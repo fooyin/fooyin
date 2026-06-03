@@ -587,6 +587,10 @@ QString ScriptRegistry::playbackTimeRemaining() const
         return {};
     }
     if(const auto* environment = playbackEnvironment(m_context); environment != nullptr) {
+        if(environment->currentTrackDuration() == 0
+           || environment->currentPosition() >= environment->currentTrackDuration()) {
+            return {};
+        }
         return Utils::msToString(environment->currentTrackDuration() - environment->currentPosition());
     }
     return {};
@@ -598,6 +602,10 @@ QString ScriptRegistry::playbackTimeRemainingSeconds() const
         return {};
     }
     if(const auto* environment = playbackEnvironment(m_context); environment != nullptr) {
+        if(environment->currentTrackDuration() == 0
+           || environment->currentPosition() >= environment->currentTrackDuration()) {
+            return {};
+        }
         return QString::number((environment->currentTrackDuration() - environment->currentPosition()) / 1000);
     }
     return {};

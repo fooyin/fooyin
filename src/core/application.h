@@ -40,6 +40,7 @@ class NetworkAccessManager;
 class PlayerController;
 class PlaylistHandler;
 class PluginManager;
+class RemoteIoService;
 class SettingsManager;
 class SortingRegistry;
 
@@ -68,6 +69,7 @@ public:
     [[nodiscard]] std::shared_ptr<PlaylistLoader> playlistLoader() const;
     [[nodiscard]] std::shared_ptr<AudioLoader> audioLoader() const;
     [[nodiscard]] std::shared_ptr<NetworkAccessManager> networkManager() const;
+    [[nodiscard]] std::shared_ptr<RemoteIoService> remoteIoService() const;
     [[nodiscard]] SortingRegistry* sortingRegistry() const;
     [[nodiscard]] DspRegistry* dspRegistry() const;
     [[nodiscard]] DspChainStore* dspChainStore() const;

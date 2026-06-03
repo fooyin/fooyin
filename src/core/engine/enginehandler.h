@@ -153,6 +153,7 @@ private:
     void armEndAdvanceWatchdog(const Track& track, uint64_t generation);
     void clearPendingBoundaryAdvance();
     void clearEngineOwnedTransition();
+    void handleEngineTrackChanged(const Track& track);
     void handleTrackCommitted(const Engine::TrackCommitContext& context);
     void handleTrackStatus(Engine::TrackStatus status, const Track& track, uint64_t generation, bool seekable);
 
@@ -212,6 +213,7 @@ private:
     std::chrono::steady_clock::time_point m_endAdvanceSuppressedSince;
     Track m_pendingBoundaryAdvanceTrack;
     uint64_t m_pendingBoundaryAdvanceGen;
+    Track m_latestTrackMetadata;
 
     Engine::PlaybackItem m_lastPreparedNextTrack;
     bool m_lastPreparedNextTrackReady;

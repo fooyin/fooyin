@@ -30,6 +30,7 @@
 
 #include <core/engine/audioloader.h>
 #include <core/library/musiclibrary.h>
+#include <core/network/remoteioservice.h>
 #include <core/playlist/playlist.h>
 #include <core/trackmetadatastore.h>
 
@@ -84,13 +85,15 @@ std::set<QString> physicalPathsForTracks(const Fooyin::TrackList& tracks)
 
 namespace Fooyin {
 LibraryScanSession::LibraryScanSession(TrackDatabase* trackDatabase, PlaylistLoader* playlistLoader,
-                                       AudioLoader* audioLoader, std::shared_ptr<TrackMetadataStore> metadataStore,
-                                       LibraryScanConfig config, LibraryScanHost* host)
+                                       AudioLoader* audioLoader, std::shared_ptr<RemoteIoService> remoteIo,
+                                       std::shared_ptr<TrackMetadataStore> metadataStore, LibraryScanConfig config,
+                                       LibraryScanHost* host)
     : m_host{host}
     , m_config{std::move(config)}
     , m_trackDatabase{trackDatabase}
     , m_playlistLoader{playlistLoader}
     , m_audioLoader{audioLoader}
+    , m_remoteIo{std::move(remoteIo)}
     , m_metadataStore{std::move(metadataStore)}
     , m_state{host}
     , m_writer{trackDatabase, [this](const ScanResult& result) { handleScanWriterFlush(result); }}
@@ -101,10 +104,22 @@ LibraryScanSession::LibraryScanSession(TrackDatabase* trackDatabase, PlaylistLoa
     , m_phase{ScanProgress::Phase::ReadingMetadata}
 { }
 
+LibraryScanSession::LibraryScanSession(TrackDatabase* trackDatabase, PlaylistLoader* playlistLoader,
+                                       AudioLoader* audioLoader, std::shared_ptr<TrackMetadataStore> metadataStore,
+                                       LibraryScanConfig config, LibraryScanHost* host)
+    : LibraryScanSession{
+          trackDatabase, playlistLoader, audioLoader, nullptr, std::move(metadataStore), std::move(config), host}
+{ }
+
 LibraryScanSession::~LibraryScanSession() = default;
 
 void LibraryScanSession::reset(const LibraryInfo& library)
 {
+    if(m_remotePlaylistDownload) {
+        m_remotePlaylistDownload->cancel();
+        m_remotePlaylistDownload.reset();
+    }
+
     m_currentLibrary = library;
     m_state.reset();
     m_writer.reset();
@@ -154,6 +169,7 @@ LibraryTrackResolver LibraryScanSession::makeResolver()
                                 m_playlistLoader,
                                 m_audioLoader,
                                 m_config.playlistSkipMissing,
+                                m_remoteIo,
                                 m_metadataStore,
                                 m_trackDatabase,
                                 &m_state,
@@ -469,7 +485,7 @@ bool LibraryScanSession::scanPlaylist(const TrackList& libraryTracks, const QLis
             return false;
         }
 
-        totalEntries += resolver.countPlaylistTracks(url.toLocalFile());
+        totalEntries += resolver.countPlaylistTracks(url);
     }
 
     m_state.setProgressPhase(m_phase, totalEntries);
@@ -480,7 +496,7 @@ bool LibraryScanSession::scanPlaylist(const TrackList& libraryTracks, const QLis
             return false;
         }
 
-        const TrackList playlistTracks = resolver.readPlaylist(url.toLocalFile());
+        const TrackList playlistTracks = resolver.readPlaylist(url);
         result.insert(result.end(), playlistTracks.cbegin(), playlistTracks.cend());
     }
 
@@ -489,6 +505,67 @@ bool LibraryScanSession::scanPlaylist(const TrackList& libraryTracks, const QLis
     }
 
     return true;
+}
+
+void LibraryScanSession::scanPlaylistAsync(const TrackList& libraryTracks, const QList<QUrl>& urls, QObject* context,
+                                           std::function<void(bool completed, TrackList tracks)> callback)
+{
+    reset({});
+
+    m_state.populateExistingTracks(libraryTracks, {}, false);
+    m_state.setReportEnumeratingProgress(true);
+    m_phase = ScanProgress::Phase::ReadingMetadata;
+
+    auto resolver = std::make_shared<LibraryTrackResolver>(makeResolver());
+    auto result   = std::make_shared<TrackList>();
+    auto index    = std::make_shared<qsizetype>(0);
+
+    auto processNext = std::make_shared<std::function<void()>>();
+    *processNext     = [this, urls, context, callback = std::move(callback), resolver, result, index,
+                        processNext]() mutable {
+        if(!m_state.mayRun()) {
+            callback(false, std::move(*result));
+            return;
+        }
+
+        if(*index >= urls.size()) {
+            if(m_state.mayRun()) {
+                flushWriter(true);
+            }
+            callback(m_state.mayRun(), std::move(*result));
+            return;
+        }
+
+        const QUrl& url = urls.at(*index);
+        ++(*index);
+
+        if(Track::isRemotePath(url.toString())) {
+            m_state.reportProgress(url.toString());
+            m_remotePlaylistDownload = resolver->readPlaylistAsync(
+                url, context,
+                [this, callback, resolver, result, processNext](const bool completed, const TrackList& tracks) mutable {
+                    m_remotePlaylistDownload.reset();
+                    if(!completed) {
+                        callback(false, std::move(*result));
+                        return;
+                    }
+
+                    result->insert(result->end(), tracks.cbegin(), tracks.cend());
+                    (*processNext)();
+                });
+            return;
+        }
+
+        const size_t playlistTrackCount = resolver->countPlaylistTracks(url);
+        m_state.setProgressPhase(m_phase, m_state.progressCount() + playlistTrackCount);
+        m_state.reportProgress(url.toString());
+
+        const TrackList playlistTracks = resolver->readPlaylist(url);
+        result->insert(result->end(), playlistTracks.cbegin(), playlistTracks.cend());
+        (*processNext)();
+    };
+
+    (*processNext)();
 }
 
 void LibraryScanSession::finish()

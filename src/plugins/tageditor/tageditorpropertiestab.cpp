@@ -37,6 +37,18 @@ constexpr auto DontAskAgain = "TagEditor/DontAskAgain";
 constexpr auto HeaderState  = "TagEditor/HeaderState";
 
 namespace Fooyin::TagEditor {
+namespace {
+bool isDbOnlyMetadataTrack(const Track& track)
+{
+    return track.isRemote() && track.isInDatabase();
+}
+
+bool allDbOnlyTracks(const TrackList& tracks)
+{
+    return std::ranges::all_of(tracks, isDbOnlyMetadataTrack);
+}
+} // namespace
+
 TagEditorPropertiesTab::TagEditorPropertiesTab(ActionManager* actionManager, TagEditorFieldRegistry* registry,
                                                SettingsManager* settings, QWidget* parent)
     : PropertiesTabWidget{parent}
@@ -135,7 +147,7 @@ void TagEditorPropertiesTab::apply()
         m_hasPendingStatChanges     = false;
     };
 
-    if(m_settings->fileValue(DontAskAgain).toBool()) {
+    if(m_settings->fileValue(DontAskAgain).toBool() || allDbOnlyTracks(m_pendingTracks)) {
         applyChanges();
         return;
     }

@@ -53,6 +53,7 @@ public:
     [[nodiscard]] QString totalWidthText() const;
     void updateLabelWidth(ClickableLabel* label, const QString& text) const;
     void updateLabelWidths() const;
+    [[nodiscard]] bool hasLiveDuration() const;
 
     void trackChanged(const Track& track);
     void stateChanged(Player::PlayState state);
@@ -67,6 +68,7 @@ public:
     ClickableLabel* m_total;
     uint64_t m_max{0};
     bool m_showRemainingTime{false};
+    QString m_liveText{SeekContainer::tr("Live")};
 };
 
 SeekContainerPrivate::SeekContainerPrivate(SeekContainer* self, PlayerController* playerController)
@@ -98,6 +100,10 @@ QString SeekContainerPrivate::elapsedWidthText() const
 
 QString SeekContainerPrivate::totalWidthText() const
 {
+    if(hasLiveDuration()) {
+        return m_liveText;
+    }
+
     const QString totalText         = widestDigitsText(Utils::msToString(m_max));
     const QString remainingTimeText = u"-"_s + totalText;
     return m_showRemainingTime ? remainingTimeText : totalText;
@@ -119,6 +125,12 @@ void SeekContainerPrivate::updateLabelWidths() const
 {
     updateLabelWidth(m_elapsed, elapsedWidthText());
     updateLabelWidth(m_total, totalWidthText());
+}
+
+bool SeekContainerPrivate::hasLiveDuration() const
+{
+    const Track track = m_playerController->currentTrack();
+    return track.isValid() && track.isRemote() && !m_playerController->currentTrackSeekable() && m_max == 0;
 }
 
 void SeekContainerPrivate::trackChanged(const Track& track)
@@ -151,6 +163,11 @@ void SeekContainerPrivate::updateLabels(uint64_t time) const
 {
     const auto elapsed = Utils::msToString(time);
     m_elapsed->setText(elapsed);
+
+    if(hasLiveDuration()) {
+        m_total->setText(m_liveText);
+        return;
+    }
 
     QString total;
     if(m_showRemainingTime) {

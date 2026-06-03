@@ -24,10 +24,10 @@ LoadPlan planTrackLoad(const TrackLoadContext& context)
 {
     LoadPlan plan;
 
-    plan.trySegmentSwitch
-        = !context.manualChange && context.isPlaying && context.decoderValid && context.isContiguousSameFileSegment;
+    plan.trySegmentSwitch   = !context.involvesRemoteStream && !context.manualChange && context.isPlaying
+                           && context.decoderValid && context.isContiguousSameFileSegment;
     plan.tryManualFadeDefer = context.manualChange;
-    plan.tryAutoTransition  = !context.manualChange && !context.hasPendingTransportFade;
+    plan.tryAutoTransition = !context.involvesRemoteStream && !context.manualChange && !context.hasPendingTransportFade;
 
     if(plan.trySegmentSwitch) {
         plan.firstStrategy = LoadStrategy::SegmentSwitch;

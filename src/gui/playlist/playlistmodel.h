@@ -209,6 +209,8 @@ private:
     prepareEditedTrack(const QModelIndex& index, const EditableTrackContext& context, const QVariant& value) const;
 
     QModelIndex rightIndex(const QModelIndex& index) const;
+    [[nodiscard]] bool playingTrackMatchesPlaylistTrack(const PlaylistTrack& track, int index) const;
+    [[nodiscard]] PlaylistTrackList tracksWithPlayingTrackOverlay(const PlaylistTrackList& tracks) const;
 
     void populateModel(PendingData data);
     void populateTrackGroup(PendingData data);
@@ -275,6 +277,7 @@ private:
     void refreshTracksForDependency(const std::vector<int>& indexes, PlaybackDependency dependency);
     void refreshTracksForDependencies(const std::vector<int>& indexes, PlaybackDependencies dependencies);
     void coverUpdated(const Track& track);
+    [[nodiscard]] PlaylistTrack persistentTrackForIndex(const QModelIndex& index) const;
     [[nodiscard]] bool playbackTrackMatchesPlaylistIndex(const PlaylistTrack& track, int index) const;
     [[nodiscard]] PlayingTrackIndexResolution resolvePlayingTrackIndex(const PlaylistTrack& track) const;
     [[nodiscard]] int resolveTrackIndex(const PlaylistTrack& track) const;

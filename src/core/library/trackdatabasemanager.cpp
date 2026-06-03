@@ -34,10 +34,17 @@
 
 Q_LOGGING_CATEGORY(TRK_DBMAN, "fy.trackdbmanager")
 
+using namespace Qt::StringLiterals;
+
 namespace {
 bool shouldContinue(const std::stop_token& stopToken)
 {
     return !stopToken.stop_requested();
+}
+
+bool isDbOnlyMetadataTrack(const Fooyin::Track& track)
+{
+    return track.isRemote();
 }
 } // namespace
 
@@ -137,7 +144,7 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int
 
         Track updatedTrack{track};
 
-        if(write) {
+        if(write && !isDbOnlyMetadataTrack(updatedTrack)) {
             if(m_audioLoader->writeTrackMetadata(updatedTrack, options)) {
                 const QDateTime modifiedTime = QFileInfo{updatedTrack.filepath()}.lastModified();
                 updatedTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
@@ -148,6 +155,10 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int
                 ++failedCount;
                 continue;
             }
+        }
+
+        if(updatedTrack.hash().isEmpty()) {
+            updatedTrack.generateHash();
         }
 
         if(m_trackDatabase.updateTrack(updatedTrack) && m_trackDatabase.updateTrackStats(updatedTrack)) {
@@ -196,7 +207,11 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, AudioReader
         bool success{true};
         bool needsTrackUpdate{false};
 
-        if(!track.isInArchive() && writeOptions != AudioReader::None) {
+        if(updatedTrack.hash().isEmpty()) {
+            updatedTrack.generateHash();
+        }
+
+        if(!track.isInArchive() && !isDbOnlyMetadataTrack(updatedTrack) && writeOptions != AudioReader::None) {
             success                        = m_audioLoader->writeTrackMetadata(updatedTrack, writeOptions);
             const QDateTime modifiedTime   = QFileInfo{updatedTrack.filepath()}.lastModified();
             const uint64_t newModifiedTime = modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0;

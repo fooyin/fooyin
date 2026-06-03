@@ -26,6 +26,7 @@
 namespace Fooyin {
 struct LibraryInfo;
 class LibraryManager;
+class RemoteIoService;
 class SettingsManager;
 class UnifiedMusicLibraryPrivate;
 
@@ -36,7 +37,8 @@ class FYCORE_EXPORT UnifiedMusicLibrary : public MusicLibrary
 public:
     UnifiedMusicLibrary(LibraryManager* libraryManager, DbConnectionPoolPtr dbPool,
                         std::shared_ptr<PlaylistLoader> playlistLoader, std::shared_ptr<AudioLoader> audioLoader,
-                        SettingsManager* settings, QObject* parent = nullptr);
+                        std::shared_ptr<RemoteIoService> remoteIo, SettingsManager* settings,
+                        QObject* parent = nullptr);
     ~UnifiedMusicLibrary() override;
 
     [[nodiscard]] bool hasLibrary() const override;

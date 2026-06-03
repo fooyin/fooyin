@@ -24,6 +24,7 @@
 #include "libraryscanutils.h"
 #include "playlist/playlistloader.h"
 
+#include <core/track.h>
 #include <core/trackmetadatastore.h>
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/database/dbconnectionpool.h>
@@ -31,6 +32,8 @@
 #include <utils/utils.h>
 
 #include <QLoggingCategory>
+
+#include <algorithm>
 
 Q_LOGGING_CATEGORY(LIB_SCANNER, "fy.scanner")
 
@@ -62,7 +65,7 @@ void LibraryScanner::startSession(const LibraryScanConfig& config, const Library
     m_currentLibrary = library;
     resetStopSource();
     m_session = std::make_unique<LibraryScanSession>(&m_trackDatabase, m_playlistLoader.get(), m_audioLoader.get(),
-                                                     m_metadataStore, config, this);
+                                                     m_remoteIo, m_metadataStore, config, this);
 }
 
 void LibraryScanner::finishSession()
@@ -79,12 +82,14 @@ void LibraryScanner::clearSession()
 
 LibraryScanner::LibraryScanner(DbConnectionPoolPtr dbPool, std::shared_ptr<PlaylistLoader> playlistLoader,
                                std::shared_ptr<TrackMetadataStore> metadataStore,
-                               std::shared_ptr<AudioLoader> audioLoader, QObject* parent)
+                               std::shared_ptr<AudioLoader> audioLoader, std::shared_ptr<RemoteIoService> remoteIo,
+                               QObject* parent)
     : Worker{parent}
     , m_dbPool{std::move(dbPool)}
     , m_playlistLoader{std::move(playlistLoader)}
     , m_metadataStore{std::move(metadataStore)}
     , m_audioLoader{std::move(audioLoader)}
+    , m_remoteIo{std::move(remoteIo)}
     , m_progressOnlyModified{false}
 { }
 
@@ -206,6 +211,7 @@ void LibraryScanner::scanTracks(const TrackList& tracks, const bool onlyModified
     Q_EMIT progressChanged(
         makeProgress(0, {}, static_cast<int>(tracks.size()), ScanProgress::Phase::ReadingMetadata, 0));
 
+    TrackList tracksToAdd;
     TrackList tracksToUpdate;
     int processedTracks{0};
 
@@ -239,7 +245,6 @@ void LibraryScanner::scanTracks(const TrackList& tracks, const bool onlyModified
         Track updatedTrack{track.filepath(), track.subsong(), track.metadataStore()};
 
         if(m_audioLoader->readTrackMetadata(updatedTrack)) {
-            updatedTrack.setId(track.id());
             updatedTrack.setLibraryId(track.libraryId());
             updatedTrack.setAddedTime(track.addedTime());
             updatedTrack.setIsEnabled(track.isEnabled());
@@ -261,12 +266,26 @@ void LibraryScanner::scanTracks(const TrackList& tracks, const bool onlyModified
             }
 
             updatedTrack.generateHash();
-            tracksToUpdate.push_back(updatedTrack);
+
+            if(track.isInDatabase()) {
+                updatedTrack.setId(track.id());
+                tracksToUpdate.push_back(updatedTrack);
+            }
+            else {
+                tracksToAdd.push_back(updatedTrack);
+            }
         }
 
         ++processedTracks;
         Q_EMIT progressChanged(makeProgress(processedTracks, track.filepath(), static_cast<int>(tracks.size()),
                                             ScanProgress::Phase::ReadingMetadata, 0));
+    }
+
+    if(!tracksToAdd.empty()) {
+        Q_EMIT progressChanged(makeProgress(processedTracks, {}, static_cast<int>(tracks.size()),
+                                            ScanProgress::Phase::WritingDatabase, 0));
+        m_trackDatabase.storeTracks(tracksToAdd);
+        Q_EMIT scannedTracks(tracksToAdd);
     }
 
     if(!tracksToUpdate.empty()) {
@@ -333,27 +352,36 @@ void LibraryScanner::scanPlaylist(const TrackList& libraryTracks, const QList<QU
     m_progressOnlyModified = false;
     startSession(config);
 
-    const Timer timer;
+    auto timer = std::make_shared<Timer>();
 
-    TrackList tracksScanned;
+    const auto finishPlaylistScan = [this, timer](bool completed, TrackList tracksScanned) {
+        if(completed && !tracksScanned.empty()) {
+            Q_EMIT progressChanged(makeProgress(
+                static_cast<int>(m_session->progressCount()), {}, static_cast<int>(m_session->progressCount()),
+                ScanProgress::Phase::WritingDatabase, static_cast<int>(m_session->discoveredFiles())));
+            m_trackDatabase.storeTracks(tracksScanned);
+            Q_EMIT playlistLoaded(tracksScanned);
+        }
 
-    const bool completed = m_session->scanPlaylist(libraryTracks, urls, tracksScanned);
+        finishSession();
+        clearSession();
 
-    if(completed && !tracksScanned.empty()) {
-        Q_EMIT progressChanged(
-            makeProgress(static_cast<int>(m_session->progressCount()), {}, static_cast<int>(m_session->progressCount()),
-                         ScanProgress::Phase::WritingDatabase, static_cast<int>(m_session->discoveredFiles())));
-        m_trackDatabase.storeTracks(tracksScanned);
-        Q_EMIT playlistLoaded(tracksScanned);
+        setState(Idle);
+        Q_EMIT finished();
+
+        qCInfo(LIB_SCANNER) << "Scan of playlist took" << timer->elapsedFormatted();
+    };
+
+    const bool containsRemotePlaylist
+        = std::ranges::any_of(urls, [](const QUrl& url) { return Track::isRemotePath(url.toString()); });
+    if(!containsRemotePlaylist) {
+        TrackList tracksScanned;
+        const bool completed = m_session->scanPlaylist(libraryTracks, urls, tracksScanned);
+        finishPlaylistScan(completed, std::move(tracksScanned));
+        return;
     }
 
-    finishSession();
-    clearSession();
-
-    setState(Idle);
-    Q_EMIT finished();
-
-    qCInfo(LIB_SCANNER) << "Scan of playlist took" << timer.elapsedFormatted();
+    m_session->scanPlaylistAsync(libraryTracks, urls, this, finishPlaylistScan);
 }
 } // namespace Fooyin
 

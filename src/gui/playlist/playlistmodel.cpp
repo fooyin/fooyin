@@ -53,9 +53,9 @@
 #include <algorithm>
 #include <optional>
 #include <queue>
+#include <ranges>
 #include <span>
 #include <stack>
-#include <type_traits>
 #include <utility>
 
 using namespace Qt::StringLiterals;
@@ -469,7 +469,7 @@ QByteArray saveTracks(const QModelIndexList& indexes)
     trackIds.reserve(indexes.size());
 
     std::ranges::transform(indexes, std::back_inserter(trackIds), [](const QModelIndex& index) {
-        return index.data(Fooyin::PlaylistItem::Role::ItemData).value<Fooyin::PlaylistTrack>().track.id();
+        return index.data(Fooyin::PlaylistItem::Role::PersistentItemData).value<Fooyin::PlaylistTrack>().track.id();
     });
 
     stream << trackIds;
@@ -482,8 +482,8 @@ Fooyin::QueueTracks savePlaylistTracks(const Fooyin::UId& playlistId, const QMod
     Fooyin::QueueTracks tracks;
 
     for(const QModelIndex& index : indexes) {
-        auto track            = index.data(Fooyin::PlaylistItem::Role::ItemData).value<Fooyin::PlaylistTrack>();
-        track.playlistId      = playlistId;
+        auto track       = index.data(Fooyin::PlaylistItem::Role::PersistentItemData).value<Fooyin::PlaylistTrack>();
+        track.playlistId = playlistId;
         track.indexInPlaylist = index.data(Fooyin::PlaylistItem::Role::Index).toInt();
         tracks.emplace_back(track);
 
@@ -797,7 +797,7 @@ Qt::ItemFlags PlaylistModel::flags(const QModelIndex& index) const
         defaultFlags |= Qt::ItemNeverHasChildren;
 
         if(const auto context = editableTrackContextForColumn(index.column()); context.has_value()) {
-            const auto track = index.data(PlaylistItem::Role::ItemData).value<PlaylistTrack>().track;
+            const auto track = index.data(PlaylistItem::Role::PersistentItemData).value<PlaylistTrack>().track;
             if(canEditTrack(track, *context)) {
                 defaultFlags |= Qt::ItemIsEditable;
             }
@@ -939,6 +939,7 @@ QHash<int, QByteArray> PlaylistModel::roleNames() const
     roles.insert(+PlaylistItem::Role::Subtitle, "Subtitle");
     roles.insert(+PlaylistItem::Role::Path, "Path");
     roles.insert(+PlaylistItem::Role::ItemData, "ItemData");
+    roles.insert(+PlaylistItem::Role::PersistentItemData, "PersistentItemData");
 
     return roles;
 }
@@ -1242,10 +1243,11 @@ void PlaylistModel::reset(const PlaylistTrackList& tracks)
         return;
     }
 
-    QMetaObject::invokeMethod(&m_populator, [this, tracks] {
+    const PlaylistTrackList displayTracks = tracksWithPlayingTrackOverlay(tracks);
+    QMetaObject::invokeMethod(&m_populator, [this, displayTracks] {
         m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
         m_populator.setPreloadCount(m_settings->value<Settings::Gui::Internal::PlaylistTrackPreloadCount>());
-        m_populator.run(m_currentPlaylist, m_currentPreset, m_columns, tracks);
+        m_populator.run(m_currentPlaylist, m_currentPreset, m_columns, displayTracks);
     });
 }
 
@@ -1451,7 +1453,11 @@ void PlaylistModel::refreshTracks(const std::vector<int>& indexes, const std::se
         const auto& [modelIndex, end] = trackIndexAtPlaylistIndex(index);
         if(!end) {
             if(const auto track = m_currentPlaylist->playlistTrack(index)) {
-                items.emplace(track.value(), *itemForIndex(modelIndex));
+                PlaylistTrack displayTrack{track.value()};
+                if(playbackTrackMatchesPlaylistIndex(m_playingTrack, index)) {
+                    displayTrack = m_playingTrack;
+                }
+                items.emplace(displayTrack, *itemForIndex(modelIndex));
             }
         }
     }
@@ -1535,7 +1541,7 @@ bool PlaylistModel::removeColumn(int column)
     resetColumnAlignment(column);
     updateLivePlaybackDependencies();
 
-    for(auto& [_, node] : m_nodes) {
+    for(auto& node : m_nodes | std::views::values) {
         node.removeColumn(column);
     }
 
@@ -1553,7 +1559,7 @@ TrackGroups PlaylistModel::saveTrackGroups(const QModelIndexList& indexes)
     for(const auto& group : indexGroups) {
         const int index = group.front().data(PlaylistItem::Role::Index).toInt();
         std::ranges::transform(group, std::back_inserter(result[index]), [](const QModelIndex& trackIndex) {
-            return trackIndex.data(Fooyin::PlaylistItem::Role::ItemData).value<PlaylistTrack>();
+            return trackIndex.data(PlaylistItem::Role::PersistentItemData).value<PlaylistTrack>();
         });
     }
 
@@ -1700,7 +1706,7 @@ void PlaylistModel::playingTrackChanged(const PlaylistTrack& track)
     }
 
     if(!resolution.structuralRemapPending) {
-        refreshTracksForDependencies(indexesToRefresh, All);
+        refreshTracks(indexesToRefresh);
     }
 
     if(m_stopAtIndex.isValid() && m_playingIndex.isValid()
@@ -1800,8 +1806,7 @@ PlaylistModel::prepareEditedTrack(const QModelIndex& index, const EditableTrackC
         return std::unexpected{BulkEditError::InvalidRequest};
     }
 
-    const auto& trackItem = std::get<PlaylistTrackItem>(item->data());
-    const Track& track    = trackItem.track().track;
+    const Track track = persistentTrackForIndex(index).track;
 
     if(!canEditTrack(track, context)) {
         return std::unexpected{BulkEditError::InvalidRequest};
@@ -2254,6 +2259,8 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
             return trackItem.right();
         case PlaylistItem::Role::ItemData:
             return trackItem.track();
+        case PlaylistItem::Role::PersistentItemData:
+            return QVariant::fromValue(persistentTrackForIndex(index));
         case PlaylistItem::Role::EditableWriteField: {
             if(singleColumnMode || column < 0 || std::cmp_greater_equal(column, m_columns.size())) {
                 return {};
@@ -2760,7 +2767,7 @@ void PlaylistModel::storeMimeData(const QModelIndexList& indexes, QMimeData* mim
         tracks.reserve(sortedIndexes.size());
 
         for(const QModelIndex& index : std::as_const(sortedIndexes)) {
-            tracks.push_back(index.data(PlaylistItem::Role::ItemData).value<PlaylistTrack>().track);
+            tracks.push_back(index.data(PlaylistItem::Role::PersistentItemData).value<PlaylistTrack>().track);
         }
 
         Gui::populateExternalTrackMimeData(tracks, mimeData);
@@ -3284,6 +3291,30 @@ void PlaylistModel::coverUpdated(const Track& track)
     }
 }
 
+PlaylistTrack PlaylistModel::persistentTrackForIndex(const QModelIndex& index) const
+{
+    auto* item = itemForIndex(index);
+    if(!item || item->type() != PlaylistItem::Track) {
+        return {};
+    }
+
+    PlaylistTrack playlistTrack = std::get<PlaylistTrackItem>(item->data()).track();
+    if(!m_currentPlaylist || playlistTrack.indexInPlaylist < 0) {
+        return playlistTrack;
+    }
+
+    const auto persistentTrack = m_currentPlaylist->playlistTrack(playlistTrack.indexInPlaylist);
+    if(!persistentTrack.has_value()) {
+        return playlistTrack;
+    }
+
+    if(playlistTrack.entryId.isValid() && persistentTrack->entryId != playlistTrack.entryId) {
+        return playlistTrack;
+    }
+
+    return *persistentTrack;
+}
+
 bool PlaylistModel::playbackTrackMatchesPlaylistIndex(const PlaylistTrack& track, int index) const
 {
     if(!m_currentPlaylist || !track.playlistId.isValid() || track.playlistId != m_currentPlaylist->id() || index < 0) {
@@ -3295,13 +3326,49 @@ bool PlaylistModel::playbackTrackMatchesPlaylistIndex(const PlaylistTrack& track
         return false;
     }
 
-    const auto playlistTrack = playlistIndex.data(PlaylistItem::Role::ItemData).value<PlaylistTrack>();
+    const auto playlistTrack = playlistIndex.data(PlaylistItem::Role::PersistentItemData).value<PlaylistTrack>();
     if(playlistTrack.playlistId != track.playlistId) {
         return false;
     }
 
     return (track.entryId.isValid() && playlistTrack.entryId == track.entryId)
         || playlistTrack.track.sameIdentityAs(track.track);
+}
+
+bool PlaylistModel::playingTrackMatchesPlaylistTrack(const PlaylistTrack& track, int index) const
+{
+    if(!m_currentPlaylist || !m_playingTrack.playlistId.isValid()
+       || m_playingTrack.playlistId != m_currentPlaylist->id() || track.playlistId != m_playingTrack.playlistId
+       || index < 0) {
+        return false;
+    }
+
+    if(m_playingTrack.entryId.isValid() && track.entryId.isValid()) {
+        return track.entryId == m_playingTrack.entryId;
+    }
+
+    return index == m_playingTrack.indexInPlaylist && track.track.sameIdentityAs(m_playingTrack.track);
+}
+
+PlaylistTrackList PlaylistModel::tracksWithPlayingTrackOverlay(const PlaylistTrackList& tracks) const
+{
+    PlaylistTrackList displayTracks{tracks};
+
+    for(size_t i{0}; i < displayTracks.size(); ++i) {
+        auto& track = displayTracks.at(i);
+
+        const int index = track.indexInPlaylist >= 0 ? track.indexInPlaylist : static_cast<int>(i);
+        if(playingTrackMatchesPlaylistTrack(track, index)) {
+            PlaylistTrack playingTrack{m_playingTrack};
+            playingTrack.playlistId      = track.playlistId;
+            playingTrack.entryId         = track.entryId;
+            playingTrack.indexInPlaylist = track.indexInPlaylist;
+
+            track = playingTrack;
+        }
+    }
+
+    return displayTracks;
 }
 
 PlaylistModel::PlayingTrackIndexResolution PlaylistModel::resolvePlayingTrackIndex(const PlaylistTrack& track) const

@@ -23,6 +23,7 @@
 
 #include "internalguisettings.h"
 
+#include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/scripting/scriptenvironmenthelpers.h>
@@ -66,9 +67,9 @@ class StatusWidgetPrivate : public QObject
     Q_OBJECT
 
 public:
-    StatusWidgetPrivate(StatusWidget* self, PlayerController* playerController, PlaylistHandler* playlistHandler,
-                        PlaylistController* playlistController, TrackSelectionController* selectionController,
-                        SettingsManager* settings);
+    StatusWidgetPrivate(StatusWidget* self, EngineController* engine, PlayerController* playerController,
+                        PlaylistHandler* playlistHandler, PlaylistController* playlistController,
+                        TrackSelectionController* selectionController, SettingsManager* settings);
 
     void setupConnections();
 
@@ -88,11 +89,13 @@ public:
     void updateScripts();
     void updatePlayingText();
     void updateSelectionText();
+    void updateRemoteStreamStatus(const Engine::TrackStatusContext& context);
     static void setRichLabelText(StatusLabel* label, const QString& text, ScriptFormatter& formatter);
 
     void stateChanged(Player::PlayState state);
 
     StatusWidget* m_self;
+    EngineController* m_engine;
     PlayerController* m_playerController;
     PlaylistHandler* m_playlistHandler;
     PlaylistController* m_playlistController;
@@ -116,16 +119,20 @@ public:
     QString m_selectionScript;
     QString m_playlistScript;
     std::function<void()> m_cancelScan;
+    uint64_t m_streamStatusGeneration{0};
     bool m_scanActive{false};
+    bool m_remoteStreamBuffering{false};
 
     QBasicTimer m_clearTimer;
 };
 
-StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, PlayerController* playerController,
-                                         PlaylistHandler* playlistHandler, PlaylistController* playlistController,
+StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, EngineController* engine,
+                                         PlayerController* playerController, PlaylistHandler* playlistHandler,
+                                         PlaylistController* playlistController,
                                          TrackSelectionController* selectionController, SettingsManager* settings)
     : QObject{self}
     , m_self{self}
+    , m_engine{engine}
     , m_playerController{playerController}
     , m_playlistHandler{playlistHandler}
     , m_playlistController{playlistController}
@@ -178,6 +185,8 @@ StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, PlayerController* p
 
 void StatusWidgetPrivate::setupConnections()
 {
+    QObject::connect(m_engine, &EngineController::trackStatusContextChanged, this,
+                     &StatusWidgetPrivate::updateRemoteStreamStatus);
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &StatusWidgetPrivate::stateChanged);
     QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this,
                      &StatusWidgetPrivate::updatePlayingText);
@@ -421,6 +430,12 @@ void StatusWidgetPrivate::setRichLabelText(StatusLabel* label, const QString& te
 
 void StatusWidgetPrivate::updatePlayingText()
 {
+    if(m_remoteStreamBuffering) {
+        m_playingText->setText(tr("Buffering stream…"));
+        updateMessageVisibility();
+        return;
+    }
+
     const auto ps = m_playerController->playState();
     if(ps == Player::PlayState::Playing || ps == Player::PlayState::Paused) {
         QString playingText;
@@ -431,15 +446,29 @@ void StatusWidgetPrivate::updatePlayingText()
                                             TrackListContextPolicy::Fallback, {}, true, false, ratingSymbols());
             playingText = m_scriptParser.evaluate(m_playingScript, currentTrack, contextData.context);
         }
-        else {
-            playingText = m_scriptParser.evaluate(m_playingScript, m_playerController->currentTrack());
-        }
 
         setRichLabelText(m_playingText, playingText, m_playingFormatter);
         updateMessageVisibility();
     }
     else {
         m_playingText->clear();
+    }
+}
+
+void StatusWidgetPrivate::updateRemoteStreamStatus(const Engine::TrackStatusContext& context)
+{
+    if(context.generation < m_streamStatusGeneration) {
+        return;
+    }
+
+    m_streamStatusGeneration = context.generation;
+
+    const bool bufferingRemoteStream
+        = context.track.isRemote()
+       && (context.status == Engine::TrackStatus::Loading || context.status == Engine::TrackStatus::Buffering);
+
+    if(std::exchange(m_remoteStreamBuffering, bufferingRemoteStream) != bufferingRemoteStream) {
+        updatePlayingText();
     }
 }
 
@@ -472,6 +501,8 @@ void StatusWidgetPrivate::stateChanged(const Player::PlayState state)
 {
     switch(state) {
         case(Player::PlayState::Stopped):
+            m_streamStatusGeneration = 0;
+            m_remoteStreamBuffering  = false;
             updatePlayingText();
             clearMessage();
             break;
@@ -482,11 +513,11 @@ void StatusWidgetPrivate::stateChanged(const Player::PlayState state)
     }
 }
 
-StatusWidget::StatusWidget(PlayerController* playerController, PlaylistHandler* playlistHandler,
-                           PlaylistController* playlistController, TrackSelectionController* selectionController,
-                           SettingsManager* settings, QWidget* parent)
+StatusWidget::StatusWidget(EngineController* engine, PlayerController* playerController,
+                           PlaylistHandler* playlistHandler, PlaylistController* playlistController,
+                           TrackSelectionController* selectionController, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<StatusWidgetPrivate>(this, playerController, playlistHandler, playlistController,
+    , p{std::make_unique<StatusWidgetPrivate>(this, engine, playerController, playlistHandler, playlistController,
                                               selectionController, settings)}
 {
     setObjectName(StatusWidget::name());

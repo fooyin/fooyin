@@ -27,14 +27,19 @@
 #include <core/track.h>
 
 #include <functional>
+#include <memory>
 
 class QFileInfo;
+class QObject;
+class QUrl;
 
 namespace Fooyin {
 class AudioLoader;
 class LibraryScanState;
 class LibraryScanWriter;
 class PlaylistLoader;
+class RemoteDownloadHandle;
+class RemoteIoService;
 class TrackDatabase;
 class TrackMetadataStore;
 
@@ -44,14 +49,25 @@ public:
     using FlushWritesHandler = std::function<void()>;
 
     LibraryTrackResolver(LibraryInfo currentLibrary, PlaylistLoader* playlistLoader, AudioLoader* audioLoader,
+                         bool playlistSkipMissing, std::shared_ptr<RemoteIoService> remoteIo,
+                         std::shared_ptr<TrackMetadataStore> metadataStore, TrackDatabase* trackDatabase,
+                         LibraryScanState* state, LibraryScanWriter* writer, TrackReloadOptions reloadOptions,
+                         FlushWritesHandler flushWrites);
+    LibraryTrackResolver(LibraryInfo currentLibrary, PlaylistLoader* playlistLoader, AudioLoader* audioLoader,
                          bool playlistSkipMissing, std::shared_ptr<TrackMetadataStore> metadataStore,
                          TrackDatabase* trackDatabase, LibraryScanState* state, LibraryScanWriter* writer,
                          TrackReloadOptions reloadOptions, FlushWritesHandler flushWrites);
 
     [[nodiscard]] TrackList readTracks(const QString& filepath);
     [[nodiscard]] TrackList readPlaylist(const QString& filepath);
+    [[nodiscard]] TrackList readPlaylist(const QUrl& url);
     [[nodiscard]] TrackList readPlaylistTracks(const QString& path);
+    [[nodiscard]] TrackList readPlaylistTracks(const QUrl& url);
+    [[nodiscard]] std::shared_ptr<RemoteDownloadHandle>
+    readPlaylistAsync(const QUrl& url, QObject* context,
+                      std::function<void(bool completed, TrackList tracks)> callback);
     [[nodiscard]] size_t countPlaylistTracks(const QString& path) const;
+    [[nodiscard]] size_t countPlaylistTracks(const QUrl& url) const;
     [[nodiscard]] TrackList readEmbeddedPlaylistTracks(const Track& track);
 
     void readCue(const QString& cue, bool onlyModified);
@@ -71,6 +87,7 @@ private:
     LibraryInfo m_currentLibrary;
     PlaylistLoader* m_playlistLoader;
     AudioLoader* m_audioLoader;
+    std::shared_ptr<RemoteIoService> m_remoteIo;
     std::shared_ptr<TrackMetadataStore> m_metadataStore;
     TrackDatabase* m_trackDatabase;
     LibraryScanState* m_state;

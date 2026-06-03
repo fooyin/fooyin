@@ -20,11 +20,13 @@
 #include <core/engine/audioloader.h>
 
 #include <core/coresettings.h>
+#include <core/network/remotesourceprovider.h>
 #include <core/track.h>
 #include <utils/helpers.h>
 
 #include <QFileInfo>
 #include <QLoggingCategory>
+#include <QUrl>
 
 #include <algorithm>
 #include <mutex>
@@ -113,6 +115,24 @@ CreatorT selectTrackIoCreator(const std::vector<EntryT>& loaders, const QString&
     return ret;
 }
 
+template <typename EntryT, typename CreatorT, typename CapabilityFn>
+CreatorT selectRemoteTrackIoCreator(const std::vector<EntryT>& loaders, CapabilityFn&& capabilityFn)
+{
+    CreatorT ret;
+
+    for(const auto& loader : loaders) {
+        if(!loader.enabled || loader.isArchiveWrapper) {
+            continue;
+        }
+
+        if(const auto io = loader.creator(); io && capabilityFn(*io)) {
+            ret.emplace_back(loader.creator);
+        }
+    }
+
+    return ret;
+}
+
 template <typename T>
 void prioritisePreferredLoaders(std::vector<std::unique_ptr<T>>& loaders, const QString& ext)
 {
@@ -136,7 +156,44 @@ bool openFileSource(Fooyin::LoadedSource& input, const QString& filepath)
         return false;
     }
 
-    input.source.filepath = filepath;
+    input.source.filepath           = filepath;
+    input.source.remoteStreamDevice = nullptr;
+    input.rebind();
+    return true;
+}
+
+bool openRemoteSource(Fooyin::LoadedSource& input, const QString& filepath,
+                      const std::shared_ptr<Fooyin::RemoteSourceProvider>& provider)
+{
+    if(!provider) {
+        input.device.reset();
+        input.source.filepath           = filepath;
+        input.source.remoteStreamDevice = nullptr;
+        input.source.modifiedTime       = 0;
+        input.source.size               = 0;
+        input.rebind();
+        return true;
+    }
+
+    input.source.remoteStreamDevice = nullptr;
+
+    auto remoteSource = provider->createStreamSource(QUrl{filepath});
+    input.device      = std::move(remoteSource.device);
+    if(!input.device) {
+        qCWarning(AUD_LDR) << "No remote source available for" << filepath;
+        return false;
+    }
+
+    if(!input.device->isOpen() && !input.device->open(QIODevice::ReadOnly)) {
+        qCWarning(AUD_LDR) << "Failed to open remote source" << filepath << input.device->errorString();
+        input.device.reset();
+        return false;
+    }
+
+    input.source.filepath           = filepath;
+    input.source.remoteStreamDevice = remoteSource.remoteDevice;
+    input.source.modifiedTime       = 0;
+    input.source.size               = 0;
     input.rebind();
     return true;
 }
@@ -163,10 +220,11 @@ bool openArchiveSource(Fooyin::LoadedSource& input, const Fooyin::AudioLoader& l
         return false;
     }
 
-    input.device              = std::move(entryData.device);
-    input.source.filepath     = entryData.info.path;
-    input.source.modifiedTime = entryData.info.modifiedTime;
-    input.source.size         = entryData.info.size;
+    input.device                    = std::move(entryData.device);
+    input.source.filepath           = entryData.info.path;
+    input.source.remoteStreamDevice = nullptr;
+    input.source.modifiedTime       = entryData.info.modifiedTime;
+    input.source.size               = entryData.info.size;
     input.rebind();
     return true;
 }
@@ -183,6 +241,7 @@ public:
     std::vector<AudioLoader::LoaderEntry<ReaderCreator>> m_readers;
     std::vector<AudioLoader::LoaderEntry<ArchiveReaderCreator>> m_archiveReaders;
 
+    std::shared_ptr<RemoteSourceProvider> m_remoteSourceProvider;
     std::shared_mutex m_mutex;
 };
 
@@ -209,6 +268,7 @@ void AudioLoader::saveState()
     const std::shared_lock lock{p->m_mutex};
     saveLoaders(p->m_decoders, DecoderState);
     saveLoaders(p->m_readers, ReaderState);
+    settings.sync();
 }
 
 void AudioLoader::restoreState()
@@ -268,6 +328,12 @@ void AudioLoader::restoreState()
 
 AudioLoader::~AudioLoader() = default;
 
+void AudioLoader::setRemoteSourceProvider(std::shared_ptr<RemoteSourceProvider> provider)
+{
+    const std::unique_lock lock{p->m_mutex};
+    p->m_remoteSourceProvider = std::move(provider);
+}
+
 QStringList AudioLoader::supportedFileExtensions() const
 {
     const std::shared_lock lock{p->m_mutex};
@@ -297,6 +363,10 @@ QStringList AudioLoader::supportedArchiveExtensions() const
 
 bool AudioLoader::canWriteMetadata(const Track& track) const
 {
+    if(track.isRemote()) {
+        return false;
+    }
+
     for(auto& reader : readersForTrack(track)) {
         bool initSuccess{true};
         if(track.isInArchive()) {
@@ -329,7 +399,17 @@ LoadedDecoder AudioLoader::loadDecoderForTrack(const Track& track, AudioDecoder:
     LoadedDecoder ret;
 
     for(auto& decoder : decoders) {
-        if(!track.isInArchive()) {
+        if(track.isRemote()) {
+            std::shared_ptr<RemoteSourceProvider> remoteSourceProvider;
+            {
+                const std::shared_lock lock{p->m_mutex};
+                remoteSourceProvider = p->m_remoteSourceProvider;
+            }
+            if(!openRemoteSource(ret.input, track.filepath(), remoteSourceProvider)) {
+                return {};
+            }
+        }
+        else if(!track.isInArchive()) {
             if(!openFileSource(ret.input, track.filepath())) {
                 return {};
             }
@@ -360,7 +440,17 @@ LoadedReader AudioLoader::loadReaderForTrack(const Track& track) const
     LoadedReader ret;
 
     for(auto& reader : readers) {
-        if(!track.isInArchive()) {
+        if(track.isRemote()) {
+            std::shared_ptr<RemoteSourceProvider> remoteSourceProvider;
+            {
+                const std::shared_lock lock{p->m_mutex};
+                remoteSourceProvider = p->m_remoteSourceProvider;
+            }
+            if(!openRemoteSource(ret.input, track.filepath(), remoteSourceProvider)) {
+                return {};
+            }
+        }
+        else if(!track.isInArchive()) {
             if(!openFileSource(ret.input, track.filepath())) {
                 return {};
             }
@@ -444,8 +534,14 @@ std::vector<std::unique_ptr<AudioDecoder>> AudioLoader::decodersForFile(const QS
     std::vector<DecoderCreator> creators;
     {
         const std::shared_lock lock{p->m_mutex};
-        creators = selectTrackIoCreator<LoaderEntry<DecoderCreator>, std::vector<DecoderCreator>>(p->m_decoders, ext,
-                                                                                                  isInArchive);
+        if(Track::isRemotePath(file)) {
+            creators = selectRemoteTrackIoCreator<LoaderEntry<DecoderCreator>, std::vector<DecoderCreator>>(
+                p->m_decoders, [](const AudioDecoder& decoder) { return decoder.supportsRemoteSources(); });
+        }
+        else {
+            creators = selectTrackIoCreator<LoaderEntry<DecoderCreator>, std::vector<DecoderCreator>>(p->m_decoders,
+                                                                                                      ext, isInArchive);
+        }
     }
 
     std::vector<std::unique_ptr<AudioDecoder>> ret;
@@ -474,8 +570,14 @@ std::vector<std::unique_ptr<AudioReader>> AudioLoader::readersForFile(const QStr
     std::vector<ReaderCreator> creators;
     {
         const std::shared_lock lock{p->m_mutex};
-        creators = selectTrackIoCreator<LoaderEntry<ReaderCreator>, std::vector<ReaderCreator>>(p->m_readers, ext,
-                                                                                                isInArchive);
+        if(Track::isRemotePath(file)) {
+            creators = selectRemoteTrackIoCreator<LoaderEntry<ReaderCreator>, std::vector<ReaderCreator>>(
+                p->m_readers, [](const AudioReader& reader) { return reader.supportsRemoteSources(); });
+        }
+        else {
+            creators = selectTrackIoCreator<LoaderEntry<ReaderCreator>, std::vector<ReaderCreator>>(p->m_readers, ext,
+                                                                                                    isInArchive);
+        }
     }
 
     std::vector<std::unique_ptr<AudioReader>> ret;
@@ -530,12 +632,25 @@ bool AudioLoader::readTrackMetadata(Track& track) const
     const Track originalTrack{track};
 
     const auto readers = readersForTrack(track);
+    std::shared_ptr<RemoteSourceProvider> remoteSourceProvider;
+    if(track.isRemote()) {
+        const std::shared_lock lock{p->m_mutex};
+        remoteSourceProvider = p->m_remoteSourceProvider;
+    }
+
     for(const auto& reader : readers) {
+        LoadedSource loadedSource;
         AudioSource source;
         source.filepath = track.filepath();
         QFile file{track.filepath()};
 
-        if(!track.isInArchive()) {
+        if(track.isRemote()) {
+            if(!openRemoteSource(loadedSource, track.filepath(), remoteSourceProvider)) {
+                return false;
+            }
+            source = loadedSource.source;
+        }
+        else if(!track.isInArchive()) {
             if(!file.open(QIODevice::ReadOnly)) {
                 qCWarning(AUD_LDR) << "Failed to open file:" << source.filepath;
                 return false;
@@ -565,7 +680,12 @@ bool AudioLoader::readTrackMetadata(Track& track) const
 
 QByteArray AudioLoader::readTrackCover(const Track& track, Track::Cover cover) const
 {
+    if(track.isRemote()) {
+        return {};
+    }
+
     const auto readers = readersForTrack(track);
+
     for(const auto& reader : readers) {
         if(!track.isInArchive() && !reader->canReadCover()) {
             continue;
@@ -594,7 +714,7 @@ QByteArray AudioLoader::readTrackCover(const Track& track, Track::Cover cover) c
 
 bool AudioLoader::writeTrackMetadata(const Track& track, AudioReader::WriteOptions options) const
 {
-    if(track.isInArchive()) {
+    if(track.isInArchive() || track.isRemote()) {
         return false;
     }
 
@@ -630,7 +750,7 @@ bool AudioLoader::writeTrackMetadata(const Track& track, AudioReader::WriteOptio
 bool AudioLoader::writeTrackCover(const Track& track, const TrackCovers& coverData,
                                   AudioReader::WriteOptions options) const
 {
-    if(track.isInArchive()) {
+    if(track.isInArchive() || track.isRemote()) {
         return false;
     }
 

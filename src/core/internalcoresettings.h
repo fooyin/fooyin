@@ -58,6 +58,7 @@ constexpr auto ExternalExcludeTypes              = "Library/ExternalExcludeTypes
 constexpr auto FFmpegAllExtensions               = "Engine/FFmpegAllExtensions";
 constexpr auto FFmpegPriorityExtensions          = "Engine/FFmpegPriorityExtensions";
 constexpr auto SplitId3v23SemicolonSeparatedTags = "Tagging/SplitId3v23SemicolonSeparatedTags";
+constexpr auto DefaultRemoteReadAheadKb          = 2048;
 
 [[nodiscard]] FYCORE_EXPORT QStringList defaultFFmpegPriorityExtensions();
 
@@ -83,6 +84,7 @@ enum CoreInternalSettings : uint32_t
     CrossfadeSwitchPolicy    = 17 | Type::Int,
     OutputDeviceProfiles     = 18 | Type::Variant,
     OpusHeaderWriteMode      = 19 | Type::Int,
+    RemoteReadAheadKb        = 20 | Type::Int,
 };
 Q_ENUM_NS(CoreInternalSettings)
 } // namespace Settings::Core::Internal

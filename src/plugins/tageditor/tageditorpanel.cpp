@@ -39,6 +39,18 @@ using namespace Qt::StringLiterals;
 constexpr auto DontAskAgain = "TagEditor/DontAskAgain";
 
 namespace Fooyin::TagEditor {
+namespace {
+bool isDbOnlyMetadataTrack(const Track& track)
+{
+    return track.isRemote() && track.isInDatabase();
+}
+
+bool allDbOnlyTracks(const TrackList& tracks)
+{
+    return std::ranges::all_of(tracks, isDbOnlyMetadataTrack);
+}
+} // namespace
+
 TagEditorPanel::TagEditorPanel(ActionManager* actionManager, TagEditorFieldRegistry* registry, MusicLibrary* library,
                                std::shared_ptr<AudioLoader> audioLoader, TrackSelectionController* selectionController,
                                SettingsManager* settings, QWidget* parent)
@@ -130,7 +142,7 @@ bool TagEditorPanel::apply()
     }
 
     const bool statOnly = m_editor->hasOnlyStatChanges();
-    if(!statOnly && !m_settings->fileValue(DontAskAgain).toBool()) {
+    if(!statOnly && !allDbOnlyTracks(m_currentTracks) && !m_settings->fileValue(DontAskAgain).toBool()) {
         QMessageBox message;
         message.setIcon(QMessageBox::Warning);
         message.setText(tr("Are you sure?"));
@@ -171,7 +183,8 @@ void TagEditorPanel::updateForTracks(const TrackList& tracks)
 
     const bool hasTracks = !tracks.empty();
     const bool canWrite  = hasTracks && std::ranges::all_of(tracks, [this](const Track& track) {
-                              return !track.hasCue() && !track.isInArchive() && m_audioLoader->canWriteMetadata(track);
+                              return !track.hasCue() && !track.isInArchive()
+                                  && (isDbOnlyMetadataTrack(track) || m_audioLoader->canWriteMetadata(track));
                            });
     m_applyButton->setEnabled(canWrite);
     m_editor->setReadOnly(!canWrite);

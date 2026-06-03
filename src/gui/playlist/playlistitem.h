@@ -51,6 +51,7 @@ public:
         Simple,
         Path,
         ItemData,
+        PersistentItemData,
         Type,
         Index,
         BaseKey,

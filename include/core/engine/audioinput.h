@@ -28,10 +28,12 @@
 #include <QObject>
 
 #include <memory>
+#include <utility>
 
 namespace Fooyin {
 class AudioDecoderPrivate;
 class ArchiveReader;
+class RemoteStreamDevice;
 
 struct ArchiveEntryInfo
 {
@@ -60,6 +62,8 @@ struct AudioSource
     QString filepath;
     //! Already-open source device.
     QIODevice* device{nullptr};
+    //! Remote stream view for `device`, when available.
+    RemoteStreamDevice* remoteStreamDevice{nullptr};
     //! Optional archive helper when source originates from an archive container.
     ArchiveReader* archiveReader{nullptr};
     //! Optional source modified time in milliseconds since epoch.
@@ -74,7 +78,7 @@ struct AudioSource
  * Lifecycle:
  * 1. `init()` once per track/subsong
  * 2. optional `start()`
- * 3. repeated `readBuffer()`
+ * 3. repeated `readAudio()`
  * 4. optional `seek()`
  * 5. `stop()` for teardown/reset
  *
@@ -111,6 +115,49 @@ public:
     Q_DECLARE_FLAGS(PlaybackHints, PlaybackHint)
     Q_FLAG(PlaybackHints)
 
+    enum class ReadStatus : uint8_t
+    {
+        DecodedAudio = 0,
+        NeedMoreInput,
+        EndOfStream,
+        Error,
+    };
+
+    struct ReadResult
+    {
+        ReadStatus status{ReadStatus::EndOfStream};
+        AudioBuffer buffer;
+        QString error;
+
+        static ReadResult data(AudioBuffer audioBuffer)
+        {
+            ReadResult result;
+            result.status = ReadStatus::DecodedAudio;
+            result.buffer = std::move(audioBuffer);
+            return result;
+        }
+
+        static ReadResult needMoreInput()
+        {
+            ReadResult result;
+            result.status = ReadStatus::NeedMoreInput;
+            return result;
+        }
+
+        static ReadResult endOfStream()
+        {
+            return {};
+        }
+
+        static ReadResult errorResult(QString message = {})
+        {
+            ReadResult result;
+            result.status = ReadStatus::Error;
+            result.error  = std::move(message);
+            return result;
+        }
+    };
+
     AudioDecoder();
     virtual ~AudioDecoder();
 
@@ -124,6 +171,18 @@ public:
      * Base class implementation returns an empty list.
      */
     [[nodiscard]] virtual QStringList preferredExtensions() const;
+    /*!
+     * Returns @c true if this decoder can consume remote/network-backed sources
+     * supplied by AudioLoader. Base implementation returns @c false.
+     */
+    [[nodiscard]] virtual bool supportsRemoteSources() const;
+    /*!
+     * Returns @c true when the decoder needs more input bytes but the source has not
+     * reached EOF. The engine should retry later instead of ending playback.
+     *
+     * Compatibility hook for decoders that only override `readBuffer()`.
+     */
+    [[nodiscard]] virtual bool needsMoreInput() const;
     /*!
      * Returns @c true if track is seekable.
      * @note Called only after `init()` succeeds.
@@ -186,6 +245,20 @@ public:
 
     /*!
      * Read up to `bytes` of interleaved PCM in the format returned by `init()`.
+     *
+     * Return `DecodedAudio` for PCM, `NeedMoreInput` when the source is still alive but
+     * currently starved, `EndOfStream` only after the decoder has drained all delayed
+     * output, or `Error` for fatal decode/source failure.
+     *
+     * New decoders should override this so EOF, input starvation, and errors are
+     * explicit. This is most useful for remote/live streams where temporary input
+     * starvation must not be treated as EOF. The default adapts legacy
+     * `readBuffer()` decoders.
+     */
+    virtual ReadResult readAudio(size_t bytes);
+    /*!
+     * Legacy read API. An invalid buffer means no PCM was returned, but does not
+     * identify whether that was EOF, would-block, or an error.
      */
     virtual AudioBuffer readBuffer(size_t bytes) = 0;
 
@@ -229,6 +302,11 @@ public:
      * Base class implementation returns an empty list.
      */
     [[nodiscard]] virtual QStringList preferredExtensions() const;
+    /*!
+     * Returns @c true if this reader can consume remote/network-backed sources
+     * supplied by AudioLoader. Base implementation returns @c false.
+     */
+    [[nodiscard]] virtual bool supportsRemoteSources() const;
     //! True when embedded cover art can be read.
     [[nodiscard]] virtual bool canReadCover() const = 0;
     //! True when embedded cover art can be written.

@@ -169,11 +169,13 @@ public Q_SLOTS:
     void updateCurrentTrackMetadata(const Fooyin::Track& track);
 
     void setAudioOutput(const Fooyin::OutputCreator& output, const QString& device);
-    void applyOutputProfile(const Fooyin::OutputCreator& output, const QString& device, SampleFormat bitdepth,
+    void applyOutputProfile(const Fooyin::OutputCreator& output, const QString& device, Fooyin::SampleFormat bitdepth,
                             bool dither, const Fooyin::Engine::DspChains& chain);
     void setOutputDevice(const QString& device);
     void setAnalysisDataSubscriptions(Fooyin::Engine::AnalysisDataTypes subscriptions);
     void updateLiveDspSettings(const Fooyin::Engine::LiveDspSettingsUpdate& update);
+
+    bool event(QEvent* event) override;
 
 Q_SIGNALS:
     void stateChanged(Fooyin::Engine::PlaybackState state);
@@ -204,7 +206,6 @@ Q_SIGNALS:
     void trackCommitted(const Fooyin::Engine::TrackCommitContext& context);
 
 protected:
-    bool event(QEvent* event) override;
     void timerEvent(QTimerEvent* event) override;
 
 private:
@@ -288,6 +289,11 @@ private:
     void schedulePipelineWakeDrainTask();
     void handlePipelineWakeSignals(const AudioPipeline::PendingSignals& pendingSignals);
     void handleOutputStateChange(AudioOutput::State state);
+
+    void clearRemoteBufferingState(bool resumePipeline = true);
+    void maybeUpdateRemoteBuffering(const char* reason);
+    [[nodiscard]] int streamBufferLengthMs(const Track& track) const;
+    [[nodiscard]] int remotePrebufferTargetMs(const AudioStreamPtr& stream) const;
 
     [[nodiscard]] uint64_t beginTransportTransition();
     void clearTransportTransition();
@@ -483,5 +489,14 @@ private:
     };
     PendingAudiblePause m_pendingAudiblePause;
     uint64_t m_nextPendingAudiblePauseSerial{0};
+
+    struct RemoteBufferingState
+    {
+        bool active{false};
+        uint64_t generation{0};
+        StreamId streamId{InvalidStreamId};
+        uint64_t rebufferCount{0};
+    };
+    RemoteBufferingState m_remoteBuffering;
 };
 } // namespace Fooyin

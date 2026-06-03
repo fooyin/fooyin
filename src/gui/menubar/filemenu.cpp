@@ -26,9 +26,6 @@
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
-#include <utils/settings/settingsdialogcontroller.h>
-#include <utils/settings/settingsmanager.h>
-#include <utils/utils.h>
 
 #include <QAction>
 #include <QApplication>
@@ -36,10 +33,9 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
-FileMenu::FileMenu(ActionManager* actionManager, SettingsManager* settings, QObject* parent)
+FileMenu::FileMenu(ActionManager* actionManager, QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
-    , m_settings{settings}
 {
     auto* fileMenu = m_actionManager->actionContainer(Constants::Menus::File);
 
@@ -58,6 +54,13 @@ FileMenu::FileMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     addFoldersCommand->setCategories(fileCategory);
     fileMenu->addAction(addFoldersCommand, Actions::Groups::One);
     QObject::connect(addFolders, &QAction::triggered, this, &FileMenu::requestAddFolders);
+
+    auto* addStreamUrl = new QAction(tr("Add stream &URL…"), this);
+    addStreamUrl->setStatusTip(tr("Add the specified stream URL to the current playlist"));
+    auto* addStreamUrlCommand = m_actionManager->registerAction(addStreamUrl, Constants::Actions::AddStreamUrl);
+    addStreamUrlCommand->setCategories(fileCategory);
+    fileMenu->addAction(addStreamUrlCommand, Actions::Groups::One);
+    QObject::connect(addStreamUrl, &QAction::triggered, this, &FileMenu::requestAddStreamUrl);
 
     fileMenu->addSeparator();
 

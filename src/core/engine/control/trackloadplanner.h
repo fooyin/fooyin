@@ -40,6 +40,7 @@ struct TrackLoadContext
     bool isPlaying{false};
     bool decoderValid{false};
     bool hasPendingTransportFade{false};
+    bool involvesRemoteStream{false};
     bool isContiguousSameFileSegment{false};
 };
 

@@ -45,6 +45,7 @@ public:
     struct DecodeResult
     {
         bool stopDecodeTimer{false};
+        bool inputNeedsMoreData{false};
     };
 
     explicit DecodingController(QObject* timerHost);
@@ -84,6 +85,7 @@ public:
     [[nodiscard]] DecodeResult decodeLoop();
     //! Handle Qt timer event id; returns nullopt for unrelated timer ids.
     [[nodiscard]] std::optional<DecodeResult> handleTimer(int timerId, bool seekInProgress);
+    [[nodiscard]] bool inputNeedsMoreData() const;
 
 private:
     QObject* m_timerHost;
@@ -95,6 +97,7 @@ private:
     int m_reserveTargetMs;
 
     bool m_fillUntilTarget;
+    bool m_inputNeedsMoreData;
 
     std::atomic<uint64_t> m_decodeReserveClampEvents;
     std::atomic<uint64_t> m_decodeBurstCapShortfallEvents;

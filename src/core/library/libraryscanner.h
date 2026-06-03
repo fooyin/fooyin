@@ -37,6 +37,7 @@ class AudioLoader;
 class DbConnectionHandler;
 class LibraryScanSession;
 class PlaylistLoader;
+class RemoteIoService;
 class TrackMetadataStore;
 
 struct FYCORE_EXPORT ScanResult
@@ -53,7 +54,7 @@ class FYCORE_EXPORT LibraryScanner : public Worker,
 public:
     explicit LibraryScanner(DbConnectionPoolPtr dbPool, std::shared_ptr<PlaylistLoader> playlistLoader,
                             std::shared_ptr<TrackMetadataStore> metadataStore, std::shared_ptr<AudioLoader> audioLoader,
-                            QObject* parent = nullptr);
+                            std::shared_ptr<RemoteIoService> remoteIo, QObject* parent = nullptr);
     ~LibraryScanner() override;
 
     void initialiseThread() override;
@@ -93,6 +94,7 @@ private:
     std::shared_ptr<PlaylistLoader> m_playlistLoader;
     std::shared_ptr<TrackMetadataStore> m_metadataStore;
     std::shared_ptr<AudioLoader> m_audioLoader;
+    std::shared_ptr<RemoteIoService> m_remoteIo;
 
     std::unique_ptr<DbConnectionHandler> m_dbHandler;
 

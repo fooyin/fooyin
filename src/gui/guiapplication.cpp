@@ -101,6 +101,7 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QImageReader>
+#include <QInputDialog>
 #include <QLoggingCategory>
 #include <QMessageBox>
 #include <QMimeDatabase>
@@ -226,6 +227,7 @@ public:
 
     void addFiles();
     void addFolders();
+    void addStreamUrl();
     void openFiles(const QList<QUrl>& urls);
 
     void loadPlaylist();
@@ -308,7 +310,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_playlistInteractor{m_core->playlistHandler(), m_playlistController.get(), m_library, m_settings}
     , m_selectionController{m_actionManager, m_core->audioLoader().get(), m_settings, m_playlistController.get()}
     , m_searchController{new SearchController(m_editableLayout.get(), m_self)}
-    , m_fileMenu{new FileMenu(m_actionManager, m_settings, m_self)}
+    , m_fileMenu{new FileMenu(m_actionManager, m_self)}
     , m_editMenu{new EditMenu(m_actionManager, m_settings, m_self)}
     , m_viewMenu{new ViewMenu(m_actionManager, m_settings, m_self)}
     , m_layoutMenu{new LayoutMenu(m_actionManager, &m_layoutProvider, m_settings, m_self)}
@@ -321,7 +323,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_windowController{new WindowController(m_mainWindow.get())}
     , m_themeRegistry{new ThemeRegistry(m_settings, m_self)}
     , m_advancedSettingsRegistry{std::make_unique<AdvancedSettingsRegistry>(m_settings)}
-    , m_coverRepository{new CoverRepository(m_core->audioLoader(), m_settings, m_self)}
+    , m_coverRepository{new CoverRepository(m_core->audioLoader(), m_core->remoteIoService(), m_settings, m_self)}
     , m_guiPluginContext{m_actionManager,
                          &m_layoutProvider,
                          &m_selectionController,
@@ -455,6 +457,7 @@ void GuiApplicationPrivate::setupConnections()
     QObject::connect(m_fileMenu, &FileMenu::requestExit, m_self, [this]() { close(); });
     QObject::connect(m_fileMenu, &FileMenu::requestAddFiles, m_self, [this]() { addFiles(); });
     QObject::connect(m_fileMenu, &FileMenu::requestAddFolders, m_self, [this]() { addFolders(); });
+    QObject::connect(m_fileMenu, &FileMenu::requestAddStreamUrl, m_self, [this]() { addStreamUrl(); });
     QObject::connect(m_fileMenu, &FileMenu::requestLoadPlaylist, m_self, [this]() { loadPlaylist(); });
     QObject::connect(m_fileMenu, &FileMenu::requestSavePlaylist, m_self, [this]() { savePlaylist(); });
     QObject::connect(m_fileMenu, &FileMenu::requestSaveAllPlaylists, m_self, [this]() { saveAllPlaylist(); });
@@ -1292,6 +1295,34 @@ void GuiApplicationPrivate::addFolders()
     }
 
     m_playlistInteractor.filesToCurrentPlaylist({dirs});
+}
+
+void GuiApplicationPrivate::addStreamUrl()
+{
+    bool accepted{false};
+    const QString input = QInputDialog::getText(m_mainWindow.get(), GuiApplication::tr("Add Stream URL"),
+                                                GuiApplication::tr("Stream URL:"), QLineEdit::Normal, {}, &accepted)
+                              .trimmed();
+
+    if(!accepted || input.isEmpty()) {
+        return;
+    }
+
+    const QUrl url{input, QUrl::StrictMode};
+    if(!url.isValid() || !Track::isRemotePath(url.toString())) {
+        QMessageBox::warning(m_mainWindow.get(), GuiApplication::tr("Invalid Stream URL"),
+                             GuiApplication::tr("Enter a valid http:// or https:// stream URL."));
+        return;
+    }
+
+    const QFileInfo urlInfo{url.path()};
+    if(m_core->playlistLoader()->parserForExtension(urlInfo.suffix().toLower())) {
+        const QString playlistName = !urlInfo.completeBaseName().isEmpty() ? urlInfo.completeBaseName() : url.host();
+        m_playlistInteractor.loadPlaylist({{playlistName, url}});
+        return;
+    }
+
+    m_playlistInteractor.tracksToCurrentPlaylist({Track{url.toString()}});
 }
 
 void GuiApplicationPrivate::openFiles(const QList<QUrl>& urls)

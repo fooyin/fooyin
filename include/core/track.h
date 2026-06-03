@@ -29,6 +29,7 @@
 #include <QMetaType>
 #include <QSharedDataPointer>
 #include <QString>
+#include <QUrl>
 
 #include <map>
 #include <memory>
@@ -128,9 +129,11 @@ public:
     [[nodiscard]] int libraryId() const;
 
     [[nodiscard]] bool isInArchive() const;
+    [[nodiscard]] bool isRemote() const;
     [[nodiscard]] QString archivePath() const;
     [[nodiscard]] QString pathInArchive() const;
     [[nodiscard]] QString relativeArchivePath() const;
+    [[nodiscard]] QUrl url() const;
 
     [[nodiscard]] int id() const;
     [[nodiscard]] QString hash() const;
@@ -235,6 +238,7 @@ public:
 
     //! Archive paths use fooyin's unpack:// URL format.
     static bool isArchivePath(const QString& path);
+    static bool isRemotePath(const QString& path);
     //! True for built-in tags that can hold multiple values.
     static bool isMultiValueTag(const QString& tag);
     //! True when tag is not one of Track's built-in metadata fields.

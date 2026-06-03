@@ -93,6 +93,7 @@ public:
 
 private:
     [[nodiscard]] ScanRequest startFileScan(const QList<QUrl>& urls) const;
+    [[nodiscard]] ScanRequest startTrackScan(const TrackList& tracks) const;
     [[nodiscard]] ScanRequest startPlaylistLoad(const QList<QUrl>& urls) const;
     void beginTrackScan(const QString& labelText, const ScanRequest& request,
                         std::function<void(const TrackList&)> func);
@@ -104,6 +105,14 @@ private:
                                                         bool preventDuplicates = false) const;
     void tracksToNewPlaylist(const QString& playlistName, const TrackList& tracks, int indexToPlay, bool replace,
                              bool play = false);
+
+    template <typename Func>
+    void scanTracks(const TrackList& tracks, Func&& func)
+    {
+        if(!tracks.empty()) {
+            beginTrackScan(tr("Reading tracks…"), startTrackScan(tracks), std::forward<Func>(func));
+        }
+    }
 
     template <typename Func>
     void scanFiles(const QList<QUrl>& urls, Func&& func)

@@ -43,6 +43,7 @@ public:
 
     void seek(uint64_t pos) override;
 
+    ReadResult readAudio(size_t bytes) override;
     AudioBuffer readBuffer(size_t bytes) override;
 
 private:

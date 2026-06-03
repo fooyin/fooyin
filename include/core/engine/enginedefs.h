@@ -44,6 +44,7 @@ enum class TrackStatus : uint8_t
     NoTrack = 0,
     Loading,
     Loaded,
+    Buffering,
     Buffered,
     End,
     Invalid,

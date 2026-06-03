@@ -128,6 +128,7 @@ constexpr auto Search           = "Fooyin.Context.Search";
 namespace Actions {
 constexpr auto AddFiles                  = "File.AddFiles";
 constexpr auto AddFolders                = "File.AddFolders";
+constexpr auto AddStreamUrl              = "File.AddStreamUrl";
 constexpr auto NewPlaylist               = "File.NewPlaylist";
 constexpr auto NewAutoPlaylist           = "File.NewAutoPlaylist";
 constexpr auto EditAutoPlaylist          = "File.EditAutoPlaylist";

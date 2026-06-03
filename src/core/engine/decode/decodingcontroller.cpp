@@ -35,6 +35,7 @@ constexpr auto TargetChunkDurationMs        = 10;
 constexpr auto BurstShortfallLogThresholdMs = 200;
 constexpr auto BurstRecoveryMinChunks       = 8;
 constexpr auto DecodeTimerGapWarnMs         = 500;
+constexpr auto DecodeLoopBudgetMs           = 100;
 constexpr auto DecodeLoopDurationWarnMs     = 500;
 constexpr auto DecodeHighWatermarkMaxRatio  = 0.99;
 constexpr auto DecodeWatermarkMinHeadroomMs = 20;
@@ -199,6 +200,7 @@ DecodingController::DecodingController(QObject* timerHost)
     , m_highWatermarkMs{400}
     , m_reserveTargetMs{0}
     , m_fillUntilTarget{false}
+    , m_inputNeedsMoreData{false}
     , m_decodeReserveClampEvents{0}
     , m_decodeBurstCapShortfallEvents{0}
     , m_hasLastDecodeTimerTick{false}
@@ -211,6 +213,7 @@ void DecodingController::startDecoding()
         start();
     }
     m_fillUntilTarget         = true;
+    m_inputNeedsMoreData      = false;
     m_hasLastDecodeTimerTick  = false;
     m_decodeTimerGapLogActive = false;
     ensureDecodeTimerRunning();
@@ -222,6 +225,7 @@ void DecodingController::stopDecoding()
     stop();
     m_fillUntilTarget         = false;
     m_reserveTargetMs         = 0;
+    m_inputNeedsMoreData      = false;
     m_hasLastDecodeTimerTick  = false;
     m_decodeTimerGapLogActive = false;
 }
@@ -246,6 +250,11 @@ void DecodingController::ensureDecodeTimerRunning()
 bool DecodingController::isDecodeTimerActive() const
 {
     return m_decodeTimerId != 0;
+}
+
+bool DecodingController::inputNeedsMoreData() const
+{
+    return m_inputNeedsMoreData;
 }
 
 void DecodingController::setBufferWatermarksMs(int lowWatermarkMs, int highWatermarkMs)
@@ -354,7 +363,9 @@ DecodingController::DecodeResult DecodingController::decodeLoop()
 {
     const auto loopStart = std::chrono::steady_clock::now();
 
-    DecodeResult result{.stopDecodeTimer = true};
+    DecodeResult result;
+    result.stopDecodeTimer = true;
+    m_inputNeedsMoreData   = false;
 
     if(!isValid() || !isDecoding()) {
         return result;
@@ -373,6 +384,14 @@ DecodingController::DecodeResult DecodingController::decodeLoop()
     int burstChunkIterations{0};
     int burstDecodedChunks{0};
     bool burstCapReached{false};
+    bool decodeBudgetReached{false};
+
+    const auto reachedDecodeBudget = [&loopStart]() {
+        const auto elapsedMs
+            = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - loopStart)
+                  .count();
+        return elapsedMs >= DecodeLoopBudgetMs;
+    };
 
     if(std::cmp_less(bufferedMs, effectiveLowWatermarkMs)
        || (reserveTargetMs > 0 && std::cmp_less(bufferedMs, reserveTargetMs))) {
@@ -385,6 +404,11 @@ DecodingController::DecodeResult DecodingController::decodeLoop()
         int chunkCount{0};
 
         while(chunkCount++ < maxBurstChunks) {
+            if(reachedDecodeBudget()) {
+                decodeBudgetReached = true;
+                break;
+            }
+
             ++burstChunkIterations;
             auto writer = stream->writer();
             if(writer.writeAvailable() == 0 || stream->endOfInput()) {
@@ -392,6 +416,10 @@ DecodingController::DecodeResult DecodingController::decodeLoop()
             }
 
             if(decodeChunk(maxFramesPerChunk) <= 0) {
+                if(lastDecodeNeededMoreInput()) {
+                    result.inputNeedsMoreData = true;
+                    m_inputNeedsMoreData      = true;
+                }
                 break;
             }
             ++burstDecodedChunks;
@@ -421,6 +449,11 @@ DecodingController::DecodeResult DecodingController::decodeLoop()
             int recoveryChunkCount{0};
 
             while(recoveryChunkCount++ < recoveryBurstChunks) {
+                if(reachedDecodeBudget()) {
+                    decodeBudgetReached = true;
+                    break;
+                }
+
                 ++burstChunkIterations;
 
                 auto writer = stream->writer();
@@ -429,6 +462,10 @@ DecodingController::DecodeResult DecodingController::decodeLoop()
                 }
 
                 if(decodeChunk(maxFramesPerChunk) <= 0) {
+                    if(lastDecodeNeededMoreInput()) {
+                        result.inputNeedsMoreData = true;
+                        m_inputNeedsMoreData      = true;
+                    }
                     break;
                 }
                 ++burstDecodedChunks;
@@ -446,8 +483,8 @@ DecodingController::DecodeResult DecodingController::decodeLoop()
                 = std::cmp_less(bufferedAfterBurstMs, static_cast<uint64_t>(std::max(0, criticalFloorMs)));
         }
 
-        if(burstCapReached && !stream->endOfInput() && shortfallMs >= BurstShortfallLogThresholdMs
-           && belowCriticalFloor) {
+        if(burstCapReached && !stream->endOfInput() && shortfallMs >= BurstShortfallLogThresholdMs && belowCriticalFloor
+           && !decodeBudgetReached) {
             incrementAtomicSaturating(m_decodeBurstCapShortfallEvents);
             qCWarning(ENGINE) << "Decode burst reached cap before fill target:" << "buffered=" << bufferedAfterBurstMs
                               << "ms target=" << fillTargetMs << "ms floor=" << criticalFloorMs
@@ -474,7 +511,8 @@ DecodingController::DecodeResult DecodingController::decodeLoop()
                           << "lowMs=" << effectiveLowWatermarkMs << "highMs=" << effectiveHighWatermarkMs
                           << "reserveMs=" << reserveTargetMs << "fillTargetMs=" << fillTargetMs
                           << "burstIterations=" << burstChunkIterations << "burstDecodedChunks=" << burstDecodedChunks
-                          << "burstCapReached=" << burstCapReached << "streamEndOfInput=" << stream->endOfInput();
+                          << "burstCapReached=" << burstCapReached << "decodeBudgetReached=" << decodeBudgetReached
+                          << "streamEndOfInput=" << stream->endOfInput();
     }
 
     result.stopDecodeTimer = !m_fillUntilTarget || stream->endOfInput() || stream->writer().writeAvailable() == 0;

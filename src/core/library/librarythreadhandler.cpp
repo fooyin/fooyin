@@ -136,7 +136,8 @@ public:
     LibraryThreadHandlerPrivate(LibraryThreadHandler* self, DbConnectionPoolPtr dbPool, MusicLibrary* library,
                                 std::shared_ptr<PlaylistLoader> playlistLoader,
                                 std::shared_ptr<TrackMetadataStore> metadataStore,
-                                const std::shared_ptr<AudioLoader>& audioLoader, SettingsManager* settings);
+                                const std::shared_ptr<AudioLoader>& audioLoader,
+                                std::shared_ptr<RemoteIoService> remoteIo, SettingsManager* settings);
 
     void scanLibrary(const LibraryScanRequest& request);
     void scanTracks(const LibraryScanRequest& request);
@@ -201,12 +202,13 @@ LibraryThreadHandlerPrivate::LibraryThreadHandlerPrivate(LibraryThreadHandler* s
                                                          std::shared_ptr<PlaylistLoader> playlistLoader,
                                                          std::shared_ptr<TrackMetadataStore> metadataStore,
                                                          const std::shared_ptr<AudioLoader>& audioLoader,
+                                                         std::shared_ptr<RemoteIoService> remoteIo,
                                                          SettingsManager* settings)
     : m_self{self}
     , m_dbPool{std::move(dbPool)}
     , m_library{library}
     , m_settings{settings}
-    , m_scanner{m_dbPool, std::move(playlistLoader), metadataStore, audioLoader}
+    , m_scanner{m_dbPool, std::move(playlistLoader), metadataStore, audioLoader, std::move(remoteIo)}
     , m_trackDatabaseManager{m_dbPool, audioLoader, m_settings, std::move(metadataStore)}
 {
     m_monitor.moveToThread(&m_thread);
@@ -744,11 +746,13 @@ void LibraryThreadHandlerPrivate::flushTrackStatsUpdates()
 LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibrary* library,
                                            std::shared_ptr<PlaylistLoader> playlistLoader,
                                            std::shared_ptr<TrackMetadataStore> metadataStore,
-                                           std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
+                                           std::shared_ptr<AudioLoader> audioLoader,
+                                           std::shared_ptr<RemoteIoService> remoteIo, SettingsManager* settings,
                                            QObject* parent)
     : QObject{parent}
     , p{std::make_unique<LibraryThreadHandlerPrivate>(this, std::move(dbPool), library, std::move(playlistLoader),
-                                                      std::move(metadataStore), std::move(audioLoader), settings)}
+                                                      std::move(metadataStore), std::move(audioLoader),
+                                                      std::move(remoteIo), settings)}
 {
     QObject::connect(&p->m_trackDatabaseManager, &TrackDatabaseManager::gotTracks, this,
                      &LibraryThreadHandler::gotTracks);
