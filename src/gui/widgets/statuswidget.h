@@ -26,6 +26,7 @@
 class QEvent;
 
 namespace Fooyin {
+class EngineController;
 class SettingsManager;
 class PlayerController;
 class PlaylistController;
@@ -38,7 +39,7 @@ class StatusWidget : public FyWidget
     Q_OBJECT
 
 public:
-    StatusWidget(PlayerController* playerController, PlaylistHandler* playlistHandler,
+    StatusWidget(EngineController* engine, PlayerController* playerController, PlaylistHandler* playlistHandler,
                  PlaylistController* playlistController, TrackSelectionController* selectionController,
                  SettingsManager* settings, QWidget* parent = nullptr);
     ~StatusWidget() override;

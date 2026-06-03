@@ -90,6 +90,15 @@ void ArchiveDecoder::seek(uint64_t pos)
     }
 }
 
+AudioDecoder::ReadResult ArchiveDecoder::readAudio(size_t bytes)
+{
+    if(!m_loadedDecoder.decoder) {
+        return ReadResult::errorResult();
+    }
+
+    return m_loadedDecoder.decoder->readAudio(bytes);
+}
+
 AudioBuffer ArchiveDecoder::readBuffer(size_t bytes)
 {
     if(!m_loadedDecoder.decoder) {

@@ -25,6 +25,10 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
     ${CMAKE_SOURCE_DIR}/include/core/library/tracksort.h
     ${CMAKE_SOURCE_DIR}/include/core/network/networkaccessmanager.h
+    ${CMAKE_SOURCE_DIR}/include/core/network/networkutils.h
+    ${CMAKE_SOURCE_DIR}/include/core/network/remotestreamdevice.h
+    ${CMAKE_SOURCE_DIR}/include/core/network/remotesourceprovider.h
+    ${CMAKE_SOURCE_DIR}/include/core/network/remoteioservice.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playbackqueue.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playercontroller.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playerdefs.h
@@ -65,6 +69,8 @@ set(SOURCES
     database/settingsdatabase.cpp
     database/settingsdatabase.h
     database/trackdatabase.cpp
+    database/databasehelpers.h
+    database/databasehelpers.cpp
     database/trackdatabase.h
     engine/audioanalysisbus.cpp
     engine/audioanalysisbus.h
@@ -229,7 +235,16 @@ set(SOURCES
     library/tracksort.cpp
     library/unifiedmusiclibrary.cpp
     library/unifiedmusiclibrary.h
+    network/hlsstreamdevice.cpp
+    network/hlsstreamdevice.h
     network/networkaccessmanager.cpp
+    network/networkstreamdevice.cpp
+    network/networkstreamdevice.h
+    network/networkutils.cpp
+    network/streamdeviceutils.cpp
+    network/streamdeviceutils.h
+    network/remotestreamdevice.cpp
+    network/remoteioservice.cpp
     playback/playbackcursor.cpp
     playback/playbackcursor.h
     playback/playbackqueue.cpp
@@ -250,6 +265,8 @@ set(SOURCES
     playlist/parsers/cueparser.h
     playlist/parsers/m3uparser.cpp
     playlist/parsers/m3uparser.h
+    playlist/parsers/plsparser.cpp
+    playlist/parsers/plsparser.h
     playlist/playlist.cpp
     playlist/playlistchangeset.cpp
     playlist/playlisthandler.cpp
@@ -287,28 +304,11 @@ set(SOURCES
     translationloader.h
 )
 
-create_fooyin_library(
-    fooyin_core
-    ADD_PRIVATE_TARGET
-    EXPORT_NAME Core
-    SOURCES ${SOURCES}
-)
+create_fooyin_library(fooyin_core ADD_PRIVATE_TARGET EXPORT_NAME Core SOURCES ${SOURCES})
 
 target_link_libraries(
-    fooyin_core
-    PRIVATE fooyin_version
-            fooyin_config
-            QCoro6::Core
-            ${FFMPEG_LIBRARIES}
-            PFFFT::PFFFT
-    PUBLIC Qt6::Core
-           Qt6::Widgets
-           Qt6::Sql
-           Qt6::Concurrent
-           Qt6::Network
-           Taglib::Taglib
-           Fooyin::Utils
-)
+        fooyin_core PRIVATE fooyin_version fooyin_config QCoro6::Core ${FFMPEG_LIBRARIES} PFFFT::PFFFT PUBLIC
+            Qt6::Core Qt6::Widgets Qt6::Sql Qt6::Concurrent Qt6::Network Taglib::Taglib Fooyin::Utils)
 
 target_include_directories(
     fooyin_core

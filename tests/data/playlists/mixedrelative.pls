@@ -1,0 +1,27 @@
+[playlist]
+File1=streams/main.mp3
+Title1=Relative Station - Main
+Length1=-1
+File2=streams/high.aac
+Title2=Relative Station - High
+Length2=-1
+File3=../backup/low.ogg
+Title3=Relative Station - Backup
+Length3=-1
+File4=subdir/deep/live.opus
+Title4=Relative Station - Deep Link
+Length4=-1
+File5=/absolute/path/local-file.flac
+Title5=Local File - Absolute
+Length5=240
+File6=relative/local-file.mp3
+Title6=Local File - Relative
+Length6=180
+File7=https://external.example.com/direct/live
+Title7=External Direct Stream
+Length7=-1
+File8=http://external.example.com:8000/relay
+Title8=External Relay Stream
+Length8=-1
+NumberOfEntries=8
+Version=2

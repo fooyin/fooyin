@@ -25,6 +25,7 @@
 #include <QLoggingCategory>
 
 #include <algorithm>
+#include <cmath>
 #include <cstring>
 #include <limits>
 #include <optional>
@@ -105,6 +106,7 @@ DecoderContext::DecoderContext()
     , m_endPolicy{EndPolicy::DecoderEofOnly}
     , m_playbackHints{AudioDecoder::NoHints}
     , m_isDecoding{false}
+    , m_lastDecodeNeededMoreInput{false}
 { }
 
 bool DecoderContext::isValid() const
@@ -152,6 +154,11 @@ uint64_t DecoderContext::startPosition() const
     return m_startPos;
 }
 
+bool DecoderContext::lastDecodeNeededMoreInput() const
+{
+    return m_lastDecodeNeededMoreInput;
+}
+
 AudioDecoder::PlaybackHints DecoderContext::playbackHints() const
 {
     return m_playbackHints;
@@ -184,8 +191,9 @@ bool DecoderContext::init(LoadedDecoder decoder, const Track& track)
     // Default to decoder-reported EOF for end detection.
     m_startPos = track.offset();
     setEndPolicy(EndPolicy::DecoderEofOnly);
-    m_currentPos = m_startPos;
-    m_isDecoding = isDecoding;
+    m_currentPos                = m_startPos;
+    m_isDecoding                = isDecoding;
+    m_lastDecodeNeededMoreInput = false;
 
     return true;
 }
@@ -207,8 +215,9 @@ bool DecoderContext::adoptPreparedDecoder(LoadedDecoder decoder, const Track& tr
     m_format   = *decoder.format;
     m_startPos = track.offset();
     setEndPolicy(EndPolicy::DecoderEofOnly);
-    m_currentPos = m_startPos;
-    m_isDecoding = isDecoding;
+    m_currentPos                = m_startPos;
+    m_isDecoding                = isDecoding;
+    m_lastDecodeNeededMoreInput = false;
 
     return true;
 }
@@ -243,7 +252,8 @@ void DecoderContext::start()
     }
 
     m_decoder->start();
-    m_isDecoding = true;
+    m_isDecoding                = true;
+    m_lastDecodeNeededMoreInput = false;
 }
 
 void DecoderContext::stop()
@@ -252,7 +262,8 @@ void DecoderContext::stop()
         m_decoder->stop();
     }
 
-    m_isDecoding = false;
+    m_isDecoding                = false;
+    m_lastDecodeNeededMoreInput = false;
 }
 
 bool DecoderContext::seek(uint64_t positionMs)
@@ -302,6 +313,8 @@ DecoderContext::EndPolicy DecoderContext::endPolicy() const
 
 int DecoderContext::decodeChunk(size_t maxFrames)
 {
+    m_lastDecodeNeededMoreInput = false;
+
     if(!m_isDecoding || !m_decoder || !m_activeStream) {
         return 0;
     }
@@ -342,16 +355,25 @@ int DecoderContext::decodeChunk(size_t maxFrames)
     const size_t bytesToRead = maxFramesToDecode * bytesPerFrame;
 
     for(int readAttempt{0}; readAttempt < MaxDiscardedPreRollReads; ++readAttempt) {
-        const auto audioBuffer = m_decoder->readBuffer(bytesToRead);
-        if(!audioBuffer.isValid()) {
+        const auto readResult       = m_decoder->readAudio(bytesToRead);
+        m_lastDecodeNeededMoreInput = readResult.status == AudioDecoder::ReadStatus::NeedMoreInput;
+
+        if(readResult.status != AudioDecoder::ReadStatus::DecodedAudio) {
+            if(readResult.status == AudioDecoder::ReadStatus::NeedMoreInput) {
+                return 0;
+            }
+            if(readResult.status == AudioDecoder::ReadStatus::Error && !readResult.error.isEmpty()) {
+                qCWarning(ENGINE) << "Decoder read failed:" << readResult.error;
+            }
+
             m_activeStream->setEndOfInput();
             m_isDecoding = false;
             return 0;
         }
 
-        const uint64_t chunkEndMs  = audioBuffer.endTime();
+        const uint64_t chunkEndMs  = readResult.buffer.endTime();
         const bool chunkReachedEnd = windowBounded && reachedTrackEnd(chunkEndMs, windowEnd);
-        const auto boundedInput    = trimBufferToTrackWindow(audioBuffer, m_startPos, windowEnd);
+        const auto boundedInput    = trimBufferToTrackWindow(readResult.buffer, m_startPos, windowEnd);
 
         m_currentPos = windowBounded ? std::min(chunkEndMs, windowEnd) : chunkEndMs;
 
@@ -497,7 +519,7 @@ bool DecoderContext::refreshTrackMetadata()
     }
 
     const Track changed = m_decoder->changedTrack();
-    if(!changed.isValid() || changed == m_track) {
+    if(!changed.isValid() || changed.sameDataAs(m_track)) {
         return false;
     }
 
@@ -545,7 +567,8 @@ void DecoderContext::reset()
     m_currentPos = 0;
     m_startPos   = 0;
     m_windowEndPos.reset();
-    m_endPolicy = EndPolicy::DecoderEofOnly;
+    m_endPolicy                 = EndPolicy::DecoderEofOnly;
+    m_lastDecodeNeededMoreInput = false;
     std::vector<double>{}.swap(m_decodeScratch);
 }
 } // namespace Fooyin

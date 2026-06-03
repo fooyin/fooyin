@@ -1182,7 +1182,7 @@ void Playlist::resetFlags()
 
 QStringList Playlist::supportedPlaylistExtensions()
 {
-    static const QStringList supportedExtensions = {u"cue"_s, u"m3u"_s, u"m3u8"_s};
+    static const QStringList supportedExtensions = {u"cue"_s, u"m3u"_s, u"m3u8"_s, u"pls"_s};
     return supportedExtensions;
 }
 

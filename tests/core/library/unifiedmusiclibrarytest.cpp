@@ -22,6 +22,8 @@
 #include "core/internalcoresettings.h"
 #include "core/library/librarymanager.h"
 #include "core/library/libraryscanner.h"
+#include "core/network/networkaccessmanager.h"
+#include "core/network/remoteioservice.h"
 #include "core/playlist/playlisthandler.h"
 #include "core/playlist/playlistloader.h"
 #include <core/coresettings.h>
@@ -291,7 +293,9 @@ struct LibraryTestContext
         , playlistLoader{std::make_shared<Fooyin::PlaylistLoader>()}
         , audioLoader{std::make_shared<Fooyin::AudioLoader>()}
         , readerState{std::make_shared<FakeLibraryReader::State>()}
-        , library{&libraryManager, dbPool, playlistLoader, audioLoader, &settings}
+        , network{std::make_shared<Fooyin::NetworkAccessManager>(&settings)}
+        , remoteIo{std::make_shared<Fooyin::RemoteIoService>(network, &settings)}
+        , library{&libraryManager, dbPool, playlistLoader, audioLoader, remoteIo, &settings}
         , playlistHandler{dbPool, audioLoader, &library, &settings}
     {
         audioLoader->addReader(u"fake-library-reader"_s,
@@ -307,6 +311,8 @@ struct LibraryTestContext
     std::shared_ptr<Fooyin::PlaylistLoader> playlistLoader;
     std::shared_ptr<Fooyin::AudioLoader> audioLoader;
     std::shared_ptr<FakeLibraryReader::State> readerState;
+    std::shared_ptr<Fooyin::NetworkAccessManager> network;
+    std::shared_ptr<Fooyin::RemoteIoService> remoteIo;
     Fooyin::UnifiedMusicLibrary library;
     Fooyin::PlaylistHandler playlistHandler;
 };

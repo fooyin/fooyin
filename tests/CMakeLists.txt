@@ -43,6 +43,8 @@ fooyin_add_test(test_playbacktransitioncoordinator core/engine/playbacktransitio
 fooyin_add_test(test_replaygainprocessor core/engine/replaygainprocessortest.cpp)
 fooyin_add_test(test_seekplanner core/engine/seekplannertest.cpp)
 fooyin_add_test(test_trackloadplanner core/engine/trackloadplannertest.cpp)
+fooyin_add_test(test_networkstreamdevice core/network/networkstreamdevicetest.cpp)
+fooyin_add_test(test_remoteioservice core/network/remoteioservicetest.cpp)
 
 fooyin_add_test(test_playbackcursor core/playback/playbackcursortest.cpp)
 fooyin_add_test(test_playbackprogresstracker core/playback/playbackprogresstrackertest.cpp)
@@ -52,6 +54,7 @@ fooyin_add_test(test_playlistnavigator core/playback/playlistnavigatortest.cpp)
 
 fooyin_add_test(test_cueparser core/playlist/cueparsertest.cpp data/playlists.qrc)
 fooyin_add_test(test_m3uparser core/playlist/m3uparsertest.cpp data/playlists.qrc)
+fooyin_add_test(test_plsparser core/playlist/plsparsertest.cpp data/playlists.qrc)
 fooyin_add_test(test_playlistchangeset core/playlist/playlistchangesettest.cpp)
 fooyin_add_test(test_playlisthandler core/playlist/playlisthandlertest.cpp)
 fooyin_add_test(test_libraryscanner core/library/libraryscannertest.cpp ${CMAKE_SOURCE_DIR}/data/data.qrc)

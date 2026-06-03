@@ -27,6 +27,7 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
+#include <core/network/remoteioservice.h>
 #include <core/playlist/playlistparser.h>
 #include <core/trackmetadatastore.h>
 
@@ -35,6 +36,8 @@
 #include <QDir>
 #include <QFile>
 #include <QLoggingCategory>
+#include <QUrl>
+#include <optional>
 #include <utility>
 
 Q_DECLARE_LOGGING_CATEGORY(LIB_SCANNER)
@@ -56,11 +59,23 @@ bool cueTracksUseEmbeddedCue(const Fooyin::TrackList& tracks)
 {
     return std::ranges::any_of(tracks, [](const Fooyin::Track& track) { return track.hasExtraTag(u"CUESHEET"_s); });
 }
+
+bool isRemotePlaylistUrl(const QUrl& url)
+{
+    return url.isValid() && Fooyin::Track::isRemotePath(url.toString());
+}
+
+QString playlistExtension(const QUrl& url)
+{
+    return QFileInfo{isRemotePlaylistUrl(url) ? url.path() : url.toLocalFile()}.suffix().toLower();
+}
+
 } // namespace
 
 namespace Fooyin {
 LibraryTrackResolver::LibraryTrackResolver(LibraryInfo currentLibrary, PlaylistLoader* playlistLoader,
                                            AudioLoader* audioLoader, const bool playlistSkipMissing,
+                                           std::shared_ptr<RemoteIoService> remoteIo,
                                            std::shared_ptr<TrackMetadataStore> metadataStore,
                                            TrackDatabase* trackDatabase, LibraryScanState* state,
                                            LibraryScanWriter* writer, const TrackReloadOptions reloadOptions,
@@ -68,6 +83,7 @@ LibraryTrackResolver::LibraryTrackResolver(LibraryInfo currentLibrary, PlaylistL
     : m_currentLibrary{std::move(currentLibrary)}
     , m_playlistLoader{playlistLoader}
     , m_audioLoader{audioLoader}
+    , m_remoteIo{std::move(remoteIo)}
     , m_metadataStore{std::move(metadataStore)}
     , m_trackDatabase{trackDatabase}
     , m_state{state}
@@ -75,6 +91,25 @@ LibraryTrackResolver::LibraryTrackResolver(LibraryInfo currentLibrary, PlaylistL
     , m_reloadOptions{reloadOptions}
     , m_flushWrites{std::move(flushWrites)}
     , m_playlistSkipMissing{playlistSkipMissing}
+{ }
+
+LibraryTrackResolver::LibraryTrackResolver(LibraryInfo currentLibrary, PlaylistLoader* playlistLoader,
+                                           AudioLoader* audioLoader, const bool playlistSkipMissing,
+                                           std::shared_ptr<TrackMetadataStore> metadataStore,
+                                           TrackDatabase* trackDatabase, LibraryScanState* state,
+                                           LibraryScanWriter* writer, const TrackReloadOptions reloadOptions,
+                                           FlushWritesHandler flushWrites)
+    : LibraryTrackResolver{std::move(currentLibrary),
+                           playlistLoader,
+                           audioLoader,
+                           playlistSkipMissing,
+                           nullptr,
+                           std::move(metadataStore),
+                           trackDatabase,
+                           state,
+                           writer,
+                           reloadOptions,
+                           std::move(flushWrites)}
 { }
 
 TrackList LibraryTrackResolver::readTracks(const QString& filepath)
@@ -122,9 +157,14 @@ TrackList LibraryTrackResolver::readTracks(const QString& filepath)
 
 TrackList LibraryTrackResolver::readPlaylist(const QString& filepath)
 {
+    return readPlaylist(QUrl::fromLocalFile(filepath));
+}
+
+TrackList LibraryTrackResolver::readPlaylist(const QUrl& url)
+{
     TrackList tracks;
 
-    const TrackList playlistTracks = readPlaylistTracks(filepath);
+    const TrackList playlistTracks = readPlaylistTracks(url);
     for(Track playlistTrack : playlistTracks) {
         if(const auto existingTrack = m_state->findExistingTrackByUniqueFilepath(playlistTrack)) {
             applyExistingTrackIdentity(playlistTrack, existingTrack.value());
@@ -138,8 +178,120 @@ TrackList LibraryTrackResolver::readPlaylist(const QString& filepath)
     return tracks;
 }
 
+std::shared_ptr<RemoteDownloadHandle>
+LibraryTrackResolver::readPlaylistAsync(const QUrl& url, QObject* context,
+                                        std::function<void(bool completed, TrackList tracks)> callback)
+{
+    if(!isRemotePlaylistUrl(url)) {
+        callback(true, readPlaylist(url));
+        return {};
+    }
+
+    if(!url.isValid()) {
+        callback(false, {});
+        return {};
+    }
+
+    const QString extension = playlistExtension(url);
+    auto* parser            = m_playlistLoader->parserForExtension(extension);
+    if(!parser) {
+        callback(false, {});
+        return {};
+    }
+
+    auto readEntry       = std::make_shared<PlaylistParser::ReadPlaylistEntry>();
+    readEntry->readTrack = [this, readEntry](const Track& playlistTrack) {
+        if(!m_state->mayRun()) {
+            readEntry->cancel = true;
+            return playlistTrack;
+        }
+
+        Track readTrack{playlistTrack};
+        readTrack.setMetadataStore(m_metadataStore);
+
+        if(playlistTrack.isRemote()) {
+            return readTrack;
+        }
+
+        readFileProperties(readTrack);
+
+        if(!m_audioLoader->readTrackMetadata(readTrack)) {
+            return playlistTrack;
+        }
+
+        readTrack.generateHash();
+        m_state->progressScanned(readTrack.prettyFilepath());
+
+        return readTrack;
+    };
+    readEntry->canLoadTrack = [this](const Track& playlistTrack) {
+        if(playlistTrack.isRemote()) {
+            return true;
+        }
+        return static_cast<bool>(m_audioLoader->loadDecoderForTrack(playlistTrack).decoder);
+    };
+
+    return m_remoteIo->download(
+        url, context,
+        [this, parser, url, readEntry, callback = std::move(callback)](std::optional<QByteArray> data,
+                                                                       const QString& error) mutable {
+            if(!data) {
+                qCInfo(LIB_SCANNER) << "Could not download playlist" << url << "for reading:" << error;
+                callback(false, {});
+                return;
+            }
+
+            QBuffer buffer{&data.value()};
+            if(!buffer.open(QIODevice::ReadOnly)) {
+                callback(false, {});
+                return;
+            }
+
+            TrackList parsedTracks
+                = parser->readPlaylist(&buffer, url.toString(), {}, *readEntry, m_playlistSkipMissing);
+            TrackList tracks;
+            tracks.reserve(parsedTracks.size());
+
+            for(Track playlistTrack : parsedTracks) {
+                if(const auto existingTrack = m_state->findExistingTrackByUniqueFilepath(playlistTrack)) {
+                    applyExistingTrackIdentity(playlistTrack, existingTrack.value());
+                    mergeReloadedTrackStats(playlistTrack, existingTrack.value(), m_reloadOptions);
+                }
+
+                playlistTrack.generateHash();
+                tracks.push_back(playlistTrack);
+            }
+
+            for(auto& track : tracks) {
+                track.setMetadataStore(m_metadataStore);
+            }
+
+            callback(m_state->mayRun(), std::move(tracks));
+        });
+}
+
 size_t LibraryTrackResolver::countPlaylistTracks(const QString& path) const
 {
+    return countPlaylistTracks(QUrl::fromLocalFile(path));
+}
+
+size_t LibraryTrackResolver::countPlaylistTracks(const QUrl& url) const
+{
+    if(!url.isValid()) {
+        return 0;
+    }
+
+    const QString extension = playlistExtension(url);
+    auto* parser            = m_playlistLoader->parserForExtension(extension);
+    if(!parser) {
+        return 0;
+    }
+
+    if(isRemotePlaylistUrl(url)) {
+        return 0;
+    }
+
+    const QString path = url.toLocalFile();
     if(path.isEmpty()) {
         return 0;
     }
@@ -149,32 +301,28 @@ size_t LibraryTrackResolver::countPlaylistTracks(const QString& path) const
         return 0;
     }
 
-    const QFileInfo info{playlistFile};
     QDir dir{path};
     dir.cdUp();
 
-    if(auto* parser = m_playlistLoader->parserForExtension(info.suffix())) {
-        return parser->countEntries(&playlistFile, path, dir);
-    }
-
-    return 0;
+    return parser->countEntries(&playlistFile, path, dir);
 }
 
 TrackList LibraryTrackResolver::readPlaylistTracks(const QString& path)
 {
-    if(path.isEmpty()) {
+    return readPlaylistTracks(QUrl::fromLocalFile(path));
+}
+
+TrackList LibraryTrackResolver::readPlaylistTracks(const QUrl& url)
+{
+    if(!url.isValid()) {
         return {};
     }
 
-    QFile playlistFile{path};
-    if(!playlistFile.open(QIODevice::ReadOnly)) {
-        qCInfo(LIB_SCANNER) << "Could not open file" << path << "for reading:" << playlistFile.errorString();
+    const QString extension = playlistExtension(url);
+    auto* parser            = m_playlistLoader->parserForExtension(extension);
+    if(!parser) {
         return {};
     }
-
-    const QFileInfo info{playlistFile};
-    QDir dir{path};
-    dir.cdUp();
 
     PlaylistParser::ReadPlaylistEntry readEntry;
     readEntry.readTrack = [this, &readEntry](const Track& playlistTrack) {
@@ -185,6 +333,11 @@ TrackList LibraryTrackResolver::readPlaylistTracks(const QString& path)
 
         Track readTrack{playlistTrack};
         readTrack.setMetadataStore(m_metadataStore);
+
+        if(playlistTrack.isRemote()) {
+            return readTrack;
+        }
+
         readFileProperties(readTrack);
 
         if(!m_audioLoader->readTrackMetadata(readTrack)) {
@@ -197,18 +350,35 @@ TrackList LibraryTrackResolver::readPlaylistTracks(const QString& path)
         return readTrack;
     };
     readEntry.canLoadTrack = [this](const Track& playlistTrack) {
+        if(playlistTrack.isRemote()) {
+            return true;
+        }
         return static_cast<bool>(m_audioLoader->loadDecoderForTrack(playlistTrack).decoder);
     };
 
-    if(auto* parser = m_playlistLoader->parserForExtension(info.suffix())) {
-        TrackList tracks = parser->readPlaylist(&playlistFile, path, dir, readEntry, m_playlistSkipMissing);
-        for(auto& track : tracks) {
-            track.setMetadataStore(m_metadataStore);
-        }
-        return tracks;
+    if(isRemotePlaylistUrl(url)) {
+        return {};
     }
 
-    return {};
+    const QString path = url.toLocalFile();
+    if(path.isEmpty()) {
+        return {};
+    }
+
+    QFile playlistFile{path};
+    if(!playlistFile.open(QIODevice::ReadOnly)) {
+        qCInfo(LIB_SCANNER) << "Could not open file" << path << "for reading:" << playlistFile.errorString();
+        return {};
+    }
+
+    QDir dir{path};
+    dir.cdUp();
+
+    TrackList tracks = parser->readPlaylist(&playlistFile, path, dir, readEntry, m_playlistSkipMissing);
+    for(auto& track : tracks) {
+        track.setMetadataStore(m_metadataStore);
+    }
+    return tracks;
 }
 
 TrackList LibraryTrackResolver::readEmbeddedPlaylistTracks(const Track& track)

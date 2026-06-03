@@ -30,6 +30,7 @@
 #include <QFileInfo>
 #include <QIODevice>
 #include <QRegularExpression>
+#include <QUrl>
 
 #include <chrono>
 #include <cmath>
@@ -46,6 +47,39 @@ constexpr auto ChapterProperty = "_CHAPTER"_L1;
 constexpr auto ChapterValue    = "1"_L1;
 
 namespace {
+bool isRemoteTrackPath(const QString& path)
+{
+    if(path.isEmpty() || Fooyin::Track::isArchivePath(path)) {
+        return false;
+    }
+
+    const QUrl url{path};
+    if(!url.isValid() || url.scheme().isEmpty()) {
+        return false;
+    }
+
+    const QString scheme = url.scheme().toLower();
+    return scheme == "http"_L1 || scheme == "https"_L1;
+}
+
+QString remoteTrackFilename(const QString& path)
+{
+    const QUrl url{path};
+    const QFileInfo info{url.path()};
+    const QString filename = info.completeBaseName();
+    return !filename.isEmpty() ? filename : url.host();
+}
+
+QString remoteTrackDirectory(const QString& path)
+{
+    return QUrl{path}.host();
+}
+
+QString remoteTrackExtension(const QString& path)
+{
+    return QFileInfo{QUrl{path}.path()}.suffix().toLower();
+}
+
 QString validNum(auto num)
 {
     if(num > 0) {
@@ -332,6 +366,10 @@ void TrackPrivate::splitArchiveUrl()
 
 QString TrackPrivate::directory() const
 {
+    if(isRemoteTrackPath(filepath)) {
+        return remoteTrackDirectory(filepath);
+    }
+
     const QFileInfo info{isInArchive ? filepathWithinArchive : filepath};
     QString dir = info.dir().dirName();
     if(isInArchive && dir == "."_L1) {
@@ -342,11 +380,19 @@ QString TrackPrivate::directory() const
 
 QString TrackPrivate::filename() const
 {
+    if(isRemoteTrackPath(filepath)) {
+        return remoteTrackFilename(filepath);
+    }
+
     return QFileInfo{isInArchive ? filepathWithinArchive : filepath}.completeBaseName();
 }
 
 QString TrackPrivate::extension() const
 {
+    if(isRemoteTrackPath(filepath)) {
+        return remoteTrackExtension(filepath);
+    }
+
     return QFileInfo{isInArchive ? filepathWithinArchive : filepath}.suffix().toLower();
 }
 
@@ -588,6 +634,10 @@ bool Track::metadataWasModified() const
 
 bool Track::exists() const
 {
+    if(isRemote()) {
+        return true;
+    }
+
     if(isInArchive()) {
         return QFileInfo::exists(archivePath());
     }
@@ -604,6 +654,11 @@ bool Track::isInArchive() const
     return p->isInArchive;
 }
 
+bool Track::isRemote() const
+{
+    return isRemotePath(p->filepath);
+}
+
 QString Track::archivePath() const
 {
     return p->archivePath;
@@ -617,6 +672,11 @@ QString Track::pathInArchive() const
 QString Track::relativeArchivePath() const
 {
     return QFileInfo{p->filepathWithinArchive}.path();
+}
+
+QUrl Track::url() const
+{
+    return isRemote() ? QUrl{p->filepath} : QUrl{};
 }
 
 int Track::id() const
@@ -695,6 +755,10 @@ QString Track::filename() const
 
 QString Track::path() const
 {
+    if(isRemote()) {
+        return {};
+    }
+
     if(isInArchive()) {
         return QFileInfo{prettyFilepath()}.dir().path();
     }
@@ -714,6 +778,12 @@ QString Track::extension() const
 
 QString Track::filenameExt() const
 {
+    if(isRemote()) {
+        const QUrl remoteUrl{p->filepath};
+        const QString filename = QFileInfo{remoteUrl.path()}.fileName();
+        return !filename.isEmpty() ? filename : remoteUrl.host();
+    }
+
     return QFileInfo{p->filepath}.fileName();
 }
 
@@ -1131,6 +1201,11 @@ bool Track::isSameStreamSegment() const
 bool Track::isArchivePath(const QString& path)
 {
     return path.startsWith("unpack://"_L1);
+}
+
+bool Track::isRemotePath(const QString& path)
+{
+    return isRemoteTrackPath(path);
 }
 
 bool Track::isMultiValueTag(const QString& tag)

@@ -93,4 +93,23 @@ TEST(TrackLoadPlannerTest, FallsBackToFullReinitWhenPendingTransportFadeBlocksAu
     EXPECT_FALSE(plan.tryManualFadeDefer);
     EXPECT_FALSE(plan.tryAutoTransition);
 }
+
+TEST(TrackLoadPlannerTest, RemoteManualChangesCanUseManualFadeDefer)
+{
+    const TrackLoadContext context{
+        .manualChange                = true,
+        .isPlaying                   = true,
+        .decoderValid                = true,
+        .hasPendingTransportFade     = false,
+        .involvesRemoteStream        = true,
+        .isContiguousSameFileSegment = true,
+    };
+
+    const LoadPlan plan = planTrackLoad(context);
+
+    EXPECT_EQ(plan.firstStrategy, LoadStrategy::ManualFadeDefer);
+    EXPECT_FALSE(plan.trySegmentSwitch);
+    EXPECT_TRUE(plan.tryManualFadeDefer);
+    EXPECT_FALSE(plan.tryAutoTransition);
+}
 } // namespace Fooyin::Testing

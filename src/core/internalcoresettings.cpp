@@ -135,6 +135,8 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
                                                               u"Engine/OutputDeviceProfiles"_s);
     m_settings->createSetting<Internal::OpusHeaderWriteMode>(static_cast<int>(OpusRGWriteMode::Album),
                                                              u"ReplayGain/OpusHeaderWriteMode"_s);
+    m_settings->createSetting<Internal::RemoteReadAheadKb>(Internal::DefaultRemoteReadAheadKb,
+                                                           u"Engine/RemoteReadAheadKb"_s);
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 

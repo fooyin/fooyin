@@ -302,8 +302,9 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"StatusBar"_s,
         [this]() {
-            auto* statusWidget = new StatusWidget(m_core->playerController(), m_core->playlistHandler(),
-                                                  m_playlistController, m_gui->trackSelection(), m_settings, m_window);
+            auto* statusWidget
+                = new StatusWidget(m_core->engine(), m_core->playerController(), m_core->playlistHandler(),
+                                   m_playlistController, m_gui->trackSelection(), m_settings, m_window);
             m_window->installStatusWidget(statusWidget);
             return statusWidget;
         },
@@ -453,6 +454,18 @@ void Widgets::registerAdvancedSettings()
                                                .maximum          = 300000,
                                                .singleStep       = 100,
                                                .suffix           = u" ms"_s,
+                                               .specialValueText = {}},
+         .normalise   = {},
+         .validate    = {}});
+    advancedSettingsRegistry->add<Settings::Core::Internal::RemoteReadAheadKb>(
+        {.category    = {tr("Playback"), tr("Buffering")},
+         .label       = tr("Read-ahead for remote streams"),
+         .description = tr("Maximum network data buffered for remote streams. Changes apply to newly opened "
+                           "streams."),
+         .editor      = AdvancedSettingSpinBox{.minimum          = 0,
+                                               .maximum          = 1048576,
+                                               .singleStep       = 256,
+                                               .suffix           = u" kB"_s,
                                                .specialValueText = {}},
          .normalise   = {},
          .validate    = {}});

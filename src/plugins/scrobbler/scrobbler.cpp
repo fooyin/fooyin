@@ -122,7 +122,7 @@ void Scrobbler::scrobble(const Track& track)
 bool Scrobbler::currentTrackReachedScrobbleThreshold() const
 {
     const Track track = m_playerController->currentTrack();
-    if(!track.isValid() || !track.hasArtists() || track.title().isEmpty()
+    if(!track.isValid() || track.isRemote() || !track.hasArtists() || track.title().isEmpty()
        || track.duration() < MinScrobbleTrackDurationMs) {
         return false;
     }

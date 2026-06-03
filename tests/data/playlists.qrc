@@ -3,5 +3,7 @@
         <file>playlists/singlefiletest.cue</file>
         <file>playlists/extendedtest.m3u</file>
         <file>playlists/standardtest.m3u</file>
+        <file>playlists/longremote.pls</file>
+        <file>playlists/mixedrelative.pls</file>
     </qresource>
 </RCC>

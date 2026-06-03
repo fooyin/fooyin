@@ -195,6 +195,11 @@ ScanRequest PlaylistInteractor::startFileScan(const QList<QUrl>& urls) const
     return m_library->scanFiles(urls);
 }
 
+ScanRequest PlaylistInteractor::startTrackScan(const TrackList& tracks) const
+{
+    return m_library->scanTracks(tracks);
+}
+
 ScanRequest PlaylistInteractor::startPlaylistLoad(const QList<QUrl>& urls) const
 {
     return m_library->loadPlaylist(urls);

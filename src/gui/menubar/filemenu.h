@@ -23,19 +23,19 @@
 
 namespace Fooyin {
 class ActionManager;
-class SettingsManager;
 
 class FileMenu : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit FileMenu(ActionManager* actionManager, SettingsManager* settings, QObject* parent = nullptr);
+    explicit FileMenu(ActionManager* actionManager, QObject* parent = nullptr);
 
 Q_SIGNALS:
     void requestExit();
     void requestAddFiles();
     void requestAddFolders();
+    void requestAddStreamUrl();
     void requestNewPlaylist();
     void requestNewAutoPlaylist();
     void requestLoadPlaylist();
@@ -44,6 +44,5 @@ Q_SIGNALS:
 
 private:
     ActionManager* m_actionManager;
-    SettingsManager* m_settings;
 };
 } // namespace Fooyin

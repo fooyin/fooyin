@@ -36,6 +36,7 @@ class QSize;
 
 namespace Fooyin {
 class AudioLoader;
+class RemoteIoService;
 class SettingsManager;
 
 class CoverRepositoryPrivate;
@@ -45,8 +46,9 @@ class FYGUI_EXPORT CoverRepository : public QObject
     Q_OBJECT
 
 public:
-    explicit CoverRepository(std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
-                             QObject* parent = nullptr);
+    CoverRepository(std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings, QObject* parent = nullptr);
+    CoverRepository(std::shared_ptr<AudioLoader> audioLoader, std::shared_ptr<RemoteIoService> remoteIo,
+                    SettingsManager* settings, QObject* parent = nullptr);
     ~CoverRepository() override;
 
     /** Returns @c true if @p track has a cover of the specified @p type. */

@@ -36,6 +36,7 @@
 #include "playback/playbackqueuestore.h"
 #include "playlist/parsers/cueparser.h"
 #include "playlist/parsers/m3uparser.h"
+#include "playlist/parsers/plsparser.h"
 #include "playlist/playlistloader.h"
 #include "plugins/pluginmanager.h"
 #include "translationloader.h"
@@ -47,6 +48,7 @@
 #include <core/engine/dsp/dspplugin.h>
 #include <core/engine/outputplugin.h>
 #include <core/network/networkaccessmanager.h>
+#include <core/network/remoteioservice.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/plugins/coreplugin.h>
@@ -58,6 +60,8 @@
 #include <QLoggingCategory>
 #include <QProcess>
 #include <QTimerEvent>
+
+#include <array>
 
 Q_LOGGING_CATEGORY(APP, "fy.app")
 
@@ -120,6 +124,8 @@ public:
     std::shared_ptr<AudioLoader> m_audioLoader;
     DspRegistry m_dspRegistry;
     DspChainStore m_dspChainStore;
+    std::shared_ptr<NetworkAccessManager> m_networkManager;
+    std::shared_ptr<RemoteIoService> m_remoteIo;
     LibraryManager* m_libraryManager;
     std::shared_ptr<PlaylistLoader> m_playlistLoader;
     UnifiedMusicLibrary* m_library;
@@ -128,7 +134,6 @@ public:
     PlaybackQueueStore m_playbackQueueStore;
     EngineHandler m_engine;
     SortingRegistry* m_sortingRegistry;
-    std::shared_ptr<NetworkAccessManager> m_networkManager;
 
     PluginManager m_pluginManager;
     CorePluginContext m_corePluginContext;
@@ -144,20 +149,22 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
     , m_database{new Database(m_self)}
     , m_audioLoader{std::make_shared<AudioLoader>()}
     , m_dspChainStore{m_settings, &m_dspRegistry}
+    , m_networkManager{std::make_shared<NetworkAccessManager>(m_settings)}
+    , m_remoteIo{std::make_shared<RemoteIoService>(m_networkManager, m_settings)}
     , m_libraryManager{new LibraryManager(m_database->connectionPool(), m_settings, m_self)}
     , m_playlistLoader{std::make_shared<PlaylistLoader>()}
     , m_library{new UnifiedMusicLibrary(m_libraryManager, m_database->connectionPool(), m_playlistLoader, m_audioLoader,
-                                        m_settings, m_self)}
+                                        m_remoteIo, m_settings, m_self)}
     , m_playlistHandler{new PlaylistHandler(m_database->connectionPool(), m_audioLoader, m_library, m_settings, m_self)}
     , m_playerController{new PlayerController(m_settings, m_playlistHandler, m_self)}
     , m_playbackQueueStore{m_database->connectionPool(), m_library, m_playlistHandler}
     , m_engine{m_audioLoader, m_playerController, m_settings, &m_dspRegistry}
     , m_sortingRegistry{new SortingRegistry(m_settings, m_self)}
-    , m_networkManager{new NetworkAccessManager(m_settings, m_self)}
     , m_pluginManager{m_settings}
     , m_corePluginContext{&m_engine,  m_playerController, m_libraryManager,  m_library,       m_playlistHandler,
                           m_settings, m_audioLoader,      m_sortingRegistry, m_networkManager}
 {
+    m_audioLoader->setRemoteSourceProvider(m_remoteIo);
     m_translations.initialiseTranslations(m_settings->value<Settings::Core::Language>());
     loadDatabaseSettings();
 }
@@ -182,6 +189,7 @@ void ApplicationPrivate::registerPlaylistParsers()
 {
     m_playlistLoader->addParser(std::make_unique<CueParser>());
     m_playlistLoader->addParser(std::make_unique<M3uParser>());
+    m_playlistLoader->addParser(std::make_unique<PlsParser>());
 }
 
 void ApplicationPrivate::registerInputs()
@@ -256,10 +264,11 @@ void ApplicationPrivate::tracksWereUpdated(const TrackList& tracks) const
     const auto trackIt = std::ranges::find_if(
         tracks, [&currentTrack](const Track& track) { return sameTrackIdentity(track, currentTrack); });
     if(trackIt != tracks.cend()) {
-        qCDebug(APP) << "Refreshing current track from library update:" << "id=" << trackIt->id()
-                     << "path=" << trackIt->uniqueFilepath() << "playCount=" << trackIt->playCount()
-                     << "rating=" << trackIt->rating();
-        m_playerController->updateCurrentTrack(*trackIt);
+        const Track& updatedTrack{*trackIt};
+        qCDebug(APP) << "Refreshing current track from library update:" << "id=" << updatedTrack.id()
+                     << "path=" << updatedTrack.uniqueFilepath() << "playCount=" << updatedTrack.playCount()
+                     << "rating=" << updatedTrack.rating();
+        m_playerController->updateCurrentTrack(updatedTrack);
     }
 }
 
@@ -426,13 +435,12 @@ Application::Application(QObject* parent)
                      &UnifiedMusicLibrary::trackWasPlayed);
     QObject::connect(p->m_libraryManager, &LibraryManager::libraryAboutToBeRemoved, p->m_playlistHandler,
                      &PlaylistHandler::savePlaylists);
-    QObject::connect(&p->m_engine, &EngineHandler::trackChanged, p->m_library, [this](const Track& track) {
+    QObject::connect(&p->m_engine, &EngineHandler::trackChanged, this, [this](const Track& track) {
         auto currentTrack = p->m_playerController->currentPlaylistTrack();
         if(!sameTrackIdentity(track, currentTrack.track)) {
             return;
         }
 
-        p->m_library->updateTrackMetadata({track});
         p->m_playerController->updateCurrentTrack(track);
     });
     QObject::connect(&p->m_engine, &EngineController::trackStatusContextChanged, this,
@@ -565,6 +573,11 @@ std::shared_ptr<AudioLoader> Application::audioLoader() const
 std::shared_ptr<NetworkAccessManager> Application::networkManager() const
 {
     return p->m_networkManager;
+}
+
+std::shared_ptr<RemoteIoService> Application::remoteIoService() const
+{
+    return p->m_remoteIo;
 }
 
 SortingRegistry* Application::sortingRegistry() const

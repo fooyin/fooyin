@@ -67,6 +67,7 @@ public:
     [[nodiscard]] const AudioFormat& format() const;
     [[nodiscard]] uint64_t currentPosition() const;
     [[nodiscard]] uint64_t startPosition() const;
+    [[nodiscard]] bool lastDecodeNeededMoreInput() const;
     [[nodiscard]] AudioDecoder::PlaybackHints playbackHints() const;
     void setPlaybackHints(AudioDecoder::PlaybackHints hints);
 
@@ -144,6 +145,7 @@ private:
     AudioDecoder::PlaybackHints m_playbackHints;
 
     bool m_isDecoding;
+    bool m_lastDecodeNeededMoreInput;
     std::vector<double> m_decodeScratch;
 };
 } // namespace Fooyin

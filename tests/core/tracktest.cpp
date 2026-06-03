@@ -71,6 +71,22 @@ TEST(TrackTest, DerivesPathFieldsForArchiveFiles)
     EXPECT_EQ(track.prettyFilepath(), u"/music/archive.zip/disc1/track02.OGG"_s);
 }
 
+TEST(TrackTest, DerivesPathFieldsForRemoteUrls)
+{
+    const Track track{u"https://radio.example.com/live/stream.mp3?quality=high"_s};
+
+    EXPECT_TRUE(track.isRemote());
+    EXPECT_FALSE(track.isInArchive());
+    EXPECT_EQ(track.url(), QUrl(u"https://radio.example.com/live/stream.mp3?quality=high"_s));
+    EXPECT_EQ(track.filename(), u"stream"_s);
+    EXPECT_EQ(track.filenameExt(), u"stream.mp3"_s);
+    EXPECT_EQ(track.directory(), u"radio.example.com"_s);
+    EXPECT_EQ(track.extension(), u"mp3"_s);
+    EXPECT_EQ(track.prettyFilepath(), u"https://radio.example.com/live/stream.mp3?quality=high"_s);
+    EXPECT_TRUE(track.exists());
+    EXPECT_TRUE(track.path().isEmpty());
+}
+
 TEST(TrackTest, UsesCompactMetadataAccessors)
 {
     Track track;

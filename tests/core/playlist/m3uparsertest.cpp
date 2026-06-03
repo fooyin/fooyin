@@ -86,6 +86,99 @@ TEST_F(M3uParserTest, ExtendedM3u)
     }
 }
 
+TEST_F(M3uParserTest, RemoteEntriesStayRemote)
+{
+    QByteArray playlistData{"#EXTM3U\n"
+                            "#EXTINF:-1,CVGM - 64Kb MP3 Stream - NL\n"
+                            "https://slacker.cvgm.net/cvgm64\n"
+                            "#EXTINF:-1,CVGM - 128Kb SHOUTcast Stream - USA\n"
+                            "http://radio.cvgm.net:8080/\n"};
+    QBuffer buffer{&playlistData};
+    ASSERT_TRUE(buffer.open(QIODevice::ReadOnly | QIODevice::Text));
+
+    PlaylistParser::ReadPlaylistEntry readEntry;
+    readEntry.readTrack = [](const Track& track) {
+        return track;
+    };
+
+    const auto tracks = m_parser->readPlaylist(&buffer, u"http://www.cvgm.net/static/media/misc/cvgm_streams.m3u"_s, {},
+                                               readEntry, false);
+
+    ASSERT_EQ(2, tracks.size());
+    EXPECT_EQ(u"https://slacker.cvgm.net/cvgm64"_s, tracks.at(0).filepath());
+    EXPECT_EQ(u"http://radio.cvgm.net:8080/"_s, tracks.at(1).filepath());
+    EXPECT_TRUE(tracks.at(0).isRemote());
+    EXPECT_TRUE(tracks.at(1).isRemote());
+    EXPECT_EQ(u"CVGM"_s, tracks.at(0).artist());
+    EXPECT_EQ(u"64Kb MP3 Stream"_s, tracks.at(0).title());
+}
+
+TEST_F(M3uParserTest, RelativeRemoteEntriesResolveAgainstPlaylistUrl)
+{
+    QByteArray playlistData{"#EXTM3U\n"
+                            "streams/live.mp3\n"
+                            "../backup/live.ogg\n"};
+    QBuffer buffer{&playlistData};
+    ASSERT_TRUE(buffer.open(QIODevice::ReadOnly | QIODevice::Text));
+
+    PlaylistParser::ReadPlaylistEntry readEntry;
+    readEntry.readTrack = [](const Track& track) {
+        return track;
+    };
+
+    const auto tracks
+        = m_parser->readPlaylist(&buffer, u"https://example.com/radio/listen/playlist.m3u"_s, {}, readEntry, false);
+
+    ASSERT_EQ(2, tracks.size());
+    EXPECT_EQ(u"https://example.com/radio/listen/streams/live.mp3"_s, tracks.at(0).filepath());
+    EXPECT_EQ(u"https://example.com/radio/backup/live.ogg"_s, tracks.at(1).filepath());
+    EXPECT_TRUE(tracks.at(0).isRemote());
+    EXPECT_TRUE(tracks.at(1).isRemote());
+}
+
+TEST_F(M3uParserTest, RejectsHlsMediaPlaylist)
+{
+    QByteArray playlistData{"#EXTM3U\n"
+                            "#EXT-X-TARGETDURATION:10\n"
+                            "#EXTINF:10,\n"
+                            "segment-001.ts\n"
+                            "#EXTINF:10,\n"
+                            "segment-002.ts\n"
+                            "#EXT-X-ENDLIST\n"};
+    QBuffer buffer{&playlistData};
+    ASSERT_TRUE(buffer.open(QIODevice::ReadOnly | QIODevice::Text));
+
+    PlaylistParser::ReadPlaylistEntry readEntry;
+    readEntry.readTrack = [](const Track& track) {
+        return track;
+    };
+
+    EXPECT_EQ(0, m_parser->countEntries(&buffer, u"https://example.com/live/playlist.m3u8"_s, {}));
+    ASSERT_TRUE(buffer.seek(0));
+    EXPECT_TRUE(
+        m_parser->readPlaylist(&buffer, u"https://example.com/live/playlist.m3u8"_s, {}, readEntry, false).empty());
+}
+
+TEST_F(M3uParserTest, RejectsHlsMasterPlaylist)
+{
+    QByteArray playlistData{"#EXTM3U\n"
+                            "#EXT-X-STREAM-INF:BANDWIDTH=1280000,RESOLUTION=640x360\n"
+                            "low/playlist.m3u8\n"
+                            "#EXT-X-STREAM-INF:BANDWIDTH=2560000,RESOLUTION=1280x720\n"
+                            "high/playlist.m3u8\n"};
+    QBuffer buffer{&playlistData};
+    ASSERT_TRUE(buffer.open(QIODevice::ReadOnly | QIODevice::Text));
+
+    PlaylistParser::ReadPlaylistEntry readEntry;
+    readEntry.readTrack = [](const Track& track) {
+        return track;
+    };
+
+    EXPECT_EQ(0, m_parser->countEntries(&buffer, u"https://example.com/master.m3u8"_s, {}));
+    ASSERT_TRUE(buffer.seek(0));
+    EXPECT_TRUE(m_parser->readPlaylist(&buffer, u"https://example.com/master.m3u8"_s, {}, readEntry, false).empty());
+}
+
 TEST_F(M3uParserTest, SavesExternalCueTracksAsSingleCueEntry)
 {
     Track track1{u"/music/album.flac"_s};

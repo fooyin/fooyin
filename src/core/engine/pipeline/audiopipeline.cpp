@@ -180,6 +180,7 @@ AudioPipeline::AudioPipeline()
     , m_playbackState{PipelinePlaybackState::Stopped}
     , m_playing{false}
     , m_pauseDrainActive{false}
+    , m_bufferingPaused{false}
     , m_renderPhase{RenderPhase::Stopped}
     , m_outputBitdepth{SampleFormat::Unknown}
     , m_ditherEnabled{false}
@@ -651,6 +652,7 @@ void AudioPipeline::play()
         const auto previousState = pipeline.m_playbackState.load(std::memory_order_acquire);
         pipeline.m_playing.store(true, std::memory_order_release);
         pipeline.m_pauseDrainActive.store(false, std::memory_order_release);
+        pipeline.m_bufferingPaused.store(false, std::memory_order_release);
         pipeline.m_playbackState.store(PipelinePlaybackState::Playing, std::memory_order_release);
         pipeline.m_renderPhase = RenderPhase::Preroll;
 
@@ -671,6 +673,7 @@ void AudioPipeline::beginPauseDrain()
     enqueueAsync([](AudioPipeline& pipeline) {
         pipeline.m_playing.store(false, std::memory_order_release);
         pipeline.m_pauseDrainActive.store(true, std::memory_order_release);
+        pipeline.m_bufferingPaused.store(false, std::memory_order_release);
         pipeline.m_playbackState.store(PipelinePlaybackState::Paused, std::memory_order_release);
         pipeline.m_renderPhase = RenderPhase::Stopped;
         pipeline.m_renderer.pauseAll();
@@ -682,6 +685,7 @@ void AudioPipeline::pause()
     enqueueAsync([](AudioPipeline& pipeline) {
         pipeline.m_playing.store(false, std::memory_order_release);
         pipeline.m_pauseDrainActive.store(false, std::memory_order_release);
+        pipeline.m_bufferingPaused.store(false, std::memory_order_release);
         pipeline.m_playbackState.store(PipelinePlaybackState::Paused, std::memory_order_release);
         pipeline.m_renderPhase = RenderPhase::Stopped;
 
@@ -693,11 +697,41 @@ void AudioPipeline::pause()
     });
 }
 
+void AudioPipeline::setBufferingPaused(bool paused)
+{
+    enqueueAsync([paused](AudioPipeline& pipeline) {
+        if(pipeline.m_bufferingPaused.load(std::memory_order_acquire) == paused) {
+            return;
+        }
+
+        pipeline.m_bufferingPaused.store(paused, std::memory_order_release);
+
+        if(paused) {
+            pipeline.m_renderPhase = RenderPhase::Stopped;
+            pipeline.m_renderer.pauseAll();
+            if(pipeline.m_outputUnit.output() && pipeline.m_outputUnit.output()->initialised()) {
+                pipeline.m_outputUnit.output()->setPaused(true);
+            }
+            pipeline.clearUnderrunWarningLatches();
+            return;
+        }
+
+        if(pipeline.m_playing.load(std::memory_order_acquire)) {
+            pipeline.m_renderPhase = RenderPhase::Preroll;
+            pipeline.m_renderer.resumeAll();
+            if(pipeline.m_outputUnit.output() && pipeline.m_outputUnit.output()->initialised()) {
+                pipeline.m_outputUnit.output()->setPaused(false);
+            }
+        }
+    });
+}
+
 void AudioPipeline::stopPlayback()
 {
     enqueueAsync([](AudioPipeline& pipeline) {
         pipeline.m_playing.store(false, std::memory_order_release);
         pipeline.m_pauseDrainActive.store(false, std::memory_order_release);
+        pipeline.m_bufferingPaused.store(false, std::memory_order_release);
         pipeline.m_playbackState.store(PipelinePlaybackState::Stopped, std::memory_order_release);
         pipeline.m_renderPhase = RenderPhase::Stopped;
 
@@ -1459,6 +1493,18 @@ void AudioPipeline::processAudio()
             = m_timelineUnit.positionIsMapped() ? PositionBasis::RenderedSource : PositionBasis::DecodeHead;
         updatePlaybackDelay(outputStateWithWrites, basis);
         notifyDataDemand(false);
+        clearUnderrunWarningLatches();
+        m_pendingWriteStallLogActive = false;
+
+        const auto waitDuration = m_outputUnit.writeBackoff(m_renderer.outputFormat(), outputStateWithWrites);
+        m_threadHost.waitFor(waitDuration);
+        return;
+    }
+
+    if(m_bufferingPaused.load(std::memory_order_acquire)) {
+        const auto outputStateWithWrites = stateWithWrites(state, framesWrittenThisCycle);
+        updatePlaybackDelay(outputStateWithWrites, PositionBasis::DecodeHead);
+        notifyDataDemand(true);
         clearUnderrunWarningLatches();
         m_pendingWriteStallLogActive = false;
 

@@ -200,6 +200,8 @@ public:
     void beginPauseDrain();
     //! Pause output processing loop.
     void pause();
+    //! Pause/resume rendering and backend output while decode refills a remote stream.
+    void setBufferingPaused(bool paused);
     //! Stop playback state and clear stream activity.
     void stopPlayback();
     //! Reset backend output buffers where supported.
@@ -652,6 +654,7 @@ private:
     std::atomic<PipelinePlaybackState> m_playbackState;
     std::atomic<bool> m_playing;
     std::atomic<bool> m_pauseDrainActive;
+    std::atomic<bool> m_bufferingPaused;
 
     RenderPhase m_renderPhase;
 

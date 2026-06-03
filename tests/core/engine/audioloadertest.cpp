@@ -19,6 +19,8 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
+#include <core/network/remotesourceprovider.h>
+#include <core/network/remotestreamdevice.h>
 
 #include <gtest/gtest.h>
 
@@ -37,6 +39,46 @@
 using namespace Qt::StringLiterals;
 
 namespace {
+class FakeRemoteStreamDevice : public QBuffer,
+                               public Fooyin::RemoteStreamDevice
+{
+public:
+    bool readWouldBlock() const override
+    {
+        return false;
+    }
+
+    qsizetype bufferedByteCount() const override
+    {
+        return bytesAvailable();
+    }
+
+    void setNonBlockingReadsEnabled(bool enabled) override
+    {
+        nonBlockingReadsEnabled = enabled;
+    }
+
+    bool nonBlockingReadsEnabled{false};
+};
+
+class FakeRemoteSourceProvider : public Fooyin::RemoteSourceProvider
+{
+public:
+    mutable int calls{0};
+
+    Fooyin::RemoteStreamSource createStreamSource(const QUrl& url) const override
+    {
+        ++calls;
+        auto buffer = std::make_unique<FakeRemoteStreamDevice>();
+        buffer->setData(url.toString().toUtf8());
+
+        Fooyin::RemoteStreamSource source;
+        source.remoteDevice = buffer.get();
+        source.device       = std::move(buffer);
+        return source;
+    }
+};
+
 QCoreApplication* ensureCoreApplication()
 {
     QStandardPaths::setTestModeEnabled(true);
@@ -75,6 +117,7 @@ struct DecoderState
     QString label;
     QStringList extensions;
     QStringList preferredExtensions;
+    bool supportsRemoteSources{false};
     bool initSucceeds{true};
     bool requireDevice{false};
     bool requireArchiveReader{false};
@@ -88,6 +131,7 @@ struct DecoderState
 
     QString lastSourcePath;
     bool lastHadDevice{false};
+    bool lastHadRemoteStreamDevice{false};
     bool lastDeviceOpen{false};
     bool lastHadArchiveReader{false};
     uint64_t lastSourceSize{0};
@@ -118,6 +162,11 @@ public:
         return m_state->preferredExtensions;
     }
 
+    bool supportsRemoteSources() const override
+    {
+        return m_state->supportsRemoteSources;
+    }
+
     bool isSeekable() const override
     {
         return true;
@@ -127,14 +176,15 @@ public:
                                             DecoderOptions options) override
     {
         ++m_state->initCalls;
-        m_state->lastSourcePath         = source.filepath;
-        m_state->lastHadDevice          = source.device != nullptr;
-        m_state->lastDeviceOpen         = source.device && source.device->isOpen();
-        m_state->lastHadArchiveReader   = source.archiveReader != nullptr;
-        m_state->lastSourceSize         = source.size;
-        m_state->lastSourceModifiedTime = source.modifiedTime;
-        m_state->lastOptions            = options;
-        m_state->playbackHintsAtInit    = playbackHints();
+        m_state->lastSourcePath            = source.filepath;
+        m_state->lastHadDevice             = source.device != nullptr;
+        m_state->lastHadRemoteStreamDevice = source.remoteStreamDevice != nullptr;
+        m_state->lastDeviceOpen            = source.device && source.device->isOpen();
+        m_state->lastHadArchiveReader      = source.archiveReader != nullptr;
+        m_state->lastSourceSize            = source.size;
+        m_state->lastSourceModifiedTime    = source.modifiedTime;
+        m_state->lastOptions               = options;
+        m_state->playbackHintsAtInit       = playbackHints();
 
         if(m_state->requireDevice && (!source.device || !source.device->isOpen())) {
             return {};
@@ -171,6 +221,7 @@ struct ReaderState
     QString label;
     QStringList extensions;
     QStringList preferredExtensions;
+    bool supportsRemoteSources{false};
     bool canReadCover{false};
     bool canWriteMetadata{false};
     bool canWriteCover{false};
@@ -193,6 +244,7 @@ struct ReaderState
 
     QString lastSourcePath;
     bool lastHadDevice{false};
+    bool lastHadRemoteStreamDevice{false};
     bool lastDeviceOpen{false};
     bool lastDeviceWritable{false};
     bool lastHadArchiveReader{false};
@@ -223,6 +275,11 @@ public:
     QStringList preferredExtensions() const override
     {
         return m_state->preferredExtensions;
+    }
+
+    bool supportsRemoteSources() const override
+    {
+        return m_state->supportsRemoteSources;
     }
 
     bool canReadCover() const override
@@ -317,13 +374,14 @@ private:
 
     void recordSource(const Fooyin::AudioSource& source)
     {
-        m_state->lastSourcePath         = source.filepath;
-        m_state->lastHadDevice          = source.device != nullptr;
-        m_state->lastDeviceOpen         = source.device && source.device->isOpen();
-        m_state->lastDeviceWritable     = source.device && source.device->isWritable();
-        m_state->lastHadArchiveReader   = source.archiveReader != nullptr;
-        m_state->lastSourceSize         = source.size;
-        m_state->lastSourceModifiedTime = source.modifiedTime;
+        m_state->lastSourcePath            = source.filepath;
+        m_state->lastHadDevice             = source.device != nullptr;
+        m_state->lastHadRemoteStreamDevice = source.remoteStreamDevice != nullptr;
+        m_state->lastDeviceOpen            = source.device && source.device->isOpen();
+        m_state->lastDeviceWritable        = source.device && source.device->isWritable();
+        m_state->lastHadArchiveReader      = source.archiveReader != nullptr;
+        m_state->lastSourceSize            = source.size;
+        m_state->lastSourceModifiedTime    = source.modifiedTime;
     }
 
     std::shared_ptr<ReaderState> m_state;
@@ -743,6 +801,116 @@ TEST_F(AudioLoaderTest, LoadsDecoderAndReaderForRegularTracks)
     EXPECT_TRUE(readerTwo->lastDeviceOpen);
     EXPECT_FALSE(readerTwo->lastHadArchiveReader);
     EXPECT_EQ(3, loadedReader.reader->subsongCount());
+}
+
+TEST_F(AudioLoaderTest, LoadsDecoderAndReaderForRemoteTracksWithoutOpeningDevices)
+{
+    AudioLoader loader;
+    const Track track{u"https://radio.example.com/live"_s};
+
+    const auto decoderOne             = addDecoder(loader, u"decoder-one"_s, {u"mp3"_s});
+    decoderOne->initSucceeds          = false;
+    decoderOne->supportsRemoteSources = false;
+
+    const auto decoderTwo             = addDecoder(loader, u"decoder-two"_s, {u"flac"_s});
+    decoderTwo->supportsRemoteSources = true;
+
+    const auto readerOne             = addReader(loader, u"reader-one"_s, {u"ogg"_s});
+    readerOne->initSucceeds          = false;
+    readerOne->supportsRemoteSources = false;
+
+    const auto readerTwo             = addReader(loader, u"reader-two"_s, {u"aac"_s});
+    readerTwo->supportsRemoteSources = true;
+    readerTwo->title                 = u"Remote Stream"_s;
+
+    EXPECT_EQ((QStringList{u"decoder-two"_s}), decoderLabels(loader.decodersForTrack(track)));
+    EXPECT_EQ((QStringList{u"reader-two"_s}), readerLabels(loader.readersForTrack(track)));
+
+    const auto loadedDecoder = loader.loadDecoderForTrack(track);
+    ASSERT_NE(loadedDecoder.decoder, nullptr);
+    EXPECT_EQ(u"decoder-two"_s, decoderLabel(loadedDecoder.decoder));
+    EXPECT_EQ(track.filepath(), loadedDecoder.input.source.filepath);
+    EXPECT_EQ(nullptr, loadedDecoder.input.source.device);
+    EXPECT_EQ(nullptr, loadedDecoder.input.device.get());
+    EXPECT_EQ(0, decoderOne->initCalls);
+    EXPECT_FALSE(decoderOne->lastHadDevice);
+    EXPECT_FALSE(decoderTwo->lastHadDevice);
+    EXPECT_FALSE(decoderTwo->lastDeviceOpen);
+
+    const auto loadedReader = loader.loadReaderForTrack(track);
+    ASSERT_NE(loadedReader.reader, nullptr);
+    EXPECT_EQ(u"reader-two"_s, readerLabel(loadedReader.reader));
+    EXPECT_EQ(track.filepath(), loadedReader.input.source.filepath);
+    EXPECT_EQ(nullptr, loadedReader.input.source.device);
+    EXPECT_EQ(nullptr, loadedReader.input.device.get());
+    EXPECT_EQ(0, readerOne->initCalls);
+    EXPECT_FALSE(readerOne->lastHadDevice);
+    EXPECT_FALSE(readerTwo->lastHadDevice);
+    EXPECT_FALSE(readerTwo->lastDeviceOpen);
+
+    Track metadataTrack{track};
+    ASSERT_TRUE(loader.readTrackMetadata(metadataTrack));
+    EXPECT_EQ(u"Remote Stream"_s, metadataTrack.title());
+    EXPECT_TRUE(metadataTrack.metadataWasRead());
+    EXPECT_EQ(0, readerOne->readCalls);
+    EXPECT_EQ(1, readerTwo->readCalls);
+    EXPECT_FALSE(loader.canWriteMetadata(track));
+    EXPECT_FALSE(loader.writeTrackMetadata(track, AudioReader::Metadata));
+    EXPECT_FALSE(loader.writeTrackCover(track, {}, AudioReader::None));
+}
+
+TEST_F(AudioLoaderTest, LoadsRemoteTracksThroughSourceFactoryWhenConfigured)
+{
+    AudioLoader loader;
+    const Track track{u"https://radio.example.com/live"_s};
+    const auto provider = std::make_shared<FakeRemoteSourceProvider>();
+
+    loader.setRemoteSourceProvider(provider);
+
+    const auto decoder             = addDecoder(loader, u"remote-decoder"_s, {});
+    decoder->supportsRemoteSources = true;
+    decoder->requireDevice         = true;
+
+    const auto reader             = addReader(loader, u"remote-reader"_s, {});
+    reader->supportsRemoteSources = true;
+    reader->requireDevice         = true;
+    reader->title                 = u"Factory Stream"_s;
+
+    const auto loadedDecoder = loader.loadDecoderForTrack(track);
+    ASSERT_NE(loadedDecoder.decoder, nullptr);
+    ASSERT_NE(loadedDecoder.input.device, nullptr);
+    EXPECT_TRUE(loadedDecoder.input.device->isOpen());
+    EXPECT_EQ(loadedDecoder.input.device.get(), loadedDecoder.input.source.device);
+    EXPECT_EQ(loadedDecoder.input.source.remoteStreamDevice,
+              dynamic_cast<Fooyin::RemoteStreamDevice*>(loadedDecoder.input.device.get()));
+    EXPECT_TRUE(decoder->lastHadDevice);
+    EXPECT_TRUE(decoder->lastHadRemoteStreamDevice);
+    EXPECT_TRUE(decoder->lastDeviceOpen);
+
+    const auto loadedReader = loader.loadReaderForTrack(track);
+    ASSERT_NE(loadedReader.reader, nullptr);
+    ASSERT_NE(loadedReader.input.device, nullptr);
+    EXPECT_TRUE(loadedReader.input.device->isOpen());
+    EXPECT_EQ(loadedReader.input.device.get(), loadedReader.input.source.device);
+    EXPECT_EQ(loadedReader.input.source.remoteStreamDevice,
+              dynamic_cast<Fooyin::RemoteStreamDevice*>(loadedReader.input.device.get()));
+    EXPECT_TRUE(reader->lastHadDevice);
+    EXPECT_TRUE(reader->lastHadRemoteStreamDevice);
+    EXPECT_TRUE(reader->lastDeviceOpen);
+
+    Track metadataTrack{track};
+    ASSERT_TRUE(loader.readTrackMetadata(metadataTrack));
+    EXPECT_EQ(u"Factory Stream"_s, metadataTrack.title());
+    EXPECT_TRUE(reader->lastHadDevice);
+    EXPECT_TRUE(reader->lastHadRemoteStreamDevice);
+    EXPECT_TRUE(reader->lastDeviceOpen);
+    EXPECT_EQ(3, provider->calls);
+
+    reader->canReadCover = true;
+    reader->coverData    = "remote-cover";
+    EXPECT_TRUE(loader.readTrackCover(track, Track::Cover::Front).isEmpty());
+    EXPECT_EQ(3, provider->calls);
+    EXPECT_EQ(0, reader->readCoverCalls);
 }
 
 TEST_F(AudioLoaderTest, ReadsWritesMetadataAndCoversForRegularTracks)

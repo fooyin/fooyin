@@ -26,6 +26,7 @@
 #include <core/coresettings.h>
 #include <core/library/libraryinfo.h>
 #include <core/library/tracksort.h>
+#include <core/network/remoteioservice.h>
 #include <core/trackmetadatastore.h>
 #include <utils/async.h>
 #include <utils/fileutils.h>
@@ -108,7 +109,7 @@ public:
 
     UnifiedMusicLibraryPrivate(UnifiedMusicLibrary* self, LibraryManager* libraryManager, DbConnectionPoolPtr dbPool,
                                std::shared_ptr<PlaylistLoader> playlistLoader, std::shared_ptr<AudioLoader> audioLoader,
-                               SettingsManager* settings);
+                               std::shared_ptr<RemoteIoService> remoteIo, SettingsManager* settings);
 
     [[nodiscard]] QString librarySortScript() const;
     [[nodiscard]] QString externalSortScript() const;
@@ -174,13 +175,20 @@ UnifiedMusicLibraryPrivate::UnifiedMusicLibraryPrivate(UnifiedMusicLibrary* self
                                                        DbConnectionPoolPtr dbPool,
                                                        std::shared_ptr<PlaylistLoader> playlistLoader,
                                                        std::shared_ptr<AudioLoader> audioLoader,
+                                                       std::shared_ptr<RemoteIoService> remoteIo,
                                                        SettingsManager* settings)
     : m_self{self}
     , m_libraryManager{libraryManager}
     , m_dbPool{std::move(dbPool)}
     , m_settings{settings}
     , m_metadataStore{std::make_shared<TrackMetadataStore>()}
-    , m_threadHandler{m_dbPool, m_self, std::move(playlistLoader), m_metadataStore, std::move(audioLoader), m_settings}
+    , m_threadHandler{m_dbPool,
+                      m_self,
+                      std::move(playlistLoader),
+                      m_metadataStore,
+                      std::move(audioLoader),
+                      std::move(remoteIo),
+                      m_settings}
     , m_sorter{m_libraryManager}
 {
     m_settings->subscribe<Settings::Core::LibrarySortScript>(m_self, [this](const QString& sort) { changeSort(sort); });
@@ -617,11 +625,12 @@ void UnifiedMusicLibraryPrivate::libraryStatusChanged(const LibraryInfo& library
 
 UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConnectionPoolPtr dbPool,
                                          std::shared_ptr<PlaylistLoader> playlistLoader,
-                                         std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
+                                         std::shared_ptr<AudioLoader> audioLoader,
+                                         std::shared_ptr<RemoteIoService> remoteIo, SettingsManager* settings,
                                          QObject* parent)
     : MusicLibrary{parent}
     , p{std::make_unique<UnifiedMusicLibraryPrivate>(this, libraryManager, std::move(dbPool), std::move(playlistLoader),
-                                                     std::move(audioLoader), settings)}
+                                                     std::move(audioLoader), std::move(remoteIo), settings)}
 {
     QObject::connect(p->m_libraryManager, &LibraryManager::libraryAdded, this, &MusicLibrary::rescan);
     QObject::connect(p->m_libraryManager, &LibraryManager::libraryAboutToBeRemoved, this,

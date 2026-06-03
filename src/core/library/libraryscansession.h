@@ -28,9 +28,13 @@
 #include "libraryscanwriter.h"
 #include "librarytrackresolver.h"
 
+#include <functional>
+
 namespace Fooyin {
 class AudioLoader;
 class PlaylistLoader;
+class RemoteDownloadHandle;
+class RemoteIoService;
 class TrackDatabase;
 class TrackMetadataStore;
 
@@ -44,6 +48,9 @@ public:
     };
 
     LibraryScanSession(TrackDatabase* trackDatabase, PlaylistLoader* playlistLoader, AudioLoader* audioLoader,
+                       std::shared_ptr<RemoteIoService> remoteIo, std::shared_ptr<TrackMetadataStore> metadataStore,
+                       LibraryScanConfig config, LibraryScanHost* host);
+    LibraryScanSession(TrackDatabase* trackDatabase, PlaylistLoader* playlistLoader, AudioLoader* audioLoader,
                        std::shared_ptr<TrackMetadataStore> metadataStore, LibraryScanConfig config,
                        LibraryScanHost* host);
     ~LibraryScanSession();
@@ -52,6 +59,8 @@ public:
     bool scanDirectories(const LibraryInfo& library, const QStringList& dirs, const TrackList& tracks);
     bool scanFiles(const TrackList& libraryTracks, const QList<QUrl>& urls, LibraryScanFilesResult& result);
     bool scanPlaylist(const TrackList& libraryTracks, const QList<QUrl>& urls, TrackList& result);
+    void scanPlaylistAsync(const TrackList& libraryTracks, const QList<QUrl>& urls, QObject* context,
+                           std::function<void(bool completed, TrackList tracks)> callback);
 
     void finish();
 
@@ -74,6 +83,7 @@ private:
     TrackDatabase* m_trackDatabase;
     PlaylistLoader* m_playlistLoader;
     AudioLoader* m_audioLoader;
+    std::shared_ptr<RemoteIoService> m_remoteIo;
     std::shared_ptr<TrackMetadataStore> m_metadataStore;
 
     LibraryScanState m_state;
@@ -81,6 +91,7 @@ private:
     LibraryInfo m_currentLibrary;
     LibraryTrackResolver* m_resolver;
     LibraryScanFilesResult* m_fileScanResult;
+    std::shared_ptr<RemoteDownloadHandle> m_remotePlaylistDownload;
 
     std::set<QString> m_externalExplicitPaths;
     std::set<QString> m_externalExplicitDirs;

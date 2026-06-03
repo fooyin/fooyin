@@ -164,11 +164,6 @@ bool pumpUntil(const std::function<bool()>& predicate, std::chrono::milliseconds
     return predicate();
 }
 
-Fooyin::Engine::PlaybackItem makePlaybackItem(const Fooyin::Track& track, uint64_t itemId)
-{
-    return {.track = track, .itemId = itemId};
-}
-
 QString createDummyAudioFile(QTemporaryDir& tempDir, const QString& fileName)
 {
     const QString filePath = tempDir.filePath(fileName);
@@ -180,18 +175,32 @@ QString createDummyAudioFile(QTemporaryDir& tempDir, const QString& fileName)
     return filePath;
 }
 
-Fooyin::Track makeTrack(const QString& filePath, uint64_t offsetMs, uint64_t durationMs)
+} // namespace
+
+namespace Fooyin::Testing {
+namespace {
+Track makeTrack(const QString& filePath, uint64_t offsetMs, uint64_t durationMs)
 {
-    Fooyin::Track track{filePath};
+    Track track{filePath};
     track.setOffset(offsetMs);
     track.setDuration(durationMs);
     track.setBitrate(320);
     return track;
 }
-} // namespace
 
-namespace Fooyin::Testing {
-namespace {
+Track makeRemoteTrack(const QString& url, uint64_t durationMs)
+{
+    Track track{url};
+    track.setDuration(durationMs);
+    track.setBitrate(128);
+    return track;
+}
+
+Fooyin::Engine::PlaybackItem makePlaybackItem(const Fooyin::Track& track, uint64_t itemId)
+{
+    return {.track = track, .itemId = itemId};
+}
+
 void registerMinimalEngineSettings(SettingsManager& settings, bool enablePauseStopFade, bool enableManualCrossfade)
 {
     qRegisterMetaType<Engine::FadingValues>("FadingValues");
@@ -241,6 +250,11 @@ public:
     [[nodiscard]] QStringList extensions() const override
     {
         return {u"fyt"_s};
+    }
+
+    [[nodiscard]] bool supportsRemoteSources() const override
+    {
+        return true;
     }
 
     [[nodiscard]] bool isSeekable() const override
@@ -385,9 +399,8 @@ public:
         return m_bufferFrames;
     }
 
-    [[nodiscard]] OutputDevices getAllDevices(bool isCurrentOutput) override
+    [[nodiscard]] OutputDevices getAllDevices(bool /*isCurrentOutput*/) override
     {
-        Q_UNUSED(isCurrentOutput)
         return {};
     }
 
@@ -461,24 +474,18 @@ public:
         return u"test.dsp.format_shift"_s;
     }
 
-    void prepare(const AudioFormat& format) override
-    {
-        Q_UNUSED(format)
-    }
+    void prepare(const AudioFormat& /*format*/) override { }
 
     AudioFormat outputFormat(const AudioFormat& input) const override
     {
-        AudioFormat output = input;
+        AudioFormat output{input};
         if(output.isValid()) {
             output.setSampleRate(input.sampleRate() * 2);
         }
         return output;
     }
 
-    void process(ProcessingBufferList& chunks) override
-    {
-        Q_UNUSED(chunks)
-    }
+    void process(ProcessingBufferList& /*chunks*/) override { }
 };
 
 struct EngineHarness
@@ -588,6 +595,21 @@ public:
     static int currentTrackId(const AudioEngine& engine)
     {
         return engine.m_currentTrack.id();
+    }
+
+    static bool currentTrackIsRemote(const AudioEngine& engine)
+    {
+        return engine.m_currentTrack.isRemote();
+    }
+
+    static int streamBufferLengthMs(const AudioEngine& engine, const Track& track)
+    {
+        return engine.streamBufferLengthMs(track);
+    }
+
+    static void setPlaybackBufferLengthMs(AudioEngine& engine, int bufferLengthMs)
+    {
+        engine.m_playbackBufferLengthMs = bufferLengthMs;
     }
 
     static uint64_t currentTrackItemId(const AudioEngine& engine)
@@ -1709,6 +1731,37 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, ManualChangeCrossfadeReanchor
     EXPECT_EQ(harness.outputStats->uninitCalls.load(), outputUninitBefore);
 }
 
+FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, ManualChangeCrossfadeToRemoteStreamDoesNotReinitOutput)
+{
+    ensureCoreApplication();
+    EngineHarness harness{/*enablePauseStopFade=*/false, /*enableManualCrossfade=*/true};
+
+    const Track firstTrack  = harness.createTrack(u"manual-crossfade-local-first.fyt"_s, 0, 120000);
+    const Track remoteTrack = makeRemoteTrack(u"https://example.test/manual-crossfade-remote.fyt"_s, 0);
+
+    harness.engine.loadTrack(makePlaybackItem(firstTrack, 1), false);
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.trackStatus() == Engine::TrackStatus::Loaded; }));
+
+    harness.engine.play();
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.playbackState() == Engine::PlaybackState::Playing; }));
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.position() > 0; }, 3000ms));
+
+    const int outputUninitBefore = harness.outputStats->uninitCalls.load();
+    const int decoderInitBefore  = harness.decoderStats->initCalls.load();
+
+    harness.engine.loadTrack(makePlaybackItem(remoteTrack, 2), true);
+
+    ASSERT_TRUE(pumpUntil(
+        [&harness, decoderInitBefore]() { return harness.decoderStats->initCalls.load() > decoderInitBefore; },
+        4000ms));
+    ASSERT_TRUE(
+        pumpUntil([&harness]() { return harness.engine.trackStatus() == Engine::TrackStatus::Buffered; }, 4000ms));
+    ASSERT_TRUE(
+        pumpUntil([&harness]() { return harness.engine.playbackState() == Engine::PlaybackState::Playing; }, 4000ms));
+    EXPECT_TRUE(AudioEngineTestAccessor::currentTrackIsRemote(harness.engine));
+    EXPECT_EQ(harness.outputStats->uninitCalls.load(), outputUninitBefore);
+}
+
 FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, NonCueTracksDoNotForceEndAtMetadataDurationBoundary)
 {
     ensureCoreApplication();
@@ -1740,5 +1793,19 @@ FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, TimelineTransitionHintsAreDisab
     Track unknownDuration{u"/music/test.fyt"_s};
     unknownDuration.setDuration(0);
     EXPECT_FALSE(AudioEngine::shouldEnableTimelineTransitionHints(unknownDuration, AudioDecoder::PlaybackHints{}));
+}
+
+FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, LiveRemoteStreamsUseFixedFiveSecondBuffer)
+{
+    ensureCoreApplication();
+    EngineHarness harness{false};
+
+    const Track liveRemoteTrack = makeRemoteTrack(u"https://example.test/live"_s, 0);
+
+    AudioEngineTestAccessor::setPlaybackBufferLengthMs(harness.engine, 1000);
+    EXPECT_EQ(AudioEngineTestAccessor::streamBufferLengthMs(harness.engine, liveRemoteTrack), 5000);
+
+    AudioEngineTestAccessor::setPlaybackBufferLengthMs(harness.engine, 12000);
+    EXPECT_EQ(AudioEngineTestAccessor::streamBufferLengthMs(harness.engine, liveRemoteTrack), 5000);
 }
 } // namespace Fooyin::Testing

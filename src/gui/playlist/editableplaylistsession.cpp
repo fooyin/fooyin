@@ -875,7 +875,7 @@ void EditablePlaylistSession::queueSelectedTracks(PlaylistWidgetSessionHost& ses
     QueueTracks tracks;
     tracks.reserve(selected.size());
     for(const QModelIndex& index : selected) {
-        const auto track = index.data(PlaylistItem::Role::ItemData).value<PlaylistTrack>();
+        const auto track = index.data(PlaylistItem::Role::PersistentItemData).value<PlaylistTrack>();
         if(track.isValid()) {
             tracks.push_back(track);
         }
@@ -905,7 +905,7 @@ void EditablePlaylistSession::dequeueSelectedTracks(PlaylistWidgetSessionHost& s
     QueueTracks tracks;
     tracks.reserve(selected.size());
     for(const QModelIndex& index : selected) {
-        const auto track = index.data(PlaylistItem::Role::ItemData).value<PlaylistTrack>();
+        const auto track = index.data(PlaylistItem::Role::PersistentItemData).value<PlaylistTrack>();
         if(track.isValid()) {
             tracks.push_back(track);
         }

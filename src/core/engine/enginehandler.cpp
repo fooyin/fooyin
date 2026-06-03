@@ -112,7 +112,7 @@ EngineHandler::EngineHandler(std::shared_ptr<AudioLoader> audioLoader, PlayerCon
     QObject::connect(m_engine, &AudioEngine::bitrateChanged, m_playerController, &PlayerController::setBitrate);
     QObject::connect(m_engine, &AudioEngine::stateChanged, this, &EngineHandler::handleStateChange);
     QObject::connect(m_engine, &AudioEngine::deviceError, this, &EngineController::engineError);
-    QObject::connect(m_engine, &AudioEngine::trackChanged, this, &EngineController::trackChanged);
+    QObject::connect(m_engine, &AudioEngine::trackChanged, this, &EngineHandler::handleEngineTrackChanged);
     QObject::connect(m_engine, &AudioEngine::trackCommitted, this, &EngineHandler::handleTrackCommitted);
     QObject::connect(m_engine, &AudioEngine::trackStatusContextChanged, this, &EngineHandler::handleTrackStatus);
     QObject::connect(m_engine, &AudioEngine::nextTrackReadiness, this, &EngineHandler::handleNextTrackReadiness);
@@ -527,6 +527,15 @@ void EngineHandler::clearEngineOwnedTransition()
     m_endAdvanceSuppressedSince   = {};
 }
 
+void EngineHandler::handleEngineTrackChanged(const Track& track)
+{
+    if(track.isValid()) {
+        m_latestTrackMetadata = track;
+    }
+
+    Q_EMIT trackChanged(track);
+}
+
 void EngineHandler::handleTrackCommitted(const Engine::TrackCommitContext& context)
 {
     clearPendingBoundaryAdvance();
@@ -542,6 +551,13 @@ void EngineHandler::handleTrackCommitted(const Engine::TrackCommitContext& conte
        && samePlaybackItem(makePlaybackItem(m_pendingTrackChange->track.track, m_pendingTrackChange->itemId),
                            makePlaybackItem(context.track, context.itemId))) {
         m_playerController->commitCurrentTrack(*m_pendingTrackChange);
+
+        if(m_latestTrackMetadata.isValid()
+           && sameTrackIdentity(m_latestTrackMetadata, m_playerController->currentTrack())
+           && !m_latestTrackMetadata.sameDataAs(m_playerController->currentTrack())) {
+            m_playerController->updateCurrentTrack(m_latestTrackMetadata);
+        }
+
         m_pendingTrackChange.reset();
         clearEngineOwnedTransition();
 
@@ -568,6 +584,13 @@ void EngineHandler::handleTrackCommitted(const Engine::TrackCommitContext& conte
             .isQueueTrack = m_upcomingTrack.isQueueTrack,
             .itemId       = m_upcomingTrack.itemId,
         });
+
+        if(m_latestTrackMetadata.isValid()
+           && sameTrackIdentity(m_latestTrackMetadata, m_playerController->currentTrack())
+           && !m_latestTrackMetadata.sameDataAs(m_playerController->currentTrack())) {
+            m_playerController->updateCurrentTrack(m_latestTrackMetadata);
+        }
+
         clearEngineOwnedTransition();
     }
 }
@@ -633,6 +656,7 @@ void EngineHandler::handleTrackStatus(Engine::TrackStatus status, const Track& t
             break;
         case Engine::TrackStatus::Loading:
         case Engine::TrackStatus::Loaded:
+        case Engine::TrackStatus::Buffering:
         case Engine::TrackStatus::Buffered:
         case Engine::TrackStatus::Unreadable:
             break;

@@ -19,6 +19,8 @@
 
 #include "trackdatabase.h"
 
+#include "databasehelpers.h"
+
 #include <core/constants.h>
 #include <core/track.h>
 #include <core/trackmetadatastore.h>
@@ -32,8 +34,6 @@
 Q_LOGGING_CATEGORY(TRK_DB, "fy.trackdb")
 
 using namespace Qt::StringLiterals;
-
-using BindingsMap = std::map<QString, QVariant>;
 
 namespace {
 float normaliseTrackRating(float rating)
@@ -89,48 +89,6 @@ QString fetchTrackColumns()
                                    "Rating"_s;
 
     return columns;
-}
-
-BindingsMap trackBindings(const Fooyin::Track& track)
-{
-    return {{u":filePath"_s, track.filepath()},
-            {u":subsong"_s, track.subsong()},
-            {u":title"_s, track.title()},
-            {u":trackNumber"_s, track.trackNumber()},
-            {u":trackTotal"_s, track.trackTotal()},
-            {u":artists"_s, track.artist()},
-            {u":albumArtist"_s, track.albumArtist()},
-            {u":album"_s, track.album()},
-            {u":discNumber"_s, track.discNumber()},
-            {u":discTotal"_s, track.discTotal()},
-            {u":date"_s, track.date()},
-            {u":composer"_s, track.composer()},
-            {u":performer"_s, track.performer()},
-            {u":genres"_s, track.genre()},
-            {u":comment"_s, track.comment()},
-            {u":cuePath"_s, track.cuePath()},
-            {u":offset"_s, static_cast<quint64>(track.offset())},
-            {u":duration"_s, static_cast<quint64>(track.duration())},
-            {u":fileSize"_s, static_cast<quint64>(track.fileSize())},
-            {u":bitRate"_s, track.bitrate()},
-            {u":sampleRate"_s, track.sampleRate()},
-            {u":channels"_s, track.channels()},
-            {u":bitDepth"_s, track.bitDepth()},
-            {u":codec"_s, track.codec()},
-            {u":codecProfile"_s, track.codecProfile()},
-            {u":tool"_s, track.tool()},
-            {u":tagTypes"_s, track.tagType()},
-            {u":encoding"_s, track.encoding()},
-            {u":extraTags"_s, track.serialiseExtraTags()},
-            {u":extraProperties"_s, track.serialiseExtraProperties()},
-            {u":modifiedDate"_s, static_cast<quint64>(track.modifiedTime())},
-            {u":trackHash"_s, track.hash()},
-            {u":libraryID"_s, track.libraryId()},
-            {u":rgTrackGain"_s, track.rgTrackGain()},
-            {u":rgAlbumGain"_s, track.rgAlbumGain()},
-            {u":rgTrackPeak"_s, track.rgTrackPeak()},
-            {u":rgAlbumPeak"_s, track.rgAlbumPeak()},
-            {u":createdDate"_s, static_cast<quint64>(track.createdTime())}};
 }
 
 Fooyin::Track readToTrack(const Fooyin::DbQuery& q, const std::shared_ptr<Fooyin::TrackMetadataStore>& store)
@@ -424,7 +382,7 @@ bool TrackDatabase::updateTrack(const Track& track)
 
     query.bindValue(u":trackId"_s, track.id());
 
-    const auto bindings = trackBindings(track);
+    const auto bindings = Database::trackBindings(track);
     for(const auto& [name, value] : bindings) {
         query.bindValue(name, value);
     }
@@ -788,7 +746,7 @@ bool TrackDatabase::insertTrack(Track& track, bool ignoreDuplicates) const
 
     DbQuery query{db(), statement};
 
-    const auto bindings = trackBindings(track);
+    const auto bindings = Database::trackBindings(track);
     for(const auto& [name, value] : bindings) {
         query.bindValue(name, value);
     }

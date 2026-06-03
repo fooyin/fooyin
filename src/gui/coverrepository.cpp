@@ -22,6 +22,7 @@
 #include "internalguisettings.h"
 
 #include <core/engine/audioloader.h>
+#include <core/network/remoteioservice.h>
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
@@ -47,6 +48,7 @@
 #include <QPromise>
 
 #include <algorithm>
+#include <chrono>
 #include <iterator>
 #include <map>
 #include <ranges>
@@ -73,6 +75,45 @@ std::vector<ThumbnailSize> placeholderSizes()
             ThumbnailSize::XxLarge, ThumbnailSize::Huge,  ThumbnailSize::Full};
 }
 
+std::vector<QUrl> remoteArtworkUrls(const Track& track)
+{
+    static const QStringList tags{
+        u"ARTWORKURL"_s,
+        u"COVERART"_s,
+        u"IMAGE"_s,
+        u"STREAMURL"_s,
+    };
+
+    std::vector<QUrl> urls;
+    std::set<QString> seenUrls;
+
+    for(const QString& tag : tags) {
+        const auto values = track.extraTag(tag);
+        for(const QString& value : values) {
+            const QUrl url{value.trimmed()};
+            const QString scheme = url.scheme().toLower();
+            if(!url.isValid() || url.isRelative() || (scheme != "http"_L1 && scheme != "https"_L1)) {
+                continue;
+            }
+            const QString key = url.toString();
+            if(seenUrls.insert(key).second) {
+                urls.push_back(url);
+            }
+        }
+    }
+
+    return urls;
+}
+
+std::optional<QUrl> remoteArtworkUrl(const Track& track)
+{
+    const auto urls = remoteArtworkUrls(track);
+    if(!urls.empty()) {
+        return urls.front();
+    }
+    return {};
+}
+
 QString generateGroupedCoverKey(const QString& group, Track::Cover type, ArtworkSourcePreference sourcePreference)
 {
     return Utils::generateHash(u"FyCover|%1|%2"_s.arg(static_cast<int>(type)).arg(static_cast<int>(sourcePreference)),
@@ -81,6 +122,14 @@ QString generateGroupedCoverKey(const QString& group, Track::Cover type, Artwork
 
 QString generateTrackCoverKey(const Track& track, Track::Cover type, ArtworkSourcePreference sourcePreference)
 {
+    if(track.isRemote() && type == Track::Cover::Front) {
+        if(const auto url = remoteArtworkUrl(track)) {
+            return Utils::generateHash(
+                u"FyRemoteCover|%1|%2"_s.arg(static_cast<int>(type)).arg(static_cast<int>(sourcePreference)),
+                url->toString());
+        }
+    }
+
     return Utils::generateHash(u"FyCover|%1|%2"_s.arg(static_cast<int>(type)).arg(static_cast<int>(sourcePreference)),
                                track.hash());
 }
@@ -354,6 +403,11 @@ bool hasEmbeddedCover(const CoverLoader& loader)
     return !coverData.isEmpty();
 }
 
+bool hasRemoteArtwork(const CoverLoader& loader)
+{
+    return loader.type == Track::Cover::Front && loader.track.isRemote() && !remoteArtworkUrls(loader.track).empty();
+}
+
 QImage loadImageFromEmbedded(const CoverLoader& loader, const QString& cachePath)
 {
     const QByteArray coverData = loader.audioLoader->readTrackCover(loader.track, loader.type);
@@ -373,13 +427,38 @@ QImage loadImageFromEmbedded(const CoverLoader& loader, const QString& cachePath
     return cover;
 }
 
+QImage loadImageFromRemoteArtworkData(const CoverLoader& loader, const QString& cachePath, const QByteArray& coverData)
+{
+    if(loader.type != Track::Cover::Front) {
+        return {};
+    }
+
+    if(coverData.isEmpty()) {
+        return {};
+    }
+
+    QImage cover = loader.originalSize ? readImageOriginal(coverData) : readImage(coverData);
+    if(cover.isNull()) {
+        return {};
+    }
+
+    if(loader.isThumb && !QFileInfo::exists(cachePath)) {
+        if(!saveThumbnail(cover, loader.key)) {
+            qCInfo(COV_REPO) << "Failed to save remote cover thumbnail for track:" << loader.track.filepath();
+        }
+        cover = Utils::scaleImage(cover, coverThumbnailPixelSize(loader.size), Utils::windowDpr());
+    }
+
+    return cover;
+}
+
 bool hasCoverImage(const CoverLoader& loader)
 {
     if(prefersEmbedded(loader)) {
-        return hasEmbeddedCover(loader) || hasImageInDirectory(loader);
+        return hasRemoteArtwork(loader) || hasEmbeddedCover(loader) || hasImageInDirectory(loader);
     }
 
-    return hasImageInDirectory(loader) || hasEmbeddedCover(loader);
+    return hasRemoteArtwork(loader) || hasImageInDirectory(loader) || hasEmbeddedCover(loader);
 }
 
 CoverLoader loadCoverImage(const CoverLoader& loader)
@@ -442,6 +521,7 @@ struct CoverRequestKey
 struct PendingPixmapRequest
 {
     std::vector<QPromise<QPixmap>> promises;
+    std::vector<std::shared_ptr<RemoteDownloadHandle>> downloads;
     bool notifyOnFinished{false};
 };
 
@@ -458,7 +538,7 @@ class FYGUI_NO_EXPORT CoverRepositoryPrivate
 {
 public:
     explicit CoverRepositoryPrivate(CoverRepository* self, std::shared_ptr<AudioLoader> audioLoader,
-                                    SettingsManager* settings);
+                                    std::shared_ptr<RemoteIoService> remoteIo, SettingsManager* settings);
 
     QPixmap loadNoCover(Track::Cover type = Track::Cover::Front, ThumbnailSize size = ThumbnailSize::None);
     [[nodiscard]] ArtworkSourcePreference sourcePreference(std::optional<ArtworkSourcePreference> source) const;
@@ -468,6 +548,9 @@ public:
     QFuture<QPixmap> requestPixmap(const CoverRequestKey& requestKey, const CoverLoader& loader,
                                    bool notifyOnFinished = false);
     void finishPixmapRequest(const CoverRequestKey& requestKey, const CoverLoader& result);
+    void finishPixmapRequestFromLocalLoad(const CoverRequestKey& requestKey, const CoverLoader& loader);
+    void requestRemoteArtwork(const CoverRequestKey& requestKey, const CoverLoader& loader, std::vector<QUrl> urls,
+                              size_t index = 0);
     void processPixmapQueue();
     void reprioritiseQueuedThumbnails();
     void cancelPendingPixmapRequest(const CoverRequestKey& requestKey);
@@ -495,6 +578,7 @@ public:
 
     CoverRepository* m_self;
     std::shared_ptr<AudioLoader> m_audioLoader;
+    std::shared_ptr<RemoteIoService> m_remoteIo;
     SettingsManager* m_settings;
 
     std::map<CoverRequestKey, PendingPixmapRequest> m_pendingPixmapRequests;
@@ -514,9 +598,10 @@ public:
 };
 
 CoverRepositoryPrivate::CoverRepositoryPrivate(CoverRepository* self, std::shared_ptr<AudioLoader> audioLoader,
-                                               SettingsManager* settings)
+                                               std::shared_ptr<RemoteIoService> remoteIo, SettingsManager* settings)
     : m_self{self}
     , m_audioLoader{std::move(audioLoader)}
+    , m_remoteIo{std::move(remoteIo)}
     , m_settings{settings}
     , m_paths{m_settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<CoverPaths>()}
     , m_sourcePreference{static_cast<ArtworkSourcePreference>(
@@ -555,6 +640,14 @@ ArtworkSourcePreference CoverRepositoryPrivate::sourcePreference(std::optional<A
 QString CoverRepositoryPrivate::thumbnailCoverKey(const Track& track, Track::Cover type,
                                                   ArtworkSourcePreference sourcePreference) const
 {
+    if(track.isRemote() && type == Track::Cover::Front) {
+        if(const auto url = remoteArtworkUrl(track)) {
+            return Utils::generateHash(
+                u"FyRemoteCover|%1|%2"_s.arg(static_cast<int>(type)).arg(static_cast<int>(sourcePreference)),
+                url->toString());
+        }
+    }
+
     QString group = evaluateThumbnailGroupScript(m_thumbnailGroupScript, track);
     if(group.isEmpty()) {
         group = track.albumHash();
@@ -731,6 +824,61 @@ void CoverRepositoryPrivate::finishPixmapRequest(const CoverRequestKey& requestK
     processPixmapQueue();
 }
 
+void CoverRepositoryPrivate::finishPixmapRequestFromLocalLoad(const CoverRequestKey& requestKey,
+                                                              const CoverLoader& loader)
+{
+    auto loaderResult = Utils::asyncExec([loader]() -> CoverLoader {
+        auto result = loadCoverImage(loader);
+        return result;
+    });
+    loaderResult.then(m_self,
+                      [this, requestKey](const CoverLoader& result) { finishPixmapRequest(requestKey, result); });
+}
+
+void CoverRepositoryPrivate::requestRemoteArtwork(const CoverRequestKey& requestKey, const CoverLoader& loader,
+                                                  std::vector<QUrl> urls, size_t index)
+{
+    if(index >= urls.size()) {
+        finishPixmapRequestFromLocalLoad(requestKey, loader);
+        return;
+    }
+
+    const auto pendingIt = m_pendingPixmapRequests.find(requestKey);
+    if(pendingIt == m_pendingPixmapRequests.end()) {
+        finishPixmapRequest(requestKey, {});
+        return;
+    }
+
+    const QUrl url = urls.at(index);
+
+    auto handle = m_remoteIo->download(
+        url, m_self,
+        [this, requestKey, loader, urls = std::move(urls), index](std::optional<QByteArray> data,
+                                                                  const QString& error) mutable {
+            if(!m_pendingPixmapRequests.contains(requestKey)) {
+                finishPixmapRequest(requestKey, {});
+                return;
+            }
+
+            if(data) {
+                CoverLoader result{loader};
+                result.cover = loadImageFromRemoteArtworkData(loader, coverThumbnailPath(loader.key), data.value());
+                if(!result.cover.isNull()) {
+                    finishPixmapRequest(requestKey, result);
+                    return;
+                }
+            }
+            else if(!error.isEmpty()) {
+                qCDebug(COV_REPO) << "Could not download remote cover artwork:" << error;
+            }
+
+            requestRemoteArtwork(requestKey, loader, std::move(urls), index + 1);
+        },
+        std::chrono::seconds{10});
+
+    pendingIt->second.downloads.emplace_back(std::move(handle));
+}
+
 void CoverRepositoryPrivate::processPixmapQueue()
 {
     while(m_activePixmapRequests < MaxActivePixmapRequests && !m_queuedPixmapRequests.empty()) {
@@ -747,13 +895,15 @@ void CoverRepositoryPrivate::processPixmapQueue()
         }
 
         ++m_activePixmapRequests;
-        auto loaderResult = Utils::asyncExec([loader = request.loader]() -> CoverLoader {
-            auto result = loadCoverImage(loader);
-            return result;
-        });
-        loaderResult.then(m_self, [this, requestKey = request.key](const CoverLoader& result) {
-            finishPixmapRequest(requestKey, result);
-        });
+
+        const bool hasCachedThumbnail
+            = request.loader.isThumb && QFileInfo::exists(coverThumbnailPath(request.loader.key));
+        if(m_remoteIo && hasRemoteArtwork(request.loader) && !hasCachedThumbnail) {
+            requestRemoteArtwork(request.key, request.loader, remoteArtworkUrls(request.loader.track));
+        }
+        else {
+            finishPixmapRequestFromLocalLoad(request.key, request.loader);
+        }
     }
 }
 
@@ -788,6 +938,9 @@ void CoverRepositoryPrivate::cancelPendingPixmapRequest(const CoverRequestKey& r
         promise.addResult(QPixmap{});
         promise.finish();
     }
+    for(const auto& download : pendingIt->second.downloads) {
+        download->cancel();
+    }
 
     m_pendingPixmapRequests.erase(pendingIt);
 }
@@ -797,6 +950,9 @@ void CoverRepositoryPrivate::finishAndClearPendingPixmapRequests()
     m_queuedPixmapRequests.clear();
 
     for(auto& request : m_pendingPixmapRequests | std::views::values) {
+        for(const auto& download : request.downloads) {
+            download->cancel();
+        }
         for(auto& promise : request.promises) {
             promise.addResult(QPixmap{});
             promise.finish();
@@ -1003,8 +1159,13 @@ void CoverRepositoryPrivate::rebuildPinnedThumbnails()
 }
 
 CoverRepository::CoverRepository(std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings, QObject* parent)
+    : CoverRepository{std::move(audioLoader), nullptr, settings, parent}
+{ }
+
+CoverRepository::CoverRepository(std::shared_ptr<AudioLoader> audioLoader, std::shared_ptr<RemoteIoService> remoteIo,
+                                 SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<CoverRepositoryPrivate>(this, std::move(audioLoader), settings)}
+    , p{std::make_unique<CoverRepositoryPrivate>(this, std::move(audioLoader), std::move(remoteIo), settings)}
 { }
 
 CoverRepository::~CoverRepository() = default;

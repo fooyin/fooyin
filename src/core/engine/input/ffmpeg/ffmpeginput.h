@@ -41,7 +41,10 @@ public:
 
     [[nodiscard]] QStringList extensions() const override;
     [[nodiscard]] QStringList preferredExtensions() const override;
+    [[nodiscard]] bool supportsRemoteSources() const override;
     [[nodiscard]] int bitrate() const override;
+    [[nodiscard]] bool trackHasChanged() const override;
+    [[nodiscard]] Track changedTrack() const override;
 
     std::optional<AudioFormat> init(const AudioSource& source, const Track& track, DecoderOptions options) override;
     void start() override;
@@ -51,6 +54,7 @@ public:
     void seek(uint64_t pos) override;
 
     Frame readFrame();
+    ReadResult readAudio(size_t bytes) override;
     AudioBuffer readBuffer(size_t bytes) override;
 
     [[nodiscard]] std::optional<bool> isPlanar() const;
@@ -67,6 +71,7 @@ public:
 
     [[nodiscard]] QStringList extensions() const override;
     [[nodiscard]] QStringList preferredExtensions() const override;
+    [[nodiscard]] bool supportsRemoteSources() const override;
     [[nodiscard]] bool canReadCover() const override;
     [[nodiscard]] bool canWriteMetaData() const override;
 
