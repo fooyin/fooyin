@@ -12776,7 +12776,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="261"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="424"/>
         <source>Bars</source>
-        <translation>Pruhy</translation>
+        <translation>Sloupce</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="262"/>
@@ -12841,7 +12841,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="276"/>
         <source>Shift note labels and note-based bands by semitones</source>
-        <translation>Posunout notové popisky a notové pruhy o půltóny</translation>
+        <translation>Posunout notové popisky a notová pásma o půltóny</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="277"/>
@@ -12921,7 +12921,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="292"/>
         <source>Choose whether to draw separate bars or a continuous curve</source>
-        <translation>Zda vykreslovat jednotlivé sloupce nebo spojitou křivku</translation>
+        <translation>Výběr mezi vykreslováním jednotlivých sloupců nebo spojité křivky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="293"/>
@@ -14245,12 +14245,12 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="94"/>
         <source>Bar size</source>
-        <translation>Velikost sloupce</translation>
+        <translation>Velikost pruhu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="96"/>
         <source>Bar spacing</source>
-        <translation>Rozestup sloupců</translation>
+        <translation>Rozestup pruhů</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="99"/>
