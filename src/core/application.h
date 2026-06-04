@@ -21,8 +21,6 @@
 
 #include "fycore_export.h"
 
-#include "playlist/playlistloader.h"
-
 #include <core/engine/audioloader.h>
 #include <utils/database/dbconnectionpool.h>
 
@@ -39,6 +37,7 @@ class MusicLibrary;
 class NetworkAccessManager;
 class PlayerController;
 class PlaylistHandler;
+class PlaylistLoader;
 class PluginManager;
 class RemoteIoService;
 class SettingsManager;

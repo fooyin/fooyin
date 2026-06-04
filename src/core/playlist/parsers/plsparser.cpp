@@ -140,6 +140,22 @@ bool PlsParser::saveIsSupported() const
     return true;
 }
 
+bool PlsParser::canParse(const QByteArray& data, const QString& contentType, const QUrl& url) const
+{
+    const QString type = contentType.toLower();
+    if(type.contains(u"scpls"_s)) {
+        return true;
+    }
+
+    const QByteArray lower = data.left(32 * 1024).trimmed().toLower();
+    if(lower.startsWith("[playlist]") || lower.startsWith("file1=") || lower.contains("\nfile1=")
+       || lower.contains("\r\nfile1=")) {
+        return true;
+    }
+
+    return PlaylistParser::canParse(data, contentType, url);
+}
+
 size_t PlsParser::countEntries(QIODevice* device, const QString& /*filepath*/, const QDir& /*dir*/) const
 {
     const auto entries = parseEntries(device);

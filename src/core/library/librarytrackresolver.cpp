@@ -23,11 +23,11 @@
 #include "libraryscanstate.h"
 #include "libraryscanutils.h"
 #include "libraryscanwriter.h"
-#include "playlist/playlistloader.h"
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
 #include <core/network/remoteioservice.h>
+#include <core/playlist/playlistloader.h>
 #include <core/playlist/playlistparser.h>
 #include <core/trackmetadatastore.h>
 

@@ -26,12 +26,12 @@
 #include "libraryscanutils.h"
 #include "libraryscanwriter.h"
 #include "librarytrackresolver.h"
-#include "playlist/playlistloader.h"
 
 #include <core/engine/audioloader.h>
 #include <core/library/musiclibrary.h>
 #include <core/network/remoteioservice.h>
 #include <core/playlist/playlist.h>
+#include <core/playlist/playlistloader.h>
 #include <core/trackmetadatastore.h>
 
 #include <QDateTime>

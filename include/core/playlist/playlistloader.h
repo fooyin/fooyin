@@ -28,6 +28,8 @@
 
 #include <QStringList>
 
+class QUrl;
+
 namespace Fooyin {
 class FYCORE_EXPORT PlaylistLoader
 {
@@ -37,6 +39,10 @@ public:
     [[nodiscard]] QStringList supportedExtensions() const;
     [[nodiscard]] QStringList supportedSaveExtensions() const;
     [[nodiscard]] PlaylistParser* parserForExtension(const QString& extension) const;
+    [[nodiscard]] PlaylistParser* parserForData(const QByteArray& data, const QString& contentType,
+                                                const QUrl& url) const;
+    [[nodiscard]] QStringList resolveUrls(const QUrl& baseUrl, const QByteArray& data,
+                                          const QString& contentType = {}) const;
 
 private:
     std::unordered_map<QString, std::unique_ptr<PlaylistParser>> m_parsers;

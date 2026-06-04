@@ -21,6 +21,7 @@
 
 #include <utils/stringutils.h>
 
+#include <QFileInfo>
 #include <QStringDecoder>
 #include <QUrl>
 
@@ -30,6 +31,12 @@ namespace Fooyin {
 size_t PlaylistParser::countEntries(QIODevice* /*device*/, const QString& /*filepath*/, const QDir& /*dir*/) const
 {
     return 0;
+}
+
+bool PlaylistParser::canParse(const QByteArray& /*data*/, const QString& /*contentType*/, const QUrl& url) const
+{
+    const QString extension = QFileInfo{url.path()}.suffix().toLower();
+    return !extension.isEmpty() && supportedExtensions().contains(extension, Qt::CaseInsensitive);
 }
 
 void Fooyin::PlaylistParser::savePlaylist(QIODevice* /*device*/, const QString& /*extension*/,

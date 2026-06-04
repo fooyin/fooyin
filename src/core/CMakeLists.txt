@@ -35,6 +35,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/playlist/playlist.h
     ${CMAKE_SOURCE_DIR}/include/core/playlist/playlistchangeset.h
     ${CMAKE_SOURCE_DIR}/include/core/playlist/playlisthandler.h
+    ${CMAKE_SOURCE_DIR}/include/core/playlist/playlistloader.h
     ${CMAKE_SOURCE_DIR}/include/core/playlist/playlistparser.h
     ${CMAKE_SOURCE_DIR}/include/core/plugins/coreplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/plugins/coreplugincontext.h
@@ -271,7 +272,6 @@ set(SOURCES
     playlist/playlistchangeset.cpp
     playlist/playlisthandler.cpp
     playlist/playlistloader.cpp
-    playlist/playlistloader.h
     playlist/playlistparser.cpp
     plugins/plugin.cpp
     plugins/plugininfo.cpp

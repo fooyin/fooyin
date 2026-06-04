@@ -22,8 +22,8 @@
 #include "database/trackdatabase.h"
 #include "libraryscansession.h"
 #include "libraryscanutils.h"
-#include "playlist/playlistloader.h"
 
+#include <core/playlist/playlistloader.h>
 #include <core/track.h>
 #include <core/trackmetadatastore.h>
 #include <utils/database/dbconnectionhandler.h>

@@ -37,10 +37,10 @@
 #include "playlist/parsers/cueparser.h"
 #include "playlist/parsers/m3uparser.h"
 #include "playlist/parsers/plsparser.h"
-#include "playlist/playlistloader.h"
 #include "plugins/pluginmanager.h"
 #include "translationloader.h"
 #include "version.h"
+#include <core/playlist/playlistloader.h>
 
 #include <core/coresettings.h>
 #include <core/engine/audiobuffer.h>
@@ -161,8 +161,8 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
     , m_engine{m_audioLoader, m_playerController, m_settings, &m_dspRegistry}
     , m_sortingRegistry{new SortingRegistry(m_settings, m_self)}
     , m_pluginManager{m_settings}
-    , m_corePluginContext{&m_engine,  m_playerController, m_libraryManager,  m_library,       m_playlistHandler,
-                          m_settings, m_audioLoader,      m_sortingRegistry, m_networkManager}
+    , m_corePluginContext{&m_engine,  m_playerController, m_libraryManager, m_library,         m_playlistHandler,
+                          m_settings, m_audioLoader,      m_playlistLoader, m_sortingRegistry, m_networkManager}
 {
     m_audioLoader->setRemoteSourceProvider(m_remoteIo);
     m_translations.initialiseTranslations(m_settings->value<Settings::Core::Language>());

@@ -37,7 +37,6 @@
 #include "dsp/skipsilencesettingswidget.h"
 #include "gui/editablelayout.h"
 #include "gui/plugins/guiplugincontext.h"
-#include "gui/windowcontroller.h"
 #include "guiapplication.h"
 #include "internalguisettings.h"
 #include "librarytree/librarytreecontroller.h"
@@ -105,6 +104,7 @@
 #include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
+#include <core/playlist/playlistloader.h>
 #include <gui/coverprovider.h>
 #include <gui/coverrepository.h>
 #include <gui/guiconstants.h>

@@ -25,6 +25,7 @@
 #include <core/coresettings.h>
 #include <core/internalcoresettings.h>
 #include <core/playlist/playlisthandler.h>
+#include <core/playlist/playlistloader.h>
 #include <core/playlist/playlistparser.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>

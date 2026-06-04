@@ -28,6 +28,7 @@ class LibraryManager;
 class MusicLibrary;
 class NetworkAccessManager;
 class PlayerController;
+class PlaylistLoader;
 class PlaylistHandler;
 class SettingsManager;
 class SortingRegistry;
@@ -39,8 +40,8 @@ struct CorePluginContext
 {
     CorePluginContext(EngineController* engine_, PlayerController* playerController_, LibraryManager* libraryManager_,
                       MusicLibrary* library_, PlaylistHandler* playlistHandler_, SettingsManager* settingsManager_,
-                      std::shared_ptr<AudioLoader> audioLoader_, SortingRegistry* sortingRegistry_,
-                      std::shared_ptr<NetworkAccessManager> networkAccess_)
+                      std::shared_ptr<AudioLoader> audioLoader_, std::shared_ptr<PlaylistLoader> playlistLoader_,
+                      SortingRegistry* sortingRegistry_, std::shared_ptr<NetworkAccessManager> networkAccess_)
         : playerController{playerController_}
         , libraryManager{libraryManager_}
         , library{library_}
@@ -48,6 +49,7 @@ struct CorePluginContext
         , settingsManager{settingsManager_}
         , engine{engine_}
         , audioLoader{std::move(audioLoader_)}
+        , playlistLoader{std::move(playlistLoader_)}
         , sortingRegistry{sortingRegistry_}
         , networkAccess{std::move(networkAccess_)}
     { }
@@ -59,6 +61,7 @@ struct CorePluginContext
     SettingsManager* settingsManager;
     EngineController* engine;
     std::shared_ptr<AudioLoader> audioLoader;
+    std::shared_ptr<PlaylistLoader> playlistLoader;
     SortingRegistry* sortingRegistry;
     std::shared_ptr<NetworkAccessManager> networkAccess;
 };

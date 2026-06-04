@@ -236,7 +236,7 @@ protected:
         m_coverRepository = std::make_unique<CoverRepository>(m_audioLoader, m_settings.get());
 
         const CorePluginContext coreContext{
-            nullptr, nullptr, nullptr, &m_library, nullptr, m_settings.get(), m_audioLoader, nullptr, {},
+            nullptr, nullptr, nullptr, &m_library, nullptr, m_settings.get(), m_audioLoader, nullptr, nullptr, {},
         };
 
         m_controller = std::make_unique<Filters::FilterController>(m_actionManager.get(), coreContext, nullptr,

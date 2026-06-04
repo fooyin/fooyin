@@ -27,6 +27,8 @@
 #include <QDir>
 #include <QString>
 
+class QUrl;
+
 namespace Fooyin {
 class FYCORE_EXPORT PlaylistParser
 {
@@ -50,6 +52,7 @@ public:
     [[nodiscard]] virtual QString name() const                    = 0;
     [[nodiscard]] virtual QStringList supportedExtensions() const = 0;
     [[nodiscard]] virtual bool saveIsSupported() const            = 0;
+    [[nodiscard]] virtual bool canParse(const QByteArray& data, const QString& contentType, const QUrl& url) const;
     [[nodiscard]] virtual size_t countEntries(QIODevice* device, const QString& filepath, const QDir& dir) const;
 
     virtual TrackList readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir,

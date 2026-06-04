@@ -178,6 +178,25 @@ bool M3uParser::saveIsSupported() const
     return true;
 }
 
+bool M3uParser::canParse(const QByteArray& data, const QString& contentType, const QUrl& url) const
+{
+    if(looksLikeHlsPlaylist(data)) {
+        return false;
+    }
+
+    const QString type = contentType.toLower();
+    if(type.contains(u"mpegurl"_s) || type.contains(u"application/vnd.apple.mpegurl"_s)) {
+        return true;
+    }
+
+    const QByteArray trimmed = data.left(HlsProbeBytes).trimmed();
+    if(trimmed.startsWith("#EXTM3U")) {
+        return true;
+    }
+
+    return PlaylistParser::canParse(data, contentType, url);
+}
+
 size_t M3uParser::countEntries(QIODevice* device, const QString& /*filepath*/, const QDir& /*dir*/) const
 {
     QByteArray m3u = toUtf8(device);
