@@ -200,6 +200,14 @@ bool WidgetProvider::widgetExists(const QString& key) const
     return p->m_widgets.contains(key);
 }
 
+QString WidgetProvider::displayName(const QString& key) const
+{
+    if(!p->m_widgets.contains(key)) {
+        return key;
+    }
+    return p->m_widgets.at(key).name;
+}
+
 bool WidgetProvider::canCreateWidget(const QString& key) const
 {
     return p->canCreateWidget(key);

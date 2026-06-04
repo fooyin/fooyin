@@ -29,6 +29,7 @@
 #include <utils/utils.h>
 
 #include <QAction>
+#include <QActionGroup>
 #include <QMenu>
 
 using namespace Qt::StringLiterals;
@@ -45,8 +46,13 @@ LayoutMenu::LayoutMenu(ActionManager* actionManager, LayoutProvider* layoutProvi
     , m_layoutEditingCmd{nullptr}
     , m_lockSplitters{nullptr}
     , m_lockSplittersCmd{nullptr}
+    , m_clearLayout{nullptr}
+    , m_layoutActionGroup{nullptr}
 {
-    QObject::connect(m_layoutProvider, &LayoutProvider::layoutAdded, this, &LayoutMenu::addLayout);
+    QObject::connect(m_layoutProvider, &LayoutProvider::layoutAdded, this, &LayoutMenu::refreshLayouts);
+    QObject::connect(m_layoutProvider, &LayoutProvider::layoutRemoved, this, &LayoutMenu::refreshLayouts);
+    QObject::connect(m_layoutProvider, &LayoutProvider::layoutChanged, this, &LayoutMenu::refreshLayouts);
+    QObject::connect(m_layoutProvider, &LayoutProvider::currentLayoutChanged, this, &LayoutMenu::updateCurrentLayout);
 }
 
 void LayoutMenu::setup()
@@ -87,38 +93,84 @@ void LayoutMenu::setup()
     exportLayout->setStatusTip(tr("Save the current layout to the specified file"));
     QObject::connect(exportLayout, &QAction::triggered, this, &LayoutMenu::exportLayout);
 
+    if(!m_clearLayout) {
+        m_clearLayout = new QAction(tr("&Clear layout"), this);
+        m_clearLayout->setStatusTip(tr("Clear the current layout"));
+        QObject::connect(m_clearLayout, &QAction::triggered, this, &LayoutMenu::clearLayout);
+    }
+
     m_layoutMenu->addAction(m_layoutEditingCmd, Actions::Groups::One);
     m_layoutMenu->addAction(m_lockSplittersCmd);
+    m_layoutMenu->addAction(m_clearLayout);
     m_layoutMenu->addAction(importLayout);
     m_layoutMenu->addAction(exportLayout);
     m_layoutMenu->addSeparator();
 
-    const auto layouts = m_layoutProvider->layouts();
-    for(const auto& layout : layouts) {
-        addLayout(layout);
+    if(!m_layoutActionGroup) {
+        m_layoutActionGroup = new QActionGroup(this);
+        m_layoutActionGroup->setExclusive(true);
     }
+
+    refreshLayouts();
 }
 
-void LayoutMenu::addLayout(const FyLayout& layout)
+void LayoutMenu::refreshLayouts()
 {
     if(!m_layoutMenu) {
         return;
     }
 
-    const QString name = layout.name();
-
-    auto* layoutAction = new QAction(name, m_layoutMenu->menu());
-    layoutAction->setStatusTip(tr("Replace the current layout"));
-    auto* layoutCmd = m_actionManager->registerAction(layoutAction, Id{u"Layout.Switch.%1"_s.arg(name)});
-    layoutCmd->setCategories({tr("Layout"), tr("Switch")});
-
-    QObject::connect(layoutAction, &QAction::triggered, this, [this, name]() {
-        const auto fyLayout = m_layoutProvider->layoutByName(name);
-        if(fyLayout.isValid()) {
-            Q_EMIT changeLayout(fyLayout);
+    for(auto* action : m_layoutActions) {
+        m_layoutMenu->menu()->removeAction(action);
+        if(m_layoutActionGroup) {
+            m_layoutActionGroup->removeAction(action);
         }
-    });
-    m_layoutMenu->addAction(layoutCmd->action());
+        action->deleteLater();
+    }
+    m_layoutActions.clear();
+
+    const auto layouts   = m_layoutProvider->layouts();
+    const auto addLayout = [this](const FyLayout& layout) {
+        const QString name = layout.name();
+
+        auto* layoutAction = new QAction(name, m_layoutMenu->menu());
+        layoutAction->setStatusTip(tr("Replace the current layout"));
+        layoutAction->setCheckable(true);
+        m_layoutActionGroup->addAction(layoutAction);
+
+        QObject::connect(layoutAction, &QAction::triggered, this, [this, name]() {
+            const auto fyLayout = m_layoutProvider->layoutByName(name);
+            if(fyLayout.isValid()) {
+                Q_EMIT changeLayout(fyLayout);
+            }
+        });
+        m_layoutMenu->menu()->addAction(layoutAction);
+        m_layoutActions.emplace_back(layoutAction);
+    };
+
+    const auto defaultLayout
+        = std::ranges::find_if(layouts, [](const FyLayout& layout) { return layout.name() == u"Default"_s; });
+    if(defaultLayout != layouts.cend()) {
+        addLayout(*defaultLayout);
+    }
+
+    for(const auto& layout : layouts) {
+        if(layout.name() != u"Default"_s) {
+            addLayout(layout);
+        }
+    }
+
+    updateCurrentLayout();
+}
+
+void LayoutMenu::updateCurrentLayout()
+{
+    const QString current = m_layoutProvider->currentLayout().name();
+    for(auto* action : m_layoutActions) {
+        if(action) {
+            action->setChecked(action->text() == current);
+        }
+    }
 }
 } // namespace Fooyin
 

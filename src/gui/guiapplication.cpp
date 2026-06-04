@@ -102,6 +102,7 @@
 #include <QFileInfo>
 #include <QImageReader>
 #include <QInputDialog>
+#include <QJsonObject>
 #include <QLoggingCategory>
 #include <QMessageBox>
 #include <QMimeDatabase>
@@ -477,6 +478,12 @@ void GuiApplicationPrivate::setupConnections()
         }
     });
     QObject::connect(m_layoutMenu, &LayoutMenu::changeLayout, m_editableLayout.get(), &EditableLayout::changeLayout);
+    QObject::connect(m_layoutMenu, &LayoutMenu::clearLayout, m_self, [this] {
+        const QString name = m_layoutProvider.currentLayout().name();
+        QJsonObject layout;
+        layout["Name"_L1] = name.isEmpty() ? u"Default"_s : name;
+        m_editableLayout->changeLayout(FyLayout{layout.value("Name"_L1).toString(), layout});
+    });
     QObject::connect(m_layoutMenu, &LayoutMenu::importLayout, m_self,
                      [this]() { m_layoutProvider.importLayout(m_mainWindow.get()); });
     QObject::connect(m_layoutMenu, &LayoutMenu::exportLayout, m_self,
@@ -1009,8 +1016,6 @@ void GuiApplicationPrivate::refreshAutoDetectedIconTheme() const
 
 void GuiApplicationPrivate::registerLayouts()
 {
-    m_layoutProvider.registerLayout(R"({"Name":"Empty"})");
-
     m_layoutProvider.registerLayout(
         R"({"Name":"Simple","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAHAAAAn0AAAAXAP////8BAAAAAgA=",
             "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAAggAABqEAAAA+AAAAHAD/////AQAAAAEA","Widgets":[

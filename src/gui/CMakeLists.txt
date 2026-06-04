@@ -155,6 +155,7 @@ set(SOURCES
     dsp/skipsilencesettingswidget.cpp
     dsp/skipsilencesettingswidget.h
     editablelayout.cpp
+    editablelayout_p.h
     fylayout.cpp
     fywidget.cpp
     guiapplication.cpp
@@ -374,8 +375,12 @@ set(SOURCES
     settings/guitrackdisplaypage.h
     settings/guigeneralpage.cpp
     settings/guigeneralpage.h
+    settings/guilayoutpage.cpp
+    settings/guilayoutpage.h
     settings/guithemespage.cpp
     settings/guithemespage.h
+    settings/layouttreemodel.cpp
+    settings/layouttreemodel.h
     settings/library/librarygeneralpage.cpp
     settings/library/librarygeneralpage.h
     settings/library/librarymetadatapage.cpp

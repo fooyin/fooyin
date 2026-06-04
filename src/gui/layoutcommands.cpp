@@ -19,21 +19,32 @@
 
 #include "layoutcommands.h"
 
+#include "editablelayout_p.h"
 #include "widgets/dummy.h"
 
 #include <gui/editablelayout.h>
+#include <gui/layoutprovider.h>
 #include <gui/widgetcontainer.h>
 #include <gui/widgetprovider.h>
 
 #include <QJsonArray>
 
+#include <utility>
+
 namespace Fooyin {
+LayoutChangeCommand::LayoutChangeCommand(EditableLayout* layout)
+    : LayoutChangeCommand{layout, nullptr, nullptr}
+{ }
+
 LayoutChangeCommand::LayoutChangeCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container)
     : m_layout{layout}
     , m_provider{provider}
     , m_container{container}
-    , m_containerId{container->id()}
-{ }
+{
+    if(container) {
+        m_containerId = container->id();
+    }
+}
 
 bool LayoutChangeCommand::checkContainer()
 {
@@ -44,6 +55,23 @@ bool LayoutChangeCommand::checkContainer()
     }
 
     return m_container != nullptr;
+}
+
+SwitchLayoutCommand::SwitchLayoutCommand(EditableLayoutPrivate* editableLayout, FyLayout layout)
+    : LayoutChangeCommand{editableLayout->m_self}
+    , m_editableLayout{editableLayout}
+    , m_oldLayout{m_layout->saveCurrentToLayout(editableLayout->m_layoutProvider->currentLayout().name())}
+    , m_newLayout{std::move(layout)}
+{ }
+
+void SwitchLayoutCommand::undo()
+{
+    m_editableLayout->changeLayout(m_oldLayout);
+}
+
+void SwitchLayoutCommand::redo()
+{
+    m_editableLayout->changeLayout(m_newLayout);
 }
 
 AddWidgetCommand::AddWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container,
