@@ -21,7 +21,7 @@
 
 #include "settingsmodel.h"
 
-#include <modelutils.h>
+#include <utils/modelutils.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/settings/settingspage.h>
 #include <utils/utils.h>

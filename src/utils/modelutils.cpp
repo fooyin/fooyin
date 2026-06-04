@@ -17,7 +17,7 @@
  *
  */
 
-#include "modelutils.h"
+#include <utils/modelutils.h>
 
 #include <QAbstractItemModel>
 #include <QModelIndex>
