@@ -2836,7 +2836,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="172"/>
         <source>Discord</source>
-        <translation>Discord 通訊社群</translation>
+        <translation>Discord 社群</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="172"/>
@@ -13650,7 +13650,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="146"/>
         <source>Tagging</source>
-        <translation>訂標籤</translation>
+        <translation>標籤</translation>
     </message>
 </context>
 <context>
@@ -15543,7 +15543,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="113"/>
         <source>Tagging</source>
-        <translation>訂標籤</translation>
+        <translation>標籤</translation>
     </message>
 </context>
 <context>
