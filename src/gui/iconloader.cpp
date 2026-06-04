@@ -61,7 +61,11 @@ QIcon iconFromResourceTheme(const QString& theme, const QString& iconName)
     }
 
     const QString iconPath = u":/icons/%1/scalable/actions/%2.svg"_s.arg(theme, iconName);
-    const QIcon icon(iconPath);
+    if(!QFile::exists(iconPath)) {
+        return {};
+    }
+
+    const QIcon icon{iconPath};
     return icon.isNull() ? QIcon{} : icon;
 }
 
