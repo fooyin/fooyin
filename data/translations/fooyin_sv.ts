@@ -3942,7 +3942,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="426"/>
         <source>Determining operations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Bestämmer åtgärder…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="462"/>
@@ -3952,9 +3952,9 @@ Effects here process the final combined output.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="466"/>
         <source>Pending operation(s): %Ln</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Väntande åtgärd: %Ln</numerusform>
+            <numerusform>Väntande åtgärder: %Ln</numerusform>
         </translation>
     </message>
     <message>
@@ -3965,7 +3965,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="492"/>
         <source>File Operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Filåtgärd</translation>
     </message>
 </context>
 <context>
@@ -3973,7 +3973,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="174"/>
         <source>Operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Åtgärd</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="176"/>
@@ -4043,7 +4043,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="89"/>
         <source>Operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Åtgärd</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="91"/>
@@ -4102,7 +4102,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="82"/>
         <source>File Operations</source>
-        <translation type="unfinished"></translation>
+        <translation>Filåtgärder</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="83"/>
@@ -4112,7 +4112,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="100"/>
         <source>File operations</source>
-        <translation type="unfinished"></translation>
+        <translation>Filåtgärder</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="146"/>
@@ -7235,7 +7235,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="136"/>
         <source>Operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Åtgärd</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="144"/>
@@ -13963,12 +13963,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="278"/>
         <source>Append selected tracks to the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till valda spår i slutet av den aktuella spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="285"/>
         <source>Append selected tracks to the active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till valda spår i slutet av den aktiva spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="292"/>
