@@ -35,6 +35,7 @@ constexpr auto Next         = "media-skip-forward";
 constexpr auto Repeat       = "media-playlist-repeat";
 constexpr auto RepeatTrack  = "media-playlist-repeat-song";
 constexpr auto Shuffle      = "media-playlist-shuffle";
+constexpr auto RandomPlay   = "media-playlist-random-play";
 constexpr auto VolumeHigh   = "audio-volume-high";
 constexpr auto VolumeMed    = "audio-volume-medium";
 constexpr auto VolumeLow    = "audio-volume-low";
