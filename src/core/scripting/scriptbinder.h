@@ -49,6 +49,7 @@ struct FYCORE_EXPORT BoundExpression
 
 struct FYCORE_EXPORT BoundScript
 {
+    uint64_t registryGeneration{0};
     QString input;
     BoundExpressionList expressions;
     ErrorList errors;

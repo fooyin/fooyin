@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2026, Luke Taylor <luket@pm.me>
+ * Copyright © 2026, Piotr Wicijowski <piotr@wicijowski.pl>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,29 +19,18 @@
 
 #pragma once
 
-#include <QString>
+#include "fygui_export.h"
 
-#include <cstdint>
+#include <core/scripting/scriptproviders.h>
+
 #include <vector>
 
 namespace Fooyin {
-enum class ScriptReferenceKind : uint8_t
+class FYGUI_EXPORT ScriptVariableRegistry
 {
-    Variable = 0,
-    Function,
-    Formatting,
-    CommandAlias,
-};
+public:
+    void registerProvider(const ScriptVariableProvider& provider);
 
-struct ScriptReferenceEntry
-{
-    ScriptReferenceKind kind{ScriptReferenceKind::Variable};
-    QString label;
-    QString insertText;
-    QString category;
-    QString description;
-    int cursorOffset{0};
+    [[nodiscard]] std::vector<ScriptVariableDescriptor> variables() const;
 };
-
-std::vector<ScriptReferenceEntry> scriptReferenceEntries();
 } // namespace Fooyin

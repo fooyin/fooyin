@@ -1713,15 +1713,19 @@ ParsedScript ScriptParserPrivate::parseQuery(const QString& input)
 
 const BoundScript& ScriptParserPrivate::bind(const ParsedScript& input)
 {
-    BoundScriptCache& cache = m_isQuery ? m_boundQueryCache : m_boundScriptCache;
+    BoundScriptCache& cache           = m_isQuery ? m_boundQueryCache : m_boundScriptCache;
+    const uint64_t registryGeneration = m_registry->generation();
 
     if(input.cacheId != 0) {
         if(const BoundScript* cached = cache.find(input.cacheId); cached != nullptr) {
-            return *cached;
+            if(cached->registryGeneration == registryGeneration) {
+                return *cached;
+            }
         }
     }
 
-    BoundScript bound = bindScript(input, m_registry.get());
+    BoundScript bound        = bindScript(input, m_registry.get());
+    bound.registryGeneration = registryGeneration;
 
     if(input.cacheId == 0) {
         m_currentBoundScript = std::move(bound);
@@ -2020,6 +2024,16 @@ ScriptParser::ScriptParser()
 void ScriptParser::addProvider(const ScriptVariableProvider& provider)
 {
     p->m_registry->addProvider(provider);
+}
+
+void ScriptParser::addGlobalProvider(const ScriptVariableProvider& provider)
+{
+    ScriptRegistry::addGlobalProvider(provider);
+}
+
+std::vector<ScriptVariableDescriptor> ScriptParser::globalVariables()
+{
+    return ScriptRegistry::globalVariables();
 }
 
 void ScriptParser::addProvider(const ScriptFunctionProvider& provider)

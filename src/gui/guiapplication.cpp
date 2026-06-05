@@ -47,7 +47,7 @@
 #include "statusevent.h"
 #include "systemtrayicon.h"
 #include "widgets.h"
-#include <gui/playlist/currentplaylistcontroller.h>
+#include <gui/playlist/playlistviewrefresher.h>
 
 #include <core/application.h>
 #include <core/corepaths.h>
@@ -78,6 +78,7 @@
 #include <gui/plugins/pluginconfigguiplugin.h>
 #include <gui/propertiesdialog.h>
 #include <gui/scripting/scripteditor.h>
+#include <gui/scripting/scriptvariableregistry.h>
 #include <gui/theme/fytheme.h>
 #include <gui/theme/themeregistry.h>
 #include <gui/trackselectioncontroller.h>
@@ -268,6 +269,7 @@ public:
 
     PropertiesDialog* m_propertiesDialog;
     std::unique_ptr<ScriptCommandHandler> m_scriptCommandHandler;
+    ScriptVariableRegistry m_scriptVariableRegistry;
     WindowController* m_windowController;
     ThemeRegistry* m_themeRegistry;
     std::unique_ptr<AdvancedSettingsRegistry> m_advancedSettingsRegistry;
@@ -330,8 +332,10 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
                          &m_selectionController,
                          m_searchController,
                          m_playlistController.get(),
+                         m_playlistController.get(),
                          m_propertiesDialog,
                          m_scriptCommandHandler.get(),
+                         &m_scriptVariableRegistry,
                          &m_widgetProvider,
                          m_editableLayout.get(),
                          m_windowController,

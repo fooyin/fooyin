@@ -42,6 +42,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/plugins/plugin.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/expression.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptparser.h
+    ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptproviders.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptenvironmenthelpers.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scripttrackwriter.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scripttypes.h

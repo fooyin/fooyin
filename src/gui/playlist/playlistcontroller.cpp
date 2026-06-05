@@ -292,6 +292,39 @@ void PlaylistController::setClipboard(const TrackList& tracks)
     Q_EMIT clipboardChanged();
 }
 
+void PlaylistController::refreshPlaylist(const UId& playlistId)
+{
+    auto* playlist = m_workspace->currentPlaylist();
+    if(playlist == nullptr || playlist->id() != playlistId) {
+        return;
+    }
+
+    Q_EMIT currentPlaylistUpdated(playlist);
+}
+
+void PlaylistController::refreshEntries(const UId& playlistId, std::span<const UId> entryIds)
+{
+    auto* playlist = m_workspace->currentPlaylist();
+    if(playlist == nullptr || playlist->id() != playlistId || entryIds.empty()) {
+        return;
+    }
+
+    std::set<int> uniqueIndexes;
+    for(const UId& entryId : entryIds) {
+        const int index = playlist->indexOfTrackEntry(entryId);
+        if(index >= 0) {
+            uniqueIndexes.emplace(index);
+        }
+    }
+
+    if(uniqueIndexes.empty()) {
+        return;
+    }
+
+    const std::vector<int> indexes{uniqueIndexes.cbegin(), uniqueIndexes.cend()};
+    Q_EMIT currentPlaylistTracksUpdated(indexes);
+}
+
 void PlaylistController::handleTrackSelectionAction(TrackAction action)
 {
     if(action == TrackAction::SendCurrentPlaylist && m_workspace->currentPlaylist()) {
