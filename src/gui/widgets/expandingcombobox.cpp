@@ -43,7 +43,7 @@ void ExpandingComboBox::setResizeToCurrentEnabled(bool enabled)
         resizeToFitCurrent();
     }
     else {
-        setMinimumSize({});
+        setMinimumSize(0, 0);
     }
 }
 
