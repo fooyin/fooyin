@@ -130,8 +130,11 @@ private:
     void onChangeLayout();
     void onSelectionChanged();
     void onCustomMarginsChanged(bool enabled);
+    void onCustomSplitterSpacingChanged(bool enabled);
     void updateMarginControls();
+    void updateSplitterControls();
     void updateModelMargins();
+    void updateModelSplitterSpacing();
     void updateButtonStates();
     void moveSelectionUp();
     void moveSelectionDown();
@@ -155,12 +158,16 @@ private:
     QSpinBox* m_topMargin;
     QSpinBox* m_rightMargin;
     QSpinBox* m_bottomMargin;
+    QGroupBox* m_splitterGroup;
+    QCheckBox* m_customSplitterSpacing;
+    QSpinBox* m_splitterSpacing;
 
     QComboBox* m_layoutCombo;
     QPushButton* m_deleteLayout;
     QJsonObject m_clipboardItem;
     bool m_loading{false};
     bool m_updatingMargins{false};
+    bool m_updatingSplitterSpacing{false};
 };
 
 GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, EditableLayout* editableLayout,
@@ -176,6 +183,9 @@ GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, Editabl
     , m_topMargin{new QSpinBox(this)}
     , m_rightMargin{new QSpinBox(this)}
     , m_bottomMargin{new QSpinBox(this)}
+    , m_splitterGroup{new QGroupBox(tr("Splitter"), this)}
+    , m_customSplitterSpacing{new QCheckBox(tr("Use custom spacing"), this)}
+    , m_splitterSpacing{new QSpinBox(this)}
     , m_layoutCombo{new QComboBox(this)}
     , m_deleteLayout{new QPushButton(this)}
 {
@@ -187,18 +197,27 @@ GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, Editabl
         spinBox->setSuffix(u" px"_s);
     }
 
+    m_splitterSpacing->setRange(0, 999);
+    m_splitterSpacing->setSuffix(u" px"_s);
+
     auto* marginsLayout = new QGridLayout(m_marginsGroup);
 
     int row{0};
     marginsLayout->addWidget(m_customMargins, row++, 0, 1, 4);
-    marginsLayout->addWidget(new QLabel(tr("Left"), m_marginsGroup), row, 0);
+    marginsLayout->addWidget(new QLabel(tr("Left") + u":"_s, m_marginsGroup), row, 0);
     marginsLayout->addWidget(m_leftMargin, row, 1);
-    marginsLayout->addWidget(new QLabel(tr("Top"), m_marginsGroup), row, 2);
+    marginsLayout->addWidget(new QLabel(tr("Top") + u":"_s, m_marginsGroup), row, 2);
     marginsLayout->addWidget(m_topMargin, row++, 3);
-    marginsLayout->addWidget(new QLabel(tr("Right"), m_marginsGroup), row, 0);
+    marginsLayout->addWidget(new QLabel(tr("Right") + u":"_s, m_marginsGroup), row, 0);
     marginsLayout->addWidget(m_rightMargin, row, 1);
-    marginsLayout->addWidget(new QLabel(tr("Bottom"), m_marginsGroup), row, 2);
+    marginsLayout->addWidget(new QLabel(tr("Bottom") + u":"_s, m_marginsGroup), row, 2);
     marginsLayout->addWidget(m_bottomMargin, row++, 3);
+
+    auto* splitterLayout = new QGridLayout(m_splitterGroup);
+    splitterLayout->addWidget(m_customSplitterSpacing, 0, 0, 1, 3);
+    splitterLayout->addWidget(new QLabel(tr("Spacing") + u":"_s, m_splitterGroup), 1, 0);
+    splitterLayout->addWidget(m_splitterSpacing, 1, 1);
+    splitterLayout->setColumnStretch(2, 1);
 
     auto* newLayout       = new QPushButton(tr("New"), this);
     auto* renameLayout    = new QPushButton(tr("Rename"), this);
@@ -214,10 +233,11 @@ GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, Editabl
 
     auto* layout = new QGridLayout(this);
     layout->addLayout(topBarLayout, 0, 0, 1, 2);
-    layout->addWidget(m_layoutTree, 1, 0);
+    layout->addWidget(m_layoutTree, 1, 0, 2, 1);
     layout->addWidget(m_marginsGroup, 1, 1, Qt::AlignTop);
+    layout->addWidget(m_splitterGroup, 2, 1, Qt::AlignTop);
     layout->setColumnStretch(0, 1);
-    layout->setRowStretch(1, 1);
+    layout->setRowStretch(2, 1);
 
     m_layoutTree->setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(m_layoutTree, &QWidget::customContextMenuRequested, this,
@@ -238,8 +258,13 @@ GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, Editabl
         QObject::connect(spinBox, &QSpinBox::valueChanged, this, &GuiLayoutPageWidget::updateModelMargins);
     }
     QObject::connect(m_customMargins, &QCheckBox::toggled, this, &GuiLayoutPageWidget::onCustomMarginsChanged);
+    QObject::connect(m_splitterSpacing, &QSpinBox::valueChanged, this,
+                     &GuiLayoutPageWidget::updateModelSplitterSpacing);
+    QObject::connect(m_customSplitterSpacing, &QCheckBox::toggled, this,
+                     &GuiLayoutPageWidget::onCustomSplitterSpacingChanged);
 
     updateMarginControls();
+    updateSplitterControls();
 }
 
 void GuiLayoutPageWidget::load()
@@ -274,6 +299,7 @@ void GuiLayoutPageWidget::load()
     m_model->populate(m_layoutProvider->currentLayout());
     m_layoutTree->setEnabled(idx >= 0);
     updateMarginControls();
+    updateSplitterControls();
     updateButtonStates();
 
     m_loading = false;
@@ -357,11 +383,13 @@ void GuiLayoutPageWidget::onChangeLayout()
     m_layoutTree->setEnabled(layout.isValid());
     updateButtonStates();
     updateMarginControls();
+    updateSplitterControls();
 }
 
 void GuiLayoutPageWidget::onSelectionChanged()
 {
     updateMarginControls();
+    updateSplitterControls();
 }
 
 void GuiLayoutPageWidget::onCustomMarginsChanged(bool enabled)
@@ -378,6 +406,22 @@ void GuiLayoutPageWidget::onCustomMarginsChanged(bool enabled)
     }
 
     updateMarginControls();
+}
+
+void GuiLayoutPageWidget::onCustomSplitterSpacingChanged(bool enabled)
+{
+    if(m_updatingSplitterSpacing) {
+        return;
+    }
+
+    if(enabled) {
+        updateModelSplitterSpacing();
+    }
+    else {
+        m_model->clearSplitterSpacing(m_layoutTree->currentIndex());
+    }
+
+    updateSplitterControls();
 }
 
 void GuiLayoutPageWidget::updateMarginControls()
@@ -401,6 +445,22 @@ void GuiLayoutPageWidget::updateMarginControls()
     }
 }
 
+void GuiLayoutPageWidget::updateSplitterControls()
+{
+    const QModelIndex index = m_layoutTree->currentIndex();
+    const bool custom       = m_model->hasCustomSplitterSpacing(index);
+
+    m_updatingSplitterSpacing = true;
+    m_customSplitterSpacing->setChecked(custom);
+    m_splitterSpacing->setValue(m_model->splitterSpacing(index));
+    m_updatingSplitterSpacing = false;
+
+    const bool enabled = m_model->hasConfigurableSplitterSpacing(index);
+
+    m_splitterGroup->setVisible(enabled);
+    m_splitterSpacing->setEnabled(enabled && custom);
+}
+
 void GuiLayoutPageWidget::updateModelMargins()
 {
     if(m_updatingMargins || !m_customMargins->isChecked()) {
@@ -409,6 +469,15 @@ void GuiLayoutPageWidget::updateModelMargins()
 
     m_model->setMargins(m_layoutTree->currentIndex(),
                         {m_leftMargin->value(), m_topMargin->value(), m_rightMargin->value(), m_bottomMargin->value()});
+}
+
+void GuiLayoutPageWidget::updateModelSplitterSpacing()
+{
+    if(m_updatingSplitterSpacing || !m_customSplitterSpacing->isChecked()) {
+        return;
+    }
+
+    m_model->setSplitterSpacing(m_layoutTree->currentIndex(), m_splitterSpacing->value());
 }
 
 void GuiLayoutPageWidget::updateButtonStates()

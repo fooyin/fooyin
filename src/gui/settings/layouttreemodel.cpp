@@ -400,6 +400,75 @@ void LayoutTreeModel::clearMargins(const QModelIndex& index)
     Q_EMIT dataChanged(index, index, {Qt::FontRole});
 }
 
+bool LayoutTreeModel::hasConfigurableSplitterSpacing(const QModelIndex& index) const
+{
+    if(!index.isValid() || !checkIndex(index, CheckIndexOption::IndexIsValid)) {
+        return false;
+    }
+
+    return isSplitter(itemForIndex(index));
+}
+
+bool LayoutTreeModel::hasCustomSplitterSpacing(const QModelIndex& index) const
+{
+    if(!index.isValid() || !checkIndex(index, CheckIndexOption::IndexIsValid)) {
+        return false;
+    }
+
+    auto* item = itemForIndex(index);
+    return item && item->data().contains("Spacing"_L1);
+}
+
+int LayoutTreeModel::splitterSpacing(const QModelIndex& index) const
+{
+    if(!index.isValid() || !checkIndex(index, CheckIndexOption::IndexIsValid)) {
+        return 0;
+    }
+
+    auto* item = itemForIndex(index);
+    if(!item) {
+        return 0;
+    }
+
+    return item->data().value("Spacing"_L1).toInt();
+}
+
+void LayoutTreeModel::setSplitterSpacing(const QModelIndex& index, int spacing)
+{
+    if(!index.isValid() || !checkIndex(index, CheckIndexOption::IndexIsValid)) {
+        return;
+    }
+
+    auto* item = itemForIndex(index);
+    if(!item || !hasConfigurableSplitterSpacing(index)) {
+        return;
+    }
+
+    QJsonObject data   = item->data();
+    data["Spacing"_L1] = spacing;
+    item->setData(data);
+    item->setStatus(LayoutItem::Changed);
+    Q_EMIT dataChanged(index, index, {Qt::FontRole});
+}
+
+void LayoutTreeModel::clearSplitterSpacing(const QModelIndex& index)
+{
+    if(!index.isValid() || !checkIndex(index, CheckIndexOption::IndexIsValid)) {
+        return;
+    }
+
+    auto* item = itemForIndex(index);
+    if(!item || !hasConfigurableSplitterSpacing(index)) {
+        return;
+    }
+
+    QJsonObject data = item->data();
+    data.remove("Spacing"_L1);
+    item->setData(data);
+    item->setStatus(LayoutItem::Changed);
+    Q_EMIT dataChanged(index, index, {Qt::FontRole});
+}
+
 QVariant LayoutTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if(role == Qt::TextAlignmentRole) {

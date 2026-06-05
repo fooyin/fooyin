@@ -85,6 +85,11 @@ public:
     [[nodiscard]] QMargins margins(const QModelIndex& index) const;
     void setMargins(const QModelIndex& index, const QMargins& margins);
     void clearMargins(const QModelIndex& index);
+    [[nodiscard]] bool hasConfigurableSplitterSpacing(const QModelIndex& index) const;
+    [[nodiscard]] bool hasCustomSplitterSpacing(const QModelIndex& index) const;
+    [[nodiscard]] int splitterSpacing(const QModelIndex& index) const;
+    void setSplitterSpacing(const QModelIndex& index, int spacing);
+    void clearSplitterSpacing(const QModelIndex& index);
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;

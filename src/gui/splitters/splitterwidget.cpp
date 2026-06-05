@@ -161,6 +161,9 @@ public:
         setChildrenCollapsible(false);
     }
 
+    void setCustomHandleSize(int size);
+    void clearCustomHandleSize();
+
 protected:
     QSplitterHandle* createHandle() override
     {
@@ -168,11 +171,12 @@ protected:
 
         handle->showHandle(m_settings->value<Settings::Gui::ShowSplitterHandles>());
         handle->setHandleLocked(m_settings->value<Settings::Gui::LockSplitterHandles>());
-        handle->setHandleSize(m_settings->value<Settings::Gui::SplitterHandleSize>());
+        handle->setHandleSize(effectiveHandleSize());
 
         m_settings->subscribe<Settings::Gui::ShowSplitterHandles>(handle, &SplitterHandle::showHandle);
         m_settings->subscribe<Settings::Gui::LockSplitterHandles>(handle, &SplitterHandle::setHandleLocked);
-        m_settings->subscribe<Settings::Gui::SplitterHandleSize>(handle, &SplitterHandle::setHandleSize);
+        m_settings->subscribe<Settings::Gui::SplitterHandleSize>(
+            handle, [this, handle]() { handle->setHandleSize(effectiveHandleSize()); });
         m_settings->subscribe<Settings::Gui::LayoutEditing>(handle, [this, handle](const bool enabled) {
             handle->showHandle(enabled || m_settings->value<Settings::Gui::ShowSplitterHandles>());
             handle->setHandleLocked(!enabled && m_settings->value<Settings::Gui::LockSplitterHandles>());
@@ -182,13 +186,44 @@ protected:
     };
 
 private:
+    [[nodiscard]] int effectiveHandleSize() const;
+    void updateHandleSizes();
+
     SettingsManager* m_settings;
+    int m_customHandleSize{-1};
 };
+
+void Splitter::setCustomHandleSize(int size)
+{
+    m_customHandleSize = size;
+    updateHandleSizes();
+}
+
+void Splitter::clearCustomHandleSize()
+{
+    m_customHandleSize = -1;
+    updateHandleSizes();
+}
+
+int Splitter::effectiveHandleSize() const
+{
+    return m_customHandleSize >= 0 ? m_customHandleSize : m_settings->value<Settings::Gui::SplitterHandleSize>();
+}
+
+void Splitter::updateHandleSizes()
+{
+    for(int i{1}; i < count(); ++i) {
+        if(auto* splitterHandle = qobject_cast<SplitterHandle*>(handle(i))) {
+            splitterHandle->setHandleSize(effectiveHandleSize());
+        }
+    }
+}
 
 SplitterWidget::SplitterWidget(WidgetProvider* widgetProvider, SettingsManager* settings, QWidget* parent)
     : WidgetContainer{widgetProvider, settings, parent}
     , m_settings{settings}
     , m_splitter{new Splitter(Qt::Vertical, settings, this)}
+    , m_customSpacing{-1}
 {
     setObjectName(SplitterWidget::name());
 
@@ -390,6 +425,10 @@ void SplitterWidget::saveLayoutData(QJsonObject& layout)
 {
     layout["State"_L1] = QString::fromUtf8(saveState().toBase64());
 
+    if(m_customSpacing >= 0) {
+        layout["Spacing"_L1] = m_customSpacing;
+    }
+
     if(!m_widgets.empty()) {
         QJsonArray children;
         for(const auto& widget : m_widgets) {
@@ -401,6 +440,13 @@ void SplitterWidget::saveLayoutData(QJsonObject& layout)
 
 void SplitterWidget::loadLayoutData(const QJsonObject& layout)
 {
+    m_customSpacing = -1;
+    m_splitter->clearCustomHandleSize();
+    if(layout.contains("Spacing"_L1)) {
+        m_customSpacing = layout.value("Spacing"_L1).toInt();
+        m_splitter->setCustomHandleSize(m_customSpacing);
+    }
+
     if(layout.contains("Widgets"_L1)) {
         const auto children = layout.value("Widgets"_L1).toArray();
         WidgetContainer::loadWidgets(children);

@@ -69,6 +69,7 @@ private:
 
     Splitter* m_splitter;
     WidgetList m_widgets;
+    int m_customSpacing;
 };
 
 class VerticalSplitterWidget : public SplitterWidget
