@@ -60,7 +60,7 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     showLog->setStatusTip(tr("Open the log dialog"));
     auto* showLogCmd = m_actionManager->registerAction(showLog, Constants::Actions::Log);
     showLogCmd->setCategories(viewCategory);
-    viewMenu->addAction(showLogCmd);
+    viewMenu->addAction(showLogCmd, Actions::Groups::One);
     QObject::connect(showLog, &QAction::triggered, this, &ViewMenu::openLog);
 
     auto* showEditor = new QAction(tr("&Script editor"), this);
@@ -68,7 +68,7 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     showEditor->setStatusTip(tr("Open the script editor dialog"));
     auto* showEditorCmd = m_actionManager->registerAction(showEditor, Constants::Actions::ScriptEditor);
     showEditorCmd->setCategories(viewCategory);
-    viewMenu->addAction(showEditorCmd);
+    viewMenu->addAction(showEditorCmd, Actions::Groups::One);
     QObject::connect(showEditor, &QAction::triggered, this, &ViewMenu::openScriptEditor);
 
     auto* showPlaylistManager = new QAction(tr("&Playlist Manager"), this);
@@ -86,21 +86,21 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     viewMenu->addAction(showPlaybackQueueCmd);
     QObject::connect(showPlaybackQueue, &QAction::triggered, this, &ViewMenu::openPlaybackQueue);
 
-    auto* separator   = viewMenu->addSeparator();
+    auto* separator   = viewMenu->addSeparator(Actions::Groups::Three);
     m_dspInsertBefore = separator->action();
 
     auto* focusSearchBar = new QAction(tr("Focus Search &Bar"), this);
     focusSearchBar->setStatusTip(tr("Focus the first Search Bar found in the current layout"));
     auto* focusSearchBarCmd = m_actionManager->registerAction(focusSearchBar, Constants::Actions::FocusSearchBar);
     focusSearchBarCmd->setCategories(viewCategory);
-    viewMenu->addAction(focusSearchBarCmd);
+    viewMenu->addAction(focusSearchBarCmd, Actions::Groups::Three);
     QObject::connect(focusSearchBar, &QAction::triggered, this, &ViewMenu::focusSearchBar);
 
     auto* showNowPlaying = new QAction(tr("Show playing &track"), this);
     showNowPlaying->setStatusTip(tr("Show the currently playing track in the playlist"));
     auto* showNowPlayingCmd = m_actionManager->registerAction(showNowPlaying, Constants::Actions::ShowNowPlaying);
     showNowPlayingCmd->setCategories(viewCategory);
-    viewMenu->addAction(showNowPlayingCmd);
+    viewMenu->addAction(showNowPlayingCmd, Actions::Groups::Three);
     QObject::connect(showNowPlaying, &QAction::triggered, this, &ViewMenu::showNowPlaying);
 }
 
