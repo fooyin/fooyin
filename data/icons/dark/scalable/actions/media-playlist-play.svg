@@ -1,0 +1,8 @@
+<svg height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg">
+    <g fill="#bebebe" transform="translate(-1.7)">
+        <rect height="5" rx="2.5" width="23" x="5" y="9"/>
+        <rect height="5" rx="2.5" width="23" x="5" y="21.5"/>
+        <rect height="5" rx="2.5" width="17" x="5" y="34"/>
+        <path d="m31.2 15.7q-.9-.6-1.6-.4-.7.2-.7 1.1v20.9q0 .9.7 1.1.7.2 1.6-.4l14.5-9.5q1.4-.9 0-1.9z"/>
+    </g>
+</svg>

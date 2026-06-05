@@ -1,0 +1,9 @@
+<svg height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg">
+    <g fill="#bebebe">
+        <path d="m16 8h4v25h-4z"/>
+        <path d="m34 12h4v25h-4z"/>
+        <path d="m18 8 20 4v6l-20-4z"/>
+        <ellipse cx="12" cy="35" rx="8" ry="5.5"/>
+        <ellipse cx="30" cy="39" rx="8" ry="5.5"/>
+    </g>
+</svg>
