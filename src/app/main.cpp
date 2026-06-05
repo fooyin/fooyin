@@ -29,13 +29,17 @@
 #include <kdsingleapplication.h>
 
 #include <QApplication>
+#include <QDir>
 #include <QLoggingCategory>
+
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
 
 using namespace Qt::StringLiterals;
 
 namespace {
 #ifdef Q_OS_WIN
-#include <windows.h>
 void configurePluginSearchPaths()
 {
     SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
