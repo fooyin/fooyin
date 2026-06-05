@@ -39,6 +39,12 @@ bool ExpandingComboBox::resizeToCurrentEnabled() const
 void ExpandingComboBox::setResizeToCurrentEnabled(bool enabled)
 {
     m_resizeToCurrentEnabled = enabled;
+    if(enabled) {
+        resizeToFitCurrent();
+    }
+    else {
+        setMinimumSize({});
+    }
 }
 
 void ExpandingComboBox::resizeToFitCurrent()
