@@ -98,6 +98,7 @@ private:
     void updateExtractedArchiveTracks(const QString& archivePath);
     void handleEmptyDirs(const QDir& dir, const QString& filepath);
     void addEmptyDirs(const QDir& dir);
+    void removeEmptyFoldersUpToLibraryRoot(const QString& filePath);
 
     MusicLibrary* m_library;
     std::shared_ptr<AudioLoader> m_audioLoader;

@@ -170,11 +170,7 @@ void FileOpsWorker::deleteFiles()
 
         const bool deleteEmptyFolders = m_settings->fileValue(Settings::DeleteEmptyFolders, false).toBool();
         if(deleteEmptyFolders) {
-            const QFileInfo fileInfo{filepath};
-            QDir folder = fileInfo.absoluteDir();
-            if(folder.exists() && folder.isEmpty()) {
-                folder.removeRecursively();
-            }
+            removeEmptyFoldersUpToLibraryRoot(filepath);
         }
 
         if(m_trackPaths.contains(filepath)) {
@@ -718,11 +714,7 @@ bool FileOpsWorker::removeArchive(const FileOpsItem& item)
 
     const bool deleteEmptyFolders = m_settings->fileValue(Settings::DeleteEmptyFolders, false).toBool();
     if(deleteEmptyFolders) {
-        const QFileInfo fileInfo{item.archivePath};
-        QDir folder = fileInfo.absoluteDir();
-        if(folder.exists() && folder.isEmpty()) {
-            folder.removeRecursively();
-        }
+        removeEmptyFoldersUpToLibraryRoot(item.archivePath);
     }
 
     updateExtractedArchiveTracks(item.archivePath);
@@ -847,6 +839,45 @@ void FileOpsWorker::addEmptyDirs(const QDir& dir)
 
     if(!dirToRemove.isEmpty()) {
         removeDir(dirToRemove);
+    }
+}
+
+void FileOpsWorker::removeEmptyFoldersUpToLibraryRoot(const QString& filePath)
+{
+    // Get library info for the file's directory
+    const QFileInfo fileInfo{filePath};
+    const QString fileDir  = fileInfo.absolutePath();
+    const auto libraryInfo = m_library->libraryForPath(fileDir);
+
+    if(!libraryInfo.has_value()) {
+        // Not in a library, only delete the immediate parent if empty
+        QDir folder = fileInfo.absoluteDir();
+        if(folder.exists() && folder.isEmpty()) {
+            folder.removeRecursively();
+        }
+        return;
+    }
+
+    // Get the library root path and normalize it
+    const QString libraryRoot = QDir::cleanPath(QFileInfo{libraryInfo->path}.absoluteFilePath());
+
+    // Start from the file's parent directory and traverse upwards
+    QDir currentDir = fileInfo.absoluteDir();
+
+    while(currentDir.absolutePath() != libraryRoot && currentDir.exists()) {
+        if(currentDir.isEmpty()) {
+            const QString currentPath = currentDir.absolutePath();
+            if(!currentDir.removeRecursively()) {
+                break;
+            }
+            if(!currentDir.cdUp()) {
+                break;
+            }
+        }
+        else {
+            // Non-empty folder encountered, stop traversal
+            break;
+        }
     }
 }
 } // namespace Fooyin::FileOps
