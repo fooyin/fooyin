@@ -79,7 +79,6 @@ constexpr auto DecodeWatermarkMinHeadroomMs = 20;
 constexpr auto DecodeWatermarkMinGapMs      = 30;
 constexpr auto PrefillSafetyMarginMs        = 100;
 constexpr auto AudiblePauseDrainPollMs      = 10;
-constexpr auto AudiblePauseDrainThresholdMs = 5;
 constexpr auto AudiblePauseWatchdogMinMs    = 250;
 constexpr auto AudiblePauseWatchdogMaxMs    = 1500;
 constexpr auto AudiblePauseWatchdogMarginMs = 100;
@@ -222,12 +221,12 @@ bool audiblePauseDrainComplete(const Fooyin::AudioPipeline::OutputQueueSnapshot&
     const int outputRate      = outputFormat.sampleRate();
 
     if(outputRate <= 0) {
-        return queuedFrames == 0 && delaySeconds <= (static_cast<double>(AudiblePauseDrainThresholdMs) / 1000.0);
+        return queuedFrames == 0 && delaySeconds <= (static_cast<double>(AudiblePauseWatchdogMarginMs) / 1000.0);
     }
 
     const int delayFrames = std::max(0, static_cast<int>(std::llround(delaySeconds * outputRate)));
     const int thresholdFrames
-        = std::max(1, static_cast<int>((static_cast<int64_t>(outputRate) * AudiblePauseDrainThresholdMs) / 1000));
+        = std::max(1, static_cast<int>((static_cast<int64_t>(outputRate) * AudiblePauseWatchdogMarginMs) / 1000));
 
     return std::max(queuedFrames, delayFrames) <= thresholdFrames;
 }
