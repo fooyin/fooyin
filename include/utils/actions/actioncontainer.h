@@ -91,8 +91,10 @@ public:
     [[nodiscard]] virtual QAction* containerAction() const = 0;
     virtual QAction* actionForItem(QObject* item) const;
 
-    virtual void insertAction(QAction* beforeAction, QAction* action)          = 0;
-    virtual void insertAction(QAction* beforeAction, Command* action)          = 0;
+    virtual void insertAction(QAction* beforeAction, QAction* action) = 0;
+    virtual void insertAction(QAction* beforeAction, Command* action) = 0;
+    virtual void insertAction(const Id& beforeAction, QAction* action);
+    virtual void insertAction(const Id& beforeAction, Command* action);
     virtual void insertMenu(QAction* beforeAction, ActionContainer* container) = 0;
 
     [[nodiscard]] virtual DisabledBehavior disabledBehavior() const;

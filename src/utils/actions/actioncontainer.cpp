@@ -49,6 +49,7 @@ public:
     [[nodiscard]] GroupIterator findGroup(const Id& groupId) const;
     [[nodiscard]] ActionContainer* findContainer(const Id& id) const;
     [[nodiscard]] QAction* determineInsertionLocation(GroupIterator group) const;
+    [[nodiscard]] QAction* insertItemBeforeAction(const Id& beforeAction, QObject* item);
 
     ActionContainer* m_self;
     ActionManager* m_manager;
@@ -94,6 +95,32 @@ QAction* ActionContainerPrivate::determineInsertionLocation(GroupIterator group)
         }
         ++group;
     }
+    return nullptr;
+}
+
+QAction* ActionContainerPrivate::insertItemBeforeAction(const Id& beforeAction, QObject* item)
+{
+    if(!beforeAction.isValid() || !item) {
+        return nullptr;
+    }
+
+    for(ActionContainer::Group& group : m_groups) {
+        const auto insertionPoint = std::ranges::find_if(group.items, [&beforeAction](QObject* groupItem) {
+            const auto* command = qobject_cast<Command*>(groupItem);
+            return command && command->id() == beforeAction;
+        });
+
+        if(insertionPoint != group.items.cend()) {
+            QAction* before = m_self->actionForItem(*insertionPoint);
+            if(!before) {
+                return nullptr;
+            }
+            group.items.insert(insertionPoint, item);
+            return before;
+        }
+    }
+
+    qCWarning(ACTIONS) << "Can't find action" << beforeAction.name() << "in container" << m_id.name();
     return nullptr;
 }
 
@@ -226,6 +253,37 @@ void ActionContainer::addAction(Command* action, const Id& group)
 
     QAction* beforeAction = p->determineInsertionLocation(groupIt);
     insertAction(beforeAction, action);
+}
+
+void ActionContainer::insertAction(const Id& beforeAction, QAction* action)
+{
+    if(!action) {
+        return;
+    }
+
+    QAction* before = p->insertItemBeforeAction(beforeAction, action);
+    if(!before) {
+        return;
+    }
+
+    QObject::connect(action, &QObject::destroyed, p.get(), &ActionContainerPrivate::itemDestroyed);
+    insertAction(before, action);
+}
+
+void ActionContainer::insertAction(const Id& beforeAction, Command* action)
+{
+    if(!canAddAction(action)) {
+        return;
+    }
+
+    QAction* before = p->insertItemBeforeAction(beforeAction, action);
+    if(!before) {
+        return;
+    }
+
+    QObject::connect(action, &Command::activeStateChanged, this, [this]() { Q_EMIT requestUpdate(this); });
+    QObject::connect(action, &QObject::destroyed, p.get(), &ActionContainerPrivate::itemDestroyed);
+    insertAction(before, action);
 }
 
 void ActionContainer::addMenu(ActionContainer* menu, const Id& group)

@@ -37,6 +37,7 @@ public:
 
     [[nodiscard]] QAction* containerAction() const override;
 
+    using ActionContainer::insertAction;
     void insertAction(QAction* beforeAction, QAction* action) override;
     void insertAction(QAction* beforeAction, Command* action) override;
     void insertMenu(QAction* beforeAction, ActionContainer* container) override;
@@ -66,6 +67,7 @@ public:
 
     [[nodiscard]] QAction* containerAction() const override;
 
+    using ActionContainer::insertAction;
     void insertAction(QAction* beforeAction, QAction* action) override;
     void insertAction(QAction* beforeAction, Command* action) override;
     void insertMenu(QAction* beforeAction, ActionContainer* container) override;
