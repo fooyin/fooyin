@@ -177,7 +177,7 @@ public:
     float m_barSpacing{1};
     int m_barSections{1};
     float m_sectionSpacing{1};
-    qint64 m_peakHoldTimeMs{1500};
+    qint64 m_peakHoldTimeMs{500};
     float m_falloffPerMs{13.0F / 1000.0F};
     float m_peakFalloffPerMs{13.0F / 1000.0F};
 

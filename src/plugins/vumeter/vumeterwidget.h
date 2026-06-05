@@ -69,7 +69,7 @@ public:
 
     struct ConfigData
     {
-        int peakHoldTimeMs{1500};
+        int peakHoldTimeMs{500};
         int falloffTime{13};
         int peakFalloffTime{13};
         bool showPeaks{false};
