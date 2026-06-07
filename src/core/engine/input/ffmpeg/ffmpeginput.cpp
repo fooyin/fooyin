@@ -839,8 +839,7 @@ int ffRead(void* data, uint8_t* buffer, int size)
     }
 
     while(true) {
-        QByteArray temp(size, Qt::Uninitialized);
-        const auto sizeRead = device->read(temp.data(), size);
+        const auto sizeRead = device->read(reinterpret_cast<char*>(buffer), size);
         if(sizeRead < 0) {
             if(remoteDevice && remoteDevice->readWouldBlock()) {
                 const auto* deadline = ioContext->openProbeDeadline;
@@ -855,7 +854,6 @@ int ffRead(void* data, uint8_t* buffer, int size)
             return AVERROR_EOF;
         }
 
-        std::memcpy(buffer, temp.constData(), sizeRead);
         return static_cast<int>(sizeRead);
     }
 }
