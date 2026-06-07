@@ -42,9 +42,7 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    void updateButton();
     void updateButtonIcon();
-    void updateButtonStyle() const;
     void scrobblingToggled(bool enabled);
 
     ActionManager* m_actionManager;

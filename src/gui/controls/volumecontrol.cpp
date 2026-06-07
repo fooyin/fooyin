@@ -58,7 +58,6 @@ public:
 
     void changeDisplay(VolumeControl::Options options, bool init = false);
 
-    void updateButtonStyle() const;
     void showVolumeMenu() const;
     void volumeChanged(double volume) const;
     void updateDisplay(double volume) const;
@@ -122,7 +121,7 @@ void VolumeControlPrivate::changeDisplay(VolumeControl::Options options, bool in
     }
 
     if(options & VolumeControl::IconMode) {
-        m_volumeIcon = new ToolButton(m_self);
+        m_volumeIcon = new ToolButton(m_settings, m_self);
         if(auto* muteCmd = m_actionManager->command(Constants::Actions::Mute)) {
             m_volumeIcon->setDefaultAction(muteCmd->action());
         }
@@ -143,7 +142,6 @@ void VolumeControlPrivate::changeDisplay(VolumeControl::Options options, bool in
 
         m_layout->addWidget(m_volumeIcon);
         updateDisplay(m_settings->value<Settings::Core::OutputVolume>());
-        updateButtonStyle();
     }
 
     if(options & VolumeControl::Tooltip) {
@@ -155,19 +153,6 @@ void VolumeControlPrivate::changeDisplay(VolumeControl::Options options, bool in
             }
         });
     }
-}
-
-void VolumeControlPrivate::updateButtonStyle() const
-{
-    if(!m_volumeIcon) {
-        return;
-    }
-
-    const auto options
-        = static_cast<Settings::Gui::ToolButtonOptions>(m_settings->value<Settings::Gui::ToolButtonStyle>());
-
-    m_volumeIcon->setStretchEnabled(options & Settings::Gui::Stretch);
-    m_volumeIcon->setAutoRaise(!(options & Settings::Gui::Raise));
 }
 
 void VolumeControlPrivate::showVolumeMenu() const
@@ -283,7 +268,6 @@ VolumeControl::VolumeControl(ActionManager* actionManager, SettingsManager* sett
     settings->subscribe<Settings::Core::OutputVolume>(this, [this](double volume) { p->updateDisplay(volume); });
     settings->subscribe<Settings::Gui::IconTheme>(
         this, [this]() { p->updateDisplay(p->m_settings->value<Settings::Core::OutputVolume>()); });
-    settings->subscribe<Settings::Gui::ToolButtonStyle>(this, [this]() { p->updateButtonStyle(); });
 }
 
 VolumeControl::~VolumeControl() = default;

@@ -47,7 +47,7 @@ ScrobblerToggle::ScrobblerToggle(ActionManager* actionManager, SettingsManager* 
     : FyWidget{parent}
     , m_actionManager{actionManager}
     , m_settings{settings}
-    , m_scrobbleButton{new ToolButton(this)}
+    , m_scrobbleButton{new ToolButton(settings, this)}
 {
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -57,11 +57,10 @@ ScrobblerToggle::ScrobblerToggle(ActionManager* actionManager, SettingsManager* 
         m_scrobbleButton->setDefaultAction(toggleCmd->action());
     }
 
-    updateButton();
+    updateButtonIcon();
 
     m_settings->subscribe<Settings::Scrobbler::ScrobblingEnabled>(this, &ScrobblerToggle::scrobblingToggled);
-    settings->subscribe<Settings::Gui::IconTheme>(this, &ScrobblerToggle::updateButton);
-    settings->subscribe<Settings::Gui::ToolButtonStyle>(this, &ScrobblerToggle::updateButton);
+    settings->subscribe<Settings::Gui::IconTheme>(this, &ScrobblerToggle::updateButtonIcon);
 }
 
 QString ScrobblerToggle::name() const
@@ -81,7 +80,7 @@ void ScrobblerToggle::changeEvent(QEvent* event)
     switch(event->type()) {
         case QEvent::PaletteChange:
         case QEvent::StyleChange:
-            updateButton();
+            updateButtonIcon();
             break;
         default:
             break;
@@ -121,12 +120,6 @@ void ScrobblerToggle::contextMenuEvent(QContextMenuEvent* event)
     menu->popup(event->globalPos());
 }
 
-void ScrobblerToggle::updateButton()
-{
-    updateButtonStyle();
-    updateButtonIcon();
-}
-
 void ScrobblerToggle::updateButtonIcon()
 {
     QAction* action = m_scrobbleButton->defaultAction();
@@ -142,15 +135,6 @@ void ScrobblerToggle::updateButtonIcon()
     else {
         action->setIcon(Gui::iconFromTheme(ScrobbleIcon));
     }
-}
-
-void ScrobblerToggle::updateButtonStyle() const
-{
-    const auto options
-        = static_cast<Settings::Gui::ToolButtonOptions>(m_settings->value<Settings::Gui::ToolButtonStyle>());
-
-    m_scrobbleButton->setStretchEnabled(options & Settings::Gui::Stretch);
-    m_scrobbleButton->setAutoRaise(!(options & Settings::Gui::Raise));
 }
 
 void ScrobblerToggle::scrobblingToggled(bool /*enabled*/)

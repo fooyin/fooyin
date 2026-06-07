@@ -40,13 +40,11 @@ public:
     [[nodiscard]] QString layoutName() const override;
 
 private:
-    void updateButtonStyle() const;
     void updateIcons() const;
     void stateChanged(Player::PlayState state) const;
 
     ActionManager* m_actionManager;
     PlayerController* m_playerController;
-    SettingsManager* m_settings;
 
     ToolButton* m_stop;
     ToolButton* m_prev;

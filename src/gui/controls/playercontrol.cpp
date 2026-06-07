@@ -42,11 +42,10 @@ PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* pla
     : FyWidget{parent}
     , m_actionManager{actionManager}
     , m_playerController{playerController}
-    , m_settings{settings}
-    , m_stop{new ToolButton(this)}
-    , m_prev{new ToolButton(this)}
-    , m_playPause{new ToolButton(this)}
-    , m_next{new ToolButton(this)}
+    , m_stop{new ToolButton(settings, this)}
+    , m_prev{new ToolButton(settings, this)}
+    , m_playPause{new ToolButton(settings, this)}
+    , m_next{new ToolButton(settings, this)}
 {
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -70,13 +69,11 @@ PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* pla
         m_next->setDefaultAction(nextCmd->action());
     }
 
-    updateButtonStyle();
     updateIcons();
 
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &PlayerControl::stateChanged);
 
     settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { updateIcons(); });
-    settings->subscribe<Settings::Gui::ToolButtonStyle>(this, [this]() { updateButtonStyle(); });
 }
 
 QString PlayerControl::name() const
@@ -87,24 +84,6 @@ QString PlayerControl::name() const
 QString PlayerControl::layoutName() const
 {
     return u"PlayerControls"_s;
-}
-
-void PlayerControl::updateButtonStyle() const
-{
-    const auto options
-        = static_cast<Settings::Gui::ToolButtonOptions>(m_settings->value<Settings::Gui::ToolButtonStyle>());
-
-    m_stop->setStretchEnabled(options & Settings::Gui::Stretch);
-    m_stop->setAutoRaise(!(options & Settings::Gui::Raise));
-
-    m_prev->setStretchEnabled(options & Settings::Gui::Stretch);
-    m_prev->setAutoRaise(!(options & Settings::Gui::Raise));
-
-    m_playPause->setStretchEnabled(options & Settings::Gui::Stretch);
-    m_playPause->setAutoRaise(!(options & Settings::Gui::Raise));
-
-    m_next->setStretchEnabled(options & Settings::Gui::Stretch);
-    m_next->setAutoRaise(!(options & Settings::Gui::Raise));
 }
 
 void PlayerControl::updateIcons() const

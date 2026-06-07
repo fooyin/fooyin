@@ -41,9 +41,8 @@ namespace Fooyin {
 PlaylistControl::PlaylistControl(PlayerController* playerController, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_playerController{playerController}
-    , m_settings{settings}
-    , m_repeat{new ToolButton(this)}
-    , m_shuffle{new ToolButton(this)}
+    , m_repeat{new ToolButton(settings, this)}
+    , m_shuffle{new ToolButton(settings, this)}
 
 {
     auto* layout = new QHBoxLayout(this);
@@ -67,12 +66,10 @@ PlaylistControl::PlaylistControl(PlayerController* playerController, SettingsMan
     setMode(playerController->playMode());
 
     setupMenus();
-    updateButtonStyle();
 
     QObject::connect(playerController, &PlayerController::playModeChanged, this, &PlaylistControl::setMode);
 
     settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { setMode(m_playerController->playMode()); });
-    settings->subscribe<Settings::Gui::ToolButtonStyle>(this, &PlaylistControl::updateButtonStyle);
 }
 
 QString PlaylistControl::name() const
@@ -97,18 +94,6 @@ void PlaylistControl::changeEvent(QEvent* event)
         default:
             break;
     }
-}
-
-void PlaylistControl::updateButtonStyle() const
-{
-    const auto options
-        = static_cast<Settings::Gui::ToolButtonOptions>(m_settings->value<Settings::Gui::ToolButtonStyle>());
-
-    m_repeat->setStretchEnabled(options & Settings::Gui::Stretch);
-    m_repeat->setAutoRaise(!(options & Settings::Gui::Raise));
-
-    m_shuffle->setStretchEnabled(options & Settings::Gui::Stretch);
-    m_shuffle->setAutoRaise(!(options & Settings::Gui::Raise));
 }
 
 void PlaylistControl::setupMenus()
