@@ -497,6 +497,14 @@ void RadioGuideWidget::showContextMenu(const QPoint& pos)
         menu->addSeparator();
     }
 
+    auto* expandAllAction = menu->addAction(tr("Expand all"));
+    QObject::connect(expandAllAction, &QAction::triggered, m_treeView, &QTreeView::expandAll);
+
+    auto* collapseAllAction = menu->addAction(tr("Collapse all"));
+    QObject::connect(collapseAllAction, &QAction::triggered, m_treeView, &QTreeView::collapseAll);
+
+    menu->addSeparator();
+
     addDisplayMenu(menu);
 
     menu->popup(m_treeView->viewport()->mapToGlobal(pos));
