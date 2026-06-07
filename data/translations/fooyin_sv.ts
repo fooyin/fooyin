@@ -2857,7 +2857,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="69"/>
         <source>Show playstate</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa uppspelningsläge</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="70"/>
@@ -6520,12 +6520,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="51"/>
         <source>Restore state on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Återhämta läge vid uppstart</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="52"/>
         <source>Single-click expands/collapses nodes</source>
-        <translation type="unfinished"></translation>
+        <translation>Enkelklick expanderar/kollapsar noder</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="53"/>
@@ -6595,7 +6595,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="94"/>
         <source>If this is the active playlist, keep it alive when changing selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Om det här är den aktiva spellistan, håll den vid liv vid ändring av selektion</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="100"/>
@@ -6716,7 +6716,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="173"/>
         <source>Manage Library Tree Groupings</source>
-        <translation type="unfinished"></translation>
+        <translation>Hantera biblioteksträdgrupperingar</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="177"/>
@@ -6739,7 +6739,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="86"/>
         <source>Use &lt;code&gt;||&lt;/code&gt; to split tree levels. &lt;b&gt;Sort Grouping&lt;/b&gt; must use the same &lt;code&gt;||&lt;/code&gt; level structure as &lt;b&gt;Display Grouping&lt;/b&gt;; each sort level applies to the matching display level, and a sort level may be empty (for example &lt;code&gt;||%year%||&lt;/code&gt;).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Använd &lt;code&gt;||&lt;/code&gt; för att splitta trädnivåer. &lt;b&gt;Sortera gruppering&lt;/b&gt; måste använda samma &lt;code&gt;||&lt;/code&gt; nivåstruktur som &lt;b&gt;Displaygruppering&lt;/b&gt;; varje sorteringsnivå tillämpas på den matchande displaynivån, och en sorteringsnivå får inte vara tom (till exempel &lt;code&gt;||%year%||&lt;/code&gt;).</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="103"/>
@@ -8624,7 +8624,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="87"/>
         <source>Save/restore playback state</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara/Återhämta uppspelningsläge</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="88"/>
@@ -8649,7 +8649,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="86"/>
         <source>Save/restore active playlist state</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara/Återhämta aktiva spellistsläget</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="90"/>
@@ -8684,12 +8684,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="107"/>
         <source>Save active playlist state on exit and restore it on next startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara aktiva spellistsläget vid avslut och återhämta den vid nästa uppstart</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="108"/>
         <source>Save playback state on exit and restore it on next startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara uppspelningsläge vid avslut och återhämta den vid nästa uppstart</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="109"/>
@@ -8816,7 +8816,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="106"/>
         <source>Blur</source>
-        <translation type="unfinished"></translation>
+        <translation>Suddighet</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="107"/>
@@ -9007,7 +9007,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="178"/>
         <source>Applies blur to the background image</source>
-        <translation type="unfinished"></translation>
+        <translation>Applicerar suddighet på bakgrundbilden</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="179"/>
@@ -10015,7 +10015,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="77"/>
         <source>Save last state of deleted playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara senaste tillstånd av raderade spellistor</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="79"/>
@@ -14661,7 +14661,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="555"/>
         <source>Show labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa etiketter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="564"/>
