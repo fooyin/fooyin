@@ -132,6 +132,7 @@ public:
     int m_iconItemColumn{-1};
     int m_iconHorizontalGap{-1};
     int m_iconVerticalGap{10};
+    bool m_useIconGapsForSideCaptions{false};
     bool m_uniformRowHeights{false};
     bool m_selectBeforeDrag{false};
     bool m_selectIgnoreParents{false};

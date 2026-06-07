@@ -100,6 +100,9 @@ public:
     [[nodiscard]] int iconVerticalGap() const;
     void setIconVerticalGap(int gap);
 
+    [[nodiscard]] bool useIconGapsForSideCaptions() const;
+    void setUseIconGapsForSideCaptions(bool enabled);
+
     void changeIconSize(const QSize& size);
 
     [[nodiscard]] QRect visualRect(const QModelIndex& index) const override;

@@ -1726,6 +1726,7 @@ private:
     [[nodiscard]] QSize iconSize() const;
     [[nodiscard]] bool haveSideCaptions() const;
     [[nodiscard]] bool haveBottomCaptions() const;
+    [[nodiscard]] bool useIconGaps() const;
 
     QRect m_layoutBounds;
     int m_segmentSize{0};
@@ -1809,10 +1810,10 @@ void IconView::invalidate()
     m_uniformRowWidth                   = 0;
     m_uniformRowHeight                  = 0;
     m_segmentSize                       = 0;
-    const bool useConfiguredGridSpacing = !haveSideCaptions();
+    const bool useConfiguredGridSpacing = useIconGaps();
     m_itemSpacing
         = useConfiguredGridSpacing && m_p->m_iconHorizontalGap >= 0 ? m_p->m_iconHorizontalGap : MinItemSpacing;
-    m_rowSpacing = haveSideCaptions() ? 0 : m_p->m_iconVerticalGap;
+    m_rowSpacing = useConfiguredGridSpacing ? m_p->m_iconVerticalGap : 0;
 }
 
 void IconView::doItemLayout()
@@ -1835,9 +1836,10 @@ void IconView::doItemLayout()
     int segPosition{topLeft.y()};
     int rowStartPosition{segStartPosition};
 
-    const bool fixedGridSpacing = !haveSideCaptions() && m_p->m_iconHorizontalGap >= 0;
+    const bool useConfiguredGridSpacing = useIconGaps();
+    const bool fixedGridSpacing         = useConfiguredGridSpacing && m_p->m_iconHorizontalGap >= 0;
 
-    if(!haveSideCaptions() && !fixedGridSpacing) {
+    if(useConfiguredGridSpacing && !fixedGridSpacing) {
         segStartPosition += m_itemSpacing;
         segEndPosition -= m_itemSpacing;
     }
@@ -1862,7 +1864,7 @@ void IconView::doItemLayout()
 
     const int totalWidthAvailable = segEndPosition - segStartPosition;
     const int totalItemWidth      = m_segmentSize * itemWidth(0);
-    const int itmWidth            = haveSideCaptions() ? totalWidthAvailable / m_segmentSize : itemWidth(0);
+    const int itmWidth            = useConfiguredGridSpacing ? itemWidth(0) : totalWidthAvailable / m_segmentSize;
     const int maxPadding          = static_cast<int>(totalWidthAvailable * maxPaddingRatio);
 
     if(!fixedGridSpacing) {
@@ -1896,7 +1898,7 @@ void IconView::doItemLayout()
             }
         }
 
-        if(haveSideCaptions()) {
+        if(!useConfiguredGridSpacing) {
             item.x = segStartPosition + (segColumn * itmWidth);
         }
         else if(fixedGridSpacing) {
@@ -2105,6 +2107,11 @@ bool IconView::haveSideCaptions() const
 bool IconView::haveBottomCaptions() const
 {
     return m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Bottom;
+}
+
+bool IconView::useIconGaps() const
+{
+    return haveBottomCaptions() || !haveSideCaptions() || m_p->m_useIconGapsForSideCaptions;
 }
 
 void IconView::prepareItemLayout()
@@ -3314,6 +3321,21 @@ void ExpandedTreeView::setIconVerticalGap(int gap)
     gap = std::max(gap, 0);
 
     if(std::exchange(p->m_iconVerticalGap, gap) == gap) {
+        return;
+    }
+
+    p->doDelayedItemsLayout();
+    viewport()->update();
+}
+
+bool ExpandedTreeView::useIconGapsForSideCaptions() const
+{
+    return p->m_useIconGapsForSideCaptions;
+}
+
+void ExpandedTreeView::setUseIconGapsForSideCaptions(bool enabled)
+{
+    if(std::exchange(p->m_useIconGapsForSideCaptions, enabled) == enabled) {
         return;
     }
 
