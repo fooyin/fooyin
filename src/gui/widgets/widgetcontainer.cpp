@@ -26,6 +26,8 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
+#include <vector>
+
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
@@ -90,6 +92,8 @@ void WidgetContainer::saveCopyLayoutData(QJsonObject& layout, LayoutCopyContext&
 
 void WidgetContainer::loadWidgets(const QJsonArray& widgets)
 {
+    std::vector<FyWidget*> addedWidgets;
+
     for(const auto& widget : widgets) {
         if(!widget.isObject()) {
             continue;
@@ -130,8 +134,12 @@ void WidgetContainer::loadWidgets(const QJsonArray& widgets)
             }
 
             addWidget(childWidget);
-            childWidget->finalise();
+            addedWidgets.emplace_back(childWidget);
         }
+    }
+
+    for(const auto& childWidget : addedWidgets) {
+        childWidget->finalise();
     }
 }
 } // namespace Fooyin
