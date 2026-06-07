@@ -30,9 +30,10 @@ class QUrl;
 namespace Fooyin {
 enum class NetworkRequestOption : uint8_t
 {
-    AlwaysNetwork = 1 << 0,
-    AcceptAny     = 1 << 1,
-    IcyMetadata   = 1 << 2,
+    AlwaysNetwork         = 1 << 0,
+    AcceptAny             = 1 << 1,
+    IcyMetadata           = 1 << 2,
+    UserVerifiedRedirects = 1 << 3,
 };
 Q_DECLARE_FLAGS(NetworkRequestOptions, NetworkRequestOption)
 

@@ -34,7 +34,10 @@ QByteArray networkUserAgent()
 QNetworkRequest makeNetworkRequest(const QUrl& url, NetworkRequestOptions options)
 {
     QNetworkRequest request{url};
-    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute,
+                         options.testFlag(NetworkRequestOption::UserVerifiedRedirects)
+                             ? QNetworkRequest::UserVerifiedRedirectPolicy
+                             : QNetworkRequest::NoLessSafeRedirectPolicy);
     request.setRawHeader("User-Agent", networkUserAgent());
 
     if(options.testFlag(NetworkRequestOption::AlwaysNetwork)) {

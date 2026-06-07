@@ -27,6 +27,7 @@
 #include <QMetaObject>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QPointer>
 #include <QThread>
 
 #include <algorithm>
@@ -74,7 +75,7 @@ struct IcyMetadataState
 
 struct NetworkStreamDeviceState
 {
-    QNetworkReply* reply{nullptr};
+    QPointer<QNetworkReply> reply;
     std::mutex mutex;
     std::condition_variable ready;
     QString error;
@@ -94,7 +95,7 @@ struct NetworkStreamDeviceState
         readMode.reset();
         reconnect.reset();
         icy.reset();
-        reply = nullptr;
+        reply.clear();
     }
 };
 
@@ -263,7 +264,8 @@ void startNetworkStreamRequestOnNetworkThread(const std::shared_ptr<QNetworkAcce
                                               const std::shared_ptr<NetworkStreamDeviceState>& state)
 {
     const QNetworkRequest req = makeNetworkRequest(
-        url, NetworkRequestOption::AlwaysNetwork | NetworkRequestOption::AcceptAny | NetworkRequestOption::IcyMetadata);
+        url, NetworkRequestOption::AlwaysNetwork | NetworkRequestOption::AcceptAny | NetworkRequestOption::IcyMetadata
+                 | NetworkRequestOption::UserVerifiedRedirects);
 
     auto* reply = network->get(req);
     reply->setReadBufferSize(static_cast<qint64>(state->streamBuffer.maxBytes));
@@ -284,6 +286,14 @@ void startNetworkStreamRequestOnNetworkThread(const std::shared_ptr<QNetworkAcce
 
     // Reply signals may arrive after the device is closed from the decode thread
     // Capture only shared state here; never capture the device object
+    QObject::connect(reply, &QNetworkReply::redirected, reply, [state, reply](const QUrl&) {
+        {
+            const std::scoped_lock lock{state->mutex};
+            if(reply == state->reply && !state->aborted) {
+                reply->redirectAllowed();
+            }
+        }
+    });
     QObject::connect(reply, &QNetworkReply::metaDataChanged, reply, [state, reply]() {
         {
             const std::scoped_lock lock{state->mutex};
@@ -325,7 +335,7 @@ void startNetworkStreamRequestOnNetworkThread(const std::shared_ptr<QNetworkAcce
                          && (receivedBytes
                              || state->reconnect.cleanFinishReconnectAttempts <= MaxCleanFinishReconnectAttempts);
                 if(reconnect) {
-                    state->reply                   = nullptr;
+                    state->reply.clear();
                     state->readMode.readWouldBlock = state->readMode.nonBlockingReadsEnabled;
                 }
                 else {
@@ -463,7 +473,7 @@ bool NetworkStreamDevice::open(OpenMode mode)
 
 void NetworkStreamDevice::close()
 {
-    QNetworkReply* reply{nullptr};
+    QPointer<QNetworkReply> reply;
     {
         const std::scoped_lock lock{m_state->mutex};
         if(m_state->aborted && !m_state->reply) {
@@ -474,17 +484,19 @@ void NetworkStreamDevice::close()
         m_state->aborted  = true;
         m_state->finished = true;
         reply             = m_state->reply;
-        m_state->reply    = nullptr;
+        m_state->reply.clear();
     }
     m_state->ready.notify_all();
 
     if(reply) {
         const auto stopRequest = [reply]() {
-            reply->abort();
-            reply->deleteLater();
+            if(reply) {
+                reply->abort();
+                reply->deleteLater();
+            }
         };
 
-        QMetaObject::invokeMethod(reply, stopRequest);
+        QMetaObject::invokeMethod(m_network.get(), stopRequest);
     }
 
     QIODevice::close();
@@ -541,11 +553,14 @@ qint64 NetworkStreamDevice::readData(char* data, qint64 maxSize)
     m_state->streamBuffer.data.remove(0, bytesRead);
     m_state->streamBuffer.bytesRead += static_cast<quint64>(bytesRead);
 
-    QNetworkReply* reply = m_state->reply;
+    const QPointer<QNetworkReply> reply = m_state->reply;
     if(reply && std::cmp_less(m_state->streamBuffer.data.size(), m_state->streamBuffer.maxBytes)) {
         QMetaObject::invokeMethod(
-            reply,
+            m_network.get(),
             [state = m_state, reply]() {
+                if(!reply) {
+                    return;
+                }
                 {
                     const std::scoped_lock appendLock{state->mutex};
                     appendReplyData(*state, reply);
