@@ -269,12 +269,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="106"/>
         <source>Primary artist</source>
-        <translation>Основной артист</translation>
+        <translation>Основной исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="108"/>
         <source>Unique artists combined into one value</source>
-        <translation>Уникальные артисты, объединённые в одно значение</translation>
+        <translation>Уникальные исполнители, объединённые в одно значение</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="110"/>
@@ -284,7 +284,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="112"/>
         <source>Album artist</source>
-        <translation>Артист альбома</translation>
+        <translation>Исполнитель альбома</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="114"/>
@@ -1349,7 +1349,7 @@
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="70"/>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="121"/>
         <source>Artist</source>
-        <translation>Артист</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="71"/>
@@ -1421,7 +1421,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="102"/>
         <source>Artist</source>
-        <translation>Артист</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="111"/>
@@ -1570,7 +1570,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="72"/>
         <source>Artist</source>
-        <translation>Артист</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="315"/>
@@ -1748,7 +1748,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="78"/>
         <source>Artist</source>
-        <translation>Артист</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="80"/>
@@ -1799,7 +1799,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="114"/>
         <source>Artist</source>
-        <translation>Артист</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="116"/>
@@ -2275,7 +2275,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="446"/>
         <source>Artist</source>
-        <translation>Артист</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="477"/>
@@ -2388,7 +2388,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="49"/>
         <source>Artist</source>
-        <translation>Артист</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="61"/>
@@ -2877,7 +2877,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="75"/>
         <source>Artist</source>
-        <translation>Артист</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="77"/>
@@ -4206,12 +4206,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="40"/>
         <source>Album Artist</source>
-        <translation>Артист альбома</translation>
+        <translation>Исполнитель альбома</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="41"/>
         <source>Artist</source>
-        <translation>Артист</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="42"/>
@@ -4548,7 +4548,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="871"/>
         <source>Artist</source>
-        <translation>Артист</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="690"/>
@@ -5649,7 +5649,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="155"/>
         <source>Artist</source>
-        <translation>Артист</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="156"/>
@@ -5674,7 +5674,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="160"/>
         <source>Album Artist</source>
-        <translation>Артист альбома</translation>
+        <translation>Исполнитель альбома</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="163"/>
@@ -6797,7 +6797,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="40"/>
         <source>Artist/Album</source>
-        <translation>Артист/альбом</translation>
+        <translation>Исполнитель/альбом</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="44"/>
@@ -7472,7 +7472,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="79"/>
         <source>Artist</source>
-        <translation>Артист</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="80"/>
@@ -7524,7 +7524,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="91"/>
         <source>Artist</source>
-        <translation>Артист</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="93"/>
@@ -7605,7 +7605,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="89"/>
         <source>Artist</source>
-        <translation>Артист</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="91"/>
@@ -7660,7 +7660,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="230"/>
         <source>Artist</source>
-        <translation>Артист</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="230"/>
@@ -8903,12 +8903,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="134"/>
         <source>Artist</source>
-        <translation>Артист</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="135"/>
         <source>Use the artist picture for current track artwork</source>
-        <translation>Использовать изображение артиста для иллюстраций текущей дорожки</translation>
+        <translation>Использовать изображение исполнителя для иллюстраций текущей дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="137"/>
@@ -9270,17 +9270,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="46"/>
         <source>Artist</source>
-        <translation>Артист</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="47"/>
         <source>Artist/Album</source>
-        <translation>Артист/альбом</translation>
+        <translation>Исполнитель/альбом</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="48"/>
         <source>Album Artist</source>
-        <translation>Артист альбома</translation>
+        <translation>Исполнитель альбома</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="49"/>
@@ -9365,7 +9365,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="65"/>
         <source>Artist Picture</source>
-        <translation>Изображение артиста</translation>
+        <translation>Изображение исполнителя</translation>
     </message>
 </context>
 <context>
@@ -10626,7 +10626,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="72"/>
         <source>Simple Artist/Album/Year</source>
-        <translation>Просто артист/альбом/год</translation>
+        <translation>Просто исполнитель/альбом/год</translation>
     </message>
 </context>
 <context>
@@ -11748,7 +11748,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="88"/>
         <source>Album Artist</source>
-        <translation>Артист альбома</translation>
+        <translation>Исполнитель альбома</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="77"/>
@@ -11793,7 +11793,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="84"/>
         <source>Artist</source>
-        <translation>Артист</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="86"/>
@@ -12479,7 +12479,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="41"/>
         <source>Artist</source>
-        <translation>Артист</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="42"/>
@@ -13478,7 +13478,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="327"/>
         <source>Artist Name</source>
-        <translation>Имя артиста</translation>
+        <translation>Имя исполнителя</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="330"/>
@@ -13488,7 +13488,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="333"/>
         <source>Album Artist</source>
-        <translation>Артист альбома</translation>
+        <translation>Исполнитель альбома</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="336"/>
@@ -13574,7 +13574,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="45"/>
         <source>Artist Name</source>
-        <translation>Имя артиста</translation>
+        <translation>Имя исполнителя</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="46"/>
@@ -13609,7 +13609,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="52"/>
         <source>Album Artist</source>
-        <translation>Артист альбома</translation>
+        <translation>Исполнитель альбома</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="53"/>
@@ -13969,7 +13969,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="255"/>
         <source>Artist picture…</source>
-        <translation>Изображение артиста…</translation>
+        <translation>Изображение исполнителя…</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="256"/>
@@ -14070,7 +14070,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="455"/>
         <source>Attach an image file as the artist picture for the selected tracks</source>
-        <translation>Прикрепить файл изображения в качестве изображения артиста для выбранных дорожек</translation>
+        <translation>Прикрепить файл изображения в качестве изображения исполнителя для выбранных дорожек</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="471"/>
