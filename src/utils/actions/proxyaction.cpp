@@ -22,6 +22,7 @@
 #include <utils/stringutils.h>
 
 #include <QPointer>
+#include <QSignalBlocker>
 
 constexpr auto ThemeIconNameProperty = "_fy_themeIconName";
 
@@ -104,7 +105,10 @@ void ProxyActionPrivate::update(QAction* updateAction, bool initialise)
             if(m_action) {
                 QObject::disconnect(m_self, &ProxyAction::toggled, m_action, &QAction::setChecked);
             }
+
+            const QSignalBlocker blocker{m_self};
             m_self->setChecked(updateAction->isChecked());
+
             if(m_action) {
                 QObject::connect(m_self, &ProxyAction::toggled, m_action, &QAction::setChecked);
             }
