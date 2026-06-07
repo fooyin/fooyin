@@ -76,19 +76,34 @@ void Dummy::saveLayoutData(QJsonObject& layout)
 {
     if(!m_missingName.isEmpty()) {
         layout["MissingWidget"_L1] = m_missingName;
+
+        if(!m_missingLayoutData.empty()) {
+            layout["MissingWidgetData"_L1] = m_missingLayoutData;
+        }
     }
 }
 
 void Dummy::loadLayoutData(const QJsonObject& layout)
 {
     if(layout.contains("MissingWidget"_L1)) {
-        m_missingName = layout.value("MissingWidget"_L1).toString();
+        m_missingName       = layout.value("MissingWidget"_L1).toString();
+        m_missingLayoutData = layout.value("MissingWidgetData"_L1).toObject();
     }
+    else if(!m_missingName.isEmpty()) {
+        m_missingLayoutData = layout;
+    }
+
+    updateText();
 }
 
 QString Dummy::missingName() const
 {
     return m_missingName;
+}
+
+QJsonObject Dummy::missingLayoutData() const
+{
+    return m_missingLayoutData;
 }
 
 void Dummy::updateText()

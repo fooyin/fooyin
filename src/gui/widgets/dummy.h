@@ -21,6 +21,8 @@
 
 #include "gui/fywidget.h"
 
+#include <QJsonObject>
+
 class QLabel;
 
 namespace Fooyin {
@@ -40,12 +42,14 @@ public:
     void loadLayoutData(const QJsonObject& layout) override;
 
     [[nodiscard]] QString missingName() const;
+    [[nodiscard]] QJsonObject missingLayoutData() const;
 
 private:
     void updateText();
 
     SettingsManager* m_settings;
     QString m_missingName;
+    QJsonObject m_missingLayoutData;
     QLabel* m_label;
 };
 } // namespace Fooyin

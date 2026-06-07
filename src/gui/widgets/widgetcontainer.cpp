@@ -123,18 +123,21 @@ void WidgetContainer::loadWidgets(const QJsonArray& widgets)
                     const QString missingName = dummy->missingName();
 
                     if(!missingName.isEmpty() && m_widgetProvider->canCreateWidget(missingName)) {
+                        const QJsonObject missingData = dummy->missingLayoutData();
                         childWidget->deleteLater();
                         childWidget = m_widgetProvider->createWidget(missingName);
 
-                        if(childValue.isObject()) {
-                            childWidget->loadLayout(childValue.toObject());
+                        if(childWidget && !missingData.empty()) {
+                            childWidget->loadLayout(missingData);
                         }
                     }
                 }
             }
 
-            addWidget(childWidget);
-            addedWidgets.emplace_back(childWidget);
+            if(childWidget) {
+                addWidget(childWidget);
+                addedWidgets.emplace_back(childWidget);
+            }
         }
     }
 

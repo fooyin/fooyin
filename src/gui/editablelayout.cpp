@@ -818,9 +818,8 @@ bool EditableLayout::loadLayout(const FyLayout& layout)
     const auto rootObject = rootWidgets.cbegin()->toObject();
     const auto widgetKey  = rootObject.constBegin().key();
     auto* topWidget       = p->m_widgetProvider->createWidget(widgetKey);
-
     if(!topWidget) {
-        return false;
+        topWidget = new Dummy(widgetKey, p->m_settings, p->m_root);
     }
 
     p->m_root->addWidget(topWidget);
@@ -829,6 +828,24 @@ bool EditableLayout::loadLayout(const FyLayout& layout)
     if(optionsIt->isObject()) {
         const QJsonObject options = optionsIt->toObject();
         topWidget->loadLayout(options);
+    }
+
+    if(auto* dummy = qobject_cast<Dummy*>(topWidget)) {
+        const QString missingName = dummy->missingName();
+
+        if(!missingName.isEmpty() && p->m_widgetProvider->canCreateWidget(missingName)) {
+            const QJsonObject missingData = dummy->missingLayoutData();
+            topWidget                     = p->m_widgetProvider->createWidget(missingName);
+
+            if(!topWidget) {
+                return false;
+            }
+
+            if(!missingData.empty()) {
+                topWidget->loadLayout(missingData);
+            }
+            p->m_root->replaceWidget(0, topWidget);
+        }
     }
 
     topWidget->finalise();
