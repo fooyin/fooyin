@@ -2579,7 +2579,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="279"/>
         <source>Append selected tracks to the active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till valda spår i slutet i den aktiva spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="286"/>
@@ -2594,7 +2594,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="299"/>
         <source>Add the selected tracks to the playback queue</source>
-        <translation>Lägg till de valda spåren till uppspelningskön</translation>
+        <translation>Lägg till de valda spåren i uppspelningskön</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="305"/>
@@ -3786,7 +3786,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="49"/>
         <source>Add the specified files to the current playlist</source>
-        <translation>Lägg till specifierade filer till den aktuella spellistan</translation>
+        <translation>Lägg till specifierade filer i den aktuella spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="55"/>
@@ -3796,7 +3796,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="56"/>
         <source>Add the contents of the specified directory to the current playlist</source>
-        <translation>Lägg till innehållet av den specifierade mappen till den aktuella spellistan</translation>
+        <translation>Lägg till innehållet av den specifierade mappen i den aktuella spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="64"/>
@@ -3851,7 +3851,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="88"/>
         <source>Save the current playlist to the specified file</source>
-        <translation>Spara den aktuella spellistan till den specifierade filen</translation>
+        <translation>Spara den aktuella spellistan i den specifierade filen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="94"/>
