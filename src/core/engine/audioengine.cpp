@@ -1549,16 +1549,42 @@ bool AudioEngine::startTrackCrossfade(const Engine::PlaybackItem& item, bool isM
         = isManualChange && crossfadeMix && (m_currentTrack.isRemote() || track.isRemote());
     const AudioFormat preTransitionInputFormat = m_pipeline.inputFormat();
 
-    const uint64_t activeGeneration = m_trackGeneration;
-    const auto activeStream         = m_decoder.activeStream();
-    const StreamId activeStreamId   = (activeStream ? activeStream->id() : InvalidStreamId);
-    const bool hasEarlyAutoTailFade = crossfadeMix && !isManualChange && m_autoCrossfadeTailFadeActive
-                                   && m_autoCrossfadeTailFadeGeneration == activeGeneration
-                                   && m_autoCrossfadeTailFadeStreamId == activeStreamId
-                                   && activeStreamId != InvalidStreamId;
+    const uint64_t activeGeneration{m_trackGeneration};
+    const auto activeStream                    = m_decoder.activeStream();
+    const StreamId activeStreamId              = (activeStream ? activeStream->id() : InvalidStreamId);
+    const StreamId preTransitionActiveStreamId = activeStreamId;
+    const bool hasEarlyAutoTailFade            = crossfadeMix && !isManualChange && m_autoCrossfadeTailFadeActive
+                                              && m_autoCrossfadeTailFadeGeneration == activeGeneration
+                                              && m_autoCrossfadeTailFadeStreamId == activeStreamId
+                                              && activeStreamId != InvalidStreamId;
 
     int fadeOutDurationMs      = eligibility->fadeOutDurationMs;
     const int fadeInDurationMs = eligibility->fadeInDurationMs;
+
+    qCDebug(ENGINE) << "Starting crossfade:"
+                    << "currentTrackId=" << m_currentTrack.id() << "currentItemId=" << m_currentTrackItemId
+                    << "currentRemote=" << m_currentTrack.isRemote() << "targetTrackId=" << track.id()
+                    << "targetItemId=" << item.itemId << "targetRemote=" << track.isRemote()
+                    << "activeStreamId=" << preTransitionActiveStreamId
+                    << "inputRate=" << preTransitionInputFormat.sampleRate()
+                    << "inputChannels=" << preTransitionInputFormat.channelCount()
+                    << "inputFormat=" << preTransitionInputFormat.prettyFormat() << "fadeOutMs=" << fadeOutDurationMs
+                    << "fadeInMs=" << fadeInDurationMs;
+
+    const auto cleanupPreTransitionStreamAfterFailedCrossfade = [&](const char* reason) {
+        if(preTransitionActiveStreamId == InvalidStreamId) {
+            return;
+        }
+
+        qCWarning(ENGINE) << "Crossfade failed after decoder handoff; removing previous stream:"
+                          << "reason=" << reason << "streamId=" << preTransitionActiveStreamId
+                          << "currentTrackId=" << m_currentTrack.id() << "currentItemId=" << m_currentTrackItemId
+                          << "targetTrackId=" << track.id() << "targetItemId=" << item.itemId
+                          << "target=" << track.filenameExt();
+        m_pipeline.removeStream(preTransitionActiveStreamId);
+        m_pipeline.unregisterStream(preTransitionActiveStreamId);
+        m_pipeline.cleanupOrphanImmediate();
+    };
 
     if(crossfadeMix && fadeOutDurationMs > 0) {
         prefillActiveStream(std::min(fadeOutDurationMs, m_playbackBufferLengthMs));
@@ -1590,7 +1616,11 @@ bool AudioEngine::startTrackCrossfade(const Engine::PlaybackItem& item, bool isM
     }
 
     if(!initDecoder(item, true)) {
-        m_pipeline.cleanupOrphanImmediate();
+        qCWarning(ENGINE) << "Crossfade decoder initialisation failed:"
+                          << "manualChange=" << isManualChange << "directManualRemote=" << directManualRemoteCrossfade
+                          << "targetTrackId=" << track.id() << "targetItemId=" << item.itemId
+                          << "target=" << track.filenameExt();
+        cleanupPreTransitionStreamAfterFailedCrossfade("init-decoder-failed");
         updateTrackStatus(Engine::TrackStatus::Invalid);
         return true;
     }
@@ -1609,12 +1639,18 @@ bool AudioEngine::startTrackCrossfade(const Engine::PlaybackItem& item, bool isM
                               << "targetRate=" << nextMixFormat.sampleRate()
                               << "targetChannels=" << nextMixFormat.channelCount()
                               << "targetFormat=" << nextMixFormat.prettyFormat() << "track=" << track.filenameExt();
+            cleanupPreTransitionStreamAfterFailedCrossfade("format-mismatch");
             return false;
         }
     }
 
     const auto newStream = m_decoder.setupCrossfadeStream(streamBufferLengthMs(track), Engine::FadeCurve::Sine);
     if(!newStream) {
+        qCWarning(ENGINE) << "Crossfade stream setup failed:"
+                          << "manualChange=" << isManualChange << "directManualRemote=" << directManualRemoteCrossfade
+                          << "targetTrackId=" << track.id() << "targetItemId=" << item.itemId
+                          << "target=" << track.filenameExt();
+        cleanupPreTransitionStreamAfterFailedCrossfade("setup-crossfade-stream-failed");
         updateTrackStatus(Engine::TrackStatus::Invalid);
         return true;
     }
@@ -1632,11 +1668,20 @@ bool AudioEngine::startTrackCrossfade(const Engine::PlaybackItem& item, bool isM
 
     prefillActiveStream(prefillTargetMs);
 
+    if(directManualRemoteCrossfade) {
+        qCDebug(ENGINE) << "Manual remote crossfade prebuffered target stream:"
+                        << "previousStreamId=" << preTransitionActiveStreamId << "newStreamId=" << newStream->id()
+                        << "targetTrackId=" << track.id() << "targetItemId=" << item.itemId
+                        << "bufferedMs=" << newStream->bufferedDurationMs() << "prefillTargetMs=" << prefillTargetMs
+                        << "remotePrebufferTargetMs=" << remoteCrossfadePrebufferMs;
+    }
+
     if(crossfadeMix && isManualChange && track.isRemote()
        && std::cmp_less(newStream->bufferedDurationMs(), remoteCrossfadePrebufferMs)) {
         qCWarning(ENGINE) << "Manual remote crossfade prebuffer shortfall; falling back to direct load:"
                           << "bufferedMs=" << newStream->bufferedDurationMs()
                           << "targetMs=" << remoteCrossfadePrebufferMs << "track=" << track.filenameExt();
+        cleanupPreTransitionStreamAfterFailedCrossfade("prebuffer-shortfall");
         return false;
     }
 
@@ -1647,11 +1692,32 @@ bool AudioEngine::startTrackCrossfade(const Engine::PlaybackItem& item, bool isM
     request.fadeInMs         = fadeInDurationMs;
     request.skipFadeOutStart = skipFadeOutStart;
 
+    const auto transitionType = crossfadeMix ? "crossfade" : "gapless";
+
+    qCDebug(ENGINE) << "Executing pipeline transition:"
+                    << "type=" << transitionType << "manualChange=" << isManualChange
+                    << "previousStreamId=" << preTransitionActiveStreamId << "newStreamId=" << newStream->id()
+                    << "targetTrackId=" << track.id() << "targetItemId=" << item.itemId
+                    << "fadeOutMs=" << request.fadeOutMs << "fadeInMs=" << request.fadeInMs
+                    << "skipFadeOutStart=" << request.skipFadeOutStart;
+
     const auto result = m_pipeline.executeTransition(request);
     if(!result.success || result.streamId == InvalidStreamId) {
+        qCWarning(ENGINE) << "Crossfade pipeline transition failed:"
+                          << "manualChange=" << isManualChange << "directManualRemote=" << directManualRemoteCrossfade
+                          << "previousStreamId=" << preTransitionActiveStreamId << "newStreamId=" << newStream->id()
+                          << "resultStreamId=" << result.streamId << "targetTrackId=" << track.id()
+                          << "targetItemId=" << item.itemId << "target=" << track.filenameExt();
+        cleanupPreTransitionStreamAfterFailedCrossfade("pipeline-transition-failed");
         updateTrackStatus(Engine::TrackStatus::Invalid);
         return true;
     }
+
+    qCDebug(ENGINE) << "Pipeline transition started:"
+                    << "type=" << transitionType << "manualChange=" << isManualChange
+                    << "previousStreamId=" << preTransitionActiveStreamId << "newStreamId=" << result.streamId
+                    << "hasOrphanStream=" << m_pipeline.hasOrphanStream() << "targetTrackId=" << track.id()
+                    << "targetItemId=" << item.itemId;
 
     if(autoGaplessHandoff) {
         m_positionCoordinator.setGaplessHold(result.streamId);
