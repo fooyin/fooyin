@@ -112,6 +112,7 @@ public:
     void loadLegacyCurrentLayout();
     [[nodiscard]] QString pathForLayout(const FyLayout& layout) const;
     [[nodiscard]] bool isBuiltIn(const QString& name) const;
+    [[nodiscard]] bool isUnmodifiedBuiltIn(const FyLayout& layout) const;
 
     void setLayoutPath(const FyLayout& layout, const QString& path);
     void saveActiveLayoutName() const;
@@ -193,7 +194,7 @@ void LayoutProviderPrivate::resolveActiveLayout()
     updateLayout(m_currentLayout);
     saveActiveLayoutName();
 
-    if(m_currentLayout.isValid() && pathForLayout(m_currentLayout).isEmpty()) {
+    if(m_currentLayout.isValid() && pathForLayout(m_currentLayout).isEmpty() && !isUnmodifiedBuiltIn(m_currentLayout)) {
         const QString path = layoutFilePath(m_currentLayout.name());
         setLayoutPath(m_currentLayout, path);
         writeLayout(m_currentLayout, path);
@@ -238,6 +239,12 @@ QString LayoutProviderPrivate::pathForLayout(const FyLayout& layout) const
 bool LayoutProviderPrivate::isBuiltIn(const QString& name) const
 {
     return m_builtInLayouts.contains(name);
+}
+
+bool LayoutProviderPrivate::isUnmodifiedBuiltIn(const FyLayout& layout) const
+{
+    const auto builtIn = m_builtInLayouts.find(layout.name());
+    return builtIn != m_builtInLayouts.cend() && layout.json() == builtIn->second.json();
 }
 
 void LayoutProviderPrivate::setLayoutPath(const FyLayout& layout, const QString& path)
@@ -351,6 +358,12 @@ void LayoutProvider::saveCurrentLayout()
 
     QString filepath = p->pathForLayout(p->m_currentLayout);
     if(filepath.isEmpty()) {
+        if(p->isUnmodifiedBuiltIn(p->m_currentLayout)) {
+            p->saveActiveLayoutName();
+            Q_EMIT currentLayoutChanged(p->m_currentLayout);
+            return;
+        }
+
         filepath = layoutFilePath(p->m_currentLayout.name());
         p->setLayoutPath(p->m_currentLayout, filepath);
     }
@@ -370,6 +383,18 @@ void LayoutProvider::registerLayout(const FyLayout& layout)
 void LayoutProvider::registerLayout(const QByteArray& json)
 {
     p->addLayout(FyLayout{json});
+}
+
+void LayoutProvider::updateLayout(const FyLayout& layout)
+{
+    if(!layout.isValid()) {
+        return;
+    }
+
+    p->updateLayout(layout);
+    if(p->m_currentLayout.name() == layout.name()) {
+        p->m_currentLayout = layout;
+    }
 }
 
 void LayoutProvider::changeLayout(const FyLayout& layout)

@@ -66,11 +66,15 @@ SwitchLayoutCommand::SwitchLayoutCommand(EditableLayoutPrivate* editableLayout, 
 
 void SwitchLayoutCommand::undo()
 {
+    m_newLayout = m_layout->saveCurrentToLayout(m_newLayout.name());
+    m_editableLayout->m_layoutProvider->updateLayout(m_newLayout);
     m_editableLayout->changeLayout(m_oldLayout);
 }
 
 void SwitchLayoutCommand::redo()
 {
+    m_oldLayout = m_layout->saveCurrentToLayout(m_oldLayout.name());
+    m_editableLayout->m_layoutProvider->updateLayout(m_oldLayout);
     m_editableLayout->changeLayout(m_newLayout);
 }
 
