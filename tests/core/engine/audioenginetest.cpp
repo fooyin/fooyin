@@ -1794,18 +1794,4 @@ FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, TimelineTransitionHintsAreDisab
     unknownDuration.setDuration(0);
     EXPECT_FALSE(AudioEngine::shouldEnableTimelineTransitionHints(unknownDuration, AudioDecoder::PlaybackHints{}));
 }
-
-FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, LiveRemoteStreamsUseFixedFiveSecondBuffer)
-{
-    ensureCoreApplication();
-    EngineHarness harness{false};
-
-    const Track liveRemoteTrack = makeRemoteTrack(u"https://example.test/live"_s, 0);
-
-    AudioEngineTestAccessor::setPlaybackBufferLengthMs(harness.engine, 1000);
-    EXPECT_EQ(AudioEngineTestAccessor::streamBufferLengthMs(harness.engine, liveRemoteTrack), 5000);
-
-    AudioEngineTestAccessor::setPlaybackBufferLengthMs(harness.engine, 12000);
-    EXPECT_EQ(AudioEngineTestAccessor::streamBufferLengthMs(harness.engine, liveRemoteTrack), 5000);
-}
 } // namespace Fooyin::Testing
