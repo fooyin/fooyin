@@ -19,10 +19,22 @@
 
 #include <gui/widgets/toolbutton.h>
 
+#include <gui/guisettings.h>
+#include <utils/settings/settingsmanager.h>
+
 #include <QStyleOptionToolButton>
 #include <QStylePainter>
 
 namespace Fooyin {
+namespace {
+void applyToolButtonStyle(ToolButton* button, int value)
+{
+    const auto options = static_cast<Settings::Gui::ToolButtonOptions>(value);
+    button->setStretchEnabled(options & Settings::Gui::Stretch);
+    button->setAutoRaise(!(options & Settings::Gui::Raise));
+}
+} // namespace
+
 ToolButton::ToolButton(QWidget* parent)
     : QToolButton{parent}
     , m_padding{20}
@@ -31,6 +43,13 @@ ToolButton::ToolButton(QWidget* parent)
     , m_stretchEnabled{false}
     , m_menuIndicatorHidden{true}
 { }
+
+ToolButton::ToolButton(SettingsManager* settings, QWidget* parent)
+    : ToolButton{parent}
+{
+    applyToolButtonStyle(this, settings->value<Settings::Gui::ToolButtonStyle>());
+    settings->subscribe<Settings::Gui::ToolButtonStyle>(this, [this](int value) { applyToolButtonStyle(this, value); });
+}
 
 void ToolButton::setStretchEnabled(bool enabled)
 {

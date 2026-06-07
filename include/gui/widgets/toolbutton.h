@@ -24,12 +24,15 @@
 #include <QToolButton>
 
 namespace Fooyin {
+class SettingsManager;
+
 class FYGUI_EXPORT ToolButton : public QToolButton
 {
     Q_OBJECT
 
 public:
     explicit ToolButton(QWidget* parent = nullptr);
+    explicit ToolButton(SettingsManager* settings, QWidget* parent = nullptr);
 
     void setStretchEnabled(bool enabled);
     void setMenuIndicatorHidden(bool hidden);
