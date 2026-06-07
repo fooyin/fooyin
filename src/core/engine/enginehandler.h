@@ -204,6 +204,7 @@ private:
     bool m_pcmReadyRelayConnected;
 
     std::optional<Player::TrackChangeRequest> m_pendingTrackChange;
+    std::optional<uint64_t> m_pendingTrackChangeGeneration;
     Player::UpcomingTrack m_upcomingTrack;
     uint64_t m_currentTrackItemId;
     Track m_engineOwnedTransitionTrack;

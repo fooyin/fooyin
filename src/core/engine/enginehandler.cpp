@@ -335,6 +335,7 @@ void EngineHandler::handleTrackChangeRequest(const Player::TrackChangeRequest& r
     clearPendingBoundaryAdvance();
     clearEngineOwnedTransition();
     m_pendingTrackChange = request;
+    m_pendingTrackChangeGeneration.reset();
     dispatchCommand(&AudioEngine::loadTrack, makePlaybackItem(track, request.itemId), request.context.userInitiated);
 }
 
@@ -559,6 +560,7 @@ void EngineHandler::handleTrackCommitted(const Engine::TrackCommitContext& conte
         }
 
         m_pendingTrackChange.reset();
+        m_pendingTrackChangeGeneration.reset();
         clearEngineOwnedTransition();
 
         if(m_pendingStartupRestore.has_value() && m_pendingStartupRestoreItemId == context.itemId) {
@@ -607,6 +609,7 @@ void EngineHandler::handleTrackStatus(Engine::TrackStatus status, const Track& t
             clearPendingBoundaryAdvance();
             clearEngineOwnedTransition();
             m_pendingTrackChange.reset();
+            m_pendingTrackChangeGeneration.reset();
             clearStartupRestore();
             m_playerController->syncPlayStateFromEngine(Player::PlayState::Stopped);
             break;
@@ -643,18 +646,26 @@ void EngineHandler::handleTrackStatus(Engine::TrackStatus status, const Track& t
             clearPositionAcceptanceFloor();
             clearPendingBoundaryAdvance();
             clearEngineOwnedTransition();
+
             if(m_pendingTrackChange.has_value()
                && m_pendingTrackChange->context.reason == Player::AdvanceReason::StartupRestore) {
                 clearStartupRestore();
             }
-            if(m_pendingTrackChange.has_value() && sameTrackIdentity(m_pendingTrackChange->track.track, track)) {
+            if(m_pendingTrackChange.has_value()
+               && (sameTrackIdentity(m_pendingTrackChange->track.track, track)
+                   || (m_pendingTrackChangeGeneration.has_value() && *m_pendingTrackChangeGeneration == generation))) {
                 // Failed loads never emit trackCommitted(), so adopt the attempted track here to
-                // clear the pending reques.
+                // clear the pending request.
                 m_playerController->commitCurrentTrack(*m_pendingTrackChange);
                 m_pendingTrackChange.reset();
+                m_pendingTrackChangeGeneration.reset();
             }
             break;
         case Engine::TrackStatus::Loading:
+            if(m_pendingTrackChange.has_value() && sameTrackIdentity(m_pendingTrackChange->track.track, track)) {
+                m_pendingTrackChangeGeneration = generation;
+            }
+            break;
         case Engine::TrackStatus::Loaded:
         case Engine::TrackStatus::Buffering:
         case Engine::TrackStatus::Buffered:
