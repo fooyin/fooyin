@@ -293,6 +293,7 @@ private:
     void clearRemoteBufferingState(bool resumePipeline = true);
     void maybeUpdateRemoteBuffering(const char* reason);
     [[nodiscard]] int streamBufferLengthMs(const Track& track) const;
+    [[nodiscard]] int remotePrebufferTargetMs(int capacityMs) const;
     [[nodiscard]] int remotePrebufferTargetMs(const AudioStreamPtr& stream) const;
 
     [[nodiscard]] uint64_t beginTransportTransition();
@@ -419,6 +420,7 @@ private:
 
     double m_volume;
     int m_playbackBufferLengthMs;
+    int m_remoteDecodedBufferMs;
     double m_decodeLowWatermarkRatio;
     double m_decodeHighWatermarkRatio;
     bool m_fadingEnabled;

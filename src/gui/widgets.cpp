@@ -471,6 +471,17 @@ void Widgets::registerAdvancedSettings()
                                                .specialValueText = {}},
          .normalise   = {},
          .validate    = {}});
+    advancedSettingsRegistry->add<Settings::Core::Internal::RemoteBufferLengthMs>(
+        {.category    = {tr("Playback"), tr("Buffering")},
+         .label       = tr("Buffer length for remote streams"),
+         .description = tr("Maximum decoded audio buffered for remote streams."),
+         .editor      = AdvancedSettingSpinBox{.minimum          = 2000,
+                                               .maximum          = 30000,
+                                               .singleStep       = 500,
+                                               .suffix           = u" ms"_s,
+                                               .specialValueText = {}},
+         .normalise   = {},
+         .validate    = {}});
     advancedSettingsRegistry->add<Settings::Gui::Internal::OutputDeviceRefreshMs>(
         {.category    = {tr("Playback"), tr("Output")},
          .label       = tr("Device refresh interval"),

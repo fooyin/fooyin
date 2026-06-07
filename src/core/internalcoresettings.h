@@ -85,6 +85,7 @@ enum CoreInternalSettings : uint32_t
     OutputDeviceProfiles     = 18 | Type::Variant,
     OpusHeaderWriteMode      = 19 | Type::Int,
     RemoteReadAheadKb        = 20 | Type::Int,
+    RemoteBufferLengthMs     = 21 | Type::Int,
 };
 Q_ENUM_NS(CoreInternalSettings)
 } // namespace Settings::Core::Internal

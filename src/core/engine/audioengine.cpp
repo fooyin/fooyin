@@ -84,9 +84,10 @@ constexpr auto AudiblePauseWatchdogMaxMs    = 1500;
 constexpr auto AudiblePauseWatchdogMarginMs = 100;
 constexpr auto MinLiveBitrateKbps           = 8;
 constexpr auto LiveBitrateWindowMs          = 1000;
-constexpr auto RemoteStreamBufferMs         = 5000;
-constexpr auto RemotePrebufferTargetMs      = 1500;
-constexpr auto RemoteRebufferFloorMs        = 500;
+constexpr auto RemoteDecodedBufferMinMs     = 2000;
+constexpr auto RemotePrebufferMinMs         = 500;
+constexpr auto RemotePrebufferMaxMs         = 5000;
+constexpr auto RemoteRebufferFloorMs        = 100;
 constexpr auto RemoteCrossfadePrefillMaxMs  = 1500;
 
 bool outputReinitRequired(const Fooyin::AudioFormat& currentOutput, const Fooyin::AudioFormat& desiredOutput)
@@ -310,6 +311,8 @@ AudioEngine::AudioEngine(std::shared_ptr<AudioLoader> audioLoader, SettingsManag
     , m_outputController{this, &m_pipeline}
     , m_volume{m_settings->value<Settings::Core::OutputVolume>()}
     , m_playbackBufferLengthMs{m_settings->value<Settings::Core::BufferLength>()}
+    , m_remoteDecodedBufferMs{std::max(RemoteDecodedBufferMinMs,
+                                       m_settings->value<Settings::Core::Internal::RemoteBufferLengthMs>())}
     , m_decodeLowWatermarkRatio{m_settings->value<Settings::Core::Internal::DecodeLowWatermarkRatio>()}
     , m_decodeHighWatermarkRatio{m_settings->value<Settings::Core::Internal::DecodeHighWatermarkRatio>()}
     , m_fadingEnabled{m_settings->value<Settings::Core::Internal::EngineFading>()}
@@ -3491,25 +3494,31 @@ int AudioEngine::streamBufferLengthMs(const Track& track) const
         return m_playbackBufferLengthMs;
     }
 
-    return RemoteStreamBufferMs;
+    return m_remoteDecodedBufferMs;
+}
+
+int AudioEngine::remotePrebufferTargetMs(int capacityMs) const
+{
+    const int targetMs = std::clamp(m_remoteDecodedBufferMs / 4, RemotePrebufferMinMs, RemotePrebufferMaxMs);
+    capacityMs         = std::max(0, capacityMs);
+    if(capacityMs <= 0) {
+        return targetMs;
+    }
+
+    return std::clamp(targetMs, 1, capacityMs);
 }
 
 int AudioEngine::remotePrebufferTargetMs(const AudioStreamPtr& stream) const
 {
-    static constexpr int targetMs = std::max(RemotePrebufferTargetMs, RemoteRebufferFloorMs);
     if(!stream || stream->sampleRate() <= 0 || stream->channelCount() <= 0) {
-        return targetMs;
+        return remotePrebufferTargetMs(0);
     }
 
     const auto capacityFrames
         = stream->writer().capacity() / static_cast<uint64_t>(std::max(1, stream->channelCount()));
     const auto capacityMs64 = (capacityFrames * 1000ULL) / static_cast<uint64_t>(stream->sampleRate());
     const int capacityMs    = static_cast<int>(std::min<uint64_t>(capacityMs64, std::numeric_limits<int>::max()));
-    if(capacityMs <= 0) {
-        return targetMs;
-    }
-
-    return std::clamp(targetMs, 1, capacityMs);
+    return remotePrebufferTargetMs(capacityMs);
 }
 
 void AudioEngine::clearRemoteBufferingState(bool resumePipeline)
@@ -3581,6 +3590,14 @@ void AudioEngine::maybeUpdateRemoteBuffering(const char* reason)
     m_remoteBuffering.streamId   = stream->id();
 
     const bool inputNeedsMoreData = m_decoder.inputNeedsMoreData();
+    const uint64_t neededMs
+        = bufferedMs < static_cast<uint64_t>(targetMs) ? static_cast<uint64_t>(targetMs) - bufferedMs : 0;
+
+    qCInfo(ENGINE) << "Remote stream rebuffering:" << "reason=" << reason << "trackId=" << m_currentTrack.id()
+                   << "generation=" << m_trackGeneration << "streamId=" << stream->id() << "bufferedMs=" << bufferedMs
+                   << "neededMs=" << neededMs << "floorMs=" << RemoteRebufferFloorMs << "targetMs=" << targetMs
+                   << "inputNeedsMoreData=" << inputNeedsMoreData
+                   << "rebufferCount=" << m_remoteBuffering.rebufferCount;
 
     m_pipeline.setBufferingPaused(true);
     m_audioClock.setPaused();
@@ -3588,12 +3605,6 @@ void AudioEngine::maybeUpdateRemoteBuffering(const char* reason)
 
     m_decoder.requestDecodeReserveMs(targetMs);
     m_decoder.ensureDecodeTimerRunning();
-
-    qCInfo(ENGINE) << "Remote stream buffering:" << "reason=" << reason << "trackId=" << m_currentTrack.id()
-                   << "generation=" << m_trackGeneration << "streamId=" << stream->id() << "bufferedMs=" << bufferedMs
-                   << "floorMs=" << RemoteRebufferFloorMs << "targetMs=" << targetMs
-                   << "inputNeedsMoreData=" << inputNeedsMoreData
-                   << "rebufferCount=" << m_remoteBuffering.rebufferCount;
 }
 
 void AudioEngine::schedulePipelineWakeDrainTask()
@@ -3720,6 +3731,16 @@ void AudioEngine::setupSettings()
         updateDecodeWatermarks();
 
         if(bufferLengthChanged && m_currentTrack.isValid()) {
+            reconfigureActiveStreamBuffering(currentPositionMs);
+        }
+    });
+    m_settings->subscribe<Settings::Core::Internal::RemoteBufferLengthMs>(this, [this](int bufferLengthMs) {
+        const int clampedBufferLengthMs = std::max(RemoteDecodedBufferMinMs, bufferLengthMs);
+        const bool bufferLengthChanged
+            = std::exchange(m_remoteDecodedBufferMs, clampedBufferLengthMs) != clampedBufferLengthMs;
+
+        if(bufferLengthChanged && m_currentTrack.isRemote()) {
+            const uint64_t currentPositionMs = position();
             reconfigureActiveStreamBuffering(currentPositionMs);
         }
     });
@@ -4208,16 +4229,21 @@ bool AudioEngine::initDecoder(const Engine::PlaybackItem& item, bool allowPrepar
 bool AudioEngine::setupNewTrackStream(const Track& track, bool applyPendingSeek)
 {
     const int streamBufferLength = streamBufferLengthMs(track);
+    const auto outputSnapshot    = m_pipeline.outputQueueSnapshot();
+    const int outputDemandMs     = startupPrefillFromOutputQueueMs(outputSnapshot, m_pipeline.outputFormat());
 
-    const auto startupPrefillMs = [this, &track, streamBufferLength]() {
-        const int baseMs          = m_playbackBufferLengthMs / 4;
-        const int decodeHighMs    = std::max(1, m_decoder.highWatermarkMs());
-        const auto outputSnapshot = m_pipeline.outputQueueSnapshot();
-        const int outputDemandMs  = startupPrefillFromOutputQueueMs(outputSnapshot, m_pipeline.outputFormat());
-        const int targetMs        = std::max({baseMs, decodeHighMs, outputDemandMs});
-        const int remoteTargetMs  = track.isRemote() ? std::max(targetMs, RemotePrebufferTargetMs) : targetMs;
-        return std::clamp(remoteTargetMs, 1, std::max(1, streamBufferLength));
-    }();
+    int targetMs{0};
+
+    if(track.isRemote()) {
+        targetMs = std::max(remotePrebufferTargetMs(streamBufferLength), outputDemandMs);
+    }
+    else {
+        const int baseMs       = m_playbackBufferLengthMs / 4;
+        const int decodeHighMs = std::max(1, m_decoder.highWatermarkMs());
+        targetMs               = std::max({baseMs, decodeHighMs, outputDemandMs});
+    }
+
+    const auto startupPrefillMs = std::clamp(targetMs, 1, std::max(1, streamBufferLength));
 
     const size_t bufferSamples
         = Audio::bufferSamplesFromMs(streamBufferLength, m_format.sampleRate(), m_format.channelCount());
