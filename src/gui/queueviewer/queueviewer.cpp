@@ -655,7 +655,7 @@ void QueueViewer::applyConfig(const ConfigData& config)
 
     m_view->changeIconSize(m_config.iconSize);
     m_view->header()->setHidden(!m_config.showHeader);
-    m_view->verticalScrollBar()->setVisible(m_config.showScrollBar);
+    m_view->setVerticalScrollBarPolicy(m_config.showScrollBar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
     m_view->setAlternatingRowColors(m_config.alternatingRows);
 
     QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
