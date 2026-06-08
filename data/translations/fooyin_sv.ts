@@ -9004,7 +9004,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="177"/>
         <source>Maximum width or height for original-size background images</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximal bredd eller höjd för original-storleks-bakgrunds-bilder</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="178"/>
