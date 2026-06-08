@@ -162,6 +162,7 @@ RadioSearch::RadioSearch(SettingsManager* settings, QWidget* parent)
     m_mainLayout->addWidget(m_saveSearchButton);
 
     auto* resetFilters = new ToolButton(settings, this);
+    m_resetFiltersAction->setStatusTip(tr("Reset all filters"));
     resetFilters->setDefaultAction(m_resetFiltersAction);
     m_mainLayout->addWidget(resetFilters);
 
@@ -322,6 +323,7 @@ void RadioSearch::setSaveSearchEnabled(const bool enabled)
 void RadioSearch::setSaveSearchToolTip(const QString& tooltip)
 {
     m_saveSearchAction->setToolTip(tooltip);
+    m_saveSearchAction->setStatusTip(tooltip);
 }
 
 void RadioSearch::setSaveSearchIcon(const bool saved)

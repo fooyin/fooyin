@@ -991,9 +991,11 @@ void RadioBrowserWidget::showSavedSearchMenu()
     menu->addSeparator();
 
     auto* renameAction = menu->addAction(tr("Rename saved search…"));
+    renameAction->setStatusTip(tr("Rename the saved search"));
     QObject::connect(renameAction, &QAction::triggered, this, [this, search]() { renameSavedSearch(search); });
 
     auto* removeAction = menu->addAction(tr("Remove saved search"));
+    removeAction->setStatusTip(tr("Remove the saved search"));
     QObject::connect(removeAction, &QAction::triggered, this, [this, search]() { removeSavedSearch(search); });
 
     if(m_filterBar) {
@@ -1350,6 +1352,7 @@ void RadioBrowserWidget::showContextMenu(const QPoint& pos)
             if(id == QLatin1StringView{RadioBrowserContextMenu::Play}) {
                 if(hasSelection && sectionEnabled(RadioBrowserContextMenu::Play)) {
                     auto* playAction = targetMenu->addAction(tr("Play"));
+                    playAction->setStatusTip(tr("Play the selected station"));
                     QObject::connect(playAction, &QAction::triggered, this, [this]() { addSelectedStations(true); });
                 }
                 return;
@@ -1383,7 +1386,8 @@ void RadioBrowserWidget::showContextMenu(const QPoint& pos)
                     auto* playlistMenu = new QMenu(tr("Add to playlist"), targetMenu);
                     m_trackSelection->addTrackAddToPlaylistContextMenu(playlistMenu);
                     if(!playlistMenu->actions().empty()) {
-                        targetMenu->addMenu(playlistMenu);
+                        auto* playlistAction = targetMenu->addMenu(playlistMenu);
+                        playlistAction->setStatusTip(tr("Add the selected stations to another playlist"));
                     }
                     else {
                         playlistMenu->deleteLater();
@@ -1426,6 +1430,8 @@ void RadioBrowserWidget::showContextMenu(const QPoint& pos)
                     const bool canEdit = stations.front().local && m_controller->isSaved(stations.front());
                     auto* editAction
                         = targetMenu->addAction(canEdit ? tr("Edit station…") : tr("View station details…"));
+                    editAction->setStatusTip(canEdit ? tr("Edit the selected custom station")
+                                                     : tr("View details for the selected station"));
                     QObject::connect(editAction, &QAction::triggered, this, &RadioBrowserWidget::editSelectedStation);
                 }
                 return;
@@ -1433,6 +1439,7 @@ void RadioBrowserWidget::showContextMenu(const QPoint& pos)
             if(id == QLatin1StringView{RadioBrowserContextMenu::AddCustom}) {
                 if(m_model->reorderEnabled() && sectionEnabled(RadioBrowserContextMenu::AddCustom)) {
                     auto* addCustomAction = targetMenu->addAction(tr("Add custom station…"));
+                    addCustomAction->setStatusTip(tr("Add a custom station to My Stations"));
                     QObject::connect(addCustomAction, &QAction::triggered, this, &RadioBrowserWidget::addCustomStation);
                 }
                 return;
@@ -1442,6 +1449,7 @@ void RadioBrowserWidget::showContextMenu(const QPoint& pos)
                     stations, [](const RadioStation& station) { return !station.streamUrl.isEmpty(); });
                 if(hasUrl && sectionEnabled(RadioBrowserContextMenu::CopyStreamUrl)) {
                     auto* copyUrlAction = targetMenu->addAction(tr("Copy stream URL"));
+                    copyUrlAction->setStatusTip(tr("Copy the selected station stream URLs to the clipboard"));
                     QObject::connect(copyUrlAction, &QAction::triggered, this, [stations]() {
                         QStringList urls;
                         for(const RadioStation& station : stations) {
@@ -1461,6 +1469,7 @@ void RadioBrowserWidget::showContextMenu(const QPoint& pos)
                 const bool hasHomepage = hasSelection && !stations.front().homepage.isEmpty();
                 if(hasHomepage && sectionEnabled(RadioBrowserContextMenu::OpenHomepage)) {
                     auto* openAction = targetMenu->addAction(tr("Open homepage"));
+                    openAction->setStatusTip(tr("Open the selected station homepage in a browser"));
                     QObject::connect(openAction, &QAction::triggered, this, [stations]() {
                         if(!stations.empty() && !stations.front().homepage.isEmpty()) {
                             QDesktopServices::openUrl(QUrl{stations.front().homepage});
@@ -1474,6 +1483,7 @@ void RadioBrowserWidget::showContextMenu(const QPoint& pos)
                 const bool hasRadioBrowserPage = !radioBrowserUrl.isEmpty() && radioBrowserUrl.isValid();
                 if(hasRadioBrowserPage && sectionEnabled(RadioBrowserContextMenu::OpenRadioBrowser)) {
                     auto* openAction = targetMenu->addAction(tr("Open radio-browser.info page"));
+                    openAction->setStatusTip(tr("Open the selected station on radio-browser.info"));
                     QObject::connect(openAction, &QAction::triggered, this, [stations]() {
                         if(!stations.empty()) {
                             const QUrl url = radioBrowserStationUrl(stations.front());
@@ -1505,9 +1515,11 @@ void RadioBrowserWidget::showContextMenu(const QPoint& pos)
         }
 
         auto* importAction = menu->addAction(tr("Import stations…"));
+        importAction->setStatusTip(tr("Import saved stations from a playlist file"));
         QObject::connect(importAction, &QAction::triggered, this, &RadioBrowserWidget::importSavedStations);
 
         auto* exportAction = menu->addAction(tr("Export stations…"));
+        exportAction->setStatusTip(tr("Export My Stations to a playlist file"));
         exportAction->setEnabled(!m_controller->savedStations().empty());
         QObject::connect(exportAction, &QAction::triggered, this, &RadioBrowserWidget::exportSavedStations);
     }
@@ -1525,6 +1537,7 @@ void RadioBrowserWidget::showHeaderContextMenu(const QPoint& pos)
     addColumnsMenu(menu);
     menu->addSeparator();
     auto* autoSizeSections = new QAction(tr("Auto-size sections"), menu);
+    autoSizeSections->setStatusTip(tr("Automatically size columns to fill the available width"));
     autoSizeSections->setCheckable(true);
     autoSizeSections->setChecked(header->isStretchEnabled());
     QObject::connect(autoSizeSections, &QAction::triggered, header,

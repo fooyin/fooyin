@@ -76,6 +76,11 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
 
     m_playbackOnSend->setToolTip(
         tr(R"(For "Replace current playlist" and "Create new playlist", start playback immediately.)"));
+    m_hideBroken->setToolTip(tr("Exclude stations marked as broken by radio-browser.info from search results."));
+    m_sendClicks->setToolTip(
+        tr("Report played stations to radio-browser.info so click counts and station statistics stay up to date."));
+    m_uniformStationIcons->setToolTip(
+        tr("Draw station icons inside equally sized frames so rows and icon captions align consistently."));
 
     m_rowHeight->setRange(0, 256);
     m_rowHeight->setSuffix(u" px"_s);
@@ -83,6 +88,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     m_iconItemBorder->setRange(0, 16);
     m_iconItemBorder->setSuffix(u" px"_s);
     m_iconItemBorder->setSpecialValueText(tr("None"));
+    m_iconItemBorder->setToolTip(tr("Size of the border around each station icon in icon display mode."));
 
     m_iconSize->setRange(16, 1024);
     m_iconSize->setSuffix(u" px"_s);
@@ -91,9 +97,12 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     m_iconHorizontalGap->setRange(-1, 256);
     m_iconHorizontalGap->setSpecialValueText(tr("Auto"));
     m_iconHorizontalGap->setSuffix(u" px"_s);
+    m_iconHorizontalGap->setToolTip(
+        tr("Horizontal spacing between stations in icon display mode. Auto uses the view's default spacing."));
 
     m_iconVerticalGap->setRange(0, 256);
     m_iconVerticalGap->setSuffix(u" px"_s);
+    m_iconVerticalGap->setToolTip(tr("Vertical spacing between stations in icon display mode."));
 
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);

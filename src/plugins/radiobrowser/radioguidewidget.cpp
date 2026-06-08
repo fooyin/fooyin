@@ -482,6 +482,7 @@ void RadioGuideWidget::showContextMenu(const QPoint& pos)
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
     auto* browseAction = menu->addAction(tr("Browse"));
+    browseAction->setStatusTip(tr("Browse the selected section"));
     browseAction->setEnabled(canBrowse);
     QObject::connect(browseAction, &QAction::triggered, this, &RadioGuideWidget::activateCurrentIndex);
     menu->addSeparator();
@@ -491,9 +492,11 @@ void RadioGuideWidget::showContextMenu(const QPoint& pos)
         const QString name = index.data(RadioGuideModel::SavedSearchNameRole).toString();
 
         auto* renameAction = menu->addAction(tr("Rename saved search…"));
+        renameAction->setStatusTip(tr("Rename the selected saved search"));
         QObject::connect(renameAction, &QAction::triggered, this, [this, id, name]() { renameSavedSearch(id, name); });
 
         auto* removeAction = menu->addAction(tr("Remove saved search"));
+        removeAction->setStatusTip(tr("Remove the selected saved search"));
         QObject::connect(removeAction, &QAction::triggered, this, [this, id]() { removeSavedSearch(id); });
 
         menu->addSeparator();
@@ -504,14 +507,17 @@ void RadioGuideWidget::showContextMenu(const QPoint& pos)
        && static_cast<Action>(index.data(RadioGuideModel::ActionRole).toInt()) == Action::MyStations;
     if(isMyStations) {
         auto* addCustomAction = menu->addAction(tr("Add custom station…"));
+        addCustomAction->setStatusTip(tr("Add a custom station to My Stations"));
         QObject::connect(addCustomAction, &QAction::triggered, this, &RadioGuideWidget::addCustomStation);
 
         menu->addSeparator();
 
         auto* importAction = menu->addAction(tr("Import stations…"));
+        importAction->setStatusTip(tr("Import saved stations from a playlist file"));
         QObject::connect(importAction, &QAction::triggered, this, &RadioGuideWidget::importSavedStations);
 
         auto* exportAction = menu->addAction(tr("Export stations…"));
+        exportAction->setStatusTip(tr("Export My Stations to a playlist file"));
         exportAction->setEnabled(!m_controller->savedStations().empty());
         QObject::connect(exportAction, &QAction::triggered, this, &RadioGuideWidget::exportSavedStations);
 
