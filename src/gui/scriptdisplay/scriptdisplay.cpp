@@ -70,6 +70,7 @@ constexpr auto ForegroundColourKey    = "TextWidget/ForegroundColour";
 constexpr auto LinkColourKey          = "TextWidget/LinkColour";
 constexpr auto HorizontalAlignmentKey = "TextWidget/HorizontalAlignment";
 constexpr auto VerticalAlignmentKey   = "TextWidget/VerticalAlignment";
+constexpr auto ScrollBarKey           = "TextWidget/Scrollbar";
 
 namespace {
 QFont fontFromString(const QString& fontString)
@@ -194,6 +195,7 @@ ScriptDisplay::ConfigData ScriptDisplay::defaultConfig() const
     config.linkColour          = normaliseColour(m_settings->fileValue(LinkColourKey, {}).toString());
     config.horizontalAlignment = m_settings->fileValue(HorizontalAlignmentKey, config.horizontalAlignment).toInt();
     config.verticalAlignment   = m_settings->fileValue(VerticalAlignmentKey, config.verticalAlignment).toInt();
+    config.showScrollBar       = m_settings->fileValue(ScrollBarKey, config.showScrollBar).toBool();
 
     return config;
 }
@@ -227,6 +229,7 @@ void ScriptDisplay::applyConfig(const ConfigData& config)
     m_config.linkColour          = normaliseColour(config.linkColour);
     m_config.horizontalAlignment = config.horizontalAlignment;
     m_config.verticalAlignment   = config.verticalAlignment;
+    m_config.showScrollBar       = config.showScrollBar;
 
     applyAppearance();
     updateText();
@@ -241,6 +244,7 @@ void ScriptDisplay::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(LinkColourKey, normaliseColour(config.linkColour));
     m_settings->fileSet(HorizontalAlignmentKey, config.horizontalAlignment);
     m_settings->fileSet(VerticalAlignmentKey, config.verticalAlignment);
+    m_settings->fileSet(ScrollBarKey, config.showScrollBar);
 }
 
 void ScriptDisplay::clearSavedDefaults() const
@@ -252,6 +256,7 @@ void ScriptDisplay::clearSavedDefaults() const
     m_settings->fileRemove(LinkColourKey);
     m_settings->fileRemove(HorizontalAlignmentKey);
     m_settings->fileRemove(VerticalAlignmentKey);
+    m_settings->fileRemove(ScrollBarKey);
 }
 
 void ScriptDisplay::saveLayoutData(QJsonObject& layout)
@@ -324,6 +329,15 @@ void ScriptDisplay::contextMenuEvent(QContextMenuEvent* event)
         }
     };
 
+    auto* showScroll = menu->addAction(tr("Show scrollbar"));
+    showScroll->setCheckable(true);
+    showScroll->setChecked(m_config.showScrollBar);
+    QObject::connect(showScroll, &QAction::triggered, this, [this](bool show) {
+        auto config{currentConfig()};
+        config.showScrollBar = show;
+        applyConfig(config);
+    });
+
     auto* alignMenu = menu->addMenu(tr("Align"));
 
     addAlignmentMenu(alignMenu, tr("Horizontal"), m_config.horizontalAlignment,
@@ -383,6 +397,9 @@ ScriptDisplay::ConfigData ScriptDisplay::configFromLayout(const QJsonObject& lay
     if(layout.contains("VerticalAlignment"_L1)) {
         config.verticalAlignment = layout.value("VerticalAlignment"_L1).toInt();
     }
+    if(layout.contains("ShowScrollbar"_L1)) {
+        config.showScrollBar = layout.value("ShowScrollbar"_L1).toBool();
+    }
 
     return config;
 }
@@ -396,6 +413,7 @@ void ScriptDisplay::saveConfigToLayout(const ConfigData& config, QJsonObject& la
     layout["LinkColour"_L1]          = normaliseColour(config.linkColour);
     layout["HorizontalAlignment"_L1] = config.horizontalAlignment;
     layout["VerticalAlignment"_L1]   = config.verticalAlignment;
+    layout["ShowScrollbar"_L1]       = config.showScrollBar;
 }
 
 void ScriptDisplay::applyAppearance()
@@ -428,6 +446,7 @@ void ScriptDisplay::applyAppearance()
     }
 
     m_text->show();
+    m_text->setVerticalScrollBarPolicy(m_config.showScrollBar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
     updateViewportAlignment();
 }
 

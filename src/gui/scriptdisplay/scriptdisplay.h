@@ -58,6 +58,7 @@ public:
         QString linkColour;
         int horizontalAlignment{Qt::AlignLeft};
         int verticalAlignment{Qt::AlignVCenter};
+        bool showScrollBar{true};
     };
 
     ScriptDisplay(PlayerController* playerController, PlaylistHandler* playlistHandler,
