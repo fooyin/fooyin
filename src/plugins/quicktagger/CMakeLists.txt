@@ -1,7 +1,6 @@
 create_fooyin_plugin_internal(
     quicktagger
     DEPENDS Fooyin::Gui
-            Fooyin::CorePrivate
     SOURCES quicktagger.cpp
             quicktagger.h
             quicktaggerconstants.h
