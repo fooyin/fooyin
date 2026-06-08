@@ -53,7 +53,7 @@ public:
     void initialise(const GuiPluginContext& context) override;
 
 private:
-    void registerLayouts(LayoutProvider* layoutProvider) const;
+    static void registerLayouts(LayoutProvider& layoutProvider);
     void scheduleRelinkRadioWidgets();
     void relinkRadioWidgets();
     void showRadioBrowserDialog();

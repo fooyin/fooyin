@@ -135,21 +135,25 @@ void RadioBrowserPlugin::initialise(const GuiPluginContext& context)
                      &RadioBrowserPlugin::scheduleRelinkRadioWidgets);
     scheduleRelinkRadioWidgets();
 
-    registerLayouts(context.layoutProvider);
+    registerLayouts(*context.layoutProvider);
 }
 
-void RadioBrowserPlugin::registerLayouts(LayoutProvider* layoutProvider) const
+void RadioBrowserPlugin::registerLayouts(LayoutProvider& layoutProvider)
 {
-    layoutProvider->registerLayout(
-        R"json({"Name":"Radio","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAJgAABPYAAAAcAP////8BAAAAAgA=",
-            "Widgets":[{"StatusBar":{}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAAA1gAABRoA/////wEAAAABAA==",
-            "Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAABugAAANUAAABWAP////8BAAAAAgA=",
-            "Widgets":[{"RadioGuide":{}},{"ArtworkPanel":{}},{"ScriptDisplay":{"HorizontalAlignment":4,
-            "Script":"$if(%isstopped%,Playback stopped,\n<sized=1><b>$if2(%streamtitle%,[$join( - ,%artist%,%title%)])</b></size>\n$crlf()\n<alpha=190>$if2(%station%,$if(%streamtitle%,,%title%))</alpha>\n)",
-            "VerticalAlignment":128}}]}},{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAAAIAAAAuEA/////wEAAAACAA==",
-            "Widgets":[{"RadioSearch":{}},{"RadioBrowser":{}}]}}]}},{"SplitterHorizontal":{
-            "State":"AAAA/wAAAAEAAAAEAAAAcAAACSoAAAA4AAAAZwD/////AQAAAAEA","Widgets":[{"PlayerControls":{}},
-            {"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}}]}}]})json");
+    static const QString jsonStart
+        = uR"json({"Name":"Radio","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAJgAABPYAAAAcAP////8BAAAAAgA=",
+                "Widgets":[{"StatusBar":{}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAAA1gAABRoA/////wEAAAABAA==","Widgets":[{
+                "SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAABugAAANUAAABWAP////8BAAAAAgA=","Widgets":[{"RadioGuide":{}},
+                {"ArtworkPanel":{}},{"ScriptDisplay":{"HorizontalAlignment":4,"Script":"$if(%isstopped%,)json"_s;
+    const QString playbackStopped = tr("Playback stopped");
+    static const QString jsonEnd
+        = uR"json(,\n<sized=1><b>$if2(%streamtitle%,[$join( - ,%artist%,%title%)])</b></size>\n$crlf()\n<alpha=190>$if2(%station%,$if(%streamtitle%,,%title%))</alpha>\n)",
+                "VerticalAlignment":128}}]}},{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAAAIAAAAuEA/////wEAAAACAA==","Widgets":[{"RadioSearch":{}},{"RadioBrowser":{}}]}}]}}]}},{
+                "SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAAcAAACSoAAAA4AAAAZwD/////wQAAAAEA","Widgets":[{"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},
+                {"VolumeControls":{}}]}}]})json"_s;
+
+    const QString fullJson = jsonStart + playbackStopped + jsonEnd;
+    layoutProvider.registerLayout(fullJson.toUtf8());
 }
 
 void RadioBrowserPlugin::scheduleRelinkRadioWidgets()
