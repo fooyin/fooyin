@@ -23,7 +23,6 @@
 #include "artwork/artworkviewerdialog.h"
 #include "coverwidgetconfigwidget.h"
 #include "pixmapfadecontroller.h"
-#include "statusevent.h"
 
 #include <core/engine/audioloader.h>
 #include <core/player/playercontroller.h>
@@ -33,6 +32,7 @@
 #include <gui/coverrepository.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/statusevent.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>

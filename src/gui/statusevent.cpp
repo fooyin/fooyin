@@ -17,7 +17,7 @@
  *
  */
 
-#include "statusevent.h"
+#include <gui/statusevent.h>
 
 #include <utils/utils.h>
 

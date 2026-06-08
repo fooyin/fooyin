@@ -44,7 +44,6 @@
 #include "scripting/scriptvariableproviders.h"
 #include "search/searchcontroller.h"
 #include "search/searchwidget.h"
-#include "statusevent.h"
 #include "systemtrayicon.h"
 #include "widgets.h"
 #include <gui/playlist/currentplaylistcontroller.h>
@@ -78,6 +77,7 @@
 #include <gui/plugins/pluginconfigguiplugin.h>
 #include <gui/propertiesdialog.h>
 #include <gui/scripting/scripteditor.h>
+#include <gui/statusevent.h>
 #include <gui/theme/fytheme.h>
 #include <gui/theme/themeregistry.h>
 #include <gui/trackselectioncontroller.h>

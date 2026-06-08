@@ -23,7 +23,6 @@
 #include "contextmenuids.h"
 #include "internalguisettings.h"
 #include "playlist/playlistcontroller.h"
-#include "statusevent.h"
 
 #include <core/library/libraryutils.h>
 #include <core/player/playercontroller.h>
@@ -32,6 +31,7 @@
 #include <gui/contextmenuutils.h>
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
+#include <gui/statusevent.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/fileutils.h>

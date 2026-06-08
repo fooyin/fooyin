@@ -22,10 +22,10 @@
 #include "artworkexporter.h"
 #include "artworkrow.h"
 #include "sources/artworksource.h"
-#include "statusevent.h"
 
 #include <core/engine/audioloader.h>
 #include <gui/coverrepository.h>
+#include <gui/statusevent.h>
 
 #include <QDir>
 #include <QFutureWatcher>

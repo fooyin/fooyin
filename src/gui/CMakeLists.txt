@@ -31,6 +31,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scripteditor.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatter.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatterregistry.h
+    ${CMAKE_SOURCE_DIR}/include/gui/statusevent.h
     ${CMAKE_SOURCE_DIR}/include/gui/theme/fytheme.h
     ${CMAKE_SOURCE_DIR}/include/gui/theme/themeregistry.h
     ${CMAKE_SOURCE_DIR}/include/gui/trackmimedata.h
@@ -459,7 +460,6 @@ set(SOURCES
     splitters/tabstackwidget.cpp
     splitters/tabstackwidget.h
     statusevent.cpp
-    statusevent.h
     systemtrayicon.cpp
     systemtrayicon.h
     theme/fytheme.cpp

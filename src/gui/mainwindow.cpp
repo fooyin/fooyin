@@ -22,7 +22,6 @@
 #include "internalguisettings.h"
 #include "menubar/mainmenubar.h"
 #include "scanprogresstext.h"
-#include "statusevent.h"
 #include "widgets/statuswidget.h"
 
 #include <core/application.h>
@@ -31,6 +30,7 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/iconloader.h>
+#include <gui/statusevent.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/enum.h>
