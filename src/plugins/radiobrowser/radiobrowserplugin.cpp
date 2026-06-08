@@ -139,12 +139,15 @@ void RadioBrowserPlugin::initialise(const GuiPluginContext& context)
 void RadioBrowserPlugin::registerLayouts(LayoutProvider* layoutProvider) const
 {
     layoutProvider->registerLayout(
-        R"({"Name":"Radio","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAJgAABPYAAAAcAP////8BAAAAAgA=",
-            "Widgets":[{"StatusBar":{}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAAA1AAABGIA/////wEAAAABAA==",
-            "Widgets":[{"RadioGuide":{}},{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAAAHAAABKsA/////wEAAAACAA==",
+        R"json({"Name":"Radio","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAJgAABPYAAAAcAP////8BAAAAAgA=",
+            "Widgets":[{"StatusBar":{}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAAA1gAABRoA/////wEAAAABAA==",
+            "Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAABugAAANUAAABWAP////8BAAAAAgA=",
+            "Widgets":[{"RadioGuide":{}},{"ArtworkPanel":{}},{"ScriptDisplay":{"HorizontalAlignment":4,
+            "Script":"$if(%isstopped%,Playback stopped,\n<sized=1><b>$if2(%streamtitle%,[%artist% - ]%title%)</b></size>\n$crlf()\n<alpha=190>$if2(%station%,$if(%streamtitle%,,%title%))</alpha>\n)",
+            "VerticalAlignment":128}}]}},{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAAAIAAAAuEA/////wEAAAACAA==",
             "Widgets":[{"RadioSearch":{}},{"RadioBrowser":{}}]}}]}},{"SplitterHorizontal":{
-            "State":"AAAA/wAAAAEAAAAEAAAAaAAACSoAAAA0AAAAGgD/////AQAAAAEA","Widgets":[{"PlayerControls":{}},
-            {"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}}]}}]})");
+            "State":"AAAA/wAAAAEAAAAEAAAAcAAACSoAAAA4AAAAZwD/////AQAAAAEA","Widgets":[{"PlayerControls":{}},
+            {"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}}]}}]})json");
 }
 
 void RadioBrowserPlugin::scheduleRelinkRadioWidgets()
