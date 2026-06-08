@@ -300,6 +300,7 @@ AudioEngine::AudioEngine(std::shared_ptr<AudioLoader> audioLoader, SettingsManag
     , m_streamToTrackOriginMs{0}
     , m_nextTransitionId{1}
     , m_decoder{this}
+    , m_nextManualRemoteCrossfadeRequestId{1}
     , m_levelFrameMailbox{8}
     , m_pcmFrameMailbox{8}
     , m_visualisationBackend{std::move(visualisationBackend)}
@@ -392,11 +393,12 @@ AudioEngine::AudioEngine(std::shared_ptr<AudioLoader> audioLoader, SettingsManag
     m_pipeline.setSignalWakeTarget(this, pipelineWakeEventType());
     m_pipeline.setAnalysisBus(m_analysisBus.get());
 
-    m_nextTrackPrepareWorker.start([this](uint64_t jobToken, uint64_t requestId, const Engine::PlaybackItem& item,
+    m_nextTrackPrepareWorker.start([this](uint64_t jobToken, uint64_t requestId,
+                                          NextTrackPrepareWorker::Purpose purpose, const Engine::PlaybackItem& item,
                                           NextTrackPreparationState preparedState) {
-        m_engineTaskQueue.enqueue(EngineTaskType::Worker, [this, jobToken, requestId, item,
+        m_engineTaskQueue.enqueue(EngineTaskType::Worker, [this, jobToken, requestId, purpose, item,
                                                            preparedState = std::move(preparedState)]() mutable {
-            applyPreparedNextTrackResult(jobToken, requestId, item, std::move(preparedState));
+            applyPreparedNextTrackResult(jobToken, requestId, purpose, item, std::move(preparedState));
         });
     });
 }
@@ -496,6 +498,9 @@ void AudioEngine::loadTrack(const Engine::PlaybackItem& item, bool manualChange)
     const Track& track = item.track;
     if(manualChange) {
         m_pendingManualTrackItemId = 0;
+        if(!m_pendingManualRemoteCrossfade || !samePlaybackItem(item, m_pendingManualRemoteCrossfade->item)) {
+            clearPendingManualRemoteCrossfade(true);
+        }
     }
 
     if(manualChange) {
@@ -1478,8 +1483,10 @@ void AudioEngine::beginShutdown()
 bool AudioEngine::ensureCrossfadePrepared(const Engine::PlaybackItem& item, bool isManualChange)
 {
     if(isManualChange && (m_currentTrack.isRemote() || item.track.isRemote())) {
-        clearPreparedNextTrack();
-        return true;
+        if(hasPreparedManualRemoteCrossfadeTarget(item)) {
+            return true;
+        }
+        return enqueueManualRemoteCrossfadePrepare(item);
     }
 
     if(!m_preparedNext || !samePlaybackItem(item, m_preparedNext->item)) {
@@ -1535,6 +1542,10 @@ bool AudioEngine::startTrackCrossfade(const Engine::PlaybackItem& item, bool isM
 
     if(!ensureCrossfadePrepared(item, isManualChange)) {
         return false;
+    }
+    if(isManualChange && (m_currentTrack.isRemote() || track.isRemote())
+       && !hasPreparedManualRemoteCrossfadeTarget(item)) {
+        return true;
     }
 
     const auto eligibility = evaluateAutoTransitionEligibility(track, isManualChange);
@@ -4495,6 +4506,7 @@ void AudioEngine::disarmStalePreparedTransitions(const Track& contextTrack, uint
 
 void AudioEngine::clearPreparedNextTrackAndCancelPendingJobs()
 {
+    m_pendingManualRemoteCrossfade.reset();
     cancelPendingPrepareJobs();
     clearPreparedNextTrack();
 }
@@ -4541,6 +4553,118 @@ bool AudioEngine::prepareNextTrackImmediate(const Engine::PlaybackItem& item, co
     return true;
 }
 
+bool AudioEngine::hasPreparedManualRemoteCrossfadeTarget(const Engine::PlaybackItem& item) const
+{
+    return m_preparedNext && samePlaybackItem(item, m_preparedNext->item) && m_preparedNext->format.isValid()
+        && m_preparedNext->preparedStream;
+}
+
+bool AudioEngine::enqueueManualRemoteCrossfadePrepare(const Engine::PlaybackItem& item)
+{
+    if(!item.track.isValid() || !(m_currentTrack.isRemote() || item.track.isRemote())) {
+        return false;
+    }
+
+    const char* readinessReason = "eligible";
+    if(!evaluateAutoTransitionEligibility(item.track, true, false, &readinessReason).has_value()) {
+        qCDebug(ENGINE) << "Manual remote crossfade target will not be prepared:"
+                        << "currentTrackId=" << m_currentTrack.id() << "currentItemId=" << m_currentTrackItemId
+                        << "targetTrackId=" << item.track.id() << "targetItemId=" << item.itemId
+                        << "reason=" << readinessReason;
+        return false;
+    }
+
+    if(m_pendingManualRemoteCrossfade && samePlaybackItem(item, m_pendingManualRemoteCrossfade->item)) {
+        qCDebug(ENGINE) << "Manual remote crossfade target preparation already pending:"
+                        << "currentTrackId=" << m_currentTrack.id() << "currentItemId=" << m_currentTrackItemId
+                        << "targetTrackId=" << item.track.id() << "targetItemId=" << item.itemId;
+        return true;
+    }
+
+    clearPreparedNextTrackAndCancelPendingJobs();
+
+    const auto requestId = m_nextManualRemoteCrossfadeRequestId++;
+    m_pendingManualRemoteCrossfade
+        = PendingManualRemoteCrossfade{.item = item, .requestId = requestId, .sourceGeneration = m_trackGeneration};
+
+    const int streamBufferMs = streamBufferLengthMs(item.track);
+    const auto prefillMs     = static_cast<uint64_t>(remotePrebufferTargetMs(streamBufferMs));
+
+    NextTrackPrepareWorker::Request request;
+    request.requestId                  = requestId;
+    request.purpose                    = NextTrackPrepareWorker::Purpose::ManualRemoteCrossfade;
+    request.item                       = item;
+    request.context.audioLoader        = m_audioLoader;
+    request.context.currentTrack       = m_currentTrack;
+    request.context.playbackState      = m_playbackState.load(std::memory_order_relaxed);
+    request.context.playbackHints      = m_decoderPlaybackHints;
+    request.context.bufferLengthMs     = static_cast<uint64_t>(std::max(1, streamBufferMs));
+    request.context.preferredPrefillMs = prefillMs;
+
+    qCDebug(ENGINE) << "Queued manual remote crossfade target preparation:"
+                    << "currentTrackId=" << m_currentTrack.id() << "currentItemId=" << m_currentTrackItemId
+                    << "targetTrackId=" << item.track.id() << "targetItemId=" << item.itemId
+                    << "requestId=" << requestId << "preferredPrefillMs=" << request.context.preferredPrefillMs
+                    << "bufferLengthMs=" << request.context.bufferLengthMs;
+
+    m_nextTrackPrepareWorker.replacePending(std::move(request));
+    return true;
+}
+
+void AudioEngine::handleManualRemoteCrossfadePreparationResult(uint64_t requestId, const Engine::PlaybackItem& item,
+                                                               NextTrackPreparationState prepared)
+{
+    if(!m_pendingManualRemoteCrossfade || m_pendingManualRemoteCrossfade->requestId != requestId
+       || !samePlaybackItem(item, m_pendingManualRemoteCrossfade->item)
+       || m_pendingManualRemoteCrossfade->sourceGeneration != m_trackGeneration) {
+        qCDebug(ENGINE) << "Dropping stale manual remote crossfade preparation result:"
+                        << "targetTrackId=" << item.track.id() << "targetItemId=" << item.itemId
+                        << "requestId=" << requestId << "currentGeneration=" << m_trackGeneration;
+        return;
+    }
+
+    m_pendingManualRemoteCrossfade.reset();
+
+    const bool preparedValid           = prepared.isValid();
+    const bool preparedStreamAvailable = preparedValid && prepared.preparedStream != nullptr;
+    const uint64_t preparedBufferedMs  = preparedStreamAvailable ? prepared.preparedStream->bufferedDurationMs() : 0;
+    const int remoteTargetMs
+        = preparedStreamAvailable ? remotePrebufferTargetMs(prepared.preparedStream) : remotePrebufferTargetMs(0);
+
+    if(!preparedValid || !preparedStreamAvailable || std::cmp_less(preparedBufferedMs, remoteTargetMs)) {
+        qCWarning(ENGINE) << "Manual remote crossfade target preparation failed; keeping current stream:"
+                          << "targetTrackId=" << item.track.id() << "targetItemId=" << item.itemId
+                          << "target=" << item.track.filenameExt() << "prepared=" << preparedValid
+                          << "preparedStream=" << preparedStreamAvailable << "preparedBufferedMs=" << preparedBufferedMs
+                          << "targetMs=" << remoteTargetMs;
+        clearPreparedNextTrack();
+        return;
+    }
+
+    prepared.item  = item;
+    m_preparedNext = std::move(prepared);
+
+    qCDebug(ENGINE) << "Manual remote crossfade target prepared:"
+                    << "currentTrackId=" << m_currentTrack.id() << "currentItemId=" << m_currentTrackItemId
+                    << "targetTrackId=" << item.track.id() << "targetItemId=" << item.itemId
+                    << "preparedBufferedMs=" << preparedBufferedMs << "targetMs=" << remoteTargetMs;
+
+    if(!startTrackCrossfade(item, true)) {
+        qCWarning(ENGINE) << "Prepared manual remote crossfade could not be committed; keeping current stream:"
+                          << "targetTrackId=" << item.track.id() << "targetItemId=" << item.itemId
+                          << "target=" << item.track.filenameExt();
+        clearPreparedNextTrack();
+    }
+}
+
+void AudioEngine::clearPendingManualRemoteCrossfade(bool cancelJobs)
+{
+    m_pendingManualRemoteCrossfade.reset();
+    if(cancelJobs) {
+        cancelPendingPrepareJobs();
+    }
+}
+
 void AudioEngine::cancelPendingPrepareJobs()
 {
     m_nextTrackPrepareWorker.cancelPendingJobs();
@@ -4571,8 +4695,9 @@ void AudioEngine::enqueuePrepareNextTrack(const Engine::PlaybackItem& item, uint
     m_nextTrackPrepareWorker.replacePending(std::move(request));
 }
 
-void AudioEngine::applyPreparedNextTrackResult(uint64_t jobToken, uint64_t requestId, const Engine::PlaybackItem& item,
-                                               NextTrackPreparationState prepared)
+void AudioEngine::applyPreparedNextTrackResult(uint64_t jobToken, uint64_t requestId,
+                                               NextTrackPrepareWorker::Purpose purpose,
+                                               const Engine::PlaybackItem& item, NextTrackPreparationState prepared)
 {
     const Track& track    = item.track;
     const uint64_t itemId = item.itemId;
@@ -4580,6 +4705,11 @@ void AudioEngine::applyPreparedNextTrackResult(uint64_t jobToken, uint64_t reque
         qCDebug(ENGINE) << "Dropping stale next-track preparation result:" << "trackId=" << track.id()
                         << "itemId=" << itemId << "requestId=" << requestId << "jobToken=" << jobToken
                         << "activeJobToken=" << m_nextTrackPrepareWorker.activeJobToken();
+        return;
+    }
+
+    if(purpose == NextTrackPrepareWorker::Purpose::ManualRemoteCrossfade) {
+        handleManualRemoteCrossfadePreparationResult(requestId, item, std::move(prepared));
         return;
     }
 
@@ -4737,7 +4867,13 @@ bool AudioEngine::executeManualFadeDeferredLoad(const Engine::PlaybackItem& item
         return false;
     }
 
-    qCDebug(ENGINE) << "Deferring manual track load until fade transition completes:" << item.track.filenameExt();
+    if(m_pendingManualRemoteCrossfade && samePlaybackItem(item, m_pendingManualRemoteCrossfade->item)) {
+        qCDebug(ENGINE) << "Deferring manual remote track load until target stream is prepared:"
+                        << item.track.filenameExt();
+    }
+    else {
+        qCDebug(ENGINE) << "Deferring manual track load until fade transition completes:" << item.track.filenameExt();
+    }
     return true;
 }
 

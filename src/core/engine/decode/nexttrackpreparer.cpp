@@ -101,7 +101,7 @@ NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const C
 
     const bool sameFileSegmentHandoff = isMultiTrackFileTransition(context.currentTrack, track);
     const bool canPrimePreparedStream = context.playbackState == Engine::PlaybackState::Playing
-                                     && decoderContext.isSeekable() && !sameFileSegmentHandoff;
+                                     && (decoderContext.isSeekable() || track.offset() == 0) && !sameFileSegmentHandoff;
 
     if(canPrimePreparedStream) {
         const int channels   = state.format.channelCount();
@@ -116,7 +116,7 @@ NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const C
             auto preparedStream             = decoderContext.createStream(bufferSamples);
             decoderContext.setActiveStream(preparedStream);
 
-            if(track.offset() > 0) {
+            if(track.offset() > 0 && decoderContext.isSeekable()) {
                 decoderContext.seek(track.offset());
             }
 
@@ -249,7 +249,7 @@ void NextTrackPrepareWorker::run(const std::stop_token& stopToken)
         const bool stale             = (currentActive != request.jobToken);
 
         if(!canceled && !stale && completion) {
-            completion(request.jobToken, request.requestId, request.item, std::move(prepared));
+            completion(request.jobToken, request.requestId, request.purpose, request.item, std::move(prepared));
         }
     }
 }

@@ -90,15 +90,22 @@ public:
 class FYCORE_EXPORT NextTrackPrepareWorker
 {
 public:
+    enum class Purpose : uint8_t
+    {
+        NextTrack,
+        ManualRemoteCrossfade,
+    };
+
     struct Request
     {
         uint64_t jobToken{0};
         uint64_t requestId{0};
+        Purpose purpose{Purpose::NextTrack};
         Engine::PlaybackItem item;
         NextTrackPreparer::Context context;
     };
 
-    using CompletionHandler = std::function<void(uint64_t jobToken, uint64_t requestId,
+    using CompletionHandler = std::function<void(uint64_t jobToken, uint64_t requestId, Purpose purpose,
                                                  const Engine::PlaybackItem& item, NextTrackPreparationState prepared)>;
 
     NextTrackPrepareWorker();

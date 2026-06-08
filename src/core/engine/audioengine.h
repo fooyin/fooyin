@@ -339,10 +339,17 @@ private:
     void disarmStalePreparedTransitions(const Track& contextTrack, uint64_t contextGeneration);
     void clearPreparedNextTrackAndCancelPendingJobs();
     [[nodiscard]] bool prepareNextTrackImmediate(const Engine::PlaybackItem& item, uint64_t prefillTargetMs = 0);
+
+    [[nodiscard]] bool hasPreparedManualRemoteCrossfadeTarget(const Engine::PlaybackItem& item) const;
+    [[nodiscard]] bool enqueueManualRemoteCrossfadePrepare(const Engine::PlaybackItem& item);
+    void handleManualRemoteCrossfadePreparationResult(uint64_t requestId, const Engine::PlaybackItem& item,
+                                                      NextTrackPreparationState prepared);
+    void clearPendingManualRemoteCrossfade(bool cancelJobs = false);
+
     void cancelPendingPrepareJobs();
     void enqueuePrepareNextTrack(const Engine::PlaybackItem& item, uint64_t requestId, uint64_t prefillTargetMs);
-    void applyPreparedNextTrackResult(uint64_t jobToken, uint64_t requestId, const Engine::PlaybackItem& item,
-                                      NextTrackPreparationState prepared);
+    void applyPreparedNextTrackResult(uint64_t jobToken, uint64_t requestId, NextTrackPrepareWorker::Purpose purpose,
+                                      const Engine::PlaybackItem& item, NextTrackPreparationState prepared);
     void cleanupActiveStream();
     void cleanupOrphanedStream();
     void resetStreamToTrackOrigin();
@@ -375,6 +382,15 @@ private:
     DecodingController m_decoder;
 
     std::optional<NextTrackPreparationState> m_preparedNext;
+
+    struct PendingManualRemoteCrossfade
+    {
+        Engine::PlaybackItem item;
+        uint64_t requestId{0};
+        uint64_t sourceGeneration{0};
+    };
+    std::optional<PendingManualRemoteCrossfade> m_pendingManualRemoteCrossfade;
+    uint64_t m_nextManualRemoteCrossfadeRequestId;
 
     struct PreparedCrossfadeTransition
     {
