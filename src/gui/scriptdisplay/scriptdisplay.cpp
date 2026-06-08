@@ -157,9 +157,9 @@ ScriptDisplay::ScriptDisplay(PlayerController* playerController, PlaylistHandler
     QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this, &ScriptDisplay::updateText);
     QObject::connect(m_playerController, &PlayerController::playlistTrackUpdated, this, &ScriptDisplay::updateText);
 
-    m_settings->subscribe<Settings::Gui::RatingFullStarSymbol>(this, [this](const QString&) { updateText(); });
-    m_settings->subscribe<Settings::Gui::RatingHalfStarSymbol>(this, [this](const QString&) { updateText(); });
-    m_settings->subscribe<Settings::Gui::RatingEmptyStarSymbol>(this, [this](const QString&) { updateText(); });
+    m_settings->subscribe<Settings::Gui::RatingFullStarSymbol>(this, &ScriptDisplay::updateText);
+    m_settings->subscribe<Settings::Gui::RatingHalfStarSymbol>(this, &ScriptDisplay::updateText);
+    m_settings->subscribe<Settings::Gui::RatingEmptyStarSymbol>(this, &ScriptDisplay::updateText);
 
     QObject::connect(m_text, &QTextBrowser::anchorClicked, this,
                      [this](const QUrl& url) { activateLink(url.toString()); });
@@ -433,15 +433,15 @@ void ScriptDisplay::applyAppearance()
 
 void ScriptDisplay::updateText()
 {
-    const Track track      = currentTrack();
-    const bool resetScroll = track != m_lastTrack;
-    const QString text     = evaluateScript();
-
     ScriptFormatter formatter;
     formatter.setBaseFont(m_text->font());
     if(!m_config.fgColour.isEmpty()) {
         formatter.setBaseColour(QColor{m_config.fgColour});
     }
+
+    const Track track      = currentTrack();
+    const bool resetScroll = track != m_lastTrack;
+    const QString text     = evaluateScript();
 
     const QColor linkColour = m_config.linkColour.isEmpty() ? QColor{} : QColor{m_config.linkColour};
     const QString body      = richTextToHtml(formatter.evaluate(text), linkColour);
@@ -541,14 +541,10 @@ Playlist* ScriptDisplay::currentPlaylist() const
 
 QString ScriptDisplay::evaluateScript()
 {
-    if(const Track track = currentTrack(); track.isValid()) {
-        auto contextData
-            = makePlaybackScriptContext(m_playerController, currentPlaylist(), TrackListContextPolicy::Fallback, {},
-                                        true, false, Gui::ratingStarSymbols(*m_settings));
-        return m_scriptParser.evaluate(m_config.script, track, contextData.context);
-    }
-
-    return m_scriptParser.evaluate(m_config.script);
+    auto contextData
+        = makePlaybackScriptContext(m_playerController, currentPlaylist(), TrackListContextPolicy::Fallback, {}, true,
+                                    false, Gui::ratingStarSymbols(*m_settings));
+    return m_scriptParser.evaluate(m_config.script, currentTrack(), contextData.context);
 }
 
 void ScriptDisplay::activateLink(const QString& link) const
