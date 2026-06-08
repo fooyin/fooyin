@@ -71,6 +71,7 @@ private:
 
     [[nodiscard]] QAction* registeredAction(const Id& id) const;
     void syncRegisteredAction(const Id& id, const QString& text, bool active);
+    QStringList actionCategories(const QuickTag& tag);
 
     ActionManager* m_actionManager;
     MusicLibrary* m_library;

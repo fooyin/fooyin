@@ -35,6 +35,8 @@ class HlsStreamDeviceState;
 class FYCORE_EXPORT HlsStreamDevice : public QIODevice,
                                       public RemoteStreamDevice
 {
+    Q_OBJECT
+
 public:
     explicit HlsStreamDevice(std::shared_ptr<QNetworkAccessManager> network, QUrl url, qsizetype maxBufferedBytes,
                              QObject* parent = nullptr);

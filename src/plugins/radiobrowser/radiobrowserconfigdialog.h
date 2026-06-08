@@ -30,6 +30,8 @@ class QSpinBox;
 namespace Fooyin::RadioBrowser {
 class RadioBrowserConfigDialog : public WidgetConfigDialog<RadioBrowserWidget, RadioBrowserWidget::ConfigData>
 {
+    Q_OBJECT
+
 public:
     explicit RadioBrowserConfigDialog(RadioBrowserWidget* radioBrowser, QWidget* parent = nullptr);
 

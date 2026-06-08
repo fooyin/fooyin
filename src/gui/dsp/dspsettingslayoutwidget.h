@@ -37,6 +37,8 @@ class DspSettingsDialog;
 
 class DspLayoutWidgetBase : public FyWidget
 {
+    Q_OBJECT
+
 public:
     DspLayoutWidgetBase(DspSettingsController* controller, QString dspId, QString displayName, QWidget* parent);
 
@@ -79,6 +81,8 @@ private:
 
 class DspSettingsDialogLayoutWidget final : public DspLayoutWidgetBase
 {
+    Q_OBJECT
+
 public:
     DspSettingsDialogLayoutWidget(DspSettingsController* controller, QString dspId, QString displayName,
                                   QWidget* parent);
@@ -102,6 +106,8 @@ private:
 
 class DspCompactLayoutWidget final : public DspLayoutWidgetBase
 {
+    Q_OBJECT
+
 public:
     DspCompactLayoutWidget(DspSettingsController* controller, QString dspId, QString displayName,
                            DspLayoutEditor* editor, QWidget* parent);

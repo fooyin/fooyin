@@ -39,6 +39,8 @@ class QTimerEvent;
 namespace Fooyin::SoundTouch {
 class SoundTouchLayoutEditor : public DspLayoutEditor
 {
+    Q_OBJECT
+
 public:
     explicit SoundTouchLayoutEditor(SoundTouchDsp::Parameter parameter, QWidget* parent = nullptr);
 

@@ -68,11 +68,6 @@ bool canWriteTracks(const TrackList& tracks, const std::shared_ptr<AudioLoader>&
         return !track.hasCue() && !track.isInArchive() && audioLoader->canWriteMetadata(track);
     });
 }
-
-QStringList actionCategories(const QuickTag& tag, const QuickTaggerPlugin* plugin)
-{
-    return {plugin->tr("Tagging"), plugin->tr("Quick Tagger"), quickTagDisplayName(tag)};
-}
 } // namespace
 
 void QuickTaggerPlugin::initialise(const CorePluginContext& context)
@@ -126,7 +121,7 @@ void QuickTaggerPlugin::registerQuickTaggerActions()
                 //: %1 is a tag field name, %2 is the new tag value.
                 syncRegisteredAction(id, tr("Set %1 to %2").arg(quickTagDisplayName(tag), value.value), true);
                 if(Command* command = m_actionManager->command(id)) {
-                    command->setCategories(actionCategories(tag, this));
+                    command->setCategories(actionCategories(tag));
                 }
             }
             else {
@@ -135,7 +130,7 @@ void QuickTaggerPlugin::registerQuickTaggerActions()
                 Command* command = m_actionManager->registerAction(action, id);
                 //: %1 is a tag field name, %2 is the new tag value.
                 command->setDescription(tr("Set %1 to %2").arg(quickTagDisplayName(tag), value.value));
-                command->setCategories(actionCategories(tag, this));
+                command->setCategories(actionCategories(tag));
                 m_quickTaggerActions[id] = action;
             }
         }
@@ -147,7 +142,7 @@ void QuickTaggerPlugin::registerQuickTaggerActions()
             //: %1 is a tag field name.
             syncRegisteredAction(id, tr("Remove %1").arg(quickTagDisplayName(tag)), true);
             if(Command* command = m_actionManager->command(id)) {
-                command->setCategories(actionCategories(tag, this));
+                command->setCategories(actionCategories(tag));
             }
         }
         else {
@@ -156,7 +151,7 @@ void QuickTaggerPlugin::registerQuickTaggerActions()
             QObject::connect(action, &QAction::triggered, this, [this, id] { runRemoveQuickTagAction(id); });
             Command* command = m_actionManager->registerAction(action, id);
             command->setDescription(action->text());
-            command->setCategories(actionCategories(tag, this));
+            command->setCategories(actionCategories(tag));
             m_quickTaggerActions[id] = action;
         }
     }
@@ -327,6 +322,11 @@ void QuickTaggerPlugin::syncRegisteredAction(const Id& id, const QString& text, 
     action->setVisible(active);
 
     m_quickTaggerActions[id] = action;
+}
+
+QStringList QuickTaggerPlugin::actionCategories(const QuickTag& tag)
+{
+    return {tr("Tagging"), tr("Quick Tagger"), quickTagDisplayName(tag)};
 }
 } // namespace Fooyin::QuickTagger
 

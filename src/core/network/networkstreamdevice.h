@@ -35,6 +35,8 @@ struct NetworkStreamDeviceState;
 class FYCORE_EXPORT NetworkStreamDevice : public QIODevice,
                                           public RemoteStreamDevice
 {
+    Q_OBJECT
+
 public:
     NetworkStreamDevice(std::shared_ptr<QNetworkAccessManager> network, QUrl url, qsizetype maxBufferedBytes,
                         QObject* parent = nullptr);
