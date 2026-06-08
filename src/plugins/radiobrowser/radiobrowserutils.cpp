@@ -26,7 +26,6 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr auto IconSize    = 128;
 constexpr auto MaxInitials = 3;
 
 namespace Fooyin::RadioBrowser::Utils {
@@ -55,25 +54,26 @@ QString stationInitials(const QString& name)
 }
 } // namespace
 
-QIcon placeholderIcon(const RadioStation& station)
+QIcon placeholderIcon(const RadioStation& station, int size)
 {
-    const auto hue = static_cast<int>(qHash(station.streamUrl.isEmpty() ? station.name : station.streamUrl) % 360);
+    const int iconSize = std::clamp(size, 32, 384);
+    const auto hue     = static_cast<int>(qHash(station.streamUrl.isEmpty() ? station.name : station.streamUrl) % 360);
     const QColor background = QColor::fromHsv(hue, 180, 220);
 
-    QPixmap pixmap{IconSize, IconSize};
+    QPixmap pixmap{iconSize, iconSize};
     pixmap.fill(Qt::transparent);
 
     QPainter painter{&pixmap};
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setPen(Qt::NoPen);
     painter.setBrush(background);
-    painter.drawRoundedRect(pixmap.rect().adjusted(4, 4, -4, -4), 10, 10);
+    painter.drawRoundedRect(pixmap.rect().adjusted(4, 4, -4, -4), iconSize / 12, iconSize / 12);
 
     const QString initials = stationInitials(station.name);
 
     QFont font = painter.font();
     font.setBold(true);
-    font.setPointSize(36);
+    font.setPointSize(std::max(8, (iconSize * 9) / 32));
     painter.setFont(font);
     painter.setPen(Qt::black);
     painter.drawText(pixmap.rect(), Qt::AlignCenter, initials);

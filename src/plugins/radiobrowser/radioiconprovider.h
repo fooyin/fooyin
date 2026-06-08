@@ -44,8 +44,8 @@ public:
     explicit RadioIconProvider(std::shared_ptr<NetworkAccessManager> network, QObject* parent = nullptr);
     ~RadioIconProvider() override;
 
-    [[nodiscard]] QIcon icon(const RadioStation& station) const;
-    void requestIcon(const RadioStation& station);
+    [[nodiscard]] QIcon icon(const RadioStation& station, int size) const;
+    void requestIcon(const RadioStation& station, int size);
 
 Q_SIGNALS:
     void iconLoaded(const QString& favicon);
@@ -55,13 +55,19 @@ private:
     void handleReply(QNetworkReply* reply);
     void finishFailedReply(QNetworkReply* reply, const QString& favicon);
 
+    struct IconRequest
+    {
+        QString favicon;
+        int size{0};
+    };
+
     std::shared_ptr<NetworkAccessManager> m_network;
 
     QCache<QString, QIcon> m_icons;
     std::set<QString> m_failed;
     std::set<QString> m_pending;
-    std::queue<QString> m_queue;
-    std::unordered_map<QNetworkReply*, QString> m_replies;
+    std::queue<IconRequest> m_queue;
+    std::unordered_map<QNetworkReply*, IconRequest> m_replies;
 };
 } // namespace RadioBrowser
 } // namespace Fooyin

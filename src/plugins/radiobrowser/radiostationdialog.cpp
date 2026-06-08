@@ -598,12 +598,12 @@ void RadioStationDialog::updateIcon() const
     const RadioStation station = m_validated ? m_validatedStation : inputStation();
 
     if(m_controller && m_controller->iconProvider() && !station.favicon.trimmed().isEmpty()) {
-        const QIcon icon = m_controller->iconProvider()->icon(station);
+        const QIcon icon = m_controller->iconProvider()->icon(station, iconSize * 2);
         if(!icon.isNull()) {
             m_icon->setPixmap(icon.pixmap(iconSize, iconSize));
             return;
         }
-        m_controller->iconProvider()->requestIcon(station);
+        m_controller->iconProvider()->requestIcon(station, iconSize * 2);
     }
 
     m_icon->setPixmap(stationIcon(station).pixmap(iconSize, iconSize));

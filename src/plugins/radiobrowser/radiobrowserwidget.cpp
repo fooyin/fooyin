@@ -1653,6 +1653,7 @@ void RadioBrowserWidget::setViewConfig(const ConfigData::ViewConfig& config)
         m_viewConfig.iconSize = {iconSize, iconSize};
     }
 
+    const QSize previousIconSize{m_config.view.iconSize};
     m_config.view = m_viewConfig;
 
     m_resultsView->setViewMode(m_viewConfig.viewMode);
@@ -1663,6 +1664,7 @@ void RadioBrowserWidget::setViewConfig(const ConfigData::ViewConfig& config)
     m_resultsView->changeIconSize(m_viewConfig.iconSize);
     m_delegate->setUniformStationIcons(m_viewConfig.uniformStationIcons);
     m_delegate->setIconItemBorderWidth(m_viewConfig.iconItemBorderWidth);
+    m_model->setIconSize(m_viewConfig.iconSize);
     m_model->setRowHeight(m_viewConfig.rowHeight);
     m_resultsView->setVerticalScrollBarPolicy(m_viewConfig.showScrollbar ? Qt::ScrollBarAsNeeded
                                                                          : Qt::ScrollBarAlwaysOff);
@@ -1675,6 +1677,10 @@ void RadioBrowserWidget::setViewConfig(const ConfigData::ViewConfig& config)
 
     m_model->setShowIcons(m_viewConfig.showIcons);
     updateIconColumnOrder();
+
+    if(previousIconSize != m_viewConfig.iconSize) {
+        scheduleVisibleIconRequest();
+    }
 
     QMetaObject::invokeMethod(m_resultsView->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
 }

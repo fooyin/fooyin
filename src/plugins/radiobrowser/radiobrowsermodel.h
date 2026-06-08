@@ -24,6 +24,7 @@
 #include <QAbstractTableModel>
 #include <QCache>
 #include <QIcon>
+#include <QSize>
 
 #include <vector>
 
@@ -72,6 +73,7 @@ public:
     void setStations(const RadioStationList& stations);
     void appendStations(const RadioStationList& stations);
     void setIconColumnOrder(const std::vector<int>& order);
+    void setIconSize(const QSize& size);
     void setRowHeight(int height);
     void setShowIcons(bool showIcons);
     void setReorderEnabled(bool enabled);
@@ -91,6 +93,7 @@ private:
     void sortStations();
     void updateIconCaptionLineCount();
     [[nodiscard]] bool isCurrentStation(const RadioStation& station) const;
+    [[nodiscard]] int iconBucketSize() const;
     [[nodiscard]] QIcon stationIcon(const RadioStation& station) const;
     [[nodiscard]] QIcon placeholderIcon(const RadioStation& station) const;
     void handleIconLoaded(const QString& favicon);
@@ -102,6 +105,7 @@ private:
     RadioIconProvider* m_iconProvider;
     mutable QCache<QString, QIcon> m_placeholderIcons;
     std::vector<int> m_iconColumnOrder;
+    QSize m_iconSize;
     int m_iconCaptionLineCount;
     int m_rowHeight;
     int m_sortColumn;

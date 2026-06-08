@@ -30,15 +30,20 @@
 #include <QPixmap>
 #include <QUrl>
 
+#include <array>
+
 using namespace Qt::StringLiterals;
 
 constexpr auto MaxConcurrentRequests = 6;
 constexpr auto MaxPendingRequests    = 256;
-constexpr auto IconSize              = 128;
+constexpr auto MinIconSize           = 32;
+constexpr auto MaxIconSize           = 384;
 constexpr auto MaxCachedIcons        = 512;
 constexpr auto MaxDecodedPixels      = 2048LL * 2048;
 constexpr qsizetype MaxIconBytes     = 2UL * 1024 * 1024;
 constexpr auto IconTransferTimeoutMs = 10'000;
+
+constexpr std::array IconBuckets{64, 96, 128, 192, 256, 384};
 
 namespace {
 QByteArray readReplyData(QNetworkReply* reply, const qsizetype maxBytes)
@@ -74,6 +79,16 @@ QString faviconUrl(const Fooyin::RadioBrowser::RadioStation& station)
 {
     return station.favicon.trimmed();
 }
+
+int normalisedIconSize(const int size)
+{
+    return std::clamp(size, MinIconSize, MaxIconSize);
+}
+
+QString iconCacheKey(const QString& favicon, const int size)
+{
+    return u"%1#%2"_s.arg(favicon, QString::number(normalisedIconSize(size)));
+}
 } // namespace
 
 namespace Fooyin::RadioBrowser {
@@ -94,39 +109,55 @@ RadioIconProvider::~RadioIconProvider()
     }
 }
 
-QIcon RadioIconProvider::icon(const RadioStation& station) const
+QIcon RadioIconProvider::icon(const RadioStation& station, int size) const
 {
-    if(auto* icon = m_icons.object(faviconUrl(station))) {
+    const QString favicon = faviconUrl(station);
+    const int iconSize    = normalisedIconSize(size);
+
+    if(auto* icon = m_icons.object(iconCacheKey(favicon, iconSize))) {
         return *icon;
+    }
+
+    for(const int bucket : IconBuckets) {
+        if(bucket <= iconSize) {
+            continue;
+        }
+        if(auto* icon = m_icons.object(iconCacheKey(favicon, bucket))) {
+            return *icon;
+        }
     }
     return {};
 }
 
-void RadioIconProvider::requestIcon(const RadioStation& station)
+void RadioIconProvider::requestIcon(const RadioStation& station, int size)
 {
-    const QString favicon = faviconUrl(station);
-    if(favicon.isEmpty() || m_icons.object(favicon) || m_failed.contains(favicon) || m_pending.contains(favicon)) {
+    const QString favicon  = faviconUrl(station);
+    const QString cacheKey = iconCacheKey(favicon, size);
+
+    if(favicon.isEmpty() || !icon(station, size).isNull() || m_failed.contains(favicon)
+       || m_pending.contains(cacheKey)) {
         return;
     }
+
     if(m_pending.size() >= MaxPendingRequests) {
         return;
     }
 
-    m_pending.insert(favicon);
-    m_queue.emplace(favicon);
+    m_pending.insert(cacheKey);
+    m_queue.emplace(IconRequest{.favicon = favicon, .size = normalisedIconSize(size)});
     startNextRequests();
 }
 
 void RadioIconProvider::startNextRequests()
 {
     while(m_replies.size() < MaxConcurrentRequests && !m_queue.empty()) {
-        const QString favicon = m_queue.front();
+        const IconRequest iconRequest = m_queue.front();
         m_queue.pop();
 
-        const QUrl url{favicon};
+        const QUrl url{iconRequest.favicon};
         if(!url.isValid() || (url.scheme() != "http"_L1 && url.scheme() != "https"_L1)) {
-            m_failed.emplace(favicon);
-            m_pending.erase(favicon);
+            m_failed.emplace(iconRequest.favicon);
+            m_pending.erase(iconCacheKey(iconRequest.favicon, iconRequest.size));
             continue;
         }
 
@@ -138,7 +169,7 @@ void RadioIconProvider::startNextRequests()
 
         auto* reply = m_network->get(request);
         reply->setReadBufferSize(MaxIconBytes + 1);
-        m_replies.emplace(reply, favicon);
+        m_replies.emplace(reply, iconRequest);
 
         QObject::connect(reply, &QNetworkReply::downloadProgress, this, [this, reply](const qint64 received, qint64) {
             if(!m_replies.contains(reply)) {
@@ -146,8 +177,8 @@ void RadioIconProvider::startNextRequests()
             }
 
             if(received > MaxIconBytes) {
-                const QString failedFavicon = m_replies.at(reply);
-                finishFailedReply(reply, failedFavicon);
+                const IconRequest failedRequest = m_replies.at(reply);
+                finishFailedReply(reply, failedRequest.favicon);
                 startNextRequests();
             }
         });
@@ -157,9 +188,11 @@ void RadioIconProvider::startNextRequests()
 
 void RadioIconProvider::handleReply(QNetworkReply* reply)
 {
-    const QString favicon = m_replies.at(reply);
+    const IconRequest iconRequest = m_replies.at(reply);
+    const QString favicon         = iconRequest.favicon;
+    const int iconSize            = normalisedIconSize(iconRequest.size);
     m_replies.erase(reply);
-    m_pending.erase(favicon);
+    m_pending.erase(iconCacheKey(favicon, iconSize));
 
     bool handled{true};
 
@@ -193,8 +226,8 @@ void RadioIconProvider::handleReply(QNetworkReply* reply)
                 m_failed.insert(favicon);
                 handled = false;
             }
-            else if(size.isValid() && (size.width() > IconSize || size.height() > IconSize)) {
-                const auto scaledSize = calculateScaledSize(size, IconSize);
+            else if(size.isValid() && (size.width() > iconSize || size.height() > iconSize)) {
+                const auto scaledSize = calculateScaledSize(size, iconSize);
                 reader.setScaledSize(scaledSize);
             }
 
@@ -202,10 +235,10 @@ void RadioIconProvider::handleReply(QNetworkReply* reply)
                 const QImage image = reader.read();
                 if(!image.isNull()) {
                     QPixmap pixmap = QPixmap::fromImage(image);
-                    if(pixmap.width() > IconSize || pixmap.height() > IconSize) {
-                        pixmap = pixmap.scaled(IconSize, IconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                    if(pixmap.width() > iconSize || pixmap.height() > iconSize) {
+                        pixmap = pixmap.scaled(iconSize, iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
                     }
-                    m_icons.insert(favicon, new QIcon{pixmap});
+                    m_icons.insert(iconCacheKey(favicon, iconSize), new QIcon{pixmap});
                     Q_EMIT iconLoaded(favicon);
                 }
                 else {
@@ -224,8 +257,10 @@ void RadioIconProvider::handleReply(QNetworkReply* reply)
 
 void RadioIconProvider::finishFailedReply(QNetworkReply* reply, const QString& favicon)
 {
-    m_replies.erase(reply);
-    m_pending.erase(favicon);
+    if(const auto request = m_replies.find(reply); request != m_replies.end()) {
+        m_pending.erase(iconCacheKey(request->second.favicon, request->second.size));
+        m_replies.erase(request);
+    }
     m_failed.insert(favicon);
 
     QObject::disconnect(reply, nullptr, nullptr, nullptr);

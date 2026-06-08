@@ -24,5 +24,5 @@
 #include <QIcon>
 
 namespace Fooyin::RadioBrowser::Utils {
-QIcon placeholderIcon(const RadioStation& station);
+QIcon placeholderIcon(const RadioStation& station, int size = 128);
 }

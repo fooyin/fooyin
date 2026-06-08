@@ -41,6 +41,7 @@ using namespace Qt::StringLiterals;
 
 constexpr auto StationRowsMimeType       = "application/x-fooyin-radio-browser-station-rows"_L1;
 constexpr auto MaxCachedPlaceholderIcons = 512;
+constexpr auto DefaultRadioIconSize      = 36;
 
 namespace Fooyin::RadioBrowser {
 namespace {
@@ -144,6 +145,29 @@ QColor columnPlayingRowColor()
     color.setAlpha(55);
     return color;
 }
+
+int radioIconBucketSize(const QSize& size)
+{
+    const int logicalSize = std::max({size.width(), size.height(), DefaultRadioIconSize});
+    const int targetSize  = logicalSize * 2;
+
+    if(targetSize <= 64) {
+        return 64;
+    }
+    if(targetSize <= 96) {
+        return 96;
+    }
+    if(targetSize <= 128) {
+        return 128;
+    }
+    if(targetSize <= 192) {
+        return 192;
+    }
+    if(targetSize <= 256) {
+        return 256;
+    }
+    return 384;
+}
 } // namespace
 
 RadioBrowserModel::RadioBrowserModel(QObject* parent)
@@ -152,6 +176,7 @@ RadioBrowserModel::RadioBrowserModel(QObject* parent)
     , m_iconPlayingColour{playingRowColor()}
     , m_iconProvider{nullptr}
     , m_placeholderIcons{MaxCachedPlaceholderIcons}
+    , m_iconSize{DefaultRadioIconSize, DefaultRadioIconSize}
     , m_iconCaptionLineCount{1}
     , m_rowHeight{0}
     , m_sortColumn{1}
@@ -508,6 +533,22 @@ void RadioBrowserModel::setIconColumnOrder(const std::vector<int>& order)
     }
 }
 
+void RadioBrowserModel::setIconSize(const QSize& size)
+{
+    const QSize iconSize = size.isValid() ? size : QSize{DefaultRadioIconSize, DefaultRadioIconSize};
+    const int oldBucket  = iconBucketSize();
+    m_iconSize           = iconSize;
+
+    if(iconBucketSize() == oldBucket) {
+        return;
+    }
+
+    m_placeholderIcons.clear();
+    if(rowCount({}) > 0) {
+        Q_EMIT dataChanged(index(0, Station), index(rowCount({}) - 1, Station), {Qt::DecorationRole});
+    }
+}
+
 void RadioBrowserModel::setRowHeight(const int height)
 {
     const int rowHeight = std::max(height, 0);
@@ -613,7 +654,7 @@ void RadioBrowserModel::requestIcons(const QModelIndexList& indexes)
         }
 
         requestedRows.insert(row);
-        m_iconProvider->requestIcon(m_stations.at(row));
+        m_iconProvider->requestIcon(m_stations.at(row), iconBucketSize());
     }
 }
 
@@ -630,10 +671,15 @@ bool RadioBrowserModel::isCurrentStation(const RadioStation& station) const
     return m_currentStation.sameCurrentStationIdentity(station);
 }
 
+int RadioBrowserModel::iconBucketSize() const
+{
+    return radioIconBucketSize(m_iconSize);
+}
+
 QIcon RadioBrowserModel::stationIcon(const RadioStation& station) const
 {
     if(m_iconProvider) {
-        const QIcon icon = m_iconProvider->icon(station);
+        const QIcon icon = m_iconProvider->icon(station, iconBucketSize());
         if(!icon.isNull()) {
             return icon;
         }
@@ -643,12 +689,13 @@ QIcon RadioBrowserModel::stationIcon(const RadioStation& station) const
 
 QIcon RadioBrowserModel::placeholderIcon(const RadioStation& station) const
 {
-    const QString cacheKey = station.uuid.isEmpty() ? station.name : station.uuid;
+    const QString cacheKey
+        = u"%1#%2"_s.arg(station.uuid.isEmpty() ? station.name : station.uuid, QString::number(iconBucketSize()));
     if(auto* icon = m_placeholderIcons.object(cacheKey)) {
         return *icon;
     }
 
-    auto* icon = new QIcon{Utils::placeholderIcon(station)};
+    auto* icon = new QIcon{Utils::placeholderIcon(station, iconBucketSize())};
     m_placeholderIcons.insert(cacheKey, icon);
     return *icon;
 }
