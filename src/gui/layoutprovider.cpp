@@ -303,6 +303,11 @@ bool LayoutProvider::canDeleteLayout(const QString& name) const
     return layout.isValid() && !p->pathForLayout(layout).isEmpty();
 }
 
+bool LayoutProvider::isBuiltInLayout(const QString& name) const
+{
+    return p->isBuiltIn(name);
+}
+
 bool LayoutProvider::canResetLayout(const QString& name) const
 {
     return p->isBuiltIn(name) && !p->pathForLayout(layoutByName(name)).isEmpty();

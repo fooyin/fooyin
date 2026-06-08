@@ -41,6 +41,7 @@ public:
     [[nodiscard]] LayoutList layouts() const;
     [[nodiscard]] FyLayout layoutByName(const QString& name) const;
     [[nodiscard]] QString uniqueLayoutName(const QString& name) const;
+    [[nodiscard]] bool isBuiltInLayout(const QString& name) const;
     [[nodiscard]] bool canDeleteLayout(const QString& name) const;
     [[nodiscard]] bool canResetLayout(const QString& name) const;
 

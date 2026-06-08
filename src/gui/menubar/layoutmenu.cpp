@@ -47,6 +47,7 @@ LayoutMenu::LayoutMenu(ActionManager* actionManager, LayoutProvider* layoutProvi
     , m_lockSplitters{nullptr}
     , m_lockSplittersCmd{nullptr}
     , m_clearLayout{nullptr}
+    , m_resetLayout{nullptr}
     , m_layoutActionGroup{nullptr}
 {
     QObject::connect(m_layoutProvider, &LayoutProvider::layoutAdded, this, &LayoutMenu::refreshLayouts);
@@ -99,9 +100,18 @@ void LayoutMenu::setup()
         QObject::connect(m_clearLayout, &QAction::triggered, this, &LayoutMenu::clearLayout);
     }
 
+    if(!m_resetLayout) {
+        m_resetLayout = new QAction(tr("&Reset layout"), this);
+        m_resetLayout->setStatusTip(tr("Reset the current layout to the built-in default"));
+        QObject::connect(m_resetLayout, &QAction::triggered, this, &LayoutMenu::resetCurrentLayout);
+    }
+
     m_layoutMenu->addAction(m_layoutEditingCmd, Actions::Groups::One);
     m_layoutMenu->addAction(m_lockSplittersCmd);
+    m_layoutMenu->addSeparator();
     m_layoutMenu->addAction(m_clearLayout);
+    m_layoutMenu->addAction(m_resetLayout);
+    m_layoutMenu->addSeparator();
     m_layoutMenu->addAction(importLayout);
     m_layoutMenu->addAction(exportLayout);
     m_layoutMenu->addSeparator();
@@ -171,6 +181,21 @@ void LayoutMenu::updateCurrentLayout()
             action->setChecked(action->text() == current);
         }
     }
+
+    if(m_resetLayout) {
+        m_resetLayout->setVisible(m_layoutProvider->isBuiltInLayout(current));
+        m_resetLayout->setEnabled(m_layoutProvider->canResetLayout(current));
+    }
+}
+
+void LayoutMenu::resetCurrentLayout()
+{
+    const QString current = m_layoutProvider->currentLayout().name();
+    if(current.isEmpty() || !m_layoutProvider->resetLayout(current)) {
+        return;
+    }
+
+    Q_EMIT changeLayout(m_layoutProvider->currentLayout());
 }
 } // namespace Fooyin
 

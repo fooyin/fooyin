@@ -53,6 +53,7 @@ Q_SIGNALS:
 private:
     void refreshLayouts();
     void updateCurrentLayout();
+    void resetCurrentLayout();
 
     ActionManager* m_actionManager;
     LayoutProvider* m_layoutProvider;
@@ -64,6 +65,7 @@ private:
     QAction* m_lockSplitters;
     Command* m_lockSplittersCmd;
     QAction* m_clearLayout;
+    QAction* m_resetLayout;
     QActionGroup* m_layoutActionGroup;
     std::vector<QAction*> m_layoutActions;
 };
