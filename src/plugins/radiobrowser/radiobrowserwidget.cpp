@@ -84,6 +84,7 @@ constexpr auto RowHeightKey         = "RadioBrowser/RowHeight";
 constexpr auto IconSizeKey          = "RadioBrowser/IconSize";
 constexpr auto IconHorizontalGapKey = "RadioBrowser/IconHorizontalGap";
 constexpr auto IconVerticalGapKey   = "RadioBrowser/IconVerticalGap";
+constexpr auto IconItemBorderKey    = "RadioBrowser/IconItemBorder";
 constexpr auto UniformIconsKey      = "RadioBrowser/UniformIcons";
 constexpr auto ShowIconsKey         = "RadioBrowser/ShowIcons";
 
@@ -350,6 +351,7 @@ void RadioBrowserWidget::saveLayoutData(QJsonObject& layout)
     layout["IconSize"_L1]          = m_viewConfig.iconSize.width();
     layout["IconHorizontalGap"_L1] = m_viewConfig.iconHorizontalGap;
     layout["IconVerticalGap"_L1]   = m_viewConfig.iconVerticalGap;
+    layout["IconItemBorder"_L1]    = m_viewConfig.iconItemBorderWidth;
     layout["UniformIcons"_L1]      = m_viewConfig.uniformStationIcons;
     layout["DoubleClickAction"_L1] = m_doubleClickAction;
     layout["MiddleClickAction"_L1] = m_middleClickAction;
@@ -397,6 +399,9 @@ void RadioBrowserWidget::loadLayoutData(const QJsonObject& layout)
     }
     if(layout.contains("IconVerticalGap"_L1)) {
         m_viewConfig.iconVerticalGap = layout.value("IconVerticalGap"_L1).toInt();
+    }
+    if(layout.contains("IconItemBorder"_L1)) {
+        m_viewConfig.iconItemBorderWidth = layout.value("IconItemBorder"_L1).toInt();
     }
     if(layout.contains("UniformIcons"_L1)) {
         m_viewConfig.uniformStationIcons = layout.value("UniformIcons"_L1).toBool();
@@ -564,6 +569,7 @@ RadioBrowserWidget::ConfigData RadioBrowserWidget::defaultConfig() const
     config.view.iconSize          = m_settings->fileValue(IconSizeKey, config.view.iconSize).toSize();
     config.view.iconHorizontalGap = m_settings->fileValue(IconHorizontalGapKey, config.view.iconHorizontalGap).toInt();
     config.view.iconVerticalGap   = m_settings->fileValue(IconVerticalGapKey, config.view.iconVerticalGap).toInt();
+    config.view.iconItemBorderWidth = m_settings->fileValue(IconItemBorderKey, config.view.iconItemBorderWidth).toInt();
     config.view.uniformStationIcons = m_settings->fileValue(UniformIconsKey, config.view.uniformStationIcons).toBool();
     config.view.showIcons           = m_settings->fileValue(ShowIconsKey, config.view.showIcons).toBool();
 
@@ -589,6 +595,7 @@ void RadioBrowserWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(IconSizeKey, config.view.iconSize);
     m_settings->fileSet(IconHorizontalGapKey, config.view.iconHorizontalGap);
     m_settings->fileSet(IconVerticalGapKey, config.view.iconVerticalGap);
+    m_settings->fileSet(IconItemBorderKey, config.view.iconItemBorderWidth);
     m_settings->fileSet(UniformIconsKey, config.view.uniformStationIcons);
     m_settings->fileSet(ShowIconsKey, config.view.showIcons);
 }
@@ -603,6 +610,7 @@ void RadioBrowserWidget::clearSavedDefaults() const
     m_settings->fileRemove(IconSizeKey);
     m_settings->fileRemove(IconHorizontalGapKey);
     m_settings->fileRemove(IconVerticalGapKey);
+    m_settings->fileRemove(IconItemBorderKey);
     m_settings->fileRemove(UniformIconsKey);
     m_settings->fileRemove(ShowIconsKey);
 }
@@ -1632,9 +1640,10 @@ void RadioBrowserWidget::setViewConfig(const ConfigData::ViewConfig& config)
 {
     m_viewConfig = config;
 
-    m_viewConfig.rowHeight         = std::max(config.rowHeight, 0);
-    m_viewConfig.iconHorizontalGap = std::max(config.iconHorizontalGap, -1);
-    m_viewConfig.iconVerticalGap   = std::max(config.iconVerticalGap, 0);
+    m_viewConfig.rowHeight           = std::max(config.rowHeight, 0);
+    m_viewConfig.iconHorizontalGap   = std::max(config.iconHorizontalGap, -1);
+    m_viewConfig.iconVerticalGap     = std::max(config.iconVerticalGap, 0);
+    m_viewConfig.iconItemBorderWidth = std::clamp(config.iconItemBorderWidth, 0, 16);
 
     if(!config.iconSize.isValid()) {
         m_viewConfig.iconSize = ConfigData::ViewConfig{}.iconSize;
@@ -1653,6 +1662,7 @@ void RadioBrowserWidget::setViewConfig(const ConfigData::ViewConfig& config)
     m_resultsView->setUseIconGapsForSideCaptions(true);
     m_resultsView->changeIconSize(m_viewConfig.iconSize);
     m_delegate->setUniformStationIcons(m_viewConfig.uniformStationIcons);
+    m_delegate->setIconItemBorderWidth(m_viewConfig.iconItemBorderWidth);
     m_model->setRowHeight(m_viewConfig.rowHeight);
     m_resultsView->setVerticalScrollBarPolicy(m_viewConfig.showScrollbar ? Qt::ScrollBarAsNeeded
                                                                          : Qt::ScrollBarAlwaysOff);

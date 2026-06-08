@@ -32,11 +32,14 @@ public:
 
     [[nodiscard]] bool uniformStationIcons() const;
     void setUniformStationIcons(bool enabled);
+    [[nodiscard]] int iconItemBorderWidth() const;
+    void setIconItemBorderWidth(int width);
 
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
 private:
     bool m_uniformStationIcons{true};
+    int m_iconItemBorderWidth{2};
 };
 } // namespace Fooyin::RadioBrowser

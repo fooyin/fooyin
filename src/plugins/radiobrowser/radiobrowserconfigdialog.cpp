@@ -44,6 +44,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     , m_iconSize{new QSpinBox(this)}
     , m_iconHorizontalGap{new QSpinBox(this)}
     , m_iconVerticalGap{new QSpinBox(this)}
+    , m_iconItemBorder{new QSpinBox(this)}
     , m_uniformStationIcons{new QCheckBox(tr("Use uniform station icon frames"), this)}
 {
     const auto addTrackAction = [](QComboBox* box, const QString& text, const TrackAction action) {
@@ -78,6 +79,10 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
 
     m_rowHeight->setRange(0, 256);
     m_rowHeight->setSuffix(u" px"_s);
+
+    m_iconItemBorder->setRange(0, 16);
+    m_iconItemBorder->setSuffix(u" px"_s);
+    m_iconItemBorder->setSpecialValueText(tr("None"));
 
     m_iconSize->setRange(16, 1024);
     m_iconSize->setSuffix(u" px"_s);
@@ -130,7 +135,9 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     gapLayout->setColumnStretch(4, 1);
 
     row = 0;
-    iconLayout->addWidget(new QLabel(tr("Size") + u":"_s, this), row, 0);
+    iconLayout->addWidget(new QLabel(tr("Item border") + u":"_s, this), row, 0);
+    iconLayout->addWidget(m_iconItemBorder, row++, 1);
+    iconLayout->addWidget(new QLabel(tr("Icon size") + u":"_s, this), row, 0);
     iconLayout->addWidget(m_iconSize, row++, 1);
     iconLayout->addWidget(new QLabel(u"🛈 "_s + tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this),
                           row++, 0, 1, 3);
@@ -172,6 +179,7 @@ RadioBrowserWidget::ConfigData RadioBrowserConfigDialog::config() const
     config.view.iconSize            = {m_iconSize->value(), m_iconSize->value()};
     config.view.iconHorizontalGap   = m_iconHorizontalGap->value();
     config.view.iconVerticalGap     = m_iconVerticalGap->value();
+    config.view.iconItemBorderWidth = m_iconItemBorder->value();
     config.view.uniformStationIcons = m_uniformStationIcons->isChecked();
     return config;
 }
@@ -194,6 +202,7 @@ void RadioBrowserConfigDialog::setConfig(const RadioBrowserWidget::ConfigData& c
     m_iconSize->setValue(std::max(config.view.iconSize.width(), config.view.iconSize.height()));
     m_iconHorizontalGap->setValue(config.view.iconHorizontalGap);
     m_iconVerticalGap->setValue(config.view.iconVerticalGap);
+    m_iconItemBorder->setValue(config.view.iconItemBorderWidth);
     m_uniformStationIcons->setChecked(config.view.uniformStationIcons);
 }
 } // namespace Fooyin::RadioBrowser

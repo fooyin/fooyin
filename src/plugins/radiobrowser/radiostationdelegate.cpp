@@ -27,6 +27,7 @@
 #include <QIcon>
 #include <QImage>
 #include <QPainter>
+#include <QPen>
 #include <QStyle>
 
 constexpr auto LineSpacing           = 2;
@@ -106,16 +107,18 @@ QRect iconTextRect(const QStyleOptionViewItem& option, ExpandedTreeView::Caption
     return rect;
 }
 
-void drawIconItemBackground(QPainter* painter, QStyleOptionViewItem* option)
+void drawIconItemBackground(QPainter* painter, QStyleOptionViewItem* option, int borderWidth)
 {
     if(option->state & QStyle::State_Selected) {
         return;
     }
 
-    painter->setPen(option->palette.color(QPalette::Mid));
+    painter->setPen(borderWidth > 0 ? QPen{option->palette.color(QPalette::Mid), static_cast<qreal>(borderWidth)}
+                                    : Qt::NoPen);
     painter->setBrush(option->backgroundBrush.style() == Qt::NoBrush ? option->palette.color(QPalette::Base)
                                                                      : option->backgroundBrush);
-    painter->drawRoundedRect(option->rect.adjusted(1, 1, -1, -1), 5, 5);
+    const qreal inset = std::max<qreal>(1.0, static_cast<qreal>(borderWidth) / 2.0);
+    painter->drawRoundedRect(QRectF{option->rect}.adjusted(inset, inset, -inset, -inset), 5, 5);
     option->backgroundBrush = Qt::NoBrush;
 }
 
@@ -344,6 +347,16 @@ void RadioStationDelegate::setUniformStationIcons(bool enabled)
     m_uniformStationIcons = enabled;
 }
 
+int RadioStationDelegate::iconItemBorderWidth() const
+{
+    return m_iconItemBorderWidth;
+}
+
+void RadioStationDelegate::setIconItemBorderWidth(const int width)
+{
+    m_iconItemBorderWidth = std::max(0, width);
+}
+
 void RadioStationDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     const auto* iconView = iconModeView(option);
@@ -391,7 +404,7 @@ void RadioStationDelegate::paint(QPainter* painter, const QStyleOptionViewItem& 
     painter->save();
 
     const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
-    drawIconItemBackground(painter, &opt);
+    drawIconItemBackground(painter, &opt, m_iconItemBorderWidth);
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 
     if(m_uniformStationIcons) {

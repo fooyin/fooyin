@@ -50,6 +50,7 @@ private:
     QSpinBox* m_iconSize;
     QSpinBox* m_iconHorizontalGap;
     QSpinBox* m_iconVerticalGap;
+    QSpinBox* m_iconItemBorder;
     QCheckBox* m_uniformStationIcons;
 };
 } // namespace Fooyin::RadioBrowser
