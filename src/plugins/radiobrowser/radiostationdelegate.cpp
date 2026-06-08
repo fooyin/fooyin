@@ -406,6 +406,14 @@ void RadioStationDelegate::paint(QPainter* painter, const QStyleOptionViewItem& 
 
 QSize RadioStationDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
+    const auto applyHeightOverride = [&index](QSize size) {
+        const QSize sizeHint = index.data(Qt::SizeHintRole).toSize();
+        if(sizeHint.height() > 0) {
+            size.setHeight(sizeHint.height());
+        }
+        return size;
+    };
+
     const auto* iconView = iconModeView(option);
 
     if(!iconView) {
@@ -413,12 +421,12 @@ QSize RadioStationDelegate::sizeHint(const QStyleOptionViewItem& option, const Q
         if(index.column() == Station) {
             size.setHeight(std::max(size.height(), columnIconSize(option) + (2 * ColumnIconPadding)));
         }
-        return size;
+        return applyHeightOverride(size);
     }
 
     const int captionLines
         = std::max(static_cast<int>(index.data(RadioBrowserModel::IconCaptionLinesRole).toStringList().size()),
                    index.data(RadioBrowserModel::IconCaptionLineCountRole).toInt());
-    return iconItemSize(option, iconView->captionDisplay(), captionLines);
+    return applyHeightOverride(iconItemSize(option, iconView->captionDisplay(), captionLines));
 }
 } // namespace Fooyin::RadioBrowser
