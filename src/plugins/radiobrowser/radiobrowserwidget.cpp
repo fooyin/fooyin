@@ -1775,6 +1775,7 @@ void RadioBrowserWidget::updateApiSortingState(const RadioSearchRequest& request
     const int sortColumn = columnForApiOrder(request.order);
     if(sortColumn < 0 || normalisedApiOrder(request.order) == "random"_L1) {
         m_model->setApiSortingEnabled(false);
+        m_model->clearSort();
         m_resultsView->setSortingEnabled(false);
         return;
     }

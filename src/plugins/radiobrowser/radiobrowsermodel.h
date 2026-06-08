@@ -78,6 +78,7 @@ public:
     void setShowIcons(bool showIcons);
     void setReorderEnabled(bool enabled);
     void setApiSortingEnabled(bool enabled);
+    void clearSort();
     void setCurrentStation(const RadioStation& station);
     void updateColours();
     [[nodiscard]] bool reorderEnabled() const;

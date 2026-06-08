@@ -595,6 +595,11 @@ void RadioBrowserModel::setApiSortingEnabled(const bool enabled)
     }
 }
 
+void RadioBrowserModel::clearSort()
+{
+    m_sortColumn = -1;
+}
+
 void RadioBrowserModel::setCurrentStation(const RadioStation& station)
 {
     const QString currentStreamUrl = m_currentStation.effectiveStreamUrl();
