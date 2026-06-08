@@ -169,7 +169,6 @@ SpectrumView::SpectrumView(EngineController* engine, PlayerController* playerCon
     , m_bandMapMaxFrequencyHz{0}
     , m_lowResEnd{-1}
 {
-    setAttribute(Qt::WA_OpaquePaintEvent);
     setMouseTracking(true);
 
     m_axisRenderer.setConfig(m_config);
@@ -1051,6 +1050,7 @@ void SpectrumView::ensureStaticLayer(const QPalette& palette) const
 
     m_staticLayer = QPixmap{targetSize};
     m_staticLayer.setDevicePixelRatio(dpr);
+    m_staticLayer.fill(Qt::transparent);
     m_staticLayerDpr = dpr;
 
     QPainter painter{&m_staticLayer};
