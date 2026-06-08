@@ -105,7 +105,9 @@ void RadioBrowserPlugin::initialise(const GuiPluginContext& context)
     m_widgetProvider->registerWidget(
         u"RadioBrowser"_s,
         [this, actionManager = context.actionManager, trackSelection = context.trackSelection]() {
-            auto* browser = new RadioBrowserWidget(m_controller, actionManager, trackSelection, m_settings);
+            const bool guideOwnsInitialBrowse = !m_editableLayout->findWidgetsByType<RadioGuideWidget>().empty();
+            auto* browser = new RadioBrowserWidget(m_controller, actionManager, trackSelection, m_settings,
+                                                   !guideOwnsInitialBrowse);
             QObject::connect(browser, &QObject::destroyed, this, &RadioBrowserPlugin::scheduleRelinkRadioWidgets);
             scheduleRelinkRadioWidgets();
             return browser;
@@ -158,13 +160,18 @@ void RadioBrowserPlugin::scheduleRelinkRadioWidgets()
 void RadioBrowserPlugin::relinkRadioWidgets()
 {
     const auto browsers = m_editableLayout->findWidgetsByType<RadioBrowserWidget>();
-    const auto searches = m_editableLayout->findWidgetsByType<RadioSearch>();
-
     if(browsers.empty()) {
         return;
     }
 
-    browsers.front()->connectFilterBar(searches.empty() ? nullptr : searches.front());
+    const auto searches = m_editableLayout->findWidgetsByType<RadioSearch>();
+    const auto guides   = m_editableLayout->findWidgetsByType<RadioGuideWidget>();
+
+    auto* search = searches.empty() ? nullptr : searches.front();
+    for(auto* browser : browsers) {
+        browser->connectFilterBar(search);
+        browser->setApplySearchOnLoad(guides.empty());
+    }
 }
 
 void RadioBrowserPlugin::showRadioBrowserDialog()

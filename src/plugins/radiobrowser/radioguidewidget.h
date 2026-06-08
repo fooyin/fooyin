@@ -63,8 +63,9 @@ private:
     void expandSavedSearches();
     void selectLatestSearch();
     void saveState() const;
-    void restoreState();
+    bool restoreState();
     bool restoreLastEntry();
+    void activateDefaultEntry();
     void activateCurrentIndex();
     void activateIndex(const QModelIndex& index);
     void showContextMenu(const QPoint& pos);

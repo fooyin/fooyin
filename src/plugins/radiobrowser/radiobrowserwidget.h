@@ -131,6 +131,7 @@ private:
 
     void scheduleFilterSearch();
     void startInitialSearch();
+    bool syncControllerBrowseState();
     void browseInitialSelection();
 
     void applyFilterSearch();

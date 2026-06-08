@@ -238,7 +238,9 @@ void RadioGuideWidget::loadLayoutData(const QJsonObject& layout)
 
 void RadioGuideWidget::finalise()
 {
-    restoreState();
+    if(!restoreState()) {
+        activateDefaultEntry();
+    }
 }
 
 void RadioGuideWidget::changeEvent(QEvent* event)
@@ -273,6 +275,10 @@ void RadioGuideWidget::requestCategories(const RadioCategoryType type)
 void RadioGuideWidget::requestNextCategory()
 {
     if(m_categoryRequestActive || m_categoryRequests.empty()) {
+        if(!m_categoryRequestActive && m_categoryRequests.empty() && !m_pendingRestoreEntryKey.isEmpty()) {
+            m_pendingRestoreEntryKey.clear();
+            activateDefaultEntry();
+        }
         return;
     }
 
@@ -344,21 +350,26 @@ void RadioGuideWidget::saveState() const
     stateSettings.setValue(GuideState, QJsonDocument{state}.toJson(QJsonDocument::Compact));
 }
 
-void RadioGuideWidget::restoreState()
+bool RadioGuideWidget::restoreState()
 {
     const FyStateSettings stateSettings;
     const QByteArray state = stateSettings.value(GuideState).toByteArray();
     if(state.isEmpty()) {
-        return;
+        return false;
     }
 
     const QJsonDocument doc = QJsonDocument::fromJson(state);
     if(!doc.isObject()) {
-        return;
+        return false;
     }
 
     m_pendingRestoreEntryKey = doc.object().value(LastEntryKey).toString();
+    if(m_pendingRestoreEntryKey.isEmpty()) {
+        return false;
+    }
+
     restoreLastEntry();
+    return true;
 }
 
 bool RadioGuideWidget::restoreLastEntry()
@@ -376,6 +387,14 @@ bool RadioGuideWidget::restoreLastEntry()
     m_treeView->setCurrentIndex(index);
     activateIndex(index);
     return true;
+}
+
+void RadioGuideWidget::activateDefaultEntry()
+{
+    const QModelIndex index = findActionIndex(m_model, Action::Popular);
+    if(index.isValid()) {
+        activateIndex(index);
+    }
 }
 
 void RadioGuideWidget::activateCurrentIndex()

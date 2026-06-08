@@ -67,7 +67,6 @@
 #include <utils/utils.h>
 
 #include <algorithm>
-#include <utility>
 
 using namespace Qt::StringLiterals;
 
@@ -439,6 +438,10 @@ void RadioBrowserWidget::finalise()
     m_resultsView->finaliseView(m_headerState);
     updateIconColumnOrder();
 
+    if(syncControllerBrowseState()) {
+        return;
+    }
+
     if(m_initialSearchState == InitialSearchState::Pending) {
         m_resultsView->setLoading(true);
         QTimer::singleShot(0, this, &RadioBrowserWidget::startInitialSearch);
@@ -514,6 +517,10 @@ void RadioBrowserWidget::setFilterBarToggleAllowed(bool allowed)
 
 void RadioBrowserWidget::setApplySearchOnLoad(bool enabled)
 {
+    if(m_initialSearchState == InitialSearchState::Complete) {
+        return;
+    }
+
     m_initialSearchState = enabled ? InitialSearchState::Pending : InitialSearchState::Disabled;
 }
 
@@ -840,9 +847,15 @@ void RadioBrowserWidget::scheduleFilterSearch()
 
 void RadioBrowserWidget::startInitialSearch()
 {
-    if(std::exchange(m_initialSearchState, InitialSearchState::Complete) != InitialSearchState::Pending) {
+    if(m_initialSearchState != InitialSearchState::Pending) {
         return;
     }
+
+    if(syncControllerBrowseState()) {
+        return;
+    }
+
+    m_initialSearchState = InitialSearchState::Complete;
 
     if(hasStationFilters(currentFilterRequest())) {
         applyFilterSearch(false);
@@ -850,6 +863,27 @@ void RadioBrowserWidget::startInitialSearch()
     else {
         browseInitialSelection();
     }
+}
+
+bool RadioBrowserWidget::syncControllerBrowseState()
+{
+    if(m_controller->stationRequestActive()) {
+        m_resultsView->setLoading(true);
+        m_initialSearchState = InitialSearchState::Complete;
+        return true;
+    }
+
+    if(!m_controller->hasActivatedBrowse()) {
+        return false;
+    }
+
+    if(m_controller->browsingSavedStations()) {
+        handleSavedStationsBrowsingChanged(true);
+    }
+
+    handleStationsChanged(m_controller->stations(), true);
+    m_initialSearchState = InitialSearchState::Complete;
+    return true;
 }
 
 void RadioBrowserWidget::browseInitialSelection()

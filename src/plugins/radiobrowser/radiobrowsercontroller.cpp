@@ -194,6 +194,7 @@ RadioBrowserController::RadioBrowserController(std::shared_ptr<NetworkAccessMana
     , m_nextResolveGroupId{0}
     , m_nextImportRequestId{0}
     , m_stationRequestActive{false}
+    , m_hasActivatedBrowse{false}
     , m_canLoadMoreStations{false}
     , m_currentRequestUpdatesLatestSearch{false}
     , m_hideBroken{true}
@@ -263,6 +264,21 @@ bool RadioBrowserController::hideBroken() const
 void RadioBrowserController::setHideBroken(const bool hideBroken)
 {
     m_hideBroken = hideBroken;
+}
+
+bool RadioBrowserController::stationRequestActive() const
+{
+    return m_stationRequestActive;
+}
+
+bool RadioBrowserController::browsingSavedStations() const
+{
+    return m_stationSource == StationSource::SavedStations;
+}
+
+bool RadioBrowserController::hasActivatedBrowse() const
+{
+    return m_hasActivatedBrowse;
 }
 
 std::optional<RadioSearchRequest> RadioBrowserController::latestSearchRequest() const
@@ -398,6 +414,7 @@ void RadioBrowserController::browseCategory(const RadioCategory& category)
 
 void RadioBrowserController::browseSavedStations()
 {
+    m_hasActivatedBrowse = true;
     setStationSource(StationSource::SavedStations);
     m_stations                          = m_store->savedStations();
     m_stationRequestActive              = false;
@@ -652,6 +669,7 @@ void RadioBrowserController::setStationSource(const StationSource source)
 
 void RadioBrowserController::searchStations(const RadioSearchRequest& request, const bool updateLatestSearch)
 {
+    m_hasActivatedBrowse = true;
     setStationSource(StationSource::SearchResults);
 
     m_currentRequest                    = request;

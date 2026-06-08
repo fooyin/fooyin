@@ -63,6 +63,10 @@ public:
     [[nodiscard]] bool hideBroken() const;
     void setHideBroken(bool hideBroken);
 
+    [[nodiscard]] bool stationRequestActive() const;
+    [[nodiscard]] bool browsingSavedStations() const;
+    [[nodiscard]] bool hasActivatedBrowse() const;
+
     [[nodiscard]] std::optional<RadioSearchRequest> latestSearchRequest() const;
     [[nodiscard]] std::optional<RadioSavedSearch> savedSearchForRequest(const RadioSearchRequest& request) const;
 
@@ -209,6 +213,7 @@ private:
     int m_nextResolveGroupId;
     int m_nextImportRequestId;
     bool m_stationRequestActive;
+    bool m_hasActivatedBrowse;
     bool m_canLoadMoreStations;
     bool m_currentRequestUpdatesLatestSearch;
     bool m_hideBroken;
