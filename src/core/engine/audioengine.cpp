@@ -4649,6 +4649,24 @@ void AudioEngine::handleManualRemoteCrossfadePreparationResult(uint64_t requestI
                     << "targetTrackId=" << item.track.id() << "targetItemId=" << item.itemId
                     << "preparedBufferedMs=" << preparedBufferedMs << "targetMs=" << remoteTargetMs;
 
+    const AudioFormat currentInputFormat = m_pipeline.inputFormat();
+    if(currentInputFormat.isValid()) {
+        const AudioFormat currentMixFormat = m_pipeline.predictPerTrackFormat(currentInputFormat);
+        const AudioFormat targetMixFormat  = m_pipeline.predictPerTrackFormat(m_preparedNext->format);
+        if(!gaplessFormatsMatch(currentMixFormat, targetMixFormat)) {
+            qCWarning(ENGINE) << "Prepared manual remote crossfade format mismatch; loading target directly:"
+                              << "currentRate=" << currentMixFormat.sampleRate()
+                              << "currentChannels=" << currentMixFormat.channelCount()
+                              << "currentFormat=" << currentMixFormat.prettyFormat()
+                              << "targetRate=" << targetMixFormat.sampleRate()
+                              << "targetChannels=" << targetMixFormat.channelCount()
+                              << "targetFormat=" << targetMixFormat.prettyFormat()
+                              << "track=" << item.track.filenameExt();
+            executeFullReinitLoad(item, false, false);
+            return;
+        }
+    }
+
     if(!startTrackCrossfade(item, true)) {
         qCWarning(ENGINE) << "Prepared manual remote crossfade could not be committed; keeping current stream:"
                           << "targetTrackId=" << item.track.id() << "targetItemId=" << item.itemId
