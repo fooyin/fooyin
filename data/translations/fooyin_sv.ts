@@ -713,7 +713,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="259"/>
         <source>Adjusts the current font size by a positive or negative delta</source>
-        <translation type="unfinished"></translation>
+        <translation>Justerar den aktuella typsnittsstorleken med en positiv eller negativ delta</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="261"/>
@@ -2988,13 +2988,15 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="236"/>
         <source>Per-track DSPs are applied to each stream separately before tracks are mixed.
 During crossfades, each track is processed independently.</source>
-        <translation type="unfinished"></translation>
+        <translation>Per-spår-DSP:n tllämpas på varje ström separat innan spår är mixade.
+Under korstoningar bearbetas varje spår för sig självt.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="238"/>
         <source>Master DSPs are applied after all active tracks are mixed into one signal.
 Effects here process the final combined output.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mästar-DSP:n tillämpas efter alla aktiva spår är mixade in i en signal.
+Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="241"/>
@@ -6749,7 +6751,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="95"/>
         <source>Add artwork to the tree by placing a cover variable such as &lt;code&gt;%frontcover%&lt;/code&gt; at the start or end of a level.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till konstverk i trädet genom att placera en omslagsbariabel som &lt;code&gt;%frontcover%&lt;/code&gt; vid början eller slutet av en nivå.</translation>
     </message>
 </context>
 <context>
@@ -10660,7 +10662,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="928"/>
         <source>Pending Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Väntande ändringar</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="929"/>
