@@ -438,7 +438,7 @@ void RadioBrowserWidget::finalise()
     m_resultsView->finaliseView(m_headerState);
     updateIconColumnOrder();
 
-    if(syncControllerBrowseState()) {
+    if(m_initialSearchState == InitialSearchState::Disabled && syncControllerBrowseState()) {
         return;
     }
 
@@ -517,11 +517,17 @@ void RadioBrowserWidget::setFilterBarToggleAllowed(bool allowed)
 
 void RadioBrowserWidget::setApplySearchOnLoad(bool enabled)
 {
-    if(m_initialSearchState == InitialSearchState::Complete) {
+    if(enabled) {
+        if(m_initialSearchState == InitialSearchState::Disabled) {
+            m_initialSearchState = InitialSearchState::Pending;
+        }
         return;
     }
 
-    m_initialSearchState = enabled ? InitialSearchState::Pending : InitialSearchState::Disabled;
+    m_initialSearchState = InitialSearchState::Disabled;
+    if(!syncControllerBrowseState()) {
+        m_resultsView->setLoading(false);
+    }
 }
 
 void RadioBrowserWidget::connectFilterBar(RadioSearch* filterBar)
@@ -851,10 +857,6 @@ void RadioBrowserWidget::startInitialSearch()
         return;
     }
 
-    if(syncControllerBrowseState()) {
-        return;
-    }
-
     m_initialSearchState = InitialSearchState::Complete;
 
     if(hasStationFilters(currentFilterRequest())) {
@@ -868,6 +870,11 @@ void RadioBrowserWidget::startInitialSearch()
 bool RadioBrowserWidget::syncControllerBrowseState()
 {
     if(m_controller->stationRequestActive()) {
+        if(!m_controller->browsingSavedStations()) {
+            const RadioSearchRequest request = m_controller->currentRequest();
+            setFilterRequest(request);
+            updateApiSortingState(request);
+        }
         m_resultsView->setLoading(true);
         m_initialSearchState = InitialSearchState::Complete;
         return true;
@@ -879,6 +886,11 @@ bool RadioBrowserWidget::syncControllerBrowseState()
 
     if(m_controller->browsingSavedStations()) {
         handleSavedStationsBrowsingChanged(true);
+    }
+    else {
+        const RadioSearchRequest request = m_controller->currentRequest();
+        setFilterRequest(request);
+        updateApiSortingState(request);
     }
 
     handleStationsChanged(m_controller->stations(), true);

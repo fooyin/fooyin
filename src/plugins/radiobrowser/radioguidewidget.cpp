@@ -153,6 +153,8 @@ RadioGuideWidget::RadioGuideWidget(RadioBrowserController* controller, SettingsM
 {
     setObjectName(RadioGuideWidget::name());
 
+    m_controller->clearActivatedBrowse();
+
     m_treeView->setModel(m_model);
     m_treeView->setHeaderHidden(true);
     m_treeView->setRootIsDecorated(true);

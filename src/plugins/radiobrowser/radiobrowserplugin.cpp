@@ -145,7 +145,7 @@ void RadioBrowserPlugin::registerLayouts(LayoutProvider* layoutProvider) const
             "Widgets":[{"StatusBar":{}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAAA1gAABRoA/////wEAAAABAA==",
             "Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAABugAAANUAAABWAP////8BAAAAAgA=",
             "Widgets":[{"RadioGuide":{}},{"ArtworkPanel":{}},{"ScriptDisplay":{"HorizontalAlignment":4,
-            "Script":"$if(%isstopped%,Playback stopped,\n<sized=1><b>$if2(%streamtitle%,[%artist% - ]%title%)</b></size>\n$crlf()\n<alpha=190>$if2(%station%,$if(%streamtitle%,,%title%))</alpha>\n)",
+            "Script":"$if(%isstopped%,Playback stopped,\n<sized=1><b>$if2(%streamtitle%,[$join( - ,%artist%,%title%)])</b></size>\n$crlf()\n<alpha=190>$if2(%station%,$if(%streamtitle%,,%title%))</alpha>\n)",
             "VerticalAlignment":128}}]}},{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAAAIAAAAuEA/////wEAAAACAA==",
             "Widgets":[{"RadioSearch":{}},{"RadioBrowser":{}}]}}]}},{"SplitterHorizontal":{
             "State":"AAAA/wAAAAEAAAAEAAAAcAAACSoAAAA4AAAAZwD/////AQAAAAEA","Widgets":[{"PlayerControls":{}},

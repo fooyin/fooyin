@@ -66,7 +66,9 @@ public:
     [[nodiscard]] bool stationRequestActive() const;
     [[nodiscard]] bool browsingSavedStations() const;
     [[nodiscard]] bool hasActivatedBrowse() const;
+    void clearActivatedBrowse();
 
+    [[nodiscard]] RadioSearchRequest currentRequest() const;
     [[nodiscard]] std::optional<RadioSearchRequest> latestSearchRequest() const;
     [[nodiscard]] std::optional<RadioSavedSearch> savedSearchForRequest(const RadioSearchRequest& request) const;
 

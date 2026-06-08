@@ -281,6 +281,16 @@ bool RadioBrowserController::hasActivatedBrowse() const
     return m_hasActivatedBrowse;
 }
 
+void RadioBrowserController::clearActivatedBrowse()
+{
+    m_hasActivatedBrowse = false;
+}
+
+RadioSearchRequest RadioBrowserController::currentRequest() const
+{
+    return m_currentRequest;
+}
+
 std::optional<RadioSearchRequest> RadioBrowserController::latestSearchRequest() const
 {
     return m_latestSearchRequest;
