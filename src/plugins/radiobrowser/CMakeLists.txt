@@ -1,0 +1,53 @@
+create_fooyin_plugin_internal(
+    radiobrowser
+    DEPENDS Fooyin::Gui
+    SOURCES radiobrowserconfigdialog.cpp
+            radiobrowserconfigdialog.h
+            radiobrowsercontextmenu.h
+            radiobrowserdatabase.cpp
+            radiobrowserdatabase.h
+            radiobrowsercontroller.cpp
+            radiobrowsercontroller.h
+            radiobrowserdialog.cpp
+            radiobrowserdialog.h
+            radiosearch.cpp
+            radiosearch.h
+            radioguidemodel.cpp
+            radioguidemodel.h
+            radiobrowserplugin.cpp
+            radiobrowserplugin.h
+            radiobrowserservice.cpp
+            radiobrowserservice.h
+            radiobrowserutils.cpp
+            radiobrowserutils.h
+            radiobrowserwidget.cpp
+            radiobrowserwidget.h
+            radiobrowsermodel.cpp
+            radiobrowsermodel.h
+            radioguidewidget.cpp
+            radioguidewidget.h
+            radioguideview.cpp
+            radioguideview.h
+            radiodiscovery.cpp
+            radiodiscovery.h
+            radiogenres.cpp
+            radiogenres.h
+            radioiconprovider.cpp
+            radioiconprovider.h
+            radiostation.cpp
+            radiostation.h
+            radiostationdelegate.cpp
+            radiostationdelegate.h
+            radiostationdialog.cpp
+            radiostationdialog.h
+            radiostationimportexportdialog.cpp
+            radiostationimportexportdialog.h
+            radiostationm3u.cpp
+            radiostationm3u.h
+            radiostationstore.cpp
+            radiostationstore.h
+            radiostationview.cpp
+            radiostationview.h
+            radiostreamresolver.cpp
+            radiostreamresolver.h
+)

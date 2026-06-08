@@ -3,14 +3,18 @@
         <file>icons/dark/index.theme</file>
         <file>icons/dark/scalable/actions/application-exit.svg</file>
         <file>icons/dark/scalable/actions/applications-graphics.svg</file>
+        <file>icons/dark/scalable/actions/audio-file.svg</file>
         <file>icons/dark/scalable/actions/audio-volume-high.svg</file>
         <file>icons/dark/scalable/actions/audio-volume-low.svg</file>
         <file>icons/dark/scalable/actions/audio-volume-medium.svg</file>
         <file>icons/dark/scalable/actions/audio-volume-muted.svg</file>
         <file>icons/dark/scalable/actions/command.svg</file>
         <file>icons/dark/scalable/actions/edit-clear.svg</file>
-        <file>icons/dark/scalable/actions/fooyin.svg</file>
+        <file>icons/dark/scalable/actions/edit-find.svg</file>
+        <file>icons/dark/scalable/actions/favorite.svg</file>
+        <file>icons/dark/scalable/actions/favorite-favorited.svg</file>
         <file alias="icons/dark/scalable/actions/org.fooyin.fooyin.svg">icons/dark/scalable/actions/fooyin.svg</file>
+        <file>icons/dark/scalable/actions/fooyin.svg</file>
         <file>icons/dark/scalable/actions/format-text-bold.svg</file>
         <file>icons/dark/scalable/actions/go-down.svg</file>
         <file>icons/dark/scalable/actions/go-next.svg</file>
@@ -20,8 +24,9 @@
         <file>icons/dark/scalable/actions/list-remove.svg</file>
         <file>icons/dark/scalable/actions/media-playback-pause.svg</file>
         <file>icons/dark/scalable/actions/media-playback-start.svg</file>
-        <file>icons/dark/scalable/actions/media-playlist-random-play.svg</file>
         <file>icons/dark/scalable/actions/media-playback-stop.svg</file>
+        <file>icons/dark/scalable/actions/media-playlist-play.svg</file>
+        <file>icons/dark/scalable/actions/media-playlist-random-play.svg</file>
         <file>icons/dark/scalable/actions/media-playlist-repeat-song.svg</file>
         <file>icons/dark/scalable/actions/media-playlist-repeat.svg</file>
         <file>icons/dark/scalable/actions/media-playlist-shuffle.svg</file>
@@ -32,25 +37,36 @@
         <file>icons/dark/scalable/actions/preferences-desktop.svg</file>
         <file>icons/dark/scalable/actions/preferences-other.svg</file>
         <file>icons/dark/scalable/actions/preferences-system.svg</file>
+        <file>icons/dark/scalable/actions/randomize.svg</file>
+        <file>icons/dark/scalable/actions/rss-symbolic.svg</file>
         <file>icons/dark/scalable/actions/script-expression.svg</file>
         <file>icons/dark/scalable/actions/script-function.svg</file>
         <file>icons/dark/scalable/actions/script-literal.svg</file>
         <file>icons/dark/scalable/actions/script-variable.svg</file>
         <file>icons/dark/scalable/actions/scrobble.svg</file>
         <file>icons/dark/scalable/actions/sidebar-right.svg</file>
+        <file>icons/dark/scalable/actions/user-bookmarks.svg</file>
+        <file>icons/dark/scalable/actions/view-filter.svg</file>
         <file>icons/dark/scalable/actions/view-log.svg</file>
+        <file>icons/dark/scalable/actions/view-process-users.svg</file>
         <file>icons/dark/scalable/actions/view-refresh.svg</file>
         <file>icons/dark/scalable/actions/view-scripteditor.svg</file>
         <file>icons/dark/scalable/actions/window-close.svg</file>
+        <file>icons/dark/scalable/actions/window-pin.svg</file>
+        <file>icons/dark/scalable/actions/window-unpin.svg</file>
         <file>icons/light/index.theme</file>
         <file>icons/light/scalable/actions/application-exit.svg</file>
         <file>icons/light/scalable/actions/applications-graphics.svg</file>
+        <file>icons/light/scalable/actions/audio-file.svg</file>
         <file>icons/light/scalable/actions/audio-volume-high.svg</file>
         <file>icons/light/scalable/actions/audio-volume-low.svg</file>
         <file>icons/light/scalable/actions/audio-volume-medium.svg</file>
         <file>icons/light/scalable/actions/audio-volume-muted.svg</file>
         <file>icons/light/scalable/actions/command.svg</file>
         <file>icons/light/scalable/actions/edit-clear.svg</file>
+        <file>icons/light/scalable/actions/edit-find.svg</file>
+        <file>icons/light/scalable/actions/favorite.svg</file>
+        <file>icons/light/scalable/actions/favorite-favorited.svg</file>
         <file>icons/light/scalable/actions/fooyin.svg</file>
         <file alias="icons/light/scalable/actions/org.fooyin.fooyin.svg">icons/light/scalable/actions/fooyin.svg</file>
         <file>icons/light/scalable/actions/format-text-bold.svg</file>
@@ -62,8 +78,9 @@
         <file>icons/light/scalable/actions/list-remove.svg</file>
         <file>icons/light/scalable/actions/media-playback-pause.svg</file>
         <file>icons/light/scalable/actions/media-playback-start.svg</file>
-        <file>icons/light/scalable/actions/media-playlist-random-play.svg</file>
         <file>icons/light/scalable/actions/media-playback-stop.svg</file>
+        <file>icons/light/scalable/actions/media-playlist-play.svg</file>
+        <file>icons/light/scalable/actions/media-playlist-random-play.svg</file>
         <file>icons/light/scalable/actions/media-playlist-repeat-song.svg</file>
         <file>icons/light/scalable/actions/media-playlist-repeat.svg</file>
         <file>icons/light/scalable/actions/media-playlist-shuffle.svg</file>
@@ -74,15 +91,22 @@
         <file>icons/light/scalable/actions/preferences-desktop.svg</file>
         <file>icons/light/scalable/actions/preferences-other.svg</file>
         <file>icons/light/scalable/actions/preferences-system.svg</file>
+        <file>icons/light/scalable/actions/randomize.svg</file>
+        <file>icons/light/scalable/actions/rss-symbolic.svg</file>
         <file>icons/light/scalable/actions/script-expression.svg</file>
         <file>icons/light/scalable/actions/script-function.svg</file>
         <file>icons/light/scalable/actions/script-literal.svg</file>
         <file>icons/light/scalable/actions/script-variable.svg</file>
         <file>icons/light/scalable/actions/scrobble.svg</file>
         <file>icons/light/scalable/actions/sidebar-right.svg</file>
+        <file>icons/light/scalable/actions/user-bookmarks.svg</file>
+        <file>icons/light/scalable/actions/view-filter.svg</file>
         <file>icons/light/scalable/actions/view-log.svg</file>
+        <file>icons/light/scalable/actions/view-process-users.svg</file>
         <file>icons/light/scalable/actions/view-refresh.svg</file>
         <file>icons/light/scalable/actions/view-scripteditor.svg</file>
         <file>icons/light/scalable/actions/window-close.svg</file>
+        <file>icons/light/scalable/actions/window-pin.svg</file>
+        <file>icons/light/scalable/actions/window-unpin.svg</file>
     </qresource>
 </RCC>
