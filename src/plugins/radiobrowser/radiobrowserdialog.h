@@ -34,7 +34,6 @@ class SettingsManager;
 class TrackSelectionController;
 
 namespace RadioBrowser {
-class RadioBrowserConnectionManager;
 class RadioSearch;
 class RadioBrowserController;
 class RadioBrowserWidget;
@@ -60,7 +59,6 @@ private:
 
     SettingsManager* m_settings;
     QTabWidget* m_tabs;
-    RadioBrowserConnectionManager* m_connectionManager;
     RadioSearch* m_searchFilterBar;
     RadioBrowserController* m_searchController;
     RadioBrowserController* m_savedStationsController;

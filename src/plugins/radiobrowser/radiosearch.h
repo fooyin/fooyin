@@ -45,21 +45,17 @@ class SettingsManager;
 class ToolButton;
 
 namespace RadioBrowser {
-class RadioBrowserConnectionManager;
-
 class RadioSearch : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit RadioSearch(SettingsManager* settings, RadioBrowserConnectionManager* connectionManager = nullptr,
-                         QWidget* parent = nullptr);
+    explicit RadioSearch(SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
-    void finalise() override;
 
     [[nodiscard]] RadioSearchRequest request(bool hideBroken) const;
     void setRequest(const RadioSearchRequest& request);
@@ -163,7 +159,6 @@ private:
     QFrame* m_filterPopup;
     QGridLayout* m_popupFiltersLayout;
     std::array<FilterGroup, static_cast<size_t>(FilterControl::Count)> m_filterGroups;
-    RadioBrowserConnectionManager* m_connectionManager;
     FilterState m_state;
 
     bool m_savedSearch;

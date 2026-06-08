@@ -1,11 +1,8 @@
 create_fooyin_plugin_internal(
     radiobrowser
     DEPENDS Fooyin::Gui
-            Fooyin::GuiPrivate
     SOURCES radiobrowserconfigdialog.cpp
             radiobrowserconfigdialog.h
-            radiobrowserconnectionmanager.cpp
-            radiobrowserconnectionmanager.h
             radiobrowsercontextmenu.h
             radiobrowserdatabase.cpp
             radiobrowserdatabase.h

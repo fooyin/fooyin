@@ -28,12 +28,12 @@
 
 namespace Fooyin {
 class ActionManager;
+class EditableLayout;
 class NetworkAccessManager;
 class PlaylistLoader;
 class TrackSelectionController;
 
 namespace RadioBrowser {
-class RadioBrowserConnectionManager;
 class RadioBrowserController;
 class RadioBrowserDialog;
 class RadioStationStore;
@@ -54,6 +54,8 @@ public:
 
 private:
     void registerLayouts(LayoutProvider* layoutProvider) const;
+    void scheduleRelinkRadioWidgets();
+    void relinkRadioWidgets();
     void showRadioBrowserDialog();
 
     std::shared_ptr<NetworkAccessManager> m_network;
@@ -62,12 +64,12 @@ private:
     PlayerController* m_playerController;
     SettingsManager* m_settings;
     WidgetProvider* m_widgetProvider;
+    EditableLayout* m_editableLayout;
     ActionManager* m_actionManager;
     TrackSelectionController* m_trackSelection;
 
     RadioStationStore* m_store;
     RadioBrowserController* m_controller;
-    RadioBrowserConnectionManager* m_connectionManager;
 };
 } // namespace RadioBrowser
 } // namespace Fooyin

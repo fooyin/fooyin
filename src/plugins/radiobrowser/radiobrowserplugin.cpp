@@ -19,7 +19,6 @@
 
 #include "radiobrowserplugin.h"
 
-#include "radiobrowserconnectionmanager.h"
 #include "radiobrowsercontextmenu.h"
 #include "radiobrowsercontroller.h"
 #include "radiobrowserdialog.h"
@@ -28,6 +27,7 @@
 #include "radiosearch.h"
 #include "radiostationstore.h"
 
+#include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
 #include <gui/layoutprovider.h>
@@ -67,12 +67,12 @@ void RadioBrowserPlugin::initialise(const CorePluginContext& context)
     m_store = new RadioStationStore(m_dbPool, this);
     m_controller
         = new RadioBrowserController(m_network, m_settings, m_playerController, m_playlistLoader, m_store, true, this);
-    m_connectionManager = new RadioBrowserConnectionManager(this);
 }
 
 void RadioBrowserPlugin::initialise(const GuiPluginContext& context)
 {
     m_widgetProvider = context.widgetProvider;
+    m_editableLayout = context.editableLayout;
     m_actionManager  = context.actionManager;
     m_trackSelection = context.trackSelection;
 
@@ -105,19 +105,33 @@ void RadioBrowserPlugin::initialise(const GuiPluginContext& context)
     m_widgetProvider->registerWidget(
         u"RadioBrowser"_s,
         [this, actionManager = context.actionManager, trackSelection = context.trackSelection]() {
-            return new RadioBrowserWidget(m_controller, actionManager, trackSelection, m_settings, m_connectionManager);
+            auto* browser = new RadioBrowserWidget(m_controller, actionManager, trackSelection, m_settings);
+            QObject::connect(browser, &QObject::destroyed, this, &RadioBrowserPlugin::scheduleRelinkRadioWidgets);
+            scheduleRelinkRadioWidgets();
+            return browser;
         },
         tr("Radio Browser"));
     m_widgetProvider->setSubMenus(u"RadioBrowser"_s, {tr("Internet")});
     m_widgetProvider->setLimit(u"RadioBrowser"_s, 1);
     m_widgetProvider->registerWidget(
-        u"RadioSearch"_s, [this]() { return new RadioSearch(m_settings, m_connectionManager); }, tr("Radio Search"));
+        u"RadioSearch"_s,
+        [this]() {
+            auto* search = new RadioSearch(m_settings);
+            QObject::connect(search, &QObject::destroyed, this, &RadioBrowserPlugin::scheduleRelinkRadioWidgets);
+            scheduleRelinkRadioWidgets();
+            return search;
+        },
+        tr("Radio Search"));
     m_widgetProvider->setSubMenus(u"RadioSearch"_s, {tr("Internet")});
     m_widgetProvider->setLimit(u"RadioSearch"_s, 1);
     m_widgetProvider->registerWidget(
         u"RadioGuide"_s, [this]() { return new RadioGuideWidget(m_controller, m_settings); }, tr("Radio Guide"));
     m_widgetProvider->setSubMenus(u"RadioGuide"_s, {tr("Internet")});
     m_widgetProvider->setLimit(u"RadioGuide"_s, 1);
+
+    QObject::connect(m_editableLayout, &EditableLayout::layoutChanged, this,
+                     &RadioBrowserPlugin::scheduleRelinkRadioWidgets);
+    scheduleRelinkRadioWidgets();
 
     registerLayouts(context.layoutProvider);
 }
@@ -131,6 +145,23 @@ void RadioBrowserPlugin::registerLayouts(LayoutProvider* layoutProvider) const
             "Widgets":[{"RadioSearch":{}},{"RadioBrowser":{}}]}}]}},{"SplitterHorizontal":{
             "State":"AAAA/wAAAAEAAAAEAAAAaAAACSoAAAA0AAAAGgD/////AQAAAAEA","Widgets":[{"PlayerControls":{}},
             {"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}}]}}]})");
+}
+
+void RadioBrowserPlugin::scheduleRelinkRadioWidgets()
+{
+    QMetaObject::invokeMethod(this, &RadioBrowserPlugin::relinkRadioWidgets, Qt::QueuedConnection);
+}
+
+void RadioBrowserPlugin::relinkRadioWidgets()
+{
+    const auto browsers = m_editableLayout->findWidgetsByType<RadioBrowserWidget>();
+    const auto searches = m_editableLayout->findWidgetsByType<RadioSearch>();
+
+    if(browsers.empty()) {
+        return;
+    }
+
+    browsers.front()->connectFilterBar(searches.empty() ? nullptr : searches.front());
 }
 
 void RadioBrowserPlugin::showRadioBrowserDialog()

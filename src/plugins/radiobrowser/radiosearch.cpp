@@ -19,7 +19,6 @@
 
 #include "radiosearch.h"
 
-#include "radiobrowserconnectionmanager.h"
 #include "radiogenres.h"
 
 #include <gui/guiconstants.h>
@@ -76,7 +75,7 @@ void setupFilterCombo(ExpandingComboBox* combo)
 }
 } // namespace
 
-RadioSearch::RadioSearch(SettingsManager* settings, RadioBrowserConnectionManager* connectionManager, QWidget* parent)
+RadioSearch::RadioSearch(SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_mainLayout{new QHBoxLayout(this)}
     , m_searchEdit{new QLineEdit(this)}
@@ -97,7 +96,6 @@ RadioSearch::RadioSearch(SettingsManager* settings, RadioBrowserConnectionManage
     , m_resetFiltersAction{new QAction(tr("Reset filters"), this)}
     , m_filterPopup{new QFrame(this, Qt::Popup)}
     , m_popupFiltersLayout{new QGridLayout(m_filterPopup)}
-    , m_connectionManager{connectionManager}
     , m_savedSearch{false}
     , m_showFilterButtonText{true}
 {
@@ -207,10 +205,6 @@ RadioSearch::RadioSearch(SettingsManager* settings, RadioBrowserConnectionManage
     updateFilterPlacement();
     updateFilterButton();
     refreshThemeIcons();
-
-    if(m_connectionManager) {
-        m_connectionManager->registerFilterBar(this);
-    }
 }
 
 QString RadioSearch::name() const
@@ -247,13 +241,6 @@ void RadioSearch::loadLayoutData(const QJsonObject& layout)
     renderControlsFromState();
     updateFilterPlacement();
     updateFilterButton();
-}
-
-void RadioSearch::finalise()
-{
-    if(m_connectionManager) {
-        m_connectionManager->relink();
-    }
 }
 
 RadioSearchRequest RadioSearch::request(bool hideBroken) const

@@ -20,7 +20,6 @@
 #include "radiobrowserwidget.h"
 
 #include "radiobrowserconfigdialog.h"
-#include "radiobrowserconnectionmanager.h"
 #include "radiobrowsercontextmenu.h"
 #include "radiobrowsercontroller.h"
 #include "radiobrowsermodel.h"
@@ -171,8 +170,7 @@ QUrl radioBrowserStationUrl(const RadioStation& station)
 
 RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, ActionManager* actionManager,
                                        TrackSelectionController* trackSelection, SettingsManager* settings,
-                                       RadioBrowserConnectionManager* connectionManager, bool applyInitialSearch,
-                                       QWidget* parent)
+                                       bool applyInitialSearch, QWidget* parent)
     : FyWidget{parent}
     , m_controller{controller}
     , m_actionManager{actionManager}
@@ -181,7 +179,6 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
     , m_widgetContext{new WidgetContext(
           this, Context{IdList{Constants::Context::TrackSelection, Id{"Fooyin.Context.RadioBrowser."}.append(id())}},
           this)}
-    , m_connectionManager{connectionManager}
     , m_toggleFilterBarAction{new QAction(tr("Show search bar"), this)}
     , m_saveSavedStationsAction{new QAction(tr("Add to My Stations"), this)}
     , m_removeSavedStationsAction{new QAction(tr("Remove from My Stations"), this)}
@@ -321,9 +318,6 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
     refreshThemeIcons();
     m_controller->fetchCategories(RadioCategoryType::Country);
     m_controller->fetchCategories(RadioCategoryType::Codec);
-    if(m_connectionManager) {
-        m_connectionManager->registerBrowser(this);
-    }
 }
 
 RadioBrowserWidget::~RadioBrowserWidget()
@@ -440,9 +434,6 @@ void RadioBrowserWidget::finalise()
     m_resultsView->finaliseView(m_headerState);
     updateIconColumnOrder();
 
-    if(m_connectionManager) {
-        m_connectionManager->relink();
-    }
     if(m_initialSearchState == InitialSearchState::Pending) {
         m_resultsView->setLoading(true);
         QTimer::singleShot(0, this, &RadioBrowserWidget::startInitialSearch);

@@ -48,7 +48,6 @@ class WidgetContext;
 
 namespace RadioBrowser {
 class RadioSearch;
-class RadioBrowserConnectionManager;
 class RadioBrowserController;
 class RadioBrowserModel;
 class RadioStationDelegate;
@@ -60,8 +59,7 @@ class RadioBrowserWidget : public FyWidget
 public:
     explicit RadioBrowserWidget(RadioBrowserController* controller, ActionManager* actionManager,
                                 TrackSelectionController* trackSelection, SettingsManager* settings,
-                                RadioBrowserConnectionManager* connectionManager, bool applyInitialSearch = true,
-                                QWidget* parent = nullptr);
+                                bool applyInitialSearch = true, QWidget* parent = nullptr);
     ~RadioBrowserWidget() override;
 
     [[nodiscard]] QString name() const override;
@@ -209,9 +207,8 @@ private:
     ActionManager* m_actionManager;
     TrackSelectionController* m_trackSelection;
     SettingsManager* m_settings;
-    WidgetContext* m_widgetContext;
-    RadioBrowserConnectionManager* m_connectionManager;
 
+    WidgetContext* m_widgetContext;
     QPointer<RadioSearch> m_filterBar;
     QAction* m_toggleFilterBarAction;
     QAction* m_saveSavedStationsAction;
