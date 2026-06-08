@@ -6,6 +6,10 @@
 
 * Spectrum
   - Add a spectrum visualisation plugin ([#52](https://github.com/fooyin/fooyin/issues/52), [#1025](https://github.com/fooyin/fooyin/issues/1025), [#1238](https://github.com/fooyin/fooyin/pull/1238))
+* Radio Browser
+  - Add a Radio Browser plugin ([#84](https://github.com/fooyin/fooyin/issues/84), [#332](https://github.com/fooyin/fooyin/issues/332), [#1270](https://github.com/fooyin/fooyin/pull/1270))
+* Streaming
+  - Add support for remote audio streams ([#1261](https://github.com/fooyin/fooyin/pull/1261))
 
 ### Improvements
 
@@ -14,6 +18,13 @@
 * Interface
   - Add device refresh support ([#1225](https://github.com/fooyin/fooyin/issues/1225))
   - Hide the checked frame for flat tool buttons
+  - Rework layout management and add widget margin editing ([#1267](https://github.com/fooyin/fooyin/pull/1267))
+  - Add support for configuring individual splitter spacing
+  - Add a Script Display option to toggle the vertical scrollbar ([#1260](https://github.com/fooyin/fooyin/issues/1260))
+  - Add random play icons
+* Scripting
+  - Add `$join`
+  - Always evaluate Script Display scripts using the playback environment
 * VU Meter
   - Add peak falloff support and align peak decay with spectrum behaviour
   - Improve configuration with peak, legend, and gradient controls
@@ -22,19 +33,31 @@
 
 * Audio/Playback
   - Fix repeat-track handling for the same logical segment ([#1232](https://github.com/fooyin/fooyin/issues/1232))
+  - Fix watchdog warnings for pause fades
 * Filters
   - Fix filter copy grouping and preserve saved filter order ([#1252](https://github.com/fooyin/fooyin/issues/1252))
   - Ignore stale asynchronous search results ([#1235](https://github.com/fooyin/fooyin/issues/1235))
+  - Clear selection on linked search changes ([#1235](https://github.com/fooyin/fooyin/issues/1235))
+  - Keep filter search recomputes in sync ([#1235](https://github.com/fooyin/fooyin/issues/1235))
+  - Restore default disabled context menus on settings page reset
 * Interface
   - Fix layout editing overlay geometry for containers
   - Keep inactive commands visible in the shortcut editor ([#1233](https://github.com/fooyin/fooyin/issues/1233))
   - Avoid stale track selection use in context actions ([#1237](https://github.com/fooyin/fooyin/issues/1237))
   - Scale playlist background pixmaps with device pixel ratio ([#1247](https://github.com/fooyin/fooyin/pull/1247))
+  - Preserve missing widget metadata across layout reloads
+  - Fix TrackList mime data support in playlist tabs and playlists
+  - Reload the Queue Viewer when current track metadata changes
+  - Preserve artwork selection during download progress ([#1257](https://github.com/fooyin/fooyin/issues/1257))
+  - Prevent a crash when updating proxy actions
 * Lyrics
   - Avoid resetting editor text on Apply ([#1234](https://github.com/fooyin/fooyin/issues/1234))
   - Fix current line highlighting mutating the undo stack
 * Scrobbling
   - Reset the timestamp when replaying the current track after stop ([#1217](https://github.com/fooyin/fooyin/pull/1217))
+* Library/Metadata
+  - Use track identity when comparing tracks
+  - Avoid unnecessary FFmpeg temporary buffers
 
 ### Build/System
 
@@ -42,6 +65,7 @@
   - Enable precompiled headers and ccache ([#1214](https://github.com/fooyin/fooyin/pull/1214))
 * Packaging
   - Remove unnecessary executable bits ([#1213](https://github.com/fooyin/fooyin/pull/1213))
+  - Compress PNG assets ([#1265](https://github.com/fooyin/fooyin/pull/1265))
 * Translations
   - Update translations and translation sources ([#1250](https://github.com/fooyin/fooyin/pull/1250), [#1251](https://github.com/fooyin/fooyin/pull/1251))
 
@@ -50,6 +74,7 @@
   - Expose the selected playlist to GUI plugins ([#1222](https://github.com/fooyin/fooyin/pull/1222))
   - Add copy-specific layout serialisation
   - Add special value text support to Advanced settings
+  - Add support for inserting actions before others by ID
 
 
 ## [0.10.8](https://github.com/fooyin/fooyin/releases/tag/v0.10.8) (2026-05-21)
