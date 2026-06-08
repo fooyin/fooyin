@@ -47,6 +47,7 @@
 #include <QJsonObject>
 #include <QMenu>
 #include <QMouseEvent>
+#include <QScopedValueRollback>
 #include <QStyle>
 #include <QUndoStack>
 
@@ -225,6 +226,7 @@ EditableLayoutPrivate::EditableLayoutPrivate(EditableLayout* self, ActionManager
     , m_box{new QHBoxLayout(m_self)}
     , m_root{new RootContainer(m_widgetProvider, m_settings, m_self)}
     , m_layoutEditing{false}
+    , m_changingLayout{false}
     , m_editingContext{new WidgetContext(m_self, Context{"Fooyin.LayoutEditing"}, m_self)}
     , m_layoutHistory{new QUndoStack(m_self)}
 {
@@ -275,12 +277,16 @@ void EditableLayoutPrivate::changeEditingState(bool editing)
             m_overlay->deleteLater();
         }
 
-        m_self->saveLayout();
+        if(!m_changingLayout) {
+            m_self->saveLayout();
+        }
     }
 }
 
-void EditableLayoutPrivate::changeLayout(const FyLayout& layout) const
+void EditableLayoutPrivate::changeLayout(const FyLayout& layout)
 {
+    const QScopedValueRollback changingLayout{m_changingLayout, true};
+
     m_root->reset();
 
     if(m_self->loadLayout(layout)) {

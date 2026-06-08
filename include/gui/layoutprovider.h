@@ -50,6 +50,7 @@ public:
     void registerLayout(const FyLayout& layout);
     void registerLayout(const QByteArray& json);
     void updateLayout(const FyLayout& layout);
+    bool saveLayout(const FyLayout& layout);
     void changeLayout(const FyLayout& layout);
     bool createLayout(const QString& name, const FyLayout& baseLayout);
     bool deleteLayout(const QString& name);

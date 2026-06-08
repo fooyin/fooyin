@@ -86,7 +86,7 @@ public:
     void updateMargins() const;
     void changeEditingState(bool editing);
 
-    void changeLayout(const FyLayout& layout) const;
+    void changeLayout(const FyLayout& layout);
 
     void showOverlay(FyWidget* widget) const;
     void hideOverlay() const;
@@ -157,6 +157,7 @@ public:
     QPointer<OverlayWidget> m_overlay;
     RootContainer* m_root;
     bool m_layoutEditing;
+    bool m_changingLayout;
 
     WidgetContext* m_editingContext;
     QJsonObject m_widgetClipboard;

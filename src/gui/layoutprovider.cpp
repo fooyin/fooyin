@@ -356,23 +356,39 @@ void LayoutProvider::saveCurrentLayout()
         return;
     }
 
-    QString filepath = p->pathForLayout(p->m_currentLayout);
-    if(filepath.isEmpty()) {
-        if(p->isUnmodifiedBuiltIn(p->m_currentLayout)) {
-            p->saveActiveLayoutName();
-            Q_EMIT currentLayoutChanged(p->m_currentLayout);
-            return;
-        }
-
-        filepath = layoutFilePath(p->m_currentLayout.name());
-        p->setLayoutPath(p->m_currentLayout, filepath);
-    }
-
-    if(writeLayout(p->m_currentLayout, filepath)) {
+    if(saveLayout(p->m_currentLayout)) {
         p->saveActiveLayoutName();
-        Q_EMIT layoutChanged(p->m_currentLayout);
         Q_EMIT currentLayoutChanged(p->m_currentLayout);
     }
+}
+
+bool LayoutProvider::saveLayout(const FyLayout& layout)
+{
+    if(!layout.isValid()) {
+        return false;
+    }
+
+    p->updateLayout(layout);
+    if(p->m_currentLayout.name() == layout.name()) {
+        p->m_currentLayout = layout;
+    }
+
+    QString filepath = p->pathForLayout(layout);
+    if(filepath.isEmpty()) {
+        if(p->isUnmodifiedBuiltIn(layout)) {
+            return true;
+        }
+
+        filepath = layoutFilePath(layout.name());
+        p->setLayoutPath(layout, filepath);
+    }
+
+    if(writeLayout(layout, filepath)) {
+        Q_EMIT layoutChanged(layout);
+        return true;
+    }
+
+    return false;
 }
 
 void LayoutProvider::registerLayout(const FyLayout& layout)
