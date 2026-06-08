@@ -148,7 +148,7 @@
 <context>
     <name>Fooyin::PlaylistModel</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1514"/>
+        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1521"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln track</numerusform>
@@ -159,7 +159,7 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="732"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="739"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
@@ -187,6 +187,44 @@
         <translation>
             <numerusform>Set &quot;%1&quot; on %Ln track?</numerusform>
             <numerusform>Set &quot;%1&quot; on %Ln tracks?</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::RadioBrowser::RadioSearch</name>
+    <message numerus="yes">
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="566"/>
+        <source>%Ln active filter(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::RadioBrowser::RadioStationImportExportDialog</name>
+    <message numerus="yes">
+        <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="77"/>
+        <source>Exported %n radio station(s).</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="150"/>
+        <source>Imported %Ln radio station(s), skipped %Ln duplicate(s).</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="154"/>
+        <source>Imported %Ln radio station(s).</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
 </context>
