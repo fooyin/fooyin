@@ -5407,7 +5407,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="98"/>
         <source>Controls how individual tracks are labelled in the properties sidebar.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrollerar hur individuella spår är etiketterade i egenskaps-sidrutan.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="101"/>
@@ -7842,7 +7842,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="84"/>
         <source>Timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>Timeout</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="75"/>
@@ -8287,7 +8287,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="129"/>
         <source>Override the output sample format. Devices may choose a compatible format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Överskugga utgångs-samplingsfrekvensen. Enheter kan välja ett kompatibelt format.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="143"/>
@@ -8893,32 +8893,32 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="137"/>
         <source>Scaled and cropped</source>
-        <translation type="unfinished"></translation>
+        <translation>Skalad och skärd</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="138"/>
         <source>Fill the playlist area while preserving proportions; edges may be cropped</source>
-        <translation type="unfinished"></translation>
+        <translation>Fyll spellistsarean medan proportioner behålls; kanter kan bli skärda</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="139"/>
         <source>Scaled</source>
-        <translation type="unfinished"></translation>
+        <translation>Skalad</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="140"/>
         <source>Stretch the image to fill the playlist area; proportions may change</source>
-        <translation type="unfinished"></translation>
+        <translation>Stretcha bilden för att fylla spellistsarean; proportioner kan ändras</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="141"/>
         <source>Scaled, keep proportions</source>
-        <translation type="unfinished"></translation>
+        <translation>Skalad, behåll proportioner</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="143"/>
         <source>Fit the whole image inside the playlist area without cropping</source>
-        <translation type="unfinished"></translation>
+        <translation>Passa hela bilden i spellistsarean utan skärning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="144"/>
@@ -8928,7 +8928,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="145"/>
         <source>Draw the image at its original size, optionally limited by maximum size</source>
-        <translation type="unfinished"></translation>
+        <translation>Rita bilden i dess originalstorlek, valfritt begränsad av maximal storlek</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="147"/>
@@ -8979,7 +8979,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="172"/>
         <source>Path to the custom background image</source>
-        <translation type="unfinished"></translation>
+        <translation>Sökväg till den egna bakgrundsbilden</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="173"/>
@@ -8989,7 +8989,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="174"/>
         <source>Select which artwork type to use for current track artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj vilken konstverkstyp att använda för aktuellt spårkonstverk</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="175"/>
@@ -8999,7 +8999,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="176"/>
         <source>Alignment for original-size background images</source>
-        <translation type="unfinished"></translation>
+        <translation>Positionering av original-storleks-bakgrunds-bilder</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="177"/>
@@ -10667,7 +10667,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="929"/>
         <source>Apply or clear the current tab&apos;s pending changes before switching tracks or tabs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verkställ eller rensa den aktuella flikens väntade ändringar innan byte av spår eller flikar.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="946"/>
