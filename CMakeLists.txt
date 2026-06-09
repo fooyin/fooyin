@@ -278,6 +278,7 @@ set_property(GLOBAL PROPERTY MIMETYPES
     x-content/audio-player
     application/x-cue
     audio/x-mpegurl
+    audio/x-scpls
     application/vnd.apple.mpegurl
     application/ogg
     application/x-ogg
