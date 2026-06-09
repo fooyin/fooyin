@@ -913,7 +913,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="323"/>
         <source>Joins non-empty values with a separator</source>
-        <translation type="unfinished"></translation>
+        <translation>Объединяет непустые значения разделителем</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="325"/>
@@ -3817,12 +3817,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="58"/>
         <source>Add stream &amp;URL…</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить &amp;URL-адрес потока…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="59"/>
         <source>Add the specified stream URL to the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить указанный URL-адрес потока в текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="67"/>
@@ -4964,22 +4964,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1308"/>
         <source>Add Stream URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить URL-адрес потока</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1309"/>
         <source>Stream URL:</source>
-        <translation type="unfinished"></translation>
+        <translation>URL-адрес потока:</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1318"/>
         <source>Invalid Stream URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Неверный URL-адрес потока</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1319"/>
         <source>Enter a valid http:// or https:// stream URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите действительный http:// или https:// URL-адрес потока.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1583"/>
@@ -5394,12 +5394,12 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="627"/>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="628"/>
         <source>Layout</source>
-        <translation type="unfinished">Макет</translation>
+        <translation>Макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="628"/>
         <source>Interface</source>
-        <translation type="unfinished">Интерфейс</translation>
+        <translation>Интерфейс</translation>
     </message>
 </context>
 <context>
@@ -5407,140 +5407,140 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="180"/>
         <source>Margins</source>
-        <translation type="unfinished">Поля</translation>
+        <translation>Поля</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="181"/>
         <source>Use custom margins</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать собственные поля</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="186"/>
         <source>Splitter</source>
-        <translation type="unfinished">Разделитель</translation>
+        <translation>Разделитель</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="187"/>
         <source>Use custom spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать собственные интервалы</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="207"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Левый</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="209"/>
         <source>Top</source>
-        <translation type="unfinished">Сверху</translation>
+        <translation>Верхний</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="211"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Правый</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="213"/>
         <source>Bottom</source>
-        <translation type="unfinished">Снизу</translation>
+        <translation>Нижний</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="218"/>
         <source>Spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Интервал</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="222"/>
         <source>New</source>
-        <translation type="unfinished">Новый</translation>
+        <translation>Создать</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="223"/>
         <source>Rename</source>
-        <translation type="unfinished">Переименовать</translation>
+        <translation>Переименовать</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="224"/>
         <source>Duplicate</source>
-        <translation type="unfinished"></translation>
+        <translation>Дублировать</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="337"/>
         <source>Move up</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить вверх</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="342"/>
         <source>Move down</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить вниз</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="347"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="355"/>
         <source>Cut</source>
-        <translation type="unfinished"></translation>
+        <translation>Вырезать</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="360"/>
         <source>Copy</source>
-        <translation type="unfinished">Копировать</translation>
+        <translation>Копировать</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="366"/>
         <source>Paste</source>
-        <translation type="unfinished">Вставить</translation>
+        <translation>Вставить</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="488"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Сбросить</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="488"/>
         <source>Delete</source>
-        <translation type="unfinished">Удалить</translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="535"/>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="537"/>
         <source>New Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="537"/>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="593"/>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="612"/>
         <source>Layout Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Название макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="569"/>
         <source>Delete Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="569"/>
         <source>Delete layout &quot;%1&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить макет «%1»?</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="593"/>
         <source>Rename Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Переименовать макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="610"/>
         <source>%1 Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Копия %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="612"/>
         <source>Duplicate Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Дублировать макет</translation>
     </message>
 </context>
 <context>
@@ -5737,12 +5737,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/core/network/hlsstreamdevice.cpp" line="490"/>
         <source>Invalid HLS stream.</source>
-        <translation type="unfinished"></translation>
+        <translation>Неверный HLS-поток.</translation>
     </message>
     <message>
         <location filename="../../src/core/network/hlsstreamdevice.cpp" line="541"/>
         <source>HLS stream cannot be read from the network thread.</source>
-        <translation type="unfinished"></translation>
+        <translation>HLS-поток не может быть прочитан из сетевого потока.</translation>
     </message>
 </context>
 <context>
@@ -6108,22 +6108,22 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="98"/>
         <source>&amp;Clear layout</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Очистить макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="99"/>
         <source>Clear the current layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить текущий макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="104"/>
         <source>&amp;Reset layout</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Сбросить макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="105"/>
         <source>Reset the current layout to the built-in default</source>
-        <translation type="unfinished"></translation>
+        <translation>Сбросить текущий макет к встроенному по умолчанию</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="147"/>
@@ -6169,7 +6169,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/layouttreemodel.cpp" line="484"/>
         <source>Name</source>
-        <translation type="unfinished">Имя</translation>
+        <translation>Имя</translation>
     </message>
 </context>
 <context>
@@ -8059,12 +8059,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/core/network/networkstreamdevice.cpp" line="459"/>
         <source>Invalid network stream.</source>
-        <translation type="unfinished"></translation>
+        <translation>Неверный сетевой поток.</translation>
     </message>
     <message>
         <location filename="../../src/core/network/networkstreamdevice.cpp" line="512"/>
         <source>Network stream cannot be read from the network thread.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сетевой поток не может быть прочитан из сетевого потока.</translation>
     </message>
 </context>
 <context>
@@ -11398,192 +11398,192 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="36"/>
         <source>Radio Browser Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки «Обозревателя радио»</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="39"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished">Начинать воспроизведение немедленно</translation>
+        <translation>Начинать воспроизведение немедленно</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="40"/>
         <source>Hide broken stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Скрывать неработающие станции</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="41"/>
         <source>Send clicks to radio-browser.info</source>
-        <translation type="unfinished"></translation>
+        <translation>Отправлять щелчки на radio-browser.info</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="42"/>
         <source>Override row height</source>
-        <translation type="unfinished">Переопределить высоту строки</translation>
+        <translation>Переопределить высоту строки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="48"/>
         <source>Use uniform station icon frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать единообразные рамки для значков станций</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="54"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="66"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="90"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="55"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизвести</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="56"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="67"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Добавить в текущий плейлист</translation>
+        <translation>Добавить в текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="57"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="68"/>
         <source>Add to current playlist and play if stopped</source>
-        <translation type="unfinished">Добавить в текущий плейлист и воспроизвести, если остановлено</translation>
+        <translation>Добавить в текущий плейлист и воспроизвести, если остановлено</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="59"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="70"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Добавить в активный плейлист</translation>
+        <translation>Добавить в активный плейлист</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="60"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="71"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished">Заменить текущий плейлист</translation>
+        <translation>Заменить текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="61"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="72"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">Создать новый плейлист</translation>
+        <translation>Создать новый плейлист</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="62"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="73"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Добавить в очередь воспроизведения</translation>
+        <translation>Добавить в очередь воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="63"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="74"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished">Поставить в начало очереди воспроизведения</translation>
+        <translation>Поставить в начало очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="64"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="75"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished">Заменить очередь воспроизведения</translation>
+        <translation>Заменить очередь воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="78"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation type="unfinished">Для «Заменить текущий плейлист» и «Создать новый плейлист» начинать воспроизведение немедленно.</translation>
+        <translation>Для «Заменить текущий плейлист» и «Создать новый плейлист» начинать воспроизведение немедленно.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="79"/>
         <source>Exclude stations marked as broken by radio-browser.info from search results.</source>
-        <translation type="unfinished"></translation>
+        <translation>Исключать станции, отмеченные radio-browser.info как неработающие, из результатов поиска.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="81"/>
         <source>Report played stations to radio-browser.info so click counts and station statistics stay up to date.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сообщать о воспроизведённых станциях на radio-browser.info, чтобы счётчики щелчков и статистика станций оставались актуальными.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="83"/>
         <source>Draw station icons inside equally sized frames so rows and icon captions align consistently.</source>
-        <translation type="unfinished"></translation>
+        <translation>Рисовать значки станций внутри рамок одинакового размера, чтобы строки и подписи к значкам выравнивались единообразно.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="91"/>
         <source>Size of the border around each station icon in icon display mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер границы вокруг каждого значка станции в режиме отображения значков.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="98"/>
         <source>Auto</source>
-        <translation type="unfinished">Автоматически</translation>
+        <translation>Авто</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="101"/>
         <source>Horizontal spacing between stations in icon display mode. Auto uses the view&apos;s default spacing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Горизонтальный интервал между станциями в режиме отображения значков. Авто использует интервал по умолчанию для представления.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="105"/>
         <source>Vertical spacing between stations in icon display mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вертикальный интервал между станциями в режиме отображения значков.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="107"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">Поведение щелчка мыши</translation>
+        <translation>Поведение щелчка мыши</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="111"/>
         <source>Double-click</source>
-        <translation type="unfinished">Двойной щелчок</translation>
+        <translation>Двойной щелчок</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="113"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Щелчок средней кнопкой</translation>
+        <translation>Щелчок средней кнопкой</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="118"/>
         <source>Search</source>
-        <translation type="unfinished">Поиск</translation>
+        <translation>Поиск</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="126"/>
         <source>Appearance</source>
-        <translation type="unfinished">Внешний вид</translation>
+        <translation>Внешний вид</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="135"/>
         <source>Icon Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим значков</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="140"/>
         <source>Horizontal</source>
-        <translation type="unfinished">Горизонтальный</translation>
+        <translation>Горизонтальный</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="142"/>
         <source>Vertical</source>
-        <translation type="unfinished">Вертикальный</translation>
+        <translation>Вертикальный</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="147"/>
         <source>Item border</source>
-        <translation type="unfinished"></translation>
+        <translation>Граница элемента</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="149"/>
         <source>Icon size</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер значка</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="151"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
-        <translation type="unfinished">Используйте &lt;b&gt;Ctrl+прокрутка&lt;/b&gt; в виджете для изменения размера значков.</translation>
+        <translation>Использовать &lt;b&gt;Ctrl+прокрутка&lt;/b&gt; в виджете для изменения размера значков.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="153"/>
         <source>Gap</source>
-        <translation type="unfinished"></translation>
+        <translation>Промежуток</translation>
     </message>
 </context>
 <context>
@@ -11591,54 +11591,54 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="70"/>
         <source>countries</source>
-        <translation type="unfinished"></translation>
+        <translation>страны</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="72"/>
         <source>languages</source>
-        <translation type="unfinished"></translation>
+        <translation>языки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="74"/>
         <source>tags</source>
-        <translation type="unfinished"></translation>
+        <translation>теги</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="76"/>
         <source>codecs</source>
-        <translation type="unfinished"></translation>
+        <translation>кодеки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="79"/>
         <source>categories</source>
-        <translation type="unfinished"></translation>
+        <translation>категории</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="478"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="612"/>
         <source>Station has no stream URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>У станции нет URL-адреса потока.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="548"/>
         <source>A radio station import is already in progress.</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт радиостанций уже выполняется.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="746"/>
         <source>Failed to load radio browser %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось загрузить обозреватель радио %1: %2</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="811"/>
         <source>Failed to refresh imported station metadata: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось обновить метаданные импортированной станции: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="830"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="843"/>
         <source>Station did not resolve to a playable stream.</source>
-        <translation type="unfinished"></translation>
+        <translation>Станция не разрешилась в воспроизводимый поток.</translation>
     </message>
 </context>
 <context>
@@ -11646,17 +11646,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserdialog.cpp" line="59"/>
         <source>Radio Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Обозреватель радио</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserdialog.cpp" line="75"/>
         <source>My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Мои станции</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserdialog.cpp" line="76"/>
         <source>Search</source>
-        <translation type="unfinished">Поиск</translation>
+        <translation>Поиск</translation>
     </message>
 </context>
 <context>
@@ -11664,47 +11664,47 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="90"/>
         <source>%1 kbps</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 кбит/с</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="444"/>
         <source>Station</source>
-        <translation type="unfinished"></translation>
+        <translation>Станция</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="446"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Страна</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="448"/>
         <source>Language</source>
-        <translation type="unfinished">Язык</translation>
+        <translation>Язык</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="450"/>
         <source>Codec</source>
-        <translation type="unfinished">Кодек</translation>
+        <translation>Кодек</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="452"/>
         <source>Bitrate</source>
-        <translation type="unfinished">Битрейт</translation>
+        <translation>Битрейт</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="454"/>
         <source>Votes</source>
-        <translation type="unfinished"></translation>
+        <translation>Голоса</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="456"/>
         <source>Clicks</source>
-        <translation type="unfinished"></translation>
+        <translation>Щелчки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="458"/>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Теги</translation>
     </message>
 </context>
 <context>
@@ -11712,44 +11712,44 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="97"/>
         <source>Radio &amp;Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Обозреватель рад&amp;ио</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="98"/>
         <source>Open the Radio Browser window</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть окно «Обозревателя радио»</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="101"/>
         <source>View</source>
-        <translation type="unfinished">Вид</translation>
+        <translation>Вид</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="115"/>
         <source>Radio Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Обозреватель радио</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="116"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="127"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="131"/>
         <source>Internet</source>
-        <translation type="unfinished"></translation>
+        <translation>Интернет</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="126"/>
         <source>Radio Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск радио</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="130"/>
         <source>Radio Guide</source>
-        <translation type="unfinished"></translation>
+        <translation>Гид по радио</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="148"/>
         <source>Playback stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизведение остановлено</translation>
     </message>
 </context>
 <context>
@@ -11757,39 +11757,39 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="222"/>
         <source>Top clicked</source>
-        <translation type="unfinished"></translation>
+        <translation>Самые кликаемые</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="227"/>
         <source>Top voted</source>
-        <translation type="unfinished"></translation>
+        <translation>Самые оцениваемые</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="232"/>
         <source>Recently clicked</source>
-        <translation type="unfinished"></translation>
+        <translation>Недавно кликаемые</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="237"/>
         <source>Recently changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Недавно изменённые</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="567"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="676"/>
         <source>Request was cancelled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Запрос был отменён.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="596"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="638"/>
         <source>Failed to parse station data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось разобрать данные станции.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="705"/>
         <source>Failed to parse category data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось разобрать данные категории.</translation>
     </message>
 </context>
 <context>
@@ -11797,266 +11797,266 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="182"/>
         <source>Show search bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать строку поиска</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="183"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="230"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="831"/>
         <source>Add to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить в «Мои станции»</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="184"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="238"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="837"/>
         <source>Remove from My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить из «Моих станций»</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="218"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="725"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="791"/>
         <source>No stations found</source>
-        <translation type="unfinished"></translation>
+        <translation>Станции не найдены</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="219"/>
         <source>Loading stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузка станций…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="222"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="333"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="800"/>
         <source>Radio Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Обозреватель радио</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="224"/>
         <source>Add the selected stations to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить выбранные станции в «Мои станции»</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="232"/>
         <source>Remove the selected stations from My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить выбранные станции из «Моих станций»</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="276"/>
         <source>Show or hide the Radio Browser filter bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать или скрыть панель фильтров «Обозревателя радио»</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="725"/>
         <source>No saved stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет сохранённых станций</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="963"/>
         <source>Saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранённый поиск</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="963"/>
         <source>Save search</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить поиск</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="989"/>
         <source>Saved as &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранён как «%1»</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="993"/>
         <source>Rename saved search…</source>
-        <translation type="unfinished"></translation>
+        <translation>Переименовать сохранённый поиск…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="994"/>
         <source>Rename the saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Переименовать сохранённый поиск</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="997"/>
         <source>Remove saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить сохранённый поиск</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="998"/>
         <source>Remove the saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить сохранённый поиск</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1009"/>
         <source>Rename Saved Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Переименовать сохранённый поиск</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1009"/>
         <source>Name</source>
-        <translation type="unfinished">Имя</translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1039"/>
         <source>Radio Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск радио</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1354"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизвести</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1355"/>
         <source>Play the selected station</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизвести выбранную станцию</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1386"/>
         <source>Add to playlist</source>
-        <translation type="unfinished">Добавить в плейлист</translation>
+        <translation>Добавить в плейлист</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1390"/>
         <source>Add the selected stations to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить выбранные станции в другой плейлист</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1432"/>
         <source>Edit station…</source>
-        <translation type="unfinished"></translation>
+        <translation>Править станцию…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1432"/>
         <source>View station details…</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотреть сведения о станции…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1433"/>
         <source>Edit the selected custom station</source>
-        <translation type="unfinished"></translation>
+        <translation>Править выбранную пользовательскую станцию</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1434"/>
         <source>View details for the selected station</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотреть сведения о выбранной станции</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1441"/>
         <source>Add custom station…</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить пользовательскую станцию…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1442"/>
         <source>Add a custom station to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить пользовательскую станцию в «Мои станции»</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1451"/>
         <source>Copy stream URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать URL-адрес потока</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1452"/>
         <source>Copy the selected station stream URLs to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать URL-адреса потоков выбранных станций в буфер обмена</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1471"/>
         <source>Open homepage</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть домашнюю страницу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1472"/>
         <source>Open the selected station homepage in a browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть домашнюю страницу выбранной станции в браузере</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1485"/>
         <source>Open radio-browser.info page</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть страницу radio-browser.info</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1486"/>
         <source>Open the selected station on radio-browser.info</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть выбранную станцию на radio-browser.info</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1517"/>
         <source>Import stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Импортировать станции…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1518"/>
         <source>Import saved stations from a playlist file</source>
-        <translation type="unfinished"></translation>
+        <translation>Импортировать сохранённые станции из файла плейлиста</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1521"/>
         <source>Export stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспортировать станции…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1522"/>
         <source>Export My Stations to a playlist file</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспортировать «Мои станции» в файл плейлиста</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1539"/>
         <source>Auto-size sections</source>
-        <translation type="unfinished">Автоматический размер секций</translation>
+        <translation>Авторазмер секций</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1540"/>
         <source>Automatically size columns to fill the available width</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматически изменять размер столбцов для заполнения доступной ширины</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1547"/>
         <source>Reset columns to default</source>
-        <translation type="unfinished">Сбросить столбцы на стандартные</translation>
+        <translation>Сбросить столбцы к значениям по умолчанию</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1565"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1611"/>
         <source>Columns</source>
-        <translation type="unfinished">Столбцы</translation>
+        <translation>Столбцы</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1608"/>
         <source>Display</source>
-        <translation type="unfinished">Отображение</translation>
+        <translation>Отображение</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1612"/>
         <source>Icons (right captions)</source>
-        <translation type="unfinished"></translation>
+        <translation>Значки (подписи справа)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1613"/>
         <source>Icons (bottom captions)</source>
-        <translation type="unfinished"></translation>
+        <translation>Значки (подписи снизу)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1654"/>
         <source>Show station icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать значки станций</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1663"/>
         <source>Show header</source>
-        <translation type="unfinished">Показывать заголовок</translation>
+        <translation>Показывать заголовок</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1672"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Показывать полосу прокрутки</translation>
+        <translation>Показывать полосу прокрутки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1681"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">Чередование цветов строк</translation>
+        <translation>Чередование цветов строк</translation>
     </message>
 </context>
 <context>
@@ -12064,247 +12064,247 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="28"/>
         <source>Blues</source>
-        <translation type="unfinished"></translation>
+        <translation>Блюз</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="29"/>
         <source>Classical</source>
-        <translation type="unfinished"></translation>
+        <translation>Классика</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="30"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Кантри</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="31"/>
         <source>Dance</source>
-        <translation type="unfinished"></translation>
+        <translation>Танцевальная</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="32"/>
         <source>Disco</source>
-        <translation type="unfinished"></translation>
+        <translation>Диско</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="33"/>
         <source>Easy</source>
-        <translation type="unfinished"></translation>
+        <translation>Лёгкая</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="34"/>
         <source>Folk</source>
-        <translation type="unfinished"></translation>
+        <translation>Фолк</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="35"/>
         <source>Hits</source>
-        <translation type="unfinished"></translation>
+        <translation>Хиты</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="36"/>
         <source>Jazz</source>
-        <translation type="unfinished"></translation>
+        <translation>Джаз</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="37"/>
         <source>Oldies</source>
-        <translation type="unfinished"></translation>
+        <translation>Ретро</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="38"/>
         <source>Pop</source>
-        <translation type="unfinished"></translation>
+        <translation>Поп</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="39"/>
         <source>Rap</source>
-        <translation type="unfinished"></translation>
+        <translation>Рэп</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="40"/>
         <source>Rock</source>
-        <translation type="unfinished"></translation>
+        <translation>Рок</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="41"/>
         <source>Soul</source>
-        <translation type="unfinished"></translation>
+        <translation>Соул</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="43"/>
         <source>Alternative</source>
-        <translation type="unfinished"></translation>
+        <translation>Альтернатива</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="44"/>
         <source>Ambient</source>
-        <translation type="unfinished"></translation>
+        <translation>Эмбиент</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="45"/>
         <source>Club</source>
-        <translation type="unfinished"></translation>
+        <translation>Клубная</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="46"/>
         <source>Electronic</source>
-        <translation type="unfinished"></translation>
+        <translation>Электронная</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="47"/>
         <source>Funk</source>
-        <translation type="unfinished"></translation>
+        <translation>Фанк</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="48"/>
         <source>Hip Hop</source>
-        <translation type="unfinished"></translation>
+        <translation>Хип-хоп</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="49"/>
         <source>House</source>
-        <translation type="unfinished"></translation>
+        <translation>Хаус</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="50"/>
         <source>Indie</source>
-        <translation type="unfinished"></translation>
+        <translation>Инди</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="51"/>
         <source>Latino</source>
-        <translation type="unfinished"></translation>
+        <translation>Латино</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="52"/>
         <source>Metal</source>
-        <translation type="unfinished"></translation>
+        <translation>Метал</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="53"/>
         <source>Punk</source>
-        <translation type="unfinished"></translation>
+        <translation>Панк</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="54"/>
         <source>Reggae</source>
-        <translation type="unfinished"></translation>
+        <translation>Регги</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="55"/>
         <source>Salsa</source>
-        <translation type="unfinished"></translation>
+        <translation>Сальса</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="56"/>
         <source>World Music</source>
-        <translation type="unfinished"></translation>
+        <translation>Мировая музыка</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="58"/>
         <source>40s</source>
-        <translation type="unfinished">8x {40s?}</translation>
+        <translation>40-е</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="59"/>
         <source>50s</source>
-        <translation type="unfinished">8x {50s?}</translation>
+        <translation>50-е</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="60"/>
         <source>60s</source>
-        <translation type="unfinished">8x {60s?}</translation>
+        <translation>60-е</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="61"/>
         <source>70s</source>
-        <translation type="unfinished">8x {70s?}</translation>
+        <translation>70-е</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="62"/>
         <source>80s</source>
-        <translation type="unfinished">8x {80s?}</translation>
+        <translation>80-е</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="63"/>
         <source>90s</source>
-        <translation type="unfinished">8x {90s?}</translation>
+        <translation>90-е</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="64"/>
         <source>2000s</source>
-        <translation type="unfinished">8x {2000s?}</translation>
+        <translation>2000-е</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="65"/>
         <source>2010s</source>
-        <translation type="unfinished">8x {2010s?}</translation>
+        <translation>2010-е</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="66"/>
         <source>Contemporary</source>
-        <translation type="unfinished"></translation>
+        <translation>Современная</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="68"/>
         <source>AM</source>
-        <translation type="unfinished"></translation>
+        <translation>AM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="69"/>
         <source>Comedy</source>
-        <translation type="unfinished"></translation>
+        <translation>Комедия</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="70"/>
         <source>College Radio</source>
-        <translation type="unfinished"></translation>
+        <translation>Студенческое радио</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="71"/>
         <source>Community Radio</source>
-        <translation type="unfinished"></translation>
+        <translation>Местное радио</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="72"/>
         <source>Culture</source>
-        <translation type="unfinished"></translation>
+        <translation>Культура</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="73"/>
         <source>Educational</source>
-        <translation type="unfinished"></translation>
+        <translation>Образовательная</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="74"/>
         <source>Kids</source>
-        <translation type="unfinished"></translation>
+        <translation>Детская</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="75"/>
         <source>News</source>
-        <translation type="unfinished"></translation>
+        <translation>Новости</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="76"/>
         <source>Public Radio</source>
-        <translation type="unfinished"></translation>
+        <translation>Общественное радио</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="77"/>
         <source>Religion</source>
-        <translation type="unfinished"></translation>
+        <translation>Религия</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="78"/>
         <source>Sport</source>
-        <translation type="unfinished"></translation>
+        <translation>Спорт</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="79"/>
         <source>Talk</source>
-        <translation type="unfinished"></translation>
+        <translation>Разговорная</translation>
     </message>
 </context>
 <context>
@@ -12312,77 +12312,77 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="135"/>
         <source>Selections</source>
-        <translation type="unfinished"></translation>
+        <translation>Подборки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="136"/>
         <source>Popular</source>
-        <translation type="unfinished"></translation>
+        <translation>Популярное</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="137"/>
         <source>Trending</source>
-        <translation type="unfinished"></translation>
+        <translation>Набирает популярность</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="138"/>
         <source>Now Listening</source>
-        <translation type="unfinished"></translation>
+        <translation>Слушают сейчас</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="139"/>
         <source>Newest</source>
-        <translation type="unfinished"></translation>
+        <translation>Новые</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="140"/>
         <source>Random</source>
-        <translation type="unfinished"></translation>
+        <translation>Случайные</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="142"/>
         <source>Library</source>
-        <translation type="unfinished">Фонотека</translation>
+        <translation>Фонотека</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="143"/>
         <source>My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Мои станции</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="144"/>
         <source>Latest Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Последний поиск</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="146"/>
         <source>Genres</source>
-        <translation type="unfinished">Жанры</translation>
+        <translation>Жанры</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="147"/>
         <source>More Genres</source>
-        <translation type="unfinished"></translation>
+        <translation>Больше жанров</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="148"/>
         <source>Eras</source>
-        <translation type="unfinished"></translation>
+        <translation>Эпохи</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="149"/>
         <source>Talk</source>
-        <translation type="unfinished"></translation>
+        <translation>Разговорная</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="168"/>
         <source>Countries</source>
-        <translation type="unfinished"></translation>
+        <translation>Страны</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="367"/>
         <source>Saved Searches</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранённые поиски</translation>
     </message>
 </context>
 <context>
@@ -12390,122 +12390,122 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="54"/>
         <source>Loading Countries…</source>
-        <translation type="unfinished"></translation>
+        <translation>Загружаются страны…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="56"/>
         <source>Loading Languages…</source>
-        <translation type="unfinished"></translation>
+        <translation>Загружаются языки…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="58"/>
         <source>Loading Genres…</source>
-        <translation type="unfinished"></translation>
+        <translation>Загружаются жанры…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="60"/>
         <source>Loading Codecs…</source>
-        <translation type="unfinished"></translation>
+        <translation>Загружаются кодеки…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="63"/>
         <source>Loading…</source>
-        <translation type="unfinished"></translation>
+        <translation>Загружается…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="209"/>
         <source>Radio Guide</source>
-        <translation type="unfinished"></translation>
+        <translation>Гид по радио</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="484"/>
         <source>Browse</source>
-        <translation type="unfinished"></translation>
+        <translation>Обзор</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="485"/>
         <source>Browse the selected section</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотреть выбранный раздел</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="494"/>
         <source>Rename saved search…</source>
-        <translation type="unfinished"></translation>
+        <translation>Переименовать сохранённый поиск…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="495"/>
         <source>Rename the selected saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Переименовать выбранный сохранённый поиск</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="498"/>
         <source>Remove saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить сохранённый поиск</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="499"/>
         <source>Remove the selected saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить выбранный сохранённый поиск</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="509"/>
         <source>Add custom station…</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить пользовательскую станцию…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="510"/>
         <source>Add a custom station to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить пользовательскую станцию в «Мои станции»</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="515"/>
         <source>Import stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Импортировать станции…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="516"/>
         <source>Import saved stations from a playlist file</source>
-        <translation type="unfinished"></translation>
+        <translation>Импортировать сохранённые станции из файла плейлиста</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="519"/>
         <source>Export stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспортировать станции…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="520"/>
         <source>Export My Stations to a playlist file</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспортировать «Мои станции» в файл плейлиста</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="527"/>
         <source>Expand all</source>
-        <translation type="unfinished"></translation>
+        <translation>Развернуть всё</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="530"/>
         <source>Collapse all</source>
-        <translation type="unfinished"></translation>
+        <translation>Свернуть всё</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="542"/>
         <source>Display</source>
-        <translation type="unfinished">Отображение</translation>
+        <translation>Отображение</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="544"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Показывать полосу прокрутки</translation>
+        <translation>Показывать полосу прокрутки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="587"/>
         <source>Rename Saved Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Переименовать сохранённый поиск</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="587"/>
         <source>Name</source>
-        <translation type="unfinished">Имя</translation>
+        <translation>Имя</translation>
     </message>
 </context>
 <context>
@@ -12513,132 +12513,132 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="96"/>
         <source>Reset filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Сбросить фильтры</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="105"/>
         <source>Search stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск станций</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="108"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="297"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="643"/>
         <source>Any country</source>
-        <translation type="unfinished"></translation>
+        <translation>Любая страна</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="111"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="395"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="398"/>
         <source>Any genre</source>
-        <translation type="unfinished"></translation>
+        <translation>Любой жанр</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="115"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="303"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="686"/>
         <source>Any codec</source>
-        <translation type="unfinished"></translation>
+        <translation>Любой кодек</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="121"/>
         <source>Min</source>
-        <translation type="unfinished">Мин</translation>
+        <translation>Мин.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="126"/>
         <source>Max</source>
-        <translation type="unfinished">Макс</translation>
+        <translation>Макс.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="139"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="588"/>
         <source>Clear filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить фильтр</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="143"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="876"/>
         <source>Pin filter to bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрепить фильтр на панели</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="150"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Страна</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="151"/>
         <source>Genre</source>
-        <translation type="unfinished">Жанр</translation>
+        <translation>Жанр</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="152"/>
         <source>Codec</source>
-        <translation type="unfinished">Кодек</translation>
+        <translation>Кодек</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="153"/>
         <source>Bitrate</source>
-        <translation type="unfinished">Битрейт</translation>
+        <translation>Битрейт</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="155"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="571"/>
         <source>Filters</source>
-        <translation type="unfinished">Фильтры</translation>
+        <translation>Фильтры</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="157"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="572"/>
         <source>Show filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать фильтры</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="165"/>
         <source>Reset all filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Сбросить все фильтры</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="213"/>
         <source>Radio Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск радио</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="565"/>
         <source>Filters (%1)</source>
         <extracomment>%1 is the number of active search filters</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Фильтры (%1)</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="566"/>
         <source>%Ln active filter(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln активный фильтр</numerusform>
+            <numerusform>%Ln активных фильтра</numerusform>
+            <numerusform>%Ln активных фильтров</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="710"/>
         <source>Min bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Мин. битрейт</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="717"/>
         <source>Max bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Макс. битрейт</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="755"/>
         <source>Show label</source>
-        <translation type="unfinished">Показывать метку</translation>
+        <translation>Показывать метку</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="876"/>
         <source>Unpin filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Открепить фильтр</translation>
     </message>
 </context>
 <context>
@@ -12649,125 +12649,125 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="441"/>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="476"/>
         <source>Station validated.</source>
-        <translation type="unfinished"></translation>
+        <translation>Станция подтверждена.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="129"/>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="367"/>
         <source>Enter a station name and stream URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите название станции и URL-адрес потока.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="138"/>
         <source>Add Custom Station</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить пользовательскую станцию</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="141"/>
         <source>Edit Custom Station</source>
-        <translation type="unfinished"></translation>
+        <translation>Править пользовательскую станцию</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="144"/>
         <source>Station Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Сведения о станции</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="166"/>
         <source>Separate tags with commas</source>
-        <translation type="unfinished"></translation>
+        <translation>Разделяйте теги запятыми</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="172"/>
         <source>Unknown</source>
-        <translation type="unfinished">Неизвестно</translation>
+        <translation>Неизвестно</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="183"/>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="211"/>
         <source>Name</source>
-        <translation type="unfinished">Имя</translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="185"/>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="213"/>
         <source>Stream URL</source>
-        <translation type="unfinished"></translation>
+        <translation>URL-адрес потока</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="189"/>
         <source>Homepage</source>
-        <translation type="unfinished"></translation>
+        <translation>Домашняя страница</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="191"/>
         <source>Favicon</source>
-        <translation type="unfinished"></translation>
+        <translation>Значок сайта</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="193"/>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Теги</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="195"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Страна</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="197"/>
         <source>Language</source>
-        <translation type="unfinished">Язык</translation>
+        <translation>Язык</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="199"/>
         <source>Codec</source>
-        <translation type="unfinished">Кодек</translation>
+        <translation>Кодек</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="201"/>
         <source>Bitrate</source>
-        <translation type="unfinished">Битрейт</translation>
+        <translation>Битрейт</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="372"/>
         <source>Waiting to validate…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ожидание подтверждения…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="384"/>
         <source>Radio Browser is unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>«Обозреватель радио» недоступен.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="394"/>
         <source>Validating station…</source>
-        <translation type="unfinished"></translation>
+        <translation>Подтверждение станции…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="403"/>
         <source>Station could not be validated.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось подтвердить станцию.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="420"/>
         <source>Station validated. Looking up station details…</source>
-        <translation type="unfinished"></translation>
+        <translation>Станция подтверждена. Поиск сведений о станции…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="459"/>
         <source>Station validated. Details found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Станция подтверждена. Сведения найдены.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="500"/>
         <source>▼ Details</source>
-        <translation type="unfinished"></translation>
+        <translation>▼ Подробности</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="500"/>
         <source>▶ Details</source>
-        <translation type="unfinished"></translation>
+        <translation>▶ Подробности</translation>
     </message>
 </context>
 <context>
@@ -12776,15 +12776,15 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="54"/>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="72"/>
         <source>Export Radio Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт радиостанций</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="77"/>
         <source>Exported %n radio station(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Экспортирована %n радиостанция.</numerusform>
+            <numerusform>Экспортировано %n радиостанции.</numerusform>
+            <numerusform>Экспортировано %n радиостанций.</numerusform>
         </translation>
     </message>
     <message>
@@ -12792,50 +12792,50 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="109"/>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="169"/>
         <source>Import Radio Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт радиостанций</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="89"/>
         <source>Append imported stations to My Stations, or replace the current list?</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить импортированные станции к «Моим станциям» или заменить текущий список?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="91"/>
         <source>Append</source>
-        <translation type="unfinished"></translation>
+        <translation>Присоединить</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="92"/>
         <source>Replace</source>
-        <translation type="unfinished">Заменить</translation>
+        <translation>Заменить</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="121"/>
         <source>Importing radio stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт радиостанций…</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="150"/>
         <source>Imported %Ln radio station(s), skipped %Ln duplicate(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Импортирована %Ln радиостанция, пропущен %Ln дубликат.</numerusform>
+            <numerusform>Импортировано %Ln радиостанции, пропущено %Ln дубликата.</numerusform>
+            <numerusform>Импортировано %Ln радиостанций, пропущено %Ln дубликатов.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="154"/>
         <source>Imported %Ln radio station(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Импортирована %Ln радиостанция.</numerusform>
+            <numerusform>Импортировано %Ln радиостанции.</numerusform>
+            <numerusform>Импортировано %Ln радиостанций.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="174"/>
         <source>M3U Playlists (*.m3u8);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Списки воспроизведения M3U (*.m3u8);;Все файлы (*)</translation>
     </message>
 </context>
 <context>
@@ -12843,12 +12843,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostreamresolver.cpp" line="129"/>
         <source>Invalid stream URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>Неверный URL-адрес потока.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostreamresolver.cpp" line="298"/>
         <source>Playlist did not contain any playable streams.</source>
-        <translation type="unfinished"></translation>
+        <translation>Плейлист не содержал воспроизводимых потоков.</translation>
     </message>
 </context>
 <context>
@@ -13145,7 +13145,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="332"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Показывать полосу прокрутки</translation>
+        <translation>Показывать полосу прокрутки</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="341"/>
@@ -13967,7 +13967,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/widgets/seekcontainer.cpp" line="71"/>
         <source>Live</source>
-        <translation type="unfinished"></translation>
+        <translation>Прямой эфир</translation>
     </message>
 </context>
 <context>
@@ -15075,7 +15075,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="434"/>
         <source>Buffering stream…</source>
-        <translation type="unfinished"></translation>
+        <translation>Буферизация потока…</translation>
     </message>
 </context>
 <context>
@@ -15917,18 +15917,18 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="78"/>
         <source>Display</source>
-        <translation type="unfinished">Отображение</translation>
+        <translation>Отображение</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="83"/>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="96"/>
         <source>Falloff</source>
-        <translation type="unfinished">Спад</translation>
+        <translation>Спад</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="137"/>
         <source>Bar gradient</source>
-        <translation type="unfinished">Градиент полос</translation>
+        <translation>Градиент полос</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="158"/>
@@ -15943,12 +15943,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="49"/>
         <source>Legend</source>
-        <translation type="unfinished"></translation>
+        <translation>Легенда</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="50"/>
         <source>Peaks</source>
-        <translation type="unfinished">Пики</translation>
+        <translation>Пики</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="76"/>
@@ -15963,7 +15963,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="94"/>
         <source>Hold time</source>
-        <translation type="unfinished">Время удержания</translation>
+        <translation>Время удержания</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="100"/>
@@ -16013,7 +16013,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="159"/>
         <source>Colours</source>
-        <translation type="unfinished">Цвета</translation>
+        <translation>Цвета</translation>
     </message>
 </context>
 <context>
@@ -16721,27 +16721,27 @@ Higher supersampling values work best with higher sample counts.</source>
         <location filename="../../src/gui/widgets.cpp" line="463"/>
         <location filename="../../src/gui/widgets.cpp" line="475"/>
         <source>Buffering</source>
-        <translation type="unfinished"></translation>
+        <translation>Буферизация</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="464"/>
         <source>Read-ahead for remote streams</source>
-        <translation type="unfinished"></translation>
+        <translation>Упреждающее чтение для внешних потоков</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="465"/>
         <source>Maximum network data buffered for remote streams. Changes apply to newly opened streams.</source>
-        <translation type="unfinished"></translation>
+        <translation>Максимальный объём сетевых данных, буферизируемых для удалённых потоков. Изменения применяются к новым открытым потокам.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="476"/>
         <source>Buffer length for remote streams</source>
-        <translation type="unfinished"></translation>
+        <translation>Длина буфера для внешних потоков</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="477"/>
         <source>Maximum decoded audio buffered for remote streams.</source>
-        <translation type="unfinished"></translation>
+        <translation>Максимальный объём декодированного аудио, буферизируемого для удалённых потоков.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="486"/>
@@ -17353,27 +17353,27 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/core/network/networkstreamdevice.cpp" line="380"/>
         <source>Failed to queue network request.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось поставить сетевой запрос в очередь.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationm3u.cpp" line="78"/>
         <source>Unable to open file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось открыть файл.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationm3u.cpp" line="113"/>
         <source>No stations found in file.</source>
-        <translation type="unfinished"></translation>
+        <translation>В файле не найдено станций.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationm3u.cpp" line="125"/>
         <source>Unable to create destination folder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось создать целевую папку.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationm3u.cpp" line="133"/>
         <source>Unable to open file for writing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось открыть файл для записи.</translation>
     </message>
 </context>
 <context>
@@ -17389,102 +17389,102 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="62"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизвести</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="67"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Добавить в текущий плейлист</translation>
+        <translation>Добавить в текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="71"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Добавить в активный плейлист</translation>
+        <translation>Добавить в активный плейлист</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="75"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished">Заменить текущий плейлист</translation>
+        <translation>Заменить текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="79"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">Создать новый плейлист</translation>
+        <translation>Создать новый плейлист</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="83"/>
         <source>Add to playlist</source>
-        <translation type="unfinished">Добавить в плейлист</translation>
+        <translation>Добавить в плейлист</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="88"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Добавить в очередь воспроизведения</translation>
+        <translation>Добавить в очередь воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="92"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Поставить следующим в очереди</translation>
+        <translation>Поставить следующим в очереди</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="96"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Убрать из очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="101"/>
         <source>Add to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить в «Мои станции»</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="105"/>
         <source>Remove from My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Убрать из «Моих станций»</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="108"/>
         <source>Edit station</source>
-        <translation type="unfinished"></translation>
+        <translation>Править станцию</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="112"/>
         <source>Add custom station</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить пользовательскую станцию</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="116"/>
         <source>Copy stream URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать URL-адрес потока</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="119"/>
         <source>Open homepage</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть домашнюю страницу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="123"/>
         <source>Open radio-browser.info page</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть страницу radio-browser.info</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="127"/>
         <source>Display</source>
-        <translation type="unfinished">Отображение</translation>
+        <translation>Отображение</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="130"/>
         <source>Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>Настроить</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="83"/>
         <source>Radio Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Обозреватель радио</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="85"/>
         <source>Unchecked items will be hidden from the radio browser context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Элементы без отметок будут скрыты из контекстного меню обозревателя радиостанций.</translation>
     </message>
 </context>
 <context>
