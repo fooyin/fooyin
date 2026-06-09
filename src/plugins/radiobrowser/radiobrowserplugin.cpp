@@ -144,7 +144,7 @@ void RadioBrowserPlugin::registerLayouts(LayoutProvider& layoutProvider)
         = uR"json({"Name":"Radio","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAAFFgAAABYA/////wEAAAACAA==",
                 "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAAA1gAABRoA/////wEAAAABAA==",
                 "Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAAEAAABugAAANUAAABWAAAAGgD/////AQAAAAIA",
-                "Widgets":[{"RadioGuide":{}},{"ArtworkPanel":{}},{"ScriptDisplay":{"HorizontalAlignment": 4,"Script":"$if(%istopped%,\n<b>)json"_s;
+                "Widgets":[{"RadioGuide":{}},{"ArtworkPanel":{}},{"ScriptDisplay":{"HorizontalAlignment": 4,"Script":"$if(%isstopped%,\n<b>)json"_s;
     const QString playbackStopped = tr("Playback stopped");
     static const QString jsonEnd
         = uR"json(</b>,\n<sized=1><b>$if2(%station%,$if(%streamtitle%,,%title%))</b></size>\n$crlf()\n$if2(%streamtitle%,[$join( - ,%artist%,%title%)])\n)"}},
