@@ -97,7 +97,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<IconTheme>(0, u"Theme/IconTheme"_s);
     m_settings->createSetting<CursorFollowsPlayback>(false, u"Playlist/CursorFollowsPlayback"_s);
     m_settings->createSetting<PlaybackFollowsCursor>(false, u"Playlist/PlaybackFollowsCursor"_s);
-    m_settings->createSetting<ToolButtonStyle>(0, u"Interface/ToolButtonStyle"_s);
+    m_settings->createSetting<ToolButtonStyle>(static_cast<int>(Stretch), u"Interface/ToolButtonStyle"_s);
     m_settings->createSetting<StarRatingSize>(17, u"Interface/StarRatingSize"_s);
     m_settings->createSetting<Style>(QString{}, u"Interface/Style"_s);
     m_settings->createTempSetting<MainWindowPixelRatio>(1.0);
