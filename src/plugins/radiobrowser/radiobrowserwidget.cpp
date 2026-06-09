@@ -72,7 +72,6 @@ using namespace Qt::StringLiterals;
 
 constexpr auto ToggleFilterBarAction = "RadioBrowser.ToggleFilterBar";
 constexpr auto SaveStationAction     = "RadioBrowser.SaveStation";
-constexpr auto RemoveStationAction   = "RadioBrowser.RemoveStation";
 
 constexpr auto HideBrokenKey        = "RadioBrowser/HideBroken";
 constexpr auto DoubleClickActionKey = "RadioBrowser/DoubleClickAction";
@@ -176,14 +175,14 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
     , m_actionManager{actionManager}
     , m_trackSelection{trackSelection}
     , m_settings{settings}
-    , m_widgetContext{new WidgetContext(
+    , m_context{new WidgetContext(
           this, Context{IdList{Constants::Context::TrackSelection, Id{"Fooyin.Context.RadioBrowser."}.append(id())}},
           this)}
     , m_toggleFilterBarAction{new QAction(tr("Show search bar"), this)}
-    , m_saveSavedStationsAction{new QAction(tr("Add to My Stations"), this)}
-    , m_removeSavedStationsAction{new QAction(tr("Remove from My Stations"), this)}
-    , m_saveSavedStationsCommand{nullptr}
-    , m_removeSavedStationsCommand{nullptr}
+    , m_saveStationsAction{new QAction(tr("Add to My Stations"), this)}
+    , m_removeStationsAction{new QAction(tr("Remove"), this)}
+    , m_saveStationsCmd{nullptr}
+    , m_removeStationsCmd{nullptr}
     , m_filterThrottler{new SignalThrottler(this)}
     , m_resultsView{new RadioStationView(this)}
     , m_delegate{new RadioStationDelegate(this)}
@@ -200,6 +199,7 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
 {
     setObjectName(RadioBrowserWidget::name());
     setFeature(Search);
+    m_actionManager->addContextObject(m_context);
 
     m_sendClicks = m_settings->fileValue(SendClicksKey, m_sendClicks).toBool();
     m_controller->setSendClicks(m_sendClicks);
@@ -218,31 +218,36 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
     m_resultsView->setEmptyText(tr("No stations found"));
     m_resultsView->setLoadingText(tr("Loading stations…"));
 
-    const Context radioBrowserContext{Id{"Fooyin.Context.RadioBrowser."}.append(id())};
+    Context actionContext{m_context->context()};
+    actionContext.erase(Constants::Context::TrackSelection);
     const QStringList radioBrowserCategory{tr("Radio Browser")};
 
-    m_saveSavedStationsAction->setStatusTip(tr("Add the selected stations to My Stations"));
-    m_saveSavedStationsAction->setShortcutVisibleInContextMenu(true);
-    m_saveSavedStationsAction->setEnabled(false);
-    m_saveSavedStationsCommand
-        = m_actionManager->registerAction(m_saveSavedStationsAction, SaveStationAction, radioBrowserContext);
-    m_saveSavedStationsCommand->setCategories(radioBrowserCategory);
-    m_saveSavedStationsCommand->setDescription(tr("Add to My Stations"));
+    m_saveStationsAction->setEnabled(false);
+    m_saveStationsAction->setStatusTip(tr("Add the selected stations to My Stations"));
+    m_saveStationsCmd = m_actionManager->registerAction(m_saveStationsAction, SaveStationAction, actionContext);
+    m_saveStationsCmd->setCategories(radioBrowserCategory);
+    QObject::connect(m_saveStationsAction, &QAction::triggered, this, &RadioBrowserWidget::saveSelectedStation);
 
-    m_removeSavedStationsAction->setStatusTip(tr("Remove the selected stations from My Stations"));
-    m_removeSavedStationsAction->setShortcutVisibleInContextMenu(true);
-    m_removeSavedStationsAction->setEnabled(false);
-    m_removeSavedStationsCommand
-        = m_actionManager->registerAction(m_removeSavedStationsAction, RemoveStationAction, radioBrowserContext);
-    m_removeSavedStationsCommand->setCategories(radioBrowserCategory);
-    m_removeSavedStationsCommand->setDescription(tr("Remove from My Stations"));
-    m_removeSavedStationsCommand->setDefaultShortcut(QKeySequence::Delete);
+    m_removeStationsAction->setEnabled(false);
+    m_removeStationsAction->setStatusTip(tr("Remove the selected stations from My Stations"));
+    m_removeStationsCmd
+        = m_actionManager->registerAction(m_removeStationsAction, Constants::Actions::Remove, actionContext);
+    m_removeStationsCmd->setAttribute(ProxyAction::UpdateText);
+    m_removeStationsCmd->setDefaultShortcut(QKeySequence::Delete);
+    QObject::connect(m_removeStationsAction, &QAction::triggered, this, &RadioBrowserWidget::removeSelectedStations);
+
+    m_toggleFilterBarAction->setCheckable(true);
+    m_toggleFilterBarAction->setChecked(true);
+    m_toggleFilterBarAction->setStatusTip(tr("Show or hide the Radio Browser filter bar"));
+    auto* toggleFilterBarCmd
+        = m_actionManager->registerAction(m_toggleFilterBarAction, ToggleFilterBarAction, actionContext);
+    toggleFilterBarCmd->setCategories(radioBrowserCategory);
+    QObject::connect(m_toggleFilterBarAction, &QAction::triggered, this, &RadioBrowserWidget::setFilterBarVisible);
 
     mainLayout->addWidget(m_resultsView, 1);
 
-    QObject::connect(m_saveSavedStationsAction, &QAction::triggered, this, &RadioBrowserWidget::saveSelectedStation);
-    QObject::connect(m_removeSavedStationsAction, &QAction::triggered, this,
-                     &RadioBrowserWidget::removeSelectedStations);
+    m_filterThrottler->setTimeout(350);
+
     QObject::connect(m_resultsView, &RadioStationView::doubleClicked, this, &RadioBrowserWidget::handleDoubleClick);
     QObject::connect(m_resultsView, &RadioStationView::middleClicked, this, &RadioBrowserWidget::handleMiddleClick);
     QObject::connect(m_resultsView, &QWidget::customContextMenuRequested, this, &RadioBrowserWidget::showContextMenu);
@@ -270,16 +275,7 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
     QObject::connect(m_model, &RadioBrowserModel::sortRequested, this, &RadioBrowserWidget::handleSortRequested);
     QObject::connect(m_model, &RadioBrowserModel::stationsReordered, this,
                      &RadioBrowserWidget::handleStationsReordered);
-    m_actionManager->addContextObject(m_widgetContext);
-    m_toggleFilterBarAction->setCheckable(true);
-    m_toggleFilterBarAction->setChecked(true);
-    m_toggleFilterBarAction->setStatusTip(tr("Show or hide the Radio Browser filter bar"));
-    auto* toggleFilterBarCmd
-        = m_actionManager->registerAction(m_toggleFilterBarAction, ToggleFilterBarAction, m_widgetContext->context());
-    toggleFilterBarCmd->setCategories(radioBrowserCategory);
-    QObject::connect(m_toggleFilterBarAction, &QAction::triggered, this, &RadioBrowserWidget::setFilterBarVisible);
 
-    m_filterThrottler->setTimeout(350);
     QObject::connect(m_filterThrottler, &SignalThrottler::triggered, this,
                      qOverload<>(&RadioBrowserWidget::applyFilterSearch));
 
@@ -828,17 +824,8 @@ void RadioBrowserWidget::updateActionState()
     const bool canRemove
         = std::ranges::any_of(stations, [this](const RadioStation& station) { return m_controller->isSaved(station); });
 
-    m_saveSavedStationsAction->setText(tr("Add to My Stations"));
-    m_saveSavedStationsAction->setEnabled(canSave);
-    if(m_saveSavedStationsCommand) {
-        m_saveSavedStationsAction->setShortcut(m_saveSavedStationsCommand->shortcut());
-    }
-
-    m_removeSavedStationsAction->setText(tr("Remove from My Stations"));
-    m_removeSavedStationsAction->setEnabled(canRemove);
-    if(m_removeSavedStationsCommand) {
-        m_removeSavedStationsAction->setShortcut(m_removeSavedStationsCommand->shortcut());
-    }
+    m_saveStationsAction->setEnabled(canSave);
+    m_removeStationsAction->setEnabled(canRemove);
 }
 
 void RadioBrowserWidget::scheduleFilterSearch()
@@ -1144,7 +1131,7 @@ void RadioBrowserWidget::updateSelectedTracks()
         selection.tracks.push_back(RadioBrowserController::trackForStation(station));
     }
 
-    m_trackSelection->changeSelectedTracks(m_widgetContext, selection);
+    m_trackSelection->changeSelectedTracks(m_context, selection);
 }
 
 void RadioBrowserWidget::addSelectedStations(bool play)
@@ -1203,7 +1190,7 @@ void RadioBrowserWidget::handleResolvedTracks(int resolveId, QObject* context, c
 
     TrackSelection selection;
     selection.tracks = tracks;
-    m_trackSelection->changeSelectedTracks(m_widgetContext, selection);
+    m_trackSelection->changeSelectedTracks(m_context, selection);
     m_trackSelection->executeAction(pending.action, pending.options);
 }
 
@@ -1414,14 +1401,14 @@ void RadioBrowserWidget::showContextMenu(const QPoint& pos)
                 return;
             }
             if(id == QLatin1StringView{RadioBrowserContextMenu::Save}) {
-                if(m_saveSavedStationsAction->isEnabled() && sectionEnabled(RadioBrowserContextMenu::Save)) {
-                    targetMenu->addAction(m_saveSavedStationsAction);
+                if(m_saveStationsAction->isEnabled() && sectionEnabled(RadioBrowserContextMenu::Save)) {
+                    targetMenu->addAction(m_saveStationsCmd->action());
                 }
                 return;
             }
             if(id == QLatin1StringView{RadioBrowserContextMenu::Remove}) {
-                if(m_removeSavedStationsAction->isEnabled() && sectionEnabled(RadioBrowserContextMenu::Remove)) {
-                    targetMenu->addAction(m_removeSavedStationsAction);
+                if(m_removeStationsAction->isEnabled() && sectionEnabled(RadioBrowserContextMenu::Remove)) {
+                    targetMenu->addAction(m_removeStationsCmd->action());
                 }
                 return;
             }

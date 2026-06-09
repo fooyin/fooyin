@@ -210,17 +210,19 @@ private:
     TrackSelectionController* m_trackSelection;
     SettingsManager* m_settings;
 
-    WidgetContext* m_widgetContext;
+    WidgetContext* m_context;
     QPointer<RadioSearch> m_filterBar;
+
     QAction* m_toggleFilterBarAction;
-    QAction* m_saveSavedStationsAction;
-    QAction* m_removeSavedStationsAction;
-    Command* m_saveSavedStationsCommand;
-    Command* m_removeSavedStationsCommand;
+    QAction* m_saveStationsAction;
+    QAction* m_removeStationsAction;
+    Command* m_saveStationsCmd;
+    Command* m_removeStationsCmd;
     SignalThrottler* m_filterThrottler;
     RadioStationView* m_resultsView;
     RadioStationDelegate* m_delegate;
     RadioBrowserModel* m_model;
+
     ConfigData m_config;
     ConfigData::ViewConfig m_viewConfig;
     QByteArray m_headerState;
@@ -229,6 +231,7 @@ private:
     bool m_playbackOnSend;
     bool m_hideBroken;
     bool m_sendClicks;
+
     bool m_loadingLayout;
     InitialSearchState m_initialSearchState;
     FilterBarMode m_filterBarMode;
