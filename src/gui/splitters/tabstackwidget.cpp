@@ -42,12 +42,12 @@ namespace Fooyin {
 TabStackWidget::TabStackWidget(WidgetProvider* widgetProvider, SettingsManager* settings, QWidget* parent)
     : WidgetContainer{widgetProvider, settings, parent}
     , m_tabs{new EditableTabWidget(this)}
-    , m_rememberLast{false}
+    , m_rememberLast{true}
 {
     QObject::setObjectName(TabStackWidget::name());
 
     auto* layout = new QVBoxLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins({});
 
     layout->addWidget(m_tabs);
 
