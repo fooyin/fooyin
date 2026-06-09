@@ -2246,7 +2246,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="408"/>
         <source>Keep aspect ratio</source>
-        <translation>Behåll bildformat</translation>
+        <translation>Behåll proportioner</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="421"/>
@@ -2354,7 +2354,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="38"/>
         <source>Keep aspect ratio</source>
-        <translation>Behåll bildformat</translation>
+        <translation>Behåll proportioner</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="39"/>
@@ -11841,7 +11841,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="989"/>
         <source>Saved as &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Sparad som ”%1”</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="993"/>
@@ -17447,7 +17447,7 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="83"/>
         <source>Radio Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Radiobläddrare</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="85"/>
