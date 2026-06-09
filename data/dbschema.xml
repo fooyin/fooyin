@@ -378,4 +378,18 @@
             ALTER TABLE Tracks ADD COLUMN CreatedDate INTEGER;
         </sql>
     </revision>
+    <revision version="18">
+        <description>
+            Change TrackStats.Rating column affinity to REAL.
+        </description>
+        <sql>
+            ALTER TABLE TrackStats RENAME COLUMN Rating TO RatingOld;
+
+            ALTER TABLE TrackStats ADD COLUMN Rating REAL DEFAULT 0;
+
+            UPDATE TrackStats SET Rating = RatingOld;
+
+            ALTER TABLE TrackStats DROP COLUMN RatingOld;
+        </sql>
+    </revision>
 </schema>
