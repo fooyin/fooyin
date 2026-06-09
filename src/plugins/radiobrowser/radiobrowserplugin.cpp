@@ -141,16 +141,15 @@ void RadioBrowserPlugin::initialise(const GuiPluginContext& context)
 void RadioBrowserPlugin::registerLayouts(LayoutProvider& layoutProvider)
 {
     static const QString jsonStart
-        = uR"json({"Name":"Radio","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAJgAABPYAAAAcAP////8BAAAAAgA=",
-                "Widgets":[{"StatusBar":{}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAAA1gAABRoA/////wEAAAABAA==","Widgets":[{
-                "SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAABugAAANUAAABWAP////8BAAAAAgA=","Widgets":[{"RadioGuide":{}},
-                {"ArtworkPanel":{}},{"ScriptDisplay":{"HorizontalAlignment":4,"Script":"$if(%isstopped%,<b>)json"_s;
+        = uR"json({"Name":"Radio","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAAFFgAAABYA/////wEAAAACAA==",
+                "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAAA1gAABRoA/////wEAAAABAA==",
+                "Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAAEAAABugAAANUAAABWAAAAGgD/////AQAAAAIA",
+                "Widgets":[{"RadioGuide":{}},{"ArtworkPanel":{}},{"ScriptDisplay":{"HorizontalAlignment": 4,"Script":"$if(%istopped%,\n<b>)json"_s;
     const QString playbackStopped = tr("Playback stopped");
     static const QString jsonEnd
-        = uR"json(</b>,\n<sized=1><b>$if2(%station%,$if(%streamtitle%,,%title%))</b></size>\n$crlf()\n$if2(%streamtitle%,[$join( - ,%artist%,%title%)])\n)",
-                "VerticalAlignment":128}}]}},{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAAAIAAAAuEA/////wEAAAACAA==","Widgets":[{"RadioSearch":{}},{"RadioBrowser":{}}]}}]}}]}},{
-                "SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAAcAAACSoAAAA4AAAAZwD/////wQAAAAEA","Widgets":[{"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},
-                {"VolumeControls":{}}]}}]})json"_s;
+        = uR"json(</b>,\n<sized=1><b>$if2(%station%,$if(%streamtitle%,,%title%))</b></size>\n$crlf()\n$if2(%streamtitle%,[$join( - ,%artist%,%title%)])\n)"}},
+                {"PlayerControls":{}}]}},{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAAAHAAABOIA/////wEAAAACAA==","Widgets":[{"RadioSearch":{}},
+                {"RadioBrowser":{}}]}}]}},{"StatusBar":{}}]}}]})json"_s;
 
     const QString fullJson = jsonStart + playbackStopped + jsonEnd;
     layoutProvider.registerLayout(fullJson.toUtf8());
