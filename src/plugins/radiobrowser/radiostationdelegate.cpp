@@ -83,20 +83,31 @@ int captionTextHeight(const QStyleOptionViewItem& option, const int lineCount)
     return QFontMetrics{titleFont}.height() + ((lineCount - 1) * (option.fontMetrics.height() + LineSpacing));
 }
 
-QRect iconTextRect(const QStyleOptionViewItem& option, ExpandedTreeView::CaptionDisplay captions)
+QRect iconTextRect(const QStyleOptionViewItem& option, ExpandedTreeView::CaptionDisplay captions, bool hasIcon)
 {
+    QRect rect{option.rect};
+
     const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
     const int margin    = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &option, option.widget);
-    QRect rect          = option.rect;
 
     switch(captions) {
         case ExpandedTreeView::CaptionDisplay::Right:
             rect = style->subElementRect(QStyle::SE_ItemViewItemText, &option, option.widget);
-            rect.setLeft(std::max(rect.left(), iconRect(option, captions).right() + IconPadding));
+            if(hasIcon) {
+                rect.setLeft(std::max(rect.left(), iconRect(option, captions).right() + IconPadding));
+            }
+            else {
+                rect.setLeft(rect.left() + (2 * IconPadding));
+            }
             rect.adjust(margin, 0, -margin, 0);
             break;
         case ExpandedTreeView::CaptionDisplay::Bottom:
-            rect.setTop(rect.top() + BottomIconPadding + iconDecorationSize(option).height() + IconPadding);
+            if(hasIcon) {
+                rect.setTop(rect.top() + BottomIconPadding + iconDecorationSize(option).height() + IconPadding);
+            }
+            else {
+                rect.setTop(rect.top() + BottomIconPadding + (iconDecorationSize(option).height() / 2));
+            }
             rect.adjust(margin, 0, -margin, 0);
             break;
         case ExpandedTreeView::CaptionDisplay::None:
@@ -304,33 +315,43 @@ QRect columnIconRect(const QStyleOptionViewItem& option)
     return rect;
 }
 
-QRect columnTextRect(const QStyleOptionViewItem& option)
+QRect columnTextRect(const QStyleOptionViewItem& option, bool hasIcon)
 {
-    const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
-    const int margin    = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &option, option.widget);
-    QRect rect          = option.rect;
-    rect.setLeft(columnIconRect(option).right() + (2 * ColumnIconPadding));
+    QRect rect{option.rect};
+
+    const QStyle* style  = option.widget ? option.widget->style() : QApplication::style();
+    const int margin     = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &option, option.widget);
+    const auto rectRight = hasIcon ? columnIconRect(option).right() : option.rect.left();
+
+    rect.setLeft(rectRight + (2 * ColumnIconPadding));
     rect.adjust(margin, 0, -margin, 0);
+
     return rect;
 }
 
-void drawColumnStationItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index,
-                           const QIcon& icon)
+void drawColumnItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, const QIcon& icon)
 {
     QStyleOptionViewItem opt{option};
-    const QString text = index.data(Qt::DisplayRole).toString();
-
     opt.text.clear();
-    opt.icon = {};
-    opt.features &= ~(QStyleOptionViewItem::HasDisplay | QStyleOptionViewItem::HasDecoration);
+
+    const bool hasIcon = !icon.isNull();
+
+    if(hasIcon) {
+        opt.icon = {};
+        opt.features &= ~(QStyleOptionViewItem::HasDisplay | QStyleOptionViewItem::HasDecoration);
+    }
 
     painter->save();
 
     const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 
-    drawIconInRect(painter, opt, icon, columnIconRect(opt));
-    drawElidedText(painter, opt, columnTextRect(opt), text, Qt::AlignLeft, QPalette::Text, opt.font);
+    if(hasIcon) {
+        drawIconInRect(painter, opt, icon, columnIconRect(opt));
+    }
+
+    const QString text = index.data(Qt::DisplayRole).toString();
+    drawElidedText(painter, opt, columnTextRect(opt, hasIcon), text, Qt::AlignLeft, QPalette::Text, opt.font);
 
     painter->restore();
 }
@@ -359,55 +380,49 @@ void RadioStationDelegate::setIconItemBorderWidth(const int width)
 
 void RadioStationDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-    const auto* iconView = iconModeView(option);
-    const auto icon      = index.data(Qt::DecorationRole).value<QIcon>();
-
-    if(!iconView) {
-        if(m_uniformStationIcons && index.column() == Station && !icon.isNull()) {
-            QStyleOptionViewItem opt{option};
-            initStyleOption(&opt, index);
-            // initStyleOption can replace the configured decoration size with the icon's actual size
-            opt.decorationSize = option.decorationSize;
-            drawColumnStationItem(painter, opt, index, icon);
-            return;
-        }
-
-        QStyledItemDelegate::paint(painter, option, index);
-        return;
-    }
-
-    if(icon.isNull()) {
-        QStyledItemDelegate::paint(painter, option, index);
-        return;
-    }
-
-    const auto captions = iconView->captionDisplay();
-
     QStyleOptionViewItem opt{option};
     initStyleOption(&opt, index);
+    // initStyleOption can replace the configured decoration size with the icon's actual size
     opt.decorationSize = option.decorationSize;
 
-    const QRect textRect          = iconTextRect(opt, captions);
-    const QVariant iconBackground = index.data(RadioBrowserModel::IconBackgroundRole);
-    if(iconBackground.canConvert<QBrush>()) {
-        opt.backgroundBrush = iconBackground.value<QBrush>();
-    }
-    else if(iconBackground.canConvert<QColor>()) {
-        opt.backgroundBrush = iconBackground.value<QColor>();
+    const auto* iconView = iconModeView(option);
+    const auto icon      = index.data(Qt::DecorationRole).value<QIcon>();
+    const bool hasIcon   = !icon.isNull();
+
+    if(!iconView) {
+        drawColumnItem(painter, opt, index, icon);
+        return;
     }
 
-    if(m_uniformStationIcons) {
+    const auto captions           = iconView->captionDisplay();
+    const QRect textRect          = iconTextRect(opt, captions, hasIcon);
+    const QVariant iconBackground = index.data(RadioBrowserModel::IconBackgroundRole);
+
+    if(hasIcon) {
+        if(iconBackground.canConvert<QBrush>()) {
+            opt.backgroundBrush = iconBackground.value<QBrush>();
+        }
+        else if(iconBackground.canConvert<QColor>()) {
+            opt.backgroundBrush = iconBackground.value<QColor>();
+        }
+    }
+
+    if(hasIcon && m_uniformStationIcons) {
         opt.icon = {};
     }
+
     opt.text.clear();
 
     painter->save();
 
+    if(hasIcon) {
+        drawIconItemBackground(painter, &opt, m_iconItemBorderWidth);
+    }
+
     const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
-    drawIconItemBackground(painter, &opt, m_iconItemBorderWidth);
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 
-    if(m_uniformStationIcons) {
+    if(hasIcon && m_uniformStationIcons) {
         drawIcon(painter, opt, icon, captions);
     }
 
