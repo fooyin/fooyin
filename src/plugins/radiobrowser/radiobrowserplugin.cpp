@@ -148,8 +148,8 @@ void RadioBrowserPlugin::registerLayouts(LayoutProvider& layoutProvider)
     const QString playbackStopped = tr("Playback stopped");
     static const QString jsonEnd
         = uR"json(</b>,\n<sized=1><b>$if2(%station%,$if(%streamtitle%,,%title%))</b></size>\n$crlf()\n$if2(%streamtitle%,[$join( - ,%artist%,%title%)])\n)"}},
-                {"PlayerControls":{}}]}},{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAAAHAAABOIA/////wEAAAACAA==","Widgets":[{"RadioSearch":{}},
-                {"RadioBrowser":{}}]}}]}},{"StatusBar":{}}]}}]})json"_s;
+            {"PlayerControls":{"ShowNext":false,"ShowPrevious":false}},{"VolumeControls":{}}]}},
+            {"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAAAHAAABOIA/////wEAAAACAA==","Widgets":[{"RadioSearch":{}},{"RadioBrowser":{}}]}}]}},{"StatusBar":{}}]}}]})json"_s;
 
     const QString fullJson = jsonStart + playbackStopped + jsonEnd;
     layoutProvider.registerLayout(fullJson.toUtf8());
