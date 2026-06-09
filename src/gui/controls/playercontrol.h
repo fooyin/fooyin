@@ -39,6 +39,12 @@ public:
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 
+    void saveLayoutData(QJsonObject& layout) override;
+    void loadLayoutData(const QJsonObject& layout) override;
+
+protected:
+    void contextMenuEvent(QContextMenuEvent* event) override;
+
 private:
     void updateIcons() const;
     void stateChanged(Player::PlayState state) const;
@@ -50,5 +56,10 @@ private:
     ToolButton* m_prev;
     ToolButton* m_playPause;
     ToolButton* m_next;
+
+    bool m_showStop;
+    bool m_showPrev;
+    bool m_showPlayPause;
+    bool m_showNext;
 };
 } // namespace Fooyin
