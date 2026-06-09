@@ -166,7 +166,7 @@ RadioSearch::RadioSearch(SettingsManager* settings, QWidget* parent)
     resetFilters->setDefaultAction(m_resetFiltersAction);
     m_mainLayout->addWidget(resetFilters);
 
-    QObject::connect(m_searchEdit, &QLineEdit::textChanged, this, [this](const QString& text) {
+    QObject::connect(m_searchEdit, &QLineEdit::textEdited, this, [this](const QString& text) {
         auto state{m_state};
         state.searchText = text;
         setState(state, true);
@@ -248,7 +248,8 @@ RadioSearchRequest RadioSearch::request(bool hideBroken) const
 {
     RadioSearchRequest filterRequest;
 
-    filterRequest.text        = m_state.searchText.trimmed();
+    filterRequest.displayText = m_state.searchText;
+    filterRequest.text        = filterRequest.displayText.trimmed();
     filterRequest.countryCode = m_state.countryCode;
     filterRequest.tag         = m_state.genreTag;
     filterRequest.order       = u"clickcount"_s;
@@ -269,7 +270,7 @@ void RadioSearch::setRequest(const RadioSearchRequest& request)
 {
     FilterState state;
 
-    state.searchText  = request.text;
+    state.searchText  = request.displayText.isNull() ? request.text : request.displayText;
     state.countryCode = request.countryCode.trimmed().toUpper();
     state.genreTag    = request.tag.trimmed();
     state.codec       = request.codec.trimmed();
@@ -454,7 +455,7 @@ void RadioSearch::setState(const FilterState& state, const bool notify)
 
 void RadioSearch::renderControlsFromState()
 {
-    {
+    if(m_searchEdit->text() != m_state.searchText) {
         const QSignalBlocker blocker{m_searchEdit};
         m_searchEdit->setText(m_state.searchText);
     }

@@ -74,6 +74,7 @@ using RadioStationList = std::vector<RadioStation>;
 
 struct RadioSearchRequest
 {
+    QString displayText;
     QString text;
     QString countryCode;
     QString language;
