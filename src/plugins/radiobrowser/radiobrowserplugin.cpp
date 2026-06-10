@@ -66,7 +66,7 @@ void RadioBrowserPlugin::initialise(const CorePluginContext& context)
 
     m_store = new RadioStationStore(m_dbPool, this);
     m_controller
-        = new RadioBrowserController(m_network, m_settings, m_playerController, m_playlistLoader, m_store, true, this);
+        = new RadioBrowserController(m_network, m_settings, m_playerController, m_playlistLoader, m_store, this);
 }
 
 void RadioBrowserPlugin::initialise(const GuiPluginContext& context)

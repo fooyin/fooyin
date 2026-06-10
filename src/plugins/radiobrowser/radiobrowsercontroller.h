@@ -50,14 +50,14 @@ class RadioBrowserController : public QObject
 public:
     explicit RadioBrowserController(std::shared_ptr<NetworkAccessManager> network, SettingsManager* settings,
                                     PlayerController* playerController, std::shared_ptr<PlaylistLoader> playlistLoader,
-                                    RadioStationStore* store, bool reportPlaybackStats = true,
-                                    QObject* parent = nullptr);
+                                    RadioStationStore* store, QObject* parent = nullptr);
 
     [[nodiscard]] RadioStationList stations() const;
     [[nodiscard]] RadioStationList savedStations() const;
     [[nodiscard]] RadioSavedSearchList savedSearches() const;
     [[nodiscard]] RadioIconProvider* iconProvider() const;
 
+    [[nodiscard]] RadioStation currentStation() const;
     [[nodiscard]] bool isSaved(const RadioStation& station) const;
 
     [[nodiscard]] bool hideBroken() const;
@@ -202,6 +202,7 @@ private:
     PlayerController* m_playerController;
 
     RadioStationList m_stations;
+    RadioStation m_currentStation;
     RadioSearchRequest m_currentRequest;
     std::optional<RadioSearchRequest> m_latestSearchRequest;
     StationSource m_stationSource;

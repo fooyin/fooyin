@@ -181,7 +181,7 @@ const RadioStation* findStationByUuid(const RadioStationList& stations, const QS
 RadioBrowserController::RadioBrowserController(std::shared_ptr<NetworkAccessManager> network, SettingsManager* settings,
                                                PlayerController* playerController,
                                                std::shared_ptr<PlaylistLoader> playlistLoader, RadioStationStore* store,
-                                               const bool reportPlaybackStats, QObject* parent)
+                                               QObject* parent)
     : QObject{parent}
     , m_service{new RadioBrowserService(network, settings, this)}
     , m_iconProvider{new RadioIconProvider(network, this)}
@@ -223,12 +223,17 @@ RadioBrowserController::RadioBrowserController(std::shared_ptr<NetworkAccessMana
     QObject::connect(m_resolver, &RadioStreamResolver::resolved, this, &RadioBrowserController::handleResolvedStream);
     QObject::connect(m_resolver, &RadioStreamResolver::failed, this, &RadioBrowserController::handleResolveFailed);
 
-    if(reportPlaybackStats) {
-        QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
-                         &RadioBrowserController::handleCurrentTrackChanged);
-    }
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
+                     &RadioBrowserController::handleCurrentTrackChanged);
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
+                     [this](Fooyin::Player::PlayState state) {
+                         if(state == Player::PlayState::Stopped) {
+                             handleCurrentTrackChanged({});
+                         }
+                     });
 
     loadLatestSearchState();
+    handleCurrentTrackChanged(m_playerController->currentTrack());
 }
 
 RadioStationList RadioBrowserController::stations() const
@@ -249,6 +254,11 @@ RadioSavedSearchList RadioBrowserController::savedSearches() const
 RadioIconProvider* RadioBrowserController::iconProvider() const
 {
     return m_iconProvider;
+}
+
+RadioStation RadioBrowserController::currentStation() const
+{
+    return m_currentStation;
 }
 
 bool RadioBrowserController::isSaved(const RadioStation& station) const
@@ -878,15 +888,15 @@ void RadioBrowserController::handleResolveFailed(const int requestId, const QStr
 
 void RadioBrowserController::handleCurrentTrackChanged(const Track& track)
 {
-    const RadioStation station = stationFromTrack(track);
-    if(station.effectiveStreamUrl().isEmpty()) {
+    m_currentStation = stationFromTrack(track);
+    if(m_currentStation.effectiveStreamUrl().isEmpty()) {
         Q_EMIT currentStationChanged({});
         return;
     }
 
-    m_store->recordPlayed(station);
-    reportStationClick(station);
-    Q_EMIT currentStationChanged(station);
+    m_store->recordPlayed(m_currentStation);
+    reportStationClick(m_currentStation);
+    Q_EMIT currentStationChanged(m_currentStation);
 }
 
 void RadioBrowserController::finishResolveGroup(int groupId)

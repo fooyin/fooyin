@@ -314,6 +314,8 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
     refreshThemeIcons();
     m_controller->fetchCategories(RadioCategoryType::Country);
     m_controller->fetchCategories(RadioCategoryType::Codec);
+
+    m_model->setCurrentStation(m_controller->currentStation());
 }
 
 RadioBrowserWidget::~RadioBrowserWidget()

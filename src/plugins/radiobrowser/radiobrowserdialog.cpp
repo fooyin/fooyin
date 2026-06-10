@@ -48,10 +48,9 @@ RadioBrowserDialog::RadioBrowserDialog(std::shared_ptr<NetworkAccessManager> net
     , m_settings{settings}
     , m_tabs{new QTabWidget(this)}
     , m_searchFilterBar{new RadioSearch(settings, this)}
-    , m_searchController{new RadioBrowserController(network, settings, playerController, playlistLoader, store, false,
-                                                    this)}
+    , m_searchController{new RadioBrowserController(network, settings, playerController, playlistLoader, store, this)}
     , m_savedStationsController{new RadioBrowserController(std::move(network), settings, playerController,
-                                                           std::move(playlistLoader), store, false, this)}
+                                                           std::move(playlistLoader), store, this)}
     , m_searchWidget{new RadioBrowserWidget(m_searchController, actionManager, trackSelection, settings, true, this)}
     , m_savedStationsWidget{
           new RadioBrowserWidget(m_savedStationsController, actionManager, trackSelection, settings, false, this)}
