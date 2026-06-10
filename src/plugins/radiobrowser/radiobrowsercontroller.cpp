@@ -233,7 +233,10 @@ RadioBrowserController::RadioBrowserController(std::shared_ptr<NetworkAccessMana
                      });
 
     loadLatestSearchState();
-    handleCurrentTrackChanged(m_playerController->currentTrack());
+
+    if(m_playerController->playState() != Player::PlayState::Stopped) {
+        handleCurrentTrackChanged(m_playerController->currentTrack());
+    }
 }
 
 RadioStationList RadioBrowserController::stations() const
