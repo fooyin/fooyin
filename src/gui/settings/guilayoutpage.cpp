@@ -538,8 +538,8 @@ void GuiLayoutPageWidget::onNewLayout()
                                                defaultName, &success)
                              .trimmed();
 
-    QJsonObject layout;
-    layout["Name"_L1] = name;
+    static const QJsonObject layout{
+        {u"Name"_s, name}, {u"Version"_s, 1}, {u"Widgets"_s, QJsonArray{QJsonObject{{u"Playlist"_s, QJsonObject{}}}}}};
 
     if(success && !name.isEmpty() && m_layoutProvider->createLayout(name, FyLayout{name, layout})) {
         load();
