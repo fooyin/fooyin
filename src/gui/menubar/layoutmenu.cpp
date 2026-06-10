@@ -155,10 +155,10 @@ void LayoutMenu::refreshLayouts()
         auto* layoutAction = new QAction(name, m_layoutMenu->menu());
         layoutAction->setStatusTip(tr("Replace the current layout"));
         layoutAction->setCheckable(true);
-        m_layoutActionGroup->addAction(layoutAction);
 
         auto* layoutCmd = m_actionManager->registerAction(layoutAction, Id{u"Layout.Switch.%1"_s.arg(name)});
         layoutCmd->setCategories({tr("Layout"), tr("Switch")});
+        m_layoutActionGroup->addAction(layoutCmd->action());
 
         QObject::connect(layoutAction, &QAction::triggered, this, [this, name]() {
             const auto fyLayout = m_layoutProvider->layoutByName(name);
