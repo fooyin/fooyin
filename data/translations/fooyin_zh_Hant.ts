@@ -364,12 +364,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="143"/>
         <source>Track bitrate</source>
-        <translation>曲目位元率</translation>
+        <translation>曲目位元速率</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="145"/>
         <source>Sample rate</source>
-        <translation>取樣頻率</translation>
+        <translation>取樣率</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="147"/>
@@ -5946,17 +5946,17 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="226"/>
         <source>Avg. Bitrate</source>
-        <translation>平均位元速率 Bitrate</translation>
+        <translation>平均位元速率</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="226"/>
         <source>Bitrate</source>
-        <translation>位元速率 Bitrate</translation>
+        <translation>位元速率</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="230"/>
         <source>Sample Rate</source>
-        <translation>取樣頻率</translation>
+        <translation>取樣率</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="252"/>
@@ -9520,12 +9520,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="54"/>
         <source>Bitrate</source>
-        <translation>位元速率 Bitrate</translation>
+        <translation>位元速率</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="55"/>
         <source>Sample Rate</source>
-        <translation>取樣頻率</translation>
+        <translation>取樣率</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="56"/>
@@ -11651,7 +11651,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="452"/>
         <source>Bitrate</source>
-        <translation>位元頻率 Bitrate</translation>
+        <translation>位元速率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="454"/>
@@ -12211,7 +12211,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="68"/>
         <source>AM</source>
-        <translation>調幅 AM</translation>
+        <translation>AM 調幅廣播</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="69"/>
@@ -12543,7 +12543,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="153"/>
         <source>Bitrate</source>
-        <translation>位元頻率 Bitrate</translation>
+        <translation>位元速率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="155"/>
@@ -12583,12 +12583,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="710"/>
         <source>Min bitrate</source>
-        <translation>最小位元率</translation>
+        <translation>最小位元速率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="717"/>
         <source>Max bitrate</source>
-        <translation>最大位元率</translation>
+        <translation>最大位元速率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="755"/>
@@ -12687,7 +12687,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="201"/>
         <source>Bitrate</source>
-        <translation>位元頻率 Bitrate</translation>
+        <translation>位元速率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="372"/>
@@ -13037,12 +13037,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="81"/>
         <source>Exclude these sample rates</source>
-        <translation>排除這些取樣頻率</translation>
+        <translation>排除這些取樣率</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="83"/>
         <source>Resample only these sample rates</source>
-        <translation>僅對這些取樣頻率進行重新取樣</translation>
+        <translation>僅對這些取樣率進行重新取樣</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="85"/>
@@ -14263,12 +14263,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="104"/>
         <source>Exclude these sample rates</source>
-        <translation>排除這些取樣頻率</translation>
+        <translation>排除這些取樣率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="106"/>
         <source>Resample only these sample rates</source>
-        <translation>僅對這些取樣頻率進行重新取樣</translation>
+        <translation>僅對這些取樣率進行重新取樣</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="108"/>
@@ -14480,7 +14480,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="271"/>
         <source>Number of frequency bands to draw</source>
-        <translation>進行繪製頻率頻段的數量</translation>
+        <translation>頻率頻段進行繪製的數量</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="272"/>
@@ -16759,7 +16759,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="537"/>
         <source>Semicolon-separated extensions where FFmpeg is tried first.</source>
-        <translation>分號分隔的擴充功能，在此 FFmpeg 會首先嘗試。</translation>
+        <translation>用分號分隔的擴充功能，在此 FFmpeg 會首先嘗試。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="543"/>
