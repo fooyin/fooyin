@@ -52,7 +52,6 @@ LayoutMenu::LayoutMenu(ActionManager* actionManager, LayoutProvider* layoutProvi
 {
     QObject::connect(m_layoutProvider, &LayoutProvider::layoutAdded, this, &LayoutMenu::refreshLayouts);
     QObject::connect(m_layoutProvider, &LayoutProvider::layoutRemoved, this, &LayoutMenu::refreshLayouts);
-    QObject::connect(m_layoutProvider, &LayoutProvider::layoutChanged, this, &LayoutMenu::refreshLayouts);
     QObject::connect(m_layoutProvider, &LayoutProvider::currentLayoutChanged, this, &LayoutMenu::updateCurrentLayout);
 }
 
@@ -131,12 +130,22 @@ void LayoutMenu::refreshLayouts()
     }
 
     for(auto* action : m_layoutActions) {
-        m_layoutMenu->menu()->removeAction(action);
+        if(!action) {
+            continue;
+        }
+
+        const Id id{u"Layout.Switch.%1"_s.arg(action->text())};
+
+        m_actionManager->unregisterAction(action, id);
+
         if(m_layoutActionGroup) {
             m_layoutActionGroup->removeAction(action);
         }
+
+        m_layoutMenu->menu()->removeAction(action);
         action->deleteLater();
     }
+
     m_layoutActions.clear();
 
     const auto layouts   = m_layoutProvider->layouts();
@@ -148,13 +157,17 @@ void LayoutMenu::refreshLayouts()
         layoutAction->setCheckable(true);
         m_layoutActionGroup->addAction(layoutAction);
 
+        auto* layoutCmd = m_actionManager->registerAction(layoutAction, Id{u"Layout.Switch.%1"_s.arg(name)});
+        layoutCmd->setCategories({tr("Layout"), tr("Switch")});
+
         QObject::connect(layoutAction, &QAction::triggered, this, [this, name]() {
             const auto fyLayout = m_layoutProvider->layoutByName(name);
             if(fyLayout.isValid()) {
                 Q_EMIT changeLayout(fyLayout);
             }
         });
-        m_layoutMenu->menu()->addAction(layoutAction);
+
+        m_layoutMenu->addAction(layoutCmd->action());
         m_layoutActions.emplace_back(layoutAction);
     };
 
