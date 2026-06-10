@@ -12089,7 +12089,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="33"/>
         <source>Easy</source>
-        <translation type="unfinished"></translation>
+        <translation>Easy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="34"/>
@@ -12149,7 +12149,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="46"/>
         <source>Electronic</source>
-        <translation type="unfinished"></translation>
+        <translation>Electronic</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="47"/>
@@ -12174,7 +12174,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="51"/>
         <source>Latino</source>
-        <translation type="unfinished"></translation>
+        <translation>Latino</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="52"/>
@@ -12367,7 +12367,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="148"/>
         <source>Eras</source>
-        <translation type="unfinished"></translation>
+        <translation>Eras</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="149"/>
@@ -12702,7 +12702,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="191"/>
         <source>Favicon</source>
-        <translation type="unfinished"></translation>
+        <translation>Favikona</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="193"/>
@@ -13967,7 +13967,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/widgets/seekcontainer.cpp" line="71"/>
         <source>Live</source>
-        <translation type="unfinished"></translation>
+        <translation>Živé vysílání</translation>
     </message>
 </context>
 <context>
