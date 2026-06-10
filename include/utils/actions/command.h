@@ -54,6 +54,7 @@ public:
     [[nodiscard]] bool hasAttribute(ProxyAction::Attribute attribute) const;
 
     [[nodiscard]] bool isActive() const;
+    [[nodiscard]] bool hasOverrideActions() const;
 
     void setShortcut(const ShortcutList& keys);
     [[nodiscard]] QString stringWithShortcut(const QString& str) const;
@@ -73,6 +74,7 @@ public:
 
     void setCurrentContext(const Context& newContext);
     void addOverrideAction(QAction* actionToAdd, const Context& context, bool changeContext = true);
+    bool removeOverrideAction(QAction* action, const Context& context);
 
 Q_SIGNALS:
     void shortcutChanged();

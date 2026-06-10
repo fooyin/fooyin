@@ -391,6 +391,30 @@ Command* ActionManager::registerAction(QAction* action, const Id& id, const Cont
     return command;
 }
 
+bool ActionManager::unregisterAction(QAction* action, const Id& id, const Context& context)
+{
+    const auto it = p->m_idCmdMap.find(id);
+    if(it == p->m_idCmdMap.end()) {
+        return false;
+    }
+
+    Command* command = it->second.get();
+    if(!command->removeOverrideAction(action, context)) {
+        return false;
+    }
+
+    if(!command->hasOverrideActions()) {
+        if(QAction* commandAction = command->action()) {
+            p->m_mainWindow->removeAction(commandAction);
+        }
+
+        p->m_idCmdMap.erase(it);
+    }
+
+    Q_EMIT commandsChanged();
+    return true;
+}
+
 Command* ActionManager::command(const Id& id) const
 {
     if(p->m_idCmdMap.contains(id)) {

@@ -60,6 +60,7 @@ public:
     ActionContainer* createMenuBar(const Id& id);
     Command* registerAction(QAction* action, const Id& id,
                             const Context& context = Context{Constants::Context::Global});
+    bool unregisterAction(QAction* action, const Id& id, const Context& context = Context{Constants::Context::Global});
 
     [[nodiscard]] Command* command(const Id& id) const;
     [[nodiscard]] CommandList commands() const;

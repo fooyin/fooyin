@@ -52,7 +52,7 @@ public:
     void setActive(bool state);
     void updateActiveState();
 
-    void removeOverrideAction(QAction* actionToRemove);
+    bool removeOverrideAction(QAction* actionToRemove);
 
     Command* m_self;
 
@@ -69,11 +69,13 @@ public:
     ProxyAction* m_action{nullptr};
 };
 
-void CommandPrivate::removeOverrideAction(QAction* actionToRemove)
+bool CommandPrivate::removeOverrideAction(QAction* actionToRemove)
 {
-    std::erase_if(m_contextActionMap,
-                  [actionToRemove](const auto& pair) { return !pair.second || pair.second == actionToRemove; });
+    const bool removed = std::erase_if(m_contextActionMap, [actionToRemove](const auto& pair) {
+        return !pair.second || pair.second == actionToRemove;
+    });
     m_self->setCurrentContext(m_context);
+    return removed;
 }
 
 [[nodiscard]] bool CommandPrivate::isEmpty() const
@@ -140,6 +142,11 @@ bool Command::hasAttribute(ProxyAction::Attribute attribute) const
 bool Command::isActive() const
 {
     return p->m_active;
+}
+
+bool Command::hasOverrideActions() const
+{
+    return !p->isEmpty();
 }
 
 void Command::setShortcut(const ShortcutList& keys)
@@ -288,6 +295,32 @@ void Command::addOverrideAction(QAction* action, const Context& context, bool ch
     if(changeContext) {
         setCurrentContext(context);
     }
+}
+
+bool Command::removeOverrideAction(QAction* action, const Context& context)
+{
+    bool removed{false};
+
+    if(context.empty()) {
+        removed = std::erase_if(p->m_contextActionMap,
+                                [action](const auto& pair) { return !pair.second || pair.second == action; })
+                > 0;
+    }
+    else {
+        for(const Id& contextId : context) {
+            auto it = p->m_contextActionMap.find(contextId);
+            if(it != p->m_contextActionMap.end() && (!it->second || it->second == action)) {
+                p->m_contextActionMap.erase(it);
+                removed = true;
+            }
+        }
+    }
+
+    if(removed) {
+        setCurrentContext(p->m_context);
+    }
+
+    return removed;
 }
 } // namespace Fooyin
 
