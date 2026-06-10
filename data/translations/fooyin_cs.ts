@@ -12244,7 +12244,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="66"/>
         <source>Contemporary</source>
-        <translation>Tato léta</translation>
+        <translation>Současnost</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="68"/>
