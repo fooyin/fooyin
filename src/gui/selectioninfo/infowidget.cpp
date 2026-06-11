@@ -29,6 +29,8 @@
 #include <core/player/playercontroller.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
+#include <gui/guiutils.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
@@ -81,7 +83,7 @@ class InfoPanel : public QWidget
     Q_OBJECT
 
 public:
-    InfoPanel(TrackList tracks, LibraryManager* libraryManager, ActionManager* actionManager,
+    InfoPanel(TrackList tracks, LibraryManager* libraryManager, ActionManager* actionManager, SettingsManager* settings,
               bool persistSettings = false, QWidget* parent = nullptr);
     InfoPanel(Application* app, ActionManager* actionManager, TrackSelectionController* selectionController,
               QWidget* parent = nullptr);
@@ -143,12 +145,12 @@ void setupInfoHost(QWidget* host, QWidget* panel)
 }
 
 InfoPanel::InfoPanel(TrackList tracks, LibraryManager* libraryManager, ActionManager* actionManager,
-                     bool persistSettings, QWidget* parent)
+                     SettingsManager* settings, bool persistSettings, QWidget* parent)
     : QWidget{parent}
     , m_actionManager{actionManager}
     , m_selectionController{nullptr}
     , m_playerController{nullptr}
-    , m_settings{nullptr}
+    , m_settings{settings}
     , m_persistSettings{persistSettings}
     , m_view{new InfoView(this)}
     , m_proxyModel{new InfoFilterModel(this)}
@@ -177,6 +179,11 @@ InfoPanel::InfoPanel(TrackList tracks, LibraryManager* libraryManager, ActionMan
     m_view->header()->setSectionResizeMode(0, QHeaderView::Interactive);
     m_view->header()->setSectionResizeMode(1, QHeaderView::Fixed);
     QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() { queueViewReset(); });
+
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this](const QVariant& var) {
+        const auto resolvedStyle = var.value<ResolvedAppStyle>();
+        Gui::updateItemViewStyle(m_view, resolvedStyle.palette);
+    });
 
     setupActions();
     loadPersistentSettings();
@@ -232,6 +239,10 @@ InfoPanel::InfoPanel(Application* app, ActionManager* actionManager, TrackSelect
         m_displayOption = static_cast<SelectionDisplay>(option);
         resetModel();
     });
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this](const QVariant& var) {
+        const auto resolvedStyle = var.value<ResolvedAppStyle>();
+        Gui::updateItemViewStyle(m_view, resolvedStyle.palette);
+    });
 
     resetModel();
 }
@@ -242,9 +253,9 @@ InfoPanel::~InfoPanel()
 }
 
 InfoWidget::InfoWidget(const TrackList& tracks, LibraryManager* libraryManager, ActionManager* actionManager,
-                       QWidget* parent)
+                       SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , m_panel{new InfoPanel(tracks, libraryManager, actionManager, false, this)}
+    , m_panel{new InfoPanel(tracks, libraryManager, actionManager, settings, false, this)}
 {
     setObjectName(InfoWidget::name());
     setupInfoHost(this, m_panel);
@@ -287,9 +298,9 @@ void InfoWidget::finalise()
 }
 
 InfoPropertiesTab::InfoPropertiesTab(const TrackList& tracks, LibraryManager* libraryManager,
-                                     ActionManager* actionManager, QWidget* parent)
+                                     ActionManager* actionManager, SettingsManager* settings, QWidget* parent)
     : PropertiesTabWidget{parent}
-    , m_panel{new InfoPanel(tracks, libraryManager, actionManager, true, this)}
+    , m_panel{new InfoPanel(tracks, libraryManager, actionManager, settings, true, this)}
 {
     setupInfoHost(this, m_panel);
 }

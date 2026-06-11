@@ -23,24 +23,72 @@
 #include <core/scripting/scriptscanner.h>
 #include <gui/scripting/scriptformatterregistry.h>
 
-#include <QApplication>
-#include <QPalette>
 #include <QRegularExpression>
 
 #include <stack>
 
 using namespace Qt::StringLiterals;
 
+namespace {
+struct FormatTag
+{
+    QString name;
+    QString option;
+};
+
+QString parseHtmlAttribute(const QString& attrs, const QString& name)
+{
+    const QRegularExpression attrRegex{
+        u"(?:^|\\s)%1\\s*=\\s*(?:\"([^\"]*)\"|'([^']*)'|([^\\s\"'>]+))"_s.arg(QRegularExpression::escape(name))};
+    const QRegularExpressionMatch match = attrRegex.match(attrs);
+    if(!match.hasMatch()) {
+        return {};
+    }
+
+    for(int i{1}; i <= 3; ++i) {
+        if(!match.captured(i).isEmpty()) {
+            return match.captured(i);
+        }
+    }
+
+    return {};
+}
+
+FormatTag parseFormatTag(const QString& content)
+{
+    if(content.isEmpty()) {
+        return {};
+    }
+
+    const QString trimmed = content.trimmed();
+    const int firstSpace  = static_cast<int>(trimmed.indexOf(u' '));
+    const int firstEquals = static_cast<int>(trimmed.indexOf(u'='));
+
+    if(firstEquals >= 0 && (firstSpace < 0 || firstEquals < firstSpace)) {
+        return {
+            .name   = trimmed.left(firstEquals).trimmed().toLower(),
+            .option = trimmed.mid(firstEquals + 1).trimmed(),
+        };
+    }
+
+    const QString name = (firstSpace < 0 ? trimmed : trimmed.left(firstSpace)).trimmed().toLower();
+    if(name.isEmpty()) {
+        return {};
+    }
+
+    FormatTag tag{.name = name, .option = {}};
+    if(firstSpace >= 0 && name == "a"_L1) {
+        tag.option = parseHtmlAttribute(trimmed.mid(firstSpace + 1), u"href"_s);
+    }
+
+    return tag;
+}
+} // namespace
+
 namespace Fooyin {
 class ScriptFormatterPrivate
 {
 public:
-    struct FormatTag
-    {
-        QString name;
-        QString option;
-    };
-
     void advance();
     void consume(ScriptScanner::TokenType type);
     void consume(ScriptScanner::TokenType type, const QString& message);
@@ -55,9 +103,8 @@ public:
     void addBlock();
     void closeBlock();
     void resetFormat();
+
     [[nodiscard]] QString readTagContent();
-    [[nodiscard]] FormatTag parseFormatTag(const QString& content) const;
-    [[nodiscard]] QString parseHtmlAttribute(const QString& attrs, const QString& name) const;
     [[nodiscard]] QString peekClosingTagName();
 
     ScriptScanner m_scanner;
@@ -174,54 +221,6 @@ QString ScriptFormatterPrivate::readTagContent()
     return content.trimmed();
 }
 
-ScriptFormatterPrivate::FormatTag ScriptFormatterPrivate::parseFormatTag(const QString& content) const
-{
-    if(content.isEmpty()) {
-        return {};
-    }
-
-    const QString trimmed = content.trimmed();
-    const int firstSpace  = trimmed.indexOf(u' ');
-    const int firstEquals = trimmed.indexOf(u'=');
-
-    if(firstEquals >= 0 && (firstSpace < 0 || firstEquals < firstSpace)) {
-        return {
-            .name   = trimmed.left(firstEquals).trimmed().toLower(),
-            .option = trimmed.mid(firstEquals + 1).trimmed(),
-        };
-    }
-
-    const QString name = (firstSpace < 0 ? trimmed : trimmed.left(firstSpace)).trimmed().toLower();
-    if(name.isEmpty()) {
-        return {};
-    }
-
-    FormatTag tag{.name = name, .option = {}};
-    if(firstSpace >= 0 && name == "a"_L1) {
-        tag.option = parseHtmlAttribute(trimmed.mid(firstSpace + 1), u"href"_s);
-    }
-
-    return tag;
-}
-
-QString ScriptFormatterPrivate::parseHtmlAttribute(const QString& attrs, const QString& name) const
-{
-    const QRegularExpression attrRegex{
-        u"(?:^|\\s)%1\\s*=\\s*(?:\"([^\"]*)\"|'([^']*)'|([^\\s\"'>]+))"_s.arg(QRegularExpression::escape(name))};
-    const QRegularExpressionMatch match = attrRegex.match(attrs);
-    if(!match.hasMatch()) {
-        return {};
-    }
-
-    for(int i = 1; i <= 3; ++i) {
-        if(!match.captured(i).isEmpty()) {
-            return match.captured(i);
-        }
-    }
-
-    return {};
-}
-
 QString ScriptFormatterPrivate::peekClosingTagName()
 {
     if(m_current.type != ScriptScanner::TokLeftAngle || m_scanner.peekNext().type != ScriptScanner::TokSlash) {
@@ -245,7 +244,7 @@ void ScriptFormatterPrivate::processFormat(const FormatTag& tag)
 {
     RichFormatting nextFormatting{m_currentBlock.format};
 
-    if(m_registry.format(nextFormatting, tag.name, tag.option)) {
+    if(ScriptFormatterRegistry::format(nextFormatting, tag.name, tag.option)) {
         addBlock();
         m_currentBlock.format = std::move(nextFormatting);
     }
@@ -312,9 +311,11 @@ void ScriptFormatterPrivate::closeBlock()
 
 void ScriptFormatterPrivate::resetFormat()
 {
-    m_currentBlock               = {};
-    m_currentBlock.format.font   = m_font;
-    m_currentBlock.format.colour = m_colour;
+    m_currentBlock             = {};
+    m_currentBlock.format.font = m_font;
+    if(m_colour.isValid()) {
+        m_currentBlock.format.colour.setColour(m_colour);
+    }
 }
 
 ScriptFormatter::ScriptFormatter()

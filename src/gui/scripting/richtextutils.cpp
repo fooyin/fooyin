@@ -45,13 +45,21 @@ RichTextMetrics measureRichTextLine(const RichText& richText, const QFont& baseF
 
 QColor resolvedRichTextColour(const RichFormatting& formatting, const QColor& baseColour, const QColor& linkColour)
 {
-    if(formatting.colour.isValid()) {
-        return formatting.colour;
+    QColor colour;
+    if(formatting.colour.isExplicit()) {
+        colour = formatting.colour.colour;
     }
-    if(!formatting.link.isEmpty() && linkColour.isValid()) {
-        return linkColour;
+    else if(!formatting.link.isEmpty() && linkColour.isValid()) {
+        colour = linkColour;
     }
-    return baseColour;
+    else {
+        colour = baseColour;
+    }
+
+    if(formatting.colour.alpha >= 0) {
+        colour.setAlpha(formatting.colour.alpha);
+    }
+    return colour;
 }
 
 QFont resolvedRichTextFont(const RichFormatting& formatting, const QFont& baseFont)
@@ -128,10 +136,18 @@ QString richTextToHtml(const RichText& richText, const QColor& linkColour)
             styles.emplace_back(u"text-decoration:line-through"_s);
         }
         if(isLink && linkColour.isValid()) {
-            styles.emplace_back(u"color:%1"_s.arg(linkColour.name(QColor::HexArgb)));
+            QColor colour{linkColour};
+            if(format.colour.alpha >= 0) {
+                colour.setAlpha(format.colour.alpha);
+            }
+            styles.emplace_back(u"color:%1"_s.arg(colour.name(QColor::HexArgb)));
         }
-        else if(format.colour.isValid()) {
-            styles.emplace_back(u"color:%1"_s.arg(format.colour.name(QColor::HexArgb)));
+        else if(format.colour.isExplicit()) {
+            QColor colour{format.colour.colour};
+            if(format.colour.alpha >= 0) {
+                colour.setAlpha(format.colour.alpha);
+            }
+            styles.emplace_back(u"color:%1"_s.arg(colour.name(QColor::HexArgb)));
         }
 
         QString htmlText = text.toHtmlEscaped();

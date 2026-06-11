@@ -17,6 +17,7 @@
  *
  */
 
+#include <gui/scripting/richtextutils.h>
 #include <gui/scripting/scriptformatter.h>
 #include <gui/scripting/scriptformatterregistry.h>
 
@@ -35,7 +36,8 @@ TEST_F(ScriptFormatterTest, NoFormat)
 {
     const auto result = m_formattter.evaluate(u"I am a test."_s);
     EXPECT_EQ(1, result.size());
-    EXPECT_FALSE(result.blocks.front().format.colour.isValid());
+    EXPECT_FALSE(result.blocks.front().format.colour.isExplicit());
+    EXPECT_EQ(-1, result.blocks.front().format.colour.alpha);
 }
 
 TEST_F(ScriptFormatterTest, Bold)
@@ -56,23 +58,23 @@ TEST_F(ScriptFormatterTest, Rgb)
 {
     const auto result = m_formattter.evaluate(u"<rgb=255,0,0>I am a test."_s);
     ASSERT_EQ(1, result.size());
-    EXPECT_EQ(255, result.blocks.front().format.colour.red());
+    EXPECT_EQ(255, result.blocks.front().format.colour.colour.red());
 }
 
 TEST_F(ScriptFormatterTest, ColorName)
 {
     const auto result = m_formattter.evaluate(u"<color=red>I am a test."_s);
     ASSERT_EQ(1, result.size());
-    EXPECT_EQ(QColor(u"red"_s), result.blocks.front().format.colour);
+    EXPECT_EQ(QColor(u"red"_s), result.blocks.front().format.colour.colour);
 }
 
 TEST_F(ScriptFormatterTest, ColorHex)
 {
     const auto result = m_formattter.evaluate(u"<color=#00ff00>I am a test."_s);
     ASSERT_EQ(1, result.size());
-    EXPECT_EQ(0, result.blocks.front().format.colour.red());
-    EXPECT_EQ(255, result.blocks.front().format.colour.green());
-    EXPECT_EQ(0, result.blocks.front().format.colour.blue());
+    EXPECT_EQ(0, result.blocks.front().format.colour.colour.red());
+    EXPECT_EQ(255, result.blocks.front().format.colour.colour.green());
+    EXPECT_EQ(0, result.blocks.front().format.colour.colour.blue());
 }
 
 TEST_F(ScriptFormatterTest, BaseColour)
@@ -82,7 +84,47 @@ TEST_F(ScriptFormatterTest, BaseColour)
 
     const auto result = m_formattter.evaluate(u"I am a test."_s);
     ASSERT_EQ(1, result.size());
-    EXPECT_EQ(colour, result.blocks.front().format.colour);
+    EXPECT_EQ(colour, result.blocks.front().format.colour.colour);
+}
+
+TEST_F(ScriptFormatterTest, Alpha)
+{
+    const QColor colour{u"#123456"_s};
+    m_formattter.setBaseColour(colour);
+
+    const auto result = m_formattter.evaluate(u"<alpha=180>I am a test.</alpha>"_s);
+    ASSERT_EQ(1, result.size());
+    EXPECT_EQ(0x12, result.blocks.front().format.colour.colour.red());
+    EXPECT_EQ(0x34, result.blocks.front().format.colour.colour.green());
+    EXPECT_EQ(0x56, result.blocks.front().format.colour.colour.blue());
+    EXPECT_EQ(180, result.blocks.front().format.colour.alpha);
+
+    QColor expected{colour};
+    expected.setAlpha(180);
+    EXPECT_EQ(expected, resolvedRichTextColour(result.blocks.front().format, Qt::black));
+}
+
+TEST_F(ScriptFormatterTest, AlphaWithoutBaseColour)
+{
+    const auto result = m_formattter.evaluate(u"<alpha=180>I am a test.</alpha>"_s);
+    ASSERT_EQ(1, result.size());
+    EXPECT_FALSE(result.blocks.front().format.colour.isExplicit());
+    EXPECT_EQ(180, result.blocks.front().format.colour.alpha);
+
+    const QColor baseColour{u"#123456"_s};
+    QColor expected{baseColour};
+    expected.setAlpha(180);
+    EXPECT_EQ(expected, resolvedRichTextColour(result.blocks.front().format, baseColour));
+}
+
+TEST_F(ScriptFormatterTest, AlphaBeforeColour)
+{
+    const auto result = m_formattter.evaluate(u"<alpha=180><color=#123456>I am a test.</color></alpha>"_s);
+    ASSERT_EQ(1, result.size());
+    EXPECT_EQ(QColor(u"#123456"_s), result.blocks.front().format.colour.colour);
+    EXPECT_EQ(180, result.blocks.front().format.colour.alpha);
+
+    EXPECT_EQ(QColor(u"#b4123456"_s), resolvedRichTextColour(result.blocks.front().format, Qt::black));
 }
 
 TEST_F(ScriptFormatterTest, EscapedLeftAngle)

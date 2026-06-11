@@ -39,9 +39,6 @@ public:
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 
-protected:
-    void changeEvent(QEvent* event) override;
-
 private:
     void setupMenus();
     void setMode(Playlist::PlayModes mode) const;

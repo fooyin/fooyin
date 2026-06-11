@@ -29,6 +29,7 @@ class ActionManager;
 class Application;
 class InfoPanel;
 class LibraryManager;
+class SettingsManager;
 class TrackSelectionController;
 
 class InfoWidget : public FyWidget
@@ -37,7 +38,7 @@ class InfoWidget : public FyWidget
 
 public:
     InfoWidget(const TrackList& tracks, LibraryManager* libraryManager, ActionManager* actionManager,
-               QWidget* parent = nullptr);
+               SettingsManager* settings, QWidget* parent = nullptr);
     InfoWidget(Application* app, ActionManager* actionManager, TrackSelectionController* selectionController,
                QWidget* parent = nullptr);
     ~InfoWidget() override;
@@ -58,7 +59,7 @@ class InfoPropertiesTab : public PropertiesTabWidget
 
 public:
     InfoPropertiesTab(const TrackList& tracks, LibraryManager* libraryManager, ActionManager* actionManager,
-                      QWidget* parent = nullptr);
+                      SettingsManager* settings, QWidget* parent = nullptr);
     ~InfoPropertiesTab() override;
 
     void updateTracks(const TrackList& tracks) override;

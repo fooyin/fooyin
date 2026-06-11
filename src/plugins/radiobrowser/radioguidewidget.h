@@ -28,7 +28,6 @@
 
 class QJsonObject;
 class QPoint;
-class QEvent;
 
 namespace Fooyin {
 class SettingsManager;
@@ -50,9 +49,6 @@ public:
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
     void finalise() override;
-
-protected:
-    void changeEvent(QEvent* event) override;
 
 private:
     void initialiseModel();

@@ -125,7 +125,7 @@ Q_SIGNALS:
 
     void filterDeleted();
     void filterUpdated();
-    void selectionKeysChanged(const std::vector<RowKey>& keys);
+    void selectionKeysChanged(const std::vector<Fooyin::Filters::RowKey>& keys);
     void configChanged();
     void requestHeaderMenu(Fooyin::AutoHeaderView* header, const QPoint& pos);
     void requestContextMenu(const QPoint& pos);

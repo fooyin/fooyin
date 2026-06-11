@@ -335,30 +335,30 @@ RichText LyricsModel::textForLine(const ParsedLine& line) const
 
         RichFormatting format;
 
-        format.font   = m_baseFont;
-        format.colour = m_colours.colour(linePlayed ? Colours::Type::LinePlayed : Colours::Type::LineUnplayed);
+        format.font = m_baseFont;
+        format.colour.setColour(m_colours.colour(linePlayed ? Colours::Type::LinePlayed : Colours::Type::LineUnplayed));
 
         switch(m_lyrics.type) {
             case Lyrics::Type::Synced: {
                 if(highlightLine) {
-                    format.font   = m_lineFont;
-                    format.colour = m_colours.colour(Colours::Type::LineSynced);
+                    format.font = m_lineFont;
+                    format.colour.setColour(m_colours.colour(Colours::Type::LineSynced));
                 }
                 break;
             }
             case Lyrics::Type::SyncedWords: {
                 if(highlightWord) {
-                    format.font   = m_wordFont;
-                    format.colour = m_colours.colour(Colours::Type::WordSynced);
+                    format.font = m_wordFont;
+                    format.colour.setColour(m_colours.colour(Colours::Type::WordSynced));
                 }
                 else if(highlightLine) {
-                    format.font   = m_wordLineFont;
-                    format.colour = m_colours.colour(Colours::Type::WordLineSynced);
+                    format.font = m_wordLineFont;
+                    format.colour.setColour(m_colours.colour(Colours::Type::WordLineSynced));
                 }
                 break;
             }
             case Lyrics::Type::Unsynced:
-                format.colour = m_colours.colour(Colours::Type::LineUnsynced);
+                format.colour.setColour(m_colours.colour(Colours::Type::LineUnsynced));
                 break;
             case Lyrics::Type::Unknown:
                 break;

@@ -151,10 +151,9 @@ CommandButton::CommandButton(ActionManager* actionManager, PlayerController* pla
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, [this]() { updateButton(); });
     QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this, [this]() { updateButton(); });
 
-    settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { updateButton(); });
-    settings->subscribe<Settings::Gui::Theme>(this, [this]() { updateButton(); });
-    settings->subscribe<Settings::Gui::Style>(this, [this]() { updateButton(); });
-    settings->subscribe<Settings::Gui::ToolButtonStyle>(this, [this]() { updateButtonStyle(); });
+    settings->subscribe<Settings::Gui::IconTheme>(this, &CommandButton::updateButton);
+    settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, &CommandButton::updateButton);
+    settings->subscribe<Settings::Gui::ToolButtonStyle>(this, &CommandButton::updateButtonStyle);
 
     applyConfig(defaultConfig());
 }
@@ -255,20 +254,6 @@ QSize CommandButton::sizeHint() const
 QSize CommandButton::minimumSizeHint() const
 {
     return m_layout->minimumSize();
-}
-
-void CommandButton::changeEvent(QEvent* event)
-{
-    FyWidget::changeEvent(event);
-
-    switch(event->type()) {
-        case QEvent::PaletteChange:
-        case QEvent::StyleChange:
-            updateButton();
-            break;
-        default:
-            break;
-    }
 }
 
 void CommandButton::contextMenuEvent(QContextMenuEvent* event)

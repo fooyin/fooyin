@@ -188,14 +188,14 @@ void GuiColoursPageWidget::load()
 void GuiColoursPageWidget::apply()
 {
     const FyTheme theme = currentTheme();
-    m_settings->set<Settings::Gui::Theme>(QVariant::fromValue(theme));
+    m_settings->set<Settings::Gui::CustomTheme>(QVariant::fromValue(theme));
     loadDefaults();
     loadCurrentTheme();
 }
 
 void GuiColoursPageWidget::reset()
 {
-    m_settings->reset<Settings::Gui::Theme>();
+    m_settings->reset<Settings::Gui::CustomTheme>();
 }
 
 void GuiColoursPageWidget::addColourOption(QGridLayout* layout, const QString& title, QPalette::ColorRole role,
@@ -269,21 +269,17 @@ void GuiColoursPageWidget::loadDefaults()
         }
     }
 
+    const auto systemFont = m_settings->value<Settings::Gui::Internal::SystemFont>().value<QFont>();
     for(const auto& [className, font] : m_fontMapping) {
         const auto& [button, option] = font;
-        if(className.isEmpty()) {
-            button->setButtonFont(QApplication::font());
-        }
-        else {
-            button->setButtonFont(QApplication::font(className.toUtf8().constData()));
-        }
+        button->setButtonFont(systemFont);
         option->setChecked(false);
     }
 }
 
 void GuiColoursPageWidget::loadCurrentTheme()
 {
-    const auto currentTheme = m_settings->value<Settings::Gui::Theme>().value<FyTheme>();
+    const auto currentTheme = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
     if(currentTheme.isValid()) {
         for(const auto& [key, colour] : Utils::asRange(currentTheme.colours)) {
             if(m_colourMapping.contains(key)) {

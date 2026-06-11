@@ -753,9 +753,9 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     m_settings->subscribe<Settings::Gui::RatingHalfStarSymbol>(this, refreshRatingStars);
     m_settings->subscribe<Settings::Gui::RatingEmptyStarSymbol>(this, refreshRatingStars);
 
-    m_settings->subscribe<Settings::Gui::Theme>(this, &PlaylistModel::updateColours);
-    m_settings->subscribe<Settings::Gui::Style>(this, &PlaylistModel::updateColours);
-    m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { invalidateData(); });
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, &PlaylistModel::updateColours);
+    m_settings->subscribe<Settings::Gui::IconTheme>(
+        this, [this]() { notifyDataChangedForSubtree({}, {Qt::DecorationRole, Qt::SizeHintRole}); });
 
     QObject::connect(&m_populator, &PlaylistPopulator::finished, this, [this]() {
         const bool loadingTextVisible = shouldShowLoadingText();
@@ -1211,7 +1211,7 @@ void PlaylistModel::setPixmapColumnSizes(const std::vector<int>& sizes)
 void PlaylistModel::updateColours()
 {
     m_playingColour = playingRowColor();
-    invalidateData();
+    notifyDataChangedForSubtree({}, {Qt::BackgroundRole});
 }
 
 void PlaylistModel::reset(const PlaylistTrackList& tracks)
@@ -1655,6 +1655,21 @@ void PlaylistModel::invalidateData()
     }
     if(const auto sIndex = indexAtPlaylistIndex(stopAtIndex); sIndex.isValid()) {
         m_stopAtIndex = sIndex;
+    }
+}
+
+void PlaylistModel::notifyDataChangedForSubtree(const QModelIndex& parent, const QList<int>& roles)
+{
+    const int rows = rowCount(parent);
+    if(rows <= 0) {
+        return;
+    }
+
+    const int columns = columnCount(parent);
+    Q_EMIT dataChanged(index(0, 0, parent), index(rows - 1, columns - 1, parent), roles);
+
+    for(int row{0}; row < rows; ++row) {
+        notifyDataChangedForSubtree(index(row, 0, parent), roles);
     }
 }
 

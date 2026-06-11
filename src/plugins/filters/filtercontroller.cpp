@@ -224,6 +224,7 @@ FilterControllerPrivate::FilterControllerPrivate(FilterController* self, ActionM
     , m_columnRegistry{new FilterColumnRegistry(settings, m_self)}
 {
     m_settings->subscribe<Settings::Core::UseVariousForCompilations>(m_self, [this]() { scheduleAllRecomputes(); });
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(m_self, [this]() { scheduleAllRecomputes(); });
 }
 
 void FilterControllerPrivate::handleAction(FilterWidget* filter, const TrackAction& action) const

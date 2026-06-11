@@ -46,7 +46,6 @@
 #include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QDesktopServices>
-#include <QEvent>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -161,6 +160,7 @@ ScriptDisplay::ScriptDisplay(PlayerController* playerController, PlaylistHandler
     m_settings->subscribe<Settings::Gui::RatingFullStarSymbol>(this, &ScriptDisplay::updateText);
     m_settings->subscribe<Settings::Gui::RatingHalfStarSymbol>(this, &ScriptDisplay::updateText);
     m_settings->subscribe<Settings::Gui::RatingEmptyStarSymbol>(this, &ScriptDisplay::updateText);
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, &ScriptDisplay::updateText);
 
     QObject::connect(m_text, &QTextBrowser::anchorClicked, this,
                      [this](const QUrl& url) { activateLink(url.toString()); });
@@ -277,21 +277,6 @@ QSize ScriptDisplay::sizeHint() const
 QSize ScriptDisplay::minimumSizeHint() const
 {
     return m_layout->minimumSize();
-}
-
-void ScriptDisplay::changeEvent(QEvent* event)
-{
-    FyWidget::changeEvent(event);
-
-    switch(event->type()) {
-        case QEvent::FontChange:
-        case QEvent::PaletteChange:
-        case QEvent::StyleChange:
-            updateText();
-            break;
-        default:
-            break;
-    }
 }
 
 void ScriptDisplay::contextMenuEvent(QContextMenuEvent* event)

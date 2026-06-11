@@ -31,6 +31,7 @@
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
@@ -40,7 +41,6 @@
 
 #include <QApplication>
 #include <QContextMenuEvent>
-#include <QEvent>
 #include <QFileInfo>
 #include <QJsonObject>
 #include <QMainWindow>
@@ -322,6 +322,12 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
     QObject::connect(m_playlistInteractor->playlistController(), &PlaylistController::playlistsLoaded, this,
                      [this]() { selectCurrentPlaylist(); });
 
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this]() {
+        applyConfig(m_config);
+        m_organiserTree->doItemsLayout();
+        m_organiserTree->viewport()->update();
+    });
+
     if(m_model->restoreModel(m_settings->fileValue(OrganiserModel).toByteArray())) {
         const auto state = m_settings->fileValue(OrganiserState).toByteArray();
         restoreExpandedState(m_organiserTree, m_model, state);
@@ -423,22 +429,6 @@ void PlaylistOrganiser::applyConfig(const ConfigData& config)
 
     m_model->setDisplayScripts(m_config.leftScript, m_config.rightScript);
     m_model->setColours(playingTextColour, playingBackgroundColour);
-}
-
-void PlaylistOrganiser::changeEvent(QEvent* event)
-{
-    FyWidget::changeEvent(event);
-
-    switch(event->type()) {
-        case QEvent::PaletteChange:
-        case QEvent::StyleChange:
-            applyConfig(m_config);
-            m_organiserTree->doItemsLayout();
-            m_organiserTree->viewport()->update();
-            break;
-        default:
-            break;
-    }
 }
 
 void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)

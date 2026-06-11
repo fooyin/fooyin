@@ -100,16 +100,16 @@ MainWindow::~MainWindow()
 void MainWindow::open()
 {
     switch(m_settings->value<Settings::Gui::StartupBehaviour>()) {
-        case(StartMaximised):
+        case StartMaximised:
             showMaximized();
             break;
-        case(StartPrev):
+        case StartPrev:
             restoreState(m_prevState);
             break;
-        case(StartHidden):
+        case StartHidden:
             m_state = Hidden;
             break;
-        case(StartNormal):
+        case StartNormal:
         default:
             show();
             break;
@@ -312,15 +312,15 @@ void MainWindow::restoreWindowGeometry()
 void MainWindow::restoreState(WindowState state)
 {
     switch(state) {
-        case(Normal): {
+        case Normal: {
             restoreWindowGeometry();
             show();
             break;
         }
-        case(Maximised):
+        case Maximised:
             showMaximized();
             break;
-        case(Hidden):
+        case Hidden:
             m_state = Hidden;
             break;
     }

@@ -26,17 +26,35 @@
 #include <utils/datastream.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <gui/widgets/expandedtreeview.h>
+
+#include <QAbstractItemView>
 #include <QApplication>
 #include <QDir>
 #include <QFileInfo>
+#include <QHeaderView>
 #include <QIODevice>
 #include <QLabel>
 #include <QMimeData>
 #include <QSet>
 #include <QStyle>
+#include <QTreeView>
 #include <QUrl>
 
 namespace Fooyin::Gui {
+namespace {
+QHeaderView* itemViewHeader(QAbstractItemView* view)
+{
+    if(auto* expandedView = qobject_cast<ExpandedTreeView*>(view)) {
+        return expandedView->header();
+    }
+    if(auto* treeView = qobject_cast<QTreeView*>(view)) {
+        return treeView->header();
+    }
+    return nullptr;
+}
+} // namespace
+
 TrackList tracksFromMimeData(MusicLibrary* library, QByteArray data)
 {
     QDataStream stream(&data, QIODevice::ReadOnly);
@@ -211,6 +229,48 @@ QMap<PaletteKey, QColor> coloursFromPalette(const QPalette& palette)
     colours[PaletteKey{P::PlaceholderText}]              = palette.color(P::Active, P::PlaceholderText);
 
     return colours;
+}
+
+void refreshItemViewPalette(QAbstractItemView* view)
+{
+    refreshItemViewPalette(view, QApplication::palette());
+}
+
+void refreshItemViewPalette(QAbstractItemView* view, const QPalette& palette)
+{
+    if(!view) {
+        return;
+    }
+
+    view->setPalette(palette);
+    if(view->viewport()) {
+        view->viewport()->setPalette(palette);
+    }
+    if(auto* header = itemViewHeader(view)) {
+        header->setPalette(palette);
+    }
+}
+
+void updateItemViewStyle(QAbstractItemView* view)
+{
+    updateItemViewStyle(view, QApplication::palette());
+}
+
+void updateItemViewStyle(QAbstractItemView* view, const QPalette& palette)
+{
+    refreshItemViewPalette(view, palette);
+
+    if(!view) {
+        return;
+    }
+
+    view->doItemsLayout();
+    if(view->viewport()) {
+        view->viewport()->update();
+    }
+    if(auto* header = itemViewHeader(view); header && header->viewport()) {
+        header->viewport()->update();
+    }
 }
 
 QLabel* createSectionHeader(const QString& text, QWidget* parent)

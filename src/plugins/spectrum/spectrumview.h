@@ -59,7 +59,6 @@ protected:
     void timerEvent(QTimerEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void leaveEvent(QEvent* event) override;
-    void changeEvent(QEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:

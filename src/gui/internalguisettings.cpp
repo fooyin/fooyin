@@ -39,10 +39,11 @@ using namespace Qt::StringLiterals;
 
 constexpr int PixmapCacheSize = 128;
 
+namespace Fooyin {
 namespace {
-Fooyin::CoverPaths defaultCoverPaths()
+CoverPaths defaultCoverPaths()
 {
-    Fooyin::CoverPaths paths;
+    CoverPaths paths;
 
     paths.frontCoverPaths.append(u"%path%/folder.*"_s);
     paths.frontCoverPaths.append(u"%path%/cover.*"_s);
@@ -57,31 +58,35 @@ Fooyin::CoverPaths defaultCoverPaths()
     return paths;
 }
 
-Fooyin::ArtworkSaveMethods defaultArtworkSaveMethods()
+ArtworkSaveMethods defaultArtworkSaveMethods()
 {
-    Fooyin::ArtworkSaveMethods methods;
+    ArtworkSaveMethods methods;
 
-    methods[Fooyin::Track::Cover::Front]  = {.method   = Fooyin::ArtworkSaveMethod::Directory,
-                                             .dir      = u"%path%"_s,
-                                             .filename = u"cover"_s,
-                                             .format   = {},
-                                             .quality  = 90};
-    methods[Fooyin::Track::Cover::Back]   = {.method   = Fooyin::ArtworkSaveMethod::Directory,
-                                             .dir      = u"%path%"_s,
-                                             .filename = u"back"_s,
-                                             .format   = {},
-                                             .quality  = 90};
-    methods[Fooyin::Track::Cover::Artist] = {.method   = Fooyin::ArtworkSaveMethod::Directory,
-                                             .dir      = u"%path%"_s,
-                                             .filename = u"artist"_s,
-                                             .format   = {},
-                                             .quality  = 90};
+    methods[Track::Cover::Front] = {.method   = ArtworkSaveMethod::Directory,
+                                    .dir      = u"%path%"_s,
+                                    .filename = u"cover"_s,
+                                    .format   = {},
+                                    .quality  = 90};
+    methods[Track::Cover::Back]  = {
+        .method = ArtworkSaveMethod::Directory, .dir = u"%path%"_s, .filename = u"back"_s, .format = {}, .quality = 90};
+    methods[Track::Cover::Artist] = {.method   = ArtworkSaveMethod::Directory,
+                                     .dir      = u"%path%"_s,
+                                     .filename = u"artist"_s,
+                                     .format   = {},
+                                     .quality  = 90};
 
     return methods;
 }
+
+ResolvedAppStyle appStyle()
+{
+    ResolvedAppStyle resolvedStyle;
+    resolvedStyle.palette     = QApplication::palette();
+    resolvedStyle.defaultFont = QApplication::font();
+    return resolvedStyle;
+}
 } // namespace
 
-namespace Fooyin {
 GuiSettings::GuiSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {
@@ -90,6 +95,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     qRegisterMetaType<CoverPaths>("CoverPaths");
     qRegisterMetaType<FyTheme>("FyTheme");
     qRegisterMetaType<ArtworkSaveMethods>("ArtworkSaveMethods");
+    qRegisterMetaType<Fooyin::ResolvedAppStyle>("ResolvedAppStyle");
 
     m_settings->createTempSetting<LayoutEditing>(false);
     m_settings->createSetting<StartupBehaviour>(3, u"Interface/StartupBehaviour"_s);
@@ -104,7 +110,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<SeekStepSmall>(4000, u"Interface/SeekIncrement"_s);
     m_settings->createSetting<SeekStepLarge>(30000, u"Interface/SeekIncrementLarge"_s);
     m_settings->createSetting<ShowStatusTips>(true, u"Interface/ShowStatusTips"_s);
-    m_settings->createTempSetting<Theme>(QVariant{});
+    m_settings->createTempSetting<CustomTheme>(QVariant{});
     m_settings->createSetting<ShowSplitterHandles>(false, u"Interface/SplitterHandles"_s);
     m_settings->createSetting<LockSplitterHandles>(false, u"Interface/LockSplitterHandles"_s);
     m_settings->createSetting<SplitterHandleSize>(-1, u"Interface/SplitterHandleSize"_s);
@@ -139,6 +145,11 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                                                               u"StatusWidget/PlaylistScript"_s);
 
     m_settings->createTempSetting<Internal::SystemIconTheme>(QIcon::themeName());
+    m_settings->createTempSetting<Internal::SystemStyle>(QApplication::style()->name());
+    m_settings->createTempSetting<Internal::SystemFont>(QApplication::font());
+    m_settings->createTempSetting<Internal::SystemPalette>(QApplication::palette());
+    m_settings->createTempSetting<Settings::Gui::ResolvedAppStyle>(QVariant::fromValue(appStyle()));
+
     m_settings->createSetting<Internal::WindowTitleTrackScript>(u"[%albumartist% - ]%title% \"[fooyin]\""_s,
                                                                 u"Interface/WindowTitleTrackScript"_s);
     m_settings->createSetting<Internal::TrackCoverPaths>(QVariant::fromValue(defaultCoverPaths()), u"Artwork/Paths"_s);
@@ -174,9 +185,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::PlaylistTabsClearButton>(false, u"PlaylistTabs/ShowClearButton"_s);
     m_settings->createSetting<Internal::PlaylistMiddleClick>(0, u"PlaylistWidget/MiddleClickBehaviour"_s);
     m_settings->createSetting<Internal::InfoDisplayPrefer>(0, u"SelectionInfo/PreferDisplay"_s);
-    m_settings->createTempSetting<Internal::SystemStyle>(QApplication::style()->name());
-    m_settings->createTempSetting<Internal::SystemFont>(QApplication::font());
-    m_settings->createTempSetting<Internal::SystemPalette>(QApplication::palette());
     m_settings->createSetting<Internal::LibTreeIconSize>(QSize{36, 36}, u"LibraryTree/IconSize"_s);
     m_settings->createSetting<Internal::ArtworkSaveMethods>(QVariant::fromValue(defaultArtworkSaveMethods()),
                                                             u"Artwork/SaveMethods"_s);

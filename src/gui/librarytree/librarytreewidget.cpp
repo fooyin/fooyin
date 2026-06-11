@@ -92,6 +92,9 @@ constexpr auto LibTreeHeaderKey            = u"LibraryTree/Header";
 constexpr auto LibTreeShowSummaryNodeKey   = u"LibraryTree/ShowSummaryNode";
 constexpr auto LibTreeSummaryNodeTitleKey  = u"LibraryTree/SummaryNodeTitle";
 
+namespace Fooyin {
+using namespace Settings::Gui::Internal;
+
 namespace {
 QModelIndexList filterAncestors(const QModelIndexList& indexes)
 {
@@ -161,13 +164,13 @@ QModelIndexList filterLeafNodes(QAbstractItemModel* model, const QModelIndexList
     return leafNodes;
 }
 
-Fooyin::TrackList tracksForIndexes(Fooyin::LibraryTreeSortModel* model, const QModelIndexList& indexes)
+TrackList tracksForIndexes(LibraryTreeSortModel* model, const QModelIndexList& indexes)
 {
-    Fooyin::TrackList tracks;
+    TrackList tracks;
     int totalTrackCount{0};
 
     for(const QModelIndex& index : indexes) {
-        totalTrackCount += index.data(Fooyin::LibraryTreeItem::TrackCount).toInt();
+        totalTrackCount += index.data(LibraryTreeItem::TrackCount).toInt();
     }
 
     if(totalTrackCount > 0) {
@@ -181,8 +184,6 @@ Fooyin::TrackList tracksForIndexes(Fooyin::LibraryTreeSortModel* model, const QM
 
 } // namespace
 
-namespace Fooyin {
-using namespace Settings::Gui::Internal;
 LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistController* playlistController,
                                      LibraryTreeController* controller, Application* core,
                                      CoverRepository* coverRepository, QWidget* parent)
@@ -603,8 +604,11 @@ void LibraryTreeWidget::setupConnections()
     QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this,
                      [this](auto* playlist) { activePlaylistChanged(playlist); });
 
-    m_settings->subscribe<Settings::Gui::Theme>(m_model, &LibraryTreeModel::resetPalette);
-    m_settings->subscribe<Settings::Gui::Style>(m_model, &LibraryTreeModel::resetPalette);
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this](const QVariant& var) {
+        const auto resolvedStyle = var.value<ResolvedAppStyle>();
+        Gui::refreshItemViewPalette(m_libraryTree, resolvedStyle.palette);
+        m_model->resetPalette();
+    });
 
     m_settings->subscribe<Settings::Core::UseVariousForCompilations>(this, [this]() { reset(); });
 
