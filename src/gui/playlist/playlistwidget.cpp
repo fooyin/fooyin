@@ -443,7 +443,6 @@ void PlaylistWidget::finalise()
 
     if(!layoutState().singleMode) {
         setSingleMode(false);
-        m_model->reset({});
     }
     else if(m_session->restoreCurrentPlaylistOnFinalise() && m_playlistController->currentPlaylist()) {
         m_session->changePlaylist(sessionHost(), nullptr, m_playlistController->currentPlaylist());
