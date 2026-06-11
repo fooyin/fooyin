@@ -50,7 +50,6 @@
 #include <QComboBox>
 #include <QContextMenuEvent>
 #include <QDialog>
-#include <QEvent>
 #include <QFont>
 #include <QGridLayout>
 #include <QHBoxLayout>
@@ -219,8 +218,7 @@ LyricsWidget::LyricsWidget(PlayerController* playerController, PlaylistHandler* 
     const auto updateThemeDefaults = [this]() {
         applyConfig(m_config);
     };
-    m_settings->subscribe<::Fooyin::Settings::Gui::Theme>(this, updateThemeDefaults);
-    m_settings->subscribe<::Fooyin::Settings::Gui::Style>(this, updateThemeDefaults);
+    m_settings->subscribe<::Fooyin::Settings::Gui::ResolvedAppStyle>(this, updateThemeDefaults);
 
     updateLyrics(m_playerController->currentTrack());
 }
@@ -443,21 +441,6 @@ void LyricsWidget::applyConfig(const ConfigData& config)
 
     if(!m_currentLyrics.isValid() && m_currentTrack.isValid()) {
         m_lyricsView->setDisplayString(noLyricsDisplayText(m_currentTrack));
-    }
-}
-
-void LyricsWidget::changeEvent(QEvent* event)
-{
-    FyWidget::changeEvent(event);
-
-    switch(event->type()) {
-        case QEvent::FontChange:
-        case QEvent::PaletteChange:
-        case QEvent::StyleChange:
-            applyConfig(m_config);
-            break;
-        default:
-            break;
     }
 }
 

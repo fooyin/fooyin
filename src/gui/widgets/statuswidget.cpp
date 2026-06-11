@@ -217,6 +217,10 @@ void StatusWidgetPrivate::setupConnections()
         m_iconLabel->setPixmap(Gui::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize));
         m_scanCancelButton->setIcon(Gui::iconFromTheme(Constants::Icons::Close));
     });
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this]() {
+        updatePlayingText();
+        updateSelectionText();
+    });
     m_settings->subscribe<Settings::Gui::Internal::StatusShowIcon>(this, [this](bool) { updateActionVisibility(); });
     m_settings->subscribe<Settings::Gui::Internal::StatusShowSelection>(this, [this]() {
         updateSelectionVisibility();
@@ -599,22 +603,6 @@ QSize StatusWidget::minimumSizeHint() const
     hint = hint.expandedTo(p->m_selectionText->minimumSizeHint());
 
     return hint;
-}
-
-void StatusWidget::changeEvent(QEvent* event)
-{
-    FyWidget::changeEvent(event);
-
-    switch(event->type()) {
-        case QEvent::FontChange:
-        case QEvent::PaletteChange:
-        case QEvent::StyleChange:
-            p->updatePlayingText();
-            p->updateSelectionText();
-            break;
-        default:
-            break;
-    }
 }
 
 void StatusWidget::contextMenuEvent(QContextMenuEvent* event)

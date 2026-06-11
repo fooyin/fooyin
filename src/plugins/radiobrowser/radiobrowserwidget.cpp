@@ -35,7 +35,6 @@
 #include <QClipboard>
 #include <QDesktopServices>
 #include <QDialog>
-#include <QEvent>
 #include <QGridLayout>
 #include <QGuiApplication>
 #include <QInputDialog>
@@ -305,8 +304,7 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
         m_model->updateColours();
     };
     m_settings->subscribe<Settings::Gui::IconTheme>(this, handleThemeChange);
-    m_settings->subscribe<Settings::Gui::Theme>(this, handleThemeChange);
-    m_settings->subscribe<Settings::Gui::Style>(this, handleThemeChange);
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, handleThemeChange);
 
     const QScopedValueRollback loadingLayout{m_loadingLayout, true};
     applyConfig(defaultConfig());
@@ -654,22 +652,6 @@ void RadioBrowserWidget::setSendClicks(const bool enabled)
     m_sendClicks = enabled;
     m_settings->fileSet(SendClicksKey, enabled);
     m_controller->setSendClicks(enabled);
-}
-
-void RadioBrowserWidget::changeEvent(QEvent* event)
-{
-    FyWidget::changeEvent(event);
-
-    switch(event->type()) {
-        case QEvent::ApplicationPaletteChange:
-        case QEvent::PaletteChange:
-        case QEvent::StyleChange:
-            refreshThemeIcons();
-            m_model->updateColours();
-            break;
-        default:
-            break;
-    }
 }
 
 void RadioBrowserWidget::showEvent(QShowEvent* event)

@@ -30,7 +30,6 @@
 
 #include <QAction>
 #include <QActionGroup>
-#include <QEvent>
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QMenu>
@@ -70,6 +69,7 @@ PlaylistControl::PlaylistControl(PlayerController* playerController, SettingsMan
     QObject::connect(playerController, &PlayerController::playModeChanged, this, &PlaylistControl::setMode);
 
     settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { setMode(m_playerController->playMode()); });
+    settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this]() { setMode(m_playerController->playMode()); });
 }
 
 QString PlaylistControl::name() const
@@ -80,20 +80,6 @@ QString PlaylistControl::name() const
 QString PlaylistControl::layoutName() const
 {
     return u"PlaylistControls"_s;
-}
-
-void PlaylistControl::changeEvent(QEvent* event)
-{
-    FyWidget::changeEvent(event);
-
-    switch(event->type()) {
-        case QEvent::PaletteChange:
-        case QEvent::StyleChange:
-            setMode(m_playerController->playMode());
-            break;
-        default:
-            break;
-    }
 }
 
 void PlaylistControl::setupMenus()

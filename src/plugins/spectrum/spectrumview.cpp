@@ -268,21 +268,6 @@ void SpectrumView::leaveEvent(QEvent* event)
     hideToolTip();
 }
 
-void SpectrumView::changeEvent(QEvent* event)
-{
-    QWidget::changeEvent(event);
-
-    switch(event->type()) {
-        case QEvent::ApplicationPaletteChange:
-        case QEvent::PaletteChange:
-        case QEvent::StyleChange:
-            refreshStyleColours();
-            break;
-        default:
-            break;
-    }
-}
-
 void SpectrumView::contextMenuEvent(QContextMenuEvent* event)
 {
     Q_EMIT contextMenuRequested(event->globalPos());

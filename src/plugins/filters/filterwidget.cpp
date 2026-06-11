@@ -30,6 +30,8 @@
 #include <gui/coverprovider.h>
 #include <gui/coverrepository.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
+#include <gui/guiutils.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/autoheaderview.h>
 #include <gui/widgets/expandedtreeview.h>
@@ -85,6 +87,7 @@ protected:
 
         switch(event->type()) {
             case QEvent::FontChange:
+            case QEvent::PaletteChange:
             case QEvent::StyleChange:
                 Q_EMIT displayChanged();
                 break;
@@ -795,6 +798,11 @@ void FilterWidget::setupConnections()
                      [this]() { scheduleVisibleCoverPinUpdate(FilterModelPinUpdateDelay); });
     QObject::connect(m_view, &ExpandedTreeView::doubleClicked, this, &FilterWidget::doubleClicked);
     QObject::connect(m_view, &ExpandedTreeView::middleClicked, this, &FilterWidget::middleClicked);
+
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this](const QVariant& var) {
+        const auto resolvedStyle = var.value<ResolvedAppStyle>();
+        Gui::updateItemViewStyle(m_view, resolvedStyle.palette);
+    });
 }
 
 void FilterWidget::handleSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)

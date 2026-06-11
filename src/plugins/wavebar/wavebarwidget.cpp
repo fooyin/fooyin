@@ -130,9 +130,9 @@ WaveBarWidget::WaveBarWidget(std::shared_ptr<AudioLoader> audioLoader, DbConnect
         }
 
         m_seekbar->setColours(Colours{});
+        m_seekbar->refreshStyleColours();
     };
-    m_settings->subscribe<Settings::Gui::Theme>(this, updateColours);
-    m_settings->subscribe<Settings::Gui::Style>(this, updateColours);
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, updateColours);
     m_settings->subscribe<Settings::Gui::SeekBarMouseFocus>(m_seekbar, &WaveSeekBar::setMouseFocusEnabled);
 }
 

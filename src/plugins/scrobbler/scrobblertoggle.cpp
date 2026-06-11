@@ -33,7 +33,6 @@
 
 #include <QAction>
 #include <QContextMenuEvent>
-#include <QEvent>
 #include <QHBoxLayout>
 #include <QIcon>
 #include <QMenu>
@@ -61,6 +60,7 @@ ScrobblerToggle::ScrobblerToggle(ActionManager* actionManager, SettingsManager* 
 
     m_settings->subscribe<Settings::Scrobbler::ScrobblingEnabled>(this, &ScrobblerToggle::scrobblingToggled);
     settings->subscribe<Settings::Gui::IconTheme>(this, &ScrobblerToggle::updateButtonIcon);
+    settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, &ScrobblerToggle::updateButtonIcon);
 }
 
 QString ScrobblerToggle::name() const
@@ -71,20 +71,6 @@ QString ScrobblerToggle::name() const
 QString ScrobblerToggle::layoutName() const
 {
     return u"ScrobbleToggle"_s;
-}
-
-void ScrobblerToggle::changeEvent(QEvent* event)
-{
-    FyWidget::changeEvent(event);
-
-    switch(event->type()) {
-        case QEvent::PaletteChange:
-        case QEvent::StyleChange:
-            updateButtonIcon();
-            break;
-        default:
-            break;
-    }
 }
 
 void ScrobblerToggle::contextMenuEvent(QContextMenuEvent* event)

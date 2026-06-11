@@ -31,7 +31,6 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QAbstractItemModel>
-#include <QEvent>
 #include <QInputDialog>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -197,8 +196,7 @@ RadioGuideWidget::RadioGuideWidget(RadioBrowserController* controller, SettingsM
         refreshThemeIcons();
     };
     m_settings->subscribe<Settings::Gui::IconTheme>(this, handleThemeChange);
-    m_settings->subscribe<Settings::Gui::Theme>(this, handleThemeChange);
-    m_settings->subscribe<Settings::Gui::Style>(this, handleThemeChange);
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, handleThemeChange);
 
     setSavedSearches(m_controller->savedSearches());
     requestCategories(RadioCategoryType::Country);
@@ -242,21 +240,6 @@ void RadioGuideWidget::finalise()
 {
     if(!restoreState()) {
         activateDefaultEntry();
-    }
-}
-
-void RadioGuideWidget::changeEvent(QEvent* event)
-{
-    FyWidget::changeEvent(event);
-
-    switch(event->type()) {
-        case QEvent::ApplicationPaletteChange:
-        case QEvent::PaletteChange:
-        case QEvent::StyleChange:
-            refreshThemeIcons();
-            break;
-        default:
-            break;
     }
 }
 

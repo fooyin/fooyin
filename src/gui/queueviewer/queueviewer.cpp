@@ -31,6 +31,7 @@
 #include <core/player/playercontroller.h>
 #include <gui/configdialog.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <gui/guiutils.h>
 #include <gui/trackmimedata.h>
 #include <gui/trackselectioncontroller.h>
@@ -248,6 +249,11 @@ void QueueViewer::setupConnections()
         m_model->setIconSize(size);
     });
     QObject::connect(m_view, &QAbstractItemView::doubleClicked, this, &QueueViewer::handleQueueDoubleClicked);
+
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this](const QVariant& var) {
+        const auto resolvedStyle = var.value<ResolvedAppStyle>();
+        Gui::updateItemViewStyle(m_view, resolvedStyle.palette);
+    });
 }
 
 void QueueViewer::resetModel() const

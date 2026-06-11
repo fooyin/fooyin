@@ -38,7 +38,6 @@ public:
     [[nodiscard]] QString layoutName() const override;
 
 protected:
-    void changeEvent(QEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:

@@ -210,7 +210,6 @@ void PlaylistView::changeEvent(QEvent* event)
 
     switch(event->type()) {
         case QEvent::FontChange:
-        case QEvent::StyleChange:
             Q_EMIT displayChanged();
             break;
         default:

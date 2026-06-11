@@ -109,8 +109,7 @@ CoverWidget::CoverWidget(PlayerController* playerController, PlaylistHandler* pl
         reloadCover();
     });
     m_settings->subscribe<Settings::Gui::IconTheme>(this, &CoverWidget::reloadCover);
-    m_settings->subscribe<Settings::Gui::Theme>(this, &CoverWidget::reloadCover);
-    m_settings->subscribe<Settings::Gui::Style>(this, &CoverWidget::reloadCover);
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, &CoverWidget::reloadCover);
 
     applyConfig(defaultConfig());
     reloadCover();

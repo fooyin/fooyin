@@ -26,7 +26,6 @@
 #include <QString>
 
 class QContextMenuEvent;
-class QEvent;
 class QHBoxLayout;
 class QJsonObject;
 class QAction;
@@ -83,7 +82,6 @@ public:
     [[nodiscard]] QSize minimumSizeHint() const override;
 
 protected:
-    void changeEvent(QEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
     void openConfigDialog() override;
     void resizeEvent(QResizeEvent* event) override;

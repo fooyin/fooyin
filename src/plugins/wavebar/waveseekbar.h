@@ -52,6 +52,7 @@ public:
     void setCentreGap(int gap);
     void setMode(WaveModes mode);
     void setColours(const Colours& colours);
+    void refreshStyleColours();
     void setSupersampleFactor(int factor);
     void setMouseFocusEnabled(bool enabled);
 
@@ -65,7 +66,6 @@ Q_SIGNALS:
 
 protected:
     void paintEvent(QPaintEvent* event) override;
-    void changeEvent(QEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;

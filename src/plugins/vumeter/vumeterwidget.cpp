@@ -784,8 +784,7 @@ VuMeterWidget::VuMeterWidget(Type type, PlayerController* playerController, Sett
         p->invalidateStaticLayer();
         update();
     };
-    m_settings->subscribe<Settings::Gui::Theme>(this, updateThemeColours);
-    m_settings->subscribe<Settings::Gui::Style>(this, updateThemeColours);
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, updateThemeColours);
 }
 
 VuMeterWidget::~VuMeterWidget() = default;

@@ -216,6 +216,7 @@ private:
     void populateTrackGroup(PendingData data);
     void updateModel(ItemKeyMap data);
     void updateTracks(const ItemList& tracks, const std::set<int>& columnsUpdated);
+    void notifyDataChangedForSubtree(const QModelIndex& parent, const QList<int>& roles);
     void mergeTrackParents(const TrackIdNodeMap& parents);
     [[nodiscard]] bool tryUpdateTrackGroupInPlace(const PendingData& data);
     [[nodiscard]] bool hasSameParentChain(const PlaylistItem* currentItem, const PlaylistItem* updatedItem) const;

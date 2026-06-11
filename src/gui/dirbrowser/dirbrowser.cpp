@@ -34,6 +34,7 @@
 #include <gui/contextmenuutils.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/toolbutton.h>
@@ -51,6 +52,7 @@
 #include <QFileSystemModel>
 #include <QGridLayout>
 #include <QHBoxLayout>
+#include <QHeaderView>
 #include <QJsonObject>
 #include <QKeyEvent>
 #include <QLineEdit>
@@ -333,8 +335,12 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
     QObject::connect(
         m_proxyModel, &QAbstractItemModel::modelReset, this, [this]() { handleModelReset(); }, Qt::QueuedConnection);
 
-    settings->subscribe<Settings::Gui::Theme>(m_proxyModel, &DirProxyModel::resetPalette);
-    settings->subscribe<Settings::Gui::Style>(m_proxyModel, &DirProxyModel::resetPalette);
+    settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this](const QVariant& var) {
+        const auto resolvedStyle = var.value<ResolvedAppStyle>();
+        Gui::refreshItemViewPalette(m_dirTree, resolvedStyle.palette);
+        m_proxyModel->resetPalette();
+        Gui::updateItemViewStyle(m_dirTree, resolvedStyle.palette);
+    });
 
     m_config = defaultConfig();
     applyConfig(m_config);

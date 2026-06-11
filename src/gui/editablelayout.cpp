@@ -713,7 +713,7 @@ FyLayout EditableLayout::saveCurrentToLayout(const QString& name, bool saveWindo
 
     FyLayout layout{json};
 
-    const auto theme = p->m_settings->value<Settings::Gui::Theme>().value<FyTheme>();
+    const auto theme = p->m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
     if(theme.isValid()) {
         layout.saveTheme(theme);
     }
@@ -821,7 +821,7 @@ bool EditableLayout::loadLayout(const FyLayout& layout)
 
     const FyTheme theme = layout.loadTheme();
     if(theme.isValid()) {
-        p->m_settings->set<Settings::Gui::Theme>(QVariant::fromValue(theme));
+        p->m_settings->set<Settings::Gui::CustomTheme>(QVariant::fromValue(theme));
     }
 
     const auto rootObject = rootWidgets.cbegin()->toObject();

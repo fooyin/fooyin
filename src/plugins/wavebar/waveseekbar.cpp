@@ -21,7 +21,6 @@
 
 #include <utils/stringutils.h>
 
-#include <QEvent>
 #include <QImage>
 #include <QMouseEvent>
 #include <QPainter>
@@ -199,6 +198,11 @@ void WaveSeekBar::setColours(const Colours& colours)
     }
 }
 
+void WaveSeekBar::refreshStyleColours()
+{
+    invalidateWaveformCache();
+}
+
 void WaveSeekBar::setSupersampleFactor(int factor)
 {
     factor = std::max(1, factor);
@@ -233,15 +237,6 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
 
     drawCachedWaveform(painter, event->rect());
     drawCursors(painter);
-}
-
-void WaveSeekBar::changeEvent(QEvent* event)
-{
-    if(event->type() == QEvent::PaletteChange || event->type() == QEvent::StyleChange) {
-        invalidateWaveformCache();
-    }
-
-    QWidget::changeEvent(event);
 }
 
 void WaveSeekBar::mouseMoveEvent(QMouseEvent* event)

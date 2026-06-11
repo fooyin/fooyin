@@ -27,6 +27,8 @@
 #include <core/internalcoresettings.h>
 #include <core/library/libraryutils.h>
 #include <core/library/musiclibrary.h>
+#include <gui/guisettings.h>
+#include <gui/guiutils.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -84,6 +86,7 @@ ReplayGainWidget::ReplayGainWidget(MusicLibrary* library, const TrackList& track
 
     m_view->setItemDelegate(new ReplayGainDelegate(this));
     m_view->setModel(m_model);
+
     QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() {
         QMetaObject::invokeMethod(
             this,
@@ -93,6 +96,12 @@ ReplayGainWidget::ReplayGainWidget(MusicLibrary* library, const TrackList& track
             },
             Qt::QueuedConnection);
     });
+
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this](const QVariant& var) {
+        const auto resolvedStyle = var.value<ResolvedAppStyle>();
+        Gui::updateItemViewStyle(m_view, resolvedStyle.palette);
+    });
+
     loadLayoutData();
     m_model->resetModel(tracks);
 

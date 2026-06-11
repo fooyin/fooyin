@@ -118,6 +118,8 @@ Q_LOGGING_CATEGORY(GUI_APP, "fy.gui")
 using namespace std::chrono_literals;
 using namespace Qt::StringLiterals;
 
+constexpr auto ThemeUpdateDelayMs = 50;
+
 namespace Fooyin {
 namespace {
 QString pluginIdentifierForRoot(const PluginManager* pluginManager, const QObject* root)
@@ -201,7 +203,9 @@ public:
     void changeVolume(double delta) const;
     void mute() const;
     void setStyle() const;
-    void setTheme() const;
+    void scheduleThemeUpdate(bool refreshSystemBaseline = false);
+    void applyTheme();
+    void handleSystemThemeChanged();
     bool setIconTheme() const;
     void refreshThemeIcons() const;
     void refreshAutoDetectedIconTheme() const;
@@ -281,6 +285,12 @@ public:
     Widgets* m_widgets;
     ScriptParser m_scriptParser;
     CoverProvider m_coverProvider;
+
+    QTimer* m_themeUpdateTimer;
+    bool m_themeUpdatePending{false};
+    bool m_refreshSystemBaseline{false};
+    bool m_applyingTheme{false};
+    quint64 m_resolvedAppStyleRevision{0};
 };
 
 namespace {
@@ -341,7 +351,15 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_logWidget{std::make_unique<LogWidget>(m_settings)}
     , m_widgets{new Widgets(m_core, m_self, m_guiPluginContext, m_mainWindow.get(), &m_playlistInteractor, m_self)}
     , m_coverProvider{m_coverRepository}
+    , m_themeUpdateTimer{new QTimer(m_self)}
 {
+    m_themeUpdateTimer->setSingleShot(true);
+    m_themeUpdateTimer->setInterval(ThemeUpdateDelayMs);
+    QObject::connect(m_themeUpdateTimer, &QTimer::timeout, m_self, [this]() {
+        m_themeUpdatePending = false;
+        applyTheme();
+    });
+
     m_scriptParser.addProvider(playlistVariableProvider());
 }
 
@@ -506,8 +524,8 @@ void GuiApplicationPrivate::setupConnections()
         QPixmapCache::clear();
         refreshThemeIcons();
     });
-    m_settings->subscribe<Settings::Gui::Theme>(m_self, [this]() {
-        setTheme();
+    m_settings->subscribe<Settings::Gui::CustomTheme>(m_self, [this]() {
+        scheduleThemeUpdate();
         if(setIconTheme()) {
             QPixmapCache::clear();
             m_settings->refresh<Settings::Gui::IconTheme>();
@@ -515,7 +533,7 @@ void GuiApplicationPrivate::setupConnections()
     });
     m_settings->subscribe<Settings::Gui::Style>(m_self, [this]() {
         setStyle();
-        setTheme();
+        scheduleThemeUpdate(true);
         if(setIconTheme()) {
             QPixmapCache::clear();
             m_settings->refresh<Settings::Gui::IconTheme>();
@@ -939,29 +957,47 @@ void GuiApplicationPrivate::setStyle() const
     }
 }
 
-void GuiApplicationPrivate::setTheme() const
+void GuiApplicationPrivate::scheduleThemeUpdate(bool refreshSystemBaseline)
 {
-    const auto currTheme = m_settings->value<Settings::Gui::Theme>().value<FyTheme>();
+    m_refreshSystemBaseline = m_refreshSystemBaseline || refreshSystemBaseline;
 
-    auto newPalette = m_settings->value<Settings::Gui::Internal::SystemPalette>().value<QPalette>();
-    for(const auto& [key, colour] : Utils::asRange(currTheme.colours)) {
-        newPalette.setColor(key.group, key.role, colour);
+    if(m_applyingTheme) {
+        m_themeUpdatePending = true;
+        return;
     }
-    QApplication::setPalette(newPalette);
 
-    {
-        // Reset all fonts to default first
-        const auto systemFont = m_settings->value<Settings::Gui::Internal::SystemFont>().value<QFont>();
-        QApplication::setFont(systemFont);
+    m_themeUpdateTimer->start();
+}
+
+void GuiApplicationPrivate::applyTheme()
+{
+    if(std::exchange(m_applyingTheme, true)) {
+        m_themeUpdatePending = true;
+        return;
+    }
+
+    const bool refreshSystemBaseline = std::exchange(m_refreshSystemBaseline, false);
+    if(refreshSystemBaseline) {
+        QApplication::setFont(QFont{});
+        QApplication::setPalette(QPalette{});
+    }
+    else {
+        QApplication::setFont(m_settings->value<Settings::Gui::Internal::SystemFont>().value<QFont>());
+        QApplication::setPalette(m_settings->value<Settings::Gui::Internal::SystemPalette>().value<QPalette>());
+    }
+
+    QTimer::singleShot(ThemeUpdateDelayMs, m_self, [this]() {
+        const auto systemFont = QApplication::font();
+        m_settings->set<Settings::Gui::Internal::SystemFont>(systemFont);
+
         const auto fontEntries = m_themeRegistry->fontEntries();
-        for(const auto& [className, _] : fontEntries) {
+        for(const auto& className : fontEntries | std::views::keys) {
             if(!className.isEmpty()) {
                 QApplication::setFont(systemFont, className.toUtf8().constData());
             }
         }
-    }
 
-    auto updateFonts = [currTheme]() {
+        const auto currTheme = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
         for(const auto& [className, font] : Utils::asRange(currTheme.fonts)) {
             if(className.isEmpty()) {
                 QApplication::setFont(font);
@@ -970,12 +1006,48 @@ void GuiApplicationPrivate::setTheme() const
                 QApplication::setFont(font, className.toUtf8().constData());
             }
         }
-        QPixmapCache::clear();
-    };
-    updateFonts();
 
-    // Fonts can sometimes reset, so set again
-    QTimer::singleShot(0, m_self, [updateFonts]() { updateFonts(); });
+        const auto systemPalette = QApplication::palette();
+        m_settings->set<Settings::Gui::Internal::SystemPalette>(systemPalette);
+
+        auto newPalette{systemPalette};
+        for(const auto& [key, colour] : Utils::asRange(currTheme.colours)) {
+            newPalette.setColor(key.group, key.role, colour);
+        }
+
+        QApplication::setPalette(newPalette);
+        QPixmapCache::clear();
+
+        QTimer::singleShot(0, m_self, [this, newPalette]() {
+            ResolvedAppStyle resolvedStyle;
+            resolvedStyle.palette     = newPalette;
+            resolvedStyle.defaultFont = QApplication::font();
+            resolvedStyle.revision    = ++m_resolvedAppStyleRevision;
+
+            const auto styleFonts = m_themeRegistry->fontEntries();
+            for(const auto& className : styleFonts | std::views::keys) {
+                if(!className.isEmpty()) {
+                    resolvedStyle.classFonts.insert(className, QApplication::font(className.toUtf8().constData()));
+                }
+            }
+
+            m_settings->set<Settings::Gui::ResolvedAppStyle>(QVariant::fromValue(resolvedStyle));
+            m_applyingTheme = false;
+
+            if(std::exchange(m_themeUpdatePending, false)) {
+                scheduleThemeUpdate();
+            }
+        });
+    });
+}
+
+void GuiApplicationPrivate::handleSystemThemeChanged()
+{
+    if(m_applyingTheme) {
+        return;
+    }
+
+    scheduleThemeUpdate(true);
 }
 
 bool GuiApplicationPrivate::setIconTheme() const
@@ -1513,9 +1585,13 @@ bool GuiApplication::eventFilter(QObject* watched, QEvent* event)
 {
     if(watched == qApp) {
         switch(event->type()) {
+            case QEvent::ApplicationFontChange:
+                p->handleSystemThemeChanged();
+                break;
             case QEvent::ApplicationPaletteChange:
             case QEvent::ThemeChange:
                 p->refreshAutoDetectedIconTheme();
+                p->handleSystemThemeChanged();
                 break;
             default:
                 break;
@@ -1523,10 +1599,14 @@ bool GuiApplication::eventFilter(QObject* watched, QEvent* event)
     }
     else if(watched == p->m_mainWindow.get()) {
         switch(event->type()) {
+            case QEvent::FontChange:
+                p->handleSystemThemeChanged();
+                break;
             case QEvent::PaletteChange:
             case QEvent::StyleChange:
             case QEvent::ThemeChange:
                 p->refreshAutoDetectedIconTheme();
+                p->handleSystemThemeChanged();
                 break;
             default:
                 break;

@@ -42,6 +42,7 @@
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/autoheaderview.h>
@@ -278,7 +279,6 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
 
     m_model->playingTrackChanged(m_playerController->currentPlaylistTrack());
     m_model->playStateChanged(m_playlistController->playState());
-    QObject::connect(m_playlistView, &PlaylistView::displayChanged, this, &PlaylistWidget::refreshViewStyle);
     applySessionTexts();
     setObjectName(PlaylistWidget::name());
     setFeature(ExclusiveSearch);
@@ -610,21 +610,6 @@ void PlaylistWidget::keyPressEvent(QKeyEvent* event)
     QWidget::keyPressEvent(event);
 }
 
-void PlaylistWidget::changeEvent(QEvent* event)
-{
-    FyWidget::changeEvent(event);
-
-    switch(event->type()) {
-        case QEvent::FontChange:
-        case QEvent::PaletteChange:
-        case QEvent::StyleChange:
-            m_model->updateColours();
-            break;
-        default:
-            break;
-    }
-}
-
 void PlaylistWidget::setupConnections()
 {
     // clang-format off
@@ -670,11 +655,7 @@ void PlaylistWidget::setupConnections()
 
     m_session->setupConnections(sessionHost());
 
-    auto handleStyleChange = [this]() {
-        refreshViewStyle();
-    };
-    m_settings->subscribe<Settings::Gui::Theme>(this, handleStyleChange);
-    m_settings->subscribe<Settings::Gui::Style>(this, handleStyleChange);
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, &PlaylistWidget::refreshViewStyle);
 
     m_settings->subscribe<Settings::Core::UseVariousForCompilations>(
         this, [this]() { m_session->changePlaylist(sessionHost(), m_playlistController->currentPlaylist(), nullptr); });
@@ -1152,8 +1133,15 @@ void PlaylistWidget::applySessionTexts()
 
 void PlaylistWidget::refreshViewStyle()
 {
-    m_model->setFont(QApplication::font("Fooyin::PlaylistView"));
-    resetModelThrottled();
+    const auto resolvedStyle = m_settings->value<Settings::Gui::ResolvedAppStyle>().value<ResolvedAppStyle>();
+
+    const QFont playlistFont = resolvedStyle.font(u"Fooyin::PlaylistView"_s);
+    m_playlistView->setFont(playlistFont);
+    m_header->setFont(playlistFont);
+    m_model->setFont(playlistFont);
+
+    Gui::updateItemViewStyle(m_playlistView, resolvedStyle.palette);
+    updateVisibleCoverPins();
 }
 
 void PlaylistWidget::addSortMenu(QMenu* parent, bool disabled)

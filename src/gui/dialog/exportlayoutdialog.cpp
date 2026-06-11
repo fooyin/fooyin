@@ -112,7 +112,7 @@ void ExportLayoutDialog::accept()
         return;
     }
 
-    const auto currentTheme = m_settings->value<Settings::Gui::Theme>().value<FyTheme>();
+    const auto currentTheme = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
     if(currentTheme.isValid()) {
         FyLayout::ThemeOptions themeOptions;
         if(m_saveColours->isChecked()) {

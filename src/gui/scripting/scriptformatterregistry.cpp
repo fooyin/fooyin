@@ -21,9 +21,6 @@
 
 #include <gui/scripting/scriptformatter.h>
 
-#include <QApplication>
-#include <QPalette>
-
 #include <array>
 
 using namespace Qt::StringLiterals;
@@ -162,7 +159,7 @@ bool colourAlpha(RichFormatting& formatting, const QString& option)
     const int alpha = option.toInt(&isInt);
 
     if(isInt) {
-        formatting.colour.setAlpha(alpha);
+        formatting.colour.alpha = alpha;
         return true;
     }
 
@@ -173,7 +170,7 @@ bool colourRgb(RichFormatting& formatting, const QString& option)
 {
     QColor colour;
     if(parseRgb(option, &colour)) {
-        formatting.colour = colour;
+        formatting.colour.setColour(colour);
         return true;
     }
 
@@ -184,7 +181,7 @@ bool colourGeneric(RichFormatting& formatting, const QString& option)
 {
     QColor colour;
     if(parseColour(option, &colour)) {
-        formatting.colour = colour;
+        formatting.colour.setColour(colour);
         return true;
     }
 

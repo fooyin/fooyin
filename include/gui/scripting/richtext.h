@@ -32,10 +32,36 @@ enum class RichAlignment : uint8_t
     Right,
 };
 
+struct RichColour
+{
+    enum class Type : uint8_t
+    {
+        Default = 0,
+        Explicit,
+    };
+
+    Type type{Type::Default};
+    QColor colour;
+    int alpha{-1};
+
+    [[nodiscard]] bool isExplicit() const
+    {
+        return type == Type::Explicit && colour.isValid();
+    }
+
+    void setColour(const QColor& newColour)
+    {
+        type   = Type::Explicit;
+        colour = newColour;
+    }
+
+    bool operator==(const RichColour& other) const = default;
+};
+
 struct RichFormatting
 {
     QFont font;
-    QColor colour;
+    RichColour colour;
     QString link;
     RichAlignment alignment{RichAlignment::Left};
 

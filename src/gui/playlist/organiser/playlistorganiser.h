@@ -64,7 +64,6 @@ public:
     void applyConfig(const ConfigData& config);
 
 protected:
-    void changeEvent(QEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
     void openConfigDialog() override;
 

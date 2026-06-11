@@ -257,7 +257,7 @@ RichText FilterDelegate::recolourRichText(RichText richText, const QColor& colou
     }
 
     for(auto& block : richText.blocks) {
-        block.format.colour = colour;
+        block.format.colour.setColour(colour);
     }
 
     return richText;

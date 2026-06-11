@@ -113,8 +113,7 @@ SpectrumWidget::SpectrumWidget(EngineController* engine, PlayerController* playe
     const auto updateThemeColours = [this]() {
         m_view->refreshStyleColours();
     };
-    m_settings->subscribe<Settings::Gui::Theme>(this, updateThemeColours);
-    m_settings->subscribe<Settings::Gui::Style>(this, updateThemeColours);
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, updateThemeColours);
 }
 
 SpectrumWidget::~SpectrumWidget() = default;

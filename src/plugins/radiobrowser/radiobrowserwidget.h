@@ -34,7 +34,6 @@
 class QPoint;
 class QJsonObject;
 class QAction;
-class QEvent;
 class QModelIndex;
 class QMenu;
 
@@ -111,7 +110,6 @@ public:
     void setSendClicks(bool enabled);
 
 protected:
-    void changeEvent(QEvent* event) override;
     void showEvent(QShowEvent* event) override;
     void openConfigDialog() override;
 
