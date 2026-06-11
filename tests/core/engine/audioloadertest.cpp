@@ -31,6 +31,7 @@
 #include <QStandardPaths>
 #include <QTemporaryDir>
 
+#include <chrono>
 #include <map>
 #include <memory>
 #include <utility>
@@ -65,6 +66,7 @@ class FakeRemoteSourceProvider : public Fooyin::RemoteSourceProvider
 {
 public:
     mutable int calls{0};
+    std::chrono::milliseconds openTimeout{std::chrono::milliseconds{12345}};
 
     Fooyin::RemoteStreamSource createStreamSource(const QUrl& url) const override
     {
@@ -74,6 +76,7 @@ public:
 
         Fooyin::RemoteStreamSource source;
         source.remoteDevice = buffer.get();
+        source.openTimeout  = openTimeout;
         source.device       = std::move(buffer);
         return source;
     }
@@ -136,6 +139,7 @@ struct DecoderState
     bool lastHadArchiveReader{false};
     uint64_t lastSourceSize{0};
     uint64_t lastSourceModifiedTime{0};
+    std::chrono::milliseconds lastRemoteOpenTimeout{std::chrono::milliseconds{0}};
     Fooyin::AudioDecoder::DecoderOptions lastOptions{Fooyin::AudioDecoder::None};
     Fooyin::AudioDecoder::PlaybackHints playbackHintsAtInit{Fooyin::AudioDecoder::NoHints};
 };
@@ -183,6 +187,7 @@ public:
         m_state->lastHadArchiveReader      = source.archiveReader != nullptr;
         m_state->lastSourceSize            = source.size;
         m_state->lastSourceModifiedTime    = source.modifiedTime;
+        m_state->lastRemoteOpenTimeout     = source.remoteOpenTimeout;
         m_state->lastOptions               = options;
         m_state->playbackHintsAtInit       = playbackHints();
 
@@ -250,6 +255,7 @@ struct ReaderState
     bool lastHadArchiveReader{false};
     uint64_t lastSourceSize{0};
     uint64_t lastSourceModifiedTime{0};
+    std::chrono::milliseconds lastRemoteOpenTimeout{std::chrono::milliseconds{0}};
     Fooyin::AudioReader::WriteOptions lastWriteOptions{Fooyin::AudioReader::None};
     Fooyin::Track::Cover lastCover{Fooyin::Track::Cover::Front};
     size_t lastWrittenCoverCount{0};
@@ -382,6 +388,7 @@ private:
         m_state->lastHadArchiveReader      = source.archiveReader != nullptr;
         m_state->lastSourceSize            = source.size;
         m_state->lastSourceModifiedTime    = source.modifiedTime;
+        m_state->lastRemoteOpenTimeout     = source.remoteOpenTimeout;
     }
 
     std::shared_ptr<ReaderState> m_state;
@@ -883,9 +890,11 @@ TEST_F(AudioLoaderTest, LoadsRemoteTracksThroughSourceFactoryWhenConfigured)
     EXPECT_EQ(loadedDecoder.input.device.get(), loadedDecoder.input.source.device);
     EXPECT_EQ(loadedDecoder.input.source.remoteStreamDevice,
               dynamic_cast<Fooyin::RemoteStreamDevice*>(loadedDecoder.input.device.get()));
+    EXPECT_EQ(provider->openTimeout, loadedDecoder.input.source.remoteOpenTimeout);
     EXPECT_TRUE(decoder->lastHadDevice);
     EXPECT_TRUE(decoder->lastHadRemoteStreamDevice);
     EXPECT_TRUE(decoder->lastDeviceOpen);
+    EXPECT_EQ(provider->openTimeout, decoder->lastRemoteOpenTimeout);
 
     const auto loadedReader = loader.loadReaderForTrack(track);
     ASSERT_NE(loadedReader.reader, nullptr);
@@ -894,9 +903,11 @@ TEST_F(AudioLoaderTest, LoadsRemoteTracksThroughSourceFactoryWhenConfigured)
     EXPECT_EQ(loadedReader.input.device.get(), loadedReader.input.source.device);
     EXPECT_EQ(loadedReader.input.source.remoteStreamDevice,
               dynamic_cast<Fooyin::RemoteStreamDevice*>(loadedReader.input.device.get()));
+    EXPECT_EQ(provider->openTimeout, loadedReader.input.source.remoteOpenTimeout);
     EXPECT_TRUE(reader->lastHadDevice);
     EXPECT_TRUE(reader->lastHadRemoteStreamDevice);
     EXPECT_TRUE(reader->lastDeviceOpen);
+    EXPECT_EQ(provider->openTimeout, reader->lastRemoteOpenTimeout);
 
     Track metadataTrack{track};
     ASSERT_TRUE(loader.readTrackMetadata(metadataTrack));
@@ -904,6 +915,7 @@ TEST_F(AudioLoaderTest, LoadsRemoteTracksThroughSourceFactoryWhenConfigured)
     EXPECT_TRUE(reader->lastHadDevice);
     EXPECT_TRUE(reader->lastHadRemoteStreamDevice);
     EXPECT_TRUE(reader->lastDeviceOpen);
+    EXPECT_EQ(provider->openTimeout, reader->lastRemoteOpenTimeout);
     EXPECT_EQ(3, provider->calls);
 
     reader->canReadCover = true;

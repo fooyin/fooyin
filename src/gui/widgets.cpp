@@ -462,7 +462,7 @@ void Widgets::registerAdvancedSettings()
     advancedSettingsRegistry->add<Settings::Core::Internal::RemoteReadAheadKb>(
         {.category    = {tr("Playback"), tr("Buffering")},
          .label       = tr("Read-ahead for remote streams"),
-         .description = tr("Maximum network data buffered for remote streams. Changes apply to newly opened "
+         .description = tr("Maximum network data buffered for remote streams.\nChanges apply to newly opened "
                            "streams."),
          .editor      = AdvancedSettingSpinBox{.minimum          = 0,
                                                .maximum          = 1048576,
@@ -478,6 +478,29 @@ void Widgets::registerAdvancedSettings()
          .editor      = AdvancedSettingSpinBox{.minimum          = 2000,
                                                .maximum          = 30000,
                                                .singleStep       = 500,
+                                               .suffix           = u" ms"_s,
+                                               .specialValueText = {}},
+         .normalise   = {},
+         .validate    = {}});
+    advancedSettingsRegistry->add<Settings::Core::Internal::RemotePrebufferMs>(
+        {.category    = {tr("Playback"), tr("Buffering")},
+         .label       = tr("Prebuffer for remote streams"),
+         .description = tr("Decoded audio buffered before starting or resuming remote playback.\nSet to 0 to choose "
+                           "automatically from the remote buffer length."),
+         .editor      = AdvancedSettingSpinBox{.minimum          = 0,
+                                               .maximum          = 5000,
+                                               .singleStep       = 250,
+                                               .suffix           = u" ms"_s,
+                                               .specialValueText = tr("Auto")},
+         .normalise   = {},
+         .validate    = {}});
+    advancedSettingsRegistry->add<Settings::Core::Internal::RemoteOpenTimeoutMs>(
+        {.category    = {tr("Playback"), tr("Buffering")},
+         .label       = tr("Open timeout for remote streams"),
+         .description = tr("Maximum time spent opening and probing remote streams."),
+         .editor      = AdvancedSettingSpinBox{.minimum          = 1000,
+                                               .maximum          = 120000,
+                                               .singleStep       = 1000,
                                                .suffix           = u" ms"_s,
                                                .specialValueText = {}},
          .normalise   = {},

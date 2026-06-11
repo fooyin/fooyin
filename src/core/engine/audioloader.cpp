@@ -158,6 +158,7 @@ bool openFileSource(Fooyin::LoadedSource& input, const QString& filepath)
 
     input.source.filepath           = filepath;
     input.source.remoteStreamDevice = nullptr;
+    input.source.remoteOpenTimeout  = std::chrono::milliseconds{0};
     input.rebind();
     return true;
 }
@@ -169,6 +170,7 @@ bool openRemoteSource(Fooyin::LoadedSource& input, const QString& filepath,
         input.device.reset();
         input.source.filepath           = filepath;
         input.source.remoteStreamDevice = nullptr;
+        input.source.remoteOpenTimeout  = std::chrono::milliseconds{0};
         input.source.modifiedTime       = 0;
         input.source.size               = 0;
         input.rebind();
@@ -192,6 +194,7 @@ bool openRemoteSource(Fooyin::LoadedSource& input, const QString& filepath,
 
     input.source.filepath           = filepath;
     input.source.remoteStreamDevice = remoteSource.remoteDevice;
+    input.source.remoteOpenTimeout  = remoteSource.openTimeout;
     input.source.modifiedTime       = 0;
     input.source.size               = 0;
     input.rebind();
@@ -223,6 +226,7 @@ bool openArchiveSource(Fooyin::LoadedSource& input, const Fooyin::AudioLoader& l
     input.device                    = std::move(entryData.device);
     input.source.filepath           = entryData.info.path;
     input.source.remoteStreamDevice = nullptr;
+    input.source.remoteOpenTimeout  = std::chrono::milliseconds{0};
     input.source.modifiedTime       = entryData.info.modifiedTime;
     input.source.size               = entryData.info.size;
     input.rebind();

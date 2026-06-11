@@ -437,6 +437,7 @@ private:
     double m_volume;
     int m_playbackBufferLengthMs;
     int m_remoteDecodedBufferMs;
+    int m_remotePrebufferMs;
     double m_decodeLowWatermarkRatio;
     double m_decodeHighWatermarkRatio;
     bool m_fadingEnabled;

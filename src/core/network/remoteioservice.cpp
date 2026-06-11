@@ -91,6 +91,7 @@ RemoteStreamSource RemoteIoService::createStreamSource(const QUrl& url) const
 {
     const auto readAheadKb      = std::max(0, m_settings->value<Settings::Core::Internal::RemoteReadAheadKb>());
     const auto maxBufferedBytes = static_cast<qsizetype>(std::max(1, readAheadKb) * 1024);
+    const auto openTimeoutMs    = std::max(1000, m_settings->value<Settings::Core::Internal::RemoteOpenTimeoutMs>());
 
     const QString path = url.path().toLower();
 
@@ -99,6 +100,7 @@ RemoteStreamSource RemoteIoService::createStreamSource(const QUrl& url) const
 
         RemoteStreamSource source;
         source.remoteDevice = device.get();
+        source.openTimeout  = std::chrono::milliseconds{openTimeoutMs};
         source.device       = std::move(device);
         return source;
     }
@@ -107,6 +109,7 @@ RemoteStreamSource RemoteIoService::createStreamSource(const QUrl& url) const
 
     RemoteStreamSource source;
     source.remoteDevice = device.get();
+    source.openTimeout  = std::chrono::milliseconds{openTimeoutMs};
     source.device       = std::move(device);
     return source;
 }

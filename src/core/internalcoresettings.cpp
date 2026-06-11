@@ -138,6 +138,10 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::RemoteReadAheadKb>(Internal::DefaultRemoteReadAheadKb,
                                                            u"Engine/RemoteReadAheadKb"_s);
     m_settings->createSetting<Internal::RemoteBufferLengthMs>(6000, u"Engine/RemoteBufferLengthMs"_s);
+    m_settings->createSetting<Internal::RemotePrebufferMs>(Internal::DefaultRemotePrebufferMs,
+                                                           u"Engine/RemotePrebufferMs"_s);
+    m_settings->createSetting<Internal::RemoteOpenTimeoutMs>(Internal::DefaultRemoteOpenTimeoutMs,
+                                                             u"Engine/RemoteOpenTimeoutMs"_s);
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 

@@ -58,7 +58,10 @@ constexpr auto ExternalExcludeTypes              = "Library/ExternalExcludeTypes
 constexpr auto FFmpegAllExtensions               = "Engine/FFmpegAllExtensions";
 constexpr auto FFmpegPriorityExtensions          = "Engine/FFmpegPriorityExtensions";
 constexpr auto SplitId3v23SemicolonSeparatedTags = "Tagging/SplitId3v23SemicolonSeparatedTags";
-constexpr auto DefaultRemoteReadAheadKb          = 2048;
+
+constexpr auto DefaultRemoteReadAheadKb   = 2048;
+constexpr auto DefaultRemotePrebufferMs   = 0;
+constexpr auto DefaultRemoteOpenTimeoutMs = 8000;
 
 [[nodiscard]] FYCORE_EXPORT QStringList defaultFFmpegPriorityExtensions();
 
@@ -86,6 +89,8 @@ enum CoreInternalSettings : uint32_t
     OpusHeaderWriteMode      = 19 | Type::Int,
     RemoteReadAheadKb        = 20 | Type::Int,
     RemoteBufferLengthMs     = 21 | Type::Int,
+    RemotePrebufferMs        = 22 | Type::Int,
+    RemoteOpenTimeoutMs      = 23 | Type::Int,
 };
 Q_ENUM_NS(CoreInternalSettings)
 } // namespace Settings::Core::Internal

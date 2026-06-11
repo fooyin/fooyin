@@ -314,6 +314,7 @@ AudioEngine::AudioEngine(std::shared_ptr<AudioLoader> audioLoader, SettingsManag
     , m_playbackBufferLengthMs{m_settings->value<Settings::Core::BufferLength>()}
     , m_remoteDecodedBufferMs{std::max(RemoteDecodedBufferMinMs,
                                        m_settings->value<Settings::Core::Internal::RemoteBufferLengthMs>())}
+    , m_remotePrebufferMs{std::max(0, m_settings->value<Settings::Core::Internal::RemotePrebufferMs>())}
     , m_decodeLowWatermarkRatio{m_settings->value<Settings::Core::Internal::DecodeLowWatermarkRatio>()}
     , m_decodeHighWatermarkRatio{m_settings->value<Settings::Core::Internal::DecodeHighWatermarkRatio>()}
     , m_fadingEnabled{m_settings->value<Settings::Core::Internal::EngineFading>()}
@@ -3576,8 +3577,9 @@ int AudioEngine::streamBufferLengthMs(const Track& track) const
 
 int AudioEngine::remotePrebufferTargetMs(int capacityMs) const
 {
-    const int targetMs = std::clamp(m_remoteDecodedBufferMs / 4, RemotePrebufferMinMs, RemotePrebufferMaxMs);
-    capacityMs         = std::max(0, capacityMs);
+    const int configuredTargetMs = m_remotePrebufferMs > 0 ? m_remotePrebufferMs : m_remoteDecodedBufferMs / 4;
+    const int targetMs           = std::clamp(configuredTargetMs, RemotePrebufferMinMs, RemotePrebufferMaxMs);
+    capacityMs                   = std::max(0, capacityMs);
     if(capacityMs <= 0) {
         return targetMs;
     }
@@ -3819,6 +3821,12 @@ void AudioEngine::setupSettings()
         if(bufferLengthChanged && m_currentTrack.isRemote()) {
             const uint64_t currentPositionMs = position();
             reconfigureActiveStreamBuffering(currentPositionMs);
+        }
+    });
+    m_settings->subscribe<Settings::Core::Internal::RemotePrebufferMs>(this, [this](int prebufferMs) {
+        m_remotePrebufferMs = std::max(0, prebufferMs);
+        if(m_currentTrack.isRemote()) {
+            maybeUpdateRemoteBuffering("prebuffer-setting-changed");
         }
     });
     m_settings->subscribe<Settings::Core::Internal::DecodeLowWatermarkRatio>(

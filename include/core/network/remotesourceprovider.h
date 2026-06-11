@@ -21,6 +21,7 @@
 
 #include "fycore_export.h"
 
+#include <chrono>
 #include <memory>
 
 class QIODevice;
@@ -33,6 +34,7 @@ struct RemoteStreamSource
 {
     std::unique_ptr<QIODevice> device;
     RemoteStreamDevice* remoteDevice{nullptr};
+    std::chrono::milliseconds openTimeout{std::chrono::milliseconds{0}};
 };
 
 class FYCORE_EXPORT RemoteSourceProvider

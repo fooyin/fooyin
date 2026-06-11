@@ -27,6 +27,7 @@
 #include <QIODevice>
 #include <QObject>
 
+#include <chrono>
 #include <memory>
 #include <utility>
 
@@ -64,6 +65,8 @@ struct AudioSource
     QIODevice* device{nullptr};
     //! Remote stream view for `device`, when available.
     RemoteStreamDevice* remoteStreamDevice{nullptr};
+    //! Timeout used while opening/probing remote streams.
+    std::chrono::milliseconds remoteOpenTimeout{std::chrono::milliseconds{0}};
     //! Optional archive helper when source originates from an archive container.
     ArchiveReader* archiveReader{nullptr};
     //! Optional source modified time in milliseconds since epoch.

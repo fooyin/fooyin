@@ -60,7 +60,6 @@ constexpr AVRational TimeBaseAv           = {.num = 1, .den = AV_TIME_BASE};
 constexpr AVRational TimeBaseMs           = {.num = 1, .den = 1000};
 constexpr auto MaxConsecutiveDecodeErrors = 8;
 constexpr auto ApeTagFooterSize           = 32;
-constexpr auto RemoteOpenProbeTimeout     = std::chrono::seconds{8};
 
 using namespace std::chrono_literals;
 
@@ -938,7 +937,10 @@ FormatContext createAVFormatContext(const AudioSource& source)
 
     std::optional<FFmpegOpenProbeDeadline> deadline;
     if(remoteDevice) {
-        deadline.emplace(std::chrono::steady_clock::now() + RemoteOpenProbeTimeout);
+        const auto timeout = source.remoteOpenTimeout > std::chrono::milliseconds{0}
+                               ? source.remoteOpenTimeout
+                               : std::chrono::milliseconds{Settings::Core::Internal::DefaultRemoteOpenTimeoutMs};
+        deadline.emplace(std::chrono::steady_clock::now() + std::max(1ms, timeout));
         auto* ioContext                        = static_cast<FFmpegIoContext*>(fc.ioContextData.get());
         ioContext->openProbeDeadline           = &*deadline;
         avContext->interrupt_callback.callback = ffmpegInterruptCallback;
