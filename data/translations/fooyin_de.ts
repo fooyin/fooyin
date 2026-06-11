@@ -11404,7 +11404,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="48"/>
         <source>Use uniform station icon frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende einheitliche Rahmen für Stations-Symbole</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="54"/>
@@ -11474,97 +11474,97 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="79"/>
         <source>Exclude stations marked as broken by radio-browser.info from search results.</source>
-        <translation type="unfinished"></translation>
+        <translation>Schließe Stationen aus den Suchergebnissen aus, die von radio-browser.info als defekt markiert wurden.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="81"/>
         <source>Report played stations to radio-browser.info so click counts and station statistics stay up to date.</source>
-        <translation type="unfinished"></translation>
+        <translation>Melde gespielte Stationen an radio-browser.info, damit die Klickzahlen und Stations-Statistiken aktuell sind.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="83"/>
         <source>Draw station icons inside equally sized frames so rows and icon captions align consistently.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige die Stations-Symbole in gleich großen Rahmen, damit Reihen und Symboluntertitel gleichmäßig ausgerichtet sind.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="91"/>
         <source>Size of the border around each station icon in icon display mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Größe des Rahmens um jedes Stations-Symbol im Symbolanzeigemodus.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="98"/>
         <source>Auto</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisch</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="101"/>
         <source>Horizontal spacing between stations in icon display mode. Auto uses the view&apos;s default spacing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontaler Abstand zwischen Stationen im Symbolanzeigemodus. Automatisch verwendet den Standardabstand der Ansicht.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="105"/>
         <source>Vertical spacing between stations in icon display mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikaler Abstand zwischen Stationen im Symbolanzeigemodus.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="107"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">Klickverhalten</translation>
+        <translation>Klickverhalten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="111"/>
         <source>Double-click</source>
-        <translation type="unfinished">Doppelklick</translation>
+        <translation>Doppelklick</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="113"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Mittelklick</translation>
+        <translation>Mittelklick</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="118"/>
         <source>Search</source>
-        <translation type="unfinished">Suche</translation>
+        <translation>Suche</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="126"/>
         <source>Appearance</source>
-        <translation type="unfinished">Aussehen</translation>
+        <translation>Aussehen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="135"/>
         <source>Icon Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbolmodus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="140"/>
         <source>Horizontal</source>
-        <translation type="unfinished">Horizontal</translation>
+        <translation>Horizontal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="142"/>
         <source>Vertical</source>
-        <translation type="unfinished">Vertikal</translation>
+        <translation>Vertikal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="147"/>
         <source>Item border</source>
-        <translation type="unfinished"></translation>
+        <translation>Eintragsrand</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="149"/>
         <source>Icon size</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbolgröße</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="151"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende &lt;b&gt;Strg+Rollen&lt;/b&gt; im Widget, um die Größe der Symbole zu verändern.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="153"/>
         <source>Gap</source>
-        <translation type="unfinished"></translation>
+        <translation>Lücke</translation>
     </message>
 </context>
 <context>
@@ -11572,54 +11572,54 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="70"/>
         <source>countries</source>
-        <translation type="unfinished"></translation>
+        <translation>Länder</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="72"/>
         <source>languages</source>
-        <translation type="unfinished"></translation>
+        <translation>Sprachen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="74"/>
         <source>tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlagwörter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="76"/>
         <source>codecs</source>
-        <translation type="unfinished"></translation>
+        <translation>Codecs</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="79"/>
         <source>categories</source>
-        <translation type="unfinished"></translation>
+        <translation>Kategorien</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="478"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="612"/>
         <source>Station has no stream URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>Station hat keine Stream-URL.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="548"/>
         <source>A radio station import is already in progress.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein Radiostationen-Import ist bereits im Gange.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="746"/>
         <source>Failed to load radio browser %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte Radio-Browser %1 nicht laden: %2</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="811"/>
         <source>Failed to refresh imported station metadata: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte importierte Stations-Metadaten nicht aktualisieren: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="830"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="843"/>
         <source>Station did not resolve to a playable stream.</source>
-        <translation type="unfinished"></translation>
+        <translation>Station löste zu keinem abspielbaren Stream auf.</translation>
     </message>
 </context>
 <context>
@@ -11627,17 +11627,17 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserdialog.cpp" line="59"/>
         <source>Radio Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio-Browser</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserdialog.cpp" line="75"/>
         <source>My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Meine Stationen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserdialog.cpp" line="76"/>
         <source>Search</source>
-        <translation type="unfinished">Suche</translation>
+        <translation>Suche</translation>
     </message>
 </context>
 <context>
@@ -11645,47 +11645,47 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="90"/>
         <source>%1 kbps</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 kbps</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="444"/>
         <source>Station</source>
-        <translation type="unfinished"></translation>
+        <translation>Station</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="446"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Land</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="448"/>
         <source>Language</source>
-        <translation type="unfinished">Sprache</translation>
+        <translation>Sprache</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="450"/>
         <source>Codec</source>
-        <translation type="unfinished">Codec</translation>
+        <translation>Codec</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="452"/>
         <source>Bitrate</source>
-        <translation type="unfinished">Bitrate</translation>
+        <translation>Bitrate</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="454"/>
         <source>Votes</source>
-        <translation type="unfinished"></translation>
+        <translation>Stimmen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="456"/>
         <source>Clicks</source>
-        <translation type="unfinished"></translation>
+        <translation>Klicks</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="458"/>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlagwörter</translation>
     </message>
 </context>
 <context>
@@ -11693,44 +11693,44 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="97"/>
         <source>Radio &amp;Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio-&amp;Browser</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="98"/>
         <source>Open the Radio Browser window</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffnet das Radio-Browser-Fenster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="101"/>
         <source>View</source>
-        <translation type="unfinished">Ansicht</translation>
+        <translation>Ansicht</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="115"/>
         <source>Radio Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio-Browser</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="116"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="127"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="131"/>
         <source>Internet</source>
-        <translation type="unfinished"></translation>
+        <translation>Internet</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="126"/>
         <source>Radio Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio-Suche</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="130"/>
         <source>Radio Guide</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio-Anleitung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="148"/>
         <source>Playback stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabe gestoppt</translation>
     </message>
 </context>
 <context>
@@ -11738,39 +11738,39 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="222"/>
         <source>Top clicked</source>
-        <translation type="unfinished"></translation>
+        <translation>Meistgeklickte</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="227"/>
         <source>Top voted</source>
-        <translation type="unfinished"></translation>
+        <translation>Bestbewertete</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="232"/>
         <source>Recently clicked</source>
-        <translation type="unfinished"></translation>
+        <translation>Kürzlich geklickt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="237"/>
         <source>Recently changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Kürzlich geändert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="567"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="676"/>
         <source>Request was cancelled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Anfrage wurde abgebrochen.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="596"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="638"/>
         <source>Failed to parse station data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte Stationsdaten nicht analysieren.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="705"/>
         <source>Failed to parse category data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte Kategoriedaten nicht analysieren.</translation>
     </message>
 </context>
 <context>
@@ -11778,266 +11778,266 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="182"/>
         <source>Show search bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Suchleiste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="183"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="230"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="831"/>
         <source>Add to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Füge zu „Meine Stationen“ hinzu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="184"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="238"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="837"/>
         <source>Remove from My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Entferne von „Meine Stationen“</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="218"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="725"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="791"/>
         <source>No stations found</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Stationen gefunden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="219"/>
         <source>Loading stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Stationen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="222"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="333"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="800"/>
         <source>Radio Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio-Browser</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="224"/>
         <source>Add the selected stations to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Füge die ausgewählten Stationen zu „Meine Stationen“ hinzu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="232"/>
         <source>Remove the selected stations from My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Entferne die ausgewählten Stationen von „Meine Stationen“</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="276"/>
         <source>Show or hide the Radio Browser filter bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige oder verstecke die Radio-Browser-Filterleiste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="725"/>
         <source>No saved stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine gespeicherten Stationen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="963"/>
         <source>Saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Gespeicherte Suche</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="963"/>
         <source>Save search</source>
-        <translation type="unfinished"></translation>
+        <translation>Suche speichern</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="989"/>
         <source>Saved as &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Gespeichert als „%1“</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="993"/>
         <source>Rename saved search…</source>
-        <translation type="unfinished"></translation>
+        <translation>Benenne gespeicherte Suche um…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="994"/>
         <source>Rename the saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Benenne die gespeicherte Suche um</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="997"/>
         <source>Remove saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Gespeicherte Suche entfernen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="998"/>
         <source>Remove the saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Entfernt die gespeicherte Suche</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1009"/>
         <source>Rename Saved Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Gespeicherte Suche umbenennen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1009"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1039"/>
         <source>Radio Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio-Suche</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1354"/>
         <source>Play</source>
-        <translation type="unfinished">Abspielen</translation>
+        <translation>Abspielen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1355"/>
         <source>Play the selected station</source>
-        <translation type="unfinished"></translation>
+        <translation>Spiele die ausgewählte Station ab</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1386"/>
         <source>Add to playlist</source>
-        <translation type="unfinished">Zur Wiedergabeliste hinzufügen</translation>
+        <translation>Zur Wiedergabeliste hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1390"/>
         <source>Add the selected stations to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Füge die ausgewählten Stationen zu einer anderen Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1432"/>
         <source>Edit station…</source>
-        <translation type="unfinished"></translation>
+        <translation>Station bearbeiten…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1432"/>
         <source>View station details…</source>
-        <translation type="unfinished"></translation>
+        <translation>Stations-Details ansehen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1433"/>
         <source>Edit the selected custom station</source>
-        <translation type="unfinished"></translation>
+        <translation>Bearbeite die ausgewählte benutzerdefinierte Station</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1434"/>
         <source>View details for the selected station</source>
-        <translation type="unfinished"></translation>
+        <translation>Details der ausgewählten Station ansehen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1441"/>
         <source>Add custom station…</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzerdefinierte Station hinzufügen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1442"/>
         <source>Add a custom station to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Füge eine benutzerdefinierte Station zu„Meine Stationen“ hinzu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1451"/>
         <source>Copy stream URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiere Stream-URL</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1452"/>
         <source>Copy the selected station stream URLs to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiere die Stream-URLs der ausgewählten Stationen in die Zwischenablage</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1471"/>
         <source>Open homepage</source>
-        <translation type="unfinished"></translation>
+        <translation>Homepage öffnen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1472"/>
         <source>Open the selected station homepage in a browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffnet die Homepage der ausgewählten Station in einem Browser</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1485"/>
         <source>Open radio-browser.info page</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne Seite auf radio-browser.info</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1486"/>
         <source>Open the selected station on radio-browser.info</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffnet die Seite der ausgewählten Station auf radio-browser.info</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1517"/>
         <source>Import stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Stationen importieren…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1518"/>
         <source>Import saved stations from a playlist file</source>
-        <translation type="unfinished"></translation>
+        <translation>Importiere gespeicherte Stationen aus einer Wiedergabelisten-Datei</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1521"/>
         <source>Export stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportiere Stationen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1522"/>
         <source>Export My Stations to a playlist file</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportiert „Meine Stationen“ in eine Wiedergabelisten-Datei</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1539"/>
         <source>Auto-size sections</source>
-        <translation type="unfinished">Spaltengröße automatisch einstellen</translation>
+        <translation>Spaltengröße automatisch einstellen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1540"/>
         <source>Automatically size columns to fill the available width</source>
-        <translation type="unfinished"></translation>
+        <translation>Passe die Größe der Spalten so an, dass die verfügbare Breite gefüllt wird</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1547"/>
         <source>Reset columns to default</source>
-        <translation type="unfinished">Setze Spalten auf Standard zurück</translation>
+        <translation>Setze Spalten auf Standard zurück</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1565"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1611"/>
         <source>Columns</source>
-        <translation type="unfinished">Spalten</translation>
+        <translation>Spalten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1608"/>
         <source>Display</source>
-        <translation type="unfinished">Anzeige</translation>
+        <translation>Anzeige</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1612"/>
         <source>Icons (right captions)</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbole (Beschriftungen rechts)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1613"/>
         <source>Icons (bottom captions)</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbole (Beschriftungen unten)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1654"/>
         <source>Show station icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Stations-Symbole</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1663"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Überschriften</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1672"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Zeige Bildlaufleiste</translation>
+        <translation>Zeige Bildlaufleiste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1681"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">Abwechselnde Zeilenfarben</translation>
+        <translation>Abwechselnde Zeilenfarben</translation>
     </message>
 </context>
 <context>
@@ -12045,82 +12045,82 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="28"/>
         <source>Blues</source>
-        <translation type="unfinished"></translation>
+        <translation>Blues</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="29"/>
         <source>Classical</source>
-        <translation type="unfinished"></translation>
+        <translation>Klassisch</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="30"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Country</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="31"/>
         <source>Dance</source>
-        <translation type="unfinished"></translation>
+        <translation>Tanz</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="32"/>
         <source>Disco</source>
-        <translation type="unfinished"></translation>
+        <translation>Disco</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="33"/>
         <source>Easy</source>
-        <translation type="unfinished"></translation>
+        <translation>Easy Listening</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="34"/>
         <source>Folk</source>
-        <translation type="unfinished"></translation>
+        <translation>Folk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="35"/>
         <source>Hits</source>
-        <translation type="unfinished"></translation>
+        <translation>Hits</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="36"/>
         <source>Jazz</source>
-        <translation type="unfinished"></translation>
+        <translation>Jazz</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="37"/>
         <source>Oldies</source>
-        <translation type="unfinished"></translation>
+        <translation>Oldies</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="38"/>
         <source>Pop</source>
-        <translation type="unfinished"></translation>
+        <translation>Pop</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="39"/>
         <source>Rap</source>
-        <translation type="unfinished"></translation>
+        <translation>Rap</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="40"/>
         <source>Rock</source>
-        <translation type="unfinished"></translation>
+        <translation>Rock</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="41"/>
         <source>Soul</source>
-        <translation type="unfinished"></translation>
+        <translation>Soul</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="43"/>
         <source>Alternative</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternative</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="44"/>
         <source>Ambient</source>
-        <translation type="unfinished"></translation>
+        <translation>Ambient</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="45"/>
@@ -12140,7 +12140,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="48"/>
         <source>Hip Hop</source>
-        <translation type="unfinished"></translation>
+        <translation>Hip-Hop</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="49"/>
@@ -12160,7 +12160,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="52"/>
         <source>Metal</source>
-        <translation type="unfinished"></translation>
+        <translation>Metal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="53"/>
@@ -12185,47 +12185,47 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="58"/>
         <source>40s</source>
-        <translation type="unfinished">8× {40s?}</translation>
+        <translation>40er</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="59"/>
         <source>50s</source>
-        <translation type="unfinished">8× {50s?}</translation>
+        <translation>50er</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="60"/>
         <source>60s</source>
-        <translation type="unfinished">8× {60s?}</translation>
+        <translation>60er</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="61"/>
         <source>70s</source>
-        <translation type="unfinished">8× {70s?}</translation>
+        <translation>70er</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="62"/>
         <source>80s</source>
-        <translation type="unfinished">8× {80s?}</translation>
+        <translation>80er</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="63"/>
         <source>90s</source>
-        <translation type="unfinished">8× {90s?}</translation>
+        <translation>90er</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="64"/>
         <source>2000s</source>
-        <translation type="unfinished">8× {2000s?}</translation>
+        <translation>2000er</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="65"/>
         <source>2010s</source>
-        <translation type="unfinished">8× {2010s?}</translation>
+        <translation>2010er</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="66"/>
         <source>Contemporary</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitgenössisch</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="68"/>
@@ -12265,7 +12265,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="75"/>
         <source>News</source>
-        <translation type="unfinished"></translation>
+        <translation>Nachrichten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="76"/>
@@ -12280,7 +12280,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="78"/>
         <source>Sport</source>
-        <translation type="unfinished"></translation>
+        <translation>Sport</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="79"/>
