@@ -14,6 +14,10 @@ create_fooyin_plugin_internal(
             radiosearch.h
             radioguidemodel.cpp
             radioguidemodel.h
+            radioguideconfigdialog.cpp
+            radioguideconfigdialog.h
+            radioguideconfigmodel.cpp
+            radioguideconfigmodel.h
             radiobrowserplugin.cpp
             radiobrowserplugin.h
             radiobrowserservice.cpp
@@ -30,8 +34,8 @@ create_fooyin_plugin_internal(
             radioguideview.h
             radiodiscovery.cpp
             radiodiscovery.h
-            radiogenres.cpp
-            radiogenres.h
+            radioguideconfig.cpp
+            radioguideconfig.h
             radioiconprovider.cpp
             radioiconprovider.h
             radiostation.cpp

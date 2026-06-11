@@ -20,6 +20,7 @@
 #include "radiostationstore.h"
 
 #include <utils/database/dbconnectionprovider.h>
+#include <utils/helpers.h>
 #include <utils/id.h>
 
 #include <QDateTime>
@@ -48,6 +49,21 @@ std::vector<RadioBrowserDatabase::StationEntry> stationEntries(const RadioStatio
     }
 
     return entries;
+}
+
+QString uniqueSavedSearchName(const QString& name, const RadioSavedSearchList& searches, const QString& ignoreId = {})
+{
+    RadioSavedSearchList candidates;
+    candidates.reserve(searches.size());
+
+    for(const RadioSavedSearch& search : searches) {
+        if(search.id != ignoreId) {
+            candidates.push_back(search);
+        }
+    }
+
+    return Utils::findUniqueString(name.trimmed(), candidates,
+                                   [](const RadioSavedSearch& search) { return search.name; });
 }
 } // namespace
 
@@ -211,14 +227,18 @@ void RadioStationStore::recordPlayed(const RadioStation& station)
 
 void RadioStationStore::saveSearch(const QString& name, const RadioSearchRequest& request)
 {
-    const QString trimmedName = name.trimmed();
-    if(trimmedName.isEmpty() || isDefaultSearchRequest(request)) {
+    const QString uniqueName = uniqueSavedSearchName(name, m_savedSearches);
+    if(uniqueName.isEmpty() || isDefaultSearchRequest(request)) {
         return;
     }
 
     for(RadioSavedSearch& search : m_savedSearches) {
         if(sameSavedSearchRequest(search.request, request)) {
-            search.name = trimmedName;
+            const QString updatedName = uniqueSavedSearchName(name, m_savedSearches, search.id);
+            if(updatedName.isEmpty()) {
+                return;
+            }
+            search.name = updatedName;
             storeSearches();
             Q_EMIT savedSearchesChanged(m_savedSearches);
             return;
@@ -227,7 +247,7 @@ void RadioStationStore::saveSearch(const QString& name, const RadioSearchRequest
 
     RadioSavedSearch search;
     search.id             = QUuid::createUuid().toString(QUuid::WithoutBraces);
-    search.name           = trimmedName;
+    search.name           = uniqueName;
     search.request        = request;
     search.request.offset = 0;
     search.request.limit  = 0;
@@ -239,14 +259,14 @@ void RadioStationStore::saveSearch(const QString& name, const RadioSearchRequest
 
 void RadioStationStore::renameSearch(const QString& id, const QString& name)
 {
-    const QString trimmedName = name.trimmed();
-    if(id.isEmpty() || trimmedName.isEmpty()) {
+    const QString uniqueName = uniqueSavedSearchName(name, m_savedSearches, id);
+    if(id.isEmpty() || uniqueName.isEmpty()) {
         return;
     }
 
     for(RadioSavedSearch& search : m_savedSearches) {
         if(search.id == id) {
-            search.name = trimmedName;
+            search.name = uniqueName;
             storeSearches();
             Q_EMIT savedSearchesChanged(m_savedSearches);
             return;

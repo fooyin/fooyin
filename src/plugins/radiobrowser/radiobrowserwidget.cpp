@@ -179,7 +179,7 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
           this)}
     , m_toggleFilterBarAction{new QAction(tr("Show search bar"), this)}
     , m_saveStationsAction{new QAction(tr("Add to My Stations"), this)}
-    , m_removeStationsAction{new QAction(tr("Remove"), this)}
+    , m_removeStationsAction{new QAction(tr("Remove from My Stations"), this)}
     , m_saveStationsCmd{nullptr}
     , m_removeStationsCmd{nullptr}
     , m_filterThrottler{new SignalThrottler(this)}
@@ -231,6 +231,7 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
     m_removeStationsAction->setStatusTip(tr("Remove the selected stations from My Stations"));
     m_removeStationsCmd
         = m_actionManager->registerAction(m_removeStationsAction, Constants::Actions::Remove, actionContext);
+    m_removeStationsCmd->setDescription(tr("Remove"));
     m_removeStationsCmd->setAttribute(ProxyAction::UpdateText);
     m_removeStationsCmd->setDefaultShortcut(QKeySequence::Delete);
     QObject::connect(m_removeStationsAction, &QAction::triggered, this, &RadioBrowserWidget::removeSelectedStations);

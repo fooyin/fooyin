@@ -19,7 +19,8 @@
 
 #include "radioguidemodel.h"
 
-#include "radiogenres.h"
+#include "radiobrowsercontroller.h"
+#include "radioguideconfig.h"
 
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
@@ -33,8 +34,9 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::RadioBrowser {
-RadioGuideModel::RadioGuideModel(QObject* parent)
+RadioGuideModel::RadioGuideModel(RadioBrowserController* controller, QObject* parent)
     : TreeModel{parent}
+    , m_controller{controller}
     , m_libraryNode{nullptr}
     , m_savedSearchesNode{nullptr}
     , m_countriesNode{nullptr}
@@ -42,7 +44,7 @@ RadioGuideModel::RadioGuideModel(QObject* parent)
     initialiseDefaults();
 }
 
-QVariant RadioGuideModel::data(const QModelIndex& index, const int role) const
+QVariant RadioGuideModel::data(const QModelIndex& index, int role) const
 {
     if(!index.isValid()) {
         return {};
@@ -74,7 +76,7 @@ QVariant RadioGuideModel::data(const QModelIndex& index, const int role) const
             break;
     }
 
-    if(role == Qt::DisplayRole) {
+    if(role == Qt::DisplayRole || role == Qt::EditRole) {
         if(index.column() == 0) {
             return node->name;
         }
@@ -102,24 +104,57 @@ QVariant RadioGuideModel::data(const QModelIndex& index, const int role) const
     return {};
 }
 
-QVariant RadioGuideModel::headerData(const int /*section*/, const Qt::Orientation /*orientation*/,
-                                     const int /*role*/) const
+QVariant RadioGuideModel::headerData(int /*section*/, Qt::Orientation /*orientation*/, int /*role*/) const
 {
     return {};
 }
 
 Qt::ItemFlags RadioGuideModel::flags(const QModelIndex& index) const
 {
+    auto defaultFlags = TreeModel::flags(index);
+
     if(!index.isValid()) {
-        return Qt::NoItemFlags;
+        return defaultFlags;
     }
 
     const RadioGuideItem* node = itemForIndex(index);
-    Qt::ItemFlags flags        = Qt::ItemIsEnabled;
-    if(node && static_cast<ItemKind>(node->kind) != ItemKind::Section) {
-        flags |= Qt::ItemIsSelectable;
+    if(!node || node->kind == ItemKind::Section) {
+        defaultFlags &= ~Qt::ItemIsSelectable;
     }
-    return flags;
+
+    if(node && node->kind == ItemKind::SavedSearch && index.column() == 0) {
+        defaultFlags |= Qt::ItemIsEditable;
+    }
+
+    return defaultFlags;
+}
+
+bool RadioGuideModel::setData(const QModelIndex& index, const QVariant& value, int role)
+{
+    if(!index.isValid() || index.column() != 0 || role != Qt::EditRole) {
+        return false;
+    }
+
+    auto* node = itemForIndex(index);
+    if(!node || node->kind != ItemKind::SavedSearch) {
+        return false;
+    }
+
+    const QString name = value.toString().trimmed();
+    if(name.isEmpty() || name == node->savedSearch.name) {
+        return false;
+    }
+
+    const QString id       = node->savedSearch.id;
+    node->name             = name;
+    node->savedSearch.name = name;
+    Q_EMIT dataChanged(index, index, {Qt::DisplayRole, Qt::EditRole, SavedSearchNameRole});
+
+    if(!id.isEmpty()) {
+        m_controller->renameSearch(id, name);
+    }
+
+    return true;
 }
 
 void RadioGuideModel::initialiseDefaults()
@@ -143,31 +178,57 @@ void RadioGuideModel::initialiseDefaults()
     addAction(m_libraryNode, tr("My Stations"), Action::MyStations, QString::fromLatin1(Constants::Icons::Bookmarks));
     addAction(m_libraryNode, tr("Latest Search"), Action::LatestSearch, QString::fromLatin1(Constants::Icons::Search));
 
-    auto* genres     = addSection(tr("Genres"));
-    auto* moreGenres = addSection(tr("More Genres"));
-    auto* eras       = addSection(tr("Eras"));
-    auto* talk       = addSection(tr("Talk"));
-
-    for(const RadioGenre& genre : RadioGenres::all()) {
-        switch(genre.section) {
-            case RadioGenreSection::Genre:
-                addTag(genres, genre.name, genre.tag);
-                break;
-            case RadioGenreSection::MoreGenre:
-                addTag(moreGenres, genre.name, genre.tag);
-                break;
-            case RadioGenreSection::Era:
-                addTag(eras, genre.name, genre.tag);
-                break;
-            case RadioGenreSection::Talk:
-                addTag(talk, genre.name, genre.tag);
-                break;
-        }
-    }
+    addTagPresets(RadioGuideConfigStore::defaultTags());
 
     m_countriesNode = addSection(tr("Countries"));
 
     endResetModel();
+}
+
+void RadioGuideModel::setTagPresets(const RadioGuideTagSections& sections, bool showCountries)
+{
+    beginResetModel();
+
+    resetRoot();
+    m_nodes.clear();
+    m_libraryNode       = nullptr;
+    m_savedSearchesNode = nullptr;
+    m_countriesNode     = nullptr;
+
+    auto* selections = addSection(tr("Selections"));
+    addAction(selections, tr("Popular"), Action::Popular, QString::fromLatin1(Constants::Icons::Favorite));
+    addAction(selections, tr("Trending"), Action::Trending, QString::fromLatin1(Constants::Icons::Rss));
+    addAction(selections, tr("Now Listening"), Action::NowListening, QString::fromLatin1(Constants::Icons::Users));
+    addAction(selections, tr("Newest"), Action::Newest, QString::fromLatin1(Constants::Icons::PlaylistPlay));
+    addAction(selections, tr("Random"), Action::Random, QString::fromLatin1(Constants::Icons::Randomize));
+
+    m_libraryNode = addSection(tr("Library"));
+    addAction(m_libraryNode, tr("My Stations"), Action::MyStations, QString::fromLatin1(Constants::Icons::Bookmarks));
+    addAction(m_libraryNode, tr("Latest Search"), Action::LatestSearch, QString::fromLatin1(Constants::Icons::Search));
+
+    addTagPresets(sections);
+
+    if(showCountries) {
+        m_countriesNode = addSection(tr("Countries"));
+    }
+
+    endResetModel();
+}
+
+void RadioGuideModel::addTagPresets(const RadioGuideTagSections& sections)
+{
+    for(const RadioGuideTagSection& section : sections) {
+        if(section.name.isEmpty()) {
+            continue;
+        }
+
+        auto* sectionNode = addSection(section.name);
+        for(const RadioGuideTag& tag : section.tags) {
+            if(!tag.name.isEmpty() && !tag.tag.isEmpty()) {
+                addTag(sectionNode, tag.name, tag.tag);
+            }
+        }
+    }
 }
 
 void RadioGuideModel::refreshIcons()
@@ -175,7 +236,7 @@ void RadioGuideModel::refreshIcons()
     refreshIcons({});
 }
 
-void RadioGuideModel::setCategories(const RadioCategoryType type, const RadioCategoryList& categories)
+void RadioGuideModel::setCategories(RadioCategoryType type, const RadioCategoryList& categories)
 {
     RadioGuideItem* section = sectionNodeForCategoryType(type);
     if(!section) {
@@ -236,7 +297,7 @@ void RadioGuideModel::setSavedSearches(const RadioSavedSearchList& searches)
     endInsertRows();
 }
 
-QModelIndex RadioGuideModel::sectionForCategoryType(const RadioCategoryType type) const
+QModelIndex RadioGuideModel::sectionForCategoryType(RadioCategoryType type) const
 {
     return indexOfItem(sectionNodeForCategoryType(type));
 }
@@ -314,8 +375,7 @@ RadioGuideItem* RadioGuideModel::addSection(RadioGuideItem* parent, const QStrin
     return node;
 }
 
-void RadioGuideModel::addAction(RadioGuideItem* parent, const QString& name, const Action action,
-                                const QString& iconName)
+void RadioGuideModel::addAction(RadioGuideItem* parent, const QString& name, Action action, const QString& iconName)
 {
     auto* node     = createNode(parent);
     node->kind     = ItemKind::Action;
@@ -395,7 +455,7 @@ void RadioGuideModel::removeSavedSearchesSection()
     endRemoveRows();
 }
 
-RadioGuideItem* RadioGuideModel::sectionNodeForCategoryType(const RadioCategoryType type) const
+RadioGuideItem* RadioGuideModel::sectionNodeForCategoryType(RadioCategoryType type) const
 {
     switch(type) {
         case RadioCategoryType::Country:

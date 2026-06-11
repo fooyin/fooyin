@@ -19,7 +19,7 @@
 
 #include "radiosearch.h"
 
-#include "radiogenres.h"
+#include "radioguideconfig.h"
 
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
@@ -399,11 +399,11 @@ void RadioSearch::populateGenreCombo()
         m_genreCombo->addItem(tr("Any genre"), QString{});
     }
 
-    const auto genres = RadioGenres::all();
-    for(const RadioGenre& genre : genres) {
-        m_popupGenreCombo->addItem(genre.name, genre.tag);
+    const auto tags = RadioGuideConfigStore::allTags();
+    for(const RadioGuideTag& tag : tags) {
+        m_popupGenreCombo->addItem(tag.name, tag.tag);
         if(m_genreCombo) {
-            m_genreCombo->addItem(genre.name, genre.tag);
+            m_genreCombo->addItem(tag.name, tag.tag);
         }
     }
 

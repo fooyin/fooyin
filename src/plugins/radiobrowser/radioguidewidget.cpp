@@ -20,6 +20,8 @@
 #include "radioguidewidget.h"
 
 #include "radiobrowsercontroller.h"
+#include "radioguideconfig.h"
+#include "radioguideconfigdialog.h"
 #include "radioguidemodel.h"
 #include "radioguideview.h"
 #include "radiostationdialog.h"
@@ -31,11 +33,9 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QAbstractItemModel>
-#include <QInputDialog>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QLineEdit>
 #include <QMenu>
 #include <QVBoxLayout>
 
@@ -95,6 +95,21 @@ QModelIndex findActionIndex(const QAbstractItemModel* model, const Action action
     return {};
 }
 
+void collapseDefaultSections(QTreeView* view, const QAbstractItemModel* model)
+{
+    for(int row{0}; row < model->rowCount(); ++row) {
+        const QModelIndex index  = model->index(row, 0);
+        const QString sectionKey = sectionExpansionKey(index);
+        if(sectionKey.isEmpty()) {
+            continue;
+        }
+
+        if(sectionKey != RadioGuideWidget::tr("Selections") && sectionKey != RadioGuideWidget::tr("Library")) {
+            view->collapse(index);
+        }
+    }
+}
+
 QString discoverEntryKey(const QModelIndex& index)
 {
     if(!index.isValid()) {
@@ -112,7 +127,7 @@ QString discoverEntryKey(const QModelIndex& index)
         case ItemKind::SavedSearch:
             return u"saved:%1"_s.arg(index.data(RadioGuideModel::SavedSearchIdRole).toString());
         case ItemKind::Section:
-            break;
+            return u"section:%1"_s.arg(index.data(RadioGuideModel::SectionKeyRole).toString());
     }
 
     return {};
@@ -144,11 +159,12 @@ RadioGuideWidget::RadioGuideWidget(RadioBrowserController* controller, SettingsM
     , m_controller{controller}
     , m_settings{settings}
     , m_treeView{new RadioGuideView(this)}
-    , m_model{new RadioGuideModel(this)}
+    , m_model{new RadioGuideModel(controller, this)}
+    , m_config{defaultConfig()}
     , m_savedSearchCount{0}
-    , m_categoryRequestActive{false}
     , m_savedSearchesLoaded{false}
     , m_showScrollbar{true}
+    , m_showCountries{m_config.showCountries}
 {
     setObjectName(RadioGuideWidget::name());
 
@@ -163,7 +179,7 @@ RadioGuideWidget::RadioGuideWidget(RadioBrowserController* controller, SettingsM
     m_treeView->setUniformRowHeights(true);
     m_treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_treeView->setSelectionMode(QAbstractItemView::SingleSelection);
-    m_treeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_treeView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
     m_treeView->setContextMenuPolicy(Qt::CustomContextMenu);
     m_treeView->setAlternatingRowColors(false);
 
@@ -171,21 +187,27 @@ RadioGuideWidget::RadioGuideWidget(RadioBrowserController* controller, SettingsM
     layout->setContentsMargins({});
     layout->addWidget(m_treeView);
 
+    m_model->setTagPresets(m_config.sections, m_config.showCountries);
     initialiseModel();
 
     QObject::connect(m_treeView, &QTreeView::clicked, this, &RadioGuideWidget::activateIndex);
     QObject::connect(m_treeView, &QTreeView::activated, this, &RadioGuideWidget::activateIndex);
     QObject::connect(m_treeView, &QWidget::customContextMenuRequested, this, &RadioGuideWidget::showContextMenu);
-    QObject::connect(m_controller, &RadioBrowserController::categoriesStarted, this,
-                     [this](RadioCategoryType type) { m_treeView->setStatusText(loadingTextForCategory(type)); });
+    QObject::connect(m_controller, &RadioBrowserController::categoriesStarted, this, [this](RadioCategoryType type) {
+        if(m_activeCategoryRequest == type) {
+            m_treeView->setStatusText(loadingTextForCategory(type));
+        }
+    });
     QObject::connect(
         m_controller, &RadioBrowserController::categoriesChanged, this,
         [this](const RadioCategoryType type, const RadioCategoryList& categories) { setCategories(type, categories); });
     QObject::connect(m_controller, &RadioBrowserController::categoriesFailed, this,
-                     [this](RadioCategoryType, const QString& error) {
-                         m_categoryRequestActive = false;
-                         m_treeView->setStatusText(error);
-                         requestNextCategory();
+                     [this](RadioCategoryType type, const QString& error) {
+                         if(m_activeCategoryRequest == type) {
+                             m_activeCategoryRequest.reset();
+                             m_treeView->setStatusText(error);
+                             requestNextCategory();
+                         }
                      });
     QObject::connect(m_controller, &RadioBrowserController::savedSearchesChanged, this,
                      &RadioGuideWidget::setSavedSearches);
@@ -199,7 +221,9 @@ RadioGuideWidget::RadioGuideWidget(RadioBrowserController* controller, SettingsM
     m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, handleThemeChange);
 
     setSavedSearches(m_controller->savedSearches());
-    requestCategories(RadioCategoryType::Country);
+    if(m_showCountries) {
+        requestCategories(RadioCategoryType::Country);
+    }
 }
 
 QString RadioGuideWidget::name() const
@@ -238,15 +262,79 @@ void RadioGuideWidget::loadLayoutData(const QJsonObject& layout)
 
 void RadioGuideWidget::finalise()
 {
+    if(!m_config.startupEntryKey.isEmpty()) {
+        m_pendingRestoreEntryKey = m_config.startupEntryKey;
+        if(!restoreLastEntry() && !m_activeCategoryRequest && m_categoryRequests.empty()) {
+            activateDefaultEntry();
+        }
+        return;
+    }
+
     if(!restoreState()) {
         activateDefaultEntry();
     }
 }
 
+RadioGuideWidget::ConfigData RadioGuideWidget::factoryConfig() const
+{
+    return RadioGuideConfigStore::defaultConfig();
+}
+
+RadioGuideWidget::ConfigData RadioGuideWidget::defaultConfig() const
+{
+    return RadioGuideConfigStore::fromSettings(*m_settings);
+}
+
+const RadioGuideWidget::ConfigData& RadioGuideWidget::currentConfig() const
+{
+    return m_config;
+}
+
+void RadioGuideWidget::saveDefaults(const ConfigData& config) const
+{
+    RadioGuideConfigStore::save(*m_settings, config);
+}
+
+void RadioGuideWidget::clearSavedDefaults() const
+{
+    RadioGuideConfigStore::reset(*m_settings);
+}
+
+void RadioGuideWidget::applyConfig(const ConfigData& config)
+{
+    RadioGuideConfigStore::save(*m_settings, config);
+    reloadGuideConfig(config);
+}
+
+void RadioGuideWidget::openConfigDialog()
+{
+    showConfigDialog(new RadioGuideConfigDialog(this, this));
+}
+
 void RadioGuideWidget::initialiseModel()
 {
     expandSections(m_treeView, m_model);
-    m_treeView->collapse(m_model->sectionForCategoryType(RadioCategoryType::Country));
+    collapseDefaultSections(m_treeView, m_model);
+}
+
+void RadioGuideWidget::reloadGuideConfig(const RadioGuideConfig& config)
+{
+    const QString currentEntry = discoverEntryKey(m_treeView->currentIndex().siblingAtColumn(0));
+
+    m_config        = config;
+    m_showCountries = config.showCountries;
+    m_model->setTagPresets(config.sections, config.showCountries);
+
+    setSavedSearches(m_controller->savedSearches());
+    initialiseModel();
+
+    if(m_showCountries) {
+        requestCategories(RadioCategoryType::Country);
+    }
+
+    if(const QModelIndex index = findGuideEntryIndex(m_model, currentEntry); index.isValid()) {
+        m_treeView->setCurrentIndex(index);
+    }
 }
 
 void RadioGuideWidget::requestCategories(const RadioCategoryType type)
@@ -259,30 +347,35 @@ void RadioGuideWidget::requestCategories(const RadioCategoryType type)
 
 void RadioGuideWidget::requestNextCategory()
 {
-    if(m_categoryRequestActive || m_categoryRequests.empty()) {
-        if(!m_categoryRequestActive && m_categoryRequests.empty() && !m_pendingRestoreEntryKey.isEmpty()) {
+    if(m_activeCategoryRequest || m_categoryRequests.empty()) {
+        if(!m_activeCategoryRequest && m_categoryRequests.empty() && !m_pendingRestoreEntryKey.isEmpty()) {
             m_pendingRestoreEntryKey.clear();
             activateDefaultEntry();
         }
         return;
     }
 
-    m_categoryRequestActive = true;
-    m_controller->fetchCategories(m_categoryRequests.dequeue());
+    m_activeCategoryRequest = m_categoryRequests.dequeue();
+    m_treeView->setStatusText(loadingTextForCategory(*m_activeCategoryRequest));
+    m_controller->fetchCategories(*m_activeCategoryRequest);
 }
 
 void RadioGuideWidget::setCategories(const RadioCategoryType type, const RadioCategoryList& categories)
 {
     if(!m_model->sectionForCategoryType(type).isValid()) {
-        m_categoryRequestActive = false;
-        requestNextCategory();
+        if(m_activeCategoryRequest == type) {
+            m_activeCategoryRequest.reset();
+            requestNextCategory();
+        }
         return;
     }
 
     m_model->setCategories(type, categories);
 
-    m_categoryRequestActive = false;
-    m_treeView->clearStatusText();
+    if(m_activeCategoryRequest == type) {
+        m_activeCategoryRequest.reset();
+        m_treeView->clearStatusText();
+    }
     restoreLastEntry();
     requestNextCategory();
 }
@@ -370,6 +463,13 @@ bool RadioGuideWidget::restoreLastEntry()
 
     m_pendingRestoreEntryKey.clear();
     m_treeView->setCurrentIndex(index);
+
+    if(static_cast<ItemKind>(index.data(RadioGuideModel::ItemKindRole).toInt()) == ItemKind::Section) {
+        m_treeView->expand(index);
+        m_treeView->scrollTo(index);
+        return true;
+    }
+
     activateIndex(index);
     return true;
 }
@@ -471,12 +571,11 @@ void RadioGuideWidget::showContextMenu(const QPoint& pos)
     menu->addSeparator();
 
     if(isSavedSearch) {
-        const QString id   = index.data(RadioGuideModel::SavedSearchIdRole).toString();
-        const QString name = index.data(RadioGuideModel::SavedSearchNameRole).toString();
+        const QString id = index.data(RadioGuideModel::SavedSearchIdRole).toString();
 
-        auto* renameAction = menu->addAction(tr("Rename saved search…"));
+        auto* renameAction = menu->addAction(tr("Rename saved search"));
         renameAction->setStatusTip(tr("Rename the selected saved search"));
-        QObject::connect(renameAction, &QAction::triggered, this, [this, id, name]() { renameSavedSearch(id, name); });
+        QObject::connect(renameAction, &QAction::triggered, this, [this, index]() { m_treeView->edit(index); });
 
         auto* removeAction = menu->addAction(tr("Remove saved search"));
         removeAction->setStatusTip(tr("Remove the selected saved search"));
@@ -516,6 +615,7 @@ void RadioGuideWidget::showContextMenu(const QPoint& pos)
     menu->addSeparator();
 
     addDisplayMenu(menu);
+    addConfigureAction(menu);
 
     menu->popup(m_treeView->viewport()->mapToGlobal(pos));
 }
@@ -562,17 +662,6 @@ void RadioGuideWidget::importSavedStations()
 void RadioGuideWidget::exportSavedStations()
 {
     RadioStationImportExportDialog::exportStations(m_controller, this);
-}
-
-void RadioGuideWidget::renameSavedSearch(const QString& id, const QString& name)
-{
-    bool accepted{false};
-    const QString newName = QInputDialog::getText(this, tr("Rename Saved Search"), tr("Name") + u":"_s,
-                                                  QLineEdit::Normal, name, &accepted)
-                                .trimmed();
-    if(accepted && !newName.isEmpty()) {
-        m_controller->renameSearch(id, newName);
-    }
 }
 
 void RadioGuideWidget::removeSavedSearch(const QString& id)

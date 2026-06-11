@@ -20,6 +20,7 @@
 #pragma once
 
 #include "radiodiscovery.h"
+#include "radioguideconfig.h"
 #include "radiostation.h"
 
 #include <utils/treeitem.h>
@@ -29,6 +30,8 @@
 #include <vector>
 
 namespace Fooyin::RadioBrowser {
+class RadioBrowserController;
+
 enum class ItemKind : uint8_t
 {
     Section = 0,
@@ -78,13 +81,15 @@ public:
         SectionKeyRole,
     };
 
-    explicit RadioGuideModel(QObject* parent = nullptr);
+    explicit RadioGuideModel(RadioBrowserController* controller, QObject* parent = nullptr);
 
     [[nodiscard]] QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 
     void initialiseDefaults();
+    void setTagPresets(const RadioGuideTagSections& sections, bool showCountries);
     void refreshIcons();
     void setCategories(RadioCategoryType type, const RadioCategoryList& categories);
     void setSavedSearches(const RadioSavedSearchList& searches);
@@ -102,12 +107,14 @@ private:
     [[nodiscard]] RadioGuideItem* addSection(RadioGuideItem* parent, const QString& name);
     void addAction(RadioGuideItem* parent, const QString& name, Action action, const QString& iconName = {});
     void addTag(RadioGuideItem* parent, const QString& name, const QString& value);
+    void addTagPresets(const RadioGuideTagSections& sections);
     void addCategory(RadioGuideItem* parent, const RadioCategory& category);
     void addSavedSearch(RadioGuideItem* parent, const RadioSavedSearch& search);
     [[nodiscard]] RadioGuideItem* ensureSavedSearchesSection();
     void removeSavedSearchesSection();
     [[nodiscard]] RadioGuideItem* sectionNodeForCategoryType(RadioCategoryType type) const;
 
+    RadioBrowserController* m_controller;
     std::vector<std::unique_ptr<RadioGuideItem>> m_nodes;
     RadioGuideItem* m_libraryNode;
     RadioGuideItem* m_savedSearchesNode;

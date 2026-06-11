@@ -20,11 +20,14 @@
 #pragma once
 
 #include "radiodiscovery.h"
+#include "radioguideconfig.h"
 #include "radiostation.h"
 
 #include <gui/fywidget.h>
 
 #include <QQueue>
+
+#include <optional>
 
 class QJsonObject;
 class QPoint;
@@ -42,6 +45,8 @@ class RadioGuideWidget : public FyWidget
     Q_OBJECT
 
 public:
+    using ConfigData = RadioGuideConfig;
+
     explicit RadioGuideWidget(RadioBrowserController* controller, SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
@@ -49,9 +54,19 @@ public:
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
     void finalise() override;
+    [[nodiscard]] ConfigData factoryConfig() const;
+    [[nodiscard]] ConfigData defaultConfig() const;
+    [[nodiscard]] const ConfigData& currentConfig() const;
+    void saveDefaults(const ConfigData& config) const;
+    void clearSavedDefaults() const;
+    void applyConfig(const ConfigData& config);
+
+protected:
+    void openConfigDialog() override;
 
 private:
     void initialiseModel();
+    void reloadGuideConfig(const RadioGuideConfig& config);
     void requestCategories(RadioCategoryType type);
     void requestNextCategory();
     void setCategories(RadioCategoryType type, const RadioCategoryList& categories);
@@ -71,7 +86,6 @@ private:
     void addCustomStation();
     void importSavedStations();
     void exportSavedStations();
-    void renameSavedSearch(const QString& id, const QString& name);
     void removeSavedSearch(const QString& id);
 
     RadioBrowserController* m_controller;
@@ -79,12 +93,14 @@ private:
 
     RadioGuideView* m_treeView;
     RadioGuideModel* m_model;
+    ConfigData m_config;
     QQueue<RadioCategoryType> m_categoryRequests;
+    std::optional<RadioCategoryType> m_activeCategoryRequest;
     QString m_pendingRestoreEntryKey;
     size_t m_savedSearchCount;
-    bool m_categoryRequestActive;
     bool m_savedSearchesLoaded;
     bool m_showScrollbar;
+    bool m_showCountries;
 };
 } // namespace RadioBrowser
 } // namespace Fooyin
