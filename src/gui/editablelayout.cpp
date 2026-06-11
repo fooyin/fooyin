@@ -715,10 +715,10 @@ FyLayout EditableLayout::saveCurrentToLayout(const QString& name, bool saveWindo
 
     const auto theme = p->m_settings->value<Settings::Gui::Theme>().value<FyTheme>();
     if(theme.isValid()) {
-        if(saveWindowSize) {
-            layout.saveWindowSize();
-        }
         layout.saveTheme(theme);
+    }
+    if(saveWindowSize) {
+        layout.saveWindowSize();
     }
 
     return layout;
