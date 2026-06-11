@@ -2580,7 +2580,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="272"/>
         <source>Append selected tracks to the current playlist</source>
-        <translation type="unfinished">Lägg till valda spår i slutet av den aktuella spellistan</translation>
+        <translation>Lägg till valda spår i slutet av den aktuella spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="279"/>
@@ -3781,7 +3781,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="231"/>
         <source>Controls when the UI switches tracks during automatic crossfade transitions</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrollerar när UI:n byter spår under automatiska korstoningsövergångar</translation>
     </message>
 </context>
 <context>
@@ -3809,12 +3809,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="58"/>
         <source>Add stream &amp;URL…</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till ström-&amp;URL…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="59"/>
         <source>Add the specified stream URL to the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till den specifierade ström-URL:n i den aktuella spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="67"/>
@@ -4018,12 +4018,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="265"/>
         <source>Copy entire source folder contents</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiera hela källmappsinehållen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="268"/>
         <source>Move entire source folder contents</source>
-        <translation type="unfinished"></translation>
+        <translation>Flytta hela källmappsinnehållen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="271"/>
@@ -4291,7 +4291,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="73"/>
         <source>If this is the active playlist, keep it alive when changing selection</source>
-        <translation type="unfinished">Om det här är den aktiva spellistan, håll den vid liv vid ändring av selektion</translation>
+        <translation>Om det här är den aktiva spellistan, håll den vid liv vid ändring av selektion</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="78"/>
@@ -4743,7 +4743,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="63"/>
         <source>Loop count</source>
-        <translation type="unfinished">Antal loopar</translation>
+        <translation>Antal loopar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="67"/>
@@ -5315,7 +5315,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="87"/>
         <source>Show splitter handles</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa splittrarhandtag</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="85"/>
@@ -5335,7 +5335,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="89"/>
         <source>Override splitter handle size</source>
-        <translation type="unfinished"></translation>
+        <translation>Överskugga splittrar-handtagsstorlek</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="91"/>
@@ -5384,12 +5384,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="627"/>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="628"/>
         <source>Layout</source>
-        <translation type="unfinished">Layout</translation>
+        <translation>Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="628"/>
         <source>Interface</source>
-        <translation type="unfinished">Gränssnitt</translation>
+        <translation>Gränssnitt</translation>
     </message>
 </context>
 <context>
@@ -5407,7 +5407,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="186"/>
         <source>Splitter</source>
-        <translation type="unfinished"></translation>
+        <translation>Splittrare</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="187"/>
@@ -5417,22 +5417,22 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="207"/>
         <source>Left</source>
-        <translation type="unfinished">Vänster</translation>
+        <translation>Vänster</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="209"/>
         <source>Top</source>
-        <translation type="unfinished">Topp</translation>
+        <translation>Topp</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="211"/>
         <source>Right</source>
-        <translation type="unfinished">Höger</translation>
+        <translation>Höger</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="213"/>
         <source>Bottom</source>
-        <translation type="unfinished">Botten</translation>
+        <translation>Botten</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="218"/>
@@ -5442,12 +5442,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="222"/>
         <source>New</source>
-        <translation type="unfinished">Ny</translation>
+        <translation>Ny</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="223"/>
         <source>Rename</source>
-        <translation type="unfinished">Döp om</translation>
+        <translation>Döp om</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="224"/>
@@ -5477,12 +5477,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="360"/>
         <source>Copy</source>
-        <translation type="unfinished">Kopiera</translation>
+        <translation>Kopiera</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="366"/>
         <source>Paste</source>
-        <translation type="unfinished">Klistra in</translation>
+        <translation>Klistra in</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="488"/>
@@ -5492,7 +5492,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="488"/>
         <source>Delete</source>
-        <translation type="unfinished">Radera</translation>
+        <translation>Radera</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="535"/>
@@ -5745,7 +5745,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="454"/>
         <source>Show header</source>
-        <translation type="unfinished">Visa rubrik</translation>
+        <translation>Visa rubrik</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="463"/>
@@ -5795,7 +5795,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="546"/>
         <source>Other</source>
-        <translation type="unfinished">Övrigt</translation>
+        <translation>Övrigt</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="578"/>
@@ -6158,7 +6158,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/layouttreemodel.cpp" line="484"/>
         <source>Name</source>
-        <translation type="unfinished">Namn</translation>
+        <translation>Namn</translation>
     </message>
 </context>
 <context>
@@ -7183,7 +7183,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="53"/>
         <source>Automatic</source>
-        <translation type="unfinished">Automatisk</translation>
+        <translation>Automatisk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="54"/>
@@ -7339,7 +7339,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="151"/>
         <source>Synced only</source>
-        <translation type="unfinished">Endast synkade</translation>
+        <translation>Endast synkade</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="152"/>
@@ -8280,7 +8280,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="330"/>
         <source>Now Playing</source>
-        <translation type="unfinished">Nu spelar</translation>
+        <translation>Nu spelar</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="330"/>
@@ -8427,7 +8427,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="321"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="328"/>
         <source>Automatic</source>
-        <translation type="unfinished">Automatisk</translation>
+        <translation>Automatisk</translation>
     </message>
 </context>
 <context>
@@ -8494,7 +8494,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="122"/>
         <source>Automatic</source>
-        <translation type="unfinished">Automatisk</translation>
+        <translation>Automatisk</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="123"/>
@@ -8534,12 +8534,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="145"/>
         <source>Low watermark</source>
-        <translation type="unfinished">Lågt vattenmärke</translation>
+        <translation>Lågt vattenmärke</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="148"/>
         <source>High watermark</source>
-        <translation type="unfinished">Högt vattenmärke</translation>
+        <translation>Högt vattenmärke</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="176"/>
@@ -8757,7 +8757,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="168"/>
         <source>Set playback order to default</source>
-        <translation type="unfinished">Sätt uppspelningsordning till default</translation>
+        <translation>Sätt uppspelningsordning till default</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="174"/>
@@ -9011,7 +9011,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="81"/>
         <source>Player Controls</source>
-        <translation type="unfinished">Spelarkontroller</translation>
+        <translation>Spelarkontroller</translation>
     </message>
 </context>
 <context>
@@ -11254,12 +11254,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="59"/>
         <source>Use sample peak for calculating peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd sampel-peak för att kalkylera peakar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="60"/>
         <source>Use true peak for calculating peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd true peak för att kalkylera peakar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="63"/>
@@ -11381,7 +11381,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="39"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished">Starta uppspelning omedelbart</translation>
+        <translation>Starta uppspelning omedelbart</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="40"/>
@@ -11396,7 +11396,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="42"/>
         <source>Override row height</source>
-        <translation type="unfinished">Överskugga radhöjd</translation>
+        <translation>Överskugga radhöjd</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="48"/>
@@ -11413,49 +11413,49 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="55"/>
         <source>Play</source>
-        <translation type="unfinished">Spela</translation>
+        <translation>Spela</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="56"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="67"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Lägg till i aktuell spellista</translation>
+        <translation>Lägg till i aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="57"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="68"/>
         <source>Add to current playlist and play if stopped</source>
-        <translation type="unfinished">Lägg till i aktuell spellista och spela om stoppad</translation>
+        <translation>Lägg till i aktuell spellista och spela om stoppad</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="59"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="70"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Lägg till i aktiv spellista</translation>
+        <translation>Lägg till i aktiv spellista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="60"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="71"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished">Ersätt aktuell spellista</translation>
+        <translation>Ersätt aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="61"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="72"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">Skapa ny spellista</translation>
+        <translation>Skapa ny spellista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="62"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="73"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Lägg till i uppspelningskö</translation>
+        <translation>Lägg till i uppspelningskö</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="63"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="74"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished">Lägg till längst fram i uppspelningskö</translation>
+        <translation>Lägg till längst fram i uppspelningskö</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="64"/>
@@ -11466,7 +11466,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="78"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation type="unfinished">Börja uppspelning omedelbart för ”Ersätt aktuell spellista” och ”Skapa ny spellista”.</translation>
+        <translation>Börja uppspelning omedelbart för ”Ersätt aktuell spellista” och ”Skapa ny spellista”.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="79"/>
@@ -11491,7 +11491,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="98"/>
         <source>Auto</source>
-        <translation type="unfinished">Auto</translation>
+        <translation>Auto</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="101"/>
@@ -11506,17 +11506,17 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="107"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">Klickbeteende</translation>
+        <translation>Klickbeteende</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="111"/>
         <source>Double-click</source>
-        <translation type="unfinished">Dubbelklick</translation>
+        <translation>Dubbelklick</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="113"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Mellanklick</translation>
+        <translation>Mellanklick</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="118"/>
@@ -11526,7 +11526,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="126"/>
         <source>Appearance</source>
-        <translation type="unfinished">Utseende</translation>
+        <translation>Utseende</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="135"/>
@@ -11536,12 +11536,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="140"/>
         <source>Horizontal</source>
-        <translation type="unfinished">Horisontell</translation>
+        <translation>Horisontell</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="142"/>
         <source>Vertical</source>
-        <translation type="unfinished">Vertikal</translation>
+        <translation>Vertikal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="147"/>
@@ -11556,7 +11556,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="151"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
-        <translation type="unfinished">Använd &lt;b&gt;Ctrl+Skroll&lt;/b&gt; i widgeten för att ändra ikonernas storlek.</translation>
+        <translation>Använd &lt;b&gt;Ctrl+Skroll&lt;/b&gt; i widgeten för att ändra ikonernas storlek.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="153"/>
@@ -11657,17 +11657,17 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="448"/>
         <source>Language</source>
-        <translation type="unfinished">Språk</translation>
+        <translation>Språk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="450"/>
         <source>Codec</source>
-        <translation type="unfinished">Kodek</translation>
+        <translation>Kodek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="452"/>
         <source>Bitrate</source>
-        <translation type="unfinished">Bittakt</translation>
+        <translation>Bittakt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="454"/>
@@ -11762,12 +11762,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="596"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="638"/>
         <source>Failed to parse station data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Misslyckades att tolka stationsdata.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="705"/>
         <source>Failed to parse category data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Misslyckades att tolka kategoridata.</translation>
     </message>
 </context>
 <context>
@@ -11823,7 +11823,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="276"/>
         <source>Show or hide the Radio Browser filter bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa eller dölj radiobläddrar-filterrutan</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="725"/>
@@ -11873,7 +11873,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1009"/>
         <source>Name</source>
-        <translation type="unfinished">Namn</translation>
+        <translation>Namn</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1039"/>
@@ -11883,7 +11883,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1354"/>
         <source>Play</source>
-        <translation type="unfinished">Spela</translation>
+        <translation>Spela</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1355"/>
@@ -11993,13 +11993,13 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1547"/>
         <source>Reset columns to default</source>
-        <translation type="unfinished">Återställ kolumner till default</translation>
+        <translation>Återställ kolumner till default</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1565"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1611"/>
         <source>Columns</source>
-        <translation type="unfinished">Kolumner</translation>
+        <translation>Kolumner</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1608"/>
@@ -12024,12 +12024,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1663"/>
         <source>Show header</source>
-        <translation type="unfinished">Visa rubrik</translation>
+        <translation>Visa rubrik</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1672"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Visa skrollningslist</translation>
+        <translation>Visa skrollningslist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1681"/>
@@ -12182,42 +12182,42 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="58"/>
         <source>40s</source>
-        <translation type="unfinished">8x {40s?}</translation>
+        <translation>40-tal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="59"/>
         <source>50s</source>
-        <translation type="unfinished">8x {50s?}</translation>
+        <translation>50-tal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="60"/>
         <source>60s</source>
-        <translation type="unfinished">8x {60s?}</translation>
+        <translation>60-tal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="61"/>
         <source>70s</source>
-        <translation type="unfinished">8x {70s?}</translation>
+        <translation>70-tal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="62"/>
         <source>80s</source>
-        <translation type="unfinished">8x {80s?}</translation>
+        <translation>80-tal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="63"/>
         <source>90s</source>
-        <translation type="unfinished">8x {90s?}</translation>
+        <translation>90-tal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="64"/>
         <source>2000s</source>
-        <translation type="unfinished">8x {2000s?}</translation>
+        <translation>2000-tal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="65"/>
         <source>2010s</source>
-        <translation type="unfinished">8x {2010s?}</translation>
+        <translation>2010-tal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="66"/>
@@ -12315,12 +12315,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="140"/>
         <source>Random</source>
-        <translation type="unfinished">Slumpmässig</translation>
+        <translation>Slumpmässig</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="142"/>
         <source>Library</source>
-        <translation type="unfinished">Bibliotek</translation>
+        <translation>Bibliotek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="143"/>
@@ -12335,7 +12335,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="146"/>
         <source>Genres</source>
-        <translation type="unfinished">Genrer</translation>
+        <translation>Genrer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="147"/>
@@ -12473,7 +12473,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="544"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Visa skrollningslist</translation>
+        <translation>Visa skrollningslist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="587"/>
@@ -12483,7 +12483,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="587"/>
         <source>Name</source>
-        <translation type="unfinished">Namn</translation>
+        <translation>Namn</translation>
     </message>
 </context>
 <context>
@@ -12522,12 +12522,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="121"/>
         <source>Min</source>
-        <translation type="unfinished">Min.</translation>
+        <translation>Min.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="126"/>
         <source>Max</source>
-        <translation type="unfinished">Max.</translation>
+        <translation>Max.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="139"/>
@@ -12549,23 +12549,23 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="151"/>
         <source>Genre</source>
-        <translation type="unfinished">Genre</translation>
+        <translation>Genre</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="152"/>
         <source>Codec</source>
-        <translation type="unfinished">Kodek</translation>
+        <translation>Kodek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="153"/>
         <source>Bitrate</source>
-        <translation type="unfinished">Bittakt</translation>
+        <translation>Bittakt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="155"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="571"/>
         <source>Filters</source>
-        <translation type="unfinished">Filter</translation>
+        <translation>Filter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="157"/>
@@ -12610,7 +12610,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="755"/>
         <source>Show label</source>
-        <translation type="unfinished">Visa etikett</translation>
+        <translation>Visa etikett</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="876"/>
@@ -12657,7 +12657,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="172"/>
         <source>Unknown</source>
-        <translation type="unfinished">Okänd</translation>
+        <translation>Okänd</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="183"/>
@@ -12891,12 +12891,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="70"/>
         <source>Apply gain and prevent clipping according to peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Applicera förstärkning och förhindra klippning enligt peak</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="71"/>
         <source>Only prevent clipping according to peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Förhindra endast klippning enligt peak</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="72"/>
@@ -13119,7 +13119,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="332"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Visa skrollningslist</translation>
+        <translation>Visa skrollningslist</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="341"/>
@@ -13456,7 +13456,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="127"/>
         <source>Fields</source>
-        <translation type="unfinished">Fält</translation>
+        <translation>Fält</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="82"/>
@@ -13963,7 +13963,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="338"/>
         <source>This will reset all settings to default.</source>
-        <translation type="unfinished">Detta kommer återställa alla inställningar till default.</translation>
+        <translation>Detta kommer återställa alla inställningar till default.</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="387"/>
@@ -14146,7 +14146,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="159"/>
         <source>Sort Script</source>
-        <translation type="unfinished">Sortera skript</translation>
+        <translation type="unfinished">Sorteringsskript</translation>
     </message>
 </context>
 <context>
@@ -14335,7 +14335,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="169"/>
         <source>Peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Peakar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="176"/>
@@ -14541,17 +14541,17 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="280"/>
         <source>Show peak markers above the current bar levels</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa peak-markerare ovanför de aktuella stolpnivåerna</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="281"/>
         <source>How long each peak marker is held before it starts falling</source>
-        <translation type="unfinished"></translation>
+        <translation>Hur länge varje peak-markerare hålls innan den börjar falla</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="282"/>
         <source>How quickly peak markers fall after the hold time</source>
-        <translation type="unfinished"></translation>
+        <translation>Hur snabbt peak-markerare faller efter hållningstiden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="283"/>
@@ -14581,7 +14581,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="288"/>
         <source>Smooth low-frequency bands when several bands map to the same FFT bin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Utjämna lågfrekvensband när flera band mappar till samma FFT-bin</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="289"/>
@@ -14601,7 +14601,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="292"/>
         <source>Choose whether to draw separate bars or a continuous curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj om det ska ritas separata stolpar eller en kontinuerlig kurva</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="293"/>
@@ -14616,7 +14616,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="295"/>
         <source>Colour used for peak markers</source>
-        <translation type="unfinished"></translation>
+        <translation>Färg använt för peak-markerare</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="296"/>
@@ -14760,7 +14760,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="426"/>
         <source>Peaks colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Peak-färg</translation>
     </message>
 </context>
 <context>
@@ -14821,7 +14821,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="699"/>
         <source>Show peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa peakar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="708"/>
@@ -14904,7 +14904,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/splitters/splitterwidget.cpp" line="419"/>
         <source>Splitter</source>
-        <translation type="unfinished"></translation>
+        <translation>Splittrare</translation>
     </message>
 </context>
 <context>
@@ -15920,7 +15920,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="50"/>
         <source>Peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Peakar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="76"/>
@@ -15975,7 +15975,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="133"/>
         <source>Peak colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Peak-färg</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="135"/>
@@ -15985,7 +15985,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="159"/>
         <source>Colours</source>
-        <translation type="unfinished">Färger</translation>
+        <translation>Färger</translation>
     </message>
 </context>
 <context>
@@ -16002,7 +16002,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="795"/>
         <source>Peak Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>Peak-mätare</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="795"/>
@@ -16012,7 +16012,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1275"/>
         <source>Show peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa peakar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1284"/>
@@ -16199,7 +16199,7 @@ Supersampling är tänkt för 1&#xa0;px-stolpar med 0&#xa0;px-mellanrum; andra s
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="138"/>
         <source>Scale the displayed waveform so the loudest peak reaches full height</source>
-        <translation type="unfinished"></translation>
+        <translation>Skala den visade vågformen så att den högljuddaste peaken når full höjd</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="139"/>
@@ -16224,12 +16224,12 @@ Supersampling är tänkt för 1&#xa0;px-stolpar med 0&#xa0;px-mellanrum; andra s
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="155"/>
         <source>How peaks are combined when waveform data is scaled to the current width</source>
-        <translation type="unfinished"></translation>
+        <translation>Hur peakar är kombinerade när vågformsdata är skalad till den aktuella bredden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="159"/>
         <source>Peak display</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Peak-display</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="173"/>
@@ -16414,7 +16414,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="591"/>
         <source>Peak display</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Peak-display</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="594"/>
@@ -17323,12 +17323,12 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
     <message>
         <location filename="../../src/core/network/networkstreamdevice.cpp" line="380"/>
         <source>Failed to queue network request.</source>
-        <translation type="unfinished"></translation>
+        <translation>Misslyckades att köa nätverksförfrågan.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationm3u.cpp" line="78"/>
         <source>Unable to open file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan inte öppna fil.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationm3u.cpp" line="113"/>
@@ -17338,12 +17338,12 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationm3u.cpp" line="125"/>
         <source>Unable to create destination folder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan inte skapa destinationsmapp.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationm3u.cpp" line="133"/>
         <source>Unable to open file for writing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan inte öppna fil för skrivning.</translation>
     </message>
 </context>
 <context>
@@ -17359,27 +17359,27 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="62"/>
         <source>Play</source>
-        <translation type="unfinished">Spela</translation>
+        <translation>Spela</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="67"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Lägg till i aktuell spellista</translation>
+        <translation>Lägg till i aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="71"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Lägg till i aktiv spellista</translation>
+        <translation>Lägg till i aktiv spellista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="75"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished">Ersätt aktuell spellista</translation>
+        <translation>Ersätt aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="79"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">Skapa ny spellista</translation>
+        <translation>Skapa ny spellista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="83"/>
@@ -17389,12 +17389,12 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="88"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Lägg till i uppspelningskö</translation>
+        <translation>Lägg till i uppspelningskö</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="92"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Köa till nästa spelning</translation>
+        <translation>Köa till nästa spelning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="96"/>
@@ -17444,7 +17444,7 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="130"/>
         <source>Configure</source>
-        <translation type="unfinished">Konfigurera</translation>
+        <translation>Konfigurera</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="83"/>
