@@ -128,6 +128,7 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
 
     const QString trackKey = setup(track, samplesPerChannel);
     if(trackKey.isEmpty()) {
+        Q_EMIT waveformGenerated(track, {});
         return;
     }
 
@@ -212,8 +213,7 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
             bytesToReadU64 = std::min<uint64_t>(bufferSize, endBytes - processedBytes);
         }
 
-        const size_t bytesToRead = static_cast<size_t>(
-            std::min<uint64_t>(bytesToReadU64, static_cast<uint64_t>(std::numeric_limits<size_t>::max())));
+        const size_t bytesToRead = std::min<uint64_t>(bytesToReadU64, std::numeric_limits<size_t>::max());
 
         auto buffer = m_loadedDecoder.decoder->readBuffer(bytesToRead);
         if(!buffer.isValid()) {
@@ -308,13 +308,13 @@ void WaveformGenerator::processBuffer(const AudioBuffer& buffer)
         return;
     }
 
-    const auto sampleCount = static_cast<size_t>(static_cast<uint64_t>(frameCount) * static_cast<uint64_t>(channels));
+    const auto sampleCount = static_cast<uint64_t>(frameCount) * static_cast<uint64_t>(channels);
     std::vector<float> samples(sampleCount);
     std::memcpy(samples.data(), buffer.data(), sampleCount * sizeof(float));
 
-    std::vector<float> channelMax(static_cast<size_t>(channels), -1.0F);
-    std::vector<float> channelMin(static_cast<size_t>(channels), 1.0F);
-    std::vector<float> channelRms(static_cast<size_t>(channels), 0.0F);
+    std::vector channelMax(static_cast<size_t>(channels), -1.0F);
+    std::vector channelMin(static_cast<size_t>(channels), 1.0F);
+    std::vector channelRms(static_cast<size_t>(channels), 0.0F);
 
     static constexpr int CancellationCheckInterval = 2048;
 

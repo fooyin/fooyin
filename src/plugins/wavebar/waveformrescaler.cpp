@@ -291,6 +291,7 @@ void WaveformRescaler::rescale(int width)
     m_width = width;
 
     if(m_data.empty()) {
+        Q_EMIT waveformRescaled(m_data);
         return;
     }
 
