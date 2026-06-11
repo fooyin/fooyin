@@ -47,7 +47,7 @@ public:
     ~EditableLayout() override;
 
     void initialise();
-    FyLayout saveCurrentToLayout(const QString& name);
+    FyLayout saveCurrentToLayout(const QString& name, bool saveWindowSize);
 
     [[nodiscard]] FyWidget* root() const;
 

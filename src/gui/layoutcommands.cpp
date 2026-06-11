@@ -60,20 +60,20 @@ bool LayoutChangeCommand::checkContainer()
 SwitchLayoutCommand::SwitchLayoutCommand(EditableLayoutPrivate* editableLayout, FyLayout layout)
     : LayoutChangeCommand{editableLayout->m_self}
     , m_editableLayout{editableLayout}
-    , m_oldLayout{m_layout->saveCurrentToLayout(editableLayout->m_layoutProvider->currentLayout().name())}
+    , m_oldLayout{m_layout->saveCurrentToLayout(editableLayout->m_layoutProvider->currentLayout().name(), true)}
     , m_newLayout{std::move(layout)}
 { }
 
 void SwitchLayoutCommand::undo()
 {
-    m_newLayout = m_layout->saveCurrentToLayout(m_newLayout.name());
+    m_newLayout = m_layout->saveCurrentToLayout(m_newLayout.name(), true);
     m_editableLayout->m_layoutProvider->saveLayout(m_newLayout);
     m_editableLayout->changeLayout(m_oldLayout);
 }
 
 void SwitchLayoutCommand::redo()
 {
-    m_oldLayout = m_layout->saveCurrentToLayout(m_oldLayout.name());
+    m_oldLayout = m_layout->saveCurrentToLayout(m_oldLayout.name(), true);
     m_editableLayout->m_layoutProvider->saveLayout(m_oldLayout);
     m_editableLayout->changeLayout(m_newLayout);
 }

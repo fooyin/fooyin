@@ -106,14 +106,10 @@ QSize ExportLayoutDialog::sizeHint() const
 
 void ExportLayoutDialog::accept()
 {
-    auto layout = m_editableLayout->saveCurrentToLayout(m_nameEdit->text());
+    auto layout = m_editableLayout->saveCurrentToLayout(m_nameEdit->text(), m_saveWindowSize->isChecked());
     if(!layout.isValid()) {
         m_errorLabel->setText(tr("Failed to save the current layout"));
         return;
-    }
-
-    if(m_saveWindowSize->isChecked()) {
-        layout.saveWindowSize();
     }
 
     const auto currentTheme = m_settings->value<Settings::Gui::Theme>().value<FyTheme>();
