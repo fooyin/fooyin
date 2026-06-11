@@ -195,9 +195,9 @@
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="566"/>
         <source>%Ln active filter(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln active filter</numerusform>
+            <numerusform>%Ln active filters</numerusform>
         </translation>
     </message>
 </context>
@@ -206,25 +206,25 @@
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="77"/>
         <source>Exported %n radio station(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Exported %n radio station.</numerusform>
+            <numerusform>Exported %n radio stations.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="150"/>
         <source>Imported %Ln radio station(s), skipped %Ln duplicate(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Imported %Ln radio station, skipped %Ln duplicate.</numerusform>
+            <numerusform>Imported %Ln radio stations, skipped %Ln duplicates.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="154"/>
         <source>Imported %Ln radio station(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Imported %Ln radio station.</numerusform>
+            <numerusform>Imported %Ln radio stations.</numerusform>
         </translation>
     </message>
 </context>
