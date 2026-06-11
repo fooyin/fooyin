@@ -170,7 +170,7 @@ void FileOpsWorker::deleteFiles()
 
         const bool deleteEmptyFolders = m_settings->fileValue(Settings::DeleteEmptyFolders, false).toBool();
         if(deleteEmptyFolders) {
-            removeEmptyFoldersUpToLibraryRoot(filepath);
+            removeEmptyFoldersUpToLibraryRoot(filepath, track.libraryId());
         }
 
         if(m_trackPaths.contains(filepath)) {
@@ -714,7 +714,7 @@ bool FileOpsWorker::removeArchive(const FileOpsItem& item)
 
     const bool deleteEmptyFolders = m_settings->fileValue(Settings::DeleteEmptyFolders, false).toBool();
     if(deleteEmptyFolders) {
-        removeEmptyFoldersUpToLibraryRoot(item.archivePath);
+        removeEmptyFoldersUpToLibraryRoot(item.archivePath, archiveLibraryId(item.archivePath));
     }
 
     updateExtractedArchiveTracks(item.archivePath);
@@ -842,14 +842,12 @@ void FileOpsWorker::addEmptyDirs(const QDir& dir)
     }
 }
 
-void FileOpsWorker::removeEmptyFoldersUpToLibraryRoot(const QString& filePath)
+void FileOpsWorker::removeEmptyFoldersUpToLibraryRoot(const QString& filePath, int libraryId)
 {
-    // Get library info for the file's directory
     const QFileInfo fileInfo{filePath};
-    const QString fileDir  = fileInfo.absolutePath();
-    const auto libraryInfo = m_library->libraryForPath(fileDir);
+    const QString libraryRoot = libraryRootForDeletedPath(filePath, libraryId);
 
-    if(!libraryInfo.has_value()) {
+    if(libraryRoot.isEmpty()) {
         // Not in a library, only delete the immediate parent if empty
         QDir folder = fileInfo.absoluteDir();
         if(folder.exists() && folder.isEmpty()) {
@@ -858,15 +856,11 @@ void FileOpsWorker::removeEmptyFoldersUpToLibraryRoot(const QString& filePath)
         return;
     }
 
-    // Get the library root path and normalize it
-    const QString libraryRoot = QDir::cleanPath(QFileInfo{libraryInfo->path}.absoluteFilePath());
-
     // Start from the file's parent directory and traverse upwards
     QDir currentDir = fileInfo.absoluteDir();
 
-    while(currentDir.absolutePath() != libraryRoot && currentDir.exists()) {
+    while(!Utils::File::isSamePath(currentDir.absolutePath(), libraryRoot) && currentDir.exists()) {
         if(currentDir.isEmpty()) {
-            const QString currentPath = currentDir.absolutePath();
             if(!currentDir.removeRecursively()) {
                 break;
             }
@@ -879,5 +873,36 @@ void FileOpsWorker::removeEmptyFoldersUpToLibraryRoot(const QString& filePath)
             break;
         }
     }
+}
+
+QString FileOpsWorker::libraryRootForDeletedPath(const QString& filePath, int libraryId) const
+{
+    const QString fileDir = QFileInfo{filePath}.absolutePath();
+
+    if(libraryId >= 0) {
+        if(const auto libraryInfo = m_library->libraryInfo(libraryId)) {
+            const QString libraryRoot = QDir::cleanPath(QFileInfo{libraryInfo->path}.absoluteFilePath());
+            if(Utils::File::isSamePath(fileDir, libraryRoot) || Utils::File::isSubdir(fileDir, libraryRoot)) {
+                return libraryRoot;
+            }
+        }
+    }
+
+    if(const auto libraryInfo = m_library->libraryForPath(fileDir)) {
+        return QDir::cleanPath(QFileInfo{libraryInfo->path}.absoluteFilePath());
+    }
+
+    return {};
+}
+
+int FileOpsWorker::archiveLibraryId(const QString& archivePath) const
+{
+    for(const Track& track : m_trackPaths | std::views::values) {
+        if(track.isInArchive() && Utils::File::isSamePath(track.archivePath(), archivePath)) {
+            return track.libraryId();
+        }
+    }
+
+    return -1;
 }
 } // namespace Fooyin::FileOps

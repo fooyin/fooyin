@@ -435,11 +435,15 @@ void FileOpsDialogPrivate::toggleRun()
     else {
         const FileOpPreset preset = currentPreset();
         if(preset.removeSourceArchive) {
-            const auto result = QMessageBox::question(
-                m_self, tr("Delete source archive after extraction?"),
-                tr("Source archive files will be moved to the trash after every file from each archive has "
-                   "been extracted. Continue?"),
-                QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+            const bool immediateDelete = m_settings->fileValue(Settings::ImmediateDelete, false).toBool();
+            const QString message
+                = immediateDelete
+                    ? tr("Source archive files will be permanently deleted after every file from each archive has "
+                         "been extracted. Continue?")
+                    : tr("Source archive files will be moved to the trash after every file from each archive has "
+                         "been extracted. Continue?");
+            const auto result = QMessageBox::question(m_self, tr("Delete source archive after extraction?"), message,
+                                                      QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
             if(result != QMessageBox::Yes) {
                 return;
             }
