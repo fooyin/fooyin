@@ -19,6 +19,8 @@
 
 #include "fileopsworker.h"
 
+#include "fileopssettings.h"
+
 #include <core/engine/audioinput.h>
 #include <core/engine/audioloader.h>
 #include <core/internalcoresettings.h>
@@ -114,7 +116,7 @@ FileOpsWorker::FileOpsWorker(MusicLibrary* library, std::shared_ptr<AudioLoader>
     , m_audioLoader{std::move(audioLoader)}
     , m_settings{settings}
     , m_tracks{std::move(tracks)}
-    , m_isMonitoring{settings->value<Settings::Core::Internal::MonitorLibraries>()}
+    , m_isMonitoring{settings->value<Fooyin::Settings::Core::Internal::MonitorLibraries>()}
 { }
 
 void FileOpsWorker::simulate(const FileOpPreset& preset)
@@ -136,7 +138,7 @@ void FileOpsWorker::deleteFiles()
     }
 
     if(m_isMonitoring) {
-        m_settings->set<Settings::Core::Internal::MonitorLibraries>(false);
+        m_settings->set<Fooyin::Settings::Core::Internal::MonitorLibraries>(false);
     }
 
     const auto appendDeletedTrack = [this](const Track& deletedTrack) {
@@ -156,12 +158,20 @@ void FileOpsWorker::deleteFiles()
         }
         m_tracksProcessed.emplace(filepath);
 
-        if(!QFile::moveToTrash(filepath)) {
+        const bool immediateDelete = m_settings->fileValue(Settings::ImmediateDelete, false).toBool();
+        const bool deleted         = immediateDelete ? QFile::remove(filepath) : QFile::moveToTrash(filepath);
+
+        if(!deleted) {
             qCWarning(FILEOPS) << "Failed to delete file" << filepath;
             continue;
         }
 
         appendDeletedTrack(track);
+
+        const bool deleteEmptyFolders = m_settings->fileValue(Settings::DeleteEmptyFolders, false).toBool();
+        if(deleteEmptyFolders) {
+            removeEmptyFoldersUpToLibraryRoot(filepath, track.libraryId());
+        }
 
         if(m_trackPaths.contains(filepath)) {
             auto range = m_trackPaths.equal_range(filepath);
@@ -178,7 +188,7 @@ void FileOpsWorker::deleteFiles()
     setState(Idle);
 
     if(m_isMonitoring) {
-        m_settings->set<Settings::Core::Internal::MonitorLibraries>(true);
+        m_settings->set<Fooyin::Settings::Core::Internal::MonitorLibraries>(true);
     }
 
     Q_EMIT deleteFinished(m_tracksToDelete);
@@ -244,7 +254,7 @@ void FileOpsWorker::run()
     setState(Running);
 
     if(m_isMonitoring) {
-        m_settings->set<Settings::Core::Internal::MonitorLibraries>(false);
+        m_settings->set<Fooyin::Settings::Core::Internal::MonitorLibraries>(false);
     }
 
     while(!m_operations.empty()) {
@@ -313,7 +323,7 @@ void FileOpsWorker::run()
     setState(Idle);
 
     if(m_isMonitoring) {
-        m_settings->set<Settings::Core::Internal::MonitorLibraries>(true);
+        m_settings->set<Fooyin::Settings::Core::Internal::MonitorLibraries>(true);
     }
 
     Q_EMIT finished();
@@ -694,9 +704,17 @@ bool FileOpsWorker::removeArchive(const FileOpsItem& item)
         return false;
     }
 
-    if(!QFile::moveToTrash(item.archivePath)) {
+    const bool immediateDelete = m_settings->fileValue(Settings::ImmediateDelete, false).toBool();
+    const bool deleted = immediateDelete ? QFile::remove(item.archivePath) : QFile::moveToTrash(item.archivePath);
+
+    if(!deleted) {
         qCWarning(FILEOPS) << "Failed to delete source archive" << item.archivePath;
         return false;
+    }
+
+    const bool deleteEmptyFolders = m_settings->fileValue(Settings::DeleteEmptyFolders, false).toBool();
+    if(deleteEmptyFolders) {
+        removeEmptyFoldersUpToLibraryRoot(item.archivePath, archiveLibraryId(item.archivePath));
     }
 
     updateExtractedArchiveTracks(item.archivePath);
@@ -822,5 +840,69 @@ void FileOpsWorker::addEmptyDirs(const QDir& dir)
     if(!dirToRemove.isEmpty()) {
         removeDir(dirToRemove);
     }
+}
+
+void FileOpsWorker::removeEmptyFoldersUpToLibraryRoot(const QString& filePath, int libraryId)
+{
+    const QFileInfo fileInfo{filePath};
+    const QString libraryRoot = libraryRootForDeletedPath(filePath, libraryId);
+
+    if(libraryRoot.isEmpty()) {
+        // Not in a library, only delete the immediate parent if empty
+        QDir folder = fileInfo.absoluteDir();
+        if(folder.exists() && folder.isEmpty()) {
+            folder.removeRecursively();
+        }
+        return;
+    }
+
+    // Start from the file's parent directory and traverse upwards
+    QDir currentDir = fileInfo.absoluteDir();
+
+    while(!Utils::File::isSamePath(currentDir.absolutePath(), libraryRoot) && currentDir.exists()) {
+        if(currentDir.isEmpty()) {
+            if(!currentDir.removeRecursively()) {
+                break;
+            }
+            if(!currentDir.cdUp()) {
+                break;
+            }
+        }
+        else {
+            // Non-empty folder encountered, stop traversal
+            break;
+        }
+    }
+}
+
+QString FileOpsWorker::libraryRootForDeletedPath(const QString& filePath, int libraryId) const
+{
+    const QString fileDir = QFileInfo{filePath}.absolutePath();
+
+    if(libraryId >= 0) {
+        if(const auto libraryInfo = m_library->libraryInfo(libraryId)) {
+            const QString libraryRoot = QDir::cleanPath(QFileInfo{libraryInfo->path}.absoluteFilePath());
+            if(Utils::File::isSamePath(fileDir, libraryRoot) || Utils::File::isSubdir(fileDir, libraryRoot)) {
+                return libraryRoot;
+            }
+        }
+    }
+
+    if(const auto libraryInfo = m_library->libraryForPath(fileDir)) {
+        return QDir::cleanPath(QFileInfo{libraryInfo->path}.absoluteFilePath());
+    }
+
+    return {};
+}
+
+int FileOpsWorker::archiveLibraryId(const QString& archivePath) const
+{
+    for(const Track& track : m_trackPaths | std::views::values) {
+        if(track.isInArchive() && Utils::File::isSamePath(track.archivePath(), archivePath)) {
+            return track.libraryId();
+        }
+    }
+
+    return -1;
 }
 } // namespace Fooyin::FileOps

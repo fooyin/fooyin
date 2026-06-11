@@ -90,6 +90,32 @@ void FileOpsPlugin::initialise(const GuiPluginContext& context)
          .normalise = {},
          .validate  = {}});
 
+    context.advancedSettingsRegistry->add(
+        {.id           = QString::fromLatin1(Settings::ImmediateDelete),
+         .category     = {tr("File Operations")},
+         .label        = tr("Immediately delete tracks (bypass trash)"),
+         .description  = {},
+         .defaultValue = false,
+         .editor       = AdvancedSettingCheckBox{},
+         .read         = [this] { return m_settings->fileValue(Settings::ImmediateDelete, false).toBool(); },
+         .write
+         = [this](const QVariant& value) { return m_settings->fileSet(Settings::ImmediateDelete, value.toBool()); },
+         .normalise = {},
+         .validate  = {}});
+
+    context.advancedSettingsRegistry->add(
+        {.id           = QString::fromLatin1(Settings::DeleteEmptyFolders),
+         .category     = {tr("File Operations")},
+         .label        = tr("Delete empty folders"),
+         .description  = {},
+         .defaultValue = false,
+         .editor       = AdvancedSettingCheckBox{},
+         .read         = [this] { return m_settings->fileValue(Settings::DeleteEmptyFolders, false).toBool(); },
+         .write
+         = [this](const QVariant& value) { return m_settings->fileSet(Settings::DeleteEmptyFolders, value.toBool()); },
+         .normalise = {},
+         .validate  = {}});
+
     setupMenu();
 }
 

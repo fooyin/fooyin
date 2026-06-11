@@ -688,7 +688,7 @@ std::optional<LibraryInfo> UnifiedMusicLibrary::libraryForPath(const QString& pa
 {
     const LibraryInfoMap& libraries = p->m_libraryManager->allLibraries();
     for(const auto& library : libraries | std::views::values) {
-        if(Utils::File::isSubdir(path, library.path)) {
+        if(Utils::File::isSamePath(path, library.path) || Utils::File::isSubdir(path, library.path)) {
             return library;
         }
     }
