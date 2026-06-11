@@ -688,7 +688,7 @@ void EditableLayout::initialise()
     p->changeLayout(p->m_layoutProvider->currentLayout());
 }
 
-FyLayout EditableLayout::saveCurrentToLayout(const QString& name)
+FyLayout EditableLayout::saveCurrentToLayout(const QString& name, bool saveWindowSize)
 {
     QJsonObject root;
     QJsonArray array;
@@ -715,6 +715,9 @@ FyLayout EditableLayout::saveCurrentToLayout(const QString& name)
 
     const auto theme = p->m_settings->value<Settings::Gui::Theme>().value<FyTheme>();
     if(theme.isValid()) {
+        if(saveWindowSize) {
+            layout.saveWindowSize();
+        }
         layout.saveTheme(theme);
     }
 
@@ -785,7 +788,7 @@ void EditableLayout::saveLayout()
 {
     const auto currentLayout = p->m_layoutProvider->currentLayout();
     const QString layoutName = currentLayout.name().isEmpty() ? u"Default"_s : currentLayout.name();
-    const auto layout        = saveCurrentToLayout(layoutName);
+    const auto layout        = saveCurrentToLayout(layoutName, false);
     if(layout.isValid()) {
         p->m_layoutProvider->changeLayout(layout);
         p->m_layoutProvider->saveCurrentLayout();
