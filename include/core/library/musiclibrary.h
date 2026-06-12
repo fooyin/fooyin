@@ -28,6 +28,7 @@
 #include <QObject>
 
 namespace Fooyin {
+class PendingTrackCoverProvider;
 class TrackMetadataStore;
 /*!
  * Represents a queued or in-progress library scan operation.
@@ -209,6 +210,11 @@ public:
      * @returns a WriteRequest which can be used to cancel the operation.
      */
     virtual WriteRequest writeTrackCovers(const TrackCoverData& coverData) = 0;
+    /*!
+     * Returns the overlay used by artwork readers to see embedded cover writes that have been accepted by the
+     * library but deferred because the backing file is currently being played.
+     */
+    [[nodiscard]] virtual PendingTrackCoverProvider* pendingTrackCoverProvider() const = 0;
 
     /** Updates the statistics (playcount, rating etc) in the database for @p tracks.  */
     virtual void updateTrackStats(const TrackList& tracks) = 0;

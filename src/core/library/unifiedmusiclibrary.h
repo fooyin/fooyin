@@ -73,11 +73,14 @@ public:
     void updateTrackMetadata(const TrackList& tracks) override;
     WriteRequest writeTrackMetadata(const TrackList& tracks) override;
     WriteRequest writeTrackCovers(const TrackCoverData& tracks) override;
+    [[nodiscard]] PendingTrackCoverProvider* pendingTrackCoverProvider() const override;
 
     void updateTrackStats(const TrackList& tracks) override;
     void updateTrackStats(const Track& track) override;
 
     void trackWasPlayed(const Track& track);
+    void setActivePlaybackTrack(const Track& track);
+    void flushPendingWrites();
     void cleanupTracks();
     WriteRequest removeUnavailbleTracks() override;
     WriteRequest deleteTracks(const TrackList& tracks) override;

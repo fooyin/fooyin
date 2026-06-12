@@ -36,6 +36,7 @@ class QSize;
 
 namespace Fooyin {
 class AudioLoader;
+class PendingTrackCoverProvider;
 class RemoteIoService;
 class SettingsManager;
 
@@ -95,6 +96,8 @@ public:
     /** Returns the placeholder cover pixmap for @p type and @p size. */
     [[nodiscard]] QPixmap placeholderCover(Track::Cover type  = Track::Cover::Front,
                                            ThumbnailSize size = ThumbnailSize::None) const;
+
+    void setPendingTrackCoverProvider(PendingTrackCoverProvider* provider);
 
     /*!
      * Returns the grouped artwork key used for thumbnails of @p track.

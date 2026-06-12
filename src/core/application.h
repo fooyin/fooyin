@@ -35,6 +35,7 @@ class EngineController;
 class LibraryManager;
 class MusicLibrary;
 class NetworkAccessManager;
+class PendingTrackCoverProvider;
 class PlayerController;
 class PlaylistHandler;
 class PlaylistLoader;
@@ -62,6 +63,7 @@ public:
     [[nodiscard]] PlayerController* playerController() const;
     [[nodiscard]] LibraryManager* libraryManager() const;
     [[nodiscard]] MusicLibrary* library() const;
+    [[nodiscard]] PendingTrackCoverProvider* pendingTrackCoverProvider() const;
     [[nodiscard]] PlaylistHandler* playlistHandler() const;
     [[nodiscard]] SettingsManager* settingsManager() const;
     [[nodiscard]] EngineController* engine() const;

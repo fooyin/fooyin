@@ -24,6 +24,7 @@
 #include "sources/artworksource.h"
 
 #include <core/engine/audioloader.h>
+#include <core/library/pendingtrackcoverprovider.h>
 #include <gui/coverrepository.h>
 #include <gui/statusevent.h>
 
@@ -32,6 +33,8 @@
 #include <QGridLayout>
 #include <QPainter>
 #include <QtConcurrentRun>
+
+#include <optional>
 
 using namespace Qt::StringLiterals;
 
@@ -58,6 +61,7 @@ ArtworkProperties::ArtworkProperties(AudioLoader* loader, MusicLibrary* library,
     : PropertiesTabWidget{parent}
     , m_audioLoader{loader}
     , m_library{library}
+    , m_pendingCoverProvider{library->pendingTrackCoverProvider()}
     , m_coverRepository{coverRepository}
     , m_settings{settings}
     , m_tracks{std::move(tracks)}
@@ -124,7 +128,8 @@ void ArtworkProperties::loadTrackArtwork()
 
     constexpr std::array coverTypes = {Track::Cover::Front, Track::Cover::Back, Track::Cover::Artist};
 
-    const auto processTracks = [tracks = m_tracks, loader = m_audioLoader, cancel = m_cancelLoading, coverTypes]() {
+    const auto processTracks = [tracks = m_tracks, loader = m_audioLoader,
+                                pendingCoverProvider = m_pendingCoverProvider, cancel = m_cancelLoading, coverTypes]() {
         auto result = std::make_shared<ArtworkLoadResult>();
 
         for(size_t i{0}; i < coverTypes.size(); ++i) {
@@ -138,8 +143,10 @@ void ArtworkProperties::loadTrackArtwork()
             }
 
             for(size_t i{0}; i < coverTypes.size(); ++i) {
-                auto& entry            = result->entries[i];
-                const QByteArray cover = loader->readTrackCover(track, entry.type);
+                auto& entry             = result->entries[i];
+                const auto pendingCover = pendingCoverProvider->pendingTrackCover(track, entry.type);
+                const QByteArray cover
+                    = pendingCover.has_value() ? pendingCover->data : loader->readTrackCover(track, entry.type);
 
                 if(cancel->load()) {
                     result->cancelled = true;

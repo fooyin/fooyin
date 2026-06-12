@@ -22,6 +22,7 @@
 #include "internalguisettings.h"
 
 #include <core/engine/audioloader.h>
+#include <core/library/pendingtrackcoverprovider.h>
 #include <core/network/remoteioservice.h>
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
@@ -358,6 +359,7 @@ struct CoverLoader
     Track::Cover type;
     ArtworkSourcePreference sourcePreference{ArtworkSourcePreference::PreferDirectory};
     std::shared_ptr<AudioLoader> audioLoader;
+    PendingTrackCoverProvider* pendingCoverProvider{nullptr};
     CoverPaths paths;
     bool isThumb{false};
     ThumbnailSize size{ThumbnailSize::None};
@@ -399,6 +401,12 @@ QImage loadImageFromDirectory(const CoverLoader& loader)
 
 bool hasEmbeddedCover(const CoverLoader& loader)
 {
+    if(loader.pendingCoverProvider) {
+        if(const auto pendingCover = loader.pendingCoverProvider->pendingTrackCover(loader.track, loader.type)) {
+            return !pendingCover->data.isEmpty();
+        }
+    }
+
     const QByteArray coverData = loader.audioLoader->readTrackCover(loader.track, loader.type);
     return !coverData.isEmpty();
 }
@@ -410,7 +418,11 @@ bool hasRemoteArtwork(const CoverLoader& loader)
 
 QImage loadImageFromEmbedded(const CoverLoader& loader, const QString& cachePath)
 {
-    const QByteArray coverData = loader.audioLoader->readTrackCover(loader.track, loader.type);
+    const auto pendingCover = loader.pendingCoverProvider
+                                ? loader.pendingCoverProvider->pendingTrackCover(loader.track, loader.type)
+                                : std::nullopt;
+    const QByteArray coverData
+        = pendingCover.has_value() ? pendingCover->data : loader.audioLoader->readTrackCover(loader.track, loader.type);
     if(coverData.isEmpty()) {
         return {};
     }
@@ -575,10 +587,12 @@ public:
     void touchPinnedThumbnail(std::map<QString, PinnedThumbnail>::iterator thumbnail);
     void evictLeastRecentlyUsedPinnedThumbnail();
     void rebuildPinnedThumbnails();
+    [[nodiscard]] bool hasPendingCover(const Track& track, Track::Cover type) const;
 
     CoverRepository* m_self;
     std::shared_ptr<AudioLoader> m_audioLoader;
     std::shared_ptr<RemoteIoService> m_remoteIo;
+    PendingTrackCoverProvider* m_pendingCoverProvider{nullptr};
     SettingsManager* m_settings;
 
     std::map<CoverRequestKey, PendingPixmapRequest> m_pendingPixmapRequests;
@@ -979,17 +993,20 @@ int CoverRepositoryPrivate::requestPriority(const CoverRequestKey& requestKey, b
 QFuture<QPixmap> CoverRepositoryPrivate::loadCover(const QString& key, const Track& track, Track::Cover type,
                                                    ArtworkSourcePreference sourcePreference, bool notifyOnFinished)
 {
-    if(const QPixmap cover = loadCachedCover(key); !cover.isNull()) {
-        return makeReadyFuture(cover);
+    if(!hasPendingCover(track, type)) {
+        if(const QPixmap cover = loadCachedCover(key); !cover.isNull()) {
+            return makeReadyFuture(cover);
+        }
     }
 
     CoverLoader loader;
-    loader.key              = key;
-    loader.track            = track;
-    loader.type             = type;
-    loader.sourcePreference = sourcePreference;
-    loader.audioLoader      = m_audioLoader;
-    loader.paths            = m_paths;
+    loader.key                  = key;
+    loader.track                = track;
+    loader.type                 = type;
+    loader.sourcePreference     = sourcePreference;
+    loader.audioLoader          = m_audioLoader;
+    loader.pendingCoverProvider = m_pendingCoverProvider;
+    loader.paths                = m_paths;
     return requestPixmap(CoverRequestKey{.key = key, .kind = CoverRequestKind::Full}, loader, notifyOnFinished);
 }
 
@@ -997,13 +1014,14 @@ QFuture<QPixmap> CoverRepositoryPrivate::loadOriginalCover(const QString& key, c
                                                            ArtworkSourcePreference sourcePreference)
 {
     CoverLoader loader;
-    loader.key              = key;
-    loader.track            = track;
-    loader.type             = type;
-    loader.sourcePreference = sourcePreference;
-    loader.audioLoader      = m_audioLoader;
-    loader.paths            = m_paths;
-    loader.originalSize     = true;
+    loader.key                  = key;
+    loader.track                = track;
+    loader.type                 = type;
+    loader.sourcePreference     = sourcePreference;
+    loader.audioLoader          = m_audioLoader;
+    loader.pendingCoverProvider = m_pendingCoverProvider;
+    loader.paths                = m_paths;
+    loader.originalSize         = true;
 
     return requestPixmap(CoverRequestKey{.key = key, .kind = CoverRequestKind::Original}, loader);
 }
@@ -1013,14 +1031,15 @@ QFuture<QPixmap> CoverRepositoryPrivate::loadThumbnail(const QString& key, const
                                                        bool notifyOnFinished)
 {
     CoverLoader loader;
-    loader.key              = key;
-    loader.track            = track;
-    loader.type             = type;
-    loader.sourcePreference = sourcePreference;
-    loader.audioLoader      = m_audioLoader;
-    loader.paths            = m_paths;
-    loader.isThumb          = true;
-    loader.size             = size;
+    loader.key                  = key;
+    loader.track                = track;
+    loader.type                 = type;
+    loader.sourcePreference     = sourcePreference;
+    loader.audioLoader          = m_audioLoader;
+    loader.pendingCoverProvider = m_pendingCoverProvider;
+    loader.paths                = m_paths;
+    loader.isThumb              = true;
+    loader.size                 = size;
 
     return requestPixmap(CoverRequestKey{.key = key, .kind = CoverRequestKind::Thumbnail, .size = size}, loader,
                          notifyOnFinished);
@@ -1050,12 +1069,13 @@ QFuture<bool> CoverRepositoryPrivate::hasCover(const QString& key, const Track& 
                                                ArtworkSourcePreference sourcePreference) const
 {
     CoverLoader loader;
-    loader.key              = key;
-    loader.track            = track;
-    loader.type             = type;
-    loader.sourcePreference = sourcePreference;
-    loader.audioLoader      = m_audioLoader;
-    loader.paths            = m_paths;
+    loader.key                  = key;
+    loader.track                = track;
+    loader.type                 = type;
+    loader.sourcePreference     = sourcePreference;
+    loader.audioLoader          = m_audioLoader;
+    loader.pendingCoverProvider = m_pendingCoverProvider;
+    loader.paths                = m_paths;
 
     auto loaderResult = Utils::asyncExec([loader]() -> bool {
         const bool result = hasCoverImage(loader);
@@ -1088,7 +1108,7 @@ void CoverRepositoryPrivate::pinLoadedThumbnail(const QString& key, const QPixma
     }
 
     bool visible{false};
-    for(const auto& [owner, keys] : m_visibleThumbnailKeys) {
+    for(const auto& keys : m_visibleThumbnailKeys | std::views::values) {
         if(keys.contains(key)) {
             visible = true;
             break;
@@ -1158,6 +1178,11 @@ void CoverRepositoryPrivate::rebuildPinnedThumbnails()
     }
 }
 
+bool CoverRepositoryPrivate::hasPendingCover(const Track& track, Track::Cover type) const
+{
+    return m_pendingCoverProvider && m_pendingCoverProvider->pendingTrackCover(track, type).has_value();
+}
+
 CoverRepository::CoverRepository(std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings, QObject* parent)
     : CoverRepository{std::move(audioLoader), nullptr, settings, parent}
 { }
@@ -1170,6 +1195,11 @@ CoverRepository::CoverRepository(std::shared_ptr<AudioLoader> audioLoader, std::
 
 CoverRepository::~CoverRepository() = default;
 
+void CoverRepository::setPendingTrackCoverProvider(PendingTrackCoverProvider* provider)
+{
+    p->m_pendingCoverProvider = provider;
+}
+
 QFuture<bool> CoverRepository::trackHasCover(const Track& track, Track::Cover type,
                                              std::optional<ArtworkSourcePreference> source) const
 {
@@ -1179,6 +1209,12 @@ QFuture<bool> CoverRepository::trackHasCover(const Track& track, Track::Cover ty
 
     const auto sourcePreference = p->sourcePreference(source);
     const QString coverKey      = generateTrackCoverKey(track, type, sourcePreference);
+
+    if(p->m_pendingCoverProvider) {
+        if(const auto pendingCover = p->m_pendingCoverProvider->pendingTrackCover(track, type)) {
+            return makeReadyFuture(!pendingCover->data.isEmpty());
+        }
+    }
 
     if(p->m_noCoverKeys.contains(coverKey)) {
         return Utils::asyncExec([] { return false; });
@@ -1196,9 +1232,11 @@ QPixmap CoverRepository::trackCover(const Track& track, Track::Cover type,
 
     const auto sourcePreference = p->sourcePreference(source);
     const QString coverKey      = generateTrackCoverKey(track, type, sourcePreference);
-    QPixmap cover               = p->loadCachedCover(coverKey);
-    if(!cover.isNull()) {
-        return cover;
+    if(!p->hasPendingCover(track, type)) {
+        QPixmap cover = p->loadCachedCover(coverKey);
+        if(!cover.isNull()) {
+            return cover;
+        }
     }
 
     p->loadCover(coverKey, track, type, sourcePreference, true);
@@ -1246,8 +1284,10 @@ QFuture<QPixmap> CoverRepository::trackCoverThumbnailAsync(const Track& track, T
         p->m_noCoverKeys.erase(coverKey);
     }
 
-    if(const QPixmap cover = p->loadCachedCover(coverKey, size); !cover.isNull()) {
-        return makeReadyFuture(cover);
+    if(!p->hasPendingCover(track, type)) {
+        if(const QPixmap cover = p->loadCachedCover(coverKey, size); !cover.isNull()) {
+            return makeReadyFuture(cover);
+        }
     }
 
     return p->loadThumbnail(coverKey, track, size, type, sourcePreference);
@@ -1279,14 +1319,18 @@ QPixmap CoverRepository::trackCoverThumbnail(const Track& track, ThumbnailSize s
         return {};
     }
 
-    QPixmap cover = p->loadCachedCover(coverKey, size);
-    if(!cover.isNull()) {
-        p->pinLoadedThumbnail(requestKey, cover);
-        return cover;
+    if(!p->hasPendingCover(track, type)) {
+        QPixmap cover = p->loadCachedCover(coverKey, size);
+        if(!cover.isNull()) {
+            p->pinLoadedThumbnail(requestKey, cover);
+            return cover;
+        }
     }
 
-    if(const QPixmap pinnedCover = p->pinnedCover(requestKey); !pinnedCover.isNull()) {
-        return pinnedCover;
+    if(!p->hasPendingCover(track, type)) {
+        if(const QPixmap pinnedCover = p->pinnedCover(requestKey); !pinnedCover.isNull()) {
+            return pinnedCover;
+        }
     }
 
     p->loadThumbnail(coverKey, track, size, type, sourcePreference, true);

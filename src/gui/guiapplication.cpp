@@ -353,6 +353,8 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_coverProvider{m_coverRepository}
     , m_themeUpdateTimer{new QTimer(m_self)}
 {
+    m_coverRepository->setPendingTrackCoverProvider(m_core->pendingTrackCoverProvider());
+
     m_themeUpdateTimer->setSingleShot(true);
     m_themeUpdateTimer->setInterval(ThemeUpdateDelayMs);
     QObject::connect(m_themeUpdateTimer, &QTimer::timeout, m_self, [this]() {

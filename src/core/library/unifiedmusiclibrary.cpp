@@ -848,6 +848,11 @@ WriteRequest UnifiedMusicLibrary::writeTrackCovers(const TrackCoverData& tracks)
     return p->m_threadHandler.writeTrackCovers(tracks);
 }
 
+PendingTrackCoverProvider* UnifiedMusicLibrary::pendingTrackCoverProvider() const
+{
+    return &p->m_threadHandler;
+}
+
 void UnifiedMusicLibrary::updateTrackStats(const TrackList& tracks)
 {
     p->m_threadHandler.saveUpdatedTrackStats(tracks);
@@ -885,6 +890,16 @@ void UnifiedMusicLibrary::trackWasPlayed(const Track& track)
     }
 
     p->m_threadHandler.saveUpdatedTrackPlaycounts(tracksToUpdate);
+}
+
+void UnifiedMusicLibrary::setActivePlaybackTrack(const Track& track)
+{
+    p->m_threadHandler.setActivePlaybackTrack(track);
+}
+
+void UnifiedMusicLibrary::flushPendingWrites()
+{
+    p->m_threadHandler.flushPendingWrites();
 }
 
 void UnifiedMusicLibrary::cleanupTracks()

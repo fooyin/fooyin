@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2024, Luke Taylor <luket@pm.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,20 +23,18 @@
 
 #include <core/track.h>
 
-#include <QString>
-
-#include <cstdint>
 #include <optional>
-#include <vector>
 
-namespace Fooyin::Utils {
-enum class FYCORE_EXPORT CommonOperation : uint8_t
+namespace Fooyin {
+class FYCORE_EXPORT PendingTrackCoverProvider
 {
-    Update = 0,
-    Remove
-};
+public:
+    virtual ~PendingTrackCoverProvider() = default;
 
-FYCORE_EXPORT std::vector<int> updateCommonTracks(TrackList& tracks, const TrackList& updatedTracks,
-                                                  CommonOperation operation);
-FYCORE_EXPORT std::optional<QString> physicalSourceKey(const Track& track);
-} // namespace Fooyin::Utils
+    /*!
+     * Returns a pending embedded cover override for @p track and @p type.
+     * @note A returned CoverImage with empty data means a pending removal; std::nullopt means no pending override.
+     */
+    [[nodiscard]] virtual std::optional<CoverImage> pendingTrackCover(const Track& track, Track::Cover type) const = 0;
+};
+} // namespace Fooyin

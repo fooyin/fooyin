@@ -19,6 +19,8 @@
 
 #include <core/library/libraryutils.h>
 
+#include <QFileInfo>
+
 namespace Fooyin::Utils {
 std::vector<int> updateCommonTracks(TrackList& tracks, const TrackList& updatedTracks, CommonOperation operation)
 {
@@ -44,5 +46,21 @@ std::vector<int> updateCommonTracks(TrackList& tracks, const TrackList& updatedT
 
     tracks = result;
     return indexes;
+}
+
+std::optional<QString> physicalSourceKey(const Track& track)
+{
+    if(!track.isValid() || track.isRemote()) {
+        return {};
+    }
+
+    const QString filepath = track.isInArchive() ? track.archivePath() : track.filepath();
+    if(filepath.isEmpty()) {
+        return {};
+    }
+
+    const QFileInfo info{filepath};
+    const QString canonicalPath = info.canonicalFilePath();
+    return canonicalPath.isEmpty() ? info.absoluteFilePath() : canonicalPath;
 }
 } // namespace Fooyin::Utils

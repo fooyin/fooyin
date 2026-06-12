@@ -36,6 +36,7 @@ class AudioLoader;
 class CoverRepository;
 struct ArtworkLoadResult;
 class MusicLibrary;
+class PendingTrackCoverProvider;
 class SettingsManager;
 
 class ArtworkProperties : public PropertiesTabWidget
@@ -66,6 +67,7 @@ private:
 
     AudioLoader* m_audioLoader;
     MusicLibrary* m_library;
+    PendingTrackCoverProvider* m_pendingCoverProvider;
     CoverRepository* m_coverRepository;
     SettingsManager* m_settings;
 

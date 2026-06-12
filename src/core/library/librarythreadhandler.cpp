@@ -27,11 +27,13 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audioinput.h>
+#include <core/library/libraryutils.h>
 #include <core/library/musiclibrary.h>
 #include <core/trackmetadatastore.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QBasicTimer>
+#include <QFuture>
 #include <QLoggingCategory>
 #include <QPromise>
 #include <QThread>
@@ -39,6 +41,7 @@
 #include <QUrl>
 
 #include <deque>
+#include <mutex>
 #include <optional>
 #include <ranges>
 #include <set>
@@ -63,6 +66,25 @@ int nextRequestId()
 {
     static int requestId{0};
     return requestId++;
+}
+
+Fooyin::WriteRequest completedWriteRequest(QObject* context, int succeeded)
+{
+    auto promise = std::make_shared<QPromise<Fooyin::WriteResult>>();
+    promise->start();
+
+    Fooyin::WriteRequest request;
+    request.finished = promise->future();
+
+    QMetaObject::invokeMethod(
+        context,
+        [promise = std::move(promise), succeeded]() {
+            promise->addResult(Fooyin::WriteResult{.succeeded = succeeded});
+            promise->finish();
+        },
+        Qt::QueuedConnection);
+
+    return request;
 }
 } // namespace
 
@@ -127,6 +149,7 @@ public:
     {
         std::stop_source stopSource;
         std::shared_ptr<QPromise<WriteResult>> promise;
+        int accepted{0};
     };
 
     struct WriteOperationToken
@@ -177,6 +200,13 @@ public:
     void queueTrackStatsUpdates(const TrackList& tracks, bool writeRating, bool writePlaycount);
     [[nodiscard]] Track applyTrackStatsUpdate(const PendingTrackStatsUpdate& pendingUpdate) const;
     void flushTrackStatsUpdates();
+    [[nodiscard]] bool isActiveSource(const Track& track) const;
+    void queuePendingStatWrite(const Track& track, AudioReader::WriteOptions options);
+    void queuePendingMetadataWrite(const Track& track);
+    void queuePendingCoverWrite(const Track& track, const TrackCovers& covers);
+    void flushPendingWritesForInactiveSources();
+    [[nodiscard]] TrackCoverData activeCoverWrites(const TrackCoverData& tracks) const;
+    [[nodiscard]] TrackCoverData inactiveCoverWrites(const TrackCoverData& tracks) const;
 
     LibraryThreadHandler* m_self;
 
@@ -193,6 +223,14 @@ public:
     QBasicTimer m_statsTimer;
     std::optional<ScanProgress> m_pendingProgress;
     std::unordered_map<QString, PendingTrackStatsUpdate> m_pendingTrackStats;
+
+    QString m_activeSourceKey;
+    mutable std::mutex m_deferredWritesMutex;
+    std::unordered_map<QString, Track> m_deferredMetadataWrites;
+    std::unordered_map<QString, std::pair<Track, AudioReader::WriteOptions>> m_deferredStatWrites;
+    std::unordered_map<QString, std::pair<Track, TrackCovers>> m_deferredCoverWrites;
+    std::unordered_map<QString, std::pair<Track, TrackCovers>> m_flushingCoverWriteData;
+    std::set<QString> m_flushingCoverWrites;
 
     std::deque<LibraryScanRequest> m_scanRequests;
     int m_nextWriteOperationId{0};
@@ -647,6 +685,7 @@ void LibraryThreadHandlerPrivate::finishWriteOperation(int operationId, int succ
         return;
     }
 
+    const int accepted = operationIt->second.accepted;
     const auto promise = std::move(operationIt->second.promise);
     m_writeOperations.erase(operationIt);
 
@@ -656,7 +695,7 @@ void LibraryThreadHandlerPrivate::finishWriteOperation(int operationId, int succ
 
     promise->addResult(WriteResult{
         .state     = cancelled ? WriteState::Cancelled : WriteState::Completed,
-        .succeeded = succeeded,
+        .succeeded = accepted + succeeded,
         .failed    = failed,
     });
     promise->finish();
@@ -673,6 +712,166 @@ void LibraryThreadHandlerPrivate::cancelWriteOperations()
     }
 
     m_writeOperations.clear();
+}
+
+bool LibraryThreadHandlerPrivate::isActiveSource(const Track& track) const
+{
+    const auto sourceKey = Utils::physicalSourceKey(track);
+    return sourceKey.has_value() && *sourceKey == m_activeSourceKey;
+}
+
+void LibraryThreadHandlerPrivate::queuePendingStatWrite(const Track& track, AudioReader::WriteOptions options)
+{
+    const auto sourceKey = Utils::physicalSourceKey(track);
+    if(!sourceKey.has_value() || options == AudioReader::None) {
+        return;
+    }
+
+    const std::scoped_lock lock{m_deferredWritesMutex};
+    auto& pending = m_deferredStatWrites[*sourceKey];
+    pending.first = track;
+    pending.second |= options;
+}
+
+void LibraryThreadHandlerPrivate::queuePendingMetadataWrite(const Track& track)
+{
+    const auto sourceKey = Utils::physicalSourceKey(track);
+    if(!sourceKey.has_value()) {
+        return;
+    }
+
+    const std::scoped_lock lock{m_deferredWritesMutex};
+    m_deferredMetadataWrites[*sourceKey] = track;
+}
+
+void LibraryThreadHandlerPrivate::queuePendingCoverWrite(const Track& track, const TrackCovers& covers)
+{
+    const auto sourceKey = Utils::physicalSourceKey(track);
+    if(!sourceKey.has_value() || covers.empty()) {
+        return;
+    }
+
+    const std::scoped_lock lock{m_deferredWritesMutex};
+    auto& pending = m_deferredCoverWrites[*sourceKey];
+    pending.first = track;
+    for(const auto& [type, cover] : covers) {
+        pending.second[type] = cover;
+    }
+}
+
+void LibraryThreadHandlerPrivate::flushPendingWritesForInactiveSources()
+{
+    struct PendingFlush
+    {
+        QString sourceKey;
+        Track track;
+        std::optional<Track> metadataTrack;
+        AudioReader::WriteOptions statsOptions{AudioReader::None};
+        TrackCovers covers;
+    };
+
+    std::vector<PendingFlush> pendingFlushes;
+
+    {
+        const std::scoped_lock lock{m_deferredWritesMutex};
+
+        std::set<QString> sourceKeys;
+        for(const auto& key : m_deferredStatWrites | std::views::keys) {
+            sourceKeys.emplace(key);
+        }
+        for(const auto& key : m_deferredMetadataWrites | std::views::keys) {
+            sourceKeys.emplace(key);
+        }
+        for(const auto& key : m_deferredCoverWrites | std::views::keys) {
+            sourceKeys.emplace(key);
+        }
+
+        for(const QString& sourceKey : sourceKeys) {
+            if(!m_activeSourceKey.isEmpty() && sourceKey == m_activeSourceKey) {
+                continue;
+            }
+            if(m_flushingCoverWrites.contains(sourceKey)) {
+                continue;
+            }
+
+            PendingFlush pendingFlush;
+            pendingFlush.sourceKey = sourceKey;
+
+            if(const auto it = m_deferredMetadataWrites.find(sourceKey); it != m_deferredMetadataWrites.end()) {
+                pendingFlush.metadataTrack = it->second;
+                pendingFlush.track         = it->second;
+            }
+            if(const auto it = m_deferredStatWrites.find(sourceKey); it != m_deferredStatWrites.end()) {
+                if(!pendingFlush.track.isValid()) {
+                    pendingFlush.track = it->second.first;
+                }
+                pendingFlush.statsOptions = it->second.second;
+            }
+            if(const auto it = m_deferredCoverWrites.find(sourceKey); it != m_deferredCoverWrites.end()) {
+                if(!pendingFlush.track.isValid()) {
+                    pendingFlush.track = it->second.first;
+                }
+                pendingFlush.covers = it->second.second;
+            }
+
+            m_deferredMetadataWrites.erase(sourceKey);
+            m_deferredStatWrites.erase(sourceKey);
+
+            if(!pendingFlush.covers.empty()) {
+                m_flushingCoverWriteData[sourceKey] = {pendingFlush.track, pendingFlush.covers};
+                m_flushingCoverWrites.emplace(sourceKey);
+                m_deferredCoverWrites.erase(sourceKey);
+            }
+            else {
+                m_deferredCoverWrites.erase(sourceKey);
+            }
+
+            pendingFlushes.emplace_back(std::move(pendingFlush));
+        }
+    }
+
+    for(const PendingFlush& pendingFlush : pendingFlushes) {
+        if(pendingFlush.track.isValid()) {
+            QMetaObject::invokeMethod(&m_trackDatabaseManager, [this, pendingFlush]() {
+                if(pendingFlush.metadataTrack.has_value()) {
+                    m_trackDatabaseManager.updateTracks({*pendingFlush.metadataTrack}, true);
+                }
+                if(pendingFlush.statsOptions != AudioReader::None) {
+                    m_trackDatabaseManager.updateTrackStats({pendingFlush.track}, pendingFlush.statsOptions);
+                }
+                if(!pendingFlush.covers.empty()) {
+                    m_trackDatabaseManager.writeCovers(
+                        TrackCoverData{.tracks = {pendingFlush.track}, .coverData = pendingFlush.covers});
+                    QMetaObject::invokeMethod(m_self, [this, sourceKey = pendingFlush.sourceKey]() {
+                        {
+                            const std::scoped_lock lock{m_deferredWritesMutex};
+                            m_flushingCoverWriteData.erase(sourceKey);
+                            m_flushingCoverWrites.erase(sourceKey);
+                        }
+                        flushPendingWritesForInactiveSources();
+                    });
+                }
+            });
+        }
+    }
+}
+
+TrackCoverData LibraryThreadHandlerPrivate::activeCoverWrites(const TrackCoverData& tracks) const
+{
+    TrackCoverData result;
+    result.coverData = tracks.coverData;
+    std::ranges::copy_if(tracks.tracks, std::back_inserter(result.tracks),
+                         [this](const Track& track) { return isActiveSource(track); });
+    return result;
+}
+
+TrackCoverData LibraryThreadHandlerPrivate::inactiveCoverWrites(const TrackCoverData& tracks) const
+{
+    TrackCoverData result;
+    result.coverData = tracks.coverData;
+    std::ranges::copy_if(tracks.tracks, std::back_inserter(result.tracks),
+                         [this](const Track& track) { return !isActiveSource(track); });
+    return result;
 }
 
 void LibraryThreadHandlerPrivate::queueTrackStatsUpdates(const TrackList& tracks, bool writeRating, bool writePlaycount)
@@ -742,6 +941,7 @@ void LibraryThreadHandlerPrivate::flushTrackStatsUpdates()
     TrackList ratingTracks;
     TrackList playcountTracks;
     TrackList ratingAndPlaycountTracks;
+    TrackList dbOnlyTracks;
 
     ratingTracks.reserve(m_pendingTrackStats.size());
     playcountTracks.reserve(m_pendingTrackStats.size());
@@ -756,7 +956,18 @@ void LibraryThreadHandlerPrivate::flushTrackStatsUpdates()
                             << "lastPlayed=" << track.lastPlayed() << "writeRating=" << pendingUpdate.writeRating
                             << "writePlaycount=" << pendingUpdate.writePlaycount;
 
-        if(pendingUpdate.writeRating && pendingUpdate.writePlaycount) {
+        if(isActiveSource(track)) {
+            AudioReader::WriteOptions deferredOptions{AudioReader::None};
+            if(pendingUpdate.writeRating && m_settings->value<Settings::Core::SaveRatingToMetadata>()) {
+                deferredOptions |= AudioReader::Rating;
+            }
+            if(pendingUpdate.writePlaycount && m_settings->value<Settings::Core::SavePlaycountToMetadata>()) {
+                deferredOptions |= AudioReader::Playcount;
+            }
+            queuePendingStatWrite(track, deferredOptions);
+            dbOnlyTracks.push_back(track);
+        }
+        else if(pendingUpdate.writeRating && pendingUpdate.writePlaycount) {
             ratingAndPlaycountTracks.push_back(track);
         }
         else if(pendingUpdate.writeRating) {
@@ -769,20 +980,24 @@ void LibraryThreadHandlerPrivate::flushTrackStatsUpdates()
 
     m_pendingTrackStats.clear();
 
-    QMetaObject::invokeMethod(&m_trackDatabaseManager,
-                              [this, ratingAndPlaycountTracks = std::move(ratingAndPlaycountTracks),
-                               ratingTracks = std::move(ratingTracks), playcountTracks = std::move(playcountTracks)]() {
-                                  if(!ratingAndPlaycountTracks.empty()) {
-                                      m_trackDatabaseManager.updateTrackStats(
-                                          ratingAndPlaycountTracks, AudioReader::Rating | AudioReader::Playcount);
-                                  }
-                                  if(!ratingTracks.empty()) {
-                                      m_trackDatabaseManager.updateTrackStats(ratingTracks, AudioReader::Rating);
-                                  }
-                                  if(!playcountTracks.empty()) {
-                                      m_trackDatabaseManager.updateTrackStats(playcountTracks, AudioReader::Playcount);
-                                  }
-                              });
+    QMetaObject::invokeMethod(
+        &m_trackDatabaseManager,
+        [this, ratingAndPlaycountTracks = std::move(ratingAndPlaycountTracks), ratingTracks = std::move(ratingTracks),
+         playcountTracks = std::move(playcountTracks), dbOnlyTracks = std::move(dbOnlyTracks)]() {
+            if(!dbOnlyTracks.empty()) {
+                m_trackDatabaseManager.updateTrackStats(dbOnlyTracks, AudioReader::None);
+            }
+            if(!ratingAndPlaycountTracks.empty()) {
+                m_trackDatabaseManager.updateTrackStats(ratingAndPlaycountTracks,
+                                                        AudioReader::Rating | AudioReader::Playcount);
+            }
+            if(!ratingTracks.empty()) {
+                m_trackDatabaseManager.updateTrackStats(ratingTracks, AudioReader::Rating);
+            }
+            if(!playcountTracks.empty()) {
+                m_trackDatabaseManager.updateTrackStats(playcountTracks, AudioReader::Playcount);
+            }
+        });
 }
 
 LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibrary* library,
@@ -933,11 +1148,39 @@ void LibraryThreadHandler::saveUpdatedTracks(const TrackList& tracks)
 
 WriteRequest LibraryThreadHandler::writeUpdatedTracks(const TrackList& tracks)
 {
+    TrackList activeTracks;
+    TrackList inactiveTracks;
+    activeTracks.reserve(tracks.size());
+    inactiveTracks.reserve(tracks.size());
+
+    for(const Track& track : tracks) {
+        if(p->isActiveSource(track)) {
+            p->queuePendingMetadataWrite(track);
+            activeTracks.push_back(track);
+        }
+        else {
+            inactiveTracks.push_back(track);
+        }
+    }
+
+    if(!activeTracks.empty()) {
+        QMetaObject::invokeMethod(&p->m_trackDatabaseManager, [this, activeTracks]() {
+            p->m_trackDatabaseManager.updateTracks(activeTracks, false);
+        });
+    }
+
+    if(inactiveTracks.empty()) {
+        return completedWriteRequest(this, static_cast<int>(activeTracks.size()));
+    }
+
     const auto operation = p->addWriteOperation();
+    if(const auto operationIt = p->m_writeOperations.find(operation.id); operationIt != p->m_writeOperations.end()) {
+        operationIt->second.accepted = static_cast<int>(activeTracks.size());
+    }
 
     QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
-                              [this, tracks, operationId = operation.id, stopToken = operation.stopToken]() {
-                                  p->m_trackDatabaseManager.updateTracks(tracks, true, operationId, stopToken);
+                              [this, inactiveTracks, operationId = operation.id, stopToken = operation.stopToken]() {
+                                  p->m_trackDatabaseManager.updateTracks(inactiveTracks, true, operationId, stopToken);
                               });
 
     return operation.request;
@@ -945,14 +1188,70 @@ WriteRequest LibraryThreadHandler::writeUpdatedTracks(const TrackList& tracks)
 
 WriteRequest LibraryThreadHandler::writeTrackCovers(const TrackCoverData& tracks)
 {
+    const TrackCoverData activeWrites = p->activeCoverWrites(tracks);
+    for(const Track& track : activeWrites.tracks) {
+        p->queuePendingCoverWrite(track, activeWrites.coverData);
+    }
+
+    const TrackCoverData inactiveWrites = p->inactiveCoverWrites(tracks);
+    if(inactiveWrites.tracks.empty()) {
+        return completedWriteRequest(this, static_cast<int>(activeWrites.tracks.size()));
+    }
+
     const auto operation = p->addWriteOperation();
+    if(const auto operationIt = p->m_writeOperations.find(operation.id); operationIt != p->m_writeOperations.end()) {
+        operationIt->second.accepted = static_cast<int>(activeWrites.tracks.size());
+    }
 
     QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
-                              [this, tracks, operationId = operation.id, stopToken = operation.stopToken]() {
-                                  p->m_trackDatabaseManager.writeCovers(tracks, operationId, stopToken);
+                              [this, inactiveWrites, operationId = operation.id, stopToken = operation.stopToken]() {
+                                  p->m_trackDatabaseManager.writeCovers(inactiveWrites, operationId, stopToken);
                               });
 
     return operation.request;
+}
+
+std::optional<CoverImage> LibraryThreadHandler::pendingTrackCover(const Track& track, Track::Cover type) const
+{
+    const auto sourceKey = Utils::physicalSourceKey(track);
+    if(!sourceKey.has_value()) {
+        return {};
+    }
+
+    const std::scoped_lock lock{p->m_deferredWritesMutex};
+    const auto pendingIt = p->m_deferredCoverWrites.find(*sourceKey);
+    if(pendingIt != p->m_deferredCoverWrites.end()) {
+        const auto coverIt = pendingIt->second.second.find(type);
+        if(coverIt == pendingIt->second.second.end()) {
+            return {};
+        }
+        return coverIt->second;
+    }
+
+    const auto flushingIt = p->m_flushingCoverWriteData.find(*sourceKey);
+    if(flushingIt == p->m_flushingCoverWriteData.end()) {
+        return {};
+    }
+
+    const auto coverIt = flushingIt->second.second.find(type);
+    return coverIt == flushingIt->second.second.end() ? std::optional<CoverImage>{} : std::optional{coverIt->second};
+}
+
+void LibraryThreadHandler::setActivePlaybackTrack(const Track& track)
+{
+    const QString previousSourceKey = p->m_activeSourceKey;
+    const auto sourceKey            = Utils::physicalSourceKey(track);
+    p->m_activeSourceKey            = sourceKey.value_or(QString{});
+
+    if(previousSourceKey != p->m_activeSourceKey) {
+        p->flushPendingWritesForInactiveSources();
+    }
+}
+
+void LibraryThreadHandler::flushPendingWrites()
+{
+    p->m_activeSourceKey.clear();
+    p->flushPendingWritesForInactiveSources();
 }
 
 void LibraryThreadHandler::saveUpdatedTrackStats(const TrackList& tracks)

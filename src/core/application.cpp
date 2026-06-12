@@ -433,6 +433,14 @@ Application::Application(QObject* parent)
                      [this](const TrackList& tracks) { p->tracksWereUpdated(tracks); });
     QObject::connect(p->m_playerController, &PlayerController::trackPlayed, p->m_library,
                      &UnifiedMusicLibrary::trackWasPlayed);
+    QObject::connect(p->m_playerController, &PlayerController::currentTrackChanged, p->m_library,
+                     &UnifiedMusicLibrary::setActivePlaybackTrack);
+    QObject::connect(p->m_playerController, &PlayerController::playStateChanged, p->m_library,
+                     [this](Player::PlayState state) {
+                         if(state == Player::PlayState::Stopped) {
+                             p->m_library->flushPendingWrites();
+                         }
+                     });
     QObject::connect(p->m_libraryManager, &LibraryManager::libraryAboutToBeRemoved, p->m_playlistHandler,
                      &PlaylistHandler::savePlaylists);
     QObject::connect(&p->m_engine, &EngineHandler::trackChanged, this, [this](const Track& track) {
@@ -495,6 +503,7 @@ void Application::shutdown()
     p->m_pluginManager.unloadPlugins();
     p->m_audioLoader->saveState();
     p->m_settings->storeSettings();
+    p->m_library->flushPendingWrites();
     p->m_library->cleanupTracks();
 }
 
@@ -543,6 +552,11 @@ LibraryManager* Application::libraryManager() const
 MusicLibrary* Application::library() const
 {
     return p->m_library;
+}
+
+PendingTrackCoverProvider* Application::pendingTrackCoverProvider() const
+{
+    return p->m_library->pendingTrackCoverProvider();
 }
 
 PlaylistHandler* Application::playlistHandler() const

@@ -21,6 +21,7 @@
 
 #include <core/library/libraryinfo.h>
 #include <core/library/musiclibrary.h>
+#include <core/library/pendingtrackcoverprovider.h>
 #include <core/track.h>
 #include <utils/database/dbconnectionpool.h>
 
@@ -40,7 +41,8 @@ class SettingsManager;
 struct TrackCoverData;
 struct WriteRequest;
 
-class LibraryThreadHandler : public QObject
+class LibraryThreadHandler : public QObject,
+                             public PendingTrackCoverProvider
 {
     Q_OBJECT
 
@@ -69,6 +71,9 @@ public:
     void saveUpdatedTracks(const TrackList& tracks);
     WriteRequest writeUpdatedTracks(const TrackList& tracks);
     WriteRequest writeTrackCovers(const TrackCoverData& tracks);
+    [[nodiscard]] std::optional<CoverImage> pendingTrackCover(const Track& track, Track::Cover type) const override;
+    void setActivePlaybackTrack(const Track& track);
+    void flushPendingWrites();
     void saveUpdatedTrackStats(const TrackList& tracks);
     void saveUpdatedTrackPlaycounts(const TrackList& tracks);
     void checkTrackAvailability(const TrackList& tracks);

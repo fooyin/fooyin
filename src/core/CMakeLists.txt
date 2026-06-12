@@ -23,6 +23,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/library/libraryinfo.h
     ${CMAKE_SOURCE_DIR}/include/core/library/libraryutils.h
     ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
+    ${CMAKE_SOURCE_DIR}/include/core/library/pendingtrackcoverprovider.h
     ${CMAKE_SOURCE_DIR}/include/core/library/tracksort.h
     ${CMAKE_SOURCE_DIR}/include/core/network/networkaccessmanager.h
     ${CMAKE_SOURCE_DIR}/include/core/network/networkutils.h
