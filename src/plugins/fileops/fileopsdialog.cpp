@@ -304,16 +304,7 @@ FileOpPreset FileOpsDialogPrivate::currentPreset() const
     FileOpPreset preset;
     preset.op = m_operation;
 
-    const QString text  = m_destination->lineEdit() ? m_destination->lineEdit()->text() : m_destination->currentText();
-    const int index     = m_destination->currentIndex();
-    const QVariant data = index >= 0 ? m_destination->itemData(index) : QVariant{};
-
-    if(index >= 0 && data.isValid() && !data.toString().isEmpty() && text == m_destination->itemText(index)) {
-        preset.dest = data.toString();
-    }
-    else {
-        preset.dest = text;
-    }
+    preset.dest        = m_destination->currentText();
     preset.filename    = m_filename->text();
     preset.wholeDir    = m_entireSource->isChecked();
     preset.removeEmpty = m_removeEmpty->isChecked();
@@ -444,7 +435,7 @@ void FileOpsDialogPrivate::populateDestinationOptions()
                 continue;
             }
             if(m_destination->findText(path) == -1) {
-                m_destination->addItem(path, path);
+                m_destination->addItem(path);
             }
         }
     }
@@ -509,12 +500,10 @@ void FileOpsDialogPrivate::modelUpdated()
 
 void FileOpsDialogPrivate::browseDestination() const
 {
-    const QVariant data = m_destination->currentData();
-    const QString start
-        = (data.isValid() && !data.toString().isEmpty()) ? data.toString() : m_destination->currentText();
-    const QString path = !start.isEmpty() ? start : QDir::homePath();
-    const QString dir  = QFileDialog::getExistingDirectory(m_self, FileOpsDialog::tr("Select Directory"), path,
-                                                           QFileDialog::DontResolveSymlinks);
+    const QString start = m_destination->currentText();
+    const QString path  = !start.isEmpty() ? start : QDir::homePath();
+    const QString dir   = QFileDialog::getExistingDirectory(m_self, FileOpsDialog::tr("Select Directory"), path,
+                                                            QFileDialog::DontResolveSymlinks);
     if(!dir.isEmpty()) {
         m_destination->setCurrentIndex(-1);
         m_destination->setCurrentText(dir);
