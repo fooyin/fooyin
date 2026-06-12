@@ -1085,7 +1085,6 @@ void PlaylistWidget::applyInitialViewSettings()
     setHeaderVisible(m_settings->value<PlaylistHeader>());
     setScrollbarVisible(m_settings->value<PlaylistScrollBar>());
     m_playlistView->setAlternatingRowColors(m_settings->value<PlaylistAltColours>());
-    m_model->setFont(QApplication::font("Fooyin::PlaylistView"));
 }
 
 void PlaylistWidget::updateMetadataEditTriggers(bool readOnly)
