@@ -229,6 +229,8 @@ private:
     void beginAudiblePauseCompletion(uint64_t transportTransitionId);
     void maybeCompletePendingAudiblePause(uint64_t serial);
     void finalisePausedState();
+    [[nodiscard]] bool shouldSuspendPausedStream() const;
+    void suspendPausedStream();
     void clearPendingAudiblePause();
     [[nodiscard]] bool cancelPendingAudiblePause();
     void handlePipelineFadeEvent(const AudioPipeline::FadeEvent& event);
@@ -466,6 +468,7 @@ private:
     uint64_t m_autoCrossfadeTailFadeGeneration;
     bool m_autoBoundaryFadeActive;
     uint64_t m_autoBoundaryFadeGeneration;
+    bool m_pausedStreamSuspended;
 
     Track m_upcomingTrackCandidate;
     uint64_t m_upcomingTrackCandidateItemId{0};

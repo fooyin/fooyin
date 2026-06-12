@@ -335,6 +335,7 @@ AudioEngine::AudioEngine(std::shared_ptr<AudioLoader> audioLoader, SettingsManag
     , m_autoCrossfadeTailFadeGeneration{0}
     , m_autoBoundaryFadeActive{false}
     , m_autoBoundaryFadeGeneration{0}
+    , m_pausedStreamSuspended{false}
 {
     setupSettings();
 
@@ -495,6 +496,7 @@ void AudioEngine::setDspChain(const Engine::DspChains& chain)
 void AudioEngine::loadTrack(const Engine::PlaybackItem& item, bool manualChange)
 {
     clearPendingAudiblePause();
+    m_pausedStreamSuspended = false;
 
     const Track& track = item.track;
     if(manualChange) {
@@ -999,6 +1001,15 @@ void AudioEngine::play()
         return;
     }
 
+    if(m_pausedStreamSuspended) {
+        m_pausedStreamSuspended = false;
+        if(m_currentTrack.isValid()) {
+            loadTrack(currentPlaybackItem(), false);
+            play();
+        }
+        return;
+    }
+
     if(!m_decoder.isValid() || !m_decoder.activeStream()) {
         if(hasPlaybackState(Engine::PlaybackState::Stopped) && m_currentTrack.isValid()) {
             loadTrack(currentPlaybackItem(), false);
@@ -1084,11 +1095,8 @@ void AudioEngine::pause()
         return;
     }
 
-    m_pipeline.pause();
     clearRemoteBufferingState(false);
-    clearPendingAnalysisData();
-    m_audioClock.stop();
-    updatePlaybackState(Engine::PlaybackState::Paused);
+    finalisePausedState();
 }
 
 void AudioEngine::stop()
@@ -1158,6 +1166,7 @@ void AudioEngine::stop()
 void AudioEngine::stopImmediate()
 {
     clearPendingAudiblePause();
+    m_pausedStreamSuspended = false;
     clearRemoteBufferingState(false);
     clearAutoCrossfadeTailFadeState();
     clearAutoBoundaryFadeState();
@@ -2290,12 +2299,58 @@ void AudioEngine::finalisePausedState()
 {
     updatePosition();
     clearTransportTransition();
+
+    if(shouldSuspendPausedStream()) {
+        suspendPausedStream();
+        return;
+    }
+
     m_pipeline.pause();
     m_fadeController.setState(FadeState::Idle);
     m_fadeController.setFadeOnNext(false);
     m_audioClock.setPaused();
     m_audioClock.stop();
     setPhase(Playback::Phase::Paused, PhaseChangeReason::PlaybackStatePaused);
+}
+
+bool AudioEngine::shouldSuspendPausedStream() const
+{
+    return m_currentTrack.isRemote() && m_decoder.isValid() && !m_decoder.isSeekable();
+}
+
+void AudioEngine::suspendPausedStream()
+{
+    qCInfo(ENGINE) << "Suspending paused remote stream:"
+                   << "trackId=" << m_currentTrack.id() << "itemId=" << m_currentTrackItemId
+                   << "generation=" << m_trackGeneration;
+
+    clearRemoteBufferingState(false);
+    clearAutoCrossfadeTailFadeState();
+    clearAutoBoundaryFadeState();
+    clearAutoAdvanceState();
+    clearPendingManualRemoteCrossfade(true);
+    m_pendingManualTrackItemId = 0;
+    clearPendingAnalysisData();
+    clearPendingAudibleTrackCommit();
+    m_transitions.setSeekInProgress(false);
+    m_transitions.clearTrackEnding();
+
+    m_decoder.stopDecoding();
+    m_pipeline.stopPlayback();
+    cleanupDecoderActiveStreamFromPipeline(false);
+    m_pipeline.cleanupOrphanImmediate();
+    m_outputController.uninitOutput();
+
+    clearPreparedNextTrackAndCancelPendingJobs();
+    m_decoder.reset();
+    resetStreamToTrackOrigin();
+
+    m_pausedStreamSuspended = true;
+    m_fadeController.setState(FadeState::Idle);
+    m_fadeController.setFadeOnNext(false);
+    m_audioClock.setPaused();
+    m_audioClock.stop();
+    updatePlaybackState(Engine::PlaybackState::Paused);
 }
 
 void AudioEngine::clearPendingAudiblePause()
