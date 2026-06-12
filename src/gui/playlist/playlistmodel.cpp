@@ -36,6 +36,7 @@
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/guistyleprovider.h>
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/trackmimedata.h>
@@ -705,11 +706,13 @@ QColor disabledRowColor()
 
 namespace Fooyin {
 PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader* audioLoader,
-                             CoverProvider* coverProvider, SettingsManager* settings, QObject* parent)
+                             CoverProvider* coverProvider, SettingsManager* settings, GuiStyleProvider* styleProvider,
+                             QObject* parent)
     : TreeModel{parent}
     , m_audioLoader{audioLoader}
     , m_library{playlistInteractor->library()}
     , m_settings{settings}
+    , m_styleProvider{styleProvider}
     , m_coverProvider{coverProvider}
     , m_id{UId::create()}
     , m_resetting{false}
@@ -1190,11 +1193,6 @@ void PlaylistModel::resetColumnAlignments()
     m_columnAlignments.clear();
 }
 
-void PlaylistModel::setFont(const QFont& font)
-{
-    QMetaObject::invokeMethod(&m_populator, [this, font]() { m_populator.setFont(font); });
-}
-
 void PlaylistModel::setPixmapColumnSize(int column, int size)
 {
     if(std::cmp_greater_equal(column, m_columnSizes.size())) {
@@ -1245,6 +1243,7 @@ void PlaylistModel::reset(const PlaylistTrackList& tracks)
 
     const PlaylistTrackList displayTracks = tracksWithPlayingTrackOverlay(tracks);
     QMetaObject::invokeMethod(&m_populator, [this, displayTracks] {
+        m_populator.setFont(playlistFont());
         m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
         m_populator.setPreloadCount(m_settings->value<Settings::Gui::Internal::PlaylistTrackPreloadCount>());
         m_populator.run(m_currentPlaylist, m_currentPreset, m_columns, displayTracks);
@@ -1391,6 +1390,7 @@ void PlaylistModel::insertTracks(const TrackGroups& tracks)
 {
     if(m_currentPlaylist) {
         QMetaObject::invokeMethod(&m_populator, [this, tracks] {
+            m_populator.setFont(playlistFont());
             m_populator.runTracks(m_currentPlaylist, m_currentPreset, m_columns, tracks);
         });
     }
@@ -1463,6 +1463,7 @@ void PlaylistModel::refreshTracks(const std::vector<int>& indexes, const std::se
     }
 
     QMetaObject::invokeMethod(&m_populator, [this, columns, items] {
+        m_populator.setFont(playlistFont());
         m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
         m_populator.updateTracks(m_currentPlaylist, m_currentPreset, m_columns, columns, items);
     });
@@ -3094,8 +3095,14 @@ void PlaylistModel::updateHeaders()
     }
 
     QMetaObject::invokeMethod(&m_populator, [this, updatedHeaders]() {
+        m_populator.setFont(playlistFont());
         m_populator.updateHeaders(m_currentPlaylist, m_currentPreset, updatedHeaders);
     });
+}
+
+QFont PlaylistModel::playlistFont() const
+{
+    return m_styleProvider->font(u"Fooyin::PlaylistView"_s);
 }
 
 void PlaylistModel::updateTrackIndexes(bool updateItems)

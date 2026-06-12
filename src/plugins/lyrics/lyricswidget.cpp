@@ -37,6 +37,7 @@
 #include <core/scripting/scriptparser.h>
 #include <gui/configdialog.h>
 #include <gui/guisettings.h>
+#include <gui/guistyleprovider.h>
 #include <gui/guiutils.h>
 #include <gui/scripting/scriptformatter.h>
 #include <gui/widgets/colourbutton.h>
@@ -132,13 +133,14 @@ int validatedEdgeFadeMode(int edgeFadeMode)
 namespace Fooyin::Lyrics {
 LyricsWidget::LyricsWidget(PlayerController* playerController, PlaylistHandler* playlistHandler,
                            LyricsFinder* lyricsFinder, LyricsSaver* lyricsSaver, SettingsManager* settings,
-                           QWidget* parent)
+                           GuiStyleProvider* styleProvider, QWidget* parent)
     : FyWidget{parent}
     , m_playerController{playerController}
     , m_playlistHandler{playlistHandler}
     , m_settings{settings}
+    , m_styleProvider{styleProvider}
     , m_lyricsView{new LyricsView(this)}
-    , m_model{new LyricsModel(this)}
+    , m_model{new LyricsModel(m_styleProvider, this)}
     , m_delegate{new LyricsDelegate(this)}
     , m_lyricsFinder{lyricsFinder}
     , m_lyricsSaver{lyricsSaver}
@@ -215,10 +217,7 @@ LyricsWidget::LyricsWidget(PlayerController* playerController, PlaylistHandler* 
         m_scrollTimer.start(ScrollTimeout, this);
     });
 
-    const auto updateThemeDefaults = [this]() {
-        applyConfig(m_config);
-    };
-    m_settings->subscribe<::Fooyin::Settings::Gui::ResolvedAppStyle>(this, updateThemeDefaults);
+    m_styleProvider->subscribe(this, [this]() { applyConfig(m_config); });
 
     updateLyrics(m_playerController->currentTrack());
 }
@@ -563,7 +562,7 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
 
 void LyricsWidget::openConfigDialog()
 {
-    showConfigDialog(new LyricsConfigDialog(this, this));
+    showConfigDialog(new LyricsConfigDialog(this, m_styleProvider, this));
 }
 
 void LyricsWidget::loadLyrics(const Lyrics& lyrics)
@@ -875,7 +874,7 @@ RichText LyricsWidget::noLyricsDisplayText(const Track& track)
 
     QFont baseFont;
     if(m_config.baseFont.isEmpty() || !baseFont.fromString(m_config.baseFont)) {
-        baseFont = Lyrics::defaultFont();
+        baseFont = Lyrics::defaultFont(*m_styleProvider);
     }
     formatter.setBaseFont(baseFont);
 

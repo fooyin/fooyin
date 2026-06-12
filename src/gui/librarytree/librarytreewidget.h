@@ -50,6 +50,7 @@ class LibraryTreeModel;
 class LibraryTreeSortModel;
 class LibraryTreeView;
 class MusicLibrary;
+class GuiStyleProvider;
 class PlayerController;
 class Playlist;
 class PlaylistController;
@@ -68,7 +69,7 @@ class LibraryTreeWidget : public FyWidget
 public:
     LibraryTreeWidget(ActionManager* actionManager, PlaylistController* playlistController,
                       LibraryTreeController* controller, Application* core, CoverRepository* coverRepository,
-                      QWidget* parent = nullptr);
+                      GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
     ~LibraryTreeWidget() override;
 
     [[nodiscard]] QString name() const override;
@@ -159,6 +160,7 @@ private:
     LibraryTreeGroupRegistry* m_groupsRegistry;
     TrackSelectionController* m_trackSelection;
     SettingsManager* m_settings;
+    GuiStyleProvider* m_styleProvider;
 
     SignalThrottler* m_resetThrottler;
     LibraryTreeGrouping m_grouping;

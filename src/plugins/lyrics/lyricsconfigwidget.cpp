@@ -40,8 +40,9 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::Lyrics {
-LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, QWidget* parent)
+LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvider* styleProvider, QWidget* parent)
     : WidgetConfigDialog{lyricsWidget, LyricsWidget::tr("Lyrics Settings"), parent}
+    , m_styleProvider{styleProvider}
     , m_tabs{new QTabWidget(this)}
     , m_seekOnClick{new QCheckBox(tr("Seek on click"), this)}
     , m_noLyricsScript{new ScriptLineEdit(this)}
@@ -380,10 +381,10 @@ void LyricsConfigDialog::setConfig(const LyricsWidget::ConfigData& config)
         button->setEnabled(custom);
     };
 
-    loadFont(m_baseFont, m_baseFontBtn, config.baseFont, Lyrics::defaultFont());
-    loadFont(m_lineFont, m_lineFontBtn, config.lineFont, Lyrics::defaultLineFont());
-    loadFont(m_wordLineFont, m_wordLineFontBtn, config.wordLineFont, Lyrics::defaultWordLineFont());
-    loadFont(m_wordFont, m_wordFontBtn, config.wordFont, Lyrics::defaultWordFont());
+    loadFont(m_baseFont, m_baseFontBtn, config.baseFont, Lyrics::defaultFont(*m_styleProvider));
+    loadFont(m_lineFont, m_lineFontBtn, config.lineFont, Lyrics::defaultLineFont(*m_styleProvider));
+    loadFont(m_wordLineFont, m_wordLineFontBtn, config.wordLineFont, Lyrics::defaultWordLineFont(*m_styleProvider));
+    loadFont(m_wordFont, m_wordFontBtn, config.wordFont, Lyrics::defaultWordFont(*m_styleProvider));
 }
 
 ScrollMode LyricsConfigDialog::scrollMode() const

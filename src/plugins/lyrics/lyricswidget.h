@@ -36,6 +36,7 @@ class QPropertyAnimation;
 
 namespace Fooyin {
 class EngineController;
+class GuiStyleProvider;
 class PlayerController;
 class PlaylistHandler;
 class SettingsManager;
@@ -56,7 +57,7 @@ class LyricsWidget : public FyWidget
 public:
     explicit LyricsWidget(PlayerController* playerController, PlaylistHandler* playlistHandler,
                           LyricsFinder* lyricsFinder, LyricsSaver* lyricsSaver, SettingsManager* settings,
-                          QWidget* parent = nullptr);
+                          GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
 
     static QString defaultNoLyricsScript();
 
@@ -132,6 +133,7 @@ private:
     PlayerController* m_playerController;
     PlaylistHandler* m_playlistHandler;
     SettingsManager* m_settings;
+    GuiStyleProvider* m_styleProvider;
 
     LyricsView* m_lyricsView;
     LyricsModel* m_model;

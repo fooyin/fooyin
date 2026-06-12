@@ -28,6 +28,7 @@
 #include <core/playlist/playlist.h>
 #include <utils/treemodel.h>
 
+#include <QFont>
 #include <QPixmap>
 #include <QThread>
 
@@ -39,6 +40,7 @@ class AudioLoader;
 class CoverProvider;
 class MusicLibrary;
 class Playlist;
+class GuiStyleProvider;
 class PlayerController;
 class PlaylistInteractor;
 struct PlaylistPreset;
@@ -97,7 +99,7 @@ public:
     Q_FLAG(PlaybackDependencies)
 
     PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader* audioLoader, CoverProvider* coverProvider,
-                  SettingsManager* settings, QObject* parent = nullptr);
+                  SettingsManager* settings, GuiStyleProvider* styleProvider, QObject* parent = nullptr);
     ~PlaylistModel() override;
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
@@ -137,7 +139,6 @@ public:
     void resetColumnAlignment(int column);
     void resetColumnAlignments();
 
-    void setFont(const QFont& font);
     void setPixmapColumnSize(int column, int size);
     void setPixmapColumnSizes(const std::vector<int>& sizes);
     void updateColours();
@@ -220,6 +221,8 @@ private:
     void mergeTrackParents(const TrackIdNodeMap& parents);
     [[nodiscard]] bool tryUpdateTrackGroupInPlace(const PendingData& data);
     [[nodiscard]] bool hasSameParentChain(const PlaylistItem* currentItem, const PlaylistItem* updatedItem) const;
+
+    [[nodiscard]] QFont playlistFont() const;
 
     QVariant trackData(PlaylistItem* item, const QModelIndex& index, int role) const;
     QVariant headerData(PlaylistItem* item, int column, int role) const;
@@ -310,6 +313,7 @@ private:
     AudioLoader* m_audioLoader;
     MusicLibrary* m_library;
     SettingsManager* m_settings;
+    GuiStyleProvider* m_styleProvider;
     CoverProvider* m_coverProvider;
 
     UId m_id;

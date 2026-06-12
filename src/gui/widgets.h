@@ -37,6 +37,7 @@ class DspPresetRegistry;
 class DspSettingsController;
 class FyWidget;
 class GuiApplication;
+class GuiStyleProvider;
 struct GuiPluginContext;
 class LibraryTreeController;
 class MainWindow;
@@ -82,6 +83,7 @@ private:
 
     MainWindow* m_window;
     SettingsManager* m_settings;
+    GuiStyleProvider* m_styleProvider;
     CoverRepository* m_coverRepository;
 
     ArtworkFinder* m_artworkFinder;

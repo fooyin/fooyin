@@ -46,7 +46,7 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
 
     m_filterController
         = new FilterController(context.actionManager, *m_core, context.trackSelection, context.editableLayout,
-                               context.coverRepository, m_core->settingsManager, this);
+                               context.coverRepository, m_core->settingsManager, context.styleProvider, this);
 
     new StaticContextMenuPage(
         m_core->settingsManager,

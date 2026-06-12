@@ -68,6 +68,7 @@
 #include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/guistyleprovider.h>
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/layoutprovider.h>
@@ -274,6 +275,7 @@ public:
     std::unique_ptr<ScriptCommandHandler> m_scriptCommandHandler;
     WindowController* m_windowController;
     ThemeRegistry* m_themeRegistry;
+    GuiStyleProvider* m_styleProvider;
     std::unique_ptr<AdvancedSettingsRegistry> m_advancedSettingsRegistry;
     CoverRepository* m_coverRepository;
 
@@ -333,6 +335,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
                                                                     m_propertiesDialog)}
     , m_windowController{new WindowController(m_mainWindow.get())}
     , m_themeRegistry{new ThemeRegistry(m_settings, m_self)}
+    , m_styleProvider{new GuiStyleProvider(m_settings, m_self)}
     , m_advancedSettingsRegistry{std::make_unique<AdvancedSettingsRegistry>(m_settings)}
     , m_coverRepository{new CoverRepository(m_core->audioLoader(), m_core->remoteIoService(), m_settings, m_self)}
     , m_guiPluginContext{m_actionManager,
@@ -346,6 +349,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
                          m_editableLayout.get(),
                          m_windowController,
                          m_themeRegistry,
+                         m_styleProvider,
                          m_advancedSettingsRegistry.get(),
                          m_coverRepository}
     , m_logWidget{std::make_unique<LogWidget>(m_settings)}
@@ -1166,8 +1170,8 @@ void GuiApplicationPrivate::showScriptEditor()
 void GuiApplicationPrivate::showSearchPlaylistDialog()
 {
     auto* coverProvider = new CoverProvider(m_coverRepository, m_self);
-    auto* search        = new SearchDialog(m_actionManager, &m_playlistInteractor, coverProvider, m_core,
-                                           SearchDialog::Target::Playlist);
+    auto* search = new SearchDialog(m_actionManager, &m_playlistInteractor, coverProvider, m_core, m_styleProvider,
+                                    SearchDialog::Target::Playlist);
     search->setAttribute(Qt::WA_DeleteOnClose);
     coverProvider->setParent(search);
 
@@ -1177,8 +1181,8 @@ void GuiApplicationPrivate::showSearchPlaylistDialog()
 void GuiApplicationPrivate::showSearchLibraryDialog()
 {
     auto* coverProvider = new CoverProvider(m_coverRepository, m_self);
-    auto* search        = new SearchDialog(m_actionManager, &m_playlistInteractor, coverProvider, m_core,
-                                           SearchDialog::Target::Library);
+    auto* search = new SearchDialog(m_actionManager, &m_playlistInteractor, coverProvider, m_core, m_styleProvider,
+                                    SearchDialog::Target::Library);
     search->setAttribute(Qt::WA_DeleteOnClose);
     coverProvider->setParent(search);
 
@@ -1822,6 +1826,11 @@ WidgetProvider* GuiApplication::widgetProvider() const
 ThemeRegistry* GuiApplication::themeRegistry() const
 {
     return p->m_themeRegistry;
+}
+
+GuiStyleProvider* GuiApplication::styleProvider() const
+{
+    return p->m_styleProvider;
 }
 
 AdvancedSettingsRegistry* GuiApplication::advancedSettingsRegistry() const

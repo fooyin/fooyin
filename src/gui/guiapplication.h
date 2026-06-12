@@ -34,6 +34,7 @@ class Application;
 class CoverRepository;
 class EditableLayout;
 class GuiApplicationPrivate;
+class GuiStyleProvider;
 class LayoutProvider;
 class PlaylistController;
 class PropertiesDialog;
@@ -74,6 +75,7 @@ public:
     [[nodiscard]] EditableLayout* editableLayout() const;
     [[nodiscard]] WidgetProvider* widgetProvider() const;
     [[nodiscard]] ThemeRegistry* themeRegistry() const;
+    [[nodiscard]] GuiStyleProvider* styleProvider() const;
     [[nodiscard]] AdvancedSettingsRegistry* advancedSettingsRegistry() const;
     [[nodiscard]] CoverRepository* coverRepository() const;
 

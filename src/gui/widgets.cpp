@@ -137,6 +137,7 @@ Widgets::Widgets(Application* core, GuiApplication* gui, const GuiPluginContext&
     , m_gui{gui}
     , m_window{mainWindow}
     , m_settings{m_core->settingsManager()}
+    , m_styleProvider{guiPluginContext.styleProvider}
     , m_coverRepository{guiPluginContext.coverRepository}
     , m_artworkFinder{new ArtworkFinder(m_core->networkManager(), m_settings, this)}
     , m_coverProvider{new CoverProvider(m_coverRepository, this)}
@@ -228,7 +229,7 @@ void Widgets::registerWidgets()
         u"LibraryTree"_s,
         [this]() {
             return new LibraryTreeWidget(m_gui->actionManager(), m_playlistController, m_libraryTreeController, m_core,
-                                         m_coverRepository, m_window);
+                                         m_coverRepository, m_styleProvider, m_window);
         },
         tr("Library Tree"));
 
@@ -293,7 +294,7 @@ void Widgets::registerWidgets()
         u"Playlist"_s,
         [this]() {
             return PlaylistWidget::createMainPlaylist(m_gui->actionManager(), m_playlistInteractor, m_coverProvider,
-                                                      m_core, m_window);
+                                                      m_core, m_styleProvider, m_window);
         },
         tr("Playlist"));
     provider->setLimit(u"Playlist"_s, 1);

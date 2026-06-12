@@ -54,16 +54,18 @@ constexpr auto LibraryState  = "Searching/LibraryState";
 
 namespace Fooyin {
 SearchDialog::SearchDialog(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
-                           CoverProvider* coverProvider, Application* core, Target target, QWidget* parent)
+                           CoverProvider* coverProvider, Application* core, GuiStyleProvider* styleProvider,
+                           Target target, QWidget* parent)
     : QDialog{parent}
     , m_target{target}
     , m_playlistInteractor{playlistInteractor}
     , m_settings{core->settingsManager()}
     , m_searchBar{new QLineEdit(this)}
-    , m_view{m_target == Target::Library ? PlaylistWidget::createDetachedLibrarySearch(
-                                               actionManager, playlistInteractor, coverProvider, core, this)
-                                         : PlaylistWidget::createDetachedPlaylistSearch(
-                                               actionManager, playlistInteractor, coverProvider, core, this)}
+    , m_view{m_target == Target::Library
+                 ? PlaylistWidget::createDetachedLibrarySearch(actionManager, playlistInteractor, coverProvider, core,
+                                                               styleProvider, this)
+                 : PlaylistWidget::createDetachedPlaylistSearch(actionManager, playlistInteractor, coverProvider, core,
+                                                                styleProvider, this)}
     , m_autoSelect{m_settings->fileValue(AutoSelect, false).toBool()}
     , m_showAll{m_settings->fileValue(ShowAll, false).toBool()}
 {

@@ -15,6 +15,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/iconloader.h
     ${CMAKE_SOURCE_DIR}/include/gui/guipaths.h
     ${CMAKE_SOURCE_DIR}/include/gui/guisettings.h
+    ${CMAKE_SOURCE_DIR}/include/gui/guistyleprovider.h
     ${CMAKE_SOURCE_DIR}/include/gui/guiutils.h
     ${CMAKE_SOURCE_DIR}/include/gui/layoutprovider.h
     ${CMAKE_SOURCE_DIR}/include/gui/playlist/currentplaylistcontroller.h
@@ -161,6 +162,7 @@ set(SOURCES
     fywidget.cpp
     guiapplication.cpp
     guiapplication.h
+    guistyleprovider.cpp
     iconloader.cpp
     guipaths.cpp
     guiutils.cpp
