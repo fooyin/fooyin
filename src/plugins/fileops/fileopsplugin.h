@@ -49,6 +49,7 @@ private:
     ActionManager* m_actionManager;
     std::shared_ptr<AudioLoader> m_audioLoader;
     MusicLibrary* m_library;
+    LibraryManager* m_libraryManager;
     TrackSelectionController* m_trackSelectionController;
     SettingsManager* m_settings;
 };
