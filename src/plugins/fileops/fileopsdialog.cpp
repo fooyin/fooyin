@@ -44,6 +44,7 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QTreeView>
+#include <core/library/librarymanager.h>
 
 using namespace Qt::StringLiterals;
 
@@ -56,7 +57,8 @@ class FileOpsDialogPrivate : public QObject
 
 public:
     FileOpsDialogPrivate(FileOpsDialog* self, MusicLibrary* library, const TrackList& tracks, Operation operation,
-                         std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings);
+                         std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
+                         LibraryManager* libraryManager);
 
     void setup();
 
@@ -84,6 +86,8 @@ public:
 
     FileOpsDialog* m_self;
     SettingsManager* m_settings;
+    MusicLibrary* m_library;
+    LibraryManager* m_libraryManager{nullptr};
 
     Operation m_operation;
 
@@ -92,7 +96,7 @@ public:
     QRadioButton* m_renameOp;
     QRadioButton* m_extractOp;
 
-    QLineEdit* m_destination;
+    QComboBox* m_destination;
     ScriptLineEdit* m_filename;
     QCheckBox* m_entireSource;
     QCheckBox* m_removeEmpty;
@@ -114,19 +118,22 @@ public:
     bool m_loading{false};
     bool m_running{false};
     bool m_presetsChanged{false};
+    void populateDestinationOptions();
 };
 
 FileOpsDialogPrivate::FileOpsDialogPrivate(FileOpsDialog* self, MusicLibrary* library, const TrackList& tracks,
                                            Operation operation, std::shared_ptr<AudioLoader> audioLoader,
-                                           SettingsManager* settings)
+                                           SettingsManager* settings, LibraryManager* libraryManager)
     : m_self{self}
     , m_settings{settings}
+    , m_library{library}
+    , m_libraryManager{libraryManager}
     , m_operation{operation}
     , m_copyOp{new QRadioButton(FileOpsDialog::tr("Copy"), self)}
     , m_moveOp{new QRadioButton(FileOpsDialog::tr("Move"), self)}
     , m_renameOp{new QRadioButton(FileOpsDialog::tr("Rename"), self)}
     , m_extractOp{new QRadioButton(FileOpsDialog::tr("Extract"), self)}
-    , m_destination{new QLineEdit(self)}
+    , m_destination{new QComboBox(self)}
     , m_filename{new ScriptLineEdit(u"%filename%"_s, tracks.front(), self)}
     , m_entireSource{new QCheckBox(self)}
     , m_removeEmpty{new QCheckBox(FileOpsDialog::tr("Remove empty source folders"), self)}
@@ -149,7 +156,9 @@ void FileOpsDialogPrivate::setup()
     auto* browseAction = new QAction({}, m_self);
     Gui::setThemeIcon(browseAction, Constants::Icons::Options);
     QObject::connect(browseAction, &QAction::triggered, this, &FileOpsDialogPrivate::browseDestination);
-    m_destination->addAction(browseAction, QLineEdit::TrailingPosition);
+    m_destination->setEditable(true);
+    auto* destLine = m_destination->lineEdit();
+    destLine->addAction(browseAction, QLineEdit::TrailingPosition);
 
     m_resultsTable->setModel(m_model);
     m_resultsTable->header()->setStretchLastSection(true);
@@ -192,11 +201,6 @@ void FileOpsDialogPrivate::setup()
     auto* buttonBox = new QDialogButtonBox(QDialogButtonBox::Apply | QDialogButtonBox::Close, m_self);
     m_runButton     = buttonBox->button(QDialogButtonBox::Apply);
     m_runButton->setText(tr("&Run"));
-    auto updateRunButton = []() {
-    };
-    updateRunButton();
-    QObject::connect(m_destination, &QLineEdit::textChanged, this, [updateRunButton]() { updateRunButton(); });
-    QObject::connect(m_filename, &QLineEdit::textChanged, this, [updateRunButton]() { updateRunButton(); });
     QObject::connect(m_runButton, &QAbstractButton::clicked, this, &FileOpsDialogPrivate::toggleRun);
     QObject::connect(buttonBox, &QDialogButtonBox::accepted, m_self, &QDialog::accept);
     QObject::connect(buttonBox, &QDialogButtonBox::rejected, m_self, &QDialog::reject);
@@ -233,7 +237,7 @@ void FileOpsDialogPrivate::setup()
     QObject::connect(m_moveOp, &QRadioButton::clicked, m_model, [this]() { changeOperation(Operation::Move); });
     QObject::connect(m_renameOp, &QRadioButton::clicked, m_model, [this]() { changeOperation(Operation::Rename); });
     QObject::connect(m_extractOp, &QRadioButton::clicked, m_model, [this]() { changeOperation(Operation::Extract); });
-    QObject::connect(m_destination, &QLineEdit::textChanged, this, &FileOpsDialogPrivate::simulateOp);
+    QObject::connect(destLine, &QLineEdit::textChanged, this, &FileOpsDialogPrivate::simulateOp);
     QObject::connect(m_filename, &QLineEdit::textChanged, this, &FileOpsDialogPrivate::simulateOp);
     QObject::connect(m_entireSource, &QCheckBox::clicked, this, [this]() {
         updateOptionState();
@@ -248,6 +252,7 @@ void FileOpsDialogPrivate::setup()
 
     changeOperation(m_operation);
     loadPresets();
+    populateDestinationOptions();
     loadCurrentPreset();
     updateButtonState();
 
@@ -297,8 +302,18 @@ void FileOpsDialogPrivate::updateButtonState() const
 FileOpPreset FileOpsDialogPrivate::currentPreset() const
 {
     FileOpPreset preset;
-    preset.op          = m_operation;
-    preset.dest        = m_destination->text();
+    preset.op = m_operation;
+
+    const QString text  = m_destination->lineEdit() ? m_destination->lineEdit()->text() : m_destination->currentText();
+    const int index     = m_destination->currentIndex();
+    const QVariant data = index >= 0 ? m_destination->itemData(index) : QVariant{};
+
+    if(index >= 0 && data.isValid() && !data.toString().isEmpty() && text == m_destination->itemText(index)) {
+        preset.dest = data.toString();
+    }
+    else {
+        preset.dest = text;
+    }
     preset.filename    = m_filename->text();
     preset.wholeDir    = m_entireSource->isChecked();
     preset.removeEmpty = m_removeEmpty->isChecked();
@@ -387,7 +402,8 @@ void FileOpsDialogPrivate::loadCurrentPreset() const
         FileOpPreset preset;
         stream >> preset;
 
-        m_destination->setText(preset.dest);
+        m_destination->setCurrentIndex(-1);
+        m_destination->setCurrentText(preset.dest);
         m_filename->setText(preset.filename);
         m_entireSource->setChecked(preset.wholeDir);
         m_removeEmpty->setChecked(preset.removeEmpty);
@@ -411,6 +427,25 @@ void FileOpsDialogPrivate::populatePresets()
     for(const auto& preset : m_presets) {
         if(preset.op == m_operation) {
             m_presetBox->addItem(preset.name);
+        }
+    }
+}
+
+void FileOpsDialogPrivate::populateDestinationOptions()
+{
+    m_destination->clear();
+
+    // Populate with library roots
+    if(m_libraryManager && m_libraryManager->hasLibrary()) {
+        const auto& libs = m_libraryManager->allLibraries();
+        for(const auto& entry : libs) {
+            const QString path = entry.second.path;
+            if(path.isEmpty()) {
+                continue;
+            }
+            if(m_destination->findText(path) == -1) {
+                m_destination->addItem(path, path);
+            }
         }
     }
 }
@@ -474,11 +509,15 @@ void FileOpsDialogPrivate::modelUpdated()
 
 void FileOpsDialogPrivate::browseDestination() const
 {
-    const QString path = !m_destination->text().isEmpty() ? m_destination->text() : QDir::homePath();
+    const QVariant data = m_destination->currentData();
+    const QString start
+        = (data.isValid() && !data.toString().isEmpty()) ? data.toString() : m_destination->currentText();
+    const QString path = !start.isEmpty() ? start : QDir::homePath();
     const QString dir  = QFileDialog::getExistingDirectory(m_self, FileOpsDialog::tr("Select Directory"), path,
                                                            QFileDialog::DontResolveSymlinks);
     if(!dir.isEmpty()) {
-        m_destination->setText(dir);
+        m_destination->setCurrentIndex(-1);
+        m_destination->setCurrentText(dir);
     }
 }
 
@@ -489,9 +528,11 @@ std::vector<FileOpPreset>::iterator FileOpsDialogPrivate::findPreset(const QStri
 }
 
 FileOpsDialog::FileOpsDialog(MusicLibrary* library, std::shared_ptr<AudioLoader> audioLoader, const TrackList& tracks,
-                             Operation operation, SettingsManager* settings, QWidget* parent)
+                             Operation operation, SettingsManager* settings, LibraryManager* libraryManager,
+                             QWidget* parent)
     : QDialog{parent}
-    , p{std::make_unique<FileOpsDialogPrivate>(this, library, tracks, operation, std::move(audioLoader), settings)}
+    , p{std::make_unique<FileOpsDialogPrivate>(this, library, tracks, operation, std::move(audioLoader), settings,
+                                               libraryManager)}
 {
     setWindowTitle(tr("File Operation"));
     setModal(true);
@@ -511,7 +552,8 @@ void FileOpsDialog::loadPreset(const QString& name)
     if(preset != p->m_presets.cend()) {
         p->m_presetBox->setCurrentText(name);
 
-        p->m_destination->setText(preset->dest);
+        p->m_destination->setCurrentIndex(-1);
+        p->m_destination->setCurrentText(preset->dest);
         p->m_filename->setText(preset->filename);
         p->m_entireSource->setChecked(preset->wholeDir);
         p->m_removeEmpty->setChecked(preset->removeEmpty);

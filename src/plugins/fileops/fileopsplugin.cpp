@@ -67,9 +67,10 @@ FileOpsPlugin::FileOpsPlugin()
 
 void FileOpsPlugin::initialise(const CorePluginContext& context)
 {
-    m_audioLoader = context.audioLoader;
-    m_library     = context.library;
-    m_settings    = context.settingsManager;
+    m_audioLoader    = context.audioLoader;
+    m_library        = context.library;
+    m_libraryManager = context.libraryManager;
+    m_settings       = context.settingsManager;
 }
 
 void FileOpsPlugin::initialise(const GuiPluginContext& context)
@@ -126,8 +127,8 @@ void FileOpsPlugin::setupMenu()
         tr("File operations"), Constants::Menus::Context::Utilities);
 
     const auto openDialog = [this](const TrackSelection& selection, Operation op, const QString& presetName = {}) {
-        auto* dialog
-            = new FileOpsDialog(m_library, m_audioLoader, selection.tracks, op, m_settings, Utils::getMainWindow());
+        auto* dialog = new FileOpsDialog(m_library, m_audioLoader, selection.tracks, op, m_settings, m_libraryManager,
+                                         Utils::getMainWindow());
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->loadPreset(presetName);
         dialog->open();
