@@ -15,6 +15,9 @@
 
 * Audio/Playback
   - Improve gapless playback handling ([#1248](https://github.com/fooyin/fooyin/issues/1248))
+* FileOps
+  - Add advanced settings for immediate delete and deleting empty folders ([#1266](https://github.com/fooyin/fooyin/pull/1266))
+  - Suggest library roots in the destination field ([#1285](https://github.com/fooyin/fooyin/pull/1285))
 * Interface
   - Add device refresh support ([#1225](https://github.com/fooyin/fooyin/issues/1225))
   - Hide the checked frame for flat tool buttons
@@ -22,6 +25,11 @@
   - Add support for configuring individual splitter spacing
   - Add a Script Display option to toggle the vertical scrollbar ([#1260](https://github.com/fooyin/fooyin/issues/1260))
   - Add random play icons
+  - Add Player Controls settings for toggling individual buttons
+  - Stretch tool buttons by default
+  - Remember the last selected Tab Stack tab by default
+* Library/Metadata
+  - Add support for monitoring individual library files ([#1212](https://github.com/fooyin/fooyin/issues/1212))
 * Scripting
   - Add `$join`
   - Always evaluate Script Display scripts using the playback environment
@@ -50,6 +58,9 @@
   - Reload the Queue Viewer when current track metadata changes
   - Preserve artwork selection during download progress ([#1257](https://github.com/fooyin/fooyin/issues/1257))
   - Prevent a crash when updating proxy actions
+  - Save window size when switching layouts ([#1281](https://github.com/fooyin/fooyin/pull/1281))
+  - Avoid clearing playlist model while finalising widget
+  - Activate Playlist Manager items on selection without changing selection on right-click
 * Lyrics
   - Avoid resetting editor text on Apply ([#1234](https://github.com/fooyin/fooyin/issues/1234))
   - Fix current line highlighting mutating the undo stack
@@ -58,6 +69,9 @@
 * Library/Metadata
   - Use track identity when comparing tracks
   - Avoid unnecessary FFmpeg temporary buffers
+  - Migrate stored track ratings to the correct REAL type ([#1216](https://github.com/fooyin/fooyin/issues/1216), [#1277](https://github.com/fooyin/fooyin/pull/1277))
+  - Defer metadata and embedded artwork writes for files currently being played ([#1276](https://github.com/fooyin/fooyin/issues/1276))
+  - Disable library auto-refresh by default
 
 ### Build/System
 
@@ -67,7 +81,7 @@
   - Remove unnecessary executable bits ([#1213](https://github.com/fooyin/fooyin/pull/1213))
   - Compress PNG assets ([#1265](https://github.com/fooyin/fooyin/pull/1265))
 * Translations
-  - Update translations and translation sources ([#1250](https://github.com/fooyin/fooyin/pull/1250), [#1251](https://github.com/fooyin/fooyin/pull/1251))
+  - Update translations and translation sources ([#1250](https://github.com/fooyin/fooyin/pull/1250), [#1251](https://github.com/fooyin/fooyin/pull/1251), [#1274](https://github.com/fooyin/fooyin/pull/1274), [#1275](https://github.com/fooyin/fooyin/pull/1275), [#1286](https://github.com/fooyin/fooyin/pull/1286), [#1287](https://github.com/fooyin/fooyin/pull/1287))
 
 ### Dev/API
 * Plugin/Widget API
@@ -75,6 +89,7 @@
   - Add copy-specific layout serialisation
   - Add special value text support to Advanced settings
   - Add support for inserting actions before others by ID
+  - Add support for unregistering actions
 
 
 ## [0.10.8](https://github.com/fooyin/fooyin/releases/tag/v0.10.8) (2026-05-21)
