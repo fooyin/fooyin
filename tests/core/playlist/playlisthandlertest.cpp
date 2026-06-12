@@ -226,6 +226,11 @@ public:
         return {};
     }
 
+    PendingTrackCoverProvider* pendingTrackCoverProvider() const override
+    {
+        return nullptr;
+    }
+
     void updateTrackStats(const TrackList&) override { }
     void updateTrackStats(const Track&) override { }
 
