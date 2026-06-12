@@ -69,6 +69,7 @@ public:
 
     [[nodiscard]] const QStringList& columns() const;
     [[nodiscard]] QString column(int column) const;
+    [[nodiscard]] QString sortColumn(int column) const;
     [[nodiscard]] const RichText& richColumn(int column) const;
     [[nodiscard]] QString iconLabel(const std::vector<int>& columnOrder) const;
     [[nodiscard]] IconCaptionLineList iconCaptionLines(const std::vector<int>& columnOrder,
@@ -97,6 +98,7 @@ private:
 
     Md5Hash m_key;
     QStringList m_columns;
+    QStringList m_sortColumns;
     std::vector<RichText> m_richColumns;
     TrackIds m_trackIds;
     bool m_isSummary;

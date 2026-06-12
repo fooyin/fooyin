@@ -26,6 +26,7 @@
 #include <gui/scripting/scriptformatter.h>
 #include <utils/crypto.h>
 
+#include <algorithm>
 #include <map>
 #include <ranges>
 #include <unordered_map>
@@ -41,6 +42,15 @@ struct ColumnData
     QStringList plainColumns;
     std::vector<RichText> richColumns;
 };
+
+RichText sortRichText(const QString& text)
+{
+    RichText richText;
+    if(!text.isEmpty()) {
+        richText.blocks.push_back({.text = text, .format = {}});
+    }
+    return richText;
+}
 
 RichText placeholderRichText()
 {
@@ -76,6 +86,29 @@ ColumnData buildColumnData(const QStringList& columns, ScriptFormatter& formatte
 
     return data;
 }
+
+QString sortColumnText(const QString& column, ScriptFormatter& formatter)
+{
+    return trimRichText(formatter.evaluate(column)).joinedText();
+}
+
+std::vector<QStringList> splitColumnValues(const QString& evaluated)
+{
+    std::vector<QStringList> values;
+
+    if(evaluated.contains(QLatin1String{Constants::UnitSeparator})) {
+        const QStringList rows = evaluated.split(QLatin1String{Constants::UnitSeparator});
+        values.reserve(rows.size());
+        for(const QString& row : rows) {
+            values.push_back(row.split(QLatin1String{Constants::RecordSeparator}));
+        }
+    }
+    else {
+        values.push_back(evaluated.split(QLatin1String{Constants::RecordSeparator}));
+    }
+
+    return values;
+}
 } // namespace
 
 FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumnList& columns, const TrackList& tracks,
@@ -91,6 +124,17 @@ FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumn
     std::ranges::transform(columns, std::back_inserter(fields),
                            [](const FilterColumn& column) { return column.field; });
 
+    const bool hasCustomSortField
+        = std::ranges::any_of(columns, [](const FilterColumn& column) { return !column.sortField.isEmpty(); });
+
+    QStringList sortFields;
+    if(hasCustomSortField) {
+        sortFields.reserve(columns.size());
+        std::ranges::transform(columns, std::back_inserter(sortFields), [](const FilterColumn& column) {
+            return column.sortField.isEmpty() ? column.field : column.sortField;
+        });
+    }
+
     ScriptParser parser;
     ScriptFormatter formatter;
     formatter.setBaseFont(context.font);
@@ -104,15 +148,23 @@ FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumn
     scriptContext.environment = &scriptEnvironment;
 
     std::map<RowKey, FilterRow> items;
+    const ParsedScript sortScript = hasCustomSortField ? parser.parse(sortFields.join("\036"_L1)) : ParsedScript{};
 
     for(const Track& track : tracks) {
         if(!track.isInLibrary()) {
             continue;
         }
 
-        const QString evaluated = parser.evaluate(script, track, scriptContext);
+        const QString evaluated                     = parser.evaluate(script, track, scriptContext);
+        const std::vector<QStringList> columnValues = splitColumnValues(evaluated);
 
-        auto addColumns = [&items, &formatter, &track](const QStringList& columnValues) {
+        std::vector<QStringList> sortValues;
+        if(hasCustomSortField) {
+            sortValues = splitColumnValues(parser.evaluate(sortScript, track, scriptContext));
+        }
+
+        auto addColumns = [&columns, &hasCustomSortField, &items, &formatter,
+                           &track](const QStringList& columnValues, const QStringList& sortColumnValues) {
             const ColumnData columnData = buildColumnData(columnValues, formatter);
             const RowKey key            = Utils::generateMd5Hash(columnData.plainColumns.join(QString{}));
 
@@ -123,19 +175,29 @@ FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumn
                 row.key         = key;
                 row.columns     = columnData.plainColumns;
                 row.richColumns = columnData.richColumns;
+
+                if(hasCustomSortField) {
+                    for(int column{0}; column < columnData.plainColumns.size(); ++column) {
+                        if(std::cmp_greater_equal(column, columns.size()) || columns.at(column).sortField.isEmpty()) {
+                            row.richColumns.push_back(sortRichText(columnData.plainColumns.value(column)));
+                        }
+                        else {
+                            row.richColumns.push_back(
+                                sortRichText(sortColumnText(sortColumnValues.value(column), formatter)));
+                        }
+                    }
+                }
             }
 
             row.trackIds.push_back(track.id());
         };
 
-        if(evaluated.contains(QLatin1String{Constants::UnitSeparator})) {
-            const QStringList values = evaluated.split(QLatin1String{Constants::UnitSeparator});
-            for(const QString& value : values) {
-                addColumns(value.split(QLatin1String{Constants::RecordSeparator}));
+        for(int index{0}; std::cmp_less(index, columnValues.size()); ++index) {
+            QStringList rowSortValues;
+            if(hasCustomSortField && !sortValues.empty()) {
+                rowSortValues = sortValues.at(std::min(index, static_cast<int>(sortValues.size()) - 1));
             }
-        }
-        else {
-            addColumns(evaluated.split(QLatin1String{Constants::RecordSeparator}));
+            addColumns(columnValues.at(index), rowSortValues);
         }
     }
 

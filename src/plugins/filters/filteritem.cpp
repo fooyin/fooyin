@@ -73,6 +73,7 @@ FilterItem::FilterItem(Md5Hash key, QStringList columns, FilterItem* parent)
     : TreeItem{parent}
     , m_key{std::move(key)}
     , m_columns{std::move(columns)}
+    , m_sortColumns{m_columns}
     , m_isSummary{false}
 {
     m_richColumns = plainColumnsToRichText(m_columns);
@@ -94,6 +95,14 @@ QString FilterItem::column(int column) const
         return {};
     }
     return m_columns.at(column);
+}
+
+QString FilterItem::sortColumn(int column) const
+{
+    if(column < 0 || column >= m_sortColumns.size()) {
+        return this->column(column);
+    }
+    return m_sortColumns.at(column);
 }
 
 const RichText& FilterItem::richColumn(int column) const
@@ -200,13 +209,36 @@ void FilterItem::updateIconCaptionColumns(const std::vector<int>& columnOrder) c
 void FilterItem::setColumns(const QStringList& columns)
 {
     m_columns     = columns;
+    m_sortColumns = m_columns;
     m_richColumns = plainColumnsToRichText(m_columns);
     invalidateIconCaches();
 }
 
 void FilterItem::setRichColumns(const std::vector<RichText>& columns)
 {
-    m_richColumns = columns;
+    const auto columnCount = static_cast<int>(m_columns.size());
+
+    if(std::cmp_greater(columns.size(), columnCount)) {
+        m_richColumns.assign(columns.cbegin(), columns.cbegin() + columnCount);
+
+        m_sortColumns.clear();
+        m_sortColumns.reserve(columnCount);
+
+        const int sortColumnCount = static_cast<int>(columns.size()) - columnCount;
+        for(int column{0}; column < columnCount; ++column) {
+            if(column < sortColumnCount) {
+                m_sortColumns.push_back(columns.at(columnCount + column).joinedText());
+            }
+            else {
+                m_sortColumns.push_back(m_columns.at(column));
+            }
+        }
+    }
+    else {
+        m_richColumns = columns;
+        m_sortColumns = m_columns;
+    }
+
     invalidateIconCaches();
 }
 
@@ -218,6 +250,7 @@ void FilterItem::setTrackIds(const TrackIds& trackIds)
 void FilterItem::removeColumn(int column)
 {
     m_columns.remove(column);
+    m_sortColumns.remove(column);
 
     if(column >= 0 && std::cmp_less(column, m_richColumns.size())) {
         m_richColumns.erase(m_richColumns.begin() + column);

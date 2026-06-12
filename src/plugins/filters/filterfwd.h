@@ -22,18 +22,25 @@
 #include <QDataStream>
 #include <QString>
 
+#include <tuple>
+
 namespace Fooyin::Filters {
 struct FilterColumn
 {
+    static constexpr qint32 Magic   = -0x46434F4C;
+    static constexpr qint32 Version = 2;
+
     int id{-1};
     int index{-1};
     bool isDefault{false};
     QString name;
     QString field;
+    QString sortField;
 
     bool operator==(const FilterColumn& other) const
     {
-        return std::tie(id, index, name, field) == std::tie(other.id, other.index, other.name, other.field);
+        return std::tie(id, index, name, field, sortField)
+            == std::tie(other.id, other.index, other.name, other.field, other.sortField);
     }
 
     [[nodiscard]] bool isValid() const
@@ -43,19 +50,44 @@ struct FilterColumn
 
     friend QDataStream& operator<<(QDataStream& stream, const FilterColumn& column)
     {
+        stream << Magic;
+        stream << Version;
         stream << column.id;
         stream << column.index;
         stream << column.name;
         stream << column.field;
+        stream << column.sortField;
         return stream;
     }
 
     friend QDataStream& operator>>(QDataStream& stream, FilterColumn& column)
     {
-        stream >> column.id;
-        stream >> column.index;
-        stream >> column.name;
-        stream >> column.field;
+        qint32 magicOrId{-1};
+        stream >> magicOrId;
+
+        if(magicOrId == Magic) {
+            qint32 version{0};
+            stream >> version;
+
+            stream >> column.id;
+            stream >> column.index;
+            stream >> column.name;
+            stream >> column.field;
+            if(version >= 2) {
+                stream >> column.sortField;
+            }
+            else {
+                column.sortField.clear();
+            }
+        }
+        else {
+            column.id = magicOrId;
+            stream >> column.index;
+            stream >> column.name;
+            stream >> column.field;
+            column.sortField.clear();
+        }
+
         return stream;
     }
 };

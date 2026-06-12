@@ -35,6 +35,7 @@
 #include <QMimeData>
 #include <QSize>
 
+#include <algorithm>
 #include <set>
 #include <utility>
 
@@ -86,14 +87,41 @@ bool rowMatchesItem(const Fooyin::Filters::FilterRow& row, const Fooyin::Filters
         return false;
     }
 
+    const int columnCount = item.columns().size();
     std::vector<Fooyin::RichText> richColumns;
-    richColumns.reserve(item.columns().size());
+    richColumns.reserve(columnCount);
 
-    for(int column = 0; column < item.columns().size(); ++column) {
+    for(int column = 0; column < columnCount; ++column) {
         richColumns.push_back(item.richColumn(column));
     }
 
-    return row.richColumns == richColumns;
+    const auto richColumnCount = std::cmp_greater(row.richColumns.size(), columnCount)
+                                   ? columnCount
+                                   : static_cast<int>(row.richColumns.size());
+    if(!std::ranges::equal(row.richColumns.cbegin(), row.richColumns.cbegin() + richColumnCount, richColumns.cbegin(),
+                           richColumns.cbegin() + richColumnCount)) {
+        return false;
+    }
+
+    if(richColumnCount != static_cast<int>(richColumns.size())) {
+        return false;
+    }
+
+    if(!std::cmp_greater(row.richColumns.size(), columnCount)) {
+        return true;
+    }
+
+    if(row.richColumns.size() != richColumns.size() + static_cast<size_t>(columnCount)) {
+        return false;
+    }
+
+    for(int column{0}; column < columnCount; ++column) {
+        if(row.richColumns.at(columnCount + column).joinedText() != item.sortColumn(column)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 } // namespace
 
@@ -118,7 +146,7 @@ bool FilterSortModel::lessThan(const QModelIndex& left, const QModelIndex& right
         return sortOrder() != Qt::AscendingOrder;
     }
 
-    const auto cmp = m_collator.compare(leftItem->column(left.column()), rightItem->column(right.column()));
+    const auto cmp = m_collator.compare(leftItem->sortColumn(left.column()), rightItem->sortColumn(right.column()));
 
     if(cmp == 0) {
         return false;

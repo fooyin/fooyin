@@ -157,6 +157,8 @@ QVariant FiltersColumnModel::headerData(int section, Qt::Orientation orientation
             return tr("Name");
         case(2):
             return tr("Field");
+        case(3):
+            return tr("Sort Field");
         default:
             break;
     }
@@ -192,6 +194,8 @@ QVariant FiltersColumnModel::data(const QModelIndex& index, int role) const
                 const QString& field = item->column().field;
                 return !field.isEmpty() ? field : u"<enter field here>"_s;
             }
+            case(3):
+                return item->column().sortField;
             default:
                 break;
         }
@@ -227,6 +231,13 @@ bool FiltersColumnModel::setData(const QModelIndex& index, const QVariant& value
             column.field = value.toString();
             break;
         }
+        case(3): {
+            if(column.sortField == value.toString()) {
+                return false;
+            }
+            column.sortField = value.toString();
+            break;
+        }
         default:
             break;
     }
@@ -259,7 +270,7 @@ int FiltersColumnModel::rowCount(const QModelIndex& /*parent*/) const
 
 int FiltersColumnModel::columnCount(const QModelIndex& /*parent*/) const
 {
-    return 3;
+    return 4;
 }
 
 bool FiltersColumnModel::removeRows(int row, int count, const QModelIndex& /*parent*/)
