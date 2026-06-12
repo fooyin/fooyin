@@ -4,7 +4,7 @@
 <context>
     <name>Fooyin::ArtworkProperties</name>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="321"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="328"/>
         <source>Exported artwork to %Ln file(s)</source>
         <translation>
             <numerusform>Exported artwork to %Ln file</numerusform>
@@ -12,7 +12,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="329"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="336"/>
         <source>Exported artwork to %Ln file(s); some exports failed</source>
         <translation>
             <numerusform>Exported artwork to %Ln file; some exports failed</numerusform>
@@ -69,7 +69,7 @@
 <context>
     <name>Fooyin::FileOps::FileOpsDialog</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="466"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="475"/>
         <source>Pending operation(s): %Ln</source>
         <translation>
             <numerusform>Pending operation: %Ln</numerusform>
@@ -80,7 +80,7 @@
 <context>
     <name>Fooyin::FileOps::FileOpsPlugin</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="170"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="197"/>
         <source>Deleted %Ln track(s)</source>
         <translation>
             <numerusform>Deleted %Ln track</numerusform>
@@ -148,7 +148,7 @@
 <context>
     <name>Fooyin::PlaylistModel</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1521"/>
+        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1522"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln track</numerusform>
@@ -159,7 +159,7 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="739"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="725"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
@@ -181,7 +181,7 @@
 <context>
     <name>Fooyin::QuickTagger::QuickTaggerPlugin</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="295"/>
+        <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="290"/>
         <source>Set &quot;%1&quot; on %Ln track(s)?</source>
         <extracomment>%1 is the Quick Tagger entry name, for example &quot;Rating&quot;.</extracomment>
         <translation>
@@ -193,7 +193,7 @@
 <context>
     <name>Fooyin::RadioBrowser::RadioSearch</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="566"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="704"/>
         <source>%Ln active filter(s)</source>
         <translation>
             <numerusform>%Ln active filter</numerusform>
@@ -231,7 +231,7 @@
 <context>
     <name>Fooyin::SearchDialog</name>
     <message numerus="yes">
-        <location filename="../../src/gui/dialog/searchdialog.cpp" line="140"/>
+        <location filename="../../src/gui/dialog/searchdialog.cpp" line="142"/>
         <source>%Ln result(s)</source>
         <translation>
             <numerusform>%Ln result</numerusform>
