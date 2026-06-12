@@ -830,9 +830,15 @@ QUrl RadioBrowserService::buildSearchUrl(const RadioSearchRequest& request, int 
     if(!request.language.trimmed().isEmpty()) {
         query.addQueryItem(u"language"_s, request.language.trimmed());
     }
-    if(!request.tag.trimmed().isEmpty()) {
-        query.addQueryItem(u"tag"_s, request.tag.trimmed());
+
+    const QStringList tags = splitStationTags(request.tag);
+    if(tags.size() > 1) {
+        query.addQueryItem(u"tagList"_s, tags.join(u","_s));
     }
+    else if(tags.size() == 1) {
+        query.addQueryItem(u"tag"_s, tags.front());
+    }
+
     if(request.bitrateMin > 0) {
         query.addQueryItem(u"bitrateMin"_s, QString::number(request.bitrateMin));
     }
@@ -891,7 +897,15 @@ QUrl RadioBrowserService::buildStationUrlLookupUrl(const QString& stationUrl, in
 
 QUrl RadioBrowserService::buildCategoryUrl(const RadioCategoryType type, const int apiIndex) const
 {
-    return QUrl{apiBase(apiIndex) + u"/json/%1"_s.arg(categoryPath(type))};
+    QUrl url{apiBase(apiIndex) + u"/json/%1"_s.arg(categoryPath(type))};
+
+    if(type == RadioCategoryType::Tag) {
+        QUrlQuery query;
+        query.addQueryItem(u"limit"_s, u"20000"_s);
+        url.setQuery(query);
+    }
+
+    return url;
 }
 
 QUrl RadioBrowserService::buildClickUrl(const QString& stationUuid) const

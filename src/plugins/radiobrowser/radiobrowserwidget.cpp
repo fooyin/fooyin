@@ -312,6 +312,7 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
 
     refreshThemeIcons();
     m_controller->fetchCategories(RadioCategoryType::Country);
+    m_controller->fetchCategories(RadioCategoryType::Tag);
     m_controller->fetchCategories(RadioCategoryType::Codec);
 
     m_model->setCurrentStation(m_controller->currentStation());
@@ -727,6 +728,9 @@ void RadioBrowserWidget::handleCategoriesChanged(RadioCategoryType type, const R
     if(type == RadioCategoryType::Country) {
         m_countryCategories = categories;
     }
+    else if(type == RadioCategoryType::Tag) {
+        m_tagCategories = categories;
+    }
     else if(type == RadioCategoryType::Codec) {
         m_codecCategories = categories;
     }
@@ -1002,7 +1006,7 @@ QString RadioBrowserWidget::defaultSearchName(const RadioSearchRequest& request)
         parts.push_back(m_filterBar ? m_filterBar->countryName(request.countryCode) : request.countryCode.trimmed());
     }
     if(!request.tag.trimmed().isEmpty()) {
-        parts.push_back(m_filterBar ? m_filterBar->genreName(request.tag) : request.tag.trimmed());
+        parts.push_back(m_filterBar ? m_filterBar->tagName(request.tag) : request.tag.trimmed());
     }
     if(!request.codec.trimmed().isEmpty()) {
         parts.push_back(request.codec.trimmed());
@@ -1742,6 +1746,9 @@ void RadioBrowserWidget::updateFilterBarCategories()
 
     if(!m_countryCategories.empty()) {
         m_filterBar->setCountryCategories(m_countryCategories);
+    }
+    if(!m_tagCategories.empty()) {
+        m_filterBar->setTagCategories(m_tagCategories);
     }
     if(!m_codecCategories.empty()) {
         m_filterBar->setCodecCategories(m_codecCategories);

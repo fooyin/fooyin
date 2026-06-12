@@ -56,6 +56,7 @@ class RadioGuideConfigStore
 public:
     [[nodiscard]] static RadioGuideTagList allTags();
     [[nodiscard]] static RadioGuideTagSections defaultTags();
+    [[nodiscard]] static RadioGuideTagList defaultGenreTags();
     [[nodiscard]] static RadioGuideConfig defaultConfig();
     [[nodiscard]] static RadioGuideConfig fromSettings(const SettingsManager& settings);
 

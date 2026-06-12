@@ -236,6 +236,7 @@ private:
     bool m_visibleIconRequestPending;
     RadioSearchRequest m_filterRequest;
     RadioCategoryList m_countryCategories;
+    RadioCategoryList m_tagCategories;
     RadioCategoryList m_codecCategories;
     std::unordered_map<int, PendingTrackAction> m_pendingTrackActions;
     std::optional<RadioSavedSearch> m_currentSavedSearch;

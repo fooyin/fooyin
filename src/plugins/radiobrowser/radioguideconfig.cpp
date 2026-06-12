@@ -64,7 +64,7 @@ RadioGuideTagSections normaliseSections(const RadioGuideTagSections& sections)
     return result;
 }
 
-RadioGuideConfig configFromSettings(const SettingsManager& settings, RadioGuideTagSections sections)
+RadioGuideConfig configFromSettings(const SettingsManager& settings, const RadioGuideTagSections& sections)
 {
     return {
         .sections        = normaliseSections(sections),
@@ -136,6 +136,38 @@ RadioGuideTagSections RadioGuideConfigStore::defaultTags()
     };
 }
 
+RadioGuideTagList RadioGuideConfigStore::defaultGenreTags()
+{
+    return {{.name = tr("Blues"), .tag = u"blues"_s},
+            {.name = tr("Classical"), .tag = u"classical"_s},
+            {.name = tr("Country"), .tag = u"country"_s},
+            {.name = tr("Dance"), .tag = u"dance"_s},
+            {.name = tr("Disco"), .tag = u"disco"_s},
+            {.name = tr("Easy"), .tag = u"easy listening"_s},
+            {.name = tr("Folk"), .tag = u"folk"_s},
+            {.name = tr("Hits"), .tag = u"hits"_s},
+            {.name = tr("Jazz"), .tag = u"jazz"_s},
+            {.name = tr("Oldies"), .tag = u"oldies"_s},
+            {.name = tr("Pop"), .tag = u"pop"_s},
+            {.name = tr("Rap"), .tag = u"rap"_s},
+            {.name = tr("Rock"), .tag = u"rock"_s},
+            {.name = tr("Soul"), .tag = u"soul"_s},
+            {.name = tr("Alternative"), .tag = u"alternative"_s},
+            {.name = tr("Ambient"), .tag = u"ambient"_s},
+            {.name = tr("Club"), .tag = u"club"_s},
+            {.name = tr("Electronic"), .tag = u"electronic"_s},
+            {.name = tr("Funk"), .tag = u"funk"_s},
+            {.name = tr("Hip Hop"), .tag = u"hiphop"_s},
+            {.name = tr("House"), .tag = u"house"_s},
+            {.name = tr("Indie"), .tag = u"indie"_s},
+            {.name = tr("Latino"), .tag = u"latino"_s},
+            {.name = tr("Metal"), .tag = u"metal"_s},
+            {.name = tr("Punk"), .tag = u"punk"_s},
+            {.name = tr("Reggae"), .tag = u"reggae"_s},
+            {.name = tr("Salsa"), .tag = u"salsa"_s},
+            {.name = tr("World Music"), .tag = u"world music"_s}};
+}
+
 RadioGuideConfig RadioGuideConfigStore::defaultConfig()
 {
     return {.sections = defaultTags(), .showCountries = true, .startupEntryKey = {}};
@@ -158,7 +190,7 @@ RadioGuideConfig RadioGuideConfigStore::fromSettings(const SettingsManager& sett
 
     quint32 sectionCount{0};
     stream >> sectionCount;
-    if(stream.status() != QDataStream::Ok || sectionCount < 0 || sectionCount > 1000) {
+    if(stream.status() != QDataStream::Ok || sectionCount > 1000) {
         return configFromSettings(settings, defaultTags());
     }
 
@@ -169,7 +201,7 @@ RadioGuideConfig RadioGuideConfigStore::fromSettings(const SettingsManager& sett
         RadioGuideTagSection section;
         quint32 tagCount{0};
         stream >> section.name >> tagCount;
-        if(stream.status() != QDataStream::Ok || tagCount < 0 || tagCount > 10000) {
+        if(stream.status() != QDataStream::Ok || tagCount > 10000) {
             return configFromSettings(settings, defaultTags());
         }
 
@@ -188,12 +220,12 @@ RadioGuideConfig RadioGuideConfigStore::fromSettings(const SettingsManager& sett
         sections.emplace_back(std::move(section));
     }
 
-    return configFromSettings(settings, std::move(sections));
+    return configFromSettings(settings, sections);
 }
 
 void RadioGuideConfigStore::save(SettingsManager& settings, const RadioGuideConfig& config)
 {
-    RadioGuideTagSections entries = normaliseSections(config.sections);
+    const RadioGuideTagSections entries = normaliseSections(config.sections);
 
     QByteArray data;
     QDataStream stream{&data, QIODevice::WriteOnly};

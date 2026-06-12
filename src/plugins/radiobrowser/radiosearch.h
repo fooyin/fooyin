@@ -27,6 +27,7 @@
 #include <QPointer>
 
 #include <array>
+#include <unordered_map>
 
 class QAction;
 class QComboBox;
@@ -63,9 +64,10 @@ public:
     void reset();
 
     void setCountryCategories(const RadioCategoryList& categories);
+    void setTagCategories(const RadioCategoryList& categories);
     void setCodecCategories(const RadioCategoryList& categories);
     [[nodiscard]] QString countryName(const QString& countryCode) const;
-    [[nodiscard]] QString genreName(const QString& tag) const;
+    [[nodiscard]] QString tagName(const QString& tag) const;
 
     void setSaveSearchEnabled(bool enabled);
     void setSaveSearchToolTip(const QString& tooltip);
@@ -93,6 +95,7 @@ private:
         QString searchText;
         QString countryCode;
         QString genreTag;
+        QString tag;
         QString codec;
         int minBitrate{0};
         int maxBitrate{0};
@@ -102,6 +105,7 @@ private:
     {
         Country = 0,
         Genre,
+        Tag,
         Codec,
         Bitrate,
         Count
@@ -110,7 +114,7 @@ private:
     void setCategories(ExpandingComboBox* popupCombo, ExpandingComboBox* pinnedCombo, const QString& anyLabel,
                        const RadioCategoryList& categories, FilterControl control);
     void populateGenreCombo();
-    int ensureGenreIndex(const QString& tag);
+    void populateTagCombo();
 
     void setState(const FilterState& state, bool notify);
     void renderControlsFromState();
@@ -139,13 +143,16 @@ private:
     QLineEdit* m_searchEdit;
     QPointer<ExpandingComboBox> m_countryCombo;
     QPointer<ExpandingComboBox> m_genreCombo;
+    QPointer<ExpandingComboBox> m_tagCombo;
     QPointer<ExpandingComboBox> m_codecCombo;
     QPointer<QSpinBox> m_minBitrate;
     QPointer<QSpinBox> m_maxBitrate;
     RadioCategoryList m_countryCategories;
+    RadioCategoryList m_tagCategories;
     RadioCategoryList m_codecCategories;
     ExpandingComboBox* m_popupCountryCombo;
     ExpandingComboBox* m_popupGenreCombo;
+    ExpandingComboBox* m_popupTagCombo;
     ExpandingComboBox* m_popupCodecCombo;
     QSpinBox* m_popupMinBitrate;
     QSpinBox* m_popupMaxBitrate;
@@ -160,6 +167,8 @@ private:
     QGridLayout* m_popupFiltersLayout;
     std::array<FilterGroup, static_cast<size_t>(FilterControl::Count)> m_filterGroups;
     FilterState m_state;
+    std::unordered_map<QString, QString> m_genreNames;
+    std::unordered_map<QString, QString> m_tagNames;
 
     bool m_savedSearch;
     bool m_showFilterButtonText;

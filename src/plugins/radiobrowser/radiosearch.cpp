@@ -40,6 +40,8 @@
 #include <QToolButton>
 #include <QWidget>
 
+#include <unordered_set>
+
 using namespace Qt::StringLiterals;
 
 constexpr auto ShowFilterTextKey = "ShowFilterText"_L1;
@@ -50,6 +52,13 @@ void syncComboValue(QComboBox* target, const QString& value)
 {
     const int index = value.isEmpty() ? 0 : target->findData(value);
     target->setCurrentIndex(index >= 0 ? index : 0);
+}
+
+void ensureComboValue(QComboBox* target, const QString& label, const QString& value)
+{
+    if(!value.isEmpty() && target->findData(value) < 0) {
+        target->addItem(label, value);
+    }
 }
 
 void updatePinButtonIcon(QToolButton* button, const bool pinned)
@@ -73,6 +82,18 @@ void setupFilterCombo(ExpandingComboBox* combo)
 
     QObject::connect(combo, &QComboBox::currentTextChanged, combo, [combo] { updateFilterComboWidth(combo); });
 }
+
+QStringList uniqueTagList(const QStringList& tags)
+{
+    QStringList result;
+    for(const QString& tag : tags) {
+        const QString trimmed = tag.trimmed();
+        if(!trimmed.isEmpty() && !result.contains(trimmed)) {
+            result.emplace_back(trimmed);
+        }
+    }
+    return result;
+}
 } // namespace
 
 RadioSearch::RadioSearch(SettingsManager* settings, QWidget* parent)
@@ -81,11 +102,13 @@ RadioSearch::RadioSearch(SettingsManager* settings, QWidget* parent)
     , m_searchEdit{new QLineEdit(this)}
     , m_countryCombo{nullptr}
     , m_genreCombo{nullptr}
+    , m_tagCombo{nullptr}
     , m_codecCombo{nullptr}
     , m_minBitrate{nullptr}
     , m_maxBitrate{nullptr}
     , m_popupCountryCombo{new ExpandingComboBox(this)}
     , m_popupGenreCombo{new ExpandingComboBox(this)}
+    , m_popupTagCombo{new ExpandingComboBox(this)}
     , m_popupCodecCombo{new ExpandingComboBox(this)}
     , m_popupMinBitrate{new QSpinBox(this)}
     , m_popupMaxBitrate{new QSpinBox(this)}
@@ -111,6 +134,9 @@ RadioSearch::RadioSearch(SettingsManager* settings, QWidget* parent)
     m_popupGenreCombo->addItem(tr("Any genre"), QString{});
     setupFilterCombo(m_popupGenreCombo);
     populateGenreCombo();
+
+    m_popupTagCombo->addItem(tr("Any tag"), QString{});
+    setupFilterCombo(m_popupTagCombo);
 
     m_popupCodecCombo->addItem(tr("Any codec"), QString{});
     setupFilterCombo(m_popupCodecCombo);
@@ -149,6 +175,7 @@ RadioSearch::RadioSearch(SettingsManager* settings, QWidget* parent)
 
     setupFilterGroup(FilterControl::Country, tr("Country"));
     setupFilterGroup(FilterControl::Genre, tr("Genre"));
+    setupFilterGroup(FilterControl::Tag, tr("Tag"));
     setupFilterGroup(FilterControl::Codec, tr("Codec"));
     setupFilterGroup(FilterControl::Bitrate, tr("Bitrate"));
 
@@ -179,6 +206,11 @@ RadioSearch::RadioSearch(SettingsManager* settings, QWidget* parent)
     QObject::connect(m_popupGenreCombo, &QComboBox::currentIndexChanged, this, [this]() {
         auto state     = m_state;
         state.genreTag = m_popupGenreCombo->currentData().toString();
+        setState(state, true);
+    });
+    QObject::connect(m_popupTagCombo, &QComboBox::currentIndexChanged, this, [this]() {
+        auto state{m_state};
+        state.tag = m_popupTagCombo->currentData().toString();
         setState(state, true);
     });
     QObject::connect(m_popupCodecCombo, &QComboBox::currentIndexChanged, this, [this]() {
@@ -251,7 +283,7 @@ RadioSearchRequest RadioSearch::request(bool hideBroken) const
     filterRequest.displayText = m_state.searchText;
     filterRequest.text        = filterRequest.displayText.trimmed();
     filterRequest.countryCode = m_state.countryCode;
-    filterRequest.tag         = m_state.genreTag;
+    filterRequest.tag         = uniqueTagList({m_state.genreTag, m_state.tag}).join(u","_s);
     filterRequest.order       = u"clickcount"_s;
     filterRequest.bitrateMin  = m_state.minBitrate;
     filterRequest.bitrateMax  = m_state.maxBitrate;
@@ -272,10 +304,21 @@ void RadioSearch::setRequest(const RadioSearchRequest& request)
 
     state.searchText  = request.displayText.isNull() ? request.text : request.displayText;
     state.countryCode = request.countryCode.trimmed().toUpper();
-    state.genreTag    = request.tag.trimmed();
     state.codec       = request.codec.trimmed();
     state.minBitrate  = std::max(0, request.bitrateMin);
     state.maxBitrate  = std::max(0, request.bitrateMax);
+
+    QStringList remainingTags;
+    const auto splitTags = splitStationTags(request.tag);
+    for(const QString& tag : splitTags) {
+        if(state.genreTag.isEmpty() && m_popupGenreCombo->findData(tag) >= 0) {
+            state.genreTag = tag;
+        }
+        else {
+            remainingTags.emplace_back(tag);
+        }
+    }
+    state.tag = uniqueTagList(remainingTags).join(u","_s);
 
     setState(state, false);
 }
@@ -298,6 +341,12 @@ void RadioSearch::setCountryCategories(const RadioCategoryList& categories)
     setCategories(m_popupCountryCombo, m_countryCombo, tr("Any country"), categories, FilterControl::Country);
 }
 
+void RadioSearch::setTagCategories(const RadioCategoryList& categories)
+{
+    m_tagCategories = categories;
+    populateTagCombo();
+}
+
 void RadioSearch::setCodecCategories(const RadioCategoryList& categories)
 {
     m_codecCategories = categories;
@@ -310,10 +359,22 @@ QString RadioSearch::countryName(const QString& countryCode) const
     return index >= 0 ? m_popupCountryCombo->itemText(index) : countryCode.trimmed();
 }
 
-QString RadioSearch::genreName(const QString& tag) const
+QString RadioSearch::tagName(const QString& tag) const
 {
-    const int index = m_popupGenreCombo->findData(tag.trimmed());
-    return index >= 0 ? m_popupGenreCombo->itemText(index) : tag.trimmed();
+    QStringList names;
+    const auto splitTags = splitStationTags(tag);
+    for(const QString& entry : splitTags) {
+        if(m_genreNames.contains(entry)) {
+            names.emplace_back(m_genreNames.at(entry));
+        }
+        else if(m_tagNames.contains(entry)) {
+            names.emplace_back(m_tagNames.at(entry));
+        }
+        else {
+            names.emplace_back(entry);
+        }
+    }
+    return names.join(u", "_s);
 }
 
 void RadioSearch::setSaveSearchEnabled(const bool enabled)
@@ -360,7 +421,7 @@ void RadioSearch::setCategories(ExpandingComboBox* popupCombo, ExpandingComboBox
         pinnedBlocker.emplace(pinnedCombo);
     }
 
-    std::vector<ExpandingComboBox*> combos{popupCombo};
+    std::vector combos{popupCombo};
     if(pinnedCombo) {
         combos.push_back(pinnedCombo);
     }
@@ -391,46 +452,104 @@ void RadioSearch::setCategories(ExpandingComboBox* popupCombo, ExpandingComboBox
 
 void RadioSearch::populateGenreCombo()
 {
-    m_popupGenreCombo->clear();
-
-    m_popupGenreCombo->addItem(tr("Any genre"), QString{});
+    const QSignalBlocker popupBlocker{m_popupGenreCombo};
+    std::optional<QSignalBlocker> pinnedBlocker;
     if(m_genreCombo) {
-        m_genreCombo->clear();
-        m_genreCombo->addItem(tr("Any genre"), QString{});
+        pinnedBlocker.emplace(m_genreCombo);
     }
 
-    const auto tags = RadioGuideConfigStore::allTags();
-    for(const RadioGuideTag& tag : tags) {
-        m_popupGenreCombo->addItem(tag.name, tag.tag);
-        if(m_genreCombo) {
-            m_genreCombo->addItem(tag.name, tag.tag);
+    std::vector combos{m_popupGenreCombo};
+    if(m_genreCombo) {
+        combos.push_back(m_genreCombo);
+    }
+
+    for(auto* combo : combos) {
+        combo->clear();
+        combo->addItem(tr("Any genre"), QString{});
+    }
+
+    m_genreNames.clear();
+
+    RadioGuideTagList genreTags = RadioGuideConfigStore::defaultGenreTags();
+    std::ranges::sort(genreTags, [](const RadioGuideTag& lhs, const RadioGuideTag& rhs) {
+        return QString::localeAwareCompare(lhs.name, rhs.name) < 0;
+    });
+
+    std::unordered_set<QString> seenTags;
+
+    for(const RadioGuideTag& tag : genreTags) {
+        const QString value = tag.tag.trimmed();
+        if(value.isEmpty() || seenTags.contains(value)) {
+            continue;
         }
+
+        seenTags.emplace(value);
+
+        for(auto* combo : combos) {
+            combo->addItem(tag.name, value);
+        }
+
+        m_genreNames.emplace(value, tag.name);
     }
 
-    m_popupGenreCombo->resizeDropDown();
-    if(m_genreCombo) {
-        m_genreCombo->resizeDropDown();
+    for(auto* combo : combos) {
+        combo->resizeDropDown();
+    }
+
+    if(m_filterGroups.at(filterIndex(FilterControl::Genre)).label) {
+        renderControlFromState(FilterControl::Genre);
+        updateFilterButton();
     }
 }
 
-int RadioSearch::ensureGenreIndex(const QString& tag)
+void RadioSearch::populateTagCombo()
 {
-    const QString trimmed = tag.trimmed();
-    if(trimmed.isEmpty()) {
-        return 0;
+    const QSignalBlocker popupBlocker{m_popupTagCombo};
+    std::optional<QSignalBlocker> pinnedBlocker;
+    if(m_tagCombo) {
+        pinnedBlocker.emplace(m_tagCombo);
     }
 
-    const int index = m_popupGenreCombo->findData(trimmed, Qt::UserRole);
-    if(index >= 0) {
-        return index;
+    m_popupTagCombo->clear();
+    m_popupTagCombo->addItem(tr("Any tag"), QString{});
+    if(m_tagCombo) {
+        m_tagCombo->clear();
+        m_tagCombo->addItem(tr("Any tag"), QString{});
     }
 
-    m_popupGenreCombo->addItem(trimmed, trimmed);
-    if(m_genreCombo) {
-        m_genreCombo->addItem(trimmed, trimmed);
+    m_tagNames.clear();
+
+    RadioCategoryList sorted{m_tagCategories};
+    std::ranges::sort(sorted, [](const RadioCategory& lhs, const RadioCategory& rhs) {
+        return QString::localeAwareCompare(lhs.name, rhs.name) < 0;
+    });
+
+    for(const RadioCategory& tag : sorted) {
+        m_popupTagCombo->addItem(tag.name, tag.value);
+        if(m_tagCombo) {
+            m_tagCombo->addItem(tag.name, tag.value);
+        }
+        m_tagNames.emplace(tag.value, tag.name);
     }
 
-    return m_popupGenreCombo->count() - 1;
+    const QString stateTag = m_state.tag.trimmed();
+    if(!stateTag.isEmpty() && m_popupTagCombo->findData(stateTag) < 0) {
+        m_popupTagCombo->addItem(stateTag, stateTag);
+        if(m_tagCombo) {
+            m_tagCombo->addItem(stateTag, stateTag);
+        }
+        m_tagNames.emplace(stateTag, stateTag);
+    }
+
+    m_popupTagCombo->resizeDropDown();
+    if(m_tagCombo) {
+        m_tagCombo->resizeDropDown();
+    }
+
+    if(m_filterGroups.at(filterIndex(FilterControl::Tag)).label) {
+        renderControlFromState(FilterControl::Tag);
+        updateFilterButton();
+    }
 }
 
 void RadioSearch::setState(const FilterState& state, const bool notify)
@@ -441,8 +560,9 @@ void RadioSearch::setState(const FilterState& state, const bool notify)
     normalised.maxBitrate
         = std::clamp(normalised.maxBitrate, m_popupMaxBitrate->minimum(), m_popupMaxBitrate->maximum());
     const bool changed = m_state.searchText != normalised.searchText || m_state.countryCode != normalised.countryCode
-                      || m_state.genreTag != normalised.genreTag || m_state.codec != normalised.codec
-                      || m_state.minBitrate != normalised.minBitrate || m_state.maxBitrate != normalised.maxBitrate;
+                      || m_state.genreTag != normalised.genreTag || m_state.tag != normalised.tag
+                      || m_state.codec != normalised.codec || m_state.minBitrate != normalised.minBitrate
+                      || m_state.maxBitrate != normalised.maxBitrate;
 
     m_state = normalised;
     renderControlsFromState();
@@ -462,6 +582,7 @@ void RadioSearch::renderControlsFromState()
 
     renderControlFromState(FilterControl::Country);
     renderControlFromState(FilterControl::Genre);
+    renderControlFromState(FilterControl::Tag);
     renderControlFromState(FilterControl::Codec);
     renderControlFromState(FilterControl::Bitrate);
 }
@@ -480,7 +601,6 @@ void RadioSearch::renderControlFromState(FilterControl control)
             }
         } break;
         case FilterControl::Genre: {
-            ensureGenreIndex(m_state.genreTag);
             const QSignalBlocker popupBlocker{m_popupGenreCombo};
             syncComboValue(m_popupGenreCombo, m_state.genreTag);
             updateFilterComboWidth(m_popupGenreCombo);
@@ -488,6 +608,18 @@ void RadioSearch::renderControlFromState(FilterControl control)
                 const QSignalBlocker pinnedBlocker{m_genreCombo};
                 syncComboValue(m_genreCombo, m_state.genreTag);
                 updateFilterComboWidth(m_genreCombo);
+            }
+        } break;
+        case FilterControl::Tag: {
+            const QSignalBlocker popupBlocker{m_popupTagCombo};
+            ensureComboValue(m_popupTagCombo, tagName(m_state.tag), m_state.tag);
+            syncComboValue(m_popupTagCombo, m_state.tag);
+            updateFilterComboWidth(m_popupTagCombo);
+            if(m_tagCombo) {
+                const QSignalBlocker pinnedBlocker{m_tagCombo};
+                ensureComboValue(m_tagCombo, tagName(m_state.tag), m_state.tag);
+                syncComboValue(m_tagCombo, m_state.tag);
+                updateFilterComboWidth(m_tagCombo);
             }
         } break;
         case FilterControl::Codec: {
@@ -529,6 +661,9 @@ int RadioSearch::activeFilterCount() const
     if(filterActive(FilterControl::Genre)) {
         ++count;
     }
+    if(filterActive(FilterControl::Tag)) {
+        ++count;
+    }
     if(filterActive(FilterControl::Codec)) {
         ++count;
     }
@@ -546,6 +681,8 @@ bool RadioSearch::filterActive(FilterControl control) const
             return !m_state.countryCode.trimmed().isEmpty();
         case FilterControl::Genre:
             return !m_state.genreTag.trimmed().isEmpty();
+        case FilterControl::Tag:
+            return !m_state.tag.trimmed().isEmpty();
         case FilterControl::Codec:
             return !m_state.codec.trimmed().isEmpty();
         case FilterControl::Bitrate:
@@ -582,7 +719,12 @@ void RadioSearch::updateFilterClearButtons()
     for(size_t i{0}; i < filterIndex(FilterControl::Count); ++i) {
         const auto control = static_cast<FilterControl>(i);
         auto& group        = filterGroup(control);
-        const bool active  = filterActive(control);
+
+        if(!group.clearButton) {
+            continue;
+        }
+
+        const bool active = filterActive(control);
         // Keep the clear button disabled but 'visible' in the layout so it's space is not collapsed
         group.clearButton->setEnabled(active);
         group.clearButton->setIcon(active ? clearIcon : QIcon{});
@@ -600,6 +742,9 @@ void RadioSearch::clearFilter(FilterControl control)
             break;
         case FilterControl::Genre:
             state.genreTag.clear();
+            break;
+        case FilterControl::Tag:
+            state.tag.clear();
             break;
         case FilterControl::Codec:
             state.codec.clear();
@@ -663,14 +808,31 @@ void RadioSearch::ensurePinnedControls(FilterControl control)
 
             m_genreCombo = new ExpandingComboBox(m_pinnedFiltersWidget);
             setupFilterCombo(m_genreCombo);
-
-            copyComboItems(m_popupGenreCombo, m_genreCombo);
+            populateGenreCombo();
             syncComboValue(m_genreCombo, m_state.genreTag);
             updateFilterComboWidth(m_genreCombo);
 
             QObject::connect(m_genreCombo, &QComboBox::currentIndexChanged, this, [this]() {
                 auto state{m_state};
                 state.genreTag = m_genreCombo->currentData().toString();
+                setState(state, true);
+            });
+            break;
+        }
+        case FilterControl::Tag: {
+            if(m_tagCombo) {
+                return;
+            }
+
+            m_tagCombo = new ExpandingComboBox(m_pinnedFiltersWidget);
+            setupFilterCombo(m_tagCombo);
+            populateTagCombo();
+            syncComboValue(m_tagCombo, m_state.tag);
+            updateFilterComboWidth(m_tagCombo);
+
+            QObject::connect(m_tagCombo, &QComboBox::currentIndexChanged, this, [this]() {
+                auto state{m_state};
+                state.tag = m_tagCombo->currentData().toString();
                 setState(state, true);
             });
             break;
@@ -783,6 +945,11 @@ void RadioSearch::updateFilterPlacement()
                     m_pinnedFiltersLayout->removeWidget(m_genreCombo);
                 }
                 break;
+            case FilterControl::Tag:
+                if(m_tagCombo) {
+                    m_pinnedFiltersLayout->removeWidget(m_tagCombo);
+                }
+                break;
             case FilterControl::Codec:
                 if(m_codecCombo) {
                     m_pinnedFiltersLayout->removeWidget(m_codecCombo);
@@ -811,6 +978,9 @@ void RadioSearch::updateFilterPlacement()
             case FilterControl::Genre:
                 delete m_genreCombo;
                 break;
+            case FilterControl::Tag:
+                delete m_tagCombo;
+                break;
             case FilterControl::Codec:
                 delete m_codecCombo;
                 break;
@@ -830,6 +1000,9 @@ void RadioSearch::updateFilterPlacement()
                 break;
             case FilterControl::Genre:
                 m_pinnedFiltersLayout->addWidget(m_genreCombo);
+                break;
+            case FilterControl::Tag:
+                m_pinnedFiltersLayout->addWidget(m_tagCombo);
                 break;
             case FilterControl::Codec:
                 m_pinnedFiltersLayout->addWidget(m_codecCombo);
@@ -857,6 +1030,9 @@ void RadioSearch::updateFilterPlacement()
                 break;
             case FilterControl::Genre:
                 m_popupFiltersLayout->removeWidget(m_popupGenreCombo);
+                break;
+            case FilterControl::Tag:
+                m_popupFiltersLayout->removeWidget(m_popupTagCombo);
                 break;
             case FilterControl::Codec:
                 m_popupFiltersLayout->removeWidget(m_popupCodecCombo);
@@ -897,6 +1073,9 @@ void RadioSearch::updateFilterPlacement()
                 break;
             case FilterControl::Genre:
                 m_popupFiltersLayout->addWidget(m_popupGenreCombo, popupRow, 1);
+                break;
+            case FilterControl::Tag:
+                m_popupFiltersLayout->addWidget(m_popupTagCombo, popupRow, 1);
                 break;
             case FilterControl::Codec:
                 m_popupFiltersLayout->addWidget(m_popupCodecCombo, popupRow, 1);
@@ -959,6 +1138,8 @@ QString RadioSearch::pinLayoutKey(FilterControl control)
             return u"CountryFilterPinned"_s;
         case FilterControl::Genre:
             return u"GenreFilterPinned"_s;
+        case FilterControl::Tag:
+            return u"TagFilterPinned"_s;
         case FilterControl::Codec:
             return u"CodecFilterPinned"_s;
         case FilterControl::Bitrate:
