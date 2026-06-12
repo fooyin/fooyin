@@ -48,30 +48,57 @@
 #include <QKeySequence>
 #include <QMainWindow>
 #include <QMenu>
+#include <QMouseEvent>
 #include <QSignalBlocker>
 #include <QSortFilterProxyModel>
 #include <QVBoxLayout>
 
-#include <array>
-
 using namespace Qt::StringLiterals;
 
 constexpr auto PlaylistManagerState = "PlaylistManager/State"_L1;
+constexpr auto ActivateOnSelection  = "ActivateOnSelection"_L1;
 
 namespace Fooyin {
 namespace {
-TrackSelection selectionForPlaylist(const Playlist* playlist)
+class PlaylistManagerView : public ExpandedTreeView
+{
+    Q_OBJECT
+
+public:
+    using ExpandedTreeView::ExpandedTreeView;
+
+protected:
+    void mousePressEvent(QMouseEvent* event) override
+    {
+        if(event->button() == Qt::RightButton) {
+            event->ignore();
+            return;
+        }
+        ExpandedTreeView::mousePressEvent(event);
+    }
+
+    void mouseDoubleClickEvent(QMouseEvent* event) override
+    {
+        if(event->button() == Qt::RightButton) {
+            event->ignore();
+            return;
+        }
+        ExpandedTreeView::mouseDoubleClickEvent(event);
+    }
+};
+
+TrackSelection selectionForPlaylist(const Playlist& playlist)
 {
     TrackSelection selection;
-    if(!playlist || playlist->trackCount() <= 0) {
+    if(playlist.trackCount() <= 0) {
         return selection;
     }
 
-    selection.tracks         = playlist->tracks();
-    selection.playlistId     = playlist->id();
+    selection.tracks         = playlist.tracks();
+    selection.playlistId     = playlist.id();
     selection.playlistBacked = true;
 
-    const auto playlistTracks = playlist->playlistTracks();
+    const auto playlistTracks = playlist.playlistTracks();
     selection.playlistIndexes.reserve(playlistTracks.size());
     selection.playlistEntryIds.reserve(playlistTracks.size());
 
@@ -93,7 +120,7 @@ PlaylistManagerWidget::PlaylistManagerWidget(ActionManager* actionManager, Playl
     , m_settings{settings}
     , m_model{new PlaylistManagerModel(playlistInteractor, this)}
     , m_proxyModel{new QSortFilterProxyModel(this)}
-    , m_view{new ExpandedTreeView(this)}
+    , m_view{new PlaylistManagerView(this)}
     , m_context{new WidgetContext(this, Context{IdList{Id{"Fooyin.Context.PlaylistManager."}.append(id())}}, this)}
     , m_activateAction{new QAction(tr("Activate"), this)}
     , m_editAutoPlaylistAction{new QAction(tr("&Edit autoplaylist"), this)}
@@ -109,12 +136,12 @@ PlaylistManagerWidget::PlaylistManagerWidget(ActionManager* actionManager, Playl
     , m_newAutoPlaylistAction{new QAction(tr("Add new &autoplaylist"), this)}
     , m_newAutoPlaylistCmd{m_actionManager->registerAction(m_newAutoPlaylistAction, Constants::Actions::NewAutoPlaylist,
                                                            m_context->context())}
-    , m_activateOnSingleClick{false}
+    , m_activateOnSelection{false}
     , m_selectingPlaylist{false}
     , m_topLevelStateLoaded{false}
 {
-    setObjectName(name());
-    setWindowTitle(name());
+    setObjectName(PlaylistManagerWidget::name());
+    setWindowTitle(PlaylistManagerWidget::name());
 
     m_actionManager->addContextObject(m_context);
 
@@ -158,16 +185,17 @@ PlaylistManagerWidget::PlaylistManagerWidget(ActionManager* actionManager, Playl
     QObject::connect(m_view, &QWidget::customContextMenuRequested, this,
                      &PlaylistManagerWidget::showPlaylistContextMenu);
     QObject::connect(header, &QWidget::customContextMenuRequested, this, &PlaylistManagerWidget::showHeaderContextMenu);
-    QObject::connect(m_view, &QAbstractItemView::clicked, this, [this](const QModelIndex& index) {
-        if(m_activateOnSingleClick) {
-            activatePlaylist(index);
-        }
-    });
     QObject::connect(m_view, &QAbstractItemView::doubleClicked, this, &PlaylistManagerWidget::activatePlaylist);
     QObject::connect(m_playlistController, &PlaylistController::currentPlaylistChanged, this,
                      &PlaylistManagerWidget::selectCurrentPlaylist);
     QObject::connect(m_model, &QAbstractItemModel::modelReset, this, &PlaylistManagerWidget::selectCurrentPlaylist);
     QObject::connect(m_model, &QAbstractItemModel::rowsInserted, this, &PlaylistManagerWidget::selectCurrentPlaylist);
+    QObject::connect(m_view->selectionModel(), &QItemSelectionModel::currentChanged, this,
+                     [this](const QModelIndex& current) {
+                         if(m_activateOnSelection && !m_selectingPlaylist) {
+                             activatePlaylist(current);
+                         }
+                     });
     QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &PlaylistManagerWidget::updateActionState);
 
@@ -186,8 +214,8 @@ QString PlaylistManagerWidget::layoutName() const
 
 void PlaylistManagerWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout["State"_L1]                 = QString::fromUtf8(saveHeaderState().toBase64());
-    layout["ActivateOnSingleClick"_L1] = m_activateOnSingleClick;
+    layout["State"_L1]          = QString::fromUtf8(saveHeaderState().toBase64());
+    layout[ActivateOnSelection] = m_activateOnSelection;
 }
 
 void PlaylistManagerWidget::loadLayoutData(const QJsonObject& layout)
@@ -198,8 +226,8 @@ void PlaylistManagerWidget::loadLayoutData(const QJsonObject& layout)
 
     resetToPlaylistIndexOrder();
 
-    if(layout.contains("ActivateOnSingleClick"_L1)) {
-        m_activateOnSingleClick = layout.value("ActivateOnSingleClick"_L1).toBool();
+    if(layout.contains(ActivateOnSelection)) {
+        m_activateOnSelection = layout.value(ActivateOnSelection).toBool();
     }
 }
 
@@ -226,7 +254,7 @@ QByteArray PlaylistManagerWidget::saveHeaderState() const
     return state;
 }
 
-void PlaylistManagerWidget::resetToPlaylistIndexOrder()
+void PlaylistManagerWidget::resetToPlaylistIndexOrder() const
 {
     m_proxyModel->sort(-1);
     m_view->header()->setSortIndicator(-1, Qt::AscendingOrder);
@@ -255,13 +283,13 @@ void PlaylistManagerWidget::closeEvent(QCloseEvent* event)
     FyWidget::closeEvent(event);
 }
 
-void PlaylistManagerWidget::addPlaylistContentsMenu(QMenu* menu, Playlist* playlist)
+void PlaylistManagerWidget::addPlaylistContentsMenu(QMenu* menu, const Playlist* playlist) const
 {
     if(!menu || !playlist) {
         return;
     }
 
-    const TrackSelection selection = selectionForPlaylist(playlist);
+    const TrackSelection selection = selectionForPlaylist(*playlist);
     if(selection.tracks.empty()) {
         return;
     }
@@ -300,7 +328,7 @@ void PlaylistManagerWidget::setupActions()
     m_renameCmd->setDescription(tr("Rename"));
     m_renameCmd->setAttribute(ProxyAction::UpdateText);
     m_renameCmd->setDefaultShortcut(Qt::Key_F2);
-    QObject::connect(m_renameAction, &QAction::triggered, this, &PlaylistManagerWidget::showRenameEditor);
+    QObject::connect(m_renameAction, &QAction::triggered, this, [this]() { showRenameEditor(); });
 
     m_removeAction->setStatusTip(tr("Remove the selected playlist"));
     m_removeAction->setShortcutVisibleInContextMenu(true);
@@ -333,7 +361,7 @@ void PlaylistManagerWidget::setupActions()
     });
 }
 
-void PlaylistManagerWidget::updateActionState()
+void PlaylistManagerWidget::updateActionState() const
 {
     Playlist* playlist{nullptr};
 
@@ -383,20 +411,13 @@ void PlaylistManagerWidget::activatePlaylist(const QModelIndex& proxyIndex) cons
     }
 }
 
-void PlaylistManagerWidget::activateCurrentPlaylist()
+void PlaylistManagerWidget::activateCurrentPlaylist() const
 {
     activatePlaylist(m_view->currentIndex());
 }
 
-void PlaylistManagerWidget::editCurrentAutoPlaylist()
+void PlaylistManagerWidget::editAutoPlaylist(Playlist* playlist) const
 {
-    const QModelIndex proxyIndex = m_view->currentIndex();
-    if(!proxyIndex.isValid()) {
-        return;
-    }
-
-    const QModelIndex sourceIndex = m_proxyModel->mapToSource(proxyIndex);
-    auto* playlist                = m_model->playlistForRow(sourceIndex.row());
     if(!playlist || !playlist->isAutoPlaylist()) {
         return;
     }
@@ -407,28 +428,42 @@ void PlaylistManagerWidget::editCurrentAutoPlaylist()
     autoDialog->show();
 }
 
+void PlaylistManagerWidget::removePlaylist(const Playlist* playlist)
+{
+    if(!playlist) {
+        return;
+    }
+
+    m_playlistController->playlistHandler()->removePlaylist(playlist->id());
+}
+
+void PlaylistManagerWidget::editCurrentAutoPlaylist()
+{
+    const QModelIndex proxyIndex = m_view->currentIndex();
+    if(!proxyIndex.isValid()) {
+        return;
+    }
+    const QModelIndex sourceIndex = m_proxyModel->mapToSource(proxyIndex);
+    editAutoPlaylist(m_model->playlistForRow(sourceIndex.row()));
+}
+
 void PlaylistManagerWidget::removeCurrentPlaylist()
 {
     const QModelIndex proxyIndex = m_view->currentIndex();
     if(!proxyIndex.isValid()) {
         return;
     }
-
     const QModelIndex sourceIndex = m_proxyModel->mapToSource(proxyIndex);
-    if(auto* playlist = m_model->playlistForRow(sourceIndex.row())) {
-        m_playlistController->playlistHandler()->removePlaylist(playlist->id());
-    }
+    removePlaylist(m_model->playlistForRow(sourceIndex.row()));
 }
 
 void PlaylistManagerWidget::showPlaylistContextMenu(const QPoint& pos)
 {
     Playlist* playlist{nullptr};
+    QModelIndex proxyIndex;
 
-    const QModelIndex proxyIndex = m_view->indexAt(pos);
+    proxyIndex = m_view->indexAt(pos);
     if(proxyIndex.isValid()) {
-        m_view->selectionModel()->setCurrentIndex(proxyIndex,
-                                                  QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
-
         const QModelIndex sourceIndex = m_proxyModel->mapToSource(proxyIndex);
         playlist                      = m_model->playlistForRow(sourceIndex.row());
     }
@@ -437,15 +472,35 @@ void PlaylistManagerWidget::showPlaylistContextMenu(const QPoint& pos)
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
     if(playlist) {
-        updateActionState();
-        menu->addAction(m_activateAction);
+        const UId playlistId = playlist->id();
+
+        auto* activateAction = new QAction(tr("Activate"), menu);
+        QObject::connect(activateAction, &QAction::triggered, this,
+                         [this, playlistId]() { m_playlistController->changeCurrentPlaylist(playlistId); });
+        menu->addAction(activateAction);
 
         if(playlist->isAutoPlaylist()) {
-            menu->addAction(m_editAutoPlaylistAction);
+            auto* editAutoPlaylistAction = new QAction(tr("Edit autoplaylist"), menu);
+            QObject::connect(editAutoPlaylistAction, &QAction::triggered, this, [this, playlist]() {
+                auto* autoDialog
+                    = new AutoPlaylistDialog(m_playlistController->playlistHandler(), playlist, Utils::getMainWindow());
+                autoDialog->setAttribute(Qt::WA_DeleteOnClose);
+                autoDialog->show();
+            });
+            menu->addAction(editAutoPlaylistAction);
         }
 
-        menu->addAction(m_renameAction);
-        menu->addAction(m_removeAction);
+        auto* renameAction
+            = new QAction(playlist->isAutoPlaylist() ? tr("Rename autoplaylist") : tr("Rename playlist"), menu);
+        QObject::connect(renameAction, &QAction::triggered, this,
+                         [this, proxyIndex]() { showRenameEditor(proxyIndex); });
+        menu->addAction(renameAction);
+
+        auto* removeAction
+            = new QAction(playlist->isAutoPlaylist() ? tr("Remove autoplaylist") : tr("Remove playlist"), menu);
+        QObject::connect(removeAction, &QAction::triggered, this,
+                         [this, playlistId]() { m_playlistController->playlistHandler()->removePlaylist(playlistId); });
+        menu->addAction(removeAction);
 
         menu->addSeparator();
     }
@@ -465,12 +520,12 @@ void PlaylistManagerWidget::showPlaylistContextMenu(const QPoint& pos)
 
     auto* optionsMenu = new QMenu(tr("Options"), menu);
 
-    auto* activateOnSingleClick = new QAction(tr("Activate on single click"), optionsMenu);
-    activateOnSingleClick->setCheckable(true);
-    activateOnSingleClick->setChecked(m_activateOnSingleClick);
-    QObject::connect(activateOnSingleClick, &QAction::toggled, this,
-                     [this](bool enabled) { m_activateOnSingleClick = enabled; });
-    optionsMenu->addAction(activateOnSingleClick);
+    auto* activateOnSelection = new QAction(tr("Activate on selection"), optionsMenu);
+    activateOnSelection->setCheckable(true);
+    activateOnSelection->setChecked(m_activateOnSelection);
+    QObject::connect(activateOnSelection, &QAction::toggled, this,
+                     [this](bool enabled) { m_activateOnSelection = enabled; });
+    optionsMenu->addAction(activateOnSelection);
 
     menu->addMenu(optionsMenu);
 
@@ -501,9 +556,13 @@ void PlaylistManagerWidget::showHeaderContextMenu(const QPoint& pos)
     menu->popup(m_view->header()->viewport()->mapToGlobal(pos));
 }
 
-void PlaylistManagerWidget::showRenameEditor()
+void PlaylistManagerWidget::showRenameEditor() const
 {
-    const QModelIndex proxyIndex = m_view->currentIndex();
+    showRenameEditor(m_view->currentIndex());
+}
+
+void PlaylistManagerWidget::showRenameEditor(const QModelIndex& proxyIndex) const
+{
     if(!proxyIndex.isValid()) {
         return;
     }
@@ -565,3 +624,6 @@ bool PlaylistManagerWidget::isWindowWidget() const
     return parentWidget() == nullptr;
 }
 } // namespace Fooyin
+
+#include "moc_playlistmanagerwidget.cpp"
+#include "playlistmanagerwidget.moc"

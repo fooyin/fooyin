@@ -64,20 +64,23 @@ protected:
 
 private:
     [[nodiscard]] QByteArray saveHeaderState() const;
-    void resetToPlaylistIndexOrder();
+    void resetToPlaylistIndexOrder() const;
 
-    void addPlaylistContentsMenu(QMenu* menu, Playlist* playlist);
+    void addPlaylistContentsMenu(QMenu* menu, const Playlist* playlist) const;
     void setupActions();
-    void updateActionState();
+    void updateActionState() const;
 
     void activatePlaylist(const QModelIndex& proxyIndex) const;
-    void activateCurrentPlaylist();
+    void editAutoPlaylist(Playlist* playlist) const;
+    void removePlaylist(const Playlist* playlist);
+    void activateCurrentPlaylist() const;
     void editCurrentAutoPlaylist();
     void removeCurrentPlaylist();
 
     void showPlaylistContextMenu(const QPoint& pos);
     void showHeaderContextMenu(const QPoint& pos);
-    void showRenameEditor();
+    void showRenameEditor(const QModelIndex& proxyIndex) const;
+    void showRenameEditor() const;
 
     void selectCurrentPlaylist();
 
@@ -107,7 +110,7 @@ private:
     QAction* m_newAutoPlaylistAction;
     Command* m_newAutoPlaylistCmd;
 
-    bool m_activateOnSingleClick;
+    bool m_activateOnSelection;
     bool m_selectingPlaylist;
     bool m_topLevelStateLoaded;
 };
