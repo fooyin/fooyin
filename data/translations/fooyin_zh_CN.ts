@@ -913,7 +913,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="323"/>
         <source>Joins non-empty values with a separator</source>
-        <translation type="unfinished"></translation>
+        <translation>用分隔符连接非空值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="325"/>
@@ -3803,12 +3803,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="58"/>
         <source>Add stream &amp;URL…</source>
-        <translation type="unfinished"></translation>
+        <translation>添加流媒体 URL(&amp;R)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="59"/>
         <source>Add the specified stream URL to the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>将指定的流媒体 URL 添加到当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="67"/>
@@ -4946,22 +4946,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1308"/>
         <source>Add Stream URL</source>
-        <translation type="unfinished"></translation>
+        <translation>添加流媒体 URL</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1309"/>
         <source>Stream URL:</source>
-        <translation type="unfinished"></translation>
+        <translation>流媒体 URL：</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1318"/>
         <source>Invalid Stream URL</source>
-        <translation type="unfinished"></translation>
+        <translation>无效的流媒体 URL</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1319"/>
         <source>Enter a valid http:// or https:// stream URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入有效的 http:// 或 https:// 流媒体 URL。</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1583"/>
@@ -5376,12 +5376,12 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="627"/>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="628"/>
         <source>Layout</source>
-        <translation type="unfinished">布局</translation>
+        <translation>布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="628"/>
         <source>Interface</source>
-        <translation type="unfinished">界面</translation>
+        <translation>界面</translation>
     </message>
 </context>
 <context>
@@ -5389,140 +5389,140 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="180"/>
         <source>Margins</source>
-        <translation type="unfinished">边距</translation>
+        <translation>边距</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="181"/>
         <source>Use custom margins</source>
-        <translation type="unfinished"></translation>
+        <translation>使用自定义边距</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="186"/>
         <source>Splitter</source>
-        <translation type="unfinished">分割器</translation>
+        <translation>分割器</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="187"/>
         <source>Use custom spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>使用自定义间距</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="207"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>左侧</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="209"/>
         <source>Top</source>
-        <translation type="unfinished">顶部</translation>
+        <translation>顶部</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="211"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>右侧</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="213"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="218"/>
         <source>Spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>间距</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="222"/>
         <source>New</source>
-        <translation type="unfinished">新预设</translation>
+        <translation>新建</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="223"/>
         <source>Rename</source>
-        <translation type="unfinished">重命名</translation>
+        <translation>重命名</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="224"/>
         <source>Duplicate</source>
-        <translation type="unfinished"></translation>
+        <translation>重复</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="337"/>
         <source>Move up</source>
-        <translation type="unfinished"></translation>
+        <translation>上移</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="342"/>
         <source>Move down</source>
-        <translation type="unfinished"></translation>
+        <translation>下移</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="347"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>移除</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="355"/>
         <source>Cut</source>
-        <translation type="unfinished"></translation>
+        <translation>剪切</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="360"/>
         <source>Copy</source>
-        <translation type="unfinished">复制</translation>
+        <translation>复制</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="366"/>
         <source>Paste</source>
-        <translation type="unfinished">粘贴</translation>
+        <translation>粘贴</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="488"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>重置</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="488"/>
         <source>Delete</source>
-        <translation type="unfinished">删除</translation>
+        <translation>删除</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="535"/>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="537"/>
         <source>New Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>新建布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="537"/>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="593"/>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="612"/>
         <source>Layout Name</source>
-        <translation type="unfinished"></translation>
+        <translation>布局名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="569"/>
         <source>Delete Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>删除布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="569"/>
         <source>Delete layout &quot;%1&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation>删除布局“%1”？</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="593"/>
         <source>Rename Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="610"/>
         <source>%1 Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 副本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="612"/>
         <source>Duplicate Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>重复布局</translation>
     </message>
 </context>
 <context>
@@ -5701,7 +5701,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="70"/>
         <source>Open the FAQ</source>
-        <translation>打开常见问题集</translation>
+        <translation>打开常见问题</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="74"/>
@@ -5719,12 +5719,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/core/network/hlsstreamdevice.cpp" line="490"/>
         <source>Invalid HLS stream.</source>
-        <translation type="unfinished"></translation>
+        <translation>无效的 HLS 流。</translation>
     </message>
     <message>
         <location filename="../../src/core/network/hlsstreamdevice.cpp" line="541"/>
         <source>HLS stream cannot be read from the network thread.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法从网络线程读取 HLS 流。</translation>
     </message>
 </context>
 <context>
@@ -6090,22 +6090,22 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="98"/>
         <source>&amp;Clear layout</source>
-        <translation type="unfinished"></translation>
+        <translation>清除布局(&amp;C)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="99"/>
         <source>Clear the current layout</source>
-        <translation type="unfinished"></translation>
+        <translation>清除当前布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="104"/>
         <source>&amp;Reset layout</source>
-        <translation type="unfinished"></translation>
+        <translation>重置布局(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="105"/>
         <source>Reset the current layout to the built-in default</source>
-        <translation type="unfinished"></translation>
+        <translation>将当前布局重置为内置默认布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="147"/>
@@ -6151,7 +6151,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/layouttreemodel.cpp" line="484"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
 </context>
 <context>
@@ -8033,12 +8033,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/core/network/networkstreamdevice.cpp" line="459"/>
         <source>Invalid network stream.</source>
-        <translation type="unfinished"></translation>
+        <translation>无效的网络流。</translation>
     </message>
     <message>
         <location filename="../../src/core/network/networkstreamdevice.cpp" line="512"/>
         <source>Network stream cannot be read from the network thread.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法从网络线程读取网络流。</translation>
     </message>
 </context>
 <context>
@@ -11360,192 +11360,192 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="36"/>
         <source>Radio Browser Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>电台浏览器设置</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="39"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished">立即开始播放</translation>
+        <translation>立即开始播放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="40"/>
         <source>Hide broken stations</source>
-        <translation type="unfinished"></translation>
+        <translation>隐藏失效电台</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="41"/>
         <source>Send clicks to radio-browser.info</source>
-        <translation type="unfinished"></translation>
+        <translation>向 radio-browser.info 发送点击信息</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="42"/>
         <source>Override row height</source>
-        <translation type="unfinished">覆盖行高</translation>
+        <translation>覆盖行高</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="48"/>
         <source>Use uniform station icon frames</source>
-        <translation type="unfinished"></translation>
+        <translation>使用统一的电台图标外框</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="54"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="66"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="90"/>
         <source>None</source>
-        <translation type="unfinished">无</translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="55"/>
         <source>Play</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="56"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="67"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">添加到当前播放列表</translation>
+        <translation>添加到当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="57"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="68"/>
         <source>Add to current playlist and play if stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到当前播放列表，若已停止则播放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="59"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="70"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">添加到活动播放列表</translation>
+        <translation>添加到活动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="60"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="71"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished">替换当前播放列表</translation>
+        <translation>替换当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="61"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="72"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">创建新的播放列表</translation>
+        <translation>创建新的播放列表</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="62"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="73"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">添加到播放队列</translation>
+        <translation>添加到播放队列</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="63"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="74"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished">添加到播放队列头</translation>
+        <translation>添加到播放队列头</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="64"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="75"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished">替换播放队列</translation>
+        <translation>替换播放队列</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="78"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation type="unfinished"></translation>
+        <translation>对于“替换当前播放列表”和“创建新播放列表”，立即开始播放。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="79"/>
         <source>Exclude stations marked as broken by radio-browser.info from search results.</source>
-        <translation type="unfinished"></translation>
+        <translation>从搜索结果中排除 radio-browser.info 标记为已损坏的电台。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="81"/>
         <source>Report played stations to radio-browser.info so click counts and station statistics stay up to date.</source>
-        <translation type="unfinished"></translation>
+        <translation>向 radio-browser.info 报告已播放的电台，以便点击次数和电台统计数据保持最新。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="83"/>
         <source>Draw station icons inside equally sized frames so rows and icon captions align consistently.</source>
-        <translation type="unfinished"></translation>
+        <translation>将电台图标绘制在等尺寸的边框内，以确保各行及图标说明文字对齐一致。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="91"/>
         <source>Size of the border around each station icon in icon display mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>图标显示模式下，每个电台图标边框的大小。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="98"/>
         <source>Auto</source>
-        <translation type="unfinished">自动</translation>
+        <translation>自动</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="101"/>
         <source>Horizontal spacing between stations in icon display mode. Auto uses the view&apos;s default spacing.</source>
-        <translation type="unfinished"></translation>
+        <translation>图标显示模式下，电台之间的水平间距。选择“自动”将使用视图的默认间距。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="105"/>
         <source>Vertical spacing between stations in icon display mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>图标显示模式下，电台之间的垂直间距。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="107"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">点击行为</translation>
+        <translation>点击行为</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="111"/>
         <source>Double-click</source>
-        <translation type="unfinished">双击</translation>
+        <translation>双击</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="113"/>
         <source>Middle-click</source>
-        <translation type="unfinished">单击中键</translation>
+        <translation>单击中键</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="118"/>
         <source>Search</source>
-        <translation type="unfinished">搜索</translation>
+        <translation>搜索</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="126"/>
         <source>Appearance</source>
-        <translation type="unfinished">外观</translation>
+        <translation>外观</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="135"/>
         <source>Icon Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>图标模式</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="140"/>
         <source>Horizontal</source>
-        <translation type="unfinished">水平</translation>
+        <translation>水平</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="142"/>
         <source>Vertical</source>
-        <translation type="unfinished">垂直</translation>
+        <translation>垂直</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="147"/>
         <source>Item border</source>
-        <translation type="unfinished"></translation>
+        <translation>项目边框</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="149"/>
         <source>Icon size</source>
-        <translation type="unfinished"></translation>
+        <translation>图标大小</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="151"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
-        <translation type="unfinished">在控件中使用 &lt;b&gt;Ctrl+Scroll&lt;/b&gt; 来调整图标大小。</translation>
+        <translation>在控件中使用 &lt;b&gt;Ctrl+滚动&lt;/b&gt; 来调整图标大小。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="153"/>
         <source>Gap</source>
-        <translation type="unfinished"></translation>
+        <translation>间隙</translation>
     </message>
 </context>
 <context>
@@ -11553,54 +11553,54 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="70"/>
         <source>countries</source>
-        <translation type="unfinished"></translation>
+        <translation>国家</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="72"/>
         <source>languages</source>
-        <translation type="unfinished"></translation>
+        <translation>语言</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="74"/>
         <source>tags</source>
-        <translation type="unfinished"></translation>
+        <translation>标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="76"/>
         <source>codecs</source>
-        <translation type="unfinished"></translation>
+        <translation>编解码器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="79"/>
         <source>categories</source>
-        <translation type="unfinished"></translation>
+        <translation>类别</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="478"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="612"/>
         <source>Station has no stream URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>该站点没有流媒体 URL。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="548"/>
         <source>A radio station import is already in progress.</source>
-        <translation type="unfinished"></translation>
+        <translation>电台导入工作已经在进行中。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="746"/>
         <source>Failed to load radio browser %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>无法加载电台浏览器 %1: %2</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="811"/>
         <source>Failed to refresh imported station metadata: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>刷新导入的电台元数据失败：%1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="830"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="843"/>
         <source>Station did not resolve to a playable stream.</source>
-        <translation type="unfinished"></translation>
+        <translation>该站点无法解析为可播放的视频流。</translation>
     </message>
 </context>
 <context>
@@ -11608,17 +11608,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserdialog.cpp" line="59"/>
         <source>Radio Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>电台浏览器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserdialog.cpp" line="75"/>
         <source>My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>我的电台</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserdialog.cpp" line="76"/>
         <source>Search</source>
-        <translation type="unfinished">搜索</translation>
+        <translation>搜索</translation>
     </message>
 </context>
 <context>
@@ -11626,47 +11626,47 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="90"/>
         <source>%1 kbps</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 kbps</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="444"/>
         <source>Station</source>
-        <translation type="unfinished"></translation>
+        <translation>电台</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="446"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>国家</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="448"/>
         <source>Language</source>
-        <translation type="unfinished">语言</translation>
+        <translation>语言</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="450"/>
         <source>Codec</source>
-        <translation type="unfinished">编解码器</translation>
+        <translation>编解码器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="452"/>
         <source>Bitrate</source>
-        <translation type="unfinished">比特率</translation>
+        <translation>比特率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="454"/>
         <source>Votes</source>
-        <translation type="unfinished"></translation>
+        <translation>投票</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="456"/>
         <source>Clicks</source>
-        <translation type="unfinished"></translation>
+        <translation>点击</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="458"/>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>标签</translation>
     </message>
 </context>
 <context>
@@ -11674,44 +11674,44 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="97"/>
         <source>Radio &amp;Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>电台浏览器(&amp;B)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="98"/>
         <source>Open the Radio Browser window</source>
-        <translation type="unfinished"></translation>
+        <translation>打开电台浏览器窗口</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="101"/>
         <source>View</source>
-        <translation type="unfinished">视图</translation>
+        <translation>视图</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="115"/>
         <source>Radio Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>电台浏览器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="116"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="127"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="131"/>
         <source>Internet</source>
-        <translation type="unfinished"></translation>
+        <translation>互联网</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="126"/>
         <source>Radio Search</source>
-        <translation type="unfinished"></translation>
+        <translation>电台搜索</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="130"/>
         <source>Radio Guide</source>
-        <translation type="unfinished"></translation>
+        <translation>电台指南</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="148"/>
         <source>Playback stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>播放已停止</translation>
     </message>
 </context>
 <context>
@@ -11719,39 +11719,39 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="222"/>
         <source>Top clicked</source>
-        <translation type="unfinished"></translation>
+        <translation>点击量最高</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="227"/>
         <source>Top voted</source>
-        <translation type="unfinished"></translation>
+        <translation>得票最高</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="232"/>
         <source>Recently clicked</source>
-        <translation type="unfinished"></translation>
+        <translation>最近点击过</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="237"/>
         <source>Recently changed</source>
-        <translation type="unfinished"></translation>
+        <translation>最近已更改</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="567"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="676"/>
         <source>Request was cancelled.</source>
-        <translation type="unfinished"></translation>
+        <translation>请求已取消。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="596"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="638"/>
         <source>Failed to parse station data.</source>
-        <translation type="unfinished"></translation>
+        <translation>解析站点数据失败。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="705"/>
         <source>Failed to parse category data.</source>
-        <translation type="unfinished"></translation>
+        <translation>类别数据解析失败。</translation>
     </message>
 </context>
 <context>
@@ -11759,266 +11759,266 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="182"/>
         <source>Show search bar</source>
-        <translation type="unfinished"></translation>
+        <translation>显示搜索栏</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="183"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="230"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="831"/>
         <source>Add to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到我的电台</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="184"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="238"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="837"/>
         <source>Remove from My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>从我的电台中移除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="218"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="725"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="791"/>
         <source>No stations found</source>
-        <translation type="unfinished"></translation>
+        <translation>未找到电台</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="219"/>
         <source>Loading stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>正在加载电台…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="222"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="333"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="800"/>
         <source>Radio Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>电台浏览器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="224"/>
         <source>Add the selected stations to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>将所选电台添加到“我的电台”</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="232"/>
         <source>Remove the selected stations from My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>从“我的电台”中移除所选电台</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="276"/>
         <source>Show or hide the Radio Browser filter bar</source>
-        <translation type="unfinished"></translation>
+        <translation>显示或隐藏电台浏览器筛选栏</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="725"/>
         <source>No saved stations</source>
-        <translation type="unfinished"></translation>
+        <translation>没有保存的电台</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="963"/>
         <source>Saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>保存搜索</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="963"/>
         <source>Save search</source>
-        <translation type="unfinished"></translation>
+        <translation>保存搜索</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="989"/>
         <source>Saved as &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>已保存为“%1”</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="993"/>
         <source>Rename saved search…</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名已保存的搜索…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="994"/>
         <source>Rename the saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名已保存的搜索</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="997"/>
         <source>Remove saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>删除已保存的搜索</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="998"/>
         <source>Remove the saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>删除已保存的搜索</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1009"/>
         <source>Rename Saved Search</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名已保存的搜索</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1009"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1039"/>
         <source>Radio Search</source>
-        <translation type="unfinished"></translation>
+        <translation>电台搜索</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1354"/>
         <source>Play</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1355"/>
         <source>Play the selected station</source>
-        <translation type="unfinished"></translation>
+        <translation>播放所选电台</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1386"/>
         <source>Add to playlist</source>
-        <translation type="unfinished">添加到播放列表</translation>
+        <translation>添加到播放列表</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1390"/>
         <source>Add the selected stations to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>将所选电台添加到另一个播放列表</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1432"/>
         <source>Edit station…</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑电台…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1432"/>
         <source>View station details…</source>
-        <translation type="unfinished"></translation>
+        <translation>查看电台详细信息…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1433"/>
         <source>Edit the selected custom station</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑所选自定义电台</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1434"/>
         <source>View details for the selected station</source>
-        <translation type="unfinished"></translation>
+        <translation>查看所选电台详细信息</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1441"/>
         <source>Add custom station…</source>
-        <translation type="unfinished"></translation>
+        <translation>添加自定义电台…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1442"/>
         <source>Add a custom station to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>将自定义电台添加到“我的电台”</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1451"/>
         <source>Copy stream URL</source>
-        <translation type="unfinished"></translation>
+        <translation>复制流媒体 URL</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1452"/>
         <source>Copy the selected station stream URLs to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>将所选电台流媒体 URL 复制到剪贴板</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1471"/>
         <source>Open homepage</source>
-        <translation type="unfinished"></translation>
+        <translation>打开主页</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1472"/>
         <source>Open the selected station homepage in a browser</source>
-        <translation type="unfinished"></translation>
+        <translation>在浏览器中打开所选电台主页</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1485"/>
         <source>Open radio-browser.info page</source>
-        <translation type="unfinished"></translation>
+        <translation>打开 radio-browser.info 页面</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1486"/>
         <source>Open the selected station on radio-browser.info</source>
-        <translation type="unfinished"></translation>
+        <translation>在 radio-browser.info 上打开所选电台</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1517"/>
         <source>Import stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>导入电台…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1518"/>
         <source>Import saved stations from a playlist file</source>
-        <translation type="unfinished"></translation>
+        <translation>从播放列表文件导入已保存的电台</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1521"/>
         <source>Export stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>导出电台…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1522"/>
         <source>Export My Stations to a playlist file</source>
-        <translation type="unfinished"></translation>
+        <translation>将我的电台导出到播放列表文件</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1539"/>
         <source>Auto-size sections</source>
-        <translation type="unfinished">自动调整大小</translation>
+        <translation>自动调整大小</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1540"/>
         <source>Automatically size columns to fill the available width</source>
-        <translation type="unfinished"></translation>
+        <translation>自动调整列宽以填充可用宽度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1547"/>
         <source>Reset columns to default</source>
-        <translation type="unfinished">重置列为默认</translation>
+        <translation>重置列为默认</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1565"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1611"/>
         <source>Columns</source>
-        <translation type="unfinished">列</translation>
+        <translation>列</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1608"/>
         <source>Display</source>
-        <translation type="unfinished">显示</translation>
+        <translation>显示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1612"/>
         <source>Icons (right captions)</source>
-        <translation type="unfinished"></translation>
+        <translation>图标（右侧标题）</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1613"/>
         <source>Icons (bottom captions)</source>
-        <translation type="unfinished"></translation>
+        <translation>图标（底部标题）</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1654"/>
         <source>Show station icons</source>
-        <translation type="unfinished"></translation>
+        <translation>显示电台图标</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1663"/>
         <source>Show header</source>
-        <translation type="unfinished">显示标题</translation>
+        <translation>显示标题</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1672"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">显示滚动条</translation>
+        <translation>显示滚动条</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1681"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">交替行颜色</translation>
+        <translation>交替行颜色</translation>
     </message>
 </context>
 <context>
@@ -12026,247 +12026,247 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="28"/>
         <source>Blues</source>
-        <translation type="unfinished"></translation>
+        <translation>蓝色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="29"/>
         <source>Classical</source>
-        <translation type="unfinished"></translation>
+        <translation>古典</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="30"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>国家</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="31"/>
         <source>Dance</source>
-        <translation type="unfinished"></translation>
+        <translation>舞蹈</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="32"/>
         <source>Disco</source>
-        <translation type="unfinished"></translation>
+        <translation>迪斯科</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="33"/>
         <source>Easy</source>
-        <translation type="unfinished"></translation>
+        <translation>简单</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="34"/>
         <source>Folk</source>
-        <translation type="unfinished"></translation>
+        <translation>民谣</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="35"/>
         <source>Hits</source>
-        <translation type="unfinished"></translation>
+        <translation>热歌榜</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="36"/>
         <source>Jazz</source>
-        <translation type="unfinished"></translation>
+        <translation>爵士乐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="37"/>
         <source>Oldies</source>
-        <translation type="unfinished"></translation>
+        <translation>老歌</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="38"/>
         <source>Pop</source>
-        <translation type="unfinished"></translation>
+        <translation>流行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="39"/>
         <source>Rap</source>
-        <translation type="unfinished"></translation>
+        <translation>说唱</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="40"/>
         <source>Rock</source>
-        <translation type="unfinished"></translation>
+        <translation>摇滚</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="41"/>
         <source>Soul</source>
-        <translation type="unfinished"></translation>
+        <translation>灵魂乐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="43"/>
         <source>Alternative</source>
-        <translation type="unfinished"></translation>
+        <translation>另类音乐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="44"/>
         <source>Ambient</source>
-        <translation type="unfinished"></translation>
+        <translation>氛围音乐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="45"/>
         <source>Club</source>
-        <translation type="unfinished"></translation>
+        <translation>夜店音乐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="46"/>
         <source>Electronic</source>
-        <translation type="unfinished"></translation>
+        <translation>电子音乐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="47"/>
         <source>Funk</source>
-        <translation type="unfinished"></translation>
+        <translation>放克</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="48"/>
         <source>Hip Hop</source>
-        <translation type="unfinished"></translation>
+        <translation>嘻哈</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="49"/>
         <source>House</source>
-        <translation type="unfinished"></translation>
+        <translation>浩室音乐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="50"/>
         <source>Indie</source>
-        <translation type="unfinished"></translation>
+        <translation>独立音乐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="51"/>
         <source>Latino</source>
-        <translation type="unfinished"></translation>
+        <translation>拉丁音乐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="52"/>
         <source>Metal</source>
-        <translation type="unfinished"></translation>
+        <translation>金属乐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="53"/>
         <source>Punk</source>
-        <translation type="unfinished"></translation>
+        <translation>朋克</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="54"/>
         <source>Reggae</source>
-        <translation type="unfinished"></translation>
+        <translation>雷鬼</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="55"/>
         <source>Salsa</source>
-        <translation type="unfinished"></translation>
+        <translation>萨尔萨</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="56"/>
         <source>World Music</source>
-        <translation type="unfinished"></translation>
+        <translation>世界音乐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="58"/>
         <source>40s</source>
-        <translation type="unfinished">8x {40s?}</translation>
+        <translation>40s</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="59"/>
         <source>50s</source>
-        <translation type="unfinished">8x {50s?}</translation>
+        <translation>50s</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="60"/>
         <source>60s</source>
-        <translation type="unfinished">8x {60s?}</translation>
+        <translation>60s</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="61"/>
         <source>70s</source>
-        <translation type="unfinished">8x {70s?}</translation>
+        <translation>70s</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="62"/>
         <source>80s</source>
-        <translation type="unfinished">8x {80s?}</translation>
+        <translation>80s</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="63"/>
         <source>90s</source>
-        <translation type="unfinished">8x {90s?}</translation>
+        <translation>90s</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="64"/>
         <source>2000s</source>
-        <translation type="unfinished">8x {2000s?}</translation>
+        <translation>2000s</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="65"/>
         <source>2010s</source>
-        <translation type="unfinished">8x {2010s?}</translation>
+        <translation>2010s</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="66"/>
         <source>Contemporary</source>
-        <translation type="unfinished"></translation>
+        <translation>当代</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="68"/>
         <source>AM</source>
-        <translation type="unfinished"></translation>
+        <translation>上午广播</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="69"/>
         <source>Comedy</source>
-        <translation type="unfinished"></translation>
+        <translation>喜剧</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="70"/>
         <source>College Radio</source>
-        <translation type="unfinished"></translation>
+        <translation>大学广播</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="71"/>
         <source>Community Radio</source>
-        <translation type="unfinished"></translation>
+        <translation>社区广播</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="72"/>
         <source>Culture</source>
-        <translation type="unfinished"></translation>
+        <translation>文化</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="73"/>
         <source>Educational</source>
-        <translation type="unfinished"></translation>
+        <translation>教育</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="74"/>
         <source>Kids</source>
-        <translation type="unfinished"></translation>
+        <translation>儿童</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="75"/>
         <source>News</source>
-        <translation type="unfinished"></translation>
+        <translation>新闻</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="76"/>
         <source>Public Radio</source>
-        <translation type="unfinished"></translation>
+        <translation>公共广播</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="77"/>
         <source>Religion</source>
-        <translation type="unfinished"></translation>
+        <translation>宗教</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="78"/>
         <source>Sport</source>
-        <translation type="unfinished"></translation>
+        <translation>体育</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="79"/>
         <source>Talk</source>
-        <translation type="unfinished"></translation>
+        <translation>谈话</translation>
     </message>
 </context>
 <context>
@@ -12274,57 +12274,57 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="135"/>
         <source>Selections</source>
-        <translation type="unfinished"></translation>
+        <translation>精选</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="136"/>
         <source>Popular</source>
-        <translation type="unfinished"></translation>
+        <translation>热门</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="137"/>
         <source>Trending</source>
-        <translation type="unfinished"></translation>
+        <translation>流行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="138"/>
         <source>Now Listening</source>
-        <translation type="unfinished"></translation>
+        <translation>正在收听</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="139"/>
         <source>Newest</source>
-        <translation type="unfinished"></translation>
+        <translation>最新</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="140"/>
         <source>Random</source>
-        <translation type="unfinished">随机播放</translation>
+        <translation>随机</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="142"/>
         <source>Library</source>
-        <translation type="unfinished">媒体库</translation>
+        <translation>媒体库</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="143"/>
         <source>My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>我的电台</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="144"/>
         <source>Latest Search</source>
-        <translation type="unfinished"></translation>
+        <translation>最新搜索</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="146"/>
         <source>Genres</source>
-        <translation type="unfinished">流派</translation>
+        <translation>流派</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="147"/>
         <source>More Genres</source>
-        <translation type="unfinished"></translation>
+        <translation>更多流派</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="148"/>
