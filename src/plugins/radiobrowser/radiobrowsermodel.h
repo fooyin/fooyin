@@ -52,6 +52,7 @@ public:
         IconCaptionLinesRole,
         IconCaptionLineCountRole,
         IconBackgroundRole,
+        SavedStationRole,
     };
 
     explicit RadioBrowserModel(QObject* parent = nullptr);
@@ -77,6 +78,8 @@ public:
     void setRowHeight(int height);
     void setShowIcons(bool showIcons);
     void setShowToolTips(bool showToolTips);
+    void setShowSavedIndicators(bool showSavedIndicators);
+    void setSavedStations(const RadioStationList& stations);
     void setReorderEnabled(bool enabled);
     void setApiSortingEnabled(bool enabled);
     void clearSort();
@@ -98,9 +101,11 @@ private:
     [[nodiscard]] int iconBucketSize() const;
     [[nodiscard]] QIcon stationIcon(const RadioStation& station) const;
     [[nodiscard]] QIcon placeholderIcon(const RadioStation& station) const;
+    [[nodiscard]] bool isSavedStation(const RadioStation& station) const;
     void handleIconLoaded(const QString& favicon);
 
     RadioStationList m_stations;
+    RadioStationList m_savedStations;
     RadioStation m_currentStation;
     QColor m_playingColour;
     QColor m_iconPlayingColour;
@@ -116,5 +121,6 @@ private:
     bool m_apiSortingEnabled;
     bool m_showIcons;
     bool m_showToolTips;
+    bool m_showSavedIndicators;
 };
 } // namespace Fooyin::RadioBrowser

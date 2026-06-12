@@ -85,6 +85,7 @@ public:
             bool showScrollbar{true};
             bool alternatingRows{true};
             bool showIcons{true};
+            bool showSavedStationIcons{true};
             bool showToolTips{true};
             int rowHeight{0};
             QSize iconSize{36, 36};

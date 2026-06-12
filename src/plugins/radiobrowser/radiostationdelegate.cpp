@@ -21,6 +21,8 @@
 
 #include "radiobrowsermodel.h"
 
+#include <gui/guiconstants.h>
+#include <gui/iconloader.h>
 #include <gui/widgets/expandedtreeview.h>
 
 #include <QApplication>
@@ -36,10 +38,14 @@ constexpr auto IconPadding           = 8;
 constexpr auto BottomIconPadding     = 12;
 constexpr auto ColumnIconPadding     = 4;
 constexpr auto DefaultColumnIconSize = 36;
+constexpr auto SavedBadgeMinSize     = 7;
+constexpr auto SavedBadgeMaxSize     = 20;
+constexpr auto SavedBadgeCellSize    = 14;
+constexpr auto SavedBadgeMargin      = 3;
+constexpr auto SavedBadgeItemMargin  = 8;
 
+namespace Fooyin::RadioBrowser {
 namespace {
-using Fooyin::ExpandedTreeView;
-
 const ExpandedTreeView* iconModeView(const QStyleOptionViewItem& option)
 {
     const auto* view = qobject_cast<const ExpandedTreeView*>(option.widget);
@@ -49,6 +55,21 @@ const ExpandedTreeView* iconModeView(const QStyleOptionViewItem& option)
 QSize iconDecorationSize(const QStyleOptionViewItem& option)
 {
     return option.decorationSize.isValid() ? option.decorationSize : QSize{96, 64};
+}
+
+int columnIconSize(const QStyleOptionViewItem& option)
+{
+    const QSize decorationSize
+        = option.decorationSize.isValid() ? option.decorationSize : QSize{DefaultColumnIconSize, DefaultColumnIconSize};
+    return std::max(decorationSize.width(), decorationSize.height());
+}
+
+QRect columnIconRect(const QStyleOptionViewItem& option)
+{
+    const int iconSize = columnIconSize(option);
+    QRect rect{option.rect.left() + ColumnIconPadding, option.rect.top() + ColumnIconPadding, iconSize, iconSize};
+    rect.moveTop(option.rect.top() + std::max(0, (option.rect.height() - iconSize) / 2));
+    return rect;
 }
 
 QRect iconRect(const QStyleOptionViewItem& option, ExpandedTreeView::CaptionDisplay captions)
@@ -233,6 +254,94 @@ void drawIcon(QPainter* painter, const QStyleOptionViewItem& option, const QIcon
     drawIconInRect(painter, option, icon, iconRect(option, captions));
 }
 
+QRect savedBadgeRect(const QRect& anchor)
+{
+    if(anchor.isEmpty()) {
+        return {};
+    }
+
+    const int anchorSize = std::min(anchor.width(), anchor.height());
+    const int size       = std::min(
+        std::clamp(static_cast<int>(std::round(anchorSize * 0.5)), SavedBadgeMinSize, SavedBadgeMaxSize), anchorSize);
+    return {anchor.right() - size + 1 - SavedBadgeMargin, anchor.top() + SavedBadgeMargin, size, size};
+}
+
+int savedBadgeSizeForAnchor(const QRect& anchor)
+{
+    if(anchor.isEmpty()) {
+        return 0;
+    }
+
+    const int anchorSize = std::min(anchor.width(), anchor.height());
+    return std::min(std::clamp(static_cast<int>(std::round(anchorSize * 0.5)), SavedBadgeMinSize, SavedBadgeMaxSize),
+                    anchorSize);
+}
+
+QRect savedBadgeRectForColumn(const QStyleOptionViewItem& option, bool hasIcon)
+{
+    if(hasIcon) {
+        return savedBadgeRect(columnIconRect(option));
+    }
+
+    const int size = std::min(SavedBadgeCellSize, std::max(0, option.rect.height() - (2 * SavedBadgeMargin)));
+    return {option.rect.right() - size - SavedBadgeMargin, option.rect.top() + ((option.rect.height() - size) / 2),
+            size, size};
+}
+
+QRect savedBadgeRectForIconItem(const QStyleOptionViewItem& option, ExpandedTreeView::CaptionDisplay captions,
+                                bool hasIcon)
+{
+    const int size = savedBadgeSizeForAnchor(hasIcon ? iconRect(option, captions) : option.rect);
+    if(size <= 0 || option.rect.isEmpty()) {
+        return {};
+    }
+
+    return {option.rect.right() - size - SavedBadgeItemMargin, option.rect.bottom() - size - SavedBadgeItemMargin, size,
+            size};
+}
+
+void drawSavedBadge(QPainter* painter, const QStyleOptionViewItem& option, const QRect& rect)
+{
+    if(rect.isEmpty()) {
+        return;
+    }
+
+    QColor background = option.palette.color(QPalette::Highlight);
+    background.setAlphaF(0.92);
+
+    QColor border = (option.state & QStyle::State_Selected) ? option.palette.color(QPalette::HighlightedText)
+                                                            : option.palette.color(QPalette::Base);
+    border.setAlphaF(0.88);
+
+    painter->save();
+
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setPen(QPen{border, 1.0});
+    painter->setBrush(background);
+    painter->drawEllipse(rect);
+
+    const int iconInset = std::max(2, rect.width() / 4);
+    const QSize iconSize{std::max(1, rect.width() - (2 * iconInset)), std::max(1, rect.height() - (2 * iconInset))};
+
+    if(iconSize.width() >= 6 && iconSize.height() >= 6) {
+        const qreal dpr = option.widget ? option.widget->devicePixelRatioF() : qApp->devicePixelRatio();
+
+        QPixmap pixmap = Gui::iconFromTheme(Constants::Icons::Bookmarks).pixmap(iconSize * dpr, dpr);
+        pixmap         = pixmap.scaled(iconSize * dpr, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        pixmap.setDevicePixelRatio(dpr);
+
+        const QSize pixmapSize = pixmap.deviceIndependentSize().toSize();
+        const QRect pixmapRect{rect.topLeft()
+                                   + QPoint{std::max(0, (rect.width() - pixmapSize.width()) / 2),
+                                            std::max(0, (rect.height() - pixmapSize.height()) / 2)},
+                               pixmapSize};
+
+        painter->drawPixmap(pixmapRect, pixmap);
+    }
+
+    painter->restore();
+}
+
 void drawElidedText(QPainter* painter, const QStyleOptionViewItem& option, const QRect& rect, const QString& text,
                     const Qt::Alignment alignment, QPalette::ColorRole role, const QFont& font)
 {
@@ -300,22 +409,7 @@ QSize iconItemSize(const QStyleOptionViewItem& option, ExpandedTreeView::Caption
     return {};
 }
 
-int columnIconSize(const QStyleOptionViewItem& option)
-{
-    const QSize decorationSize
-        = option.decorationSize.isValid() ? option.decorationSize : QSize{DefaultColumnIconSize, DefaultColumnIconSize};
-    return std::max(decorationSize.width(), decorationSize.height());
-}
-
-QRect columnIconRect(const QStyleOptionViewItem& option)
-{
-    const int iconSize = columnIconSize(option);
-    QRect rect{option.rect.left() + ColumnIconPadding, option.rect.top() + ColumnIconPadding, iconSize, iconSize};
-    rect.moveTop(option.rect.top() + std::max(0, (option.rect.height() - iconSize) / 2));
-    return rect;
-}
-
-QRect columnTextRect(const QStyleOptionViewItem& option, bool hasIcon)
+QRect columnTextRect(const QStyleOptionViewItem& option, bool hasIcon, bool hasSavedBadge)
 {
     QRect rect{option.rect};
 
@@ -325,6 +419,9 @@ QRect columnTextRect(const QStyleOptionViewItem& option, bool hasIcon)
 
     rect.setLeft(rectRight + (2 * ColumnIconPadding));
     rect.adjust(margin, 0, -margin, 0);
+    if(hasSavedBadge && !hasIcon) {
+        rect.setRight(std::min(rect.right(), savedBadgeRectForColumn(option, hasIcon).left() - ColumnIconPadding));
+    }
 
     return rect;
 }
@@ -334,7 +431,8 @@ void drawColumnItem(QPainter* painter, const QStyleOptionViewItem& option, const
     QStyleOptionViewItem opt{option};
     opt.text.clear();
 
-    const bool hasIcon = !icon.isNull();
+    const bool hasIcon       = !icon.isNull();
+    const bool hasSavedBadge = index.column() == Station && index.data(RadioBrowserModel::SavedStationRole).toBool();
 
     if(hasIcon) {
         opt.icon = {};
@@ -351,13 +449,16 @@ void drawColumnItem(QPainter* painter, const QStyleOptionViewItem& option, const
     }
 
     const QString text = index.data(Qt::DisplayRole).toString();
-    drawElidedText(painter, opt, columnTextRect(opt, hasIcon), text, Qt::AlignLeft, QPalette::Text, opt.font);
+    drawElidedText(painter, opt, columnTextRect(opt, hasIcon, hasSavedBadge), text, Qt::AlignLeft, QPalette::Text,
+                   opt.font);
+    if(hasSavedBadge) {
+        drawSavedBadge(painter, opt, savedBadgeRectForColumn(opt, hasIcon));
+    }
 
     painter->restore();
 }
 } // namespace
 
-namespace Fooyin::RadioBrowser {
 bool RadioStationDelegate::uniformStationIcons() const
 {
     return m_uniformStationIcons;
@@ -397,6 +498,7 @@ void RadioStationDelegate::paint(QPainter* painter, const QStyleOptionViewItem& 
     const auto captions           = iconView->captionDisplay();
     const QRect textRect          = iconTextRect(opt, captions, hasIcon);
     const QVariant iconBackground = index.data(RadioBrowserModel::IconBackgroundRole);
+    const bool hasSavedBadge      = index.data(RadioBrowserModel::SavedStationRole).toBool();
 
     if(hasIcon) {
         if(iconBackground.canConvert<QBrush>()) {
@@ -424,6 +526,9 @@ void RadioStationDelegate::paint(QPainter* painter, const QStyleOptionViewItem& 
 
     if(hasIcon && m_uniformStationIcons) {
         drawIcon(painter, opt, icon, captions);
+    }
+    if(hasSavedBadge) {
+        drawSavedBadge(painter, opt, savedBadgeRectForIconItem(opt, captions, hasIcon));
     }
 
     drawCaptionLines(painter, opt, textRect, captions,

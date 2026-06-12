@@ -63,6 +63,8 @@ struct RadioStation
     bool hls{false};
     bool local{false};
 
+    [[nodiscard]] QString stationKey() const;
+
     [[nodiscard]] QString effectiveStreamUrl() const;
     [[nodiscard]] QString searchResultKey() const;
 

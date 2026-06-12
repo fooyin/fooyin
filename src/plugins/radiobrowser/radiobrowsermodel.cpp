@@ -185,6 +185,7 @@ RadioBrowserModel::RadioBrowserModel(QObject* parent)
     , m_apiSortingEnabled{false}
     , m_showIcons{true}
     , m_showToolTips{true}
+    , m_showSavedIndicators{true}
 { }
 
 int RadioBrowserModel::rowCount(const QModelIndex& parent) const
@@ -258,6 +259,8 @@ QVariant RadioBrowserModel::data(const QModelIndex& index, const int role) const
             }
             return lines;
         }
+        case SavedStationRole:
+            return m_showSavedIndicators && isSavedStation(station);
         default:
             break;
     }
@@ -584,6 +587,28 @@ void RadioBrowserModel::setShowToolTips(const bool showToolTips)
     }
 }
 
+void RadioBrowserModel::setShowSavedIndicators(const bool showSavedIndicators)
+{
+    if(std::exchange(m_showSavedIndicators, showSavedIndicators) == showSavedIndicators) {
+        return;
+    }
+
+    if(rowCount({}) > 0) {
+        Q_EMIT dataChanged(index(0, 0), index(rowCount({}) - 1, columnCount({}) - 1),
+                           {SavedStationRole, Qt::ToolTipRole});
+    }
+}
+
+void RadioBrowserModel::setSavedStations(const RadioStationList& stations)
+{
+    m_savedStations = stations;
+
+    if(rowCount({}) > 0) {
+        Q_EMIT dataChanged(index(0, 0), index(rowCount({}) - 1, columnCount({}) - 1),
+                           {SavedStationRole, Qt::ToolTipRole});
+    }
+}
+
 void RadioBrowserModel::setReorderEnabled(const bool enabled)
 {
     if(m_reorderEnabled == enabled) {
@@ -715,6 +740,17 @@ QIcon RadioBrowserModel::placeholderIcon(const RadioStation& station) const
     auto* icon = new QIcon{Utils::placeholderIcon(station, iconBucketSize())};
     m_placeholderIcons.insert(cacheKey, icon);
     return *icon;
+}
+
+bool RadioBrowserModel::isSavedStation(const RadioStation& station) const
+{
+    const QString key = station.stationKey();
+    if(key.isEmpty()) {
+        return false;
+    }
+
+    return std::ranges::any_of(m_savedStations,
+                               [&key](const RadioStation& savedStation) { return savedStation.stationKey() == key; });
 }
 
 void RadioBrowserModel::sort(int column, const Qt::SortOrder order)

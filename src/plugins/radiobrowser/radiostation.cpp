@@ -26,6 +26,16 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::RadioBrowser {
+QString RadioStation::stationKey() const
+{
+    if(!uuid.isEmpty()) {
+        return u"uuid:%1"_s.arg(uuid);
+    }
+
+    const QString url = effectiveStreamUrl();
+    return url.isEmpty() ? QString{} : u"url:%1"_s.arg(url);
+}
+
 QString RadioStation::effectiveStreamUrl() const
 {
     return !resolvedStreamUrl.isEmpty() ? resolvedStreamUrl : streamUrl;

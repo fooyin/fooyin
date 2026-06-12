@@ -47,6 +47,7 @@ private:
     QCheckBox* m_playbackOnSend;
     QCheckBox* m_hideBroken;
     QCheckBox* m_sendClicks;
+    QCheckBox* m_showSavedStationIcons;
     QCheckBox* m_showToolTips;
     QCheckBox* m_overrideRowHeight;
     QSpinBox* m_rowHeight;
