@@ -22,6 +22,7 @@
 #include "fileopsmodel.h"
 #include "fileopssettings.h"
 
+#include <core/library/librarymanager.h>
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
 #include <gui/widgets/scriptlineedit.h>
@@ -44,7 +45,6 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QTreeView>
-#include <core/library/librarymanager.h>
 
 using namespace Qt::StringLiterals;
 
@@ -81,13 +81,13 @@ public:
     void toggleRun();
     void modelUpdated();
 
+    void populateDestinationOptions() const;
     void browseDestination() const;
     std::vector<FileOpPreset>::iterator findPreset(const QString& name);
 
     FileOpsDialog* m_self;
     SettingsManager* m_settings;
-    MusicLibrary* m_library;
-    LibraryManager* m_libraryManager{nullptr};
+    LibraryManager* m_libraryManager;
 
     Operation m_operation;
 
@@ -118,7 +118,6 @@ public:
     bool m_loading{false};
     bool m_running{false};
     bool m_presetsChanged{false};
-    void populateDestinationOptions();
 };
 
 FileOpsDialogPrivate::FileOpsDialogPrivate(FileOpsDialog* self, MusicLibrary* library, const TrackList& tracks,
@@ -126,7 +125,6 @@ FileOpsDialogPrivate::FileOpsDialogPrivate(FileOpsDialog* self, MusicLibrary* li
                                            SettingsManager* settings, LibraryManager* libraryManager)
     : m_self{self}
     , m_settings{settings}
-    , m_library{library}
     , m_libraryManager{libraryManager}
     , m_operation{operation}
     , m_copyOp{new QRadioButton(FileOpsDialog::tr("Copy"), self)}
@@ -422,25 +420,6 @@ void FileOpsDialogPrivate::populatePresets()
     }
 }
 
-void FileOpsDialogPrivate::populateDestinationOptions()
-{
-    m_destination->clear();
-
-    // Populate with library roots
-    if(m_libraryManager && m_libraryManager->hasLibrary()) {
-        const auto& libs = m_libraryManager->allLibraries();
-        for(const auto& entry : libs) {
-            const QString path = entry.second.path;
-            if(path.isEmpty()) {
-                continue;
-            }
-            if(m_destination->findText(path) == -1) {
-                m_destination->addItem(path);
-            }
-        }
-    }
-}
-
 void FileOpsDialogPrivate::simulateOp() const
 {
     if(m_loading) {
@@ -495,6 +474,25 @@ void FileOpsDialogPrivate::modelUpdated()
     else {
         m_status->setText(FileOpsDialog::tr("Pending operation(s): %Ln", nullptr, opCount));
         m_runButton->setEnabled(true);
+    }
+}
+
+void FileOpsDialogPrivate::populateDestinationOptions() const
+{
+    m_destination->clear();
+
+    // Populate with library roots
+    if(m_libraryManager->hasLibrary()) {
+        const auto& libs = m_libraryManager->allLibraries();
+        for(const auto& entry : libs) {
+            const QString path = entry.second.path;
+            if(path.isEmpty()) {
+                continue;
+            }
+            if(m_destination->findText(path) == -1) {
+                m_destination->addItem(path);
+            }
+        }
     }
 }
 
