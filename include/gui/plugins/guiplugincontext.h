@@ -27,6 +27,7 @@ class AdvancedSettingsRegistry;
 class CoverRepository;
 class CurrentPlaylistController;
 class EditableLayout;
+class GuiStyleProvider;
 class LayoutProvider;
 class PropertiesDialog;
 class SearchController;
@@ -46,8 +47,8 @@ struct FYGUI_EXPORT GuiPluginContext
                      CurrentPlaylistController* playlistSelection_, PropertiesDialog* propertiesDialog_,
                      ScriptCommandHandler* scriptCommandHandler_, WidgetProvider* widgetProvider_,
                      EditableLayout* editableLayout_, WindowController* windowController_,
-                     ThemeRegistry* themeRegistry_, AdvancedSettingsRegistry* advancedSettingsRegistry_,
-                     CoverRepository* coverRepository_)
+                     ThemeRegistry* themeRegistry_, GuiStyleProvider* styleProvider_,
+                     AdvancedSettingsRegistry* advancedSettingsRegistry_, CoverRepository* coverRepository_)
         : actionManager{actionManager_}
         , layoutProvider{layoutProvider_}
         , trackSelection{trackSelection_}
@@ -59,6 +60,7 @@ struct FYGUI_EXPORT GuiPluginContext
         , editableLayout{editableLayout_}
         , windowController{windowController_}
         , themeRegistry{themeRegistry_}
+        , styleProvider{styleProvider_}
         , advancedSettingsRegistry{advancedSettingsRegistry_}
         , coverRepository{coverRepository_}
     { }
@@ -74,6 +76,7 @@ struct FYGUI_EXPORT GuiPluginContext
     EditableLayout* editableLayout;
     WindowController* windowController;
     ThemeRegistry* themeRegistry;
+    GuiStyleProvider* styleProvider;
     AdvancedSettingsRegistry* advancedSettingsRegistry;
     CoverRepository* coverRepository;
 };

@@ -31,6 +31,7 @@ namespace Fooyin {
 class ActionManager;
 class Application;
 class CoverProvider;
+class GuiStyleProvider;
 class PlaylistInteractor;
 class SettingsManager;
 
@@ -46,7 +47,7 @@ public:
     };
 
     SearchDialog(ActionManager* actionManager, PlaylistInteractor* playlistInteractor, CoverProvider* coverProvider,
-                 Application* core, Target target, QWidget* parent = nullptr);
+                 Application* core, GuiStyleProvider* styleProvider, Target target, QWidget* parent = nullptr);
 
     void done(int value) override;
 

@@ -78,8 +78,9 @@ void LyricsPlugin::initialise(const GuiPluginContext& context)
 
     m_widgetProvider->registerWidget(
         u"Lyrics"_s,
-        [this]() {
-            return new LyricsWidget(m_playerController, m_playlistHandler, m_lyricsFinder, m_lyricsSaver, m_settings);
+        [this, styleProvider = context.styleProvider]() {
+            return new LyricsWidget(m_playerController, m_playlistHandler, m_lyricsFinder, m_lyricsSaver, m_settings,
+                                    styleProvider);
         },
         tr("Lyrics"));
     context.themeRegistry->registerFontEntry(tr("Lyrics"), u"Fooyin::Lyrics::LyricsArea"_s);

@@ -42,6 +42,7 @@
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/guistyleprovider.h>
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/trackselectioncontroller.h>
@@ -60,7 +61,6 @@
 
 #include <QAbstractItemModel>
 #include <QActionGroup>
-#include <QApplication>
 #include <QByteArray>
 #include <QHBoxLayout>
 #include <QHeaderView>
@@ -219,7 +219,7 @@ private:
 } // namespace
 
 PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
-                               CoverProvider* coverProvider, Application* core,
+                               CoverProvider* coverProvider, Application* core, GuiStyleProvider* styleProvider,
                                std::unique_ptr<PlaylistWidgetSession> session, QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
@@ -231,6 +231,7 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     , m_selectionController{m_playlistController->selectionController()}
     , m_library{playlistInteractor->library()}
     , m_settings{core->settingsManager()}
+    , m_styleProvider{styleProvider}
     , m_settingsDialog{m_settings->settingsDialog()}
     , m_session{std::move(session)}
     , m_resetThrottler{new SignalThrottler(this)}
@@ -238,7 +239,8 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     , m_presetRegistry{m_playlistController->presetRegistry()}
     , m_sortRegistry{core->sortingRegistry()}
     , m_layout{new QHBoxLayout(this)}
-    , m_model{new PlaylistModel(m_playlistInteractor, core->audioLoader().get(), coverProvider, m_settings, this)}
+    , m_model{new PlaylistModel(m_playlistInteractor, core->audioLoader().get(), coverProvider, m_settings,
+                                styleProvider, this)}
     , m_delgate{new PlaylistDelegate(this)}
     , m_starDelegate{nullptr}
     , m_playlistView{new PlaylistView(this)}
@@ -277,8 +279,6 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     applyInitialViewSettings();
     applyBackgroundSettings();
 
-    refreshViewStyle();
-
     m_model->playingTrackChanged(m_playerController->currentPlaylistTrack());
     m_model->playStateChanged(m_playlistController->playState());
     applySessionTexts();
@@ -287,27 +287,28 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
 }
 
 PlaylistWidget* PlaylistWidget::createMainPlaylist(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
-                                                   CoverProvider* coverProvider, Application* core, QWidget* parent)
+                                                   CoverProvider* coverProvider, Application* core,
+                                                   GuiStyleProvider* styleProvider, QWidget* parent)
 {
-    return new PlaylistWidget(actionManager, playlistInteractor, coverProvider, core,
+    return new PlaylistWidget(actionManager, playlistInteractor, coverProvider, core, styleProvider,
                               PlaylistWidgetSession::createEditable(), parent);
 }
 
 PlaylistWidget* PlaylistWidget::createDetachedPlaylistSearch(ActionManager* actionManager,
                                                              PlaylistInteractor* playlistInteractor,
                                                              CoverProvider* coverProvider, Application* core,
-                                                             QWidget* parent)
+                                                             GuiStyleProvider* styleProvider, QWidget* parent)
 {
-    return new PlaylistWidget(actionManager, playlistInteractor, coverProvider, core,
+    return new PlaylistWidget(actionManager, playlistInteractor, coverProvider, core, styleProvider,
                               PlaylistWidgetSession::createDetachedPlaylist(), parent);
 }
 
 PlaylistWidget* PlaylistWidget::createDetachedLibrarySearch(ActionManager* actionManager,
                                                             PlaylistInteractor* playlistInteractor,
                                                             CoverProvider* coverProvider, Application* core,
-                                                            QWidget* parent)
+                                                            GuiStyleProvider* styleProvider, QWidget* parent)
 {
-    return new PlaylistWidget(actionManager, playlistInteractor, coverProvider, core,
+    return new PlaylistWidget(actionManager, playlistInteractor, coverProvider, core, styleProvider,
                               PlaylistWidgetSession::createDetachedLibrary(), parent);
 }
 
@@ -656,7 +657,10 @@ void PlaylistWidget::setupConnections()
 
     m_session->setupConnections(sessionHost());
 
-    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, &PlaylistWidget::refreshViewStyle);
+    m_styleProvider->subscribe(this, [this] {
+        refreshViewStyle();
+        resetModelThrottled();
+    });
 
     m_settings->subscribe<Settings::Core::UseVariousForCompilations>(
         this, [this]() { m_session->changePlaylist(sessionHost(), m_playlistController->currentPlaylist(), nullptr); });
@@ -780,6 +784,10 @@ void PlaylistWidget::resetModel()
 
 void PlaylistWidget::resetModelThrottled() const
 {
+    if(!m_styleProvider->isResolved() || !layoutState().currentPreset.isValid()) {
+        return;
+    }
+
     m_resetThrottler->throttle();
 }
 
@@ -941,7 +949,7 @@ void PlaylistWidget::setSingleMode(bool enabled)
         }
     }
 
-    resetModel();
+    resetModelThrottled();
 }
 
 void PlaylistWidget::updateSpans()
@@ -1133,16 +1141,15 @@ void PlaylistWidget::applySessionTexts()
 
 void PlaylistWidget::refreshViewStyle()
 {
-    const auto resolvedStyle = m_settings->value<Settings::Gui::ResolvedAppStyle>().value<ResolvedAppStyle>();
-    if(resolvedStyle.revision > 0) {
-        const QFont playlistFont = resolvedStyle.font(u"Fooyin::PlaylistView"_s);
-        m_playlistView->setFont(playlistFont);
-        m_header->setFont(playlistFont);
-        m_model->setFont(playlistFont);
+    const auto& resolvedStyle = m_styleProvider->style();
 
-        Gui::updateItemViewStyle(m_playlistView, resolvedStyle.palette);
-        updateVisibleCoverPins();
-    }
+    const QFont playlistFont = resolvedStyle.font(u"Fooyin::PlaylistView"_s);
+
+    m_playlistView->setFont(playlistFont);
+    m_header->setFont(playlistFont);
+
+    Gui::updateItemViewStyle(m_playlistView, resolvedStyle.palette);
+    updateVisibleCoverPins();
 }
 
 void PlaylistWidget::addSortMenu(QMenu* parent, bool disabled)

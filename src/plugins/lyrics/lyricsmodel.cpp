@@ -25,7 +25,7 @@
 #include <utility>
 
 namespace Fooyin::Lyrics {
-LyricsModel::LyricsModel(QObject* parent)
+LyricsModel::LyricsModel(GuiStyleProvider* styleProvider, QObject* parent)
     : QAbstractListModel{parent}
     , m_topViewportPadding{0}
     , m_bottomViewportPadding{0}
@@ -35,10 +35,11 @@ LyricsModel::LyricsModel(QObject* parent)
     , m_currentLine{-1}
     , m_currentLineEnd{-1}
     , m_currentWord{-1}
-    , m_baseFont{Lyrics::defaultFont()}
-    , m_lineFont{Lyrics::defaultLineFont()}
-    , m_wordLineFont{Lyrics::defaultWordLineFont()}
-    , m_wordFont{Lyrics::defaultWordFont()}
+    , m_styleProvider{styleProvider}
+    , m_baseFont{Lyrics::defaultFont(*m_styleProvider)}
+    , m_lineFont{Lyrics::defaultLineFont(*m_styleProvider)}
+    , m_wordLineFont{Lyrics::defaultWordLineFont(*m_styleProvider)}
+    , m_wordFont{Lyrics::defaultWordFont(*m_styleProvider)}
 {
     setColours(Colours{});
     setFonts({}, {}, {}, {});
@@ -128,19 +129,19 @@ void LyricsModel::setFonts(const QString& baseFont, const QString& lineFont, con
                            const QString& wordFont)
 {
     if(baseFont.isEmpty() || !m_baseFont.fromString(baseFont)) {
-        m_baseFont = Lyrics::defaultFont();
+        m_baseFont = Lyrics::defaultFont(*m_styleProvider);
     }
 
     if(lineFont.isEmpty() || !m_lineFont.fromString(lineFont)) {
-        m_lineFont = Lyrics::defaultLineFont();
+        m_lineFont = Lyrics::defaultLineFont(*m_styleProvider);
     }
 
     if(wordLineFont.isEmpty() || !m_wordLineFont.fromString(wordLineFont)) {
-        m_wordLineFont = Lyrics::defaultWordLineFont();
+        m_wordLineFont = Lyrics::defaultWordLineFont(*m_styleProvider);
     }
 
     if(wordFont.isEmpty() || !m_wordFont.fromString(wordFont)) {
-        m_wordFont = Lyrics::defaultWordFont();
+        m_wordFont = Lyrics::defaultWordFont(*m_styleProvider);
     }
 
     beginResetModel();
@@ -235,7 +236,7 @@ QVariant LyricsModel::data(const QModelIndex& index, int role) const
         case Qt::DisplayRole:
             return line.joinedWords();
         case Qt::FontRole:
-            return Lyrics::defaultFont();
+            return Lyrics::defaultFont(*m_styleProvider);
         case Qt::TextAlignmentRole:
             return QVariant::fromValue(m_alignment);
         case RichTextRole:

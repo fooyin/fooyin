@@ -44,6 +44,7 @@ namespace Fooyin {
 class ActionManager;
 class Application;
 class CoverProvider;
+class GuiStyleProvider;
 class MusicLibrary;
 class PlaylistColumnRegistry;
 class PlaylistDelegate;
@@ -89,15 +90,15 @@ public:
 
     static PlaylistWidget* createMainPlaylist(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
                                               CoverProvider* coverProvider, Application* core,
-                                              QWidget* parent = nullptr);
+                                              GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
     static PlaylistWidget* createDetachedPlaylistSearch(ActionManager* actionManager,
                                                         PlaylistInteractor* playlistInteractor,
                                                         CoverProvider* coverProvider, Application* core,
-                                                        QWidget* parent = nullptr);
+                                                        GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
     static PlaylistWidget* createDetachedLibrarySearch(ActionManager* actionManager,
                                                        PlaylistInteractor* playlistInteractor,
                                                        CoverProvider* coverProvider, Application* core,
-                                                       QWidget* parent = nullptr);
+                                                       GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
 
     ~PlaylistWidget() override;
 
@@ -121,7 +122,8 @@ protected:
 
 private:
     PlaylistWidget(ActionManager* actionManager, PlaylistInteractor* playlistInteractor, CoverProvider* coverProvider,
-                   Application* core, std::unique_ptr<PlaylistWidgetSession> session, QWidget* parent);
+                   Application* core, GuiStyleProvider* styleProvider, std::unique_ptr<PlaylistWidgetSession> session,
+                   QWidget* parent);
     void populateTrackContextMenu(QMenu* menu, const QModelIndexList& selected);
     void showHeaderMenu(const QPoint& pos);
     void addSortMenu(QMenu* parent, bool disabled);
@@ -197,6 +199,7 @@ private:
     TrackSelectionController* m_selectionController;
     MusicLibrary* m_library;
     SettingsManager* m_settings;
+    GuiStyleProvider* m_styleProvider;
     SettingsDialogController* m_settingsDialog;
 
     std::unique_ptr<PlaylistWidgetSession> m_session;

@@ -35,6 +35,7 @@
 #include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/guistyleprovider.h>
 #include <gui/guiutils.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/autoheaderview.h>
@@ -44,7 +45,6 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QAction>
-#include <QApplication>
 #include <QMenu>
 #include <QPointer>
 
@@ -52,6 +52,8 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
+
+using namespace Qt::StringLiterals;
 
 namespace Fooyin::Filters {
 namespace {
@@ -147,7 +149,7 @@ public:
     explicit FilterControllerPrivate(FilterController* self, ActionManager* actionManager,
                                      const CorePluginContext& core, TrackSelectionController* trackSelection,
                                      EditableLayout* editableLayout, CoverRepository* coverRepository,
-                                     SettingsManager* settings);
+                                     SettingsManager* settings, GuiStyleProvider* styleProvider);
 
     void handleAction(FilterWidget* filter, const TrackAction& action) const;
     void filterContextMenu(FilterWidget* widget, const QPoint& pos) const;
@@ -196,6 +198,7 @@ public:
     CoverRepository* m_coverRepository;
     EditableLayout* m_editableLayout;
     SettingsManager* m_settings;
+    GuiStyleProvider* m_styleProvider;
 
     FilterManager* m_manager;
     FilterColumnRegistry* m_columnRegistry;
@@ -210,7 +213,7 @@ FilterControllerPrivate::FilterControllerPrivate(FilterController* self, ActionM
                                                  const CorePluginContext& core,
                                                  TrackSelectionController* trackSelection,
                                                  EditableLayout* editableLayout, CoverRepository* coverRepository,
-                                                 SettingsManager* settings)
+                                                 SettingsManager* settings, GuiStyleProvider* styleProvider)
     : m_self{self}
     , m_actionManager{actionManager}
     , m_library{core.library}
@@ -220,11 +223,12 @@ FilterControllerPrivate::FilterControllerPrivate(FilterController* self, ActionM
     , m_coverRepository{coverRepository}
     , m_editableLayout{editableLayout}
     , m_settings{settings}
+    , m_styleProvider{styleProvider}
     , m_manager{new FilterManager(m_self, m_editableLayout, m_self)}
     , m_columnRegistry{new FilterColumnRegistry(settings, m_self)}
 {
     m_settings->subscribe<Settings::Core::UseVariousForCompilations>(m_self, [this]() { scheduleAllRecomputes(); });
-    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(m_self, [this]() { scheduleAllRecomputes(); });
+    m_styleProvider->subscribe(m_self, [this]() { scheduleAllRecomputes(); });
 }
 
 void FilterControllerPrivate::handleAction(FilterWidget* filter, const TrackAction& action) const
@@ -366,7 +370,7 @@ void FilterControllerPrivate::filterContextMenu(FilterWidget* widget, const QPoi
 FilterRowBuildContext FilterControllerPrivate::rowBuildContext() const
 {
     return {
-        .font          = QApplication::font("Fooyin::Filters::FilterView"),
+        .font          = m_styleProvider->font(u"Fooyin::Filters::FilterView"_s),
         .ratingSymbols = Gui::ratingStarSymbols(*m_settings),
         .useVarious    = m_settings->value<Settings::Core::UseVariousForCompilations>(),
     };
@@ -609,6 +613,10 @@ void FilterControllerPrivate::sortGroupedFilters(FilterGroupState& group)
 
 void FilterControllerPrivate::scheduleRecompute(const Id& groupId)
 {
+    if(!m_styleProvider->isResolved()) {
+        return;
+    }
+
     if(!m_groups.contains(groupId)) {
         return;
     }
@@ -641,6 +649,10 @@ void FilterControllerPrivate::scheduleAllRecomputes()
 
 void FilterControllerPrivate::handleLibraryTracksPatched(const TrackList& changedTracks)
 {
+    if(!m_styleProvider->isResolved()) {
+        return;
+    }
+
     if(changedTracks.empty()) {
         return;
     }
@@ -1023,10 +1035,11 @@ std::optional<FilterGroup> FilterControllerPrivate::publicGroup(const Id& id) co
 
 FilterController::FilterController(ActionManager* actionManager, const CorePluginContext& core,
                                    TrackSelectionController* trackSelection, EditableLayout* editableLayout,
-                                   CoverRepository* coverRepository, SettingsManager* settings, QObject* parent)
+                                   CoverRepository* coverRepository, SettingsManager* settings,
+                                   GuiStyleProvider* styleProvider, QObject* parent)
     : QObject{parent}
     , p{std::make_unique<FilterControllerPrivate>(this, actionManager, core, trackSelection, editableLayout,
-                                                  coverRepository, settings)}
+                                                  coverRepository, settings, styleProvider)}
 {
     QObject::connect(p->m_library, &MusicLibrary::tracksAdded, this,
                      [this](const TrackList& tracks) { p->handleLibraryTracksPatched(tracks); });

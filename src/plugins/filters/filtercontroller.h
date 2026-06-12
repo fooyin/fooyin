@@ -29,6 +29,7 @@ class ActionManager;
 class CoverRepository;
 struct CorePluginContext;
 class EditableLayout;
+class GuiStyleProvider;
 class MusicLibrary;
 class SettingsManager;
 class TagLoader;
@@ -58,7 +59,8 @@ class FilterController : public QObject
 public:
     FilterController(ActionManager* actionManager, const CorePluginContext& core,
                      TrackSelectionController* trackSelection, EditableLayout* editableLayout,
-                     CoverRepository* coverRepository, SettingsManager* settings, QObject* parent = nullptr);
+                     CoverRepository* coverRepository, SettingsManager* settings, GuiStyleProvider* styleProvider,
+                     QObject* parent = nullptr);
     ~FilterController() override;
 
     [[nodiscard]] FilterColumnRegistry* columnRegistry() const;

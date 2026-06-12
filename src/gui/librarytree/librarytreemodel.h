@@ -31,6 +31,7 @@
 
 namespace Fooyin {
 class CoverRepository;
+class GuiStyleProvider;
 class LibraryManager;
 class LibraryTreeModelPrivate;
 class SettingsManager;
@@ -60,7 +61,8 @@ class LibraryTreeModel : public TreeModel<LibraryTreeItem>
 
 public:
     explicit LibraryTreeModel(LibraryManager* libraryManager, const std::shared_ptr<AudioLoader>& audioLoader,
-                              CoverRepository* coverRepository, SettingsManager* settings, QObject* parent = nullptr);
+                              CoverRepository* coverRepository, SettingsManager* settings,
+                              GuiStyleProvider* styleProvider, QObject* parent = nullptr);
     ~LibraryTreeModel() override;
 
     void resetPalette();

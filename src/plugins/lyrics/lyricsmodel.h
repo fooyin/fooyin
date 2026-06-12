@@ -27,7 +27,10 @@
 #include <QAbstractListModel>
 #include <QMargins>
 
-namespace Fooyin::Lyrics {
+namespace Fooyin {
+class GuiStyleProvider;
+
+namespace Lyrics {
 class LyricsModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -43,7 +46,7 @@ public:
         LineSpacingRole
     };
 
-    explicit LyricsModel(QObject* parent = nullptr);
+    explicit LyricsModel(GuiStyleProvider* styleProvider, QObject* parent = nullptr);
 
     void setLyrics(const Lyrics& lyrics);
     [[nodiscard]] Lyrics lyrics() const;
@@ -88,9 +91,11 @@ private:
     std::vector<RichText> m_text;
 
     Colours m_colours;
+    GuiStyleProvider* m_styleProvider;
     QFont m_baseFont;
     QFont m_lineFont;
     QFont m_wordLineFont;
     QFont m_wordFont;
 };
-} // namespace Fooyin::Lyrics
+} // namespace Lyrics
+} // namespace Fooyin

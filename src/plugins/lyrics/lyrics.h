@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <gui/guistyleprovider.h>
+
 #include <cstdint>
 #include <tuple>
 #include <vector>
@@ -136,34 +138,37 @@ struct Lyrics
 
     [[nodiscard]] bool isSynced() const
     {
-        return type == Lyrics::Type::Synced || type == Lyrics::Type::SyncedWords;
+        return type == Type::Synced || type == Type::SyncedWords;
     }
 
     [[nodiscard]] bool isSyncedWords() const
     {
-        return type == Lyrics::Type::SyncedWords;
+        return type == Type::SyncedWords;
     }
 
-    static QFont defaultFont()
+    static QFont defaultFont(const GuiStyleProvider& styleProvider)
     {
+        if(styleProvider.isResolved()) {
+            return styleProvider.font(QStringLiteral("Fooyin::Lyrics::LyricsArea"));
+        }
         return QApplication::font("Fooyin::Lyrics::LyricsArea");
     }
 
-    static QFont defaultLineFont()
+    static QFont defaultLineFont(const GuiStyleProvider& styleProvider)
     {
-        QFont font{defaultFont()};
+        QFont font{defaultFont(styleProvider)};
         return font;
     }
 
-    static QFont defaultWordLineFont()
+    static QFont defaultWordLineFont(const GuiStyleProvider& styleProvider)
     {
-        QFont font{defaultFont()};
+        QFont font{defaultFont(styleProvider)};
         return font;
     }
 
-    static QFont defaultWordFont()
+    static QFont defaultWordFont(const GuiStyleProvider& styleProvider)
     {
-        QFont font{defaultWordLineFont()};
+        QFont font{defaultWordLineFont(styleProvider)};
         return font;
     }
 

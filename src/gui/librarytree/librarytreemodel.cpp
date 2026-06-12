@@ -29,6 +29,7 @@
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/guistyleprovider.h>
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/scripting/richtextutils.h>
@@ -38,7 +39,6 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
-#include <QApplication>
 #include <QColor>
 #include <QIODevice>
 #include <QMimeData>
@@ -53,11 +53,6 @@
 using namespace Qt::StringLiterals;
 
 namespace {
-QFont libraryTreeFont()
-{
-    return QApplication::font("Fooyin::LibraryTreeView");
-}
-
 using NodeParentMap = std::unordered_map<Fooyin::Md5Hash, Fooyin::Md5Hash>;
 
 bool cmpItemsReverse(Fooyin::LibraryTreeItem* pItem1, Fooyin::LibraryTreeItem* pItem2)
@@ -258,13 +253,14 @@ class LibraryTreeModelPrivate
 public:
     explicit LibraryTreeModelPrivate(LibraryTreeModel* self, LibraryManager* libraryManager,
                                      std::shared_ptr<AudioLoader> audioLoader, CoverRepository* coverRepository,
-                                     SettingsManager* settings);
+                                     SettingsManager* settings, GuiStyleProvider* styleProvider);
 
     void updateSummary();
     void ensureSummaryNodeVisible();
     void removeSummaryNode();
     void queueRichTitleUpdate(ItemKeyMap items);
     void startRichTitleUpdate(ItemKeyMap items);
+    [[nodiscard]] QFont libraryTreeFont() const;
     [[nodiscard]] int childCountForScript(const LibraryTreeItem& item) const;
     [[nodiscard]] int summaryChildCountForScript();
 
@@ -289,6 +285,7 @@ public:
     LibraryTreeModel* m_self;
     std::shared_ptr<AudioLoader> m_audioLoader;
     SettingsManager* m_settings;
+    GuiStyleProvider* m_styleProvider;
 
     CoverProvider m_coverProvider;
     LibraryTreeGrouping m_grouping;
@@ -315,18 +312,21 @@ public:
     QString m_parentNode;
     QString m_playingPath;
     int m_rowHeight{0};
-    QColor m_playingColour{QApplication::palette().highlight().color()};
+    QColor m_playingColour;
     ThumbnailSize m_iconSize;
 };
 
 LibraryTreeModelPrivate::LibraryTreeModelPrivate(LibraryTreeModel* self, LibraryManager* libraryManager,
                                                  std::shared_ptr<AudioLoader> audioLoader,
-                                                 CoverRepository* coverRepository, SettingsManager* settings)
+                                                 CoverRepository* coverRepository, SettingsManager* settings,
+                                                 GuiStyleProvider* styleProvider)
     : m_self{self}
     , m_audioLoader{std::move(audioLoader)}
     , m_settings{settings}
+    , m_styleProvider{styleProvider}
     , m_coverProvider{coverRepository}
     , m_populator{libraryManager, settings}
+    , m_playingColour{m_styleProvider->palette().highlight().color()}
     , m_iconSize{
           CoverProvider::findThumbnailSize(m_settings->value<Settings::Gui::Internal::LibTreeIconSize>().toSize())}
 {
@@ -442,6 +442,11 @@ void LibraryTreeModelPrivate::startRichTitleUpdate(ItemKeyMap items)
         m_populator.setFont(font);
         m_populator.updateItems(std::move(items), useVarious);
     });
+}
+
+QFont LibraryTreeModelPrivate::libraryTreeFont() const
+{
+    return m_styleProvider->font(u"Fooyin::LibraryTreeView"_s);
 }
 
 void LibraryTreeModelPrivate::removeTracks(const TrackList& tracks)
@@ -847,9 +852,11 @@ void LibraryTreeModelPrivate::beginReset()
 }
 
 LibraryTreeModel::LibraryTreeModel(LibraryManager* libraryManager, const std::shared_ptr<AudioLoader>& audioLoader,
-                                   CoverRepository* coverRepository, SettingsManager* settings, QObject* parent)
+                                   CoverRepository* coverRepository, SettingsManager* settings,
+                                   GuiStyleProvider* styleProvider, QObject* parent)
     : TreeModel{parent}
-    , p{std::make_unique<LibraryTreeModelPrivate>(this, libraryManager, audioLoader, coverRepository, settings)}
+    , p{std::make_unique<LibraryTreeModelPrivate>(this, libraryManager, audioLoader, coverRepository, settings,
+                                                  styleProvider)}
 {
     qRegisterMetaType<PendingTreeDataPtr>("Fooyin::PendingTreeDataPtr");
 
@@ -901,7 +908,7 @@ LibraryTreeModel::~LibraryTreeModel()
 
 void LibraryTreeModel::resetPalette()
 {
-    p->m_playingColour = QApplication::palette().highlight().color();
+    p->m_playingColour = p->m_styleProvider->palette().highlight().color();
     p->m_playingColour.setAlpha(90);
 
     p->queueRichTitleUpdate(p->m_nodes);
@@ -1253,7 +1260,7 @@ void LibraryTreeModel::addTracks(const TrackList& tracks)
     p->m_populatorThread.start();
 
     QMetaObject::invokeMethod(&p->m_populator, [this, tracksToAdd = std::move(tracksToAdd)] {
-        p->m_populator.setFont(libraryTreeFont());
+        p->m_populator.setFont(p->libraryTreeFont());
         p->m_populator.run(p->m_grouping, tracksToAdd,
                            p->m_settings->value<Settings::Core::UseVariousForCompilations>());
     });
@@ -1276,7 +1283,7 @@ void LibraryTreeModel::updateTracks(const TrackList& tracks)
     p->m_populatorThread.start();
 
     QMetaObject::invokeMethod(&p->m_populator, [this, tracksToUpdate = std::move(tracksToUpdate)] {
-        p->m_populator.setFont(libraryTreeFont());
+        p->m_populator.setFont(p->libraryTreeFont());
         p->m_populator.run(p->m_grouping, tracksToUpdate,
                            p->m_settings->value<Settings::Core::UseVariousForCompilations>());
     });
@@ -1332,7 +1339,7 @@ void LibraryTreeModel::reset(const TrackList& tracks)
     p->m_tracksPendingRemoval.clear();
 
     QMetaObject::invokeMethod(&p->m_populator, [this, tracks] {
-        p->m_populator.setFont(libraryTreeFont());
+        p->m_populator.setFont(p->libraryTreeFont());
         p->m_populator.run(p->m_grouping, tracks, p->m_settings->value<Settings::Core::UseVariousForCompilations>());
     });
 }

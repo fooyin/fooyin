@@ -42,6 +42,7 @@
 #include <gui/contextmenuutils.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/guistyleprovider.h>
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/trackselectioncontroller.h>
@@ -186,7 +187,7 @@ TrackList tracksForIndexes(LibraryTreeSortModel* model, const QModelIndexList& i
 
 LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistController* playlistController,
                                      LibraryTreeController* controller, Application* core,
-                                     CoverRepository* coverRepository, QWidget* parent)
+                                     CoverRepository* coverRepository, GuiStyleProvider* styleProvider, QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
     , m_library{core->library()}
@@ -196,10 +197,12 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
     , m_groupsRegistry{controller->groupRegistry()}
     , m_trackSelection{playlistController->selectionController()}
     , m_settings{core->settingsManager()}
+    , m_styleProvider{styleProvider}
     , m_resetThrottler{new SignalThrottler(this)}
     , m_layout{new QVBoxLayout(this)}
     , m_libraryTree{new LibraryTreeView(this)}
-    , m_model{new LibraryTreeModel(core->libraryManager(), core->audioLoader(), coverRepository, m_settings, this)}
+    , m_model{new LibraryTreeModel(core->libraryManager(), core->audioLoader(), coverRepository, m_settings,
+                                   styleProvider, this)}
     , m_sortProxy{new LibraryTreeSortModel(this)}
     , m_widgetContext{new WidgetContext(
           this,
@@ -604,10 +607,10 @@ void LibraryTreeWidget::setupConnections()
     QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this,
                      [this](auto* playlist) { activePlaylistChanged(playlist); });
 
-    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this](const QVariant& var) {
-        const auto resolvedStyle = var.value<ResolvedAppStyle>();
+    m_styleProvider->subscribe(this, [this](const ResolvedAppStyle& resolvedStyle) {
         Gui::refreshItemViewPalette(m_libraryTree, resolvedStyle.palette);
         m_model->resetPalette();
+        reset();
     });
 
     m_settings->subscribe<Settings::Core::UseVariousForCompilations>(this, [this]() { reset(); });
@@ -619,6 +622,10 @@ void LibraryTreeWidget::setupConnections()
 
 void LibraryTreeWidget::reset() const
 {
+    if(!m_styleProvider->isResolved()) {
+        return;
+    }
+
     m_resetThrottler->throttle();
 }
 

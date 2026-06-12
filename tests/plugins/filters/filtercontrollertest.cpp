@@ -31,6 +31,7 @@
 #include <gui/coverrepository.h>
 #include <gui/editablelayout.h>
 #include <gui/guisettings.h>
+#include <gui/guistyleprovider.h>
 #include <gui/internalguisettings.h>
 #include <gui/layoutprovider.h>
 #include <gui/widgetprovider.h>
@@ -150,6 +151,11 @@ public:
         return {};
     }
 
+    PendingTrackCoverProvider* pendingTrackCoverProvider() const override
+    {
+        return nullptr;
+    }
+
     void updateTrackStats(const TrackList& /*tracks*/) override { }
     void updateTrackStats(const Track& /*track*/) override { }
 
@@ -232,6 +238,8 @@ protected:
         m_editableLayout = std::make_unique<EditableLayout>(m_actionManager.get(), &m_widgetProvider, &m_layoutProvider,
                                                             m_settings.get());
 
+        m_styleProvider = std::make_unique<GuiStyleProvider>(m_settings.get());
+
         m_audioLoader     = std::make_shared<AudioLoader>();
         m_coverRepository = std::make_unique<CoverRepository>(m_audioLoader, m_settings.get());
 
@@ -241,7 +249,7 @@ protected:
 
         m_controller = std::make_unique<Filters::FilterController>(m_actionManager.get(), coreContext, nullptr,
                                                                    m_editableLayout.get(), m_coverRepository.get(),
-                                                                   m_settings.get());
+                                                                   m_settings.get(), m_styleProvider.get());
     }
 
     Filters::FilterGroup defaultGroup() const
@@ -261,6 +269,7 @@ protected:
     std::unique_ptr<QMainWindow> m_mainWindow;
     std::unique_ptr<ActionManager> m_actionManager;
     std::unique_ptr<EditableLayout> m_editableLayout;
+    std::unique_ptr<GuiStyleProvider> m_styleProvider;
     std::shared_ptr<AudioLoader> m_audioLoader;
     std::unique_ptr<CoverRepository> m_coverRepository;
     std::unique_ptr<Filters::FilterController> m_controller;

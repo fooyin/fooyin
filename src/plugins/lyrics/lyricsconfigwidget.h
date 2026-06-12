@@ -42,7 +42,7 @@ class LyricsConfigDialog : public WidgetConfigDialog<LyricsWidget, LyricsWidget:
     Q_OBJECT
 
 public:
-    explicit LyricsConfigDialog(LyricsWidget* lyricsWidget, QWidget* parent = nullptr);
+    explicit LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
 
 protected:
     [[nodiscard]] LyricsWidget::ConfigData config() const override;
@@ -51,6 +51,8 @@ protected:
 private:
     [[nodiscard]] ScrollMode scrollMode() const;
     void setScrollMode(ScrollMode mode);
+
+    GuiStyleProvider* m_styleProvider;
 
     QTabWidget* m_tabs;
 
