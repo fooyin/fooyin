@@ -5413,7 +5413,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="187"/>
         <source>Use custom spacing</source>
-        <translation type="unfinished">Verwende benutzerdefinierten Abstand</translation>
+        <translation>Verwende benutzerdefinierten Abstand</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="207"/>
@@ -12250,7 +12250,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="72"/>
         <source>Culture</source>
-        <translation type="unfinished"></translation>
+        <translation>Kultur</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiogenres.cpp" line="73"/>
@@ -12298,12 +12298,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="136"/>
         <source>Popular</source>
-        <translation type="unfinished"></translation>
+        <translation>Beliebt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="137"/>
         <source>Trending</source>
-        <translation type="unfinished"></translation>
+        <translation>Im Trend</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="138"/>
@@ -12313,37 +12313,37 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="139"/>
         <source>Newest</source>
-        <translation type="unfinished"></translation>
+        <translation>Neuste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="140"/>
         <source>Random</source>
-        <translation type="unfinished">Zufällig</translation>
+        <translation>Zufällig</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="142"/>
         <source>Library</source>
-        <translation type="unfinished">Bibliothek</translation>
+        <translation>Bibliothek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="143"/>
         <source>My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Meine Stationen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="144"/>
         <source>Latest Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Neuste Suche</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="146"/>
         <source>Genres</source>
-        <translation type="unfinished">Genres</translation>
+        <translation>Genres</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="147"/>
         <source>More Genres</source>
-        <translation type="unfinished"></translation>
+        <translation>Mehr Genres</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="148"/>
@@ -12358,12 +12358,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="168"/>
         <source>Countries</source>
-        <translation type="unfinished"></translation>
+        <translation>Länder</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="367"/>
         <source>Saved Searches</source>
-        <translation type="unfinished"></translation>
+        <translation>Gespeicherte Suchen</translation>
     </message>
 </context>
 <context>
@@ -12371,27 +12371,27 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="54"/>
         <source>Loading Countries…</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Länder…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="56"/>
         <source>Loading Languages…</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Sprachen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="58"/>
         <source>Loading Genres…</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Genres…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="60"/>
         <source>Loading Codecs…</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Codecs…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="63"/>
         <source>Loading…</source>
-        <translation type="unfinished"></translation>
+        <translation>Laden…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="209"/>
@@ -12406,87 +12406,87 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="485"/>
         <source>Browse the selected section</source>
-        <translation type="unfinished"></translation>
+        <translation>Den ausgewählten Abschnitt durchschauen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="494"/>
         <source>Rename saved search…</source>
-        <translation type="unfinished"></translation>
+        <translation>Gespeicherte Suche umbenennen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="495"/>
         <source>Rename the selected saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Benenne die ausgewählte gespeicherte Suche um</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="498"/>
         <source>Remove saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Gespeicherte Suche entfernen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="499"/>
         <source>Remove the selected saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Entfernt die ausgewählte gespeicherte Suche</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="509"/>
         <source>Add custom station…</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzerdefinierte Station hinzufügen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="510"/>
         <source>Add a custom station to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Fügt eine benutzerdefinierte Station zu „Meine Stationen“ hinzu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="515"/>
         <source>Import stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Stationen importieren…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="516"/>
         <source>Import saved stations from a playlist file</source>
-        <translation type="unfinished"></translation>
+        <translation>Importiere gespeicherte Stationen aus einer Wiedergabelisten-Datei</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="519"/>
         <source>Export stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Stationen exportieren…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="520"/>
         <source>Export My Stations to a playlist file</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportiere „Meine Stationen“ in eine Wiedergabelisten-Datei</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="527"/>
         <source>Expand all</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle ausklappen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="530"/>
         <source>Collapse all</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle einklappen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="542"/>
         <source>Display</source>
-        <translation type="unfinished">Anzeige</translation>
+        <translation>Anzeige</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="544"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Zeige Bildlaufleiste</translation>
+        <translation>Zeige Bildlaufleiste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="587"/>
         <source>Rename Saved Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Gespeicherte Suche umbenennen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="587"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
 </context>
 <context>
@@ -12494,131 +12494,131 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="96"/>
         <source>Reset filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter zurücksetzen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="105"/>
         <source>Search stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Suche Stationen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="108"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="297"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="643"/>
         <source>Any country</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Länder</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="111"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="395"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="398"/>
         <source>Any genre</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Genres</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="115"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="303"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="686"/>
         <source>Any codec</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Codecs</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="121"/>
         <source>Min</source>
-        <translation type="unfinished">Min.</translation>
+        <translation>Min.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="126"/>
         <source>Max</source>
-        <translation type="unfinished">Max.</translation>
+        <translation>Max.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="139"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="588"/>
         <source>Clear filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter leeren</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="143"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="876"/>
         <source>Pin filter to bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter an die Leiste anheften</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="150"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Land</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="151"/>
         <source>Genre</source>
-        <translation type="unfinished">Genre</translation>
+        <translation>Genre</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="152"/>
         <source>Codec</source>
-        <translation type="unfinished">Codec</translation>
+        <translation>Codec</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="153"/>
         <source>Bitrate</source>
-        <translation type="unfinished">Bitrate</translation>
+        <translation>Bitrate</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="155"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="571"/>
         <source>Filters</source>
-        <translation type="unfinished">Filter</translation>
+        <translation>Filter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="157"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="572"/>
         <source>Show filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Filter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="165"/>
         <source>Reset all filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Filter zurücksetzen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="213"/>
         <source>Radio Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio-Suche</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="565"/>
         <source>Filters (%1)</source>
         <extracomment>%1 is the number of active search filters</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Filter (%1)</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="566"/>
         <source>%Ln active filter(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln aktive Filter</numerusform>
+            <numerusform>%Ln aktive Filter</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="710"/>
         <source>Min bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimale Bitrate</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="717"/>
         <source>Max bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Bitrate</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="755"/>
         <source>Show label</source>
-        <translation type="unfinished">Zeige Beschriftung</translation>
+        <translation>Zeige Beschriftung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="876"/>
         <source>Unpin filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter nicht mehr anheften</translation>
     </message>
 </context>
 <context>
@@ -12629,115 +12629,115 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="441"/>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="476"/>
         <source>Station validated.</source>
-        <translation type="unfinished"></translation>
+        <translation>Station validiert.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="129"/>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="367"/>
         <source>Enter a station name and stream URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gib einen Stationsnamen und eine Stream-URL ein</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="138"/>
         <source>Add Custom Station</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzerdefinierte Station hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="141"/>
         <source>Edit Custom Station</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzerdefinierte Station bearbeiten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="144"/>
         <source>Station Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Stations-Details</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="166"/>
         <source>Separate tags with commas</source>
-        <translation type="unfinished"></translation>
+        <translation>Trenne Schlagwörter durch Kommata</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="172"/>
         <source>Unknown</source>
-        <translation type="unfinished">Unbekannt</translation>
+        <translation>Unbekannt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="183"/>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="211"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="185"/>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="213"/>
         <source>Stream URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Stream-URL</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="189"/>
         <source>Homepage</source>
-        <translation type="unfinished"></translation>
+        <translation>Homepage</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="191"/>
         <source>Favicon</source>
-        <translation type="unfinished"></translation>
+        <translation>Webseiten-Icon</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="193"/>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlagwörter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="195"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Land</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="197"/>
         <source>Language</source>
-        <translation type="unfinished">Sprache</translation>
+        <translation>Sprache</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="199"/>
         <source>Codec</source>
-        <translation type="unfinished">Codec</translation>
+        <translation>Codec</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="201"/>
         <source>Bitrate</source>
-        <translation type="unfinished">Bitrate</translation>
+        <translation>Bitrate</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="372"/>
         <source>Waiting to validate…</source>
-        <translation type="unfinished"></translation>
+        <translation>Warte auf Validierung…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="384"/>
         <source>Radio Browser is unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio-Browser ist nicht verfügbar.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="394"/>
         <source>Validating station…</source>
-        <translation type="unfinished"></translation>
+        <translation>Validiere Station…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="403"/>
         <source>Station could not be validated.</source>
-        <translation type="unfinished"></translation>
+        <translation>Station konnte nicht validiert werden.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="420"/>
         <source>Station validated. Looking up station details…</source>
-        <translation type="unfinished"></translation>
+        <translation>Station validiert. Schlage Stations-Details nach…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="459"/>
         <source>Station validated. Details found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Station validiert. Details gefunden.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="500"/>
@@ -12756,14 +12756,14 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="54"/>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="72"/>
         <source>Export Radio Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportiere Radiostationen</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="77"/>
         <source>Exported %n radio station(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n Radiostation exportiert.</numerusform>
+            <numerusform>%n Radiostationen exportiert.</numerusform>
         </translation>
     </message>
     <message>
@@ -12771,48 +12771,48 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="109"/>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="169"/>
         <source>Import Radio Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Importiere Radiostationen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="89"/>
         <source>Append imported stations to My Stations, or replace the current list?</source>
-        <translation type="unfinished"></translation>
+        <translation>Importierte Stationen an „Meine Stationen“ anhängen, oder die aktuelle Liste ersetzen?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="91"/>
         <source>Append</source>
-        <translation type="unfinished"></translation>
+        <translation>Anhängen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="92"/>
         <source>Replace</source>
-        <translation type="unfinished">Ersetzen</translation>
+        <translation>Ersetzen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="121"/>
         <source>Importing radio stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importiere Radiostationen…</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="150"/>
         <source>Imported %Ln radio station(s), skipped %Ln duplicate(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln Radiostation importiert, %Ln Duplikat übersprungen.</numerusform>
+            <numerusform>%Ln Radiostationen importiert, %Ln Duplikate übersprungen.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="154"/>
         <source>Imported %Ln radio station(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln Radiostation importiert.</numerusform>
+            <numerusform>%Ln Radiostationen importiert.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="174"/>
         <source>M3U Playlists (*.m3u8);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>M3U Wiedergabelisten (*.m3u8);;Alle Dateien (*)</translation>
     </message>
 </context>
 <context>
@@ -12820,12 +12820,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostreamresolver.cpp" line="129"/>
         <source>Invalid stream URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige Stream-URL.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostreamresolver.cpp" line="298"/>
         <source>Playlist did not contain any playable streams.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabeliste enthielt keine abspielbaren Streams.</translation>
     </message>
 </context>
 <context>
@@ -13122,7 +13122,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="332"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Zeige Bildlaufleiste</translation>
+        <translation>Zeige Bildlaufleiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="341"/>
@@ -13943,7 +13943,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/widgets/seekcontainer.cpp" line="71"/>
         <source>Live</source>
-        <translation type="unfinished"></translation>
+        <translation>Live</translation>
     </message>
 </context>
 <context>
@@ -14328,168 +14328,168 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="152"/>
         <source>Spectrum Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen: Spektrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="164"/>
         <source>Amplitudes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausschlag</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="169"/>
         <source>Peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Spitzen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="176"/>
         <source>Top labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschriftungen oben</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="177"/>
         <source>Bottom labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschriftungen unten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="178"/>
         <source>Left labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschriftungen links</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="179"/>
         <source>Right labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschriftungen rechts</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="180"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="417"/>
         <source>Horizontal gridlines</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontale Gitterlinien</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="181"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="418"/>
         <source>Vertical gridlines</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikale Gitterlinien</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="182"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="421"/>
         <source>White keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Weiße Tasten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="183"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="422"/>
         <source>Black keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Schwarze Tasten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="184"/>
         <source>Tooltip</source>
-        <translation type="unfinished">Tooltip</translation>
+        <translation>Tooltip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="185"/>
         <source>Fill spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Spektrum füllen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="186"/>
         <source>Interpolate</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpolieren</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="188"/>
         <source>Custom colours</source>
-        <translation type="unfinished">Benutzerdefinierte Farben</translation>
+        <translation>Benutzerdefinierte Farben</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="199"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Skalierung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="201"/>
         <source>Analysis</source>
-        <translation type="unfinished"></translation>
+        <translation>Analyse</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="205"/>
         <source>Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Achsen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="207"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="472"/>
         <source>Display</source>
-        <translation type="unfinished">Anzeige</translation>
+        <translation>Anzeige</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="248"/>
         <source>%1 fps</source>
-        <translation type="unfinished">%1 FPS</translation>
+        <translation>%1 FPS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="255"/>
         <source>Blackman-Harris</source>
-        <translation type="unfinished"></translation>
+        <translation>Blackman-Harris</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="256"/>
         <source>Hann</source>
-        <translation type="unfinished"></translation>
+        <translation>Hann</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="257"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="259"/>
         <source>Frequencies</source>
-        <translation type="unfinished"></translation>
+        <translation>Frequenzen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="260"/>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Noten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="261"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="424"/>
         <source>Bars</source>
-        <translation type="unfinished"></translation>
+        <translation>Balken</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="262"/>
         <source>Curve</source>
-        <translation type="unfinished">Kurve</translation>
+        <translation>Kurve</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="264"/>
         <source>Choose whether bands are spaced by frequency or by musical note</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle ob Bänder durch Frequenzen oder Musiknoten getrennt werden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="265"/>
         <source>Lowest frequency shown</source>
-        <translation type="unfinished"></translation>
+        <translation>Niedrigste anzuzeigende Frequenz</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="266"/>
         <source>Highest frequency</source>
-        <translation type="unfinished"></translation>
+        <translation>Höchste Frequenz</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="267"/>
         <source>Lowest note shown</source>
-        <translation type="unfinished"></translation>
+        <translation>Niedrigste anzuzeigende Note</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="268"/>
         <source>Highest note shown</source>
-        <translation type="unfinished"></translation>
+        <translation>Höchste anzuzeigende Note</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="269"/>
@@ -14504,12 +14504,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="271"/>
         <source>Number of frequency bands to draw</source>
-        <translation type="unfinished"></translation>
+        <translation>Anzahl an anzuzeigenden Frequenzbändern</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="272"/>
         <source>Number of samples analysed per spectrum frame; higher values improve frequency detail but respond more slowly</source>
-        <translation type="unfinished"></translation>
+        <translation>Wie viele Samples pro Spektrum-Bild analysiert werden; höhere Werte erhöhen den Detailgrad, könnten aber langsamer reagieren</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="274"/>
@@ -14519,7 +14519,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="275"/>
         <source>Reference frequency for A4</source>
-        <translation type="unfinished"></translation>
+        <translation>Referenzfrequenz für a¹</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="276"/>
@@ -14594,12 +14594,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="290"/>
         <source>Split each bar into this many vertical segments</source>
-        <translation type="unfinished"></translation>
+        <translation>Teile jeden Balken in so viele vertikale Abschnitte</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="291"/>
         <source>Vertical gap between bar segments</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikaler Abstand zwischen Balkenabschnitten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="292"/>
@@ -14609,7 +14609,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="293"/>
         <source>Font used for spectrum axis labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Schriftart für die Achsenbeschriftung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="294"/>
@@ -14639,7 +14639,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="341"/>
         <source>Axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Achse</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="342"/>
@@ -14654,7 +14654,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="344"/>
         <source>Bands</source>
-        <translation type="unfinished"></translation>
+        <translation>Bänder</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="347"/>
@@ -14669,18 +14669,18 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="349"/>
         <source>Pitch (A4)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tonhöhe (a¹)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="350"/>
         <source>Transpose</source>
-        <translation type="unfinished"></translation>
+        <translation>Transponieren</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="371"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="376"/>
         <source>Hold time</source>
-        <translation type="unfinished"></translation>
+        <translation>Haltezeit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="372"/>
@@ -14696,54 +14696,54 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="395"/>
         <source>Bar spacing</source>
-        <translation type="unfinished">Balkenabstand</translation>
+        <translation>Balkenabstand</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="396"/>
         <source>Sections</source>
-        <translation type="unfinished">Abschnitte</translation>
+        <translation>Abschnitte</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="397"/>
         <source>Section spacing</source>
-        <translation type="unfinished">Abschnittsabstand</translation>
+        <translation>Abschnittsabstand</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="398"/>
         <source>Style</source>
-        <translation type="unfinished">Stil</translation>
+        <translation>Stil</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="399"/>
         <source>Axis font</source>
-        <translation type="unfinished"></translation>
+        <translation>Achsen-Schriftart</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="402"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="473"/>
         <source>Colours</source>
-        <translation type="unfinished">Farben</translation>
+        <translation>Farben</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="413"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="471"/>
         <source>General</source>
-        <translation type="unfinished">Allgemein</translation>
+        <translation>Allgemein</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="414"/>
         <source>Text colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Textfarbe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="415"/>
         <source>Background colour</source>
-        <translation type="unfinished">Hintergrundfarbe</translation>
+        <translation>Hintergrundfarbe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="416"/>
         <source>Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>Gitter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="419"/>
@@ -14753,7 +14753,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="420"/>
         <source>Keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Noten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="425"/>
@@ -14771,12 +14771,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="47"/>
         <source>Spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Spektrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="48"/>
         <source>Visualisations</source>
-        <translation type="unfinished">Visualisierungen</translation>
+        <translation>Visualisierungen</translation>
     </message>
 </context>
 <context>
@@ -14784,37 +14784,37 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="124"/>
         <source>Spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Spektrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="634"/>
         <source>Style</source>
-        <translation type="unfinished">Stil</translation>
+        <translation>Stil</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="637"/>
         <source>Bars</source>
-        <translation type="unfinished"></translation>
+        <translation>Balken</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="640"/>
         <source>Curve</source>
-        <translation type="unfinished">Kurve</translation>
+        <translation>Kurve</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="658"/>
         <source>Axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Achse</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="661"/>
         <source>Frequencies</source>
-        <translation type="unfinished"></translation>
+        <translation>Frequenzen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="664"/>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Noten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="682"/>
@@ -14824,57 +14824,57 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="699"/>
         <source>Show peaks</source>
-        <translation type="unfinished">Zeige Spitzenwerte</translation>
+        <translation>Zeige Spitzenwerte</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="708"/>
         <source>Fill spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Spektrum füllen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="717"/>
         <source>Show tooltip</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Tooltip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="726"/>
         <source>Labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschriftungen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="728"/>
         <source>Top</source>
-        <translation type="unfinished">Oben</translation>
+        <translation>Oben</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="737"/>
         <source>Bottom</source>
-        <translation type="unfinished">Unten</translation>
+        <translation>Unten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="746"/>
         <source>Left</source>
-        <translation type="unfinished">Links</translation>
+        <translation>Links</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="755"/>
         <source>Right</source>
-        <translation type="unfinished">Rechts</translation>
+        <translation>Rechts</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="769"/>
         <source>Gridlines</source>
-        <translation type="unfinished"></translation>
+        <translation>Gitterlinien</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="771"/>
         <source>Horizontal</source>
-        <translation type="unfinished">Horizontal</translation>
+        <translation>Horizontal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="780"/>
         <source>Vertical</source>
-        <translation type="unfinished">Vertikal</translation>
+        <translation>Vertikal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="789"/>
@@ -15678,7 +15678,7 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="278"/>
         <source>Queue</source>
-        <translation type="unfinished">Warteschlange</translation>
+        <translation>Warteschlange</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="280"/>
@@ -15893,7 +15893,7 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="78"/>
         <source>Display</source>
-        <translation type="unfinished">Anzeige</translation>
+        <translation>Anzeige</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="83"/>
@@ -15919,7 +15919,7 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="49"/>
         <source>Legend</source>
-        <translation type="unfinished"></translation>
+        <translation>Legende</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="50"/>
@@ -15939,7 +15939,7 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="94"/>
         <source>Hold time</source>
-        <translation type="unfinished"></translation>
+        <translation>Haltezeit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="100"/>
@@ -15989,7 +15989,7 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="159"/>
         <source>Colours</source>
-        <translation type="unfinished">Farben</translation>
+        <translation>Farben</translation>
     </message>
 </context>
 <context>
@@ -16722,22 +16722,22 @@ Höhere Supersampling-Werte funktionieren am besten mit höherer Sampleanzahl.</
     <message>
         <location filename="../../src/gui/widgets.cpp" line="486"/>
         <source>Output</source>
-        <translation type="unfinished">Ausgabe</translation>
+        <translation>Ausgabe</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="487"/>
         <source>Device refresh interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Geräteaktualisierungs-Intervall</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="488"/>
         <source>Interval used to refresh the list of available output devices. Set to 0 to disable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Intervall, das zur Aktualisierung der verfügbaren Ausgabegeräte verwendet wird. Zum Deaktivieren auf 0 setzen.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="493"/>
         <source>Disabled</source>
-        <translation type="unfinished">Deaktiviert</translation>
+        <translation>Deaktiviert</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="501"/>
