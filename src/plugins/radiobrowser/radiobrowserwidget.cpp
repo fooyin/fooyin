@@ -84,6 +84,7 @@ constexpr auto IconVerticalGapKey   = "RadioBrowser/IconVerticalGap";
 constexpr auto IconItemBorderKey    = "RadioBrowser/IconItemBorder";
 constexpr auto UniformIconsKey      = "RadioBrowser/UniformIcons";
 constexpr auto ShowIconsKey         = "RadioBrowser/ShowIcons";
+constexpr auto ShowToolTipsKey      = "RadioBrowser/ShowToolTips";
 
 namespace Fooyin::RadioBrowser {
 namespace {
@@ -344,6 +345,7 @@ void RadioBrowserWidget::saveLayoutData(QJsonObject& layout)
     layout["ShowScrollbar"_L1]     = m_viewConfig.showScrollbar;
     layout["AlternatingRows"_L1]   = m_viewConfig.alternatingRows;
     layout["ShowIcons"_L1]         = m_viewConfig.showIcons;
+    layout["ShowToolTips"_L1]      = m_viewConfig.showToolTips;
     layout["RowHeight"_L1]         = m_viewConfig.rowHeight;
     layout["IconSize"_L1]          = m_viewConfig.iconSize.width();
     layout["IconHorizontalGap"_L1] = m_viewConfig.iconHorizontalGap;
@@ -383,6 +385,9 @@ void RadioBrowserWidget::loadLayoutData(const QJsonObject& layout)
     }
     if(layout.contains("ShowIcons"_L1)) {
         m_viewConfig.showIcons = layout.value("ShowIcons"_L1).toBool();
+    }
+    if(layout.contains("ShowToolTips"_L1)) {
+        m_viewConfig.showToolTips = layout.value("ShowToolTips"_L1).toBool();
     }
     if(layout.contains("RowHeight"_L1)) {
         m_viewConfig.rowHeight = layout.value("RowHeight"_L1).toInt();
@@ -583,6 +588,7 @@ RadioBrowserWidget::ConfigData RadioBrowserWidget::defaultConfig() const
     config.view.iconItemBorderWidth = m_settings->fileValue(IconItemBorderKey, config.view.iconItemBorderWidth).toInt();
     config.view.uniformStationIcons = m_settings->fileValue(UniformIconsKey, config.view.uniformStationIcons).toBool();
     config.view.showIcons           = m_settings->fileValue(ShowIconsKey, config.view.showIcons).toBool();
+    config.view.showToolTips        = m_settings->fileValue(ShowToolTipsKey, config.view.showToolTips).toBool();
 
     if(!config.view.iconSize.isValid()) {
         config.view.iconSize = factoryConfig().view.iconSize;
@@ -609,6 +615,7 @@ void RadioBrowserWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(IconItemBorderKey, config.view.iconItemBorderWidth);
     m_settings->fileSet(UniformIconsKey, config.view.uniformStationIcons);
     m_settings->fileSet(ShowIconsKey, config.view.showIcons);
+    m_settings->fileSet(ShowToolTipsKey, config.view.showToolTips);
 }
 
 void RadioBrowserWidget::clearSavedDefaults() const
@@ -624,6 +631,7 @@ void RadioBrowserWidget::clearSavedDefaults() const
     m_settings->fileRemove(IconItemBorderKey);
     m_settings->fileRemove(UniformIconsKey);
     m_settings->fileRemove(ShowIconsKey);
+    m_settings->fileRemove(ShowToolTipsKey);
 }
 
 void RadioBrowserWidget::applyConfig(const ConfigData& config)
@@ -1636,6 +1644,15 @@ void RadioBrowserWidget::addDisplayMenu(QMenu* menu)
         setViewConfig(config);
     });
 
+    auto* showToolTips = new QAction(tr("Show station tooltips"), displayMenu);
+    showToolTips->setCheckable(true);
+    showToolTips->setChecked(m_viewConfig.showToolTips);
+    QObject::connect(showToolTips, &QAction::triggered, this, [this](bool checked) {
+        auto config{m_viewConfig};
+        config.showToolTips = checked;
+        setViewConfig(config);
+    });
+
     auto* showHeader = new QAction(tr("Show header"), displayMenu);
     showHeader->setCheckable(true);
     showHeader->setChecked(m_viewConfig.showHeader);
@@ -1664,6 +1681,7 @@ void RadioBrowserWidget::addDisplayMenu(QMenu* menu)
     });
 
     displayMenu->addAction(showIcons);
+    displayMenu->addAction(showToolTips);
     displayMenu->addAction(showHeader);
     displayMenu->addAction(showScrollbar);
     displayMenu->addAction(alternatingRows);
@@ -1701,6 +1719,7 @@ void RadioBrowserWidget::setViewConfig(const ConfigData::ViewConfig& config)
     m_delegate->setIconItemBorderWidth(m_viewConfig.iconItemBorderWidth);
     m_model->setIconSize(m_viewConfig.iconSize);
     m_model->setRowHeight(m_viewConfig.rowHeight);
+    m_model->setShowToolTips(m_viewConfig.showToolTips);
     m_resultsView->setVerticalScrollBarPolicy(m_viewConfig.showScrollbar ? Qt::ScrollBarAsNeeded
                                                                          : Qt::ScrollBarAlwaysOff);
     m_resultsView->setAlternatingRowColors(m_viewConfig.viewMode != ExpandedTreeView::ViewMode::Icon

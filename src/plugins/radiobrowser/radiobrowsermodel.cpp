@@ -184,6 +184,7 @@ RadioBrowserModel::RadioBrowserModel(QObject* parent)
     , m_reorderEnabled{false}
     , m_apiSortingEnabled{false}
     , m_showIcons{true}
+    , m_showToolTips{true}
 { }
 
 int RadioBrowserModel::rowCount(const QModelIndex& parent) const
@@ -277,7 +278,7 @@ QVariant RadioBrowserModel::data(const QModelIndex& index, const int role) const
         }
     }
 
-    if(role == Qt::ToolTipRole) {
+    if(role == Qt::ToolTipRole && m_showToolTips) {
         QStringList lines;
         lines.emplace_back(station.name);
         if(!station.country.isEmpty()) {
@@ -569,6 +570,17 @@ void RadioBrowserModel::setShowIcons(const bool showIcons)
 
     if(rowCount({}) > 0) {
         Q_EMIT dataChanged(index(0, Station), index(rowCount({}) - 1, Station), {Qt::DecorationRole});
+    }
+}
+
+void RadioBrowserModel::setShowToolTips(const bool showToolTips)
+{
+    if(std::exchange(m_showToolTips, showToolTips) == showToolTips) {
+        return;
+    }
+
+    if(rowCount({}) > 0) {
+        Q_EMIT dataChanged(index(0, 0), index(rowCount({}) - 1, columnCount({}) - 1), {Qt::ToolTipRole});
     }
 }
 

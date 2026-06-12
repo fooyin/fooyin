@@ -39,6 +39,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     , m_playbackOnSend{new QCheckBox(tr("Start playback immediately"), this)}
     , m_hideBroken{new QCheckBox(tr("Hide broken stations"), this)}
     , m_sendClicks{new QCheckBox(tr("Send clicks to radio-browser.info"), this)}
+    , m_showToolTips{new QCheckBox(tr("Show station tooltips"), this)}
     , m_overrideRowHeight{new QCheckBox(tr("Override row height") + u":"_s, this)}
     , m_rowHeight{new QSpinBox(this)}
     , m_iconSize{new QSpinBox(this)}
@@ -81,6 +82,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
         tr("Report played stations to radio-browser.info so click counts and station statistics stay up to date."));
     m_uniformStationIcons->setToolTip(
         tr("Draw station icons inside equally sized frames so rows and icon captions align consistently."));
+    m_showToolTips->setToolTip(tr("Show station details when hovering over station rows and icons."));
 
     m_rowHeight->setRange(0, 256);
     m_rowHeight->setSuffix(u" px"_s);
@@ -129,6 +131,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     row = 0;
     appearanceLayout->addWidget(m_overrideRowHeight, row, 0);
     appearanceLayout->addWidget(m_rowHeight, row++, 1);
+    appearanceLayout->addWidget(m_showToolTips, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_uniformStationIcons, row++, 0, 1, 2);
     appearanceLayout->setColumnStretch(2, 1);
 
@@ -185,6 +188,7 @@ RadioBrowserWidget::ConfigData RadioBrowserConfigDialog::config() const
     config.playbackOnSend           = m_playbackOnSend->isChecked();
     config.hideBroken               = m_hideBroken->isChecked();
     config.view.rowHeight           = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0;
+    config.view.showToolTips        = m_showToolTips->isChecked();
     config.view.iconSize            = {m_iconSize->value(), m_iconSize->value()};
     config.view.iconHorizontalGap   = m_iconHorizontalGap->value();
     config.view.iconVerticalGap     = m_iconVerticalGap->value();
@@ -208,6 +212,7 @@ void RadioBrowserConfigDialog::setConfig(const RadioBrowserWidget::ConfigData& c
     m_rowHeight->setEnabled(config.view.rowHeight > 0);
     m_overrideRowHeight->setChecked(config.view.rowHeight > 0);
     m_rowHeight->setValue(config.view.rowHeight);
+    m_showToolTips->setChecked(config.view.showToolTips);
     m_iconSize->setValue(std::max(config.view.iconSize.width(), config.view.iconSize.height()));
     m_iconHorizontalGap->setValue(config.view.iconHorizontalGap);
     m_iconVerticalGap->setValue(config.view.iconVerticalGap);

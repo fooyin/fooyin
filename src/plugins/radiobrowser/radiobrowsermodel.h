@@ -76,6 +76,7 @@ public:
     void setIconSize(const QSize& size);
     void setRowHeight(int height);
     void setShowIcons(bool showIcons);
+    void setShowToolTips(bool showToolTips);
     void setReorderEnabled(bool enabled);
     void setApiSortingEnabled(bool enabled);
     void clearSort();
@@ -114,5 +115,6 @@ private:
     bool m_reorderEnabled;
     bool m_apiSortingEnabled;
     bool m_showIcons;
+    bool m_showToolTips;
 };
 } // namespace Fooyin::RadioBrowser
