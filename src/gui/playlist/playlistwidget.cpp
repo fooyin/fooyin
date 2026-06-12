@@ -277,6 +277,8 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     applyInitialViewSettings();
     applyBackgroundSettings();
 
+    refreshViewStyle();
+
     m_model->playingTrackChanged(m_playerController->currentPlaylistTrack());
     m_model->playStateChanged(m_playlistController->playState());
     applySessionTexts();
@@ -1085,7 +1087,6 @@ void PlaylistWidget::applyInitialViewSettings()
     setHeaderVisible(m_settings->value<PlaylistHeader>());
     setScrollbarVisible(m_settings->value<PlaylistScrollBar>());
     m_playlistView->setAlternatingRowColors(m_settings->value<PlaylistAltColours>());
-    m_model->setFont(QApplication::font("Fooyin::PlaylistView"));
 }
 
 void PlaylistWidget::updateMetadataEditTriggers(bool readOnly)
@@ -1133,14 +1134,15 @@ void PlaylistWidget::applySessionTexts()
 void PlaylistWidget::refreshViewStyle()
 {
     const auto resolvedStyle = m_settings->value<Settings::Gui::ResolvedAppStyle>().value<ResolvedAppStyle>();
+    if(resolvedStyle.revision > 0) {
+        const QFont playlistFont = resolvedStyle.font(u"Fooyin::PlaylistView"_s);
+        m_playlistView->setFont(playlistFont);
+        m_header->setFont(playlistFont);
+        m_model->setFont(playlistFont);
 
-    const QFont playlistFont = resolvedStyle.font(u"Fooyin::PlaylistView"_s);
-    m_playlistView->setFont(playlistFont);
-    m_header->setFont(playlistFont);
-    m_model->setFont(playlistFont);
-
-    Gui::updateItemViewStyle(m_playlistView, resolvedStyle.palette);
-    updateVisibleCoverPins();
+        Gui::updateItemViewStyle(m_playlistView, resolvedStyle.palette);
+        updateVisibleCoverPins();
+    }
 }
 
 void PlaylistWidget::addSortMenu(QMenu* parent, bool disabled)
