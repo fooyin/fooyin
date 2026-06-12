@@ -108,7 +108,8 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<AddFoldersIgnorePlaylists>(true, u"Playlist/AddFoldersIgnorePlaylists"_s);
     m_settings->createSetting<PlaylistPreventDuplicates>(false, u"Playlist/PreventDuplicates"_s);
 
-    m_settings->createSetting<Internal::MonitorLibraries>(false, u"Library/MonitorLibraries"_s);
+    m_settings->createSetting<Internal::MonitorLibraryDirectories>(false, u"Library/MonitorLibraries"_s);
+    m_settings->createSetting<Internal::MonitorTrackFiles>(false, u"Library/MonitorTrackFiles"_s);
     m_settings->createTempSetting<Internal::MuteVolume>(m_settings->value<OutputVolume>());
     m_settings->createSetting<Internal::DisabledPlugins>(QStringList{}, u"Plugins/Disabled"_s);
     m_settings->createSetting<Internal::EngineFading>(false, u"Engine/Fading"_s);

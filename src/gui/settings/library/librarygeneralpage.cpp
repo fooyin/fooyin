@@ -118,7 +118,8 @@ private:
     QLineEdit* m_excludeTypes;
 
     QCheckBox* m_autoRefresh;
-    QCheckBox* m_monitorLibraries;
+    QCheckBox* m_monitorLibraryDirectories;
+    QCheckBox* m_monitorTrackFiles;
     QCheckBox* m_markUnavailable;
     QCheckBox* m_markUnavailableStart;
 };
@@ -133,7 +134,8 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(LibraryManager* libraryManage
     , m_restrictTypes{new QLineEdit(this)}
     , m_excludeTypes{new QLineEdit(this)}
     , m_autoRefresh{new QCheckBox(tr("Auto refresh on startup"), this)}
-    , m_monitorLibraries{new QCheckBox(tr("Monitor libraries"), this)}
+    , m_monitorLibraryDirectories{new QCheckBox(tr("Monitor library directories"), this)}
+    , m_monitorTrackFiles{new QCheckBox(tr("Monitor track files"), this)}
     , m_markUnavailable{new QCheckBox(tr("Mark unavailable tracks on playback"), this)}
     , m_markUnavailableStart{new QCheckBox(tr("Mark unavailable tracks on startup"), this)}
 {
@@ -147,7 +149,9 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(LibraryManager* libraryManage
     m_libraryView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup"));
-    m_monitorLibraries->setToolTip(tr("Monitor libraries for external changes"));
+    m_monitorLibraryDirectories->setToolTip(
+        tr("Watch library directories for external changes such as new or removed files"));
+    m_monitorTrackFiles->setToolTip(tr("Watch individual track files for tag changes"));
 
     auto* fileTypesGroup  = new QGroupBox(tr("File Types"), this);
     auto* fileTypesLayout = new QGridLayout(fileTypesGroup);
@@ -166,7 +170,8 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(LibraryManager* libraryManage
 
     row = 0;
     scanningLayout->addWidget(m_autoRefresh, row++, 0);
-    scanningLayout->addWidget(m_monitorLibraries, row++, 0);
+    scanningLayout->addWidget(m_monitorLibraryDirectories, row++, 0);
+    scanningLayout->addWidget(m_monitorTrackFiles, row++, 0);
 
     auto* availabilityGroup  = new QGroupBox(tr("Availability"), this);
     auto* availabilityLayout = new QGridLayout(availabilityGroup);
@@ -191,6 +196,7 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(LibraryManager* libraryManage
     QObject::connect(m_libraryView, &LibraryTableView::rescanLibrary, m_library, &MusicLibrary::rescan);
     QObject::connect(m_libraryView, &LibraryTableView::cancelLibraryScan, m_library, &MusicLibrary::cancelScan);
     QObject::connect(m_library, &MusicLibrary::scanProgress, m_model, &LibraryModel::setScanProgress);
+    QObject::connect(m_monitorLibraryDirectories, &QCheckBox::toggled, m_monitorTrackFiles, &QWidget::setEnabled);
 }
 
 void LibraryGeneralPageWidget::load()
@@ -206,7 +212,9 @@ void LibraryGeneralPageWidget::load()
     m_excludeTypes->setText(excludeExtensions.join(u';'));
 
     m_autoRefresh->setChecked(m_settings->value<Settings::Core::AutoRefresh>());
-    m_monitorLibraries->setChecked(m_settings->value<Settings::Core::Internal::MonitorLibraries>());
+    m_monitorLibraryDirectories->setChecked(m_settings->value<Settings::Core::Internal::MonitorLibraryDirectories>());
+    m_monitorTrackFiles->setChecked(m_settings->value<Settings::Core::Internal::MonitorTrackFiles>());
+    m_monitorTrackFiles->setEnabled(m_monitorLibraryDirectories->isChecked());
     m_markUnavailable->setChecked(m_settings->fileValue(Settings::Core::Internal::MarkUnavailable, false).toBool());
     m_markUnavailableStart->setChecked(
         m_settings->fileValue(Settings::Core::Internal::MarkUnavailableStartup, false).toBool());
@@ -222,7 +230,8 @@ void LibraryGeneralPageWidget::apply()
                         m_excludeTypes->text().split(u';', Qt::SkipEmptyParts));
 
     m_settings->set<Settings::Core::AutoRefresh>(m_autoRefresh->isChecked());
-    m_settings->set<Settings::Core::Internal::MonitorLibraries>(m_monitorLibraries->isChecked());
+    m_settings->set<Settings::Core::Internal::MonitorLibraryDirectories>(m_monitorLibraryDirectories->isChecked());
+    m_settings->set<Settings::Core::Internal::MonitorTrackFiles>(m_monitorTrackFiles->isChecked());
     m_settings->fileSet(Settings::Core::Internal::MarkUnavailable, m_markUnavailable->isChecked());
     m_settings->fileSet(Settings::Core::Internal::MarkUnavailableStartup, m_markUnavailableStart->isChecked());
 }
@@ -233,7 +242,8 @@ void LibraryGeneralPageWidget::reset()
     m_settings->fileRemove(Settings::Core::Internal::LibraryExcludeTypes);
 
     m_settings->reset<Settings::Core::AutoRefresh>();
-    m_settings->reset<Settings::Core::Internal::MonitorLibraries>();
+    m_settings->reset<Settings::Core::Internal::MonitorLibraryDirectories>();
+    m_settings->reset<Settings::Core::Internal::MonitorTrackFiles>();
     m_settings->fileRemove(Settings::Core::Internal::MarkUnavailable);
     m_settings->fileRemove(Settings::Core::Internal::MarkUnavailableStartup);
 }

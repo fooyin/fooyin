@@ -54,7 +54,7 @@ public:
 
     void getAllTracks();
 
-    void setupWatchers(const LibraryInfoMap& libraries, bool enabled);
+    void setupWatchers(const LibraryInfoMap& libraries, bool monitorDirectories, bool monitorTrackFiles);
     [[nodiscard]] bool hasPendingLibraryScan(int libraryId) const;
 
     ScanRequest refreshLibrary(const LibraryInfo& library);

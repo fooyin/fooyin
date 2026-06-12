@@ -22,6 +22,7 @@
 #include "librarywatcher.h"
 
 #include <core/library/libraryinfo.h>
+#include <core/track.h>
 
 #include <QObject>
 
@@ -38,12 +39,14 @@ public:
 Q_SIGNALS:
     void statusChanged(const Fooyin::LibraryInfo& library);
     void directoriesChanged(const Fooyin::LibraryInfo& library, const QStringList& dirs);
+    void trackFilesChanged(const Fooyin::LibraryInfo& library, const QStringList& files);
 
 public Q_SLOTS:
-    void setupWatchers(const Fooyin::LibraryInfoMap& libraries, bool enabled);
+    void setupWatchers(const Fooyin::LibraryInfoMap& libraries, const Fooyin::TrackList& tracks,
+                       bool monitorDirectories, bool monitorTrackFiles);
 
 private:
-    void addWatcher(const LibraryInfo& library);
+    void addWatcher(const LibraryInfo& library, const TrackList& tracks, bool monitorTrackFiles);
 
     std::unordered_map<int, LibraryWatcher> m_watchers;
 };

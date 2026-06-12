@@ -41,6 +41,7 @@
 #include <deque>
 #include <optional>
 #include <ranges>
+#include <set>
 #include <stop_token>
 #include <unordered_map>
 
@@ -106,7 +107,9 @@ public:
     struct PendingWatcherSetup
     {
         LibraryInfoMap libraries;
-        bool enabled{false};
+        TrackList tracks;
+        bool monitorDirectories{false};
+        bool monitorTrackFiles{false};
     };
 
     struct PendingTrackStatsUpdate
@@ -149,12 +152,13 @@ public:
     ScanRequest addTracksScanRequest(const TrackList& tracks, bool onlyModified);
     ScanRequest addFilesScanRequest(const QList<QUrl>& files);
     ScanRequest addDirectoryScanRequest(const LibraryInfo& libraryInfo, const QStringList& dirs);
+    ScanRequest addChangedTrackFilesScanRequest(const LibraryInfo& libraryInfo, const QStringList& files);
     ScanRequest addPlaylistRequest(const QList<QUrl>& files);
 
     [[nodiscard]] LibraryScanRequest* request(int id);
     [[nodiscard]] LibraryScanRequest* currentRequest();
     void execNextRequest();
-    void setupWatchers(const LibraryInfoMap& libraries, bool enabled);
+    void setupWatchers(const LibraryInfoMap& libraries, bool monitorDirectories, bool monitorTrackFiles);
     void applyPendingWatcherSetup();
 
     void updateProgress(const ScanProgress& progress);
@@ -352,6 +356,35 @@ ScanRequest LibraryThreadHandlerPrivate::addDirectoryScanRequest(const LibraryIn
     return request;
 }
 
+ScanRequest LibraryThreadHandlerPrivate::addChangedTrackFilesScanRequest(const LibraryInfo& libraryInfo,
+                                                                         const QStringList& files)
+{
+    std::set<QString> changedPaths;
+    for(const QString& file : files) {
+        const QString path = normalisePath(file);
+        if(!path.isEmpty()) {
+            changedPaths.emplace(path);
+        }
+    }
+
+    const TrackList libraryTracks = m_library->libraryTracks();
+
+    TrackList tracks;
+    tracks.reserve(libraryTracks.size());
+
+    for(const Track& track : libraryTracks) {
+        if(track.libraryId() == libraryInfo.id && !track.hasCue() && changedPaths.contains(physicalTrackPath(track))) {
+            tracks.emplace_back(track);
+        }
+    }
+
+    if(tracks.empty()) {
+        return {.type = ScanRequest::Tracks, .id = -1, .cancel = {}};
+    }
+
+    return addTracksScanRequest(tracks, false);
+}
+
 ScanRequest LibraryThreadHandlerPrivate::addPlaylistRequest(const QList<QUrl>& files)
 {
     const int id = nextRequestId();
@@ -512,16 +545,23 @@ void LibraryThreadHandlerPrivate::completeScanRequest(const int id)
     }
 }
 
-void LibraryThreadHandlerPrivate::setupWatchers(const LibraryInfoMap& libraries, const bool enabled)
+void LibraryThreadHandlerPrivate::setupWatchers(const LibraryInfoMap& libraries, bool monitorDirectories,
+                                                bool monitorTrackFiles)
 {
-    if(enabled && (!m_scanRequests.empty() || m_currentRequestId >= 0)) {
-        m_pendingWatcherSetup = PendingWatcherSetup{.libraries = libraries, .enabled = enabled};
+    const TrackList tracks = m_library->libraryTracks();
+
+    if(monitorDirectories && (!m_scanRequests.empty() || m_currentRequestId >= 0)) {
+        m_pendingWatcherSetup = PendingWatcherSetup{.libraries          = libraries,
+                                                    .tracks             = tracks,
+                                                    .monitorDirectories = monitorDirectories,
+                                                    .monitorTrackFiles  = monitorTrackFiles};
         return;
     }
 
     m_pendingWatcherSetup.reset();
-    QMetaObject::invokeMethod(&m_monitor,
-                              [this, libraries, enabled]() { m_monitor.setupWatchers(libraries, enabled); });
+    QMetaObject::invokeMethod(&m_monitor, [this, libraries, tracks, monitorDirectories, monitorTrackFiles]() {
+        m_monitor.setupWatchers(libraries, tracks, monitorDirectories, monitorTrackFiles);
+    });
 }
 
 void LibraryThreadHandlerPrivate::applyPendingWatcherSetup()
@@ -533,8 +573,10 @@ void LibraryThreadHandlerPrivate::applyPendingWatcherSetup()
     const auto pendingSetup = std::move(*m_pendingWatcherSetup);
     m_pendingWatcherSetup.reset();
 
-    QMetaObject::invokeMethod(
-        &m_monitor, [this, pendingSetup]() { m_monitor.setupWatchers(pendingSetup.libraries, pendingSetup.enabled); });
+    QMetaObject::invokeMethod(&m_monitor, [this, pendingSetup]() {
+        m_monitor.setupWatchers(pendingSetup.libraries, pendingSetup.tracks, pendingSetup.monitorDirectories,
+                                pendingSetup.monitorTrackFiles);
+    });
 }
 
 void LibraryThreadHandlerPrivate::cancelScanRequest(int id)
@@ -803,6 +845,10 @@ LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibr
                      [this](const LibraryInfo& libraryInfo, const QStringList& dirs) {
                          p->addDirectoryScanRequest(libraryInfo, dirs);
                      });
+    QObject::connect(&p->m_monitor, &LibraryMonitor::trackFilesChanged, this,
+                     [this](const LibraryInfo& libraryInfo, const QStringList& files) {
+                         p->addChangedTrackFilesScanRequest(libraryInfo, files);
+                     });
 
     QMetaObject::invokeMethod(&p->m_scanner, &Worker::initialiseThread);
     QMetaObject::invokeMethod(&p->m_trackDatabaseManager, &Worker::initialiseThread);
@@ -826,9 +872,10 @@ void LibraryThreadHandler::getAllTracks()
     QMetaObject::invokeMethod(&p->m_trackDatabaseManager, &TrackDatabaseManager::getAllTracks);
 }
 
-void LibraryThreadHandler::setupWatchers(const LibraryInfoMap& libraries, bool enabled)
+void LibraryThreadHandler::setupWatchers(const LibraryInfoMap& libraries, bool monitorDirectories,
+                                         bool monitorTrackFiles)
 {
-    p->setupWatchers(libraries, enabled);
+    p->setupWatchers(libraries, monitorDirectories, monitorTrackFiles);
 }
 
 bool LibraryThreadHandler::hasPendingLibraryScan(const int libraryId) const

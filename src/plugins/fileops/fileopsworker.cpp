@@ -116,7 +116,7 @@ FileOpsWorker::FileOpsWorker(MusicLibrary* library, std::shared_ptr<AudioLoader>
     , m_audioLoader{std::move(audioLoader)}
     , m_settings{settings}
     , m_tracks{std::move(tracks)}
-    , m_isMonitoring{settings->value<Fooyin::Settings::Core::Internal::MonitorLibraries>()}
+    , m_isMonitoring{settings->value<Fooyin::Settings::Core::Internal::MonitorLibraryDirectories>()}
 { }
 
 void FileOpsWorker::simulate(const FileOpPreset& preset)
@@ -138,7 +138,7 @@ void FileOpsWorker::deleteFiles()
     }
 
     if(m_isMonitoring) {
-        m_settings->set<Fooyin::Settings::Core::Internal::MonitorLibraries>(false);
+        m_settings->set<Fooyin::Settings::Core::Internal::MonitorLibraryDirectories>(false);
     }
 
     const auto appendDeletedTrack = [this](const Track& deletedTrack) {
@@ -188,7 +188,7 @@ void FileOpsWorker::deleteFiles()
     setState(Idle);
 
     if(m_isMonitoring) {
-        m_settings->set<Fooyin::Settings::Core::Internal::MonitorLibraries>(true);
+        m_settings->set<Fooyin::Settings::Core::Internal::MonitorLibraryDirectories>(true);
     }
 
     Q_EMIT deleteFinished(m_tracksToDelete);
@@ -254,7 +254,7 @@ void FileOpsWorker::run()
     setState(Running);
 
     if(m_isMonitoring) {
-        m_settings->set<Fooyin::Settings::Core::Internal::MonitorLibraries>(false);
+        m_settings->set<Fooyin::Settings::Core::Internal::MonitorLibraryDirectories>(false);
     }
 
     while(!m_operations.empty()) {
@@ -323,7 +323,7 @@ void FileOpsWorker::run()
     setState(Idle);
 
     if(m_isMonitoring) {
-        m_settings->set<Fooyin::Settings::Core::Internal::MonitorLibraries>(true);
+        m_settings->set<Fooyin::Settings::Core::Internal::MonitorLibraryDirectories>(true);
     }
 
     Q_EMIT finished();

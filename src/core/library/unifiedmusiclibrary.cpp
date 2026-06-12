@@ -125,6 +125,7 @@ public:
     void handleTracksLoaded();
     void loadTracks(TrackList tracksToLoad);
     void changeSort(const QString& sort);
+    void setupLibraryWatchers();
 
     QCoro::Task<> commitLoadTracks(TrackList tracksToLoad);
     QCoro::Task<> commitChangeSort(QString sort);
@@ -192,8 +193,9 @@ UnifiedMusicLibraryPrivate::UnifiedMusicLibraryPrivate(UnifiedMusicLibrary* self
     , m_sorter{m_libraryManager}
 {
     m_settings->subscribe<Settings::Core::LibrarySortScript>(m_self, [this](const QString& sort) { changeSort(sort); });
-    m_settings->subscribe<Settings::Core::Internal::MonitorLibraries>(
-        m_self, [this](bool enabled) { m_threadHandler.setupWatchers(m_libraryManager->allLibraries(), enabled); });
+    m_settings->subscribe<Settings::Core::Internal::MonitorLibraryDirectories>(m_self,
+                                                                               [this]() { setupLibraryWatchers(); });
+    m_settings->subscribe<Settings::Core::Internal::MonitorTrackFiles>(m_self, [this]() { setupLibraryWatchers(); });
 }
 
 QString UnifiedMusicLibraryPrivate::librarySortScript() const
@@ -236,6 +238,14 @@ void UnifiedMusicLibraryPrivate::enqueueCommit(CommitOperation operation)
     processNextCommit();
 }
 
+void UnifiedMusicLibraryPrivate::setupLibraryWatchers()
+{
+    const bool monitorDirs       = m_settings->value<Settings::Core::Internal::MonitorLibraryDirectories>();
+    const bool monitorTrackFiles = monitorDirs && m_settings->value<Settings::Core::Internal::MonitorTrackFiles>();
+
+    m_threadHandler.setupWatchers(m_libraryManager->allLibraries(), monitorDirs, monitorTrackFiles);
+}
+
 void UnifiedMusicLibraryPrivate::processNextCommit()
 {
     if(m_activeCommitTask || m_commitQueue.empty()) {
@@ -264,8 +274,7 @@ void UnifiedMusicLibraryPrivate::handleTracksLoaded()
         m_self->refreshAll();
     }
 
-    m_threadHandler.setupWatchers(m_libraryManager->allLibraries(),
-                                  m_settings->value<Settings::Core::Internal::MonitorLibraries>());
+    setupLibraryWatchers();
 
     if(m_settings->fileValue(Settings::Core::Internal::MarkUnavailableStartup, false).toBool() && !m_tracks.empty()) {
         if(autoRefresh) {
@@ -361,6 +370,8 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitAddTracks(TrackList newTracks)
     if(!addedTracks.empty()) {
         Q_EMIT m_self->tracksAdded(addedTracks);
     }
+
+    setupLibraryWatchers();
 }
 
 void UnifiedMusicLibraryPrivate::updateLibraryTracks(const TrackList& updatedTracks)
@@ -417,6 +428,7 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksMetadata(TrackList t
     updateLibraryTracks(sortedTracks);
     co_await resortLibraryTracks();
     Q_EMIT m_self->tracksMetadataChanged(sortedTracks);
+    setupLibraryWatchers();
 }
 
 TrackList UnifiedMusicLibraryPrivate::mergeTrackUpdates(const TrackList& tracksToUpdate,
@@ -449,6 +461,7 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksAvailability(TrackLi
     updateLibraryTracks(sortedTracks);
     co_await resortLibraryTracks();
     Q_EMIT m_self->tracksUpdated(sortedTracks);
+    setupLibraryWatchers();
 }
 
 QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksStats(TrackList tracksToUpdate)
@@ -461,6 +474,7 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksStats(TrackList trac
     updateLibraryTracks(sortedTracks);
     co_await resortLibraryTracks();
     Q_EMIT m_self->tracksUpdated(sortedTracks);
+    setupLibraryWatchers();
 }
 
 QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracks(TrackList tracksToUpdate)
@@ -472,6 +486,7 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracks(TrackList tracksToU
     updateLibraryTracks(sortedTracks);
     co_await resortLibraryTracks();
     Q_EMIT m_self->tracksUpdated(sortedTracks);
+    setupLibraryWatchers();
 }
 
 QCoro::Task<> UnifiedMusicLibraryPrivate::commitRemoveTracks(TrackList tracksToRemove)
@@ -490,6 +505,7 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitRemoveTracks(TrackList tracksToR
     m_tracks = std::move(remainingTracks);
 
     Q_EMIT m_self->tracksDeleted(tracksToRemove);
+    setupLibraryWatchers();
     co_return;
 }
 
@@ -608,6 +624,7 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitRemoveLibrary(LibraryInfo librar
         Q_EMIT m_self->tracksMetadataChanged(updatedTracks);
     }
 
+    setupLibraryWatchers();
     co_return;
 }
 

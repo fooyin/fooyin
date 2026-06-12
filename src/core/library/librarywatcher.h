@@ -34,6 +34,7 @@ public:
 
 Q_SIGNALS:
     void libraryDirsChanged(const QStringList& paths);
+    void libraryTrackFilesChanged(const QStringList& paths);
 
 protected:
     void timerEvent(QTimerEvent* event) override;
@@ -41,5 +42,6 @@ protected:
 private:
     QBasicTimer m_timer;
     std::set<QString> m_dirs;
+    std::set<QString> m_files;
 };
 } // namespace Fooyin
