@@ -52,9 +52,11 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
 {
     TrackSelectionController::addAction(m_doubleClick, tr("None"), TrackAction::None);
     TrackSelectionController::addAction(m_doubleClick, tr("Play"), TrackAction::Play);
+    m_doubleClick->addItem(tr("Add or remove from My Stations"), RadioBrowserWidget::ToggleSavedStation);
     TrackSelectionController::addStandardActions(m_doubleClick);
 
     TrackSelectionController::addAction(m_middleClick, tr("None"), TrackAction::None);
+    m_middleClick->addItem(tr("Add or remove from My Stations"), RadioBrowserWidget::ToggleSavedStation);
     TrackSelectionController::addStandardActions(m_middleClick);
 
     m_playbackOnSend->setToolTip(

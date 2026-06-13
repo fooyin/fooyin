@@ -56,6 +56,8 @@ class RadioBrowserWidget : public FyWidget
     Q_OBJECT
 
 public:
+    static constexpr auto ToggleSavedStation = 1000;
+
     explicit RadioBrowserWidget(RadioBrowserController* controller, ActionManager* actionManager,
                                 TrackSelectionController* trackSelection, SettingsManager* settings,
                                 bool applyInitialSearch = true, QWidget* parent = nullptr);

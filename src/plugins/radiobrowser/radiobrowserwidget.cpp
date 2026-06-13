@@ -1345,8 +1345,20 @@ void RadioBrowserWidget::executeClickAction(const QModelIndex& index, const int 
         return;
     }
 
-    const auto action = static_cast<Fooyin::TrackAction>(actionValue);
-    if(action == Fooyin::TrackAction::None) {
+    if(actionValue == ToggleSavedStation) {
+        const RadioStation station = m_model->stationAt(index.row());
+        if(m_controller->isSaved(station)) {
+            m_controller->removeSavedStation(station);
+        }
+        else {
+            m_controller->saveStation(station);
+        }
+        updateActionState();
+        return;
+    }
+
+    const auto action = static_cast<TrackAction>(actionValue);
+    if(action == TrackAction::None) {
         return;
     }
 
