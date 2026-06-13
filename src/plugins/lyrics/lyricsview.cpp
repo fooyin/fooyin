@@ -19,9 +19,12 @@
 
 #include "lyricsview.h"
 
+#include "lyricsdelegate.h"
 #include "lyricsmodel.h"
 
 #include <gui/scripting/richtextutils.h>
+#include <gui/widgets/tooltip.h>
+#include <utils/stringutils.h>
 
 #include <QAbstractTextDocumentLayout>
 #include <QApplication>
@@ -480,6 +483,75 @@ bool LyricsView::isSeekableIndex(const QModelIndex& index) const
     return index.isValid() && !index.data(LyricsModel::IsPaddingRole).toBool();
 }
 
+QString LyricsView::seekText(const QModelIndex& index, const QPoint& pos) const
+{
+    if(!isSeekableIndex(index)) {
+        return {};
+    }
+
+    auto timestamp = index.data(LyricsModel::TimestampRole).value<uint64_t>();
+
+    const auto lyricsType = static_cast<Lyrics::Type>(index.data(LyricsModel::LyricsTypeRole).toInt());
+    if(lyricsType == Lyrics::Type::SyncedWords) {
+        if(const auto* delegate = qobject_cast<const LyricsDelegate*>(itemDelegate())) {
+            const int wordIndex = delegate->wordIndexAt(index, pos, visualRect(index));
+            if(wordIndex >= 0) {
+                const auto words = index.data(LyricsModel::WordsRole).value<std::vector<ParsedWord>>();
+                if(static_cast<size_t>(wordIndex) < words.size()) {
+                    timestamp = words.at(static_cast<size_t>(wordIndex)).timestamp;
+                }
+            }
+        }
+    }
+
+    return Utils::msToString(timestamp);
+}
+
+void LyricsView::updateSeekToolTip()
+{
+    const QString text       = seekText(m_dragIndex, m_dragPos);
+    const QRect viewportRect = viewport()->rect();
+    if(text.isEmpty() || viewportRect.isEmpty()) {
+        if(m_seekTip) {
+            m_seekTip->deleteLater();
+        }
+        return;
+    }
+
+    if(!m_seekTip) {
+        m_seekTip = new ToolTip(window());
+        m_seekTip->raise();
+        m_seekTip->show();
+    }
+
+    m_seekTip->setText(text);
+    m_seekTip->setSubtext({});
+
+    static constexpr int Spacing = 6;
+    static constexpr int Margin  = 4;
+
+    QPoint tipPos{m_dragPos};
+
+    if(tipPos.y() - Spacing - m_seekTip->height() >= viewportRect.top() + Margin) {
+        tipPos.setX(tipPos.x() - (m_seekTip->width() / 2));
+        tipPos.setY(tipPos.y() - Spacing);
+    }
+    else {
+        if(tipPos.x() > viewportRect.center().x()) {
+            tipPos.rx() -= m_seekTip->width() + Spacing;
+        }
+        else {
+            tipPos.rx() += Spacing;
+        }
+        tipPos.setY(std::min(viewportRect.bottom() - Margin, tipPos.y() + Spacing + m_seekTip->height()));
+    }
+
+    tipPos.setX(std::clamp(tipPos.x(), viewportRect.left() + Margin,
+                           std::max(viewportRect.left() + Margin, viewportRect.right() - Margin - m_seekTip->width())));
+
+    m_seekTip->setPosition(viewport()->mapTo(window(), tipPos));
+}
+
 void LyricsView::updateDragPreview(const QPoint& pos)
 {
     const QPoint seekPos    = seekPosition(pos);
@@ -491,6 +563,7 @@ void LyricsView::updateDragPreview(const QPoint& pos)
     m_dragPos   = seekPos;
     m_dragIndex = index;
 
+    updateSeekToolTip();
     viewport()->update();
 }
 
@@ -500,6 +573,10 @@ void LyricsView::clearDragPreview()
 
     m_dragIndex = QPersistentModelIndex{};
     m_dragPos   = {};
+
+    if(m_seekTip) {
+        m_seekTip->deleteLater();
+    }
 
     viewport()->update();
 

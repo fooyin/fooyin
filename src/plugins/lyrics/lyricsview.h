@@ -24,12 +24,14 @@
 #include <QListView>
 #include <QMargins>
 #include <QPersistentModelIndex>
+#include <QPointer>
 
 class QColor;
 class QPainter;
 
 namespace Fooyin {
 class SettingsManager;
+class ToolTip;
 
 namespace Lyrics {
 class LyricsDelegate;
@@ -72,12 +74,14 @@ private:
     [[nodiscard]] QPoint seekPosition(const QPoint& pos) const;
     [[nodiscard]] QModelIndex seekableIndexAt(const QPoint& pos) const;
     [[nodiscard]] bool isSeekableIndex(const QModelIndex& index) const;
+    [[nodiscard]] QString seekText(const QModelIndex& index, const QPoint& pos) const;
     [[nodiscard]] QColor backgroundColour() const;
     [[nodiscard]] int edgeFadeHeight() const;
     [[nodiscard]] int visiblePaddingHeight(bool top) const;
 
     void updateScrollSingleStep();
     void paintEdgeFade(QPainter& painter) const;
+    void updateSeekToolTip();
     void updateDragPreview(const QPoint& pos);
     void clearDragPreview();
 
@@ -88,6 +92,7 @@ private:
     QPoint m_pressPos;
     QPoint m_dragPos;
     QPersistentModelIndex m_dragIndex;
+    QPointer<ToolTip> m_seekTip;
     bool m_edgeFadeEnabled;
     int m_edgeFadeSizePercent;
     bool m_leftButtonDown;
