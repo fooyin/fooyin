@@ -45,6 +45,7 @@
 
 #include <atomic>
 #include <chrono>
+#include <deque>
 #include <memory>
 #include <optional>
 
@@ -287,6 +288,7 @@ private:
     void onLevelFrameReady(const LevelFrame& frame);
     void onPcmFrameReady(const PcmFrame& frame);
     void dispatchPendingLevelFrames();
+    void scheduleLevelFramePresentationTimer();
     void dispatchPendingPcmFrames();
     void schedulePipelineWakeDrainTask();
     void handlePipelineWakeSignals(const AudioPipeline::PendingSignals& pendingSignals);
@@ -423,6 +425,7 @@ private:
 
     LockFreeRingBuffer<LevelFrame> m_levelFrameMailbox;
     LockFreeRingBuffer<PcmFrame> m_pcmFrameMailbox;
+    std::deque<LevelFrame> m_pendingLevelFrames;
     std::shared_ptr<VisualisationBackend> m_visualisationBackend;
     std::atomic<bool> m_levelFrameDispatchQueued;
     std::atomic<bool> m_pcmFrameDispatchQueued;
@@ -453,6 +456,7 @@ private:
 
     AudioClock m_audioClock;
     int m_lastReportedBitrate;
+    int m_levelFramePresentationTimerId{0};
     int m_vbrUpdateIntervalMs;
     std::chrono::steady_clock::time_point m_lastVbrUpdateAt;
     int m_vbrUpdateTimerId;

@@ -632,6 +632,11 @@ public:
         engine.onPcmFrameReady(frame);
     }
 
+    static void deliverLevelFrame(AudioEngine& engine, const LevelFrame& frame)
+    {
+        engine.onLevelFrameReady(frame);
+    }
+
     static void publishPosition(AudioEngine& engine, uint64_t sourcePositionMs, uint64_t outputDelayMs,
                                 double delayToSourceScale, AudioClock::UpdateMode mode, bool emitNow)
     {
@@ -1605,6 +1610,99 @@ FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, SetAnalysisDataSubscriptionsAcc
     harness.engine.setAnalysisDataSubscriptions(Engine::AnalysisDataTypes{});
 
     SUCCEED();
+}
+
+FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, LevelFramesAreDispatchedAtPresentationTime)
+{
+    ensureCoreApplication();
+    EngineHarness harness{false};
+
+    std::mutex mutex;
+    std::optional<LevelFrame> receivedFrame;
+
+    QObject::connect(&harness.engine, &AudioEngine::levelReady, &harness.engine,
+                     [&mutex, &receivedFrame](const auto& frame) {
+                         const std::scoped_lock lock{mutex};
+                         receivedFrame = frame;
+                     });
+
+    LevelFrame expectedFrame;
+    expectedFrame.channelCount     = 1;
+    expectedFrame.peak[0]          = 0.5F;
+    expectedFrame.rms[0]           = 0.25F;
+    expectedFrame.streamTimeMs     = 123;
+    expectedFrame.presentationTime = std::chrono::steady_clock::now() + 100ms;
+
+    AudioEngineTestAccessor::deliverLevelFrame(harness.engine, expectedFrame);
+
+    EXPECT_FALSE(pumpUntil(
+        [&mutex, &receivedFrame]() {
+            const std::scoped_lock lock{mutex};
+            return receivedFrame.has_value();
+        },
+        40ms));
+
+    ASSERT_TRUE(pumpUntil(
+        [&mutex, &receivedFrame]() {
+            const std::scoped_lock lock{mutex};
+            return receivedFrame.has_value();
+        },
+        1000ms));
+
+    const std::scoped_lock lock{mutex};
+    ASSERT_TRUE(receivedFrame.has_value());
+    EXPECT_EQ(receivedFrame->channelCount, expectedFrame.channelCount);
+    EXPECT_FLOAT_EQ(receivedFrame->peak[0], expectedFrame.peak[0]);
+    EXPECT_FLOAT_EQ(receivedFrame->rms[0], expectedFrame.rms[0]);
+    EXPECT_EQ(receivedFrame->streamTimeMs, expectedFrame.streamTimeMs);
+}
+
+FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, LevelFrameDispatchDropsStaleDueFrames)
+{
+    ensureCoreApplication();
+    EngineHarness harness{false};
+
+    std::mutex mutex;
+    int receivedCount{0};
+    std::optional<LevelFrame> receivedFrame;
+
+    QObject::connect(&harness.engine, &AudioEngine::levelReady, &harness.engine,
+                     [&mutex, &receivedCount, &receivedFrame](const LevelFrame& frame) {
+                         const std::scoped_lock lock{mutex};
+                         ++receivedCount;
+                         receivedFrame = frame;
+                     });
+
+    LevelFrame firstFrame;
+    firstFrame.channelCount     = 1;
+    firstFrame.peak[0]          = 0.25F;
+    firstFrame.rms[0]           = 0.125F;
+    firstFrame.streamTimeMs     = 100;
+    firstFrame.presentationTime = std::chrono::steady_clock::now() - 1ms;
+
+    LevelFrame latestFrame   = firstFrame;
+    latestFrame.peak[0]      = 0.75F;
+    latestFrame.rms[0]       = 0.5F;
+    latestFrame.streamTimeMs = 200;
+
+    AudioEngineTestAccessor::deliverLevelFrame(harness.engine, firstFrame);
+    AudioEngineTestAccessor::deliverLevelFrame(harness.engine, latestFrame);
+
+    ASSERT_TRUE(pumpUntil(
+        [&mutex, &receivedCount]() {
+            const std::scoped_lock lock{mutex};
+            return receivedCount > 0;
+        },
+        1000ms));
+
+    QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
+
+    const std::scoped_lock lock{mutex};
+    EXPECT_EQ(receivedCount, 1);
+    ASSERT_TRUE(receivedFrame.has_value());
+    EXPECT_EQ(receivedFrame->streamTimeMs, latestFrame.streamTimeMs);
+    EXPECT_FLOAT_EQ(receivedFrame->peak[0], latestFrame.peak[0]);
+    EXPECT_FLOAT_EQ(receivedFrame->rms[0], latestFrame.rms[0]);
 }
 
 FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, AudioEngineDispatchesPcmFrames)

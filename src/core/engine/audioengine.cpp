@@ -89,6 +89,7 @@ constexpr auto RemotePrebufferMinMs         = 500;
 constexpr auto RemotePrebufferMaxMs         = 5000;
 constexpr auto RemoteRebufferFloorMs        = 100;
 constexpr auto RemoteCrossfadePrefillMaxMs  = 1500;
+constexpr auto MaxPendingLevelFrames        = 64;
 
 bool outputReinitRequired(const Fooyin::AudioFormat& currentOutput, const Fooyin::AudioFormat& desiredOutput)
 {
@@ -1486,6 +1487,10 @@ void AudioEngine::beginShutdown()
         killTimer(m_vbrUpdateTimerId);
         m_vbrUpdateTimerId = 0;
     }
+    if(m_levelFramePresentationTimerId != 0) {
+        killTimer(m_levelFramePresentationTimerId);
+        m_levelFramePresentationTimerId = 0;
+    }
     m_pipelineWakeTaskQueued.store(false, std::memory_order_relaxed);
     m_engineTaskQueue.beginShutdown();
 }
@@ -2310,6 +2315,7 @@ void AudioEngine::finalisePausedState()
     m_fadeController.setFadeOnNext(false);
     m_audioClock.setPaused();
     m_audioClock.stop();
+    updatePlaybackState(Engine::PlaybackState::Paused);
     setPhase(Playback::Phase::Paused, PhaseChangeReason::PlaybackStatePaused);
 }
 
@@ -3478,6 +3484,13 @@ void AudioEngine::handleTimerTick(int timerId)
         return;
     }
 
+    if(timerId == m_levelFramePresentationTimerId) {
+        killTimer(m_levelFramePresentationTimerId);
+        m_levelFramePresentationTimerId = 0;
+        dispatchPendingLevelFrames();
+        return;
+    }
+
     if(auto decodeResult = m_decoder.handleTimer(timerId, m_transitions.isSeekInProgress())) {
         syncDecoderTrackMetadata();
         syncDecoderBitrate();
@@ -3502,6 +3515,11 @@ void AudioEngine::clearPendingAnalysisData()
 
     m_levelFrameMailbox.requestReset();
     m_pcmFrameMailbox.requestReset();
+    m_pendingLevelFrames.clear();
+    if(m_levelFramePresentationTimerId != 0) {
+        killTimer(m_levelFramePresentationTimerId);
+        m_levelFramePresentationTimerId = 0;
+    }
     m_levelFrameDispatchQueued.store(false, std::memory_order_relaxed);
     m_pcmFrameDispatchQueued.store(false, std::memory_order_relaxed);
 }
@@ -3555,15 +3573,34 @@ void AudioEngine::dispatchPendingLevelFrames()
 {
     auto reader = m_levelFrameMailbox.reader();
 
-    LevelFrame latestFrame;
-    bool hasFrame{false};
-
-    while(reader.read(&latestFrame, 1) == 1) {
-        hasFrame = true;
+    LevelFrame frame;
+    while(reader.read(&frame, 1) == 1) {
+        m_pendingLevelFrames.push_back(frame);
+        while(std::cmp_greater(m_pendingLevelFrames.size(), MaxPendingLevelFrames)) {
+            m_pendingLevelFrames.pop_front();
+        }
     }
 
-    if(hasFrame) {
-        Q_EMIT levelReady(latestFrame);
+    const auto now = std::chrono::steady_clock::now();
+
+    LevelFrame latestDueFrame;
+    bool hasDueFrame{false};
+    std::deque<LevelFrame> futureFrames;
+
+    for(const LevelFrame& pendingFrame : m_pendingLevelFrames) {
+        if(pendingFrame.presentationTime <= now) {
+            latestDueFrame = pendingFrame;
+            hasDueFrame    = true;
+            continue;
+        }
+
+        futureFrames.push_back(pendingFrame);
+    }
+
+    m_pendingLevelFrames = std::move(futureFrames);
+
+    if(hasDueFrame) {
+        Q_EMIT levelReady(latestDueFrame);
     }
 
     m_levelFrameDispatchQueued.store(false, std::memory_order_relaxed);
@@ -3572,6 +3609,40 @@ void AudioEngine::dispatchPendingLevelFrames()
        && !m_levelFrameDispatchQueued.exchange(true, std::memory_order_relaxed)) {
         QMetaObject::invokeMethod(this, [this]() { dispatchPendingLevelFrames(); }, Qt::QueuedConnection);
     }
+
+    scheduleLevelFramePresentationTimer();
+}
+
+void AudioEngine::scheduleLevelFramePresentationTimer()
+{
+    if(m_levelFramePresentationTimerId != 0) {
+        killTimer(m_levelFramePresentationTimerId);
+        m_levelFramePresentationTimerId = 0;
+    }
+
+    if(m_pendingLevelFrames.empty()) {
+        return;
+    }
+
+    const auto now = std::chrono::steady_clock::now();
+    auto earliest  = m_pendingLevelFrames.front().presentationTime;
+
+    for(const auto& frame : m_pendingLevelFrames) {
+        if(frame.presentationTime < earliest) {
+            earliest = frame.presentationTime;
+        }
+    }
+
+    if(earliest <= now) {
+        if(!m_levelFrameDispatchQueued.exchange(true, std::memory_order_relaxed)) {
+            QMetaObject::invokeMethod(this, &AudioEngine::dispatchPendingLevelFrames, Qt::QueuedConnection);
+        }
+        return;
+    }
+
+    const auto delayMs              = std::chrono::duration_cast<std::chrono::milliseconds>(earliest - now).count();
+    const int timerMs               = std::clamp<int64_t>(delayMs, 1, std::numeric_limits<int>::max());
+    m_levelFramePresentationTimerId = startTimer(timerMs, Qt::PreciseTimer);
 }
 
 void AudioEngine::dispatchPendingPcmFrames()
