@@ -188,7 +188,7 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
     layoutPageLayout->addStretch();
 
     auto* stylePage        = new QWidget(this);
-    auto* fontsGroup       = new QGroupBox(tr("Typography"), stylePage);
+    auto* fontsGroup       = new QGroupBox(tr("Fonts"), stylePage);
     auto* fontsGroupLayout = new QGridLayout(fontsGroup);
     auto* fadeGroup        = new QGroupBox(tr("Fade"), layoutPage);
     auto* fadeLayout       = new QGridLayout(fadeGroup);
