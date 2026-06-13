@@ -55,6 +55,7 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
     , m_showScrollbar{new QCheckBox(tr("Show scrollbar"), this)}
     , m_centreFirstSyncedLine{new QCheckBox(tr("Centre first synced line"), this)}
     , m_centreLastSyncedLine{new QCheckBox(tr("Centre last synced line"), this)}
+    , m_progressMode{new QComboBox(this)}
     , m_alignment{new QComboBox(this)}
     , m_lineSpacing{new QSpinBox(this)}
     , m_leftMargin{new QSpinBox(this)}
@@ -145,23 +146,6 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
     layoutGeneralLayout->addWidget(m_alignment, row++, 1);
     layoutGeneralLayout->setColumnStretch(2, 1);
 
-    auto* fadeGroup  = new QGroupBox(tr("Fade"), layoutPage);
-    auto* fadeLayout = new QGridLayout(fadeGroup);
-
-    m_edgeFadeMode->addItem(tr("Off"), static_cast<int>(EdgeFadeMode::Off));
-    m_edgeFadeMode->addItem(tr("Synced only"), static_cast<int>(EdgeFadeMode::SyncedOnly));
-    m_edgeFadeMode->addItem(tr("Scrolling lyrics"), static_cast<int>(EdgeFadeMode::ScrollingLyrics));
-    m_edgeFadeMode->addItem(tr("All lyrics"), static_cast<int>(EdgeFadeMode::AllLyrics));
-
-    m_edgeFadeSize->setRange(1, 50);
-    m_edgeFadeSize->setSuffix(u" %"_s);
-
-    row = 0;
-    fadeLayout->addWidget(new QLabel(tr("Apply to") + u":"_s, layoutPage), row, 0);
-    fadeLayout->addWidget(m_edgeFadeMode, row++, 1);
-    fadeLayout->addWidget(m_edgeFadeSize, row++, 0, 1, 4);
-    fadeLayout->setColumnStretch(4, 1);
-
     auto* marginsGroup  = new QGroupBox(tr("Margins"), layoutPage);
     auto* marginsLayout = new QGridLayout(marginsGroup);
     auto* syncedGroup   = new QGroupBox(tr("Synced"), layoutPage);
@@ -199,14 +183,17 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
 
     auto* layoutPageLayout = new QVBoxLayout(layoutPage);
     layoutPageLayout->addWidget(layoutGeneralGroup);
-    layoutPageLayout->addWidget(fadeGroup);
     layoutPageLayout->addWidget(syncedGroup);
     layoutPageLayout->addWidget(marginsGroup);
     layoutPageLayout->addStretch();
 
     auto* stylePage        = new QWidget(this);
-    auto* fontsGroup       = new QGroupBox(tr("Fonts"), stylePage);
+    auto* fontsGroup       = new QGroupBox(tr("Typography"), stylePage);
     auto* fontsGroupLayout = new QGridLayout(fontsGroup);
+    auto* fadeGroup        = new QGroupBox(tr("Fade"), layoutPage);
+    auto* fadeLayout       = new QGridLayout(fadeGroup);
+    auto* progressGroup    = new QGroupBox(tr("Progress"), stylePage);
+    auto* progressLayout   = new QGridLayout(progressGroup);
 
     row = 0;
     fontsGroupLayout->addWidget(Gui::createSectionHeader(tr("General"), stylePage), row++, 0, 1, 2);
@@ -221,6 +208,32 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
     fontsGroupLayout->addWidget(m_wordFont, row, 0);
     fontsGroupLayout->addWidget(m_wordFontBtn, row++, 1);
     fontsGroupLayout->setColumnStretch(1, 1);
+
+    m_edgeFadeMode->addItem(tr("Off"), static_cast<int>(EdgeFadeMode::Off));
+    m_edgeFadeMode->addItem(tr("Synced only"), static_cast<int>(EdgeFadeMode::SyncedOnly));
+    m_edgeFadeMode->addItem(tr("Scrolling lyrics"), static_cast<int>(EdgeFadeMode::ScrollingLyrics));
+    m_edgeFadeMode->addItem(tr("All lyrics"), static_cast<int>(EdgeFadeMode::AllLyrics));
+
+    m_edgeFadeSize->setRange(1, 50);
+    m_edgeFadeSize->setSuffix(u" %"_s);
+
+    row = 0;
+    fadeLayout->addWidget(new QLabel(tr("Apply to") + u":"_s, layoutPage), row, 0);
+    fadeLayout->addWidget(m_edgeFadeMode, row++, 1);
+    fadeLayout->addWidget(m_edgeFadeSize, row++, 0, 1, 4);
+    fadeLayout->setColumnStretch(4, 1);
+
+    m_progressMode->addItem(tr("Off"), static_cast<int>(ProgressMode::Off));
+    m_progressMode->addItem(tr("Synced lines"), static_cast<int>(ProgressMode::SyncedLines));
+    m_progressMode->addItem(tr("Synced words"), static_cast<int>(ProgressMode::SyncedWords));
+    m_progressMode->addItem(tr("Synced lines and words"), static_cast<int>(ProgressMode::AllSynced));
+    m_progressMode->setToolTip(
+        tr("Controls whether playback progress is shown for line-synced lyrics, word-synced lyrics, or both."));
+
+    row = 0;
+    progressLayout->addWidget(new QLabel(tr("Apply to") + u":"_s, stylePage), row, 0);
+    progressLayout->addWidget(m_progressMode, row++, 1);
+    progressLayout->setColumnStretch(1, 1);
 
     auto* coloursLayout = new QGridLayout(m_coloursGroup);
 
@@ -244,10 +257,14 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
     coloursLayout->addWidget(m_wordColourBtn, row++, 1);
     coloursLayout->setColumnStretch(1, 1);
 
-    auto* stylePageLayout = new QVBoxLayout(stylePage);
-    stylePageLayout->addWidget(fontsGroup);
-    stylePageLayout->addWidget(m_coloursGroup);
-    stylePageLayout->addStretch();
+    auto* stylePageLayout = new QGridLayout(stylePage);
+
+    row = 0;
+    stylePageLayout->addWidget(fontsGroup, row, 0);
+    stylePageLayout->addWidget(m_coloursGroup, row++, 1);
+    stylePageLayout->addWidget(fadeGroup, row, 0);
+    stylePageLayout->addWidget(progressGroup, row++, 1);
+    stylePageLayout->setRowStretch(row, 1);
 
     m_tabs->addTab(layoutPage, tr("Layout"));
     m_tabs->addTab(stylePage, tr("Style"));
@@ -290,6 +307,7 @@ LyricsWidget::ConfigData LyricsConfigDialog::config() const
         .lineSpacing           = m_lineSpacing->value(),
         .centreFirstSyncedLine = m_centreFirstSyncedLine->isChecked(),
         .centreLastSyncedLine  = m_centreLastSyncedLine->isChecked(),
+        .progressMode          = m_progressMode->currentData().toInt(),
         .margins      = {m_leftMargin->value(), m_topMargin->value(), m_rightMargin->value(), m_bottomMargin->value()},
         .colours      = QVariant{},
         .baseFont     = m_baseFont->isChecked() ? m_baseFontBtn->buttonFont().toString() : QString{},
@@ -326,6 +344,7 @@ void LyricsConfigDialog::setConfig(const LyricsWidget::ConfigData& config)
     m_seekOnClick->setChecked(config.seekOnClick);
     m_noLyricsScript->setText(config.noLyricsScript);
     m_scrollDuration->setValue(config.scrollDuration);
+
     int fadeModeIdx = m_edgeFadeMode->findData(config.edgeFadeMode);
     if(fadeModeIdx < 0) {
         fadeModeIdx = m_edgeFadeMode->findData(static_cast<int>(EdgeFadeMode::SyncedOnly));
@@ -340,6 +359,12 @@ void LyricsConfigDialog::setConfig(const LyricsWidget::ConfigData& config)
     m_lineSpacing->setValue(config.lineSpacing);
     m_centreFirstSyncedLine->setChecked(config.centreFirstSyncedLine);
     m_centreLastSyncedLine->setChecked(config.centreLastSyncedLine);
+
+    int progressModeIdx = m_progressMode->findData(config.progressMode);
+    if(progressModeIdx < 0) {
+        progressModeIdx = m_progressMode->findData(static_cast<int>(ProgressMode::Off));
+    }
+    m_progressMode->setCurrentIndex(progressModeIdx);
 
     int alignIdx = m_alignment->findData(config.alignment);
     if(alignIdx < 0) {

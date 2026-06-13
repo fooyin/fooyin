@@ -69,6 +69,7 @@ private:
     QCheckBox* m_showScrollbar;
     QCheckBox* m_centreFirstSyncedLine;
     QCheckBox* m_centreLastSyncedLine;
+    QComboBox* m_progressMode;
     QComboBox* m_alignment;
     QSpinBox* m_lineSpacing;
     QSpinBox* m_leftMargin;

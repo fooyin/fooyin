@@ -24,6 +24,8 @@
 #include <algorithm>
 #include <utility>
 
+constexpr uint64_t ProgressUpdateIntervalMs = 33;
+
 namespace Fooyin::Lyrics {
 LyricsModel::LyricsModel(GuiStyleProvider* styleProvider, QObject* parent)
     : QAbstractListModel{parent}
@@ -32,6 +34,7 @@ LyricsModel::LyricsModel(GuiStyleProvider* styleProvider, QObject* parent)
     , m_alignment{Qt::AlignCenter}
     , m_lineSpacing{5}
     , m_currentTime{0}
+    , m_lastProgressUpdateTime{0}
     , m_currentLine{-1}
     , m_currentLineEnd{-1}
     , m_currentWord{-1}
@@ -40,6 +43,7 @@ LyricsModel::LyricsModel(GuiStyleProvider* styleProvider, QObject* parent)
     , m_lineFont{Lyrics::defaultLineFont(*m_styleProvider)}
     , m_wordLineFont{Lyrics::defaultWordLineFont(*m_styleProvider)}
     , m_wordFont{Lyrics::defaultWordFont(*m_styleProvider)}
+    , m_progressMode{ProgressMode::Off}
 {
     setColours(Colours{});
     setFonts({}, {}, {}, {});
@@ -49,11 +53,12 @@ void LyricsModel::setLyrics(const Lyrics& lyrics)
 {
     beginResetModel();
 
-    m_lyrics         = lyrics;
-    m_currentLine    = -1;
-    m_currentLineEnd = -1;
-    m_currentWord    = -1;
-    m_currentTime    = 0;
+    m_lyrics                 = lyrics;
+    m_currentLine            = -1;
+    m_currentLineEnd         = -1;
+    m_currentWord            = -1;
+    m_currentTime            = 0;
+    m_lastProgressUpdateTime = 0;
 
     m_text.clear();
 
@@ -154,10 +159,44 @@ void LyricsModel::setFonts(const QString& baseFont, const QString& lineFont, con
     endResetModel();
 }
 
+void LyricsModel::setProgressMode(ProgressMode mode)
+{
+    if(std::exchange(m_progressMode, mode) == mode) {
+        return;
+    }
+
+    if(m_currentLine >= 0) {
+        for(int lineIndex{m_currentLine}; lineIndex <= m_currentLineEnd; ++lineIndex) {
+            m_text[lineIndex] = textForLine(m_lyrics.lines.at(lineIndex));
+        }
+
+        Q_EMIT dataChanged(index(m_currentLine + 1, 0), index(m_currentLineEnd + 1, 0),
+                           {RichTextRole, CurrentTimeRole, ProgressColourRole, ProgressBaseColourRole});
+    }
+}
+
 void LyricsModel::setCurrentTime(uint64_t time)
 {
     m_currentTime = time;
+
+    const int prevLine    = m_currentLine;
+    const int prevLineEnd = m_currentLineEnd;
+
     updateCurrentLine();
+
+    if(!shouldFillProgress() || m_currentLine < 0 || prevLine != m_currentLine || prevLineEnd != m_currentLineEnd) {
+        m_lastProgressUpdateTime = time;
+        return;
+    }
+
+    const uint64_t timeDiff
+        = time > m_lastProgressUpdateTime ? time - m_lastProgressUpdateTime : m_lastProgressUpdateTime - time;
+    if(timeDiff < ProgressUpdateIntervalMs) {
+        return;
+    }
+
+    m_lastProgressUpdateTime = time;
+    Q_EMIT dataChanged(index(m_currentLine + 1, 0), index(m_currentLineEnd + 1, 0), {CurrentTimeRole});
 }
 
 uint64_t LyricsModel::currentTime() const
@@ -243,12 +282,34 @@ QVariant LyricsModel::data(const QModelIndex& index, int role) const
             return QVariant::fromValue(m_text.at(lineIndex));
         case TimestampRole:
             return QVariant::fromValue(line.timestamp);
+        case DurationRole:
+            return QVariant::fromValue(line.duration);
         case WordsRole:
             return QVariant::fromValue(line.words);
         case MarginsRole:
             return QVariant::fromValue(m_margins);
         case LineSpacingRole:
             return QVariant::fromValue(m_lineSpacing);
+        case CurrentTimeRole:
+            return QVariant::fromValue(m_currentTime);
+        case LyricsTypeRole:
+            return QVariant::fromValue(static_cast<int>(m_lyrics.type));
+        case ProgressColourRole:
+            if(!shouldFillProgress()) {
+                return {};
+            }
+            if(m_lyrics.type == Lyrics::Type::SyncedWords) {
+                return m_colours.colour(Colours::Type::WordSynced);
+            }
+            return m_colours.colour(Colours::Type::LineSynced);
+        case ProgressBaseColourRole:
+            if(!shouldFillProgress()) {
+                return {};
+            }
+            if(m_lyrics.type == Lyrics::Type::SyncedWords) {
+                return m_colours.colour(Colours::Type::WordLineSynced);
+            }
+            return m_colours.colour(Colours::Type::LineUnplayed);
         default:
             return {};
     }
@@ -333,6 +394,9 @@ RichText LyricsModel::textForLine(const ParsedLine& line) const
     for(const auto& parsedWord : line.words) {
         const bool highlightWord
             = highlightLine && m_lyrics.type == Lyrics::Type::SyncedWords && parsedWord.isCurrent(m_currentTime);
+        const bool playedWordInHighlightedLine
+            = shouldFillWordProgress() && highlightLine && m_lyrics.type == Lyrics::Type::SyncedWords
+           && parsedWord.timestamp < m_currentTime && !parsedWord.isCurrent(m_currentTime);
 
         RichFormatting format;
 
@@ -348,7 +412,11 @@ RichText LyricsModel::textForLine(const ParsedLine& line) const
                 break;
             }
             case Lyrics::Type::SyncedWords: {
-                if(highlightWord) {
+                if(playedWordInHighlightedLine) {
+                    format.font = m_wordLineFont;
+                    format.colour.setColour(m_colours.colour(Colours::Type::WordSynced));
+                }
+                else if(highlightWord) {
                     format.font = m_wordFont;
                     format.colour.setColour(m_colours.colour(Colours::Type::WordSynced));
                 }
@@ -388,8 +456,24 @@ std::vector<ParsedLine>::const_iterator LyricsModel::lineForTimestamp(uint64_t t
     return line;
 }
 
-std::vector<ParsedWord>::const_iterator LyricsModel::wordForTimestamp(const Fooyin::Lyrics::ParsedLine& line,
-                                                                      uint64_t timestamp) const
+bool LyricsModel::shouldFillLineProgress() const
+{
+    return m_lyrics.type == Lyrics::Type::Synced
+        && (m_progressMode == ProgressMode::SyncedLines || m_progressMode == ProgressMode::AllSynced);
+}
+
+bool LyricsModel::shouldFillWordProgress() const
+{
+    return m_lyrics.type == Lyrics::Type::SyncedWords
+        && (m_progressMode == ProgressMode::SyncedWords || m_progressMode == ProgressMode::AllSynced);
+}
+
+bool LyricsModel::shouldFillProgress() const
+{
+    return shouldFillLineProgress() || shouldFillWordProgress();
+}
+
+std::vector<ParsedWord>::const_iterator LyricsModel::wordForTimestamp(const ParsedLine& line, uint64_t timestamp) const
 {
     auto word = std::ranges::lower_bound(line.words, timestamp, {}, &Fooyin::Lyrics::ParsedWord::endTimestamp);
     if(word == line.words.cbegin() && word->timestamp > timestamp) {

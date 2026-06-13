@@ -45,6 +45,7 @@ constexpr auto ShowScrollbar   = u"Lyrics/ShowScrollbar";
 constexpr auto ScrollMode      = u"Lyrics/ScrollMode";
 constexpr auto CentreFirstLine = u"Lyrics/CentreFirstSyncedLine";
 constexpr auto CentreLastLine  = u"Lyrics/CentreLastSyncedLine";
+constexpr auto ProgressFill    = u"Lyrics/ProgressFill";
 constexpr auto EdgeFadeMode    = u"Lyrics/EdgeFadeMode";
 constexpr auto EdgeFadeSize    = u"Lyrics/EdgeFadeSize";
 constexpr auto TitleField      = u"Lyrics/TitleField";
@@ -78,6 +79,14 @@ enum class EdgeFadeMode : uint8_t
     SyncedOnly,
     ScrollingLyrics,
     AllLyrics
+};
+
+enum class ProgressMode : uint8_t
+{
+    Off = 0,
+    SyncedLines,
+    SyncedWords,
+    AllSynced
 };
 
 enum class SaveScheme : uint8_t

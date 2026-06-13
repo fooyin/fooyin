@@ -55,9 +55,11 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QJsonObject>
+#include <QJsonValue>
 #include <QLoggingCategory>
 #include <QMainWindow>
 #include <QMenu>
+#include <QMetaType>
 #include <QPropertyAnimation>
 #include <QScrollBar>
 #include <QTimerEvent>
@@ -128,6 +130,24 @@ int validatedEdgeFadeMode(int edgeFadeMode)
     return std::clamp(edgeFadeMode, static_cast<int>(Fooyin::Lyrics::EdgeFadeMode::Off),
                       static_cast<int>(Fooyin::Lyrics::EdgeFadeMode::AllLyrics));
 }
+
+int validatedProgressMode(int progressMode)
+{
+    return std::clamp(progressMode, static_cast<int>(Fooyin::Lyrics::ProgressMode::Off),
+                      static_cast<int>(Fooyin::Lyrics::ProgressMode::AllSynced));
+}
+
+int progressModeFromVariant(const QVariant& value, int defaultMode)
+{
+    if(!value.isValid()) {
+        return defaultMode;
+    }
+    if(value.metaType().id() == QMetaType::Bool) {
+        return value.toBool() ? static_cast<int>(Fooyin::Lyrics::ProgressMode::AllSynced)
+                              : static_cast<int>(Fooyin::Lyrics::ProgressMode::Off);
+    }
+    return validatedProgressMode(value.toInt());
+}
 } // namespace
 
 namespace Fooyin::Lyrics {
@@ -176,6 +196,17 @@ LyricsWidget::LyricsWidget(PlayerController* playerController, PlaylistHandler* 
     QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsSearchFinished, this,
                      &LyricsWidget::handleLyricsSearchFinished);
     QObject::connect(m_lyricsSaver, &LyricsSaver::lyricsSaved, this, &LyricsWidget::handleSavedLyrics);
+
+    QObject::connect(m_model, &QAbstractItemModel::modelReset, m_delegate, &LyricsDelegate::clearLayoutCache);
+    QObject::connect(m_model, &QAbstractItemModel::layoutChanged, m_delegate, &LyricsDelegate::clearLayoutCache);
+    QObject::connect(
+        m_model, &QAbstractItemModel::dataChanged, m_delegate,
+        [this](const QModelIndex& /*topLeft*/, const QModelIndex& /*bottomRight*/, const QList<int>& roles) {
+            const bool progressOnly = roles.size() == 1 && roles.front() == LyricsModel::CurrentTimeRole;
+            if(!progressOnly) {
+                m_delegate->clearLayoutCache();
+            }
+        });
 
     QObject::connect(m_lyricsView, &LyricsView::lineClicked, this, &LyricsWidget::seekTo);
     QObject::connect(m_lyricsView, &LyricsView::lineDragSeekRequested, this, &LyricsWidget::seekTo);
@@ -320,6 +351,7 @@ LyricsWidget::ConfigData LyricsWidget::defaultConfig() const
     config.centreFirstSyncedLine
         = m_settings->fileValue(Settings::CentreFirstLine, config.centreFirstSyncedLine).toBool();
     config.centreLastSyncedLine = m_settings->fileValue(Settings::CentreLastLine, config.centreLastSyncedLine).toBool();
+    config.progressMode = progressModeFromVariant(m_settings->fileValue(Settings::ProgressFill), config.progressMode);
 
     const QVariant margins = m_settings->fileValue(Settings::Margins);
     if(margins.isValid() && margins.canConvert<QMargins>()) {
@@ -349,6 +381,7 @@ void LyricsWidget::saveDefaults(const ConfigData& config) const
                                           static_cast<int>(ScrollMode::Automatic));
     validated.edgeFadeMode   = validatedEdgeFadeMode(validated.edgeFadeMode);
     validated.edgeFadeSize   = validatedEdgeFadeSize(validated.edgeFadeSize);
+    validated.progressMode   = validatedProgressMode(validated.progressMode);
     validated.alignment      = validatedAlignment(validated.alignment);
     validated.lineSpacing    = std::clamp(validated.lineSpacing, 0, 100);
     validated.margins        = clampedMargins(validated.margins);
@@ -373,6 +406,7 @@ void LyricsWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(Settings::LineSpacing, validated.lineSpacing);
     m_settings->fileSet(Settings::CentreFirstLine, validated.centreFirstSyncedLine);
     m_settings->fileSet(Settings::CentreLastLine, validated.centreLastSyncedLine);
+    m_settings->fileSet(Settings::ProgressFill, validated.progressMode);
     m_settings->fileSet(Settings::Margins, QVariant::fromValue(validated.margins));
     m_settings->fileSet(Settings::Colours, validated.colours);
     m_settings->fileSet(Settings::BaseFont, validated.baseFont);
@@ -394,6 +428,7 @@ void LyricsWidget::clearSavedDefaults() const
     m_settings->fileRemove(Settings::LineSpacing);
     m_settings->fileRemove(Settings::CentreFirstLine);
     m_settings->fileRemove(Settings::CentreLastLine);
+    m_settings->fileRemove(Settings::ProgressFill);
     m_settings->fileRemove(Settings::Margins);
     m_settings->fileRemove(Settings::Colours);
     m_settings->fileRemove(Settings::BaseFont);
@@ -410,6 +445,7 @@ void LyricsWidget::applyConfig(const ConfigData& config)
                                           static_cast<int>(ScrollMode::Automatic));
     validated.edgeFadeMode   = validatedEdgeFadeMode(validated.edgeFadeMode);
     validated.edgeFadeSize   = validatedEdgeFadeSize(validated.edgeFadeSize);
+    validated.progressMode   = validatedProgressMode(validated.progressMode);
     validated.alignment      = validatedAlignment(validated.alignment);
     validated.lineSpacing    = std::clamp(validated.lineSpacing, 0, 100);
     validated.margins        = clampedMargins(validated.margins);
@@ -433,6 +469,7 @@ void LyricsWidget::applyConfig(const ConfigData& config)
     m_model->setAlignment(static_cast<Qt::Alignment>(m_config.alignment));
     m_model->setColours(m_config.colours.isValid() ? m_config.colours.value<Colours>() : Colours{});
     m_model->setFonts(m_config.baseFont, m_config.lineFont, m_config.wordLineFont, m_config.wordFont);
+    m_model->setProgressMode(static_cast<ProgressMode>(m_config.progressMode));
 
     updateViewportPadding();
 
@@ -713,6 +750,9 @@ LyricsWidget::ConfigData LyricsWidget::configFromLayout(const QJsonObject& layou
     if(layout.contains("CentreLastSyncedLine"_L1)) {
         config.centreLastSyncedLine = layout.value("CentreLastSyncedLine"_L1).toBool();
     }
+    if(layout.contains("ProgressFill"_L1)) {
+        config.progressMode = layout.value("ProgressFill"_L1).toInt();
+    }
 
     QMargins margins{config.margins};
     if(layout.contains("LeftMargin"_L1)) {
@@ -787,6 +827,7 @@ void LyricsWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
     layout["LineSpacing"_L1]           = config.lineSpacing;
     layout["CentreFirstSyncedLine"_L1] = config.centreFirstSyncedLine;
     layout["CentreLastSyncedLine"_L1]  = config.centreLastSyncedLine;
+    layout["ProgressFill"_L1]          = config.progressMode;
     layout["LeftMargin"_L1]            = config.margins.left();
     layout["TopMargin"_L1]             = config.margins.top();
     layout["RightMargin"_L1]           = config.margins.right();

@@ -21,6 +21,7 @@
 
 #include "lyrics.h"
 #include "lyricscolours.h"
+#include "settings/lyricssettings.h"
 
 #include <gui/scripting/richtext.h>
 
@@ -40,10 +41,15 @@ public:
     {
         RichTextRole = Qt::UserRole,
         TimestampRole,
+        DurationRole,
         WordsRole,
         IsPaddingRole,
         MarginsRole,
-        LineSpacingRole
+        LineSpacingRole,
+        CurrentTimeRole,
+        LyricsTypeRole,
+        ProgressColourRole,
+        ProgressBaseColourRole
     };
 
     explicit LyricsModel(GuiStyleProvider* styleProvider, QObject* parent = nullptr);
@@ -58,6 +64,7 @@ public:
     void setColours(const Colours& colours);
     void setFonts(const QString& baseFont, const QString& lineFont, const QString& wordLineFont,
                   const QString& wordFont);
+    void setProgressMode(ProgressMode mode);
 
     void setCurrentTime(uint64_t time);
     [[nodiscard]] uint64_t currentTime() const;
@@ -76,6 +83,9 @@ private:
     [[nodiscard]] std::vector<ParsedLine>::const_iterator lineForTimestamp(uint64_t timestamp) const;
     [[nodiscard]] std::vector<ParsedWord>::const_iterator wordForTimestamp(const ParsedLine& line,
                                                                            uint64_t timestamp) const;
+    [[nodiscard]] bool shouldFillLineProgress() const;
+    [[nodiscard]] bool shouldFillWordProgress() const;
+    [[nodiscard]] bool shouldFillProgress() const;
 
     Lyrics m_lyrics;
     QMargins m_margins;
@@ -84,6 +94,7 @@ private:
     Qt::Alignment m_alignment;
     int m_lineSpacing;
     uint64_t m_currentTime;
+    uint64_t m_lastProgressUpdateTime;
     int m_currentLine;
     int m_currentLineEnd;
     int m_currentWord;
@@ -96,6 +107,7 @@ private:
     QFont m_lineFont;
     QFont m_wordLineFont;
     QFont m_wordFont;
+    ProgressMode m_progressMode;
 };
 } // namespace Lyrics
 } // namespace Fooyin

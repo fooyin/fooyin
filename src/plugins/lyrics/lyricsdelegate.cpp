@@ -19,6 +19,7 @@
 
 #include "lyricsdelegate.h"
 
+#include "lyrics.h"
 #include "lyricsmodel.h"
 
 #include <gui/scripting/richtext.h>
@@ -29,15 +30,12 @@
 #include <QTextBoundaryFinder>
 
 #include <algorithm>
+#include <numeric>
 
+constexpr size_t MaxLayoutCacheEntries = 128;
+
+namespace Fooyin::Lyrics {
 namespace {
-struct LaidOutChunk
-{
-    QRect rect;
-    int blockIndex{0};
-    QString text;
-};
-
 int firstGraphemeLength(const QString& text)
 {
     QTextBoundaryFinder boundary{QTextBoundaryFinder::BoundaryType::Grapheme, text};
@@ -91,22 +89,35 @@ int textHeight(const QString& text, const QFontMetrics& fm)
     return std::max(fm.height(), fm.boundingRect(text).height());
 }
 
-void calculateWordRects(const QModelIndex& index, const QRect& boundingRect, const QFont& baseFont,
-                        std::vector<LaidOutChunk>& wordRects, int& totalHeight)
+qreal progressForTime(uint64_t currentTime, uint64_t startTime, uint64_t duration)
 {
-    const auto lineSpacing = index.data(Fooyin::Lyrics::LyricsModel::LineSpacingRole).toInt();
+    if(duration == 0 || currentTime <= startTime) {
+        return 0.0;
+    }
+
+    if(currentTime >= startTime + duration) {
+        return 1.0;
+    }
+
+    return static_cast<qreal>(currentTime - startTime) / static_cast<qreal>(duration);
+}
+
+void calculateWordRects(const QModelIndex& index, int width, const QFont& baseFont,
+                        std::vector<LyricsDelegate::LaidOutChunk>& wordRects, int& totalHeight)
+{
+    const auto lineSpacing = index.data(LyricsModel::LineSpacingRole).toInt();
     const auto alignment   = index.data(Qt::TextAlignmentRole).toInt();
 
-    const auto richText = index.data(Fooyin::Lyrics::LyricsModel::RichTextRole).value<Fooyin::RichText>();
+    const auto richText = index.data(LyricsModel::RichTextRole).value<RichText>();
     if(richText.empty()) {
         totalHeight = lineSpacing;
         return;
     }
 
-    const int rightEdge = std::max(boundingRect.width(), 1);
+    const int rightEdge = std::max(width, 1);
     int currentY{0};
     int lineHeight{0};
-    std::vector<LaidOutChunk> currentLineRects;
+    std::vector<LyricsDelegate::LaidOutChunk> currentLineRects;
     int currentLineWidth{0};
 
     const auto flushLine = [&](bool addSpacing) {
@@ -124,7 +135,7 @@ void calculateWordRects(const QModelIndex& index, const QRect& boundingRect, con
                 break;
         }
 
-        int x = lineStartX + boundingRect.left();
+        int x = lineStartX;
         for(auto& chunk : currentLineRects) {
             chunk.rect.moveLeft(x);
             chunk.rect.moveTop(currentY);
@@ -193,9 +204,95 @@ void calculateWordRects(const QModelIndex& index, const QRect& boundingRect, con
 
     totalHeight = currentY;
 }
+
+void drawProgressOverlay(QPainter* painter, const QStyleOptionViewItem& option, const RichText& richText,
+                         const std::vector<LyricsDelegate::LaidOutChunk>& chunks, qreal progress,
+                         const QColor& progressColour)
+{
+    if(chunks.empty() || progress <= 0.0 || !progressColour.isValid()) {
+        return;
+    }
+
+    const int totalWidth = std::accumulate(chunks.cbegin(), chunks.cend(), 0,
+                                           [](int total, const auto& chunk) { return total + chunk.rect.width(); });
+
+    int remainingWidth = std::clamp(static_cast<int>(std::ceil(progress * totalWidth)), 0, totalWidth);
+    if(remainingWidth <= 0) {
+        return;
+    }
+
+    for(const auto& chunk : chunks) {
+        if(remainingWidth <= 0) {
+            break;
+        }
+
+        const int fillWidth = std::min(chunk.rect.width(), remainingWidth);
+        if(fillWidth <= 0 || chunk.blockIndex < 0 || std::cmp_greater_equal(chunk.blockIndex, richText.blocks.size())) {
+            continue;
+        }
+
+        painter->save();
+
+        painter->setClipRect(QRect{chunk.rect.left(), chunk.rect.top(), fillWidth, chunk.rect.height()});
+        painter->setFont(resolvedRichTextFont(richText.blocks[chunk.blockIndex].format, option.font));
+        painter->setPen(progressColour);
+        painter->drawText(chunk.rect, Qt::AlignLeft | Qt::AlignVCenter, chunk.text);
+
+        painter->restore();
+
+        remainingWidth -= fillWidth;
+    }
+}
+
+bool containsChunk(const std::vector<LyricsDelegate::LaidOutChunk>& chunks, const LyricsDelegate::LaidOutChunk& chunk)
+{
+    return std::ranges::any_of(chunks, [&chunk](const LyricsDelegate::LaidOutChunk& candidate) {
+        return candidate.blockIndex == chunk.blockIndex && candidate.rect == chunk.rect && candidate.text == chunk.text;
+    });
+}
 } // namespace
 
-namespace Fooyin::Lyrics {
+void LyricsDelegate::clearLayoutCache()
+{
+    m_layoutCache.clear();
+}
+
+const LyricsDelegate::CachedLayout& LyricsDelegate::layoutForIndex(const QModelIndex& index, int width,
+                                                                   const QFont& font) const
+{
+    width = std::max(width, 1);
+    ++m_layoutCacheUseCounter;
+
+    if(!index.isValid()) {
+        m_layoutCache.clear();
+    }
+
+    const int row     = index.row();
+    const auto cached = std::ranges::find_if(m_layoutCache, [&](const auto& layout) {
+        return layout.row == row && layout.width == width && layout.font == font;
+    });
+    if(cached != m_layoutCache.end()) {
+        cached->lastUsed = m_layoutCacheUseCounter;
+        return *cached;
+    }
+
+    if(m_layoutCache.size() >= MaxLayoutCacheEntries) {
+        const auto leastRecentlyUsed = std::ranges::min_element(m_layoutCache, {}, &CachedLayout::lastUsed);
+        if(leastRecentlyUsed != m_layoutCache.end()) {
+            m_layoutCache.erase(leastRecentlyUsed);
+        }
+    }
+
+    auto& layout    = m_layoutCache.emplace_back();
+    layout.row      = row;
+    layout.font     = font;
+    layout.width    = width;
+    layout.lastUsed = m_layoutCacheUseCounter;
+
+    calculateWordRects(index, width, font, layout.chunks, layout.totalHeight);
+    return layout;
+}
+
 void LyricsDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     painter->save();
@@ -221,24 +318,68 @@ void LyricsDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     // Apply left/right padding
     const QRect contentRect = option.rect.adjusted(margins.left(), 0, -margins.right(), 0);
 
-    std::vector<LaidOutChunk> wordRects;
-    int totalHeight{0};
-
-    calculateWordRects(index, contentRect, option.font, wordRects, totalHeight);
+    std::vector<LaidOutChunk> wordRects{layoutForIndex(index, contentRect.width(), option.font).chunks};
 
     // Offset word rects
     for(auto& chunk : wordRects) {
-        chunk.rect.translate(0, option.rect.top());
+        chunk.rect.translate(contentRect.left(), option.rect.top());
     }
 
+    qreal progress{0.0};
+    QColor progressColour;
+    QColor progressBaseColour;
+    std::vector<LaidOutChunk> progressChunks;
+    const auto lyricsType = static_cast<Lyrics::Type>(index.data(LyricsModel::LyricsTypeRole).toInt());
+    if(lyricsType == Lyrics::Type::Synced) {
+        const auto timestamp   = index.data(LyricsModel::TimestampRole).value<uint64_t>();
+        const auto duration    = index.data(LyricsModel::DurationRole).value<uint64_t>();
+        const auto currentTime = index.data(LyricsModel::CurrentTimeRole).value<uint64_t>();
+
+        if(currentTime >= timestamp && currentTime < timestamp + duration) {
+            progress           = progressForTime(currentTime, timestamp, duration);
+            progressColour     = index.data(LyricsModel::ProgressColourRole).value<QColor>();
+            progressBaseColour = index.data(LyricsModel::ProgressBaseColourRole).value<QColor>();
+            progressChunks     = wordRects;
+        }
+    }
+    else if(lyricsType == Lyrics::Type::SyncedWords) {
+        const auto currentTime = index.data(LyricsModel::CurrentTimeRole).value<uint64_t>();
+        const auto timestamp   = index.data(LyricsModel::TimestampRole).value<uint64_t>();
+        const auto duration    = index.data(LyricsModel::DurationRole).value<uint64_t>();
+
+        if(currentTime >= timestamp && currentTime < timestamp + duration) {
+            const auto words = index.data(LyricsModel::WordsRole).value<std::vector<ParsedWord>>();
+
+            const auto word = std::ranges::find_if(words, [currentTime](const ParsedWord& parsedWord) {
+                return currentTime >= parsedWord.timestamp && currentTime < parsedWord.endTimestamp();
+            });
+
+            if(word != words.cend()) {
+                const int wordIndex = static_cast<int>(std::distance(words.cbegin(), word));
+                std::ranges::copy_if(wordRects, std::back_inserter(progressChunks),
+                                     [wordIndex](const LaidOutChunk& chunk) { return chunk.blockIndex == wordIndex; });
+
+                progress           = progressForTime(currentTime, word->timestamp, word->duration);
+                progressColour     = index.data(LyricsModel::ProgressColourRole).value<QColor>();
+                progressBaseColour = index.data(LyricsModel::ProgressBaseColourRole).value<QColor>();
+            }
+        }
+    }
+
+    const bool allChunksUseProgressBase = progressChunks.size() == wordRects.size();
     for(const auto& chunk : wordRects) {
         const auto& format = richText.blocks[chunk.blockIndex].format;
 
         painter->setFont(resolvedRichTextFont(format, option.font));
-        painter->setPen(resolvedRichTextColour(format, option.palette.color(QPalette::Text)));
+        painter->setPen((allChunksUseProgressBase || containsChunk(progressChunks, chunk))
+                                && progressBaseColour.isValid()
+                            ? progressBaseColour
+                            : resolvedRichTextColour(format, option.palette.color(QPalette::Text)));
 
         painter->drawText(chunk.rect, Qt::AlignLeft | Qt::AlignVCenter, chunk.text);
     }
+
+    drawProgressOverlay(painter, option, richText, progressChunks, progress, progressColour);
 
     painter->restore();
 }
@@ -273,11 +414,7 @@ QSize LyricsDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelI
         return {viewWidth, fm.height() + lineSpacing};
     }
 
-    const QRect boundingRect{0, 0, availableWidth, 10000};
-
-    std::vector<LaidOutChunk> wordRects;
-    int totalHeight{0};
-    calculateWordRects(index, boundingRect, option.font, wordRects, totalHeight);
+    int totalHeight = layoutForIndex(index, availableWidth, option.font).totalHeight;
 
     // Ensure minimum height
     if(totalHeight <= 0) {
@@ -302,13 +439,10 @@ int LyricsDelegate::wordIndexAt(const QModelIndex& index, const QPoint& pos, con
 
     const QRect contentRect = opt.rect.adjusted(margins.left(), 0, -margins.right(), 0);
 
-    std::vector<LaidOutChunk> wordRects;
-    int totalHeight{0};
-
-    calculateWordRects(index, contentRect, opt.font, wordRects, totalHeight);
+    std::vector<LaidOutChunk> wordRects{layoutForIndex(index, contentRect.width(), opt.font).chunks};
 
     for(auto& chunk : wordRects) {
-        chunk.rect.translate(0, opt.rect.top());
+        chunk.rect.translate(contentRect.left(), opt.rect.top());
     }
 
     for(const auto& chunk : wordRects) {

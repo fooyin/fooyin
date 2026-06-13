@@ -21,6 +21,12 @@
 
 #include <QStyledItemDelegate>
 
+#include <QFont>
+#include <QRect>
+#include <QString>
+
+#include <vector>
+
 namespace Fooyin {
 class SettingsManager;
 
@@ -36,6 +42,31 @@ public:
     [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
     [[nodiscard]] int wordIndexAt(const QModelIndex& index, const QPoint& pos, const QRect& idxRect) const;
+
+    void clearLayoutCache();
+
+    struct LaidOutChunk
+    {
+        QRect rect;
+        int blockIndex{0};
+        QString text;
+    };
+
+    struct CachedLayout
+    {
+        int row{-1};
+        QFont font;
+        int width{0};
+        std::vector<LaidOutChunk> chunks;
+        int totalHeight{0};
+        uint64_t lastUsed{0};
+    };
+
+private:
+    [[nodiscard]] const CachedLayout& layoutForIndex(const QModelIndex& index, int width, const QFont& font) const;
+
+    mutable std::vector<CachedLayout> m_layoutCache;
+    mutable uint64_t m_layoutCacheUseCounter{0};
 };
 } // namespace Lyrics
 } // namespace Fooyin

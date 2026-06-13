@@ -81,6 +81,7 @@ public:
         int lineSpacing{5};
         bool centreFirstSyncedLine{false};
         bool centreLastSyncedLine{true};
+        int progressMode{static_cast<int>(ProgressMode::Off)};
         QMargins margins{Defaults::margins()};
         QVariant colours;
         QString baseFont;
