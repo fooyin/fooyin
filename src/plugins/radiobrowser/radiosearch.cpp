@@ -45,6 +45,8 @@
 using namespace Qt::StringLiterals;
 
 constexpr auto ShowFilterTextKey = "ShowFilterText"_L1;
+constexpr auto RetryCategoryData = "__radio_browser_retry_category__"_L1;
+constexpr int RetryCategoryRole  = Qt::UserRole + 1;
 
 namespace Fooyin::RadioBrowser {
 namespace {
@@ -199,22 +201,34 @@ RadioSearch::RadioSearch(SettingsManager* settings, QWidget* parent)
         setState(state, true);
     });
     QObject::connect(m_popupCountryCombo, &QComboBox::currentIndexChanged, this, [this]() {
-        auto state        = m_state;
+        if(handleCategoryRetry(m_popupCountryCombo, RadioCategoryType::Country)) {
+            return;
+        }
+
+        auto state{m_state};
         state.countryCode = m_popupCountryCombo->currentData().toString();
         setState(state, true);
     });
     QObject::connect(m_popupGenreCombo, &QComboBox::currentIndexChanged, this, [this]() {
-        auto state     = m_state;
+        auto state{m_state};
         state.genreTag = m_popupGenreCombo->currentData().toString();
         setState(state, true);
     });
     QObject::connect(m_popupTagCombo, &QComboBox::currentIndexChanged, this, [this]() {
+        if(handleCategoryRetry(m_popupTagCombo, RadioCategoryType::Tag)) {
+            return;
+        }
+
         auto state{m_state};
         state.tag = m_popupTagCombo->currentData().toString();
         setState(state, true);
     });
     QObject::connect(m_popupCodecCombo, &QComboBox::currentIndexChanged, this, [this]() {
-        auto state  = m_state;
+        if(handleCategoryRetry(m_popupCodecCombo, RadioCategoryType::Codec)) {
+            return;
+        }
+
+        auto state{m_state};
         state.codec = m_popupCodecCombo->currentData().toString();
         setState(state, true);
     });
@@ -353,6 +367,30 @@ void RadioSearch::setCodecCategories(const RadioCategoryList& categories)
     setCategories(m_popupCodecCombo, m_codecCombo, tr("Any codec"), categories, FilterControl::Codec);
 }
 
+void RadioSearch::setCountryCategoriesFailed(const QString& error)
+{
+    setCategoriesFailed(m_popupCountryCombo, m_countryCombo, tr("Any country"),
+                        error.isEmpty() ? tr("Countries unavailable - select to retry")
+                                        : tr("Countries unavailable: %1 - select to retry").arg(error),
+                        FilterControl::Country);
+}
+
+void RadioSearch::setTagCategoriesFailed(const QString& error)
+{
+    setCategoriesFailed(m_popupTagCombo, m_tagCombo, tr("Any tag"),
+                        error.isEmpty() ? tr("Tags unavailable - select to retry")
+                                        : tr("Tags unavailable: %1 - select to retry").arg(error),
+                        FilterControl::Tag);
+}
+
+void RadioSearch::setCodecCategoriesFailed(const QString& error)
+{
+    setCategoriesFailed(m_popupCodecCombo, m_codecCombo, tr("Any codec"),
+                        error.isEmpty() ? tr("Codecs unavailable - select to retry")
+                                        : tr("Codecs unavailable: %1 - select to retry").arg(error),
+                        FilterControl::Codec);
+}
+
 QString RadioSearch::countryName(const QString& countryCode) const
 {
     const int index = m_popupCountryCombo->findData(countryCode.trimmed());
@@ -448,6 +486,44 @@ void RadioSearch::setCategories(ExpandingComboBox* popupCombo, ExpandingComboBox
 
     renderControlFromState(control);
     updateFilterButton();
+}
+
+void RadioSearch::setCategoriesFailed(ExpandingComboBox* popupCombo, ExpandingComboBox* pinnedCombo,
+                                      const QString& anyLabel, const QString& failureLabel, FilterControl control)
+{
+    const QSignalBlocker popupBlocker{popupCombo};
+    std::optional<QSignalBlocker> pinnedBlocker;
+    if(pinnedCombo) {
+        pinnedBlocker.emplace(pinnedCombo);
+    }
+
+    std::vector combos{popupCombo};
+    if(pinnedCombo) {
+        combos.push_back(pinnedCombo);
+    }
+
+    for(auto* combo : combos) {
+        combo->clear();
+        combo->addItem(anyLabel, QString{});
+        combo->addItem(failureLabel, QString{});
+        combo->setItemData(1, RetryCategoryData, RetryCategoryRole);
+        combo->resizeDropDown();
+    }
+
+    renderControlFromState(control);
+    updateFilterButton();
+}
+
+bool RadioSearch::handleCategoryRetry(QComboBox* combo, const RadioCategoryType type)
+{
+    if(!combo || combo->itemData(combo->currentIndex(), RetryCategoryRole).toString() != RetryCategoryData) {
+        return false;
+    }
+
+    const QSignalBlocker blocker{combo};
+    combo->setCurrentIndex(0);
+    Q_EMIT categoryRetryRequested(type);
+    return true;
 }
 
 void RadioSearch::populateGenreCombo()
@@ -773,6 +849,7 @@ void RadioSearch::ensurePinnedControls(FilterControl control)
         target->clear();
         for(int i{0}; i < source->count(); ++i) {
             target->addItem(source->itemIcon(i), source->itemText(i), source->itemData(i));
+            target->setItemData(i, source->itemData(i, RetryCategoryRole), RetryCategoryRole);
         }
     };
 
@@ -795,6 +872,10 @@ void RadioSearch::ensurePinnedControls(FilterControl control)
             updateFilterComboWidth(m_countryCombo);
 
             QObject::connect(m_countryCombo, &QComboBox::currentIndexChanged, this, [this]() {
+                if(handleCategoryRetry(m_countryCombo, RadioCategoryType::Country)) {
+                    return;
+                }
+
                 auto state{m_state};
                 state.countryCode = m_countryCombo->currentData().toString();
                 setState(state, true);
@@ -831,6 +912,10 @@ void RadioSearch::ensurePinnedControls(FilterControl control)
             updateFilterComboWidth(m_tagCombo);
 
             QObject::connect(m_tagCombo, &QComboBox::currentIndexChanged, this, [this]() {
+                if(handleCategoryRetry(m_tagCombo, RadioCategoryType::Tag)) {
+                    return;
+                }
+
                 auto state{m_state};
                 state.tag = m_tagCombo->currentData().toString();
                 setState(state, true);
@@ -855,6 +940,10 @@ void RadioSearch::ensurePinnedControls(FilterControl control)
             updateFilterComboWidth(m_codecCombo);
 
             QObject::connect(m_codecCombo, &QComboBox::currentIndexChanged, this, [this]() {
+                if(handleCategoryRetry(m_codecCombo, RadioCategoryType::Codec)) {
+                    return;
+                }
+
                 auto state{m_state};
                 state.codec = m_codecCombo->currentData().toString();
                 setState(state, true);

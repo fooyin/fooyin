@@ -27,6 +27,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonParseError>
+#include <QLoggingCategory>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QRandomGenerator>
@@ -38,8 +39,11 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr auto ApiSrvRecord = "_api._tcp.radio-browser.info"_L1;
-constexpr auto Limit        = 100;
+Q_LOGGING_CATEGORY(RADIO_BROWSER, "fooyin.radiobrowser")
+
+constexpr auto ApiSrvRecord         = "_api._tcp.radio-browser.info"_L1;
+constexpr auto Limit                = 100;
+constexpr auto ApiTransferTimeoutMs = 10'000;
 
 constexpr std::array FallbackApiBases{
     "https://de1.api.radio-browser.info",
@@ -177,6 +181,24 @@ RadioStationList stationsFromJsonArray(const QJsonArray& array)
     }
 
     return stations;
+}
+
+QString replyFailureDescription(QNetworkReply* reply, const QString& fallbackError)
+{
+    if(!reply) {
+        return fallbackError;
+    }
+
+    const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    QString error    = fallbackError.isEmpty() ? reply->errorString() : fallbackError;
+    if(error.isEmpty()) {
+        error = RadioBrowserService::tr("Unknown error");
+    }
+
+    if(status > 0) {
+        return u"HTTP %1, %2 (%3)"_s.arg(status).arg(error).arg(reply->error());
+    }
+    return u"%1 (%2)"_s.arg(error).arg(reply->error());
 }
 } // namespace
 
@@ -345,7 +367,7 @@ void RadioBrowserService::startSearchRequest(const RadioSearchRequest& request, 
     m_stationRequest      = std::move(context);
 
     QNetworkRequest networkRequest = makeNetworkRequest(buildSearchUrl(request, normalisedIndex));
-    networkRequest.setHeader(QNetworkRequest::ContentTypeHeader, u"application/json"_s);
+    networkRequest.setTransferTimeout(ApiTransferTimeoutMs);
 
     m_reply = m_network->get(networkRequest);
     QObject::connect(m_reply, &QNetworkReply::finished, this, &RadioBrowserService::handleReply);
@@ -371,7 +393,7 @@ void RadioBrowserService::startEndpointRequest(const QString& path, int limit, i
     m_stationRequest     = std::move(context);
 
     QNetworkRequest request = makeNetworkRequest(buildStationsEndpointUrl(path, limit, offset, normalisedIndex));
-    request.setHeader(QNetworkRequest::ContentTypeHeader, u"application/json"_s);
+    request.setTransferTimeout(ApiTransferTimeoutMs);
 
     m_reply = m_network->get(request);
     QObject::connect(m_reply, &QNetworkReply::finished, this, &RadioBrowserService::handleReply);
@@ -394,7 +416,7 @@ void RadioBrowserService::startCategoryRequest(RadioCategoryType type, int apiIn
     m_categoryRequests[type] = context;
 
     QNetworkRequest request = makeNetworkRequest(buildCategoryUrl(type, normalisedIndex));
-    request.setHeader(QNetworkRequest::ContentTypeHeader, u"application/json"_s);
+    request.setTransferTimeout(ApiTransferTimeoutMs);
 
     const QPointer<QNetworkReply> reply = m_network->get(request);
     m_categoryReplies[type]             = reply;
@@ -416,7 +438,7 @@ void RadioBrowserService::startStationLookupRequest(const StationLookupRequestCo
     QNetworkRequest networkRequest
         = makeNetworkRequest(request.url.isEmpty() ? buildStationLookupUrl(request.uuids, request.apiIndex)
                                                    : buildStationUrlLookupUrl(request.url, request.apiIndex));
-    networkRequest.setHeader(QNetworkRequest::ContentTypeHeader, u"application/json"_s);
+    networkRequest.setTransferTimeout(ApiTransferTimeoutMs);
 
     m_lookupReply = m_network->get(networkRequest);
     QObject::connect(m_lookupReply, &QNetworkReply::finished, this, &RadioBrowserService::handleStationLookupReply);
@@ -424,8 +446,9 @@ void RadioBrowserService::startStationLookupRequest(const StationLookupRequestCo
 
 void RadioBrowserService::startClickRequest(const QString& stationUuid)
 {
-    const QNetworkRequest request = makeNetworkRequest(buildClickUrl(stationUuid));
-    m_clickReply                  = m_network->get(request);
+    QNetworkRequest request = makeNetworkRequest(buildClickUrl(stationUuid));
+    request.setTransferTimeout(ApiTransferTimeoutMs);
+    m_clickReply = m_network->get(request);
     QObject::connect(m_clickReply, &QNetworkReply::finished, this, [this]() {
         if(m_clickReply) {
             m_clickReply->deleteLater();
@@ -569,11 +592,16 @@ void RadioBrowserService::handleReply()
     }
 
     if(m_reply->error() != QNetworkReply::NoError) {
-        const QString error = m_reply->errorString();
+        const QString error   = m_reply->errorString();
+        const QString failure = replyFailureDescription(m_reply, error);
         m_reply->deleteLater();
         m_reply = nullptr;
         if(!retryStationRequest()) {
             const QString requestText = stationRequestText();
+            qCWarning(RADIO_BROWSER) << "Radio Browser station request failed:"
+                                     << "request=" << requestText
+                                     << "attempts=" << (m_stationRequest ? m_stationRequest->attempts : 0)
+                                     << "error=" << failure;
             m_stationRequest.reset();
             Q_EMIT searchFailed(requestText, error);
         }
@@ -589,15 +617,25 @@ void RadioBrowserService::handleReply()
     QJsonParseError parseError;
     const QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
     if(parseError.error != QJsonParseError::NoError || !doc.isArray()) {
-        const QString requestText = stationRequestText();
-        m_stationRequest.reset();
+        const QString error = parseError.error != QJsonParseError::NoError ? parseError.errorString()
+                                                                           : tr("Unexpected response format.");
         m_reply->deleteLater();
         m_reply = nullptr;
+        if(retryStationRequest()) {
+            return;
+        }
+
+        const QString requestText = stationRequestText();
+        qCWarning(RADIO_BROWSER) << "Radio Browser station response parse failed:"
+                                 << "request=" << requestText
+                                 << "attempts=" << (m_stationRequest ? m_stationRequest->attempts : 0)
+                                 << "error=" << error;
+        m_stationRequest.reset();
         Q_EMIT searchFailed(requestText, tr("Failed to parse station data."));
         return;
     }
 
-    RadioStationList stations = stationsFromJsonArray(doc.array());
+    const RadioStationList stations = stationsFromJsonArray(doc.array());
 
     m_reply->deleteLater();
     m_reply = nullptr;
@@ -614,11 +652,16 @@ void RadioBrowserService::handleStationLookupReply()
     }
 
     if(m_lookupReply->error() != QNetworkReply::NoError) {
-        const QString error = m_lookupReply->errorString();
+        const QString error   = m_lookupReply->errorString();
+        const QString failure = replyFailureDescription(m_lookupReply, error);
         m_lookupReply->deleteLater();
         m_lookupReply = nullptr;
         if(!retryStationLookupRequest()) {
             const int requestId = m_lookupRequest ? m_lookupRequest->requestId : 0;
+            qCWarning(RADIO_BROWSER) << "Radio Browser station lookup failed:"
+                                     << "requestId=" << requestId
+                                     << "attempts=" << (m_lookupRequest ? m_lookupRequest->attempts : 0)
+                                     << "error=" << failure;
             m_lookupRequest.reset();
             Q_EMIT stationLookupFailed(requestId, error);
         }
@@ -631,19 +674,28 @@ void RadioBrowserService::handleStationLookupReply()
     QJsonParseError parseError;
     const QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
     if(parseError.error != QJsonParseError::NoError || !doc.isArray()) {
-        const int requestId = m_lookupRequest->requestId;
-        m_lookupRequest.reset();
+        const QString error = parseError.error != QJsonParseError::NoError ? parseError.errorString()
+                                                                           : tr("Unexpected response format.");
         m_lookupReply->deleteLater();
         m_lookupReply = nullptr;
+        if(retryStationLookupRequest()) {
+            return;
+        }
+
+        const int requestId = m_lookupRequest->requestId;
+        qCWarning(RADIO_BROWSER) << "Radio Browser station lookup response parse failed:"
+                                 << "requestId=" << requestId << "attempts=" << m_lookupRequest->attempts
+                                 << "error=" << error;
+        m_lookupRequest.reset();
         Q_EMIT stationLookupFailed(requestId, tr("Failed to parse station data."));
         return;
     }
 
-    const int requestId        = m_lookupRequest->requestId;
-    RadioStationList stations  = stationsFromJsonArray(doc.array());
-    m_lookupRequest            = {};
-    QNetworkReply* lookupReply = m_lookupReply;
-    m_lookupReply              = nullptr;
+    const int requestId             = m_lookupRequest->requestId;
+    const RadioStationList stations = stationsFromJsonArray(doc.array());
+    m_lookupRequest                 = {};
+    QNetworkReply* lookupReply      = m_lookupReply;
+    m_lookupReply                   = nullptr;
     lookupReply->deleteLater();
     Q_EMIT stationLookupFinished(requestId, stations);
 }
@@ -678,11 +730,17 @@ void RadioBrowserService::handleCategoriesReply(const RadioCategoryType type)
     }
 
     if(reply->error() != QNetworkReply::NoError) {
-        const QString error = reply->errorString();
+        const QString error   = reply->errorString();
+        const QString failure = replyFailureDescription(reply, error);
         reply->deleteLater();
         m_categoryReplies.erase(type);
 
         if(!retryCategoryRequest(type)) {
+            const auto requestIt = m_categoryRequests.find(type);
+            qCWarning(RADIO_BROWSER) << "Radio Browser category request failed:"
+                                     << "type=" << static_cast<int>(type) << "attempts="
+                                     << (requestIt != m_categoryRequests.end() ? requestIt->second.attempts : 0)
+                                     << "error=" << failure;
             m_categoryRequests.erase(type);
             Q_EMIT categoriesFailed(type, error);
         }
@@ -699,9 +757,20 @@ void RadioBrowserService::handleCategoriesReply(const RadioCategoryType type)
     QJsonParseError parseError;
     const QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
     if(parseError.error != QJsonParseError::NoError || !doc.isArray()) {
-        m_categoryRequests.erase(type);
+        const QString error = parseError.error != QJsonParseError::NoError ? parseError.errorString()
+                                                                           : tr("Unexpected response format.");
         reply->deleteLater();
         m_categoryReplies.erase(type);
+        if(retryCategoryRequest(type)) {
+            return;
+        }
+
+        const auto requestIt = m_categoryRequests.find(type);
+        qCWarning(RADIO_BROWSER) << "Radio Browser category response parse failed:"
+                                 << "type=" << static_cast<int>(type) << "attempts="
+                                 << (requestIt != m_categoryRequests.end() ? requestIt->second.attempts : 0)
+                                 << "error=" << error;
+        m_categoryRequests.erase(type);
         Q_EMIT categoriesFailed(type, tr("Failed to parse category data."));
         return;
     }

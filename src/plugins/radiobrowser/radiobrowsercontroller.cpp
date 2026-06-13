@@ -729,11 +729,14 @@ void RadioBrowserController::handleSearchFailed(const QString& query, const QStr
     m_stationRequestMode   = StationRequestMode::Replace;
     m_canLoadMoreStations  = false;
 
-    if(requestMode == StationRequestMode::Replace) {
+    if(requestMode == StationRequestMode::Replace && m_stations.empty()) {
         m_stations.clear();
         Q_EMIT stationsChanged(m_stations, true);
     }
 
+    if(!error.isEmpty()) {
+        StatusEvent::post(tr("Failed to load radio browser stations: %1").arg(error));
+    }
     Q_EMIT searchFailed(query, error);
 }
 

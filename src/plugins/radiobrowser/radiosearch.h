@@ -66,6 +66,9 @@ public:
     void setCountryCategories(const RadioCategoryList& categories);
     void setTagCategories(const RadioCategoryList& categories);
     void setCodecCategories(const RadioCategoryList& categories);
+    void setCountryCategoriesFailed(const QString& error);
+    void setTagCategoriesFailed(const QString& error);
+    void setCodecCategoriesFailed(const QString& error);
     [[nodiscard]] QString countryName(const QString& countryCode) const;
     [[nodiscard]] QString tagName(const QString& tag) const;
 
@@ -78,6 +81,7 @@ public:
 
 Q_SIGNALS:
     void filterChanged();
+    void categoryRetryRequested(Fooyin::RadioBrowser::RadioCategoryType type);
     void saveSearchTriggered();
     void resetTriggered();
 
@@ -113,6 +117,10 @@ private:
 
     void setCategories(ExpandingComboBox* popupCombo, ExpandingComboBox* pinnedCombo, const QString& anyLabel,
                        const RadioCategoryList& categories, FilterControl control);
+    void setCategoriesFailed(ExpandingComboBox* popupCombo, ExpandingComboBox* pinnedCombo, const QString& anyLabel,
+                             const QString& failureLabel, FilterControl control);
+    bool handleCategoryRetry(QComboBox* combo, RadioCategoryType type);
+
     void populateGenreCombo();
     void populateTagCombo();
 

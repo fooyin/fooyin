@@ -126,9 +126,10 @@ private:
     void handleStationsChanged(const RadioStationList& stations, bool reset);
     void handleSavedStationsBrowsingChanged(bool browsing);
     void handleCategoriesChanged(RadioCategoryType type, const RadioCategoryList& categories);
+    void handleCategoriesFailed(RadioCategoryType type, const QString& error);
     void handleSearchRequestActivated(const RadioSearchRequest& request);
     void handleSortRequested(int column, Qt::SortOrder order);
-    void handleSearchFailed();
+    void handleSearchFailed(const QString& query, const QString& error);
     void handleStationActionFailed(QObject* context, const RadioStation& station, const QString& error);
     void handleFilterChanged();
     void handleSaveSearchTriggered();
@@ -138,6 +139,7 @@ private:
     void startInitialSearch();
     bool syncControllerBrowseState();
     void browseInitialSelection();
+    void retryCurrentSearch();
 
     void applyFilterSearch();
     void applyFilterSearch(bool updateLatestSearch);
@@ -257,6 +259,9 @@ private:
     RadioCategoryList m_countryCategories;
     RadioCategoryList m_tagCategories;
     RadioCategoryList m_codecCategories;
+    QString m_countryCategoryError;
+    QString m_tagCategoryError;
+    QString m_codecCategoryError;
     std::unordered_map<int, PendingTrackAction> m_pendingTrackActions;
     std::optional<RadioSavedSearch> m_currentSavedSearch;
 };

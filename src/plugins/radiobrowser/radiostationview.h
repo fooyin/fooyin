@@ -21,6 +21,7 @@
 
 #include <gui/widgets/expandedtreeview.h>
 
+class QPushButton;
 class QResizeEvent;
 
 namespace Fooyin {
@@ -40,21 +41,29 @@ public:
     void finaliseView(const QByteArray& headerState);
     void resetColumnsToDefault();
     void setEmptyText(const QString& text);
+    void setFailureText(const QString& text);
     void setLoading(bool loading);
     void setLoadingText(const QString& text);
 
 Q_SIGNALS:
     void displayChanged();
+    void retryRequested();
 
 protected:
     void changeEvent(QEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
 
 private:
+    void updateRetryButton();
+
     AutoHeaderView* m_header;
+    QPushButton* m_retryButton;
     QString m_emptyText;
+    QString m_failureText;
     QString m_loadingText;
     bool m_loading;
+    bool m_failed;
 };
 } // namespace RadioBrowser
 } // namespace Fooyin

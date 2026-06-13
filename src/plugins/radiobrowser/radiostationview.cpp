@@ -25,6 +25,8 @@
 
 #include <QPaintEvent>
 #include <QPainter>
+#include <QPushButton>
+#include <QResizeEvent>
 
 using namespace Qt::StringLiterals;
 
@@ -32,7 +34,9 @@ namespace Fooyin::RadioBrowser {
 RadioStationView::RadioStationView(QWidget* parent)
     : ExpandedTreeView{parent}
     , m_header{new AutoHeaderView(Qt::Horizontal, this)}
+    , m_retryButton{new QPushButton(tr("Retry"), viewport())}
     , m_loading{false}
+    , m_failed{false}
 {
     setHeader(m_header);
     setIconItemColumn(Station);
@@ -48,6 +52,9 @@ RadioStationView::RadioStationView(QWidget* parent)
     m_header->setFirstSectionMovable(false);
     m_header->setSectionsClickable(true);
     m_header->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    m_retryButton->hide();
+    QObject::connect(m_retryButton, &QPushButton::clicked, this, &RadioStationView::retryRequested);
 }
 
 AutoHeaderView* RadioStationView::stationHeader() const
@@ -88,9 +95,23 @@ void RadioStationView::setEmptyText(const QString& text)
     viewport()->update();
 }
 
+void RadioStationView::setFailureText(const QString& text)
+{
+    m_failureText = text;
+    m_failed      = !text.isEmpty();
+    m_loading     = false;
+    updateRetryButton();
+    viewport()->update();
+}
+
 void RadioStationView::setLoading(const bool loading)
 {
     m_loading = loading;
+    if(loading) {
+        m_failed = false;
+        m_failureText.clear();
+    }
+    updateRetryButton();
     viewport()->update();
 }
 
@@ -117,21 +138,48 @@ void RadioStationView::changeEvent(QEvent* event)
 void RadioStationView::paintEvent(QPaintEvent* event)
 {
     if(model() && model()->rowCount(rootIndex()) > 0) {
+        updateRetryButton();
         ExpandedTreeView::paintEvent(event);
         return;
     }
 
+    updateRetryButton();
+
     QPainter painter{viewport()};
     painter.fillRect(viewport()->rect(), palette().brush(QPalette::Base));
 
-    const QString text = m_loading ? m_loadingText : m_emptyText;
+    const QString text = m_loading ? m_loadingText : m_failed ? m_failureText : m_emptyText;
     if(text.isEmpty()) {
         return;
     }
 
     QRect textRect = painter.fontMetrics().boundingRect(text);
     textRect.moveCenter(viewport()->rect().center());
+    if(m_failed && m_retryButton->isVisible()) {
+        textRect.moveCenter(QPoint{viewport()->rect().center().x(),
+                                   viewport()->rect().center().y() - (m_retryButton->height() / 2) - 8});
+    }
     painter.drawText(textRect, Qt::AlignCenter, text);
+}
+
+void RadioStationView::resizeEvent(QResizeEvent* event)
+{
+    ExpandedTreeView::resizeEvent(event);
+    updateRetryButton();
+}
+
+void RadioStationView::updateRetryButton()
+{
+    const bool visible = m_failed && model() && model()->rowCount(rootIndex()) == 0;
+    m_retryButton->setVisible(visible);
+    if(!visible) {
+        return;
+    }
+
+    const QSize size = m_retryButton->sizeHint();
+    const QRect rect = viewport()->rect();
+    const QPoint pos{rect.center().x() - (size.width() / 2), rect.center().y() + 12};
+    m_retryButton->setGeometry(QRect{pos, size});
 }
 
 void RadioStationView::clearSort()

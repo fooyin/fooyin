@@ -279,6 +279,7 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
                      &RadioBrowserWidget::updateIconColumnOrder);
     QObject::connect(m_resultsView, &ExpandedTreeView::viewModeChanged, this,
                      &RadioBrowserWidget::updateIconColumnOrder);
+    QObject::connect(m_resultsView, &RadioStationView::retryRequested, this, &RadioBrowserWidget::retryCurrentSearch);
     QObject::connect(m_resultsView->verticalScrollBar(), &QScrollBar::valueChanged, this,
                      &RadioBrowserWidget::scheduleVisibleIconRequest);
     QObject::connect(m_resultsView->verticalScrollBar(), &QScrollBar::valueChanged, this,
@@ -305,6 +306,8 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
                      &RadioBrowserWidget::handleSavedStationsBrowsingChanged);
     QObject::connect(m_controller, &RadioBrowserController::categoriesChanged, this,
                      &RadioBrowserWidget::handleCategoriesChanged);
+    QObject::connect(m_controller, &RadioBrowserController::categoriesFailed, this,
+                     &RadioBrowserWidget::handleCategoriesFailed);
     QObject::connect(m_controller, &RadioBrowserController::savedSearchesChanged, this,
                      &RadioBrowserWidget::updateSavedSearchState);
     QObject::connect(m_controller, &RadioBrowserController::savedStationsChanged, m_model,
@@ -598,6 +601,8 @@ void RadioBrowserWidget::connectFilterBar(RadioSearch* filterBar)
     }
 
     QObject::connect(m_filterBar, &RadioSearch::filterChanged, this, &RadioBrowserWidget::handleFilterChanged);
+    QObject::connect(m_filterBar, &RadioSearch::categoryRetryRequested, m_controller,
+                     &RadioBrowserController::fetchCategories);
     QObject::connect(m_filterBar, &RadioSearch::saveSearchTriggered, this,
                      &RadioBrowserWidget::handleSaveSearchTriggered);
     QObject::connect(m_filterBar, &RadioSearch::resetTriggered, this, &RadioBrowserWidget::resetFilters);
@@ -761,6 +766,7 @@ void RadioBrowserWidget::handleStationsReordered(const RadioStationList& station
 void RadioBrowserWidget::handleStationsChanged(const RadioStationList& stations, bool reset)
 {
     m_resultsView->setLoading(false);
+    m_resultsView->setFailureText({});
 
     if(reset) {
         m_model->setStations(stations);
@@ -814,12 +820,15 @@ void RadioBrowserWidget::handleCategoriesChanged(RadioCategoryType type, const R
 {
     if(type == RadioCategoryType::Country) {
         m_countryCategories = categories;
+        m_countryCategoryError.clear();
     }
     else if(type == RadioCategoryType::Tag) {
         m_tagCategories = categories;
+        m_tagCategoryError.clear();
     }
     else if(type == RadioCategoryType::Codec) {
         m_codecCategories = categories;
+        m_codecCategoryError.clear();
     }
     else {
         return;
@@ -827,6 +836,33 @@ void RadioBrowserWidget::handleCategoriesChanged(RadioCategoryType type, const R
 
     updateFilterBarCategories();
     updateSavedSearchState();
+}
+
+void RadioBrowserWidget::handleCategoriesFailed(RadioCategoryType type, const QString& error)
+{
+    if(type == RadioCategoryType::Country) {
+        m_countryCategoryError = error;
+    }
+    else if(type == RadioCategoryType::Tag) {
+        m_tagCategoryError = error;
+    }
+    else if(type == RadioCategoryType::Codec) {
+        m_codecCategoryError = error;
+    }
+
+    if(!m_filterBar) {
+        return;
+    }
+
+    if(type == RadioCategoryType::Country && m_countryCategories.empty()) {
+        m_filterBar->setCountryCategoriesFailed(error);
+    }
+    else if(type == RadioCategoryType::Tag && m_tagCategories.empty()) {
+        m_filterBar->setTagCategoriesFailed(error);
+    }
+    else if(type == RadioCategoryType::Codec && m_codecCategories.empty()) {
+        m_filterBar->setCodecCategoriesFailed(error);
+    }
 }
 
 void RadioBrowserWidget::handleSearchRequestActivated(const RadioSearchRequest& request)
@@ -857,10 +893,11 @@ void RadioBrowserWidget::handleSortRequested(const int column, const Qt::SortOrd
     m_controller->sortCurrentStations(apiOrder, reverse);
 }
 
-void RadioBrowserWidget::handleSearchFailed()
+void RadioBrowserWidget::handleSearchFailed(const QString&, const QString& error)
 {
     m_resultsView->setLoading(false);
-    m_resultsView->setEmptyText(tr("No stations found"));
+    m_resultsView->setFailureText(error.isEmpty() ? tr("Failed to load stations.")
+                                                  : tr("Failed to load stations: %1").arg(error));
 }
 
 void RadioBrowserWidget::handleStationActionFailed(QObject* context, const RadioStation& station, const QString& error)
@@ -964,6 +1001,20 @@ bool RadioBrowserWidget::syncControllerBrowseState()
 void RadioBrowserWidget::browseInitialSelection()
 {
     m_controller->fetchTopVoted();
+}
+
+void RadioBrowserWidget::retryCurrentSearch()
+{
+    if(m_controller->stationRequestActive()) {
+        return;
+    }
+
+    if(m_controller->hasActivatedBrowse()) {
+        m_controller->searchStations(m_controller->currentRequest());
+        return;
+    }
+
+    startInitialSearch();
 }
 
 void RadioBrowserWidget::applyFilterSearch()
@@ -1964,11 +2015,20 @@ void RadioBrowserWidget::updateFilterBarCategories()
     if(!m_countryCategories.empty()) {
         m_filterBar->setCountryCategories(m_countryCategories);
     }
+    else if(!m_countryCategoryError.isEmpty()) {
+        m_filterBar->setCountryCategoriesFailed(m_countryCategoryError);
+    }
     if(!m_tagCategories.empty()) {
         m_filterBar->setTagCategories(m_tagCategories);
     }
+    else if(!m_tagCategoryError.isEmpty()) {
+        m_filterBar->setTagCategoriesFailed(m_tagCategoryError);
+    }
     if(!m_codecCategories.empty()) {
         m_filterBar->setCodecCategories(m_codecCategories);
+    }
+    else if(!m_codecCategoryError.isEmpty()) {
+        m_filterBar->setCodecCategoriesFailed(m_codecCategoryError);
     }
 }
 
