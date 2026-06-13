@@ -225,6 +225,7 @@ private:
     [[nodiscard]] int adjustedCrossfadePrefillMs(int requestedMs) const;
     void cancelAllFades();
     void cancelFadesForReinit();
+    void interruptTransportFade();
     void reinitOutputForCurrentFormat();
     void applyFadeResult(const FadeController::FadeResult& result);
     void beginAudiblePauseCompletion(uint64_t transportTransitionId);

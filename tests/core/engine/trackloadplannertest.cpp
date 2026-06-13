@@ -58,6 +58,24 @@ TEST(TrackLoadPlannerTest, PrefersManualFadeDeferForManualChange)
     EXPECT_FALSE(plan.tryAutoTransition);
 }
 
+TEST(TrackLoadPlannerTest, PendingTransportFadeBlocksManualFadeDefer)
+{
+    const TrackLoadContext context{
+        .manualChange                = true,
+        .isPlaying                   = true,
+        .decoderValid                = true,
+        .hasPendingTransportFade     = true,
+        .isContiguousSameFileSegment = false,
+    };
+
+    const LoadPlan plan = planTrackLoad(context);
+
+    EXPECT_EQ(plan.firstStrategy, LoadStrategy::FullReinit);
+    EXPECT_FALSE(plan.trySegmentSwitch);
+    EXPECT_FALSE(plan.tryManualFadeDefer);
+    EXPECT_FALSE(plan.tryAutoTransition);
+}
+
 TEST(TrackLoadPlannerTest, PrefersAutoTransitionWhenEligible)
 {
     const TrackLoadContext context{

@@ -499,6 +499,10 @@ void AudioEngine::loadTrack(const Engine::PlaybackItem& item, bool manualChange)
     clearPendingAudiblePause();
     m_pausedStreamSuspended = false;
 
+    if(manualChange) {
+        interruptTransportFade();
+    }
+
     const Track& track = item.track;
     if(manualChange) {
         m_pendingManualTrackItemId = 0;
@@ -1000,6 +1004,15 @@ void AudioEngine::play()
 
     if(playAction == PlaybackAction::NoOp) {
         return;
+    }
+
+    const bool interruptedTransportFade = isFadingTransport(m_phase);
+    if(playAction == PlaybackAction::Continue && !interruptedTransportFade && !m_fadeController.hasPendingFade()) {
+        return;
+    }
+
+    if(interruptedTransportFade) {
+        clearTransportTransition();
     }
 
     if(m_pausedStreamSuspended) {
@@ -2082,6 +2095,31 @@ void AudioEngine::cancelAllFades()
 void AudioEngine::cancelFadesForReinit()
 {
     m_fadeController.cancelForReinit(m_fadingValues.pause.curve);
+}
+
+void AudioEngine::interruptTransportFade()
+{
+    const FadeState fadeState = m_fadeController.state();
+    if(!isFadingTransport(m_phase) && fadeState != FadeState::FadingToPause && fadeState != FadeState::FadingToStop) {
+        return;
+    }
+
+    const Engine::FadeSpec& fadeSpec
+        = fadeState == FadeState::FadingToStop ? m_fadingValues.stop : m_fadingValues.pause;
+    const bool canFadeIn = m_fadingEnabled && fadeSpec.effectiveInMs() > 0;
+
+    clearTransportTransition();
+
+    if(canFadeIn) {
+        m_fadeController.invalidateActiveFade();
+    }
+    else {
+        cancelAllFades();
+    }
+
+    if(hasPlaybackState(Engine::PlaybackState::Playing)) {
+        setPhase(Playback::Phase::Playing, PhaseChangeReason::PlaybackStatePlaying);
+    }
 }
 
 void AudioEngine::reconfigureActiveStreamBuffering(uint64_t positionMs)
@@ -5129,7 +5167,9 @@ void AudioEngine::executeFullReinitLoad(const Engine::PlaybackItem& item, bool m
 
     updateTrackStatus(Engine::TrackStatus::Loaded);
 
-    if(prevState == Engine::PlaybackState::Playing
+    const bool manualTransportFadeInterrupted = manualChange && preserveTransportFade;
+
+    if(prevState == Engine::PlaybackState::Playing && !manualTransportFadeInterrupted
        && (m_pipeline.faderIsFading() || m_fadeController.hasPendingFade())) {
         m_fadeController.setFadeOnNext(true);
     }
