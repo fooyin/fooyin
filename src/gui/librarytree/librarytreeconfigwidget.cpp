@@ -172,32 +172,12 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     mainLayout->setColumnStretch(0, 1);
     mainLayout->setRowStretch(0, 1);
 
-    auto addTrackAction = [](QComboBox* box, const QString& text, TrackAction action) {
-        box->addItem(text, static_cast<int>(action));
-    };
+    TrackSelectionController::addAction(m_doubleClick, tr("Expand/collapse"), TrackAction::None);
+    TrackSelectionController::addAction(m_doubleClick, tr("Expand/collapse or play"), TrackAction::Play);
+    TrackSelectionController::addStandardActions(m_doubleClick);
 
-    addTrackAction(m_doubleClick, tr("Expand/collapse"), TrackAction::None);
-    addTrackAction(m_doubleClick, tr("Expand/collapse or play"), TrackAction::Play);
-    addTrackAction(m_doubleClick, tr("Add to current playlist"), TrackAction::AddCurrentPlaylist);
-    addTrackAction(m_doubleClick, tr("Add to current playlist and play if stopped"),
-                   TrackAction::AddCurrentPlaylistAndPlayIfStopped);
-    addTrackAction(m_doubleClick, tr("Add to active playlist"), TrackAction::AddActivePlaylist);
-    addTrackAction(m_doubleClick, tr("Replace current playlist"), TrackAction::SendCurrentPlaylist);
-    addTrackAction(m_doubleClick, tr("Create new playlist"), TrackAction::SendNewPlaylist);
-    addTrackAction(m_doubleClick, tr("Add to playback queue"), TrackAction::AddToQueue);
-    addTrackAction(m_doubleClick, tr("Add to front of playback queue"), TrackAction::QueueNext);
-    addTrackAction(m_doubleClick, tr("Replace playback queue"), TrackAction::SendToQueue);
-
-    addTrackAction(m_middleClick, tr("None"), TrackAction::None);
-    addTrackAction(m_middleClick, tr("Add to current playlist"), TrackAction::AddCurrentPlaylist);
-    addTrackAction(m_middleClick, tr("Add to current playlist and play if stopped"),
-                   TrackAction::AddCurrentPlaylistAndPlayIfStopped);
-    addTrackAction(m_middleClick, tr("Add to active playlist"), TrackAction::AddActivePlaylist);
-    addTrackAction(m_middleClick, tr("Replace current playlist"), TrackAction::SendCurrentPlaylist);
-    addTrackAction(m_middleClick, tr("Create new playlist"), TrackAction::SendNewPlaylist);
-    addTrackAction(m_middleClick, tr("Add to playback queue"), TrackAction::AddToQueue);
-    addTrackAction(m_middleClick, tr("Add to front of playback queue"), TrackAction::QueueNext);
-    addTrackAction(m_middleClick, tr("Replace playback queue"), TrackAction::SendToQueue);
+    TrackSelectionController::addAction(m_middleClick, tr("None"), TrackAction::None);
+    TrackSelectionController::addStandardActions(m_middleClick);
 
     QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, m_rowHeight, &QWidget::setEnabled);
     QObject::connect(m_showSummaryNode, &QCheckBox::toggled, m_summaryNodeTitle, &QWidget::setEnabled);
@@ -239,13 +219,8 @@ LibraryTreeWidget::ConfigData LibraryTreeConfigDialog::config() const
 
 void LibraryTreeConfigDialog::setConfig(const LibraryTreeWidget::ConfigData& config)
 {
-    if(const int index = m_doubleClick->findData(config.doubleClickAction); index >= 0) {
-        m_doubleClick->setCurrentIndex(index);
-    }
-
-    if(const int index = m_middleClick->findData(config.middleClickAction); index >= 0) {
-        m_middleClick->setCurrentIndex(index);
-    }
+    TrackSelectionController::setCurrentAction(m_doubleClick, config.doubleClickAction);
+    TrackSelectionController::setCurrentAction(m_middleClick, config.middleClickAction);
 
     m_playbackOnSend->setChecked(config.sendPlayback);
     m_playlistEnabled->setChecked(config.playlistEnabled);

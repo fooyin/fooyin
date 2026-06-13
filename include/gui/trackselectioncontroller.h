@@ -30,6 +30,7 @@
 #include <optional>
 #include <vector>
 
+class QComboBox;
 class QMenu;
 
 namespace Fooyin {
@@ -84,6 +85,14 @@ struct FYGUI_EXPORT TrackContextMenuNodeInfo
     bool isSubmenu{false};
 };
 
+enum class ActionGroup : uint8_t
+{
+    Playlist = 1 << 0,
+    Queue    = 1 << 1,
+    All      = Playlist | Queue
+};
+Q_DECLARE_FLAGS(ActionGroups, ActionGroup)
+
 namespace PlaylistAction {
 enum ActionOption : uint8_t
 {
@@ -134,6 +143,10 @@ public:
                                             const Id& beforeId = {});
     [[nodiscard]] std::vector<TrackContextMenuNodeInfo> trackContextMenuNodes() const;
 
+    static void addAction(QComboBox* box, const QString& text, TrackAction action);
+    static void addStandardActions(QComboBox* box, ActionGroups groups = ActionGroup::All);
+    static bool setCurrentAction(QComboBox* box, int actionValue);
+
     void executeAction(TrackAction action, PlaylistAction::ActionOptions options = {},
                        const QString& playlistName = {});
 
@@ -154,4 +167,5 @@ private:
 };
 } // namespace Fooyin
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::ActionGroups)
 Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::PlaylistAction::ActionOptions)

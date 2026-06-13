@@ -41,6 +41,7 @@
 #include <QAction>
 #include <QApplication>
 #include <QClipboard>
+#include <QComboBox>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMainWindow>
@@ -1560,6 +1561,40 @@ std::vector<TrackContextMenuNodeInfo> TrackSelectionController::trackContextMenu
     p->appendNodeInfo(p->m_queueRoot, nodes);
     p->appendNodeInfo(p->m_trackRoot, nodes);
     return nodes;
+}
+
+void TrackSelectionController::addAction(QComboBox* box, const QString& text, TrackAction action)
+{
+    box->addItem(text, static_cast<int>(action));
+}
+
+void TrackSelectionController::addStandardActions(QComboBox* box, ActionGroups groups)
+{
+    if(groups.testFlag(ActionGroup::Playlist)) {
+        addAction(box, tr("Add to current playlist"), TrackAction::AddCurrentPlaylist);
+        addAction(box, tr("Add to current playlist and play if stopped"),
+                  TrackAction::AddCurrentPlaylistAndPlayIfStopped);
+        addAction(box, tr("Add to active playlist"), TrackAction::AddActivePlaylist);
+        addAction(box, tr("Replace current playlist"), TrackAction::SendCurrentPlaylist);
+        addAction(box, tr("Create new playlist"), TrackAction::SendNewPlaylist);
+    }
+
+    if(groups.testFlag(ActionGroup::Queue)) {
+        addAction(box, tr("Add to playback queue"), TrackAction::AddToQueue);
+        addAction(box, tr("Add to front of playback queue"), TrackAction::QueueNext);
+        addAction(box, tr("Replace playback queue"), TrackAction::SendToQueue);
+    }
+}
+
+bool TrackSelectionController::setCurrentAction(QComboBox* box, int actionValue)
+{
+    const int index = box->findData(actionValue);
+    if(index < 0) {
+        return false;
+    }
+
+    box->setCurrentIndex(index);
+    return true;
 }
 
 void TrackSelectionController::executeAction(TrackAction action, PlaylistAction::ActionOptions options,

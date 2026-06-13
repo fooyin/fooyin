@@ -36,17 +36,6 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
-namespace {
-using ActionIndexMap = std::map<int, int>;
-
-void addTrackAction(QComboBox* box, const QString& text, TrackAction action, ActionIndexMap& actionMap)
-{
-    const int actionValue = static_cast<int>(action);
-    actionMap.emplace(actionValue, box->count());
-    box->addItem(text, actionValue);
-}
-} // namespace
-
 class PlaylistGeneralPageWidget : public SettingsPageWidget
 {
     Q_OBJECT
@@ -133,17 +122,11 @@ void PlaylistGeneralPageWidget::load()
     m_preloadCount->setValue(m_settings->value<Settings::Gui::Internal::PlaylistTrackPreloadCount>());
     m_inlineTagEditing->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistInlineTagEditing>());
 
-    ActionIndexMap middleActions;
     m_middleClick->clear();
-    addTrackAction(m_middleClick, tr("None"), TrackAction::None, middleActions);
-    addTrackAction(m_middleClick, tr("Add to playback queue"), TrackAction::AddToQueue, middleActions);
-    addTrackAction(m_middleClick, tr("Add to front of playback queue"), TrackAction::QueueNext, middleActions);
-    addTrackAction(m_middleClick, tr("Replace playback queue"), TrackAction::SendToQueue, middleActions);
-
-    const auto middleAction = m_settings->value<Settings::Gui::Internal::PlaylistMiddleClick>();
-    if(middleActions.contains(middleAction)) {
-        m_middleClick->setCurrentIndex(middleActions.at(middleAction));
-    }
+    TrackSelectionController::addAction(m_middleClick, tr("None"), TrackAction::None);
+    TrackSelectionController::addStandardActions(m_middleClick, ActionGroup::Queue);
+    TrackSelectionController::setCurrentAction(m_middleClick,
+                                               m_settings->value<Settings::Gui::Internal::PlaylistMiddleClick>());
 
     m_skipMissing->setChecked(m_settings->value<Settings::Core::PlaylistSkipMissing>());
     m_ignoreFolderPlaylists->setChecked(m_settings->value<Settings::Core::AddFoldersIgnorePlaylists>());
