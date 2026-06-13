@@ -87,6 +87,7 @@ public:
             bool showIcons{true};
             bool showSavedStationIcons{true};
             bool showToolTips{true};
+            bool separateSavedStationsViewState{false};
             int rowHeight{0};
             QSize iconSize{36, 36};
             int iconHorizontalGap{-1};
@@ -110,6 +111,8 @@ public:
     void applyConfig(const ConfigData& config);
     [[nodiscard]] bool sendClicks() const;
     void setSendClicks(bool enabled);
+    [[nodiscard]] bool separateSavedStationsViewStateAllowed() const;
+    void setSeparateSavedStationsViewStateAllowed(bool allowed);
 
 protected:
     void showEvent(QShowEvent* event) override;
@@ -178,6 +181,8 @@ private:
     void addColumnsMenu(QMenu* menu);
     void addDisplayMenu(QMenu* menu);
 
+    void saveCurrentViewState();
+    void applyActiveViewState();
     void setViewConfig(const ConfigData::ViewConfig& config);
     void updateIconColumnOrder();
     void disconnectFilterBar();
@@ -205,6 +210,13 @@ private:
         Toggleable
     };
 
+    struct ViewState
+    {
+        ExpandedTreeView::ViewMode viewMode{ExpandedTreeView::ViewMode::Tree};
+        ExpandedTreeView::CaptionDisplay captions{ExpandedTreeView::CaptionDisplay::Right};
+        QByteArray headerState;
+    };
+
     RadioBrowserController* m_controller;
     ActionManager* m_actionManager;
     TrackSelectionController* m_trackSelection;
@@ -225,7 +237,8 @@ private:
 
     ConfigData m_config;
     ConfigData::ViewConfig m_viewConfig;
-    QByteArray m_headerState;
+    ViewState m_browseViewState;
+    ViewState m_savedStationsViewState;
     int m_doubleClickAction;
     int m_middleClickAction;
     bool m_playbackOnSend;
@@ -235,6 +248,8 @@ private:
     bool m_loadingLayout;
     InitialSearchState m_initialSearchState;
     FilterBarMode m_filterBarMode;
+    bool m_separateSavedStationsViewStateAllowed;
+    bool m_browsingSavedStations;
     bool m_visibleIconRequestPending;
     RadioSearchRequest m_filterRequest;
     RadioCategoryList m_countryCategories;

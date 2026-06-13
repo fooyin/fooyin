@@ -68,6 +68,8 @@ RadioBrowserDialog::RadioBrowserDialog(std::shared_ptr<NetworkAccessManager> net
 
     m_savedStationsWidget->setApplySearchOnLoad(false);
     m_savedStationsWidget->setFilterBarAllowed(false);
+    m_searchWidget->setSeparateSavedStationsViewStateAllowed(false);
+    m_savedStationsWidget->setSeparateSavedStationsViewStateAllowed(false);
     m_searchWidget->setFilterBarToggleAllowed(false);
     m_searchWidget->connectFilterBar(m_searchFilterBar);
 

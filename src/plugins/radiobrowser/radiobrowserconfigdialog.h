@@ -49,6 +49,7 @@ private:
     QCheckBox* m_sendClicks;
     QCheckBox* m_showSavedStationIcons;
     QCheckBox* m_showToolTips;
+    QCheckBox* m_separateSavedStationsViewState;
     QCheckBox* m_overrideRowHeight;
     QSpinBox* m_rowHeight;
     QSpinBox* m_iconSize;
