@@ -162,6 +162,19 @@ void RadioStationView::paintEvent(QPaintEvent* event)
     painter.drawText(textRect, Qt::AlignCenter, text);
 }
 
+void RadioStationView::keyPressEvent(QKeyEvent* event)
+{
+    const auto key = event->key();
+    if(key == Qt::Key_Enter || key == Qt::Key_Return) {
+        const auto indexes = selectionModel()->selectedRows();
+        if(!indexes.empty()) {
+            Q_EMIT doubleClicked(indexes.front());
+        }
+    }
+
+    ExpandedTreeView::keyPressEvent(event);
+}
+
 void RadioStationView::resizeEvent(QResizeEvent* event)
 {
     ExpandedTreeView::resizeEvent(event);

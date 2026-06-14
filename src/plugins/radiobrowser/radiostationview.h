@@ -52,6 +52,7 @@ Q_SIGNALS:
 protected:
     void changeEvent(QEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
 
 private:
