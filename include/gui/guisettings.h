@@ -87,6 +87,9 @@ enum GuiSettings : uint32_t
     RatingHalfStarSymbol       = 30 | Type::String,
     RatingEmptyStarSymbol      = 31 | Type::String,
     SeekBarMouseFocus          = 32 | Type::Bool,
+    PlaylistIntegratedSearch   = 33 | Type::Bool,
+    PlaylistSearchMode         = 34 | Type::Int,
+    PlaylistSearchScript       = 35 | Type::String,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Settings::Gui

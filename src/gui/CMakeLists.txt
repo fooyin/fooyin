@@ -257,6 +257,8 @@ set(SOURCES
     playlist/playlistitem.h
     playlist/playlistitemmodels.cpp
     playlist/playlistitemmodels.h
+    playlist/playlistsearchcontroller.cpp
+    playlist/playlistsearchcontroller.h
     playlist/playlistmodel.cpp
     playlist/playlistmodel.h
     playlist/playlistpopulator.cpp

@@ -23,7 +23,9 @@
 
 #include <core/coresettings.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
@@ -56,6 +58,9 @@ private:
     QCheckBox* m_skipMissing;
     QCheckBox* m_ignoreFolderPlaylists;
     QCheckBox* m_preventDuplicates;
+    QCheckBox* m_integratedSearch;
+    QComboBox* m_searchMode;
+    ScriptLineEdit* m_searchScript;
 };
 
 PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
@@ -66,6 +71,9 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     , m_skipMissing{new QCheckBox(tr("Skip missing tracks"), this)}
     , m_ignoreFolderPlaylists{new QCheckBox(tr("Ignore playlist files when adding folders"), this)}
     , m_preventDuplicates{new QCheckBox(tr("Prevent duplicate tracks when loading playlists"), this)}
+    , m_integratedSearch{new QCheckBox(tr("Open search bar instead of pop-up playlist search"), this)}
+    , m_searchMode{new QComboBox(this)}
+    , m_searchScript{new ScriptLineEdit(this)}
 {
     auto* behaviour       = new QGroupBox(tr("Behaviour"), this);
     auto* behaviourLayout = new QGridLayout(behaviour);
@@ -108,12 +116,27 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     loadingLayout->addWidget(m_ignoreFolderPlaylists, row++, 0);
     loadingLayout->addWidget(m_preventDuplicates, row++, 0);
 
+    auto* search       = new QGroupBox(tr("Search"), this);
+    auto* searchLayout = new QGridLayout(search);
+
+    m_searchMode->addItem(tr("Match beginnings of words"), 0);
+    m_searchMode->addItem(tr("Match anywhere"), 1);
+
+    row = 0;
+    searchLayout->addWidget(m_integratedSearch, row++, 0, 1, 2);
+    searchLayout->addWidget(new QLabel(tr("Search mode") + ":"_L1, this), row, 0);
+    searchLayout->addWidget(m_searchMode, row++, 1);
+    searchLayout->addWidget(new QLabel(tr("Search script") + ":"_L1, this), row, 0);
+    searchLayout->addWidget(m_searchScript, row++, 1);
+    searchLayout->setColumnStretch(1, 1);
+
     auto* mainLayout = new QGridLayout(this);
 
     row = 0;
     mainLayout->addWidget(behaviour, row++, 0);
     mainLayout->addWidget(clickBehaviour, row++, 0);
     mainLayout->addWidget(loading, row++, 0);
+    mainLayout->addWidget(search, row++, 0);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 }
 
@@ -131,6 +154,9 @@ void PlaylistGeneralPageWidget::load()
     m_skipMissing->setChecked(m_settings->value<Settings::Core::PlaylistSkipMissing>());
     m_ignoreFolderPlaylists->setChecked(m_settings->value<Settings::Core::AddFoldersIgnorePlaylists>());
     m_preventDuplicates->setChecked(m_settings->value<Settings::Core::PlaylistPreventDuplicates>());
+    m_integratedSearch->setChecked(m_settings->value<Settings::Gui::PlaylistIntegratedSearch>());
+    m_searchMode->setCurrentIndex(m_searchMode->findData(m_settings->value<Settings::Gui::PlaylistSearchMode>()));
+    m_searchScript->setText(m_settings->value<Settings::Gui::PlaylistSearchScript>());
 }
 
 void PlaylistGeneralPageWidget::apply()
@@ -141,6 +167,9 @@ void PlaylistGeneralPageWidget::apply()
     m_settings->set<Settings::Core::PlaylistSkipMissing>(m_skipMissing->isChecked());
     m_settings->set<Settings::Core::AddFoldersIgnorePlaylists>(m_ignoreFolderPlaylists->isChecked());
     m_settings->set<Settings::Core::PlaylistPreventDuplicates>(m_preventDuplicates->isChecked());
+    m_settings->set<Settings::Gui::PlaylistIntegratedSearch>(m_integratedSearch->isChecked());
+    m_settings->set<Settings::Gui::PlaylistSearchMode>(m_searchMode->currentData().toInt());
+    m_settings->set<Settings::Gui::PlaylistSearchScript>(m_searchScript->text());
 }
 
 void PlaylistGeneralPageWidget::reset()
@@ -151,6 +180,9 @@ void PlaylistGeneralPageWidget::reset()
     m_settings->reset<Settings::Core::PlaylistSkipMissing>();
     m_settings->reset<Settings::Core::AddFoldersIgnorePlaylists>();
     m_settings->reset<Settings::Core::PlaylistPreventDuplicates>();
+    m_settings->reset<Settings::Gui::PlaylistIntegratedSearch>();
+    m_settings->reset<Settings::Gui::PlaylistSearchMode>();
+    m_settings->reset<Settings::Gui::PlaylistSearchScript>();
 }
 
 PlaylistGeneralPage::PlaylistGeneralPage(SettingsManager* settings, QObject* parent)

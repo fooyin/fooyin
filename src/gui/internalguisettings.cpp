@@ -20,6 +20,7 @@
 #include "internalguisettings.h"
 
 #include "nowplayingoutput/nowplayingoutputservice.h"
+#include "playlist/playlistsearchcontroller.h"
 #include "search/searchwidget.h"
 #include "widgets/statuswidget.h"
 
@@ -123,6 +124,10 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<SearchErrorBg>(QVariant{}, u"Searching/ErrorBgColour"_s);
     m_settings->createSetting<SearchErrorFg>(QVariant{}, u"Searching/ErrorFgColour"_s);
     m_settings->createSetting<SearchSuccessClose>(true, u"Searching/CloseOnSuccess"_s);
+    m_settings->createSetting<PlaylistIntegratedSearch>(false, u"Playlist/IntegratedSearch"_s);
+    m_settings->createSetting<PlaylistSearchMode>(static_cast<int>(PlaylistSearchController::Mode::MatchWordBeginnings),
+                                                  u"Playlist/SearchMode"_s);
+    m_settings->createSetting<PlaylistSearchScript>(u"[%artist%] [%title%] [%album%]"_s, u"Playlist/SearchScript"_s);
     m_settings->createSetting<ShowMenuBar>(true, u"Interface/ShowMenuBar"_s);
     m_settings->createSetting<RatingFullStarSymbol>(defaultRatingFullStarSymbol(), u"Interface/RatingFullStarSymbol"_s);
     m_settings->createSetting<RatingHalfStarSymbol>(defaultRatingHalfStarSymbol(), u"Interface/RatingHalfStarSymbol"_s);

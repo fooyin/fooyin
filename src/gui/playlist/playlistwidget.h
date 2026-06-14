@@ -36,7 +36,7 @@
 #include <QModelIndexList>
 #include <QString>
 
-class QHBoxLayout;
+class QVBoxLayout;
 class QAction;
 class QMenu;
 
@@ -48,6 +48,7 @@ class GuiStyleProvider;
 class MusicLibrary;
 class PlaylistColumnRegistry;
 class PlaylistDelegate;
+class PlaylistSearchController;
 class PlaylistInteractor;
 class PlaylistView;
 class SettingsManager;
@@ -115,6 +116,7 @@ public:
     void finalise() override;
 
     void searchEvent(const SearchRequest& request) override;
+    bool openIntegratedSearch();
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
@@ -210,7 +212,7 @@ private:
     PresetRegistry* m_presetRegistry;
     SortingRegistry* m_sortRegistry;
 
-    QHBoxLayout* m_layout;
+    QVBoxLayout* m_layout;
     PlaylistModel* m_model;
     PlaylistDelegate* m_delgate;
     StarDelegate* m_starDelegate;
@@ -229,5 +231,6 @@ private:
     Track m_bgCoverTrack;
 
     std::unique_ptr<EditablePlaylistSessionHost> m_host;
+    PlaylistSearchController* m_searchController;
 };
 } // namespace Fooyin

@@ -39,6 +39,7 @@
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
 #include "playlist/playlistuicontroller.h"
+#include "playlist/playlistwidget.h"
 #include "queueviewer/queueviewer.h"
 #include "scripting/scriptcommandhandler.h"
 #include "scripting/scriptvariableproviders.h"
@@ -220,6 +221,7 @@ public:
     void showSearchLibraryDialog();
     void showPlaybackQueue();
     void showPlaylistManager();
+    bool focusIntegratedPlaylistSearch() const;
     void focusSearchBar() const;
     void showQuickSearch() const;
     void showPropertiesDialog(const TrackList& tracks) const;
@@ -1169,6 +1171,10 @@ void GuiApplicationPrivate::showScriptEditor()
 
 void GuiApplicationPrivate::showSearchPlaylistDialog()
 {
+    if(m_settings->value<Settings::Gui::PlaylistIntegratedSearch>() && focusIntegratedPlaylistSearch()) {
+        return;
+    }
+
     auto* coverProvider = new CoverProvider(m_coverRepository, m_self);
     auto* search = new SearchDialog(m_actionManager, &m_playlistInteractor, coverProvider, m_core, m_styleProvider,
                                     SearchDialog::Target::Playlist);
@@ -1204,6 +1210,18 @@ void GuiApplicationPrivate::showPlaylistManager()
     m_playlistManagerWidget->finalise();
 
     m_playlistManagerWidget->show();
+}
+
+bool GuiApplicationPrivate::focusIntegratedPlaylistSearch() const
+{
+    const auto playlists = m_editableLayout->findWidgetsByType<PlaylistWidget>();
+    for(auto* playlist : playlists) {
+        if(playlist && playlist->isVisibleTo(m_mainWindow.get()) && playlist->openIntegratedSearch()) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void GuiApplicationPrivate::showPlaybackQueue()

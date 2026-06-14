@@ -26,6 +26,7 @@
 #include "playlistcolumnregistry.h"
 #include "playlistcontroller.h"
 #include "playlistdelegate.h"
+#include "playlistsearchcontroller.h"
 #include "playlistview.h"
 #include "playlistwidgetsession.h"
 
@@ -62,7 +63,6 @@
 #include <QAbstractItemModel>
 #include <QActionGroup>
 #include <QByteArray>
-#include <QHBoxLayout>
 #include <QHeaderView>
 #include <QJsonObject>
 #include <QKeyEvent>
@@ -71,6 +71,7 @@
 #include <QScrollBar>
 #include <QSortFilterProxyModel>
 #include <QStringList>
+#include <QVBoxLayout>
 
 #include <set>
 #include <utility>
@@ -238,7 +239,7 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     , m_columnRegistry{m_playlistController->columnRegistry()}
     , m_presetRegistry{m_playlistController->presetRegistry()}
     , m_sortRegistry{core->sortingRegistry()}
-    , m_layout{new QHBoxLayout(this)}
+    , m_layout{new QVBoxLayout(this)}
     , m_model{new PlaylistModel(m_playlistInteractor, core->audioLoader().get(), coverProvider, m_settings,
                                 styleProvider, this)}
     , m_delgate{new PlaylistDelegate(this)}
@@ -254,12 +255,15 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     , m_bgImageMode{PlaylistBgImage::None}
     , m_bgCoverType{Track::Cover::Front}
     , m_host{std::make_unique<PlaylistWidgetHost>(this)}
+    , m_searchController{
+          new PlaylistSearchController(m_playlistController, m_model, m_playlistView, m_header, m_settings, this)}
 {
     Gui::setThemeIcon(m_playAction, Constants::Icons::Play);
 
     const auto modeCaps = m_session->capabilities();
 
-    m_layout->setContentsMargins(0, 0, 0, 0);
+    m_layout->setContentsMargins({});
+    m_layout->setSpacing(0);
 
     m_header->setStretchEnabled(true);
     m_header->setSectionsClickable(true);
@@ -274,7 +278,13 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     m_playlistView->viewport()->setAcceptDrops(modeCaps.editablePlaylist);
     m_playlistView->viewport()->installEventFilter(new ToolTipFilter(this));
 
+    QObject::connect(m_searchController, &PlaylistSearchController::playCurrentRequested, this,
+                     &PlaylistWidget::startPlayback);
+    QObject::connect(m_searchController, &PlaylistSearchController::queueCurrentRequested, this,
+                     [this]() { m_session->queueSelectedTracks(sessionHost(), false, false); });
+
     m_layout->addWidget(m_playlistView);
+    m_layout->addWidget(m_searchController->widget());
 
     applyInitialViewSettings();
     applyBackgroundSettings();
@@ -459,6 +469,15 @@ void PlaylistWidget::searchEvent(const SearchRequest& request)
     m_session->searchEvent(sessionHost(), request);
 }
 
+bool PlaylistWidget::openIntegratedSearch()
+{
+    if(!isVisible()) {
+        return false;
+    }
+
+    return m_searchController->open();
+}
+
 void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
 {
     auto* menu = new QMenu(this);
@@ -607,6 +626,11 @@ void PlaylistWidget::keyPressEvent(QKeyEvent* event)
     }
     else if(key == Qt::Key_Enter || key == Qt::Key_Return) {
         startPlayback();
+    }
+    else if(key == Qt::Key_F3 && m_searchController->isOpen()) {
+        m_searchController->navigate(event->modifiers() & Qt::ShiftModifier ? -1 : 1);
+        event->accept();
+        return;
     }
 
     QWidget::keyPressEvent(event);
@@ -765,6 +789,7 @@ void PlaylistWidget::setupActions()
 
 void PlaylistWidget::resetModel()
 {
+    m_searchController->markResultsOutOfDate();
     m_playlistView->playlistAboutToBeReset();
 
     Playlist* currentPlaylist = m_playlistController->currentPlaylist();
