@@ -1735,7 +1735,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="67"/>
         <source>Minimum match threshold</source>
-        <translation type="unfinished">Minimala matchgränsen</translation>
+        <translation>Minimal matchgräns</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="70"/>
@@ -9982,27 +9982,27 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="483"/>
         <source>Edit autoplaylist</source>
-        <translation type="unfinished">Redigera autospellista</translation>
+        <translation>Redigera autospellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="494"/>
         <source>Rename autoplaylist</source>
-        <translation type="unfinished">Döp om autospellista</translation>
+        <translation>Döp om autospellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="494"/>
         <source>Rename playlist</source>
-        <translation type="unfinished">Döp om spellista</translation>
+        <translation>Döp om spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="500"/>
         <source>Remove autoplaylist</source>
-        <translation type="unfinished">Ta bort autospellista</translation>
+        <translation>Ta bort autospellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="500"/>
         <source>Remove playlist</source>
-        <translation type="unfinished">Ta bort spellista</translation>
+        <translation>Ta bort spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="521"/>
@@ -11897,7 +11897,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="234"/>
         <source>Remove</source>
-        <translation type="unfinished">Ta bort</translation>
+        <translation>Ta bort</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="241"/>
@@ -12131,22 +12131,22 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="53"/>
         <source>Add Preset</source>
-        <translation type="unfinished">Lägg till förinställning</translation>
+        <translation>Lägg till förinställning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="54"/>
         <source>Remove</source>
-        <translation type="unfinished">Ta bort</translation>
+        <translation>Ta bort</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="55"/>
         <source>Move Up</source>
-        <translation type="unfinished">Flytta upp</translation>
+        <translation>Flytta upp</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="56"/>
         <source>Move Down</source>
-        <translation type="unfinished">Flytta ner</translation>
+        <translation>Flytta ner</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="57"/>
@@ -12156,7 +12156,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="80"/>
         <source>General</source>
-        <translation type="unfinished">Generellt</translation>
+        <translation>Generellt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="85"/>
@@ -12166,7 +12166,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="93"/>
         <source>Tags</source>
-        <translation type="unfinished">Taggar</translation>
+        <translation>Taggar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="223"/>
@@ -12176,12 +12176,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="224"/>
         <source>Popular</source>
-        <translation type="unfinished">Populärt</translation>
+        <translation>Populärt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="225"/>
         <source>Trending</source>
-        <translation type="unfinished">Trendigt</translation>
+        <translation>Trendigt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="226"/>
@@ -12191,22 +12191,22 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="227"/>
         <source>Newest</source>
-        <translation type="unfinished">Nyast</translation>
+        <translation>Nyast</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="228"/>
         <source>Random</source>
-        <translation type="unfinished">Slumpmässig</translation>
+        <translation>Slumpmässig</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="229"/>
         <source>My Stations</source>
-        <translation type="unfinished">Mina stationer</translation>
+        <translation>Mina stationer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="230"/>
         <source>Latest Search</source>
-        <translation type="unfinished">Senaste sökning</translation>
+        <translation>Senaste sökning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="250"/>
@@ -12225,12 +12225,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigmodel.cpp" line="91"/>
         <source>Name</source>
-        <translation type="unfinished">Namn</translation>
+        <translation>Namn</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigmodel.cpp" line="91"/>
         <source>Tag</source>
-        <translation type="unfinished">Tagg</translation>
+        <translation>Tagg</translation>
     </message>
 </context>
 <context>
@@ -12238,7 +12238,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="85"/>
         <source>Genres</source>
-        <translation type="unfinished">Genrer</translation>
+        <translation>Genrer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="86"/>
@@ -12250,7 +12250,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="87"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="142"/>
         <source>Classical</source>
-        <translation type="unfinished">Klassisk</translation>
+        <translation>Klassisk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="88"/>
@@ -12262,7 +12262,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="89"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="144"/>
         <source>Dance</source>
-        <translation type="unfinished">Dans</translation>
+        <translation>Dans</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="90"/>
@@ -12310,7 +12310,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="97"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="152"/>
         <source>Rap</source>
-        <translation type="unfinished">Rapp</translation>
+        <translation>Rapp</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="98"/>
@@ -12327,13 +12327,13 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="101"/>
         <source>More Genres</source>
-        <translation type="unfinished">Mer genrer</translation>
+        <translation>Mer genrer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="102"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="155"/>
         <source>Alternative</source>
-        <translation type="unfinished">Alternativ</translation>
+        <translation>Alternativ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="103"/>
@@ -12345,13 +12345,13 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="104"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="157"/>
         <source>Club</source>
-        <translation type="unfinished">Klubb</translation>
+        <translation>Klubb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="105"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="158"/>
         <source>Electronic</source>
-        <translation type="unfinished">Elektronisk</translation>
+        <translation>Elektronisk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="106"/>
@@ -12363,7 +12363,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="107"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="160"/>
         <source>Hip Hop</source>
-        <translation type="unfinished">Hiphop</translation>
+        <translation>Hiphop</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="108"/>
@@ -12387,7 +12387,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="111"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="164"/>
         <source>Metal</source>
-        <translation type="unfinished">Metal</translation>
+        <translation>Metal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="112"/>
@@ -12411,7 +12411,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="115"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="168"/>
         <source>World Music</source>
-        <translation type="unfinished">Världsmusik</translation>
+        <translation>Världsmusik</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="117"/>
@@ -12421,73 +12421,73 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="118"/>
         <source>40s</source>
-        <translation type="unfinished">40-tal</translation>
+        <translation>40-tal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="119"/>
         <source>50s</source>
-        <translation type="unfinished">50-tal</translation>
+        <translation>50-tal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="120"/>
         <source>60s</source>
-        <translation type="unfinished">60-tal</translation>
+        <translation>60-tal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="121"/>
         <source>70s</source>
-        <translation type="unfinished">70-tal</translation>
+        <translation>70-tal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="122"/>
         <source>80s</source>
-        <translation type="unfinished">80-tal</translation>
+        <translation>80-tal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="123"/>
         <source>90s</source>
-        <translation type="unfinished">90-tal</translation>
+        <translation>90-tal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="124"/>
         <source>2000s</source>
-        <translation type="unfinished">2000-tal</translation>
+        <translation>2000-tal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="125"/>
         <source>2010s</source>
-        <translation type="unfinished">2010-tal</translation>
+        <translation>2010-tal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="127"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="135"/>
         <source>Talk</source>
-        <translation type="unfinished">Prat</translation>
+        <translation>Prat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="128"/>
         <source>College Radio</source>
-        <translation type="unfinished">Studentradio</translation>
+        <translation>Studentradio</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="129"/>
         <source>Community Radio</source>
-        <translation type="unfinished">Närradio</translation>
+        <translation>Närradio</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="130"/>
         <source>Culture</source>
-        <translation type="unfinished">Kultur</translation>
+        <translation>Kultur</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="131"/>
         <source>News</source>
-        <translation type="unfinished">Nyheter</translation>
+        <translation>Nyheter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="132"/>
         <source>Public Radio</source>
-        <translation type="unfinished">Allmänradio</translation>
+        <translation>Allmänradio</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="133"/>
@@ -12497,7 +12497,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="134"/>
         <source>Sport</source>
-        <translation type="unfinished">Sport</translation>
+        <translation>Sport</translation>
     </message>
 </context>
 <context>
@@ -12598,12 +12598,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="107"/>
         <source>Selections</source>
-        <translation type="unfinished">Selektioner</translation>
+        <translation>Selektioner</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="107"/>
         <source>Library</source>
-        <translation type="unfinished">Bibliotek</translation>
+        <translation>Bibliotek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="231"/>
@@ -16944,7 +16944,7 @@ Set to 0 to choose automatically from the remote buffer length.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="495"/>
         <source>Auto</source>
-        <translation type="unfinished">Auto</translation>
+        <translation>Auto</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="500"/>
