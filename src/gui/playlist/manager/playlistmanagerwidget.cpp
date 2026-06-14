@@ -112,11 +112,13 @@ TrackSelection selectionForPlaylist(const Playlist& playlist)
 } // namespace
 
 PlaylistManagerWidget::PlaylistManagerWidget(ActionManager* actionManager, PlaylistController* playlistController,
-                                             PlaylistInteractor* playlistInteractor, SettingsManager* settings,
+                                             PlaylistInteractor* playlistInteractor,
+                                             TrackSelectionController* selectionController, SettingsManager* settings,
                                              QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
     , m_playlistController{playlistController}
+    , m_selectionController{selectionController}
     , m_settings{settings}
     , m_model{new PlaylistManagerModel(playlistInteractor, this)}
     , m_proxyModel{new QSortFilterProxyModel(this)}
@@ -296,7 +298,7 @@ void PlaylistManagerWidget::addPlaylistContentsMenu(QMenu* menu, const Playlist*
 
     //: %1 refers to the name of a playlist.
     auto* selectionMenu = new QMenu(tr("%1 contents").arg(playlist->name()), menu);
-    m_playlistController->selectionController()->addTrackContextMenu(selectionMenu, selection);
+    m_selectionController->addTrackContextMenu(selectionMenu, selection);
     if(selectionMenu->isEmpty()) {
         delete selectionMenu;
         return;
@@ -509,8 +511,7 @@ void PlaylistManagerWidget::showPlaylistContextMenu(const QPoint& pos)
     menu->addAction(m_newAutoPlaylistAction);
 
     if(playlist) {
-        const TrackSelectionController* selectionController = m_playlistController->selectionController();
-        if(selectionController && playlist->trackCount() > 0) {
+        if(m_selectionController && playlist->trackCount() > 0) {
             menu->addSeparator();
             addPlaylistContentsMenu(menu, playlist);
         }

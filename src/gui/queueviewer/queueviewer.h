@@ -48,7 +48,8 @@ class QueueViewer : public FyWidget
 
 public:
     explicit QueueViewer(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
-                         CoverRepository* coverRepository, SettingsManager* settings, QWidget* parent = nullptr);
+                         TrackSelectionController* selectionController, CoverRepository* coverRepository,
+                         SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;

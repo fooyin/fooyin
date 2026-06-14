@@ -37,11 +37,10 @@
 #include <set>
 
 namespace Fooyin {
-PlaylistController::PlaylistController(Application* app, TrackSelectionController* selectionController, QObject* parent)
+PlaylistController::PlaylistController(Application* app, QObject* parent)
     : CurrentPlaylistController{parent}
     , m_handler{app->playlistHandler()}
     , m_playerController{app->playerController()}
-    , m_selectionController{selectionController}
     , m_settings{app->settingsManager()}
     , m_presetRegistry{new PresetRegistry(m_settings, this)}
     , m_columnRegistry{new PlaylistColumnRegistry(m_settings, this)}
@@ -89,11 +88,6 @@ PlayerController* PlaylistController::playerController() const
 PlaylistHandler* PlaylistController::playlistHandler() const
 {
     return m_handler;
-}
-
-TrackSelectionController* PlaylistController::selectionController() const
-{
-    return m_selectionController;
 }
 
 PresetRegistry* PlaylistController::presetRegistry() const

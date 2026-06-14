@@ -73,12 +73,13 @@ constexpr auto QueueViewerStateKey       = "PlaybackQueue/State"_L1;
 
 namespace Fooyin {
 QueueViewer::QueueViewer(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
-                         CoverRepository* coverRepository, SettingsManager* settings, QWidget* parent)
+                         TrackSelectionController* selectionController, CoverRepository* coverRepository,
+                         SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
     , m_playlistInteractor{playlistInteractor}
     , m_playerController{m_playlistInteractor->playerController()}
-    , m_selectionController{m_playlistInteractor->playlistController()->selectionController()}
+    , m_selectionController{selectionController}
     , m_settings{settings}
     , m_view{new QueueViewerView(this)}
     , m_model{new QueueViewerModel(coverRepository, m_playerController, settings, this)}

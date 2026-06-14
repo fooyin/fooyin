@@ -90,14 +90,17 @@ public:
     };
 
     static PlaylistWidget* createMainPlaylist(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
+                                              TrackSelectionController* selectionController,
                                               CoverProvider* coverProvider, Application* core,
                                               GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
     static PlaylistWidget* createDetachedPlaylistSearch(ActionManager* actionManager,
                                                         PlaylistInteractor* playlistInteractor,
+                                                        TrackSelectionController* selectionController,
                                                         CoverProvider* coverProvider, Application* core,
                                                         GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
     static PlaylistWidget* createDetachedLibrarySearch(ActionManager* actionManager,
                                                        PlaylistInteractor* playlistInteractor,
+                                                       TrackSelectionController* selectionController,
                                                        CoverProvider* coverProvider, Application* core,
                                                        GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
 
@@ -124,8 +127,8 @@ protected:
 
 private:
     PlaylistWidget(ActionManager* actionManager, PlaylistInteractor* playlistInteractor, CoverProvider* coverProvider,
-                   Application* core, GuiStyleProvider* styleProvider, std::unique_ptr<PlaylistWidgetSession> session,
-                   QWidget* parent);
+                   Application* core, GuiStyleProvider* styleProvider, TrackSelectionController* selectionController,
+                   std::unique_ptr<PlaylistWidgetSession> session, QWidget* parent);
     void populateTrackContextMenu(QMenu* menu, const QModelIndexList& selected);
     void showHeaderMenu(const QPoint& pos);
     void addSortMenu(QMenu* parent, bool disabled);

@@ -70,8 +70,8 @@ class LibraryTreeWidget : public FyWidget
 
 public:
     LibraryTreeWidget(ActionManager* actionManager, PlaylistController* playlistController,
-                      LibraryTreeController* controller, Application* core, CoverRepository* coverRepository,
-                      GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
+                      TrackSelectionController* trackSelection, LibraryTreeController* controller, Application* core,
+                      CoverRepository* coverRepository, GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
     ~LibraryTreeWidget() override;
 
     [[nodiscard]] QString name() const override;

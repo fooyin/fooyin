@@ -34,6 +34,7 @@ class CoverProvider;
 class GuiStyleProvider;
 class PlaylistInteractor;
 class SettingsManager;
+class TrackSelectionController;
 
 class SearchDialog : public QDialog
 {
@@ -47,7 +48,8 @@ public:
     };
 
     SearchDialog(ActionManager* actionManager, PlaylistInteractor* playlistInteractor, CoverProvider* coverProvider,
-                 Application* core, GuiStyleProvider* styleProvider, Target target, QWidget* parent = nullptr);
+                 Application* core, GuiStyleProvider* styleProvider, TrackSelectionController* selectionController,
+                 Target target, QWidget* parent = nullptr);
 
     void done(int value) override;
 

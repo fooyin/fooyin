@@ -57,11 +57,11 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 PlaylistTabs::PlaylistTabs(WidgetProvider* widgetProvider, PlaylistController* playlistController,
-                           SettingsManager* settings, QWidget* parent)
+                           TrackSelectionController* selectionController, SettingsManager* settings, QWidget* parent)
     : WidgetContainer{widgetProvider, settings, parent}
     , m_playlistController{playlistController}
     , m_playlistHandler{m_playlistController->playlistHandler()}
-    , m_selectionController{m_playlistController->selectionController()}
+    , m_selectionController{selectionController}
     , m_settings{settings}
     , m_layout{new QVBoxLayout(this)}
     , m_tabs{new SingleTabbedWidget(this)}

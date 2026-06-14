@@ -186,8 +186,9 @@ TrackList tracksForIndexes(LibraryTreeSortModel* model, const QModelIndexList& i
 } // namespace
 
 LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistController* playlistController,
-                                     LibraryTreeController* controller, Application* core,
-                                     CoverRepository* coverRepository, GuiStyleProvider* styleProvider, QWidget* parent)
+                                     TrackSelectionController* trackSelection, LibraryTreeController* controller,
+                                     Application* core, CoverRepository* coverRepository,
+                                     GuiStyleProvider* styleProvider, QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
     , m_library{core->library()}
@@ -195,7 +196,7 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
     , m_playerController{playlistController->playerController()}
     , m_playlistController{playlistController}
     , m_groupsRegistry{controller->groupRegistry()}
-    , m_trackSelection{playlistController->selectionController()}
+    , m_trackSelection{trackSelection}
     , m_settings{core->settingsManager()}
     , m_styleProvider{styleProvider}
     , m_resetThrottler{new SignalThrottler(this)}

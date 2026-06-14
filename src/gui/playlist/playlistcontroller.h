@@ -58,12 +58,11 @@ class PlaylistController : public CurrentPlaylistController
     Q_OBJECT
 
 public:
-    PlaylistController(Application* app, TrackSelectionController* selectionController, QObject* parent = nullptr);
+    PlaylistController(Application* app, QObject* parent = nullptr);
     ~PlaylistController() override;
 
     [[nodiscard]] PlayerController* playerController() const;
     [[nodiscard]] PlaylistHandler* playlistHandler() const;
-    [[nodiscard]] TrackSelectionController* selectionController() const;
     [[nodiscard]] PresetRegistry* presetRegistry() const;
     [[nodiscard]] PlaylistColumnRegistry* columnRegistry() const;
     [[nodiscard]] PlaylistUiController* uiController() const;
@@ -140,7 +139,6 @@ private:
 
     PlaylistHandler* m_handler;
     PlayerController* m_playerController;
-    TrackSelectionController* m_selectionController;
     SettingsManager* m_settings;
     PresetRegistry* m_presetRegistry;
     PlaylistColumnRegistry* m_columnRegistry;

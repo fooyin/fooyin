@@ -221,6 +221,7 @@ private:
 
 PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
                                CoverProvider* coverProvider, Application* core, GuiStyleProvider* styleProvider,
+                               TrackSelectionController* selectionController,
                                std::unique_ptr<PlaylistWidgetSession> session, QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
@@ -229,7 +230,7 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     , m_coverProvider{coverProvider}
     , m_playerController{playlistInteractor->playerController()}
     , m_libraryManager{core->libraryManager()}
-    , m_selectionController{m_playlistController->selectionController()}
+    , m_selectionController{selectionController}
     , m_library{playlistInteractor->library()}
     , m_settings{core->settingsManager()}
     , m_styleProvider{styleProvider}
@@ -297,29 +298,32 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
 }
 
 PlaylistWidget* PlaylistWidget::createMainPlaylist(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
+                                                   TrackSelectionController* selectionController,
                                                    CoverProvider* coverProvider, Application* core,
                                                    GuiStyleProvider* styleProvider, QWidget* parent)
 {
     return new PlaylistWidget(actionManager, playlistInteractor, coverProvider, core, styleProvider,
-                              PlaylistWidgetSession::createEditable(), parent);
+                              selectionController, PlaylistWidgetSession::createEditable(), parent);
 }
 
 PlaylistWidget* PlaylistWidget::createDetachedPlaylistSearch(ActionManager* actionManager,
                                                              PlaylistInteractor* playlistInteractor,
+                                                             TrackSelectionController* selectionController,
                                                              CoverProvider* coverProvider, Application* core,
                                                              GuiStyleProvider* styleProvider, QWidget* parent)
 {
     return new PlaylistWidget(actionManager, playlistInteractor, coverProvider, core, styleProvider,
-                              PlaylistWidgetSession::createDetachedPlaylist(), parent);
+                              selectionController, PlaylistWidgetSession::createDetachedPlaylist(), parent);
 }
 
 PlaylistWidget* PlaylistWidget::createDetachedLibrarySearch(ActionManager* actionManager,
                                                             PlaylistInteractor* playlistInteractor,
+                                                            TrackSelectionController* selectionController,
                                                             CoverProvider* coverProvider, Application* core,
                                                             GuiStyleProvider* styleProvider, QWidget* parent)
 {
     return new PlaylistWidget(actionManager, playlistInteractor, coverProvider, core, styleProvider,
-                              PlaylistWidgetSession::createDetachedLibrary(), parent);
+                              selectionController, PlaylistWidgetSession::createDetachedLibrary(), parent);
 }
 
 PlaylistWidget::~PlaylistWidget()

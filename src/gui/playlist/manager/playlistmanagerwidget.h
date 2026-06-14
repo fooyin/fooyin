@@ -38,6 +38,7 @@ class PlaylistController;
 class PlaylistInteractor;
 class PlaylistManagerModel;
 class SettingsManager;
+class TrackSelectionController;
 class WidgetContext;
 
 class PlaylistManagerWidget : public FyWidget
@@ -46,7 +47,8 @@ class PlaylistManagerWidget : public FyWidget
 
 public:
     explicit PlaylistManagerWidget(ActionManager* actionManager, PlaylistController* playlistController,
-                                   PlaylistInteractor* playlistInteractor, SettingsManager* settings,
+                                   PlaylistInteractor* playlistInteractor,
+                                   TrackSelectionController* selectionController, SettingsManager* settings,
                                    QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
@@ -91,6 +93,7 @@ private:
 
     ActionManager* m_actionManager;
     PlaylistController* m_playlistController;
+    TrackSelectionController* m_selectionController;
     SettingsManager* m_settings;
 
     PlaylistManagerModel* m_model;

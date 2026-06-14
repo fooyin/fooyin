@@ -186,7 +186,8 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"PlaylistTabs"_s,
         [this]() {
-            auto* playlistTabs = new PlaylistTabs(m_gui->widgetProvider(), m_playlistController, m_settings, m_window);
+            auto* playlistTabs = new PlaylistTabs(m_gui->widgetProvider(), m_playlistController,
+                                                  m_gui->trackSelection(), m_settings, m_window);
             QObject::connect(playlistTabs, &PlaylistTabs::filesDropped, m_playlistInteractor,
                              &PlaylistInteractor::filesToPlaylist);
             QObject::connect(playlistTabs, &PlaylistTabs::tracksDropped, m_playlistInteractor,
@@ -208,15 +209,15 @@ void Widgets::registerWidgets()
         u"PlaylistManager"_s,
         [this]() {
             return new PlaylistManagerWidget(m_gui->actionManager(), m_playlistController, m_playlistInteractor,
-                                             m_settings, m_window);
+                                             m_gui->trackSelection(), m_settings, m_window);
         },
         tr("Playlist Manager"));
 
     provider->registerWidget(
         u"PlaybackQueue"_s,
         [this]() {
-            return new QueueViewer(m_gui->actionManager(), m_playlistInteractor, m_coverRepository, m_settings,
-                                   m_window);
+            return new QueueViewer(m_gui->actionManager(), m_playlistInteractor, m_gui->trackSelection(),
+                                   m_coverRepository, m_settings, m_window);
         },
         tr("Playback Queue"));
 
@@ -228,8 +229,8 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"LibraryTree"_s,
         [this]() {
-            return new LibraryTreeWidget(m_gui->actionManager(), m_playlistController, m_libraryTreeController, m_core,
-                                         m_coverRepository, m_styleProvider, m_window);
+            return new LibraryTreeWidget(m_gui->actionManager(), m_playlistController, m_gui->trackSelection(),
+                                         m_libraryTreeController, m_core, m_coverRepository, m_styleProvider, m_window);
         },
         tr("Library Tree"));
 
@@ -293,8 +294,9 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"Playlist"_s,
         [this]() {
-            return PlaylistWidget::createMainPlaylist(m_gui->actionManager(), m_playlistInteractor, m_coverProvider,
-                                                      m_core, m_styleProvider, m_window);
+            return PlaylistWidget::createMainPlaylist(m_gui->actionManager(), m_playlistInteractor,
+                                                      m_gui->trackSelection(), m_coverProvider, m_core, m_styleProvider,
+                                                      m_window);
         },
         tr("Playlist"));
     provider->setLimit(u"Playlist"_s, 1);

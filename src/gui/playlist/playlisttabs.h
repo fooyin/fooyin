@@ -44,7 +44,8 @@ class PlaylistTabs : public WidgetContainer
 
 public:
     explicit PlaylistTabs(WidgetProvider* widgetProvider, PlaylistController* playlistController,
-                          SettingsManager* settings, QWidget* parent = nullptr);
+                          TrackSelectionController* selectionController, SettingsManager* settings,
+                          QWidget* parent = nullptr);
 
     void setupTabs();
 
