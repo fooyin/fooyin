@@ -153,14 +153,14 @@ QVariant FiltersColumnModel::headerData(int section, Qt::Orientation orientation
     }
 
     switch(section) {
-        case(0):
+        case 0:
             return tr("Index");
-        case(1):
+        case 1:
             return tr("Name");
-        case(2):
-            return tr("Field");
-        case(3):
-            return tr("Sort Field");
+        case 2:
+            return tr("Display Script");
+        case 3:
+            return tr("Sort Script");
         default:
             break;
     }
@@ -241,7 +241,7 @@ bool FiltersColumnModel::setData(const QModelIndex& index, const QVariant& value
     FilterColumn column = item->column();
 
     switch(index.column()) {
-        case(1): {
+        case 1: {
             if(value.toString() == u"<enter name here>"_s || column.name == value.toString()) {
                 if(item->status() == ColumnItem::Added) {
                     Q_EMIT pendingRowCancelled();
@@ -251,14 +251,14 @@ bool FiltersColumnModel::setData(const QModelIndex& index, const QVariant& value
             column.name = value.toString();
             break;
         }
-        case(2): {
+        case 2: {
             if(column.field == value.toString()) {
                 return false;
             }
             column.field = value.toString();
             break;
         }
-        case(3): {
+        case 3: {
             if(column.sortField == value.toString()) {
                 return false;
             }
@@ -285,7 +285,7 @@ QModelIndex FiltersColumnModel::index(int row, int column, const QModelIndex& pa
         return {};
     }
 
-    ColumnItem* item = m_root.child(row);
+    const ColumnItem* item = m_root.child(row);
 
     return createIndex(row, column, item);
 }
