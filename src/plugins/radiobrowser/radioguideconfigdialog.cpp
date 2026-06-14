@@ -32,6 +32,7 @@
 #include <QHeaderView>
 #include <QLabel>
 #include <QMenu>
+#include <QMouseEvent>
 #include <QSignalBlocker>
 #include <QTreeView>
 
@@ -43,11 +44,35 @@ QString actionEntryKey(Action action)
 {
     return u"action:%1"_s.arg(static_cast<int>(action));
 }
+
+class RadioGuideConfigTreeView : public QTreeView
+{
+    Q_OBJECT
+
+public:
+    using QTreeView::QTreeView;
+
+protected:
+    void mouseDoubleClickEvent(QMouseEvent* event) override
+    {
+        const QModelIndex index = indexAt(event->pos());
+        if(index.isValid() && index.column() == 1 && !index.parent().isValid()) {
+            const QModelIndex node = index.siblingAtColumn(0);
+            if(model() && model()->hasChildren(node)) {
+                setExpanded(node, !isExpanded(node));
+            }
+            event->accept();
+            return;
+        }
+
+        QTreeView::mouseDoubleClickEvent(event);
+    }
+};
 } // namespace
 
 RadioGuideConfigDialog::RadioGuideConfigDialog(RadioGuideWidget* guideWidget, QWidget* parent)
     : WidgetConfigDialog{guideWidget, tr("Radio Guide Settings"), parent}
-    , m_tree{new QTreeView(this)}
+    , m_tree{new RadioGuideConfigTreeView(this)}
     , m_model{new RadioGuideConfigModel(this)}
     , m_addSectionAction{new QAction(tr("Add Section"), this)}
     , m_addTagAction{new QAction(tr("Add Preset"), this)}
@@ -268,3 +293,6 @@ void RadioGuideConfigDialog::addTag()
     updateActionState();
 }
 } // namespace Fooyin::RadioBrowser
+
+#include "moc_radioguideconfigdialog.cpp"
+#include "radioguideconfigdialog.moc"
