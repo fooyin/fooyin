@@ -52,6 +52,16 @@ TEST(LyricsParserTest, ParsesUnsyncedText)
     EXPECT_EQ(lyrics.lines.at(1).joinedWords(), u"Second line "_s);
 }
 
+TEST(LyricsParserTest, HandlesBlankLines)
+{
+    const auto lyrics = Lyrics::parse(u"\r"_s);
+
+    ASSERT_EQ(lyrics.type, Lyrics::Lyrics::Type::Unsynced);
+    ASSERT_EQ(lyrics.lines.size(), 1);
+    EXPECT_EQ(lyrics.lines.at(0).timestamp, 0);
+    EXPECT_EQ(lyrics.lines.at(0).joinedWords(), u" "_s);
+}
+
 TEST(LyricsParserTest, ParsesStandardLrcMetadataAndLines)
 {
     const auto lyrics = Lyrics::parse(u"[ti:Song]\n[ar:Artist]\n[al:Album]\n"

@@ -56,16 +56,17 @@ struct LineContext
 {
     const QChar* start{nullptr};
     const QChar* current{nullptr};
+    const QChar* end{nullptr};
 
     [[nodiscard]] bool isAtEnd() const
     {
-        return *current == nullptr;
+        return current == end;
     }
 
     [[nodiscard]] bool isSpace() const
     {
         const QChar* ptr{start};
-        while(ptr && *ptr != '\0'_L1) {
+        while(ptr && ptr != end) {
             if(!ptr->isSpace()) {
                 return false;
             }
@@ -76,11 +77,17 @@ struct LineContext
 
     [[nodiscard]] QChar peek() const
     {
+        if(isAtEnd()) {
+            return u'\0';
+        }
         return *current;
     }
 
     QChar advance()
     {
+        if(isAtEnd()) {
+            return u'\0';
+        }
         std::advance(current, 1);
         return *std::prev(current);
     }
@@ -367,7 +374,7 @@ Fooyin::Lyrics::ParsedLine splitLine(Fooyin::Lyrics::ParsedLine& parsedLine, Foo
 
 void parseLine(Fooyin::Lyrics::Lyrics& lyrics, const QString& line)
 {
-    LineContext context{.start = line.cbegin(), .current = line.cbegin()};
+    LineContext context{.start = line.cbegin(), .current = line.cbegin(), .end = line.cend()};
 
     std::vector<Token> tokens;
 
