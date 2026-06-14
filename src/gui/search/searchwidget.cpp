@@ -259,8 +259,15 @@ void SearchWidget::keyPressEvent(QKeyEvent* event)
 
         searchChanged(true);
     }
-    else if(key == Qt::Key_Escape && isQuickSearch()) {
-        close();
+    else if(key == Qt::Key_Escape) {
+        if(isQuickSearch()) {
+            close();
+        }
+        else if(!m_searchBox->text().isEmpty()) {
+            m_searchBox->clear();
+        }
+        event->accept();
+        return;
     }
     else if(key == Qt::Key_Backspace && modifiers == Qt::ControlModifier) {
         deleteWord();
