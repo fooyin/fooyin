@@ -35,6 +35,7 @@
 #include <QMimeData>
 #include <QSize>
 
+#include <algorithm>
 #include <set>
 #include <utility>
 
@@ -89,11 +90,26 @@ bool rowMatchesItem(const Fooyin::Filters::FilterRow& row, const Fooyin::Filters
     std::vector<Fooyin::RichText> richColumns;
     richColumns.reserve(item.columns().size());
 
-    for(int column = 0; column < item.columns().size(); ++column) {
+    for(int column{0}; std::cmp_less(column, item.columns().size()); ++column) {
         richColumns.push_back(item.richColumn(column));
     }
 
-    return row.richColumns == richColumns;
+    if(row.richColumns != richColumns) {
+        return false;
+    }
+
+    const QStringList sortColumns = row.sortColumns.empty() ? row.columns : row.sortColumns;
+    if(sortColumns.size() != item.columns().size()) {
+        return false;
+    }
+
+    for(int column{0}; std::cmp_less(column, sortColumns.size()); ++column) {
+        if(sortColumns.at(column) != item.sortColumn(column)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 } // namespace
 
@@ -118,7 +134,7 @@ bool FilterSortModel::lessThan(const QModelIndex& left, const QModelIndex& right
         return sortOrder() != Qt::AscendingOrder;
     }
 
-    const auto cmp = m_collator.compare(leftItem->column(left.column()), rightItem->column(right.column()));
+    const auto cmp = m_collator.compare(leftItem->sortColumn(left.column()), rightItem->sortColumn(right.column()));
 
     if(cmp == 0) {
         return false;
@@ -648,6 +664,7 @@ void FilterModel::setRows(const FilterColumnList& columns, const FilterRowList& 
             auto [it, _] = p->m_nodes.emplace(row.key, FilterItem{row.key, row.columns, parent});
             auto& item   = it->second;
 
+            item.setSortColumns(row.sortColumns);
             item.setRichColumns(row.richColumns);
             item.setTrackIds(row.trackIds);
             parent->appendChild(&item);
@@ -697,6 +714,7 @@ void FilterModel::setRows(const FilterColumnList& columns, const FilterRowList& 
         beginInsertRows({}, rowOffset + rowIndex, rowOffset + rowIndex);
         auto [it, _]  = p->m_nodes.emplace(row.key, FilterItem{row.key, row.columns, parent});
         auto& newItem = it->second;
+        newItem.setSortColumns(row.sortColumns);
         newItem.setRichColumns(row.richColumns);
         newItem.setTrackIds(row.trackIds);
         parent->insertChild(rowOffset + rowIndex, &newItem);
@@ -719,6 +737,7 @@ void FilterModel::setRows(const FilterColumnList& columns, const FilterRowList& 
         }
 
         item->setColumns(row.columns);
+        item->setSortColumns(row.sortColumns);
         item->setRichColumns(row.richColumns);
         item->setTrackIds(row.trackIds);
 

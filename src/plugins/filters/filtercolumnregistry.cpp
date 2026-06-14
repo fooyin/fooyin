@@ -36,11 +36,11 @@ FilterColumnRegistry::FilterColumnRegistry(SettingsManager* settings, QObject* p
 
 void FilterColumnRegistry::loadDefaults()
 {
-    addDefaultItem({.id = 0, .name = tr("Genre"), .field = u"%<genre>%"_s});
-    addDefaultItem({.id = 1, .name = tr("Album Artist"), .field = u"%<albumartist>%"_s});
-    addDefaultItem({.id = 2, .name = tr("Artist"), .field = u"%<artist>%"_s});
-    addDefaultItem({.id = 3, .name = tr("Album"), .field = u"%album%"_s});
-    addDefaultItem({.id = 4, .name = tr("Date"), .field = u"%date%"_s});
+    addDefaultItem({.id = 0, .name = tr("Genre"), .field = u"%<genre>%"_s, .sortField = {}});
+    addDefaultItem({.id = 1, .name = tr("Album Artist"), .field = u"%<albumartist>%"_s, .sortField = {}});
+    addDefaultItem({.id = 2, .name = tr("Artist"), .field = u"%<artist>%"_s, .sortField = {}});
+    addDefaultItem({.id = 3, .name = tr("Album"), .field = u"%album%"_s, .sortField = {}});
+    addDefaultItem({.id = 4, .name = tr("Date"), .field = u"%date%"_s, .sortField = {}});
 }
 } // namespace Fooyin::Filters
 

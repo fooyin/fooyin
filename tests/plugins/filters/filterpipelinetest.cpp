@@ -185,7 +185,9 @@ TEST(FilterPipelineTest, PatchFilterRowsMovesUpdatedTrackBetweenBucketsAndPrunes
         return track;
     }();
 
-    const Filters::FilterColumnList columns{{.id = 0, .name = u"Genre"_s, .field = u"%<genre>%"_s}};
+    const Filters::FilterColumnList columns{
+        {.id = 0, .name = u"Genre"_s, .field = u"%<genre>%"_s, .sortField = {}},
+    };
     const Filters::FilterRowBuildContext context{
         .font          = {},
         .ratingSymbols = {u"*"_s, u"/"_s, u"-"_s},
@@ -220,7 +222,9 @@ TEST(FilterPipelineTest, PatchFilterRowsAddsNewTrackIntoExistingBucketInCurrentO
         return track;
     }();
 
-    const Filters::FilterColumnList columns{{.id = 0, .name = u"Genre"_s, .field = u"%<genre>%"_s}};
+    const Filters::FilterColumnList columns{
+        {.id = 0, .name = u"Genre"_s, .field = u"%<genre>%"_s, .sortField = {}},
+    };
     const Filters::FilterRowBuildContext context{
         .font          = {},
         .ratingSymbols = {u"*"_s, u"/"_s, u"-"_s},

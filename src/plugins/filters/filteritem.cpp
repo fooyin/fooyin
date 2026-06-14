@@ -73,6 +73,7 @@ FilterItem::FilterItem(Md5Hash key, QStringList columns, FilterItem* parent)
     : TreeItem{parent}
     , m_key{std::move(key)}
     , m_columns{std::move(columns)}
+    , m_sortColumns{m_columns}
     , m_isSummary{false}
 {
     m_richColumns = plainColumnsToRichText(m_columns);
@@ -94,6 +95,14 @@ QString FilterItem::column(int column) const
         return {};
     }
     return m_columns.at(column);
+}
+
+QString FilterItem::sortColumn(int column) const
+{
+    if(column < 0 || column >= m_sortColumns.size()) {
+        return this->column(column);
+    }
+    return m_sortColumns.at(column);
 }
 
 const RichText& FilterItem::richColumn(int column) const
@@ -200,8 +209,14 @@ void FilterItem::updateIconCaptionColumns(const std::vector<int>& columnOrder) c
 void FilterItem::setColumns(const QStringList& columns)
 {
     m_columns     = columns;
+    m_sortColumns = m_columns;
     m_richColumns = plainColumnsToRichText(m_columns);
     invalidateIconCaches();
+}
+
+void FilterItem::setSortColumns(const QStringList& columns)
+{
+    m_sortColumns = columns.isEmpty() ? m_columns : columns;
 }
 
 void FilterItem::setRichColumns(const std::vector<RichText>& columns)
@@ -218,6 +233,7 @@ void FilterItem::setTrackIds(const TrackIds& trackIds)
 void FilterItem::removeColumn(int column)
 {
     m_columns.remove(column);
+    m_sortColumns.remove(column);
 
     if(column >= 0 && std::cmp_less(column, m_richColumns.size())) {
         m_richColumns.erase(m_richColumns.begin() + column);

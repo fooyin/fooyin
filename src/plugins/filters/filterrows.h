@@ -38,6 +38,7 @@ struct FilterRow
 {
     RowKey key;
     QStringList columns;
+    QStringList sortColumns;
     std::vector<RichText> richColumns;
     TrackIds trackIds;
 };

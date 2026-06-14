@@ -21,7 +21,9 @@
 
 #include "filtercolumnregistry.h"
 
+#include <QApplication>
 #include <QFont>
+#include <QPalette>
 
 using namespace Qt::StringLiterals;
 
@@ -80,7 +82,7 @@ void FiltersColumnModel::processQueue()
         const FilterColumn column           = node.column();
 
         switch(status) {
-            case(ColumnItem::Added): {
+            case ColumnItem::Added: {
                 if(column.field.isEmpty()) {
                     break;
                 }
@@ -95,7 +97,7 @@ void FiltersColumnModel::processQueue()
                 }
                 break;
             }
-            case(ColumnItem::Removed): {
+            case ColumnItem::Removed: {
                 if(m_columnsRegistry->removeById(column.id)) {
                     beginRemoveRows({}, node.row(), node.row());
                     m_root.removeChild(node.row());
@@ -107,7 +109,7 @@ void FiltersColumnModel::processQueue()
                 }
                 break;
             }
-            case(ColumnItem::Changed): {
+            case ColumnItem::Changed: {
                 if(m_columnsRegistry->changeItem(column)) {
                     if(const auto item = m_columnsRegistry->itemById(column.id)) {
                         node.changeColumn(item.value());
@@ -119,7 +121,7 @@ void FiltersColumnModel::processQueue()
                 }
                 break;
             }
-            case(ColumnItem::None):
+            case ColumnItem::None:
                 break;
         }
     }
@@ -151,12 +153,14 @@ QVariant FiltersColumnModel::headerData(int section, Qt::Orientation orientation
     }
 
     switch(section) {
-        case(0):
+        case 0:
             return tr("Index");
-        case(1):
+        case 1:
             return tr("Name");
-        case(2):
-            return tr("Field");
+        case 2:
+            return tr("Display Script");
+        case 3:
+            return tr("Sort Script");
         default:
             break;
     }
@@ -180,17 +184,44 @@ QVariant FiltersColumnModel::data(const QModelIndex& index, int role) const
         return QVariant::fromValue(item->column());
     }
 
-    if(role == Qt::DisplayRole || role == Qt::EditRole) {
+    const FilterColumn& columnData = item->column();
+
+    if(role == Qt::ForegroundRole && index.column() == 3 && columnData.sortField.isEmpty()) {
+        return QApplication::palette().color(QPalette::PlaceholderText);
+    }
+
+    if(role == Qt::EditRole) {
         switch(index.column()) {
-            case(0):
-                return item->column().index;
-            case(1): {
-                const QString& name = item->column().name;
+            case 0:
+                return columnData.index;
+            case 1: {
+                return columnData.name;
+            }
+            case 2: {
+                return columnData.field;
+            }
+            case 3:
+                return columnData.sortField;
+            default:
+                break;
+        }
+    }
+
+    if(role == Qt::DisplayRole) {
+        switch(index.column()) {
+            case 0:
+                return columnData.index;
+            case 1: {
+                const QString& name = columnData.name;
                 return !name.isEmpty() ? name : u"<enter name here>"_s;
             }
-            case(2): {
-                const QString& field = item->column().field;
+            case 2: {
+                const QString& field = columnData.field;
                 return !field.isEmpty() ? field : u"<enter field here>"_s;
+            }
+            case 3: {
+                const QString& sortField = columnData.sortField;
+                return !sortField.isEmpty() ? sortField : tr("Use display script");
             }
             default:
                 break;
@@ -210,7 +241,7 @@ bool FiltersColumnModel::setData(const QModelIndex& index, const QVariant& value
     FilterColumn column = item->column();
 
     switch(index.column()) {
-        case(1): {
+        case 1: {
             if(value.toString() == u"<enter name here>"_s || column.name == value.toString()) {
                 if(item->status() == ColumnItem::Added) {
                     Q_EMIT pendingRowCancelled();
@@ -220,11 +251,18 @@ bool FiltersColumnModel::setData(const QModelIndex& index, const QVariant& value
             column.name = value.toString();
             break;
         }
-        case(2): {
+        case 2: {
             if(column.field == value.toString()) {
                 return false;
             }
             column.field = value.toString();
+            break;
+        }
+        case 3: {
+            if(column.sortField == value.toString()) {
+                return false;
+            }
+            column.sortField = value.toString();
             break;
         }
         default:
@@ -247,7 +285,7 @@ QModelIndex FiltersColumnModel::index(int row, int column, const QModelIndex& pa
         return {};
     }
 
-    ColumnItem* item = m_root.child(row);
+    const ColumnItem* item = m_root.child(row);
 
     return createIndex(row, column, item);
 }
@@ -259,7 +297,7 @@ int FiltersColumnModel::rowCount(const QModelIndex& /*parent*/) const
 
 int FiltersColumnModel::columnCount(const QModelIndex& /*parent*/) const
 {
-    return 3;
+    return 4;
 }
 
 bool FiltersColumnModel::removeRows(int row, int count, const QModelIndex& /*parent*/)
