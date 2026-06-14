@@ -1925,7 +1925,7 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="53"/>
         <source>Force-sorted</source>
-        <translation type="unfinished"></translation>
+        <translation>Tvångssorterad</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="54"/>
@@ -1961,7 +1961,8 @@
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="87"/>
         <source>When enabled, the autoplaylist is fully reordered by its sort pattern whenever it regenerates. 
 When disabled, existing track order is preserved and only newly added matching tracks are sorted and then appended.</source>
-        <translation type="unfinished"></translation>
+        <translation>När på blir autospellistan helt omsorterad av dess sorteringsmönster när det omgenereras.
+När av bevaras existerande spårordning och endast nytillagda matchande spår är sorterade och läggs sedan in i slutet.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="95"/>
@@ -4702,12 +4703,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
         <source>Open Config Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna konfig-mappen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="112"/>
         <source>Open Share Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna share-mappen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
@@ -4717,7 +4718,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="135"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="136"/>
@@ -4732,7 +4733,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="138"/>
         <source>Remember from last run</source>
-        <translation type="unfinished"></translation>
+        <translation>Kom ihåg från senaste körning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="165"/>
@@ -5092,7 +5093,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="427"/>
         <source>Display</source>
-        <translation type="unfinished">Visa</translation>
+        <translation>Display</translation>
     </message>
 </context>
 <context>
@@ -5367,7 +5368,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="91"/>
         <source>Raise</source>
-        <translation type="unfinished"></translation>
+        <translation>Förhöj</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="92"/>
@@ -6055,7 +6056,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="312"/>
         <source>Total Peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Total peak</translation>
     </message>
 </context>
 <context>
@@ -14485,7 +14486,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="100"/>
         <source>Intermediate</source>
-        <translation type="unfinished"></translation>
+        <translation>Intermediär</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="101"/>
@@ -15175,7 +15176,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="633"/>
         <source>Show action tips</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa åtgärdstips</translation>
     </message>
 </context>
 <context>
@@ -15206,17 +15207,17 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="66"/>
         <source>Show action tips</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa åtgärdstips</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="83"/>
         <source>Shown in the status bar when no tracks are selected, or when selection info is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Visas i statusfältet när inga spår är valda, eller när selektionsinfo är av.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="86"/>
         <source>Playing track</source>
-        <translation>Spelar spår</translation>
+        <translation>Spelande spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="88"/>
