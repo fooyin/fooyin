@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "database/playbackqueuedatabase.h"
+#include "core/database/playbackqueuedatabase.h"
 
 #include <core/player/playbackqueue.h>
 #include <utils/database/dbconnectionpool.h>

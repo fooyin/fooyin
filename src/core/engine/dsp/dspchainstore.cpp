@@ -119,11 +119,11 @@ DspChains deserialiseChain(const QByteArray& data)
 } // namespace
 
 namespace Fooyin {
-DspChainStore::DspChainStore(SettingsManager* settings, DspRegistry* registry, EngineHandler* engine)
-    : QObject{engine}
+DspChainStore::DspChainStore(SettingsManager* settings, DspRegistry* registry, QObject* parent)
+    : QObject{parent}
     , m_settings{settings}
     , m_registry{registry}
-    , m_engine{engine}
+    , m_engine{nullptr}
     , m_nextInstanceId{1}
 {
     loadFromSettings();

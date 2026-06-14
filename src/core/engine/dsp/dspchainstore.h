@@ -39,7 +39,7 @@ class FYCORE_EXPORT DspChainStore : public QObject
     Q_OBJECT
 
 public:
-    DspChainStore(SettingsManager* settings, DspRegistry* registry, EngineHandler* engine = nullptr);
+    DspChainStore(SettingsManager* settings, DspRegistry* registry, QObject* parent = nullptr);
 
     void setEngine(EngineHandler* engine);
 

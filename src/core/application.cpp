@@ -33,14 +33,11 @@
 #include "library/librarymanager.h"
 #include "library/sortingregistry.h"
 #include "library/unifiedmusiclibrary.h"
-#include "playback/playbackqueuestore.h"
 #include "playlist/parsers/cueparser.h"
 #include "playlist/parsers/m3uparser.h"
 #include "playlist/parsers/plsparser.h"
 #include "plugins/pluginmanager.h"
-#include "translationloader.h"
 #include "version.h"
-#include <core/playlist/playlistloader.h>
 
 #include <core/coresettings.h>
 #include <core/engine/audiobuffer.h>
@@ -51,17 +48,14 @@
 #include <core/network/remoteioservice.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
+#include <core/playlist/playlistloader.h>
 #include <core/plugins/coreplugin.h>
-#include <utils/database/dbconnectionprovider.h>
 #include <utils/settings/settingsmanager.h>
 
-#include <QBasicTimer>
 #include <QCoreApplication>
 #include <QLoggingCategory>
 #include <QProcess>
 #include <QTimerEvent>
-
-#include <array>
 
 Q_LOGGING_CATEGORY(APP, "fy.app")
 
@@ -95,81 +89,234 @@ void registerTypes()
 } // namespace
 
 namespace Fooyin {
-class ApplicationPrivate
-{
-public:
-    explicit ApplicationPrivate(Application* self_);
-
-    void initialise();
-    void registerPlaylistParsers();
-    void registerInputs();
-
-    void setupConnections();
-    void markTrack(const Track& track) const;
-    void tracksWereUpdated(const TrackList& tracks) const;
-    void loadPlugins();
-
-    void startSaveTimer();
-    void exportAllPlaylists(bool shutdown);
-
-    void loadDatabaseSettings() const;
-    void saveDatabaseSettings() const;
-
-    Application* m_self;
-
-    SettingsManager* m_settings;
-    CoreSettings m_coreSettings;
-    TranslationLoader m_translations;
-    Database* m_database;
-    std::shared_ptr<AudioLoader> m_audioLoader;
-    DspRegistry m_dspRegistry;
-    DspChainStore m_dspChainStore;
-    std::shared_ptr<NetworkAccessManager> m_networkManager;
-    std::shared_ptr<RemoteIoService> m_remoteIo;
-    LibraryManager* m_libraryManager;
-    std::shared_ptr<PlaylistLoader> m_playlistLoader;
-    UnifiedMusicLibrary* m_library;
-    PlaylistHandler* m_playlistHandler;
-    PlayerController* m_playerController;
-    PlaybackQueueStore m_playbackQueueStore;
-    EngineHandler m_engine;
-    SortingRegistry* m_sortingRegistry;
-
-    PluginManager m_pluginManager;
-    CorePluginContext m_corePluginContext;
-
-    QBasicTimer m_playlistSaveTimer;
-    QBasicTimer m_settingsSaveTimer;
-};
-
-ApplicationPrivate::ApplicationPrivate(Application* self_)
-    : m_self{self_}
-    , m_settings{new SettingsManager(Core::settingsPath(), m_self)}
+Application::Application(QObject* parent)
+    : QObject{parent}
+    , m_settings{new SettingsManager(Core::settingsPath(), this)}
     , m_coreSettings{m_settings}
-    , m_database{new Database(m_self)}
+    , m_database{new Database(this)}
     , m_audioLoader{std::make_shared<AudioLoader>()}
-    , m_dspChainStore{m_settings, &m_dspRegistry}
+    , m_dspRegistry{std::make_unique<DspRegistry>()}
+    , m_dspChainStore{std::make_unique<DspChainStore>(m_settings, m_dspRegistry.get())}
     , m_networkManager{std::make_shared<NetworkAccessManager>(m_settings)}
     , m_remoteIo{std::make_shared<RemoteIoService>(m_networkManager, m_settings)}
-    , m_libraryManager{new LibraryManager(m_database->connectionPool(), m_settings, m_self)}
+    , m_libraryManager{new LibraryManager(m_database->connectionPool(), m_settings, this)}
     , m_playlistLoader{std::make_shared<PlaylistLoader>()}
     , m_library{new UnifiedMusicLibrary(m_libraryManager, m_database->connectionPool(), m_playlistLoader, m_audioLoader,
-                                        m_remoteIo, m_settings, m_self)}
-    , m_playlistHandler{new PlaylistHandler(m_database->connectionPool(), m_audioLoader, m_library, m_settings, m_self)}
-    , m_playerController{new PlayerController(m_settings, m_playlistHandler, m_self)}
+                                        m_remoteIo, m_settings, this)}
+    , m_playlistHandler{new PlaylistHandler(m_database->connectionPool(), m_audioLoader, m_library, m_settings, this)}
+    , m_playerController{new PlayerController(m_settings, m_playlistHandler, this)}
     , m_playbackQueueStore{m_database->connectionPool(), m_library, m_playlistHandler}
-    , m_engine{m_audioLoader, m_playerController, m_settings, &m_dspRegistry}
-    , m_sortingRegistry{new SortingRegistry(m_settings, m_self)}
-    , m_pluginManager{m_settings}
-    , m_corePluginContext{&m_engine,  m_playerController, m_libraryManager, m_library,         m_playlistHandler,
-                          m_settings, m_audioLoader,      m_playlistLoader, m_sortingRegistry, m_networkManager}
+    , m_engine{std::make_unique<EngineHandler>(m_audioLoader, m_playerController, m_settings, m_dspRegistry.get())}
+    , m_sortingRegistry{new SortingRegistry(m_settings, this)}
+    , m_pluginManager{std::make_unique<PluginManager>(m_settings)}
+    , m_corePluginContext{m_engine.get(), m_playerController, m_libraryManager, m_library,         m_playlistHandler,
+                          m_settings,     m_audioLoader,      m_playlistLoader, m_sortingRegistry, m_networkManager}
 {
     m_audioLoader->setRemoteSourceProvider(m_remoteIo);
     m_translations.initialiseTranslations(m_settings->value<Settings::Core::Language>());
     loadDatabaseSettings();
+
+    QObject::connect(m_playlistHandler, &PlaylistHandler::playlistAdded, this, &Application::startSaveTimer);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::playlistRemoved, this, &Application::startSaveTimer);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksAdded, this, &Application::startSaveTimer);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksChanged, this, &Application::startSaveTimer);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksUpdated, this, &Application::startSaveTimer);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksRemoved, this, &Application::startSaveTimer);
+    QObject::connect(
+        m_playlistHandler, &PlaylistHandler::playlistsPopulated, this,
+        [this]() { m_playerController->replaceTracks(m_playbackQueueStore.load()); }, Qt::SingleShotConnection);
+    QObject::connect(m_playerController, &PlayerController::tracksQueued, this,
+                     [this]() { m_playbackQueueStore.save(m_playerController->playbackQueue()); });
+    QObject::connect(m_playerController, &PlayerController::tracksDequeued, this,
+                     [this]() { m_playbackQueueStore.save(m_playerController->playbackQueue()); });
+    QObject::connect(m_playerController, &PlayerController::trackIndexesDequeued, this,
+                     [this]() { m_playbackQueueStore.save(m_playerController->playbackQueue()); });
+    QObject::connect(m_playerController, &PlayerController::trackQueueChanged, this,
+                     [this]() { m_playbackQueueStore.save(m_playerController->playbackQueue()); });
+
+    QObject::connect(m_library, &MusicLibrary::tracksMetadataChanged, this,
+                     [this](const TrackList& tracks) { tracksWereUpdated(tracks); });
+    QObject::connect(m_library, &MusicLibrary::tracksUpdated, this,
+                     [this](const TrackList& tracks) { tracksWereUpdated(tracks); });
+    QObject::connect(m_playerController, &PlayerController::trackPlayed, m_library,
+                     &UnifiedMusicLibrary::trackWasPlayed);
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, m_library,
+                     &UnifiedMusicLibrary::setActivePlaybackTrack);
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, m_library,
+                     [this](Player::PlayState state) {
+                         if(state == Player::PlayState::Stopped) {
+                             m_library->flushPendingWrites();
+                         }
+                     });
+    QObject::connect(m_libraryManager, &LibraryManager::libraryAboutToBeRemoved, m_playlistHandler,
+                     &PlaylistHandler::savePlaylists);
+    QObject::connect(m_engine.get(), &EngineHandler::trackChanged, this, [this](const Track& track) {
+        auto currentTrack = m_playerController->currentPlaylistTrack();
+        if(!sameTrackIdentity(track, currentTrack.track)) {
+            return;
+        }
+
+        m_playerController->updateCurrentTrack(track);
+    });
+    QObject::connect(m_engine.get(), &EngineController::trackStatusContextChanged, this,
+                     [this](const Engine::TrackStatusContext& context) {
+                         if(context.status == Engine::TrackStatus::Invalid) {
+                             m_playerController->pause();
+                         }
+                     });
 }
 
-void ApplicationPrivate::initialise()
+Application::~Application() = default;
+
+void Application::startup()
+{
+    initialise();
+}
+
+void Application::shutdown()
+{
+    saveDatabaseSettings();
+
+    if(m_settings->fileValue(Settings::Core::Internal::AutoExportPlaylists).toBool()) {
+        exportAllPlaylists(true);
+    }
+
+    if(m_settings->value<Settings::Core::ClearPlaybackQueueOnExit>()) {
+        m_playbackQueueStore.save(PlaybackQueue{});
+    }
+    else {
+        m_playbackQueueStore.save(m_playerController->playbackQueue());
+    }
+
+    m_playlistHandler->savePlaylists();
+    m_pluginManager->unloadPlugins();
+    m_audioLoader->saveState();
+    m_settings->storeSettings();
+    m_library->flushPendingWrites();
+    m_library->cleanupTracks();
+}
+
+void Application::quit()
+{
+    QMetaObject::invokeMethod(QCoreApplication::instance(), []() { QCoreApplication::quit(); }, Qt::QueuedConnection);
+}
+
+void Application::restart()
+{
+    QMetaObject::invokeMethod(
+        QCoreApplication::instance(),
+        []() {
+            const QString appPath = QCoreApplication::applicationFilePath();
+            QCoreApplication::quit();
+            QProcess::startDetached(appPath, {u"--skip-single"_s});
+        },
+        Qt::QueuedConnection);
+}
+
+Database* Application::database() const
+{
+    return m_database;
+}
+
+DbConnectionPoolPtr Application::databasePool() const
+{
+    return m_database->connectionPool();
+}
+
+PluginManager* Application::pluginManager() const
+{
+    return m_pluginManager.get();
+}
+
+PlayerController* Application::playerController() const
+{
+    return m_playerController;
+}
+
+LibraryManager* Application::libraryManager() const
+{
+    return m_libraryManager;
+}
+
+MusicLibrary* Application::library() const
+{
+    return m_library;
+}
+
+PendingTrackCoverProvider* Application::pendingTrackCoverProvider() const
+{
+    return m_library->pendingTrackCoverProvider();
+}
+
+PlaylistHandler* Application::playlistHandler() const
+{
+    return m_playlistHandler;
+}
+
+SettingsManager* Application::settingsManager() const
+{
+    return m_settings;
+}
+
+EngineController* Application::engine() const
+{
+    return m_engine.get();
+}
+
+std::shared_ptr<PlaylistLoader> Application::playlistLoader() const
+{
+    return m_playlistLoader;
+}
+
+std::shared_ptr<AudioLoader> Application::audioLoader() const
+{
+    return m_audioLoader;
+}
+
+std::shared_ptr<NetworkAccessManager> Application::networkManager() const
+{
+    return m_networkManager;
+}
+
+std::shared_ptr<RemoteIoService> Application::remoteIoService() const
+{
+    return m_remoteIo;
+}
+
+SortingRegistry* Application::sortingRegistry() const
+{
+    return m_sortingRegistry;
+}
+
+DspRegistry* Application::dspRegistry() const
+{
+    return m_dspRegistry.get();
+}
+
+DspChainStore* Application::dspChainStore() const
+{
+    return m_dspChainStore.get();
+}
+
+void Application::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_playlistSaveTimer.timerId()) {
+        m_playlistSaveTimer.stop();
+        if(m_settings->fileValue(Settings::Core::Internal::AutoExportPlaylists).toBool()) {
+            exportAllPlaylists(false);
+        }
+        m_playlistHandler->savePlaylists();
+    }
+    else if(event->timerId() == m_settingsSaveTimer.timerId()) {
+        if(m_settings->settingsHaveChanged()) {
+            m_settings->storeSettings();
+        }
+    }
+
+    QObject::timerEvent(event);
+}
+
+void Application::initialise()
 {
     registerTypes();
     registerInputs();
@@ -177,22 +324,22 @@ void ApplicationPrivate::initialise()
     setupConnections();
     loadPlugins();
 
-    m_dspChainStore.setEngine(&m_engine);
+    m_dspChainStore->setEngine(m_engine.get());
     m_audioLoader->restoreState();
-    m_settingsSaveTimer.start(SettingsSaveInterval, m_self);
+    m_settingsSaveTimer.start(SettingsSaveInterval, this);
 
     m_library->loadAllTracks();
-    m_engine.setup();
+    m_engine->setup();
 }
 
-void ApplicationPrivate::registerPlaylistParsers()
+void Application::registerPlaylistParsers()
 {
     m_playlistLoader->addParser(std::make_unique<CueParser>());
     m_playlistLoader->addParser(std::make_unique<M3uParser>());
     m_playlistLoader->addParser(std::make_unique<PlsParser>());
 }
 
-void ApplicationPrivate::registerInputs()
+void Application::registerInputs()
 {
     m_audioLoader->addDecoder(
         u"Archive"_s, [this]() { return std::make_unique<ArchiveDecoder>(m_audioLoader); }, -1, true);
@@ -203,12 +350,12 @@ void ApplicationPrivate::registerInputs()
     m_audioLoader->addReader(u"FFmpeg"_s, []() { return std::make_unique<FFmpegReader>(); }, 99);
 }
 
-void ApplicationPrivate::setupConnections()
+void Application::setupConnections()
 {
-    QObject::connect(m_library, &MusicLibrary::tracksDeleted, m_self,
+    QObject::connect(m_library, &MusicLibrary::tracksDeleted, this,
                      [this](const TrackList& tracks) { m_playlistHandler->handleTracksDeleted(tracks); });
 
-    QObject::connect(&m_engine, &EngineController::trackStatusContextChanged, m_self,
+    QObject::connect(m_engine.get(), &EngineController::trackStatusContextChanged, this,
                      [this](const Engine::TrackStatusContext& context) {
                          if(context.status == Engine::TrackStatus::Invalid) {
                              const Track track = m_playerController->currentTrack();
@@ -216,15 +363,15 @@ void ApplicationPrivate::setupConnections()
                          }
                      });
 
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, m_self,
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
                      [this](const Track& track) { markTrack(track); });
-    QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, &m_engine,
+    QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, m_engine.get(),
                      &EngineHandler::updateCurrentTrackMetadata);
 
-    m_settings->subscribe<Settings::Core::Shutdown>(m_self, [this]() {
-        const auto state = m_engine.engineState();
+    m_settings->subscribe<Settings::Core::Shutdown>(this, [this]() {
+        const auto state = m_engine->engineState();
         if(state != Engine::PlaybackState::Stopped && state != Engine::PlaybackState::Error) {
-            QObject::connect(&m_engine, &EngineController::finished, m_self, Application::quit);
+            QObject::connect(m_engine.get(), &EngineController::finished, this, Application::quit);
             m_playerController->stop();
         }
         else {
@@ -233,7 +380,7 @@ void ApplicationPrivate::setupConnections()
     });
 }
 
-void ApplicationPrivate::markTrack(const Track& track) const
+void Application::markTrack(const Track& track) const
 {
     if(!track.isValid()) {
         return;
@@ -254,7 +401,7 @@ void ApplicationPrivate::markTrack(const Track& track) const
     }
 }
 
-void ApplicationPrivate::tracksWereUpdated(const TrackList& tracks) const
+void Application::tracksWereUpdated(const TrackList& tracks) const
 {
     const Track currentTrack = m_playerController->currentTrack();
     if(!currentTrack.isValid()) {
@@ -272,19 +419,19 @@ void ApplicationPrivate::tracksWereUpdated(const TrackList& tracks) const
     }
 }
 
-void ApplicationPrivate::loadPlugins()
+void Application::loadPlugins()
 {
     const QStringList pluginPaths{Core::pluginPaths()};
-    m_pluginManager.findPlugins(pluginPaths);
-    m_pluginManager.loadPlugins();
+    m_pluginManager->findPlugins(pluginPaths);
+    m_pluginManager->loadPlugins();
 
-    m_pluginManager.initialisePlugins<CorePlugin>(
+    m_pluginManager->initialisePlugins<CorePlugin>(
         [this](CorePlugin* plugin) { plugin->initialise(m_corePluginContext); });
 
-    m_pluginManager.initialisePlugins<OutputPlugin>(
-        [this](OutputPlugin* plugin) { m_engine.addOutput(plugin->name(), plugin->creator()); });
+    m_pluginManager->initialisePlugins<OutputPlugin>(
+        [this](OutputPlugin* plugin) { m_engine->addOutput(plugin->name(), plugin->creator()); });
 
-    m_pluginManager.initialisePlugins<InputPlugin>([this](InputPlugin* plugin) {
+    m_pluginManager->initialisePlugins<InputPlugin>([this](InputPlugin* plugin) {
         const auto creator = plugin->inputCreator();
         if(creator.decoder) {
             m_audioLoader->addDecoder(plugin->inputName(), creator.decoder);
@@ -297,24 +444,24 @@ void ApplicationPrivate::loadPlugins()
         }
     });
 
-    m_pluginManager.initialisePlugins<DspPlugin>([this](DspPlugin* plugin) {
+    m_pluginManager->initialisePlugins<DspPlugin>([this](DspPlugin* plugin) {
         const auto dsps = plugin->dspCreators();
         for(const auto& creator : dsps) {
             if(creator.id.isEmpty() || creator.name.isEmpty() || !creator.factory) {
                 continue;
             }
 
-            m_dspRegistry.registerDsp(creator);
+            m_dspRegistry->registerDsp(creator);
         }
     });
 }
 
-void ApplicationPrivate::startSaveTimer()
+void Application::startSaveTimer()
 {
-    m_playlistSaveTimer.start(PlaylistSaveInterval, m_self);
+    m_playlistSaveTimer.start(PlaylistSaveInterval, this);
 }
 
-void ApplicationPrivate::exportAllPlaylists(bool shutdown)
+void Application::exportAllPlaylists(bool shutdown)
 {
     using namespace Settings::Core::Internal;
 
@@ -380,7 +527,7 @@ void ApplicationPrivate::exportAllPlaylists(bool shutdown)
     }
 }
 
-void ApplicationPrivate::loadDatabaseSettings() const
+void Application::loadDatabaseSettings() const
 {
     const DbConnectionProvider dbProvider{m_database->connectionPool()};
     SettingsDatabase settingsDb;
@@ -392,221 +539,13 @@ void ApplicationPrivate::loadDatabaseSettings() const
     }
 }
 
-void ApplicationPrivate::saveDatabaseSettings() const
+void Application::saveDatabaseSettings() const
 {
     const DbConnectionProvider dbProvider{m_database->connectionPool()};
     SettingsDatabase settingsDb;
     settingsDb.initialise(dbProvider);
 
     settingsDb.set(u"Version"_s, QString::fromLatin1(VERSION));
-}
-
-Application::Application(QObject* parent)
-    : QObject{parent}
-    , p{std::make_unique<ApplicationPrivate>(this)}
-{
-    auto startPlaylistTimer = [this]() {
-        p->startSaveTimer();
-    };
-
-    QObject::connect(p->m_playlistHandler, &PlaylistHandler::playlistAdded, this, startPlaylistTimer);
-    QObject::connect(p->m_playlistHandler, &PlaylistHandler::playlistRemoved, this, startPlaylistTimer);
-    QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksAdded, this, startPlaylistTimer);
-    QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksChanged, this, startPlaylistTimer);
-    QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksUpdated, this, startPlaylistTimer);
-    QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksRemoved, this, startPlaylistTimer);
-    QObject::connect(
-        p->m_playlistHandler, &PlaylistHandler::playlistsPopulated, this,
-        [this]() { p->m_playerController->replaceTracks(p->m_playbackQueueStore.load()); }, Qt::SingleShotConnection);
-    QObject::connect(p->m_playerController, &PlayerController::tracksQueued, this,
-                     [this]() { p->m_playbackQueueStore.save(p->m_playerController->playbackQueue()); });
-    QObject::connect(p->m_playerController, &PlayerController::tracksDequeued, this,
-                     [this]() { p->m_playbackQueueStore.save(p->m_playerController->playbackQueue()); });
-    QObject::connect(p->m_playerController, &PlayerController::trackIndexesDequeued, this,
-                     [this]() { p->m_playbackQueueStore.save(p->m_playerController->playbackQueue()); });
-    QObject::connect(p->m_playerController, &PlayerController::trackQueueChanged, this,
-                     [this]() { p->m_playbackQueueStore.save(p->m_playerController->playbackQueue()); });
-
-    QObject::connect(p->m_library, &MusicLibrary::tracksMetadataChanged, this,
-                     [this](const TrackList& tracks) { p->tracksWereUpdated(tracks); });
-    QObject::connect(p->m_library, &MusicLibrary::tracksUpdated, this,
-                     [this](const TrackList& tracks) { p->tracksWereUpdated(tracks); });
-    QObject::connect(p->m_playerController, &PlayerController::trackPlayed, p->m_library,
-                     &UnifiedMusicLibrary::trackWasPlayed);
-    QObject::connect(p->m_playerController, &PlayerController::currentTrackChanged, p->m_library,
-                     &UnifiedMusicLibrary::setActivePlaybackTrack);
-    QObject::connect(p->m_playerController, &PlayerController::playStateChanged, p->m_library,
-                     [this](Player::PlayState state) {
-                         if(state == Player::PlayState::Stopped) {
-                             p->m_library->flushPendingWrites();
-                         }
-                     });
-    QObject::connect(p->m_libraryManager, &LibraryManager::libraryAboutToBeRemoved, p->m_playlistHandler,
-                     &PlaylistHandler::savePlaylists);
-    QObject::connect(&p->m_engine, &EngineHandler::trackChanged, this, [this](const Track& track) {
-        auto currentTrack = p->m_playerController->currentPlaylistTrack();
-        if(!sameTrackIdentity(track, currentTrack.track)) {
-            return;
-        }
-
-        p->m_playerController->updateCurrentTrack(track);
-    });
-    QObject::connect(&p->m_engine, &EngineController::trackStatusContextChanged, this,
-                     [this](const Engine::TrackStatusContext& context) {
-                         if(context.status == Engine::TrackStatus::Invalid) {
-                             p->m_playerController->pause();
-                         }
-                     });
-}
-
-void Application::startup()
-{
-    p->initialise();
-}
-
-Application::~Application() = default;
-
-void Application::timerEvent(QTimerEvent* event)
-{
-    if(event->timerId() == p->m_playlistSaveTimer.timerId()) {
-        p->m_playlistSaveTimer.stop();
-        if(p->m_settings->fileValue(Settings::Core::Internal::AutoExportPlaylists).toBool()) {
-            p->exportAllPlaylists(false);
-        }
-        p->m_playlistHandler->savePlaylists();
-    }
-    else if(event->timerId() == p->m_settingsSaveTimer.timerId()) {
-        if(p->m_settings->settingsHaveChanged()) {
-            p->m_settings->storeSettings();
-        }
-    }
-
-    QObject::timerEvent(event);
-}
-
-void Application::shutdown()
-{
-    p->saveDatabaseSettings();
-
-    if(p->m_settings->fileValue(Settings::Core::Internal::AutoExportPlaylists).toBool()) {
-        p->exportAllPlaylists(true);
-    }
-
-    if(p->m_settings->value<Settings::Core::ClearPlaybackQueueOnExit>()) {
-        p->m_playbackQueueStore.save(PlaybackQueue{});
-    }
-    else {
-        p->m_playbackQueueStore.save(p->m_playerController->playbackQueue());
-    }
-
-    p->m_playlistHandler->savePlaylists();
-    p->m_pluginManager.unloadPlugins();
-    p->m_audioLoader->saveState();
-    p->m_settings->storeSettings();
-    p->m_library->flushPendingWrites();
-    p->m_library->cleanupTracks();
-}
-
-void Application::quit()
-{
-    QMetaObject::invokeMethod(QCoreApplication::instance(), []() { QCoreApplication::quit(); }, Qt::QueuedConnection);
-}
-
-void Application::restart()
-{
-    QMetaObject::invokeMethod(
-        QCoreApplication::instance(),
-        []() {
-            const QString appPath = QCoreApplication::applicationFilePath();
-            QCoreApplication::quit();
-            QProcess::startDetached(appPath, {u"--skip-single"_s});
-        },
-        Qt::QueuedConnection);
-}
-
-Database* Application::database() const
-{
-    return p->m_database;
-}
-
-DbConnectionPoolPtr Application::databasePool() const
-{
-    return p->m_database->connectionPool();
-}
-
-PluginManager* Application::pluginManager() const
-{
-    return &p->m_pluginManager;
-}
-
-PlayerController* Application::playerController() const
-{
-    return p->m_playerController;
-}
-
-LibraryManager* Application::libraryManager() const
-{
-    return p->m_libraryManager;
-}
-
-MusicLibrary* Application::library() const
-{
-    return p->m_library;
-}
-
-PendingTrackCoverProvider* Application::pendingTrackCoverProvider() const
-{
-    return p->m_library->pendingTrackCoverProvider();
-}
-
-PlaylistHandler* Application::playlistHandler() const
-{
-    return p->m_playlistHandler;
-}
-
-SettingsManager* Application::settingsManager() const
-{
-    return p->m_settings;
-}
-
-EngineController* Application::engine() const
-{
-    return &p->m_engine;
-}
-
-std::shared_ptr<PlaylistLoader> Application::playlistLoader() const
-{
-    return p->m_playlistLoader;
-}
-
-std::shared_ptr<AudioLoader> Application::audioLoader() const
-{
-    return p->m_audioLoader;
-}
-
-std::shared_ptr<NetworkAccessManager> Application::networkManager() const
-{
-    return p->m_networkManager;
-}
-
-std::shared_ptr<RemoteIoService> Application::remoteIoService() const
-{
-    return p->m_remoteIo;
-}
-
-SortingRegistry* Application::sortingRegistry() const
-{
-    return p->m_sortingRegistry;
-}
-
-DspRegistry* Application::dspRegistry() const
-{
-    return &p->m_dspRegistry;
-}
-
-DspChainStore* Application::dspChainStore() const
-{
-    return &p->m_dspChainStore;
 }
 } // namespace Fooyin
 
