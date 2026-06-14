@@ -1131,7 +1131,9 @@ MoveOperation PlaylistModel::moveTracks(const MoveOperation& operation)
 
             const QModelIndex sourceParent = indexOfItem(sourceParentItem);
 
-            beginMoveRows(sourceParent, firstRow, lastRow, targetParent, row);
+            if(!beginMoveRows(sourceParent, firstRow, lastRow, targetParent, row)) {
+                continue;
+            }
             row = dropMoveRows(sourceParent, children, targetParent, row);
             endMoveRows();
 

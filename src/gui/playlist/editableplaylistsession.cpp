@@ -566,11 +566,20 @@ void EditablePlaylistSession::applyPlaylistChangeSet(PlaylistWidgetSessionHost& 
                   }
 
                   const QModelIndex sourceIndex = model->indexAtTrackEntry(move.entryId);
+                  if(!sourceIndex.isValid()) {
+                      handleTracksChanged(widgetSessionHost(widget), {}, false);
+                      return;
+                  }
+
                   MoveOperation operation;
                   const int sourcePlaylistIndex = sourceIndex.data(PlaylistItem::Role::Index).toInt();
                   operation.emplace_back(move.targetIndex, TrackIndexRangeList{{.first = sourcePlaylistIndex,
                                                                                 .last  = sourcePlaylistIndex}});
                   model->moveTracks(operation);
+                  if(model->playlistIndexForTrackEntry(move.entryId) != move.targetIndex) {
+                      handleTracksChanged(widgetSessionHost(widget), {}, false);
+                      return;
+                  }
               }
 
               std::vector<int> updatedIndexes;
