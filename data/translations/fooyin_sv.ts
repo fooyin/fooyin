@@ -2072,7 +2072,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="76"/>
         <source>Command Button Settings</source>
-        <translation>Kommandoknappinställningar</translation>
+        <translation>Kommandoknapp-inställningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="93"/>
@@ -2349,7 +2349,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="35"/>
         <source>Cover Widget Settings</source>
-        <translation>Omslagswidgetinställningar</translation>
+        <translation>Omslagswidget-inställningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="38"/>
@@ -2684,7 +2684,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="36"/>
         <source>Directory Browser Settings</source>
-        <translation>Mappbläddrarinställningar</translation>
+        <translation>Mappbläddrar-inställningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="37"/>
@@ -3179,7 +3179,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="51"/>
         <source>&amp;Settings</source>
-        <translation>&amp;Inställningar</translation>
+        <translation>In&amp;ställningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="53"/>
@@ -3385,7 +3385,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="913"/>
         <source>Open Equaliser settings</source>
-        <translation>Öppna equalizerinställningar</translation>
+        <translation>Öppna equalizer-inställningar</translation>
     </message>
 </context>
 <context>
@@ -3418,7 +3418,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="227"/>
         <source>Equaliser Settings</source>
-        <translation>Equalizerinställningar</translation>
+        <translation>Equalizer-inställningar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="267"/>
@@ -3493,14 +3493,14 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="681"/>
         <source>Invalid value on line %L1.</source>
-        <translation>Ogiltigt värde på linje %L1.</translation>
+        <translation>Ogiltigt värde på rad %L1.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="682"/>
         <source>The first %Ln non-empty line(s) must contain integer values.</source>
         <translation>
-            <numerusform>Den första icke-tomma linjen måste innehålla heltal.</numerusform>
-            <numerusform>De %Ln första icke-tomma linjerna måste innehålla heltal.</numerusform>
+            <numerusform>Den första icke-tomma raden måste innehålla heltal.</numerusform>
+            <numerusform>De %Ln första icke-tomma raderna måste innehålla heltal.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -6762,7 +6762,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="42"/>
         <source>Library Tree Settings</source>
-        <translation>Biblioteksträdinställningar</translation>
+        <translation>Biblioteksträd-inställningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="46"/>
@@ -7006,7 +7006,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="86"/>
         <source>Use &lt;code&gt;||&lt;/code&gt; to split tree levels. &lt;b&gt;Sort Grouping&lt;/b&gt; must use the same &lt;code&gt;||&lt;/code&gt; level structure as &lt;b&gt;Display Grouping&lt;/b&gt;; each sort level applies to the matching display level, and a sort level may be empty (for example &lt;code&gt;||%year%||&lt;/code&gt;).</source>
-        <translation type="unfinished">Använd &lt;code&gt;||&lt;/code&gt; för att splitta trädnivåer. &lt;b&gt;Sortera gruppering&lt;/b&gt; måste använda samma &lt;code&gt;||&lt;/code&gt; nivåstruktur som &lt;b&gt;Displaygruppering&lt;/b&gt;; varje sorteringsnivå tillämpas på den matchande displaynivån, och en sorteringsnivå får inte vara tom (till exempel &lt;code&gt;||%year%||&lt;/code&gt;).</translation>
+        <translation>Använd &lt;code&gt;||&lt;/code&gt; för att splitta trädnivåer. &lt;b&gt;Sorteringsgruppering&lt;/b&gt; måste använda samma &lt;code&gt;||&lt;/code&gt; nivåstruktur som &lt;b&gt;Displaygruppering&lt;/b&gt;; varje sorteringsnivå tillämpas på den matchande displaynivån, och en sorteringsnivå får inte vara tom (till exempel &lt;code&gt;||%year%||&lt;/code&gt;).</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="103"/>
@@ -9415,7 +9415,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="100"/>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="193"/>
         <source>Playlist Switcher</source>
-        <translation>­Spellistsbytare</translation>
+        <translation>Spellistsbytare</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="192"/>
@@ -10135,12 +10135,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="59"/>
         <source>Playing text</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande text</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="61"/>
         <source>Playing background</source>
-        <translation type="unfinished">Spelar bakgrund</translation>
+        <translation>Spelande bakgrund</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="64"/>
@@ -12721,7 +12721,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="514"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="517"/>
         <source>Any tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Vilken tagg som helst</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="141"/>
@@ -12765,7 +12765,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="178"/>
         <source>Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Tagg</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="179"/>
@@ -13872,7 +13872,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="256"/>
         <source>Finish</source>
-        <translation type="unfinished"></translation>
+        <translation>Slutför</translation>
     </message>
 </context>
 <context>
@@ -14010,7 +14010,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="89"/>
         <source>These settings will only apply if autosearch is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dessa inställningar tillämpas endast om autosökning är av.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="102"/>
@@ -14362,7 +14362,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="159"/>
         <source>Sort Script</source>
-        <translation type="unfinished">Sorteringsskript</translation>
+        <translation>Sorteringsskript</translation>
     </message>
 </context>
 <context>
