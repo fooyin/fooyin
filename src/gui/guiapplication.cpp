@@ -124,13 +124,13 @@ constexpr auto ThemeUpdateDelayMs = 50;
 
 namespace Fooyin {
 namespace {
-QString pluginIdentifierForRoot(const PluginManager* pluginManager, const QObject* root)
+QString pluginIdentifierForRoot(const PluginManager& pluginManager, const QObject* root)
 {
-    if(!pluginManager || !root) {
+    if(!root) {
         return {};
     }
 
-    for(const auto& [pluginId, pluginInfo] : pluginManager->allPluginInfo()) {
+    for(const auto& [pluginId, pluginInfo] : pluginManager.allPluginInfo()) {
         if(pluginInfo && pluginInfo->root() == root) {
             return pluginId;
         }
@@ -174,180 +174,59 @@ void applyInitialIconThemes(SettingsManager* settings)
     const auto [primaryTheme, fallbackTheme] = resolveIconThemes(settings);
     Gui::setThemeIconOverrides(primaryTheme, fallbackTheme);
 }
-} // namespace
 
-class GuiApplicationPrivate
+Application* prepareCoreForGuiApplication(Application* core)
 {
-public:
-    explicit GuiApplicationPrivate(GuiApplication* self_, Application* core_);
-
-    void initialise();
-    void setupConnections();
-    void initialisePlugins();
-
-    void showPluginsNotFoundMessage();
-    void initialiseTray();
-    void updateWindowTitle();
-    void checkArtwork();
-    void handleTrackStatus(const Engine::TrackStatusContext& context);
-    void handleTracksDeleted(const TrackList& tracks);
-
-    void removeExpiredCovers(const TrackList& tracks);
-
-    void registerActions();
-    void rescanTracks(const TrackList& tracks, bool onlyModified) const;
-
-    void setupScanMenu();
-    void setupRatingMenu();
-    void setupUtilitiesMenu();
-
-    void close();
-    void changeVolume(double delta) const;
-    void mute() const;
-    void setStyle() const;
-    void scheduleThemeUpdate(bool refreshSystemBaseline = false);
-    void applyTheme();
-    void handleSystemThemeChanged();
-    bool setIconTheme() const;
-    void refreshThemeIcons() const;
-    void refreshAutoDetectedIconTheme() const;
-    void registerLayouts();
-
-    void checkTracksNeedUpdate() const;
-    void showNeedReloadMessage() const;
-
-    void showScriptEditor();
-    void showSearchPlaylistDialog();
-    void showSearchLibraryDialog();
-    void showPlaybackQueue();
-    void showPlaylistManager();
-    bool focusIntegratedPlaylistSearch() const;
-    void focusSearchBar() const;
-    void showQuickSearch() const;
-    void showPropertiesDialog(const TrackList& tracks) const;
-    void showEngineError(const QString& error) const;
-    void showMessage(const QString& title, const Track& track) const;
-    void showTrackNotFoundMessage(const Track& track) const;
-    void showTrackUnreableMessage(const Track& track) const;
-
-    void createNewPlaylist() const;
-    void createNewAutoPlaylist();
-
-    void addFiles();
-    void addFolders();
-    void addStreamUrl();
-    void openFiles(const QList<QUrl>& urls);
-
-    void loadPlaylist();
-    void savePlaylist() const;
-    void savePlaylist(const Playlist* playlist) const;
-    void saveAllPlaylist() const;
-
-    GuiApplication* m_self;
-    Application* m_core;
-
-    SettingsManager* m_settings;
-    ActionManager* m_actionManager;
-    MusicLibrary* m_library;
-    PlayerController* m_playerController;
-    PlaylistHandler* m_playlistHandler;
-
-    WidgetProvider m_widgetProvider;
-    GuiSettings m_guiSettings;
-    LayoutProvider m_layoutProvider;
-    std::unique_ptr<EditableLayout> m_editableLayout;
-    std::unique_ptr<MainMenuBar> m_menubar;
-    std::unique_ptr<MainWindow> m_mainWindow;
-    std::unique_ptr<SystemTrayIcon> m_trayIcon;
-    WidgetContext* m_mainContext;
-    std::unique_ptr<PlaylistController> m_playlistController;
-    PlaylistInteractor m_playlistInteractor;
-    TrackSelectionController m_selectionController;
-    SearchController* m_searchController;
-
-    FileMenu* m_fileMenu;
-    EditMenu* m_editMenu;
-    ViewMenu* m_viewMenu;
-    LayoutMenu* m_layoutMenu;
-    PlaybackMenu* m_playbackMenu;
-    LibraryMenu* m_libraryMenu;
-    HelpMenu* m_helpMenu;
-
-    PropertiesDialog* m_propertiesDialog;
-    std::unique_ptr<ScriptCommandHandler> m_scriptCommandHandler;
-    WindowController* m_windowController;
-    ThemeRegistry* m_themeRegistry;
-    GuiStyleProvider* m_styleProvider;
-    std::unique_ptr<AdvancedSettingsRegistry> m_advancedSettingsRegistry;
-    CoverRepository* m_coverRepository;
-
-    GuiPluginContext m_guiPluginContext;
-
-    std::unique_ptr<LogWidget> m_logWidget;
-    QPointer<QueueViewer> m_playbackQueueWidget;
-    QPointer<PlaylistManagerWidget> m_playlistManagerWidget;
-    Widgets* m_widgets;
-    ScriptParser m_scriptParser;
-    CoverProvider m_coverProvider;
-
-    QTimer* m_themeUpdateTimer;
-    bool m_themeUpdatePending{false};
-    bool m_refreshSystemBaseline{false};
-    bool m_applyingTheme{false};
-    quint64 m_resolvedAppStyleRevision{0};
-};
-
-namespace {
-std::unique_ptr<GuiApplicationPrivate> createGuiApplicationPrivate(GuiApplication* self, Application* core)
-{
-    // Some widgets and actions resolve icons during GuiApplicationPrivate construction,
-    // so the icon theme overrides must be set up before creating it
+    // Some widgets and actions resolve icons during construction, so icon
+    // theme overrides must be set up before initialising GuiApplication members.
     applyInitialIconThemes(core ? core->settingsManager() : nullptr);
-    return std::make_unique<GuiApplicationPrivate>(self, core);
+    return core;
 }
 } // namespace
 
-GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application* core_)
-    : m_self{self_}
-    , m_core{core_}
+GuiApplication::GuiApplication(Application* core)
+    : m_core{prepareCoreForGuiApplication(core)}
     , m_settings{m_core->settingsManager()}
-    , m_actionManager{new ActionManager(m_settings, m_self)}
+    , m_actionManager{new ActionManager(m_settings, this)}
     , m_library{m_core->library()}
     , m_playerController{m_core->playerController()}
     , m_playlistHandler{m_core->playlistHandler()}
+    , m_widgetProvider{std::make_unique<WidgetProvider>()}
     , m_guiSettings{m_settings}
-    , m_editableLayout{std::make_unique<EditableLayout>(m_actionManager, &m_widgetProvider, &m_layoutProvider,
+    , m_layoutProvider{std::make_unique<LayoutProvider>()}
+    , m_editableLayout{std::make_unique<EditableLayout>(m_actionManager, m_widgetProvider.get(), m_layoutProvider.get(),
                                                         m_settings)}
     , m_menubar{std::make_unique<MainMenuBar>(m_actionManager, m_settings)}
     , m_mainWindow{std::make_unique<MainWindow>(m_actionManager, m_menubar.get(), m_library, m_settings)}
-    , m_mainContext{new WidgetContext(m_mainWindow.get(), Context{"Fooyin.MainWindow"}, m_self)}
-    , m_playlistController{std::make_unique<PlaylistController>(m_core, &m_selectionController)}
+    , m_mainContext{new WidgetContext(m_mainWindow.get(), Context{"Fooyin.MainWindow"}, this)}
+    , m_playlistController{std::make_unique<PlaylistController>(m_core)}
     , m_playlistInteractor{m_core->playlistHandler(), m_playlistController.get(), m_library, m_settings}
-    , m_selectionController{m_actionManager, m_core->audioLoader().get(), m_settings, m_playlistController.get()}
-    , m_searchController{new SearchController(m_editableLayout.get(), m_self)}
-    , m_fileMenu{new FileMenu(m_actionManager, m_self)}
-    , m_editMenu{new EditMenu(m_actionManager, m_settings, m_self)}
-    , m_viewMenu{new ViewMenu(m_actionManager, m_settings, m_self)}
-    , m_layoutMenu{new LayoutMenu(m_actionManager, &m_layoutProvider, m_settings, m_self)}
-    , m_playbackMenu{new PlaybackMenu(m_actionManager, m_playerController, m_settings, m_self)}
-    , m_libraryMenu{new LibraryMenu(m_core, m_actionManager, m_self)}
-    , m_helpMenu{new HelpMenu(m_actionManager, m_self)}
-    , m_propertiesDialog{new PropertiesDialog(m_actionManager, m_settings, m_self)}
+    , m_selectionController{std::make_unique<TrackSelectionController>(m_actionManager, m_core->audioLoader().get(),
+                                                                       m_settings, m_playlistController.get())}
+    , m_searchController{new SearchController(m_editableLayout.get(), this)}
+    , m_fileMenu{new FileMenu(m_actionManager, this)}
+    , m_editMenu{new EditMenu(m_actionManager, m_settings, this)}
+    , m_viewMenu{new ViewMenu(m_actionManager, m_settings, this)}
+    , m_layoutMenu{new LayoutMenu(m_actionManager, m_layoutProvider.get(), m_settings, this)}
+    , m_playbackMenu{new PlaybackMenu(m_actionManager, m_playerController, m_settings, this)}
+    , m_libraryMenu{new LibraryMenu(m_core, m_actionManager, this)}
+    , m_helpMenu{new HelpMenu(m_actionManager, this)}
+    , m_propertiesDialog{new PropertiesDialog(m_actionManager, m_settings, this)}
     , m_scriptCommandHandler{std::make_unique<ScriptCommandHandler>(m_actionManager, m_playerController,
                                                                     m_propertiesDialog)}
     , m_windowController{new WindowController(m_mainWindow.get())}
-    , m_themeRegistry{new ThemeRegistry(m_settings, m_self)}
-    , m_styleProvider{new GuiStyleProvider(m_settings, m_self)}
+    , m_themeRegistry{new ThemeRegistry(m_settings, this)}
+    , m_styleProvider{new GuiStyleProvider(m_settings, this)}
     , m_advancedSettingsRegistry{std::make_unique<AdvancedSettingsRegistry>(m_settings)}
-    , m_coverRepository{new CoverRepository(m_core->audioLoader(), m_core->remoteIoService(), m_settings, m_self)}
+    , m_coverRepository{new CoverRepository(m_core->audioLoader(), m_core->remoteIoService(), m_settings, this)}
     , m_guiPluginContext{m_actionManager,
-                         &m_layoutProvider,
-                         &m_selectionController,
+                         m_layoutProvider.get(),
+                         m_selectionController.get(),
                          m_searchController,
                          m_playlistController.get(),
                          m_propertiesDialog,
                          m_scriptCommandHandler.get(),
-                         &m_widgetProvider,
+                         m_widgetProvider.get(),
                          m_editableLayout.get(),
                          m_windowController,
                          m_themeRegistry,
@@ -355,25 +234,31 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
                          m_advancedSettingsRegistry.get(),
                          m_coverRepository}
     , m_logWidget{std::make_unique<LogWidget>(m_settings)}
-    , m_widgets{new Widgets(m_core, m_self, m_guiPluginContext, m_mainWindow.get(), &m_playlistInteractor, m_self)}
+    , m_widgets{new Widgets(m_core, this, m_guiPluginContext, m_mainWindow.get(), &m_playlistInteractor, this)}
     , m_coverProvider{m_coverRepository}
-    , m_themeUpdateTimer{new QTimer(m_self)}
+    , m_themeUpdatePending{false}
+    , m_refreshSystemBaseline{false}
+    , m_applyingTheme{false}
+    , m_resolvedAppStyleRevision{0}
 {
     m_coverRepository->setPendingTrackCoverProvider(m_core->pendingTrackCoverProvider());
 
-    m_themeUpdateTimer->setSingleShot(true);
-    m_themeUpdateTimer->setInterval(ThemeUpdateDelayMs);
-    QObject::connect(m_themeUpdateTimer, &QTimer::timeout, m_self, [this]() {
-        m_themeUpdatePending = false;
-        applyTheme();
-    });
-
     m_scriptParser.addProvider(playlistVariableProvider());
+
+    QObject::connect(m_settings->settingsDialog(), &SettingsDialogController::opening, this, [this]() {
+        const bool isLayoutEditing = m_settings->value<Settings::Gui::LayoutEditing>();
+        // Layout editing mode overrides the global action context, so disable it until the dialog closes
+        m_settings->set<Settings::Gui::LayoutEditing>(false);
+        QObject::connect(
+            m_settings->settingsDialog(), &SettingsDialogController::closing, this,
+            [this, isLayoutEditing]() { m_settings->set<Settings::Gui::LayoutEditing>(isLayoutEditing); },
+            Qt::SingleShotConnection);
+    });
 }
 
-void GuiApplicationPrivate::initialise()
+void GuiApplication::initialise()
 {
-    qApp->installEventFilter(m_self);
+    qApp->installEventFilter(this);
 
     setupConnections();
     registerActions();
@@ -399,7 +284,7 @@ void GuiApplicationPrivate::initialise()
 
     m_widgets->registerDspWidgets();
     m_viewMenu->registerDspSettingsActions(m_widgets->dspSettingsRegistry(), m_widgets->dspSettingsController());
-    m_layoutProvider.findLayouts();
+    m_layoutProvider->findLayouts();
     m_layoutMenu->setup();
     m_editableLayout->initialise();
     m_mainWindow->setCentralWidget(m_editableLayout.get());
@@ -424,122 +309,115 @@ void GuiApplicationPrivate::initialise()
     initialiseTray();
 }
 
-void GuiApplicationPrivate::setupConnections()
+void GuiApplication::setupConnections()
 {
-    QObject::connect(m_library, &MusicLibrary::tracksMetadataChanged, m_self,
-                     [this](const TrackList& tracks) { removeExpiredCovers(tracks); });
-    QObject::connect(m_library, &MusicLibrary::tracksMetadataChanged, &m_selectionController,
+    QObject::connect(m_library, &MusicLibrary::tracksMetadataChanged, this, &GuiApplication::removeExpiredCovers);
+    QObject::connect(m_library, &MusicLibrary::tracksMetadataChanged, m_selectionController.get(),
                      &TrackSelectionController::tracksUpdated);
-    QObject::connect(m_library, &MusicLibrary::tracksUpdated, &m_selectionController,
+    QObject::connect(m_library, &MusicLibrary::tracksUpdated, m_selectionController.get(),
                      &TrackSelectionController::tracksUpdated);
-    QObject::connect(m_library, &MusicLibrary::tracksDeleted, &m_selectionController,
+    QObject::connect(m_library, &MusicLibrary::tracksDeleted, m_selectionController.get(),
                      &TrackSelectionController::tracksRemoved);
-    QObject::connect(m_library, &MusicLibrary::tracksDeleted, m_self,
-                     [this](const TrackList& tracks) { handleTracksDeleted(tracks); });
+    QObject::connect(m_library, &MusicLibrary::tracksDeleted, this, &GuiApplication::handleTracksDeleted);
 
-    QObject::connect(m_playerController, &PlayerController::playStateChanged, m_mainWindow.get(),
-                     [this]() { updateWindowTitle(); });
-    QObject::connect(m_playerController, &PlayerController::playlistTrackUpdated, m_self,
-                     [this]() { updateWindowTitle(); });
-    QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, m_self,
-                     [this]() { updateWindowTitle(); });
-    QObject::connect(m_playerController, &PlayerController::trackQueueChanged, m_self,
-                     [this]() { updateWindowTitle(); });
-    QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, m_self,
-                     [this]() { updateWindowTitle(); });
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &GuiApplication::updateWindowTitle);
+    QObject::connect(m_playerController, &PlayerController::playlistTrackUpdated, this,
+                     &GuiApplication::updateWindowTitle);
+    QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this,
+                     &GuiApplication::updateWindowTitle);
+    QObject::connect(m_playerController, &PlayerController::trackQueueChanged, this,
+                     &GuiApplication::updateWindowTitle);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this,
+                     &GuiApplication::updateWindowTitle);
 
     const auto updateTitleForActivePlaylist = [this](Playlist* playlist) {
         if(playlist == m_playlistHandler->activePlaylist()) {
             updateWindowTitle();
         }
     };
-    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksAdded, m_self, updateTitleForActivePlaylist);
-    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksChanged, m_self, updateTitleForActivePlaylist);
-    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksUpdated, m_self, updateTitleForActivePlaylist);
-    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksRemoved, m_self, updateTitleForActivePlaylist);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksAdded, this, updateTitleForActivePlaylist);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksChanged, this, updateTitleForActivePlaylist);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksUpdated, this, updateTitleForActivePlaylist);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksRemoved, this, updateTitleForActivePlaylist);
 
-    m_settings->subscribe<Settings::Gui::Internal::WindowTitleTrackScript>(m_self, [this]() { updateWindowTitle(); });
-    m_settings->subscribe<Settings::Gui::RatingFullStarSymbol>(m_self, [this](const QString&) { updateWindowTitle(); });
-    m_settings->subscribe<Settings::Gui::RatingHalfStarSymbol>(m_self, [this](const QString&) { updateWindowTitle(); });
-    m_settings->subscribe<Settings::Gui::RatingEmptyStarSymbol>(m_self,
-                                                                [this](const QString&) { updateWindowTitle(); });
+    m_settings->subscribe<Settings::Gui::Internal::WindowTitleTrackScript>(this, &GuiApplication::updateWindowTitle);
+    m_settings->subscribe<Settings::Gui::RatingFullStarSymbol>(this, &GuiApplication::updateWindowTitle);
+    m_settings->subscribe<Settings::Gui::RatingHalfStarSymbol>(this, &GuiApplication::updateWindowTitle);
+    m_settings->subscribe<Settings::Gui::RatingEmptyStarSymbol>(this, &GuiApplication::updateWindowTitle);
 
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, m_self,
-                     [this]() { updateWindowTitle(); });
-    QObject::connect(&m_selectionController, &TrackSelectionController::actionExecuted, m_playlistController.get(),
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
+                     &GuiApplication::updateWindowTitle);
+    QObject::connect(m_selectionController.get(), &TrackSelectionController::actionExecuted, m_playlistController.get(),
                      &PlaylistController::handleTrackSelectionAction);
-    QObject::connect(&m_selectionController, &TrackSelectionController::requestPropertiesDialog, m_self,
-                     [this](const TrackList& tracks) { showPropertiesDialog(tracks); });
+    QObject::connect(m_selectionController.get(), &TrackSelectionController::requestPropertiesDialog, this,
+                     &GuiApplication::showPropertiesDialog);
     QObject::connect(
-        &m_selectionController, &TrackSelectionController::requestArtworkSearch, m_self,
-        [this](const TrackList& tracks, bool quick) { m_self->searchForArtwork(tracks, Track::Cover::Front, quick); });
-    QObject::connect(&m_selectionController, &TrackSelectionController::requestArtworkAttach, m_self,
-                     [this](const TrackList& tracks, Track::Cover type, const QString& filepath) {
-                         m_self->attachArtwork(tracks, type, filepath);
-                     });
-    QObject::connect(&m_selectionController, &TrackSelectionController::requestArtworkRemoval, m_self,
-                     [this](const TrackList& tracks) { m_self->removeAllArtwork(tracks); });
-    QObject::connect(m_fileMenu, &FileMenu::requestNewPlaylist, m_self, [this]() { createNewPlaylist(); });
-    QObject::connect(m_fileMenu, &FileMenu::requestNewAutoPlaylist, m_self, [this]() { createNewAutoPlaylist(); });
-    QObject::connect(m_fileMenu, &FileMenu::requestExit, m_self, [this]() { close(); });
-    QObject::connect(m_fileMenu, &FileMenu::requestAddFiles, m_self, [this]() { addFiles(); });
-    QObject::connect(m_fileMenu, &FileMenu::requestAddFolders, m_self, [this]() { addFolders(); });
-    QObject::connect(m_fileMenu, &FileMenu::requestAddStreamUrl, m_self, [this]() { addStreamUrl(); });
-    QObject::connect(m_fileMenu, &FileMenu::requestLoadPlaylist, m_self, [this]() { loadPlaylist(); });
-    QObject::connect(m_fileMenu, &FileMenu::requestSavePlaylist, m_self, [this]() { savePlaylist(); });
-    QObject::connect(m_fileMenu, &FileMenu::requestSaveAllPlaylists, m_self, [this]() { saveAllPlaylist(); });
-    QObject::connect(m_editMenu, &EditMenu::requestSearch, m_self, [this]() { showSearchPlaylistDialog(); });
-    QObject::connect(m_libraryMenu, &LibraryMenu::requestSearch, m_self, [this]() { showSearchLibraryDialog(); });
-    QObject::connect(m_libraryMenu, &LibraryMenu::requestQuickSearch, m_self, [this]() { showQuickSearch(); });
+        m_selectionController.get(), &TrackSelectionController::requestArtworkSearch, this,
+        [this](const TrackList& tracks, bool quick) { this->searchForArtwork(tracks, Track::Cover::Front, quick); });
+    QObject::connect(m_selectionController.get(), &TrackSelectionController::requestArtworkAttach, this,
+                     &GuiApplication::attachArtwork);
+    QObject::connect(m_selectionController.get(), &TrackSelectionController::requestArtworkRemoval, this,
+                     &GuiApplication::removeAllArtwork);
+    QObject::connect(m_fileMenu, &FileMenu::requestNewPlaylist, this, &GuiApplication::createNewPlaylist);
+    QObject::connect(m_fileMenu, &FileMenu::requestNewAutoPlaylist, this, &GuiApplication::createNewAutoPlaylist);
+    QObject::connect(m_fileMenu, &FileMenu::requestExit, this, &GuiApplication::close);
+    QObject::connect(m_fileMenu, &FileMenu::requestAddFiles, this, &GuiApplication::addFiles);
+    QObject::connect(m_fileMenu, &FileMenu::requestAddFolders, this, &GuiApplication::addFolders);
+    QObject::connect(m_fileMenu, &FileMenu::requestAddStreamUrl, this, &GuiApplication::addStreamUrl);
+    QObject::connect(m_fileMenu, &FileMenu::requestLoadPlaylist, this, &GuiApplication::loadPlaylist);
+    QObject::connect(m_fileMenu, &FileMenu::requestSavePlaylist, this, &GuiApplication::saveCurrentPlaylist);
+    QObject::connect(m_fileMenu, &FileMenu::requestSaveAllPlaylists, this, &GuiApplication::saveAllPlaylist);
+    QObject::connect(m_editMenu, &EditMenu::requestSearch, this, &GuiApplication::showSearchPlaylistDialog);
+    QObject::connect(m_libraryMenu, &LibraryMenu::requestSearch, this, &GuiApplication::showSearchLibraryDialog);
+    QObject::connect(m_libraryMenu, &LibraryMenu::requestQuickSearch, this, &GuiApplication::showQuickSearch);
     QObject::connect(m_viewMenu, &ViewMenu::openQuickSetup, m_editableLayout.get(), &EditableLayout::showQuickSetup);
-    QObject::connect(m_viewMenu, &ViewMenu::openPlaybackQueue, m_self, [this]() { showPlaybackQueue(); });
-    QObject::connect(m_viewMenu, &ViewMenu::openPlaylistManager, m_self, [this]() { showPlaylistManager(); });
-    QObject::connect(m_viewMenu, &ViewMenu::focusSearchBar, m_self, [this]() { focusSearchBar(); });
+    QObject::connect(m_viewMenu, &ViewMenu::openPlaybackQueue, this, &GuiApplication::showPlaybackQueue);
+    QObject::connect(m_viewMenu, &ViewMenu::openPlaylistManager, this, &GuiApplication::showPlaylistManager);
+    QObject::connect(m_viewMenu, &ViewMenu::focusSearchBar, this, &GuiApplication::focusSearchBar);
     QObject::connect(m_viewMenu, &ViewMenu::openLog, m_logWidget.get(), &LogWidget::show);
-    QObject::connect(m_viewMenu, &ViewMenu::openScriptEditor, m_self, [this]() { showScriptEditor(); });
-    QObject::connect(m_viewMenu, &ViewMenu::showNowPlaying, m_self, [this]() {
+    QObject::connect(m_viewMenu, &ViewMenu::openScriptEditor, this, &GuiApplication::showScriptEditor);
+    QObject::connect(m_viewMenu, &ViewMenu::showNowPlaying, this, [this]() {
         if(auto* activePlaylist = m_playlistHandler->activePlaylist()) {
             m_playlistController->uiController()->showNowPlaying();
             m_playlistController->changeCurrentPlaylist(activePlaylist);
         }
     });
     QObject::connect(m_layoutMenu, &LayoutMenu::changeLayout, m_editableLayout.get(), &EditableLayout::changeLayout);
-    QObject::connect(m_layoutMenu, &LayoutMenu::clearLayout, m_self, [this] {
-        const QString name = m_layoutProvider.currentLayout().name();
+    QObject::connect(m_layoutMenu, &LayoutMenu::clearLayout, this, [this] {
+        const QString name = m_layoutProvider->currentLayout().name();
         QJsonObject layout;
         layout["Name"_L1] = name.isEmpty() ? u"Default"_s : name;
         m_editableLayout->changeLayout(FyLayout{layout.value("Name"_L1).toString(), layout});
     });
-    QObject::connect(m_layoutMenu, &LayoutMenu::importLayout, m_self,
-                     [this]() { m_layoutProvider.importLayout(m_mainWindow.get()); });
-    QObject::connect(m_layoutMenu, &LayoutMenu::exportLayout, m_self,
+    QObject::connect(m_layoutMenu, &LayoutMenu::importLayout, this,
+                     [this]() { m_layoutProvider->importLayout(m_mainWindow.get()); });
+    QObject::connect(m_layoutMenu, &LayoutMenu::exportLayout, this,
                      [this]() { m_editableLayout->exportLayout(m_editableLayout.get()); });
 
-    QObject::connect(&m_layoutProvider, &LayoutProvider::requestChangeLayout, m_editableLayout.get(),
+    QObject::connect(m_layoutProvider.get(), &LayoutProvider::requestChangeLayout, m_editableLayout.get(),
                      &EditableLayout::changeLayout);
     QObject::connect(m_editableLayout.get(), &EditableLayout::layoutChanged, m_searchController,
                      &SearchController::loadWidgets);
 
-    QObject::connect(m_core->engine(), &EngineController::engineError, m_self,
-                     [this](const QString& error) { showEngineError(error); });
-    QObject::connect(m_core->engine(), &EngineController::trackStatusContextChanged, m_self,
-                     [this](const Engine::TrackStatusContext& context) { handleTrackStatus(context); });
+    QObject::connect(m_core->engine(), &EngineController::engineError, this, &GuiApplication::showEngineError);
+    QObject::connect(m_core->engine(), &EngineController::trackStatusContextChanged, this,
+                     &GuiApplication::handleTrackStatus);
 
-    m_settings->subscribe<Settings::Gui::LayoutEditing>(m_self, [this]() { updateWindowTitle(); });
+    m_settings->subscribe<Settings::Gui::LayoutEditing>(this, &GuiApplication::updateWindowTitle);
 
-    m_settings->subscribe<Settings::Gui::IconTheme>(m_self, [this]() {
+    m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
         setIconTheme();
         QPixmapCache::clear();
         refreshThemeIcons();
     });
-    m_settings->subscribe<Settings::Gui::CustomTheme>(m_self, [this]() {
+    m_settings->subscribe<Settings::Gui::CustomTheme>(this, [this]() {
         scheduleThemeUpdate();
         if(setIconTheme()) {
             QPixmapCache::clear();
             m_settings->refresh<Settings::Gui::IconTheme>();
         }
     });
-    m_settings->subscribe<Settings::Gui::Style>(m_self, [this]() {
+    m_settings->subscribe<Settings::Gui::Style>(this, [this]() {
         setStyle();
         scheduleThemeUpdate(true);
         if(setIconTheme()) {
@@ -551,10 +429,10 @@ void GuiApplicationPrivate::setupConnections()
     m_settings->subscribe<Settings::Gui::Internal::ImageAllocationLimit>(m_settings, &QImageReader::setAllocationLimit);
 }
 
-void GuiApplicationPrivate::initialisePlugins()
+void GuiApplication::initialisePlugins()
 {
     if(m_core->pluginManager()->allPluginInfo().empty()) {
-        QMetaObject::invokeMethod(m_self, [this]() { showPluginsNotFoundMessage(); }, Qt::QueuedConnection);
+        QMetaObject::invokeMethod(this, [this]() { showPluginsNotFoundMessage(); }, Qt::QueuedConnection);
         return;
     }
 
@@ -573,23 +451,23 @@ void GuiApplicationPrivate::initialisePlugins()
     m_core->pluginManager()->initialisePlugins<PluginConfigGuiPlugin>([this](PluginConfigGuiPlugin* plugin) {
         auto provider          = plugin->settingsProvider();
         auto* root             = dynamic_cast<QObject*>(plugin);
-        const QString pluginId = pluginIdentifierForRoot(m_core->pluginManager(), root);
+        const QString pluginId = pluginIdentifierForRoot(*m_core->pluginManager(), root);
         if(provider && m_widgets->pluginSettingsRegistry() && !pluginId.isEmpty()) {
             m_widgets->pluginSettingsRegistry()->registerProvider(pluginId, std::move(provider));
         }
     });
 }
 
-void GuiApplicationPrivate::showPluginsNotFoundMessage()
+void GuiApplication::showPluginsNotFoundMessage()
 {
     QMessageBox message;
     message.setIcon(QMessageBox::Warning);
-    message.setText(GuiApplication::tr("Plugins not found"));
-    message.setInformativeText(GuiApplication::tr("Some plugins are required for full functionality."));
-    message.setDetailedText(GuiApplication::tr("Plugin search locations:\n\n") + Core::pluginPaths().join(u"\n"_s));
+    message.setText(tr("Plugins not found"));
+    message.setInformativeText(tr("Some plugins are required for full functionality."));
+    message.setDetailedText(tr("Plugin search locations:\n\n") + Core::pluginPaths().join(u"\n"_s));
 
     message.addButton(QMessageBox::Ok);
-    QPushButton* quitButton = message.addButton(GuiApplication::tr("Quit"), QMessageBox::ActionRole);
+    QPushButton* quitButton = message.addButton(tr("Quit"), QMessageBox::ActionRole);
     quitButton->setIcon(Gui::iconFromTheme(Constants::Icons::Quit));
     message.setDefaultButton(QMessageBox::Ok);
 
@@ -600,7 +478,7 @@ void GuiApplicationPrivate::showPluginsNotFoundMessage()
     }
 }
 
-void GuiApplicationPrivate::initialiseTray()
+void GuiApplication::initialiseTray()
 {
     m_trayIcon = std::make_unique<SystemTrayIcon>(m_actionManager);
 
@@ -611,11 +489,11 @@ void GuiApplicationPrivate::initialiseTray()
         m_trayIcon->show();
     }
 
-    m_settings->subscribe<Settings::Gui::Internal::ShowTrayIcon>(m_self,
+    m_settings->subscribe<Settings::Gui::Internal::ShowTrayIcon>(this,
                                                                  [this](bool show) { m_trayIcon->setVisible(show); });
 }
 
-void GuiApplicationPrivate::updateWindowTitle()
+void GuiApplication::updateWindowTitle()
 {
     if(m_playerController->playState() == Player::PlayState::Stopped) {
         m_mainWindow->resetTitle();
@@ -636,7 +514,7 @@ void GuiApplicationPrivate::updateWindowTitle()
     m_mainWindow->setTitle(title);
 }
 
-void GuiApplicationPrivate::checkArtwork()
+void GuiApplication::checkArtwork()
 {
     if(m_settings->value<Settings::Gui::Internal::ArtworkAutoSearch>()) {
         if(const auto track = m_playerController->currentTrack(); track.isValid()) {
@@ -649,7 +527,7 @@ void GuiApplicationPrivate::checkArtwork()
     }
 }
 
-void GuiApplicationPrivate::handleTrackStatus(const Engine::TrackStatusContext& context)
+void GuiApplication::handleTrackStatus(const Engine::TrackStatusContext& context)
 {
     const Track& track = context.track;
 
@@ -670,7 +548,7 @@ void GuiApplicationPrivate::handleTrackStatus(const Engine::TrackStatusContext& 
     }
 }
 
-void GuiApplicationPrivate::handleTracksDeleted(const TrackList& tracks)
+void GuiApplication::handleTracksDeleted(const TrackList& tracks)
 {
     const PlaylistTrack currentTrack = m_playerController->currentPlaylistTrack();
 
@@ -694,7 +572,7 @@ void GuiApplicationPrivate::handleTracksDeleted(const TrackList& tracks)
     }
 }
 
-void GuiApplicationPrivate::removeExpiredCovers(const TrackList& tracks)
+void GuiApplication::removeExpiredCovers(const TrackList& tracks)
 {
     for(const Track& track : tracks) {
         if(track.metadataWasModified()) {
@@ -703,25 +581,25 @@ void GuiApplicationPrivate::removeExpiredCovers(const TrackList& tracks)
     }
 }
 
-void GuiApplicationPrivate::registerActions()
+void GuiApplication::registerActions()
 {
-    const QStringList volumeCategory = {GuiApplication::tr("Volume")};
+    const QStringList volumeCategory = {tr("Volume")};
 
-    auto* volumeUp = new QAction(GuiApplication::tr("Volume up"), m_mainWindow.get());
+    auto* volumeUp = new QAction(tr("Volume up"), m_mainWindow.get());
     Gui::setThemeIcon(volumeUp, Constants::Icons::VolumeHigh);
     auto* volumeUpCmd = m_actionManager->registerAction(volumeUp, Constants::Actions::VolumeUp);
     volumeUpCmd->setCategories(volumeCategory);
     QObject::connect(volumeUp, &QAction::triggered, m_mainWindow.get(),
                      [this]() { changeVolume(m_settings->value<Settings::Gui::VolumeStep>()); });
 
-    auto* volumeDown = new QAction(GuiApplication::tr("Volume down"), m_mainWindow.get());
+    auto* volumeDown = new QAction(tr("Volume down"), m_mainWindow.get());
     Gui::setThemeIcon(volumeDown, Constants::Icons::VolumeLow);
     auto* volumeDownCmd = m_actionManager->registerAction(volumeDown, Constants::Actions::VolumeDown);
     volumeDownCmd->setCategories(volumeCategory);
     QObject::connect(volumeDown, &QAction::triggered, m_mainWindow.get(),
                      [this]() { changeVolume(-m_settings->value<Settings::Gui::VolumeStep>()); });
 
-    auto* muteAction = new QAction(GuiApplication::tr("Mute"), m_mainWindow.get());
+    auto* muteAction = new QAction(tr("Mute"), m_mainWindow.get());
     Gui::setThemeIcon(muteAction, Constants::Icons::VolumeMute);
     muteAction->setCheckable(true);
     muteAction->setChecked(m_settings->value<Settings::Core::OutputVolume>() <= 0.0);
@@ -731,11 +609,11 @@ void GuiApplicationPrivate::registerActions()
     m_settings->subscribe<Settings::Core::OutputVolume>(
         muteAction, [muteAction](double volume) { muteAction->setChecked(volume <= 0.0); });
 
-    auto* clearPlaylistAction = new QAction(GuiApplication::tr("Clear Current Playlist"), m_mainWindow.get());
-    clearPlaylistAction->setStatusTip(GuiApplication::tr("Remove all tracks from the current playlist"));
+    auto* clearPlaylistAction = new QAction(tr("Clear Current Playlist"), m_mainWindow.get());
+    clearPlaylistAction->setStatusTip(tr("Remove all tracks from the current playlist"));
     Gui::setThemeIcon(clearPlaylistAction, Constants::Icons::Clear);
     auto* clearPlaylistCmd = m_actionManager->registerAction(clearPlaylistAction, Constants::Actions::ClearPlaylist);
-    clearPlaylistCmd->setCategories({GuiApplication::tr("Playlist")});
+    clearPlaylistCmd->setCategories({tr("Playlist")});
     clearPlaylistCmd->setAttribute(ProxyAction::UpdateText);
     QObject::connect(clearPlaylistAction, &QAction::triggered, m_mainWindow.get(),
                      [this]() { m_playlistController->clearCurrentPlaylist(); });
@@ -757,23 +635,23 @@ void GuiApplicationPrivate::registerActions()
                      updateClearPlaylistState);
     updateClearPlaylistState();
 
-    const QStringList seekCategory = {GuiApplication::tr("Playback"), GuiApplication::tr("Seek")};
+    const QStringList seekCategory = {tr("Playback"), tr("Seek")};
 
-    auto* seekForwardSmall    = new QAction(GuiApplication::tr("Seek forward (small step)"), m_mainWindow.get());
+    auto* seekForwardSmall    = new QAction(tr("Seek forward (small step)"), m_mainWindow.get());
     auto* seekForwardSmallCmd = m_actionManager->registerAction(seekForwardSmall, Constants::Actions::SeekForwardSmall);
     seekForwardSmallCmd->setCategories(seekCategory);
     seekForwardSmallCmd->setDefaultShortcut(QKeySequence{Qt::ALT | Qt::Key_Right});
     QObject::connect(seekForwardSmall, &QAction::triggered, m_mainWindow.get(),
                      [this]() { m_playerController->seekForward(m_settings->value<Settings::Gui::SeekStepSmall>()); });
 
-    auto* seekForwardLarge    = new QAction(GuiApplication::tr("Seek forward (large step)"), m_mainWindow.get());
+    auto* seekForwardLarge    = new QAction(tr("Seek forward (large step)"), m_mainWindow.get());
     auto* seekForwardLargeCmd = m_actionManager->registerAction(seekForwardLarge, Constants::Actions::SeekForwardLarge);
     seekForwardLargeCmd->setCategories(seekCategory);
     seekForwardLargeCmd->setDefaultShortcut(QKeySequence{Qt::CTRL | Qt::Key_Right});
     QObject::connect(seekForwardLarge, &QAction::triggered, m_mainWindow.get(),
                      [this]() { m_playerController->seekForward(m_settings->value<Settings::Gui::SeekStepLarge>()); });
 
-    auto* seekBackwardSmall = new QAction(GuiApplication::tr("Seek backward (small step)"), m_mainWindow.get());
+    auto* seekBackwardSmall = new QAction(tr("Seek backward (small step)"), m_mainWindow.get());
     auto* seekBackwardSmallCmd
         = m_actionManager->registerAction(seekBackwardSmall, Constants::Actions::SeekBackwardSmall);
     seekBackwardSmallCmd->setCategories(seekCategory);
@@ -781,7 +659,7 @@ void GuiApplicationPrivate::registerActions()
     QObject::connect(seekBackwardSmall, &QAction::triggered, m_mainWindow.get(),
                      [this]() { m_playerController->seekBackward(m_settings->value<Settings::Gui::SeekStepSmall>()); });
 
-    auto* seekBackwardLarge = new QAction(GuiApplication::tr("Seek backward (large step)"), m_mainWindow.get());
+    auto* seekBackwardLarge = new QAction(tr("Seek backward (large step)"), m_mainWindow.get());
     auto* seekBackwardLargeCmd
         = m_actionManager->registerAction(seekBackwardLarge, Constants::Actions::SeekBackwardLarge);
     seekBackwardLargeCmd->setCategories(seekCategory);
@@ -806,10 +684,10 @@ void GuiApplicationPrivate::registerActions()
     QObject::connect(m_playlistController->playlistHandler(), &PlaylistHandler::tracksRemoved, m_mainWindow.get(),
                      setSavePlaylistState);
 
-    auto* removePlaylist = new QAction(GuiApplication::tr("Remove Playlist"), m_mainWindow.get());
+    auto* removePlaylist = new QAction(tr("Remove Playlist"), m_mainWindow.get());
     auto* removeCmd      = m_actionManager->registerAction(removePlaylist, Constants::Actions::RemovePlaylist);
-    removeCmd->setCategories({GuiApplication::tr("Playlist")});
-    removeCmd->setDescription(GuiApplication::tr("Remove Current Playlist"));
+    removeCmd->setCategories({tr("Playlist")});
+    removeCmd->setDescription(tr("Remove Current Playlist"));
     removeCmd->setDefaultShortcut(QKeySequence{Qt::CTRL | Qt::Key_W});
     QObject::connect(removePlaylist, &QAction::triggered, m_mainWindow.get(), [this]() {
         if(auto* currentPlaylist = m_playlistController->currentPlaylist()) {
@@ -817,11 +695,11 @@ void GuiApplicationPrivate::registerActions()
         }
     });
 
-    auto* toggleMenubar = new QAction(GuiApplication::tr("Toggle Menubar"), m_mainWindow.get());
+    auto* toggleMenubar = new QAction(tr("Toggle Menubar"), m_mainWindow.get());
     toggleMenubar->setCheckable(true);
     toggleMenubar->setChecked(m_settings->value<Settings::Gui::ShowMenuBar>());
     auto* toggleMenubarCmd = m_actionManager->registerAction(toggleMenubar, Constants::Actions::ToggleMenubar);
-    toggleMenubarCmd->setCategories({GuiApplication::tr("View")});
+    toggleMenubarCmd->setCategories({tr("View")});
     toggleMenubarCmd->setDefaultShortcut(QKeySequence{Qt::CTRL | Qt::Key_M});
     QObject::connect(toggleMenubar, &QAction::triggered, m_mainWindow.get(),
                      [this](bool visible) { m_settings->set<Settings::Gui::ShowMenuBar>(visible); });
@@ -829,10 +707,9 @@ void GuiApplicationPrivate::registerActions()
         toggleMenubar, [toggleMenubar](bool visible) { toggleMenubar->setChecked(visible); });
 }
 
-void GuiApplicationPrivate::rescanTracks(const TrackList& tracks, bool onlyModified) const
+void GuiApplication::rescanTracks(const TrackList& tracks, bool onlyModified) const
 {
-    auto* scanDialog = new ElapsedProgressDialog(GuiApplication::tr("Reading tracks…"), GuiApplication::tr("Abort"), 0,
-                                                 100, Utils::getMainWindow());
+    auto* scanDialog = new ElapsedProgressDialog(tr("Reading tracks…"), tr("Abort"), 0, 100, Utils::getMainWindow());
     scanDialog->setAttribute(Qt::WA_DeleteOnClose);
     scanDialog->setModal(true);
     scanDialog->setMinimumDuration(500ms);
@@ -860,7 +737,7 @@ void GuiApplicationPrivate::rescanTracks(const TrackList& tracks, bool onlyModif
                              scanDialog->setValue(progress.percentage());
                          }
                          if(!progress.file.isEmpty()) {
-                             scanDialog->setText(GuiApplication::tr("Current file") + ":\n"_L1 + progress.file);
+                             scanDialog->setText(tr("Current file") + ":\n"_L1 + progress.file);
                          }
 
                          if(progress.phase == ScanProgress::Phase::Finished) {
@@ -869,23 +746,21 @@ void GuiApplicationPrivate::rescanTracks(const TrackList& tracks, bool onlyModif
                      });
 }
 
-void GuiApplicationPrivate::setupScanMenu()
+void GuiApplication::setupScanMenu()
 {
-    m_selectionController.registerTrackContextSubmenu(m_self, TrackContextMenuArea::Track,
-                                                      Constants::Menus::Context::TrackSelection,
-                                                      Constants::Menus::Context::Tagging, GuiApplication::tr("Tagging"),
-                                                      Constants::Menus::Context::TrackFinalSeparator);
+    m_selectionController->registerTrackContextSubmenu(
+        this, TrackContextMenuArea::Track, Constants::Menus::Context::TrackSelection,
+        Constants::Menus::Context::Tagging, tr("Tagging"), Constants::Menus::Context::TrackFinalSeparator);
 
-    auto* rescanAction        = new QAction(GuiApplication::tr("Reload tags from files"), m_mainWindow.get());
-    auto* rescanChangedAction = new QAction(GuiApplication::tr("Reload tags from modified files"), m_mainWindow.get());
+    auto* rescanAction        = new QAction(tr("Reload tags from files"), m_mainWindow.get());
+    auto* rescanChangedAction = new QAction(tr("Reload tags from modified files"), m_mainWindow.get());
 
-    rescanAction->setStatusTip(GuiApplication::tr("Replace tags in selected tracks with tags from the files"));
-    rescanChangedAction->setStatusTip(
-        GuiApplication::tr("Replace tags in selected tracks with tags from the files if modified"));
+    rescanAction->setStatusTip(tr("Replace tags in selected tracks with tags from the files"));
+    rescanChangedAction->setStatusTip(tr("Replace tags in selected tracks with tags from the files if modified"));
 
     auto rescan = [this](const bool onlyModified) {
-        if(m_selectionController.hasTracks()) {
-            const auto tracks = m_selectionController.selectedTracks();
+        if(m_selectionController->hasTracks()) {
+            const auto tracks = m_selectionController->selectedTracks();
             rescanTracks(tracks, onlyModified);
         }
     };
@@ -893,37 +768,35 @@ void GuiApplicationPrivate::setupScanMenu()
     QObject::connect(rescanAction, &QAction::triggered, m_mainWindow.get(), [rescan]() { rescan(false); });
     QObject::connect(rescanChangedAction, &QAction::triggered, m_mainWindow.get(), [rescan]() { rescan(true); });
 
-    m_selectionController.registerTrackContextAction(
-        m_self, TrackContextMenuArea::Track, Constants::Menus::Context::Tagging, "Tracks.ReloadTags",
+    m_selectionController->registerTrackContextAction(
+        this, TrackContextMenuArea::Track, Constants::Menus::Context::Tagging, "Tracks.ReloadTags",
         rescanAction->text(), [this, rescanAction](QMenu* menu, const TrackSelection&) {
-            rescanAction->setEnabled(m_selectionController.hasTracks());
+            rescanAction->setEnabled(m_selectionController->hasTracks());
             menu->addAction(rescanAction);
         });
-    m_selectionController.registerTrackContextAction(
-        m_self, TrackContextMenuArea::Track, Constants::Menus::Context::Tagging, "Tracks.ReloadModifiedTags",
+    m_selectionController->registerTrackContextAction(
+        this, TrackContextMenuArea::Track, Constants::Menus::Context::Tagging, "Tracks.ReloadModifiedTags",
         rescanChangedAction->text(), [this, rescanChangedAction](QMenu* menu, const TrackSelection&) {
-            rescanChangedAction->setEnabled(m_selectionController.hasTracks());
+            rescanChangedAction->setEnabled(m_selectionController->hasTracks());
             menu->addAction(rescanChangedAction);
         });
 }
 
-void GuiApplicationPrivate::setupRatingMenu()
+void GuiApplication::setupRatingMenu()
 {
-    m_selectionController.registerTrackContextSubmenu(m_self, TrackContextMenuArea::Track,
-                                                      Constants::Menus::Context::TrackSelection,
-                                                      Constants::Menus::Context::Tagging, GuiApplication::tr("Tagging"),
-                                                      Constants::Menus::Context::TrackFinalSeparator);
+    m_selectionController->registerTrackContextSubmenu(
+        this, TrackContextMenuArea::Track, Constants::Menus::Context::TrackSelection,
+        Constants::Menus::Context::Tagging, tr("Tagging"), Constants::Menus::Context::TrackFinalSeparator);
 }
 
-void GuiApplicationPrivate::setupUtilitiesMenu()
+void GuiApplication::setupUtilitiesMenu()
 {
-    m_selectionController.registerTrackContextSubmenu(
-        m_self, TrackContextMenuArea::Track, Constants::Menus::Context::TrackSelection,
-        Constants::Menus::Context::Utilities, GuiApplication::tr("Utilities"),
-        Constants::Menus::Context::TrackFinalSeparator);
+    m_selectionController->registerTrackContextSubmenu(
+        this, TrackContextMenuArea::Track, Constants::Menus::Context::TrackSelection,
+        Constants::Menus::Context::Utilities, tr("Utilities"), Constants::Menus::Context::TrackFinalSeparator);
 }
 
-void GuiApplicationPrivate::close()
+void GuiApplication::close()
 {
     if(m_mainWindow->isVisible()) {
         m_mainWindow->close();
@@ -933,7 +806,7 @@ void GuiApplicationPrivate::close()
     }
 }
 
-void GuiApplicationPrivate::changeVolume(double delta) const
+void GuiApplication::changeVolume(double delta) const
 {
     const double currentVolume = std::max(m_settings->value<Settings::Core::OutputVolume>(), 0.01);
     const double currentDb     = Audio::volumeToDb(currentVolume);
@@ -942,7 +815,7 @@ void GuiApplicationPrivate::changeVolume(double delta) const
     m_settings->set<Settings::Core::OutputVolume>(newVolume);
 }
 
-void GuiApplicationPrivate::mute() const
+void GuiApplication::mute() const
 {
     const double volume = m_settings->value<Settings::Core::OutputVolume>();
     if(volume > 0.0) {
@@ -954,7 +827,7 @@ void GuiApplicationPrivate::mute() const
     }
 }
 
-void GuiApplicationPrivate::setStyle() const
+void GuiApplication::setStyle() const
 {
     const auto currStyle = m_settings->value<Settings::Gui::Style>();
     if(auto* style = QStyleFactory::create(currStyle)) {
@@ -965,7 +838,7 @@ void GuiApplicationPrivate::setStyle() const
     }
 }
 
-void GuiApplicationPrivate::scheduleThemeUpdate(bool refreshSystemBaseline)
+void GuiApplication::scheduleThemeUpdate(bool refreshSystemBaseline)
 {
     m_refreshSystemBaseline = m_refreshSystemBaseline || refreshSystemBaseline;
 
@@ -974,10 +847,10 @@ void GuiApplicationPrivate::scheduleThemeUpdate(bool refreshSystemBaseline)
         return;
     }
 
-    m_themeUpdateTimer->start();
+    m_themeUpdateTimer.start(ThemeUpdateDelayMs, this);
 }
 
-void GuiApplicationPrivate::applyTheme()
+void GuiApplication::applyTheme()
 {
     if(std::exchange(m_applyingTheme, true)) {
         m_themeUpdatePending = true;
@@ -994,7 +867,7 @@ void GuiApplicationPrivate::applyTheme()
         QApplication::setPalette(m_settings->value<Settings::Gui::Internal::SystemPalette>().value<QPalette>());
     }
 
-    QTimer::singleShot(ThemeUpdateDelayMs, m_self, [this]() {
+    QTimer::singleShot(ThemeUpdateDelayMs, this, [this]() {
         const auto systemFont = QApplication::font();
         m_settings->set<Settings::Gui::Internal::SystemFont>(systemFont);
 
@@ -1026,7 +899,7 @@ void GuiApplicationPrivate::applyTheme()
         QApplication::setPalette(newPalette);
         QPixmapCache::clear();
 
-        QTimer::singleShot(0, m_self, [this, newPalette]() {
+        QTimer::singleShot(0, this, [this, newPalette]() {
             ResolvedAppStyle resolvedStyle;
             resolvedStyle.palette     = newPalette;
             resolvedStyle.defaultFont = QApplication::font();
@@ -1049,7 +922,7 @@ void GuiApplicationPrivate::applyTheme()
     });
 }
 
-void GuiApplicationPrivate::handleSystemThemeChanged()
+void GuiApplication::handleSystemThemeChanged()
 {
     if(m_applyingTheme) {
         return;
@@ -1058,13 +931,13 @@ void GuiApplicationPrivate::handleSystemThemeChanged()
     scheduleThemeUpdate(true);
 }
 
-bool GuiApplicationPrivate::setIconTheme() const
+bool GuiApplication::setIconTheme() const
 {
     const auto [primaryTheme, fallbackTheme] = resolveIconThemes(m_settings);
     return Gui::setThemeIconOverrides(primaryTheme, fallbackTheme);
 }
 
-void GuiApplicationPrivate::refreshThemeIcons() const
+void GuiApplication::refreshThemeIcons()
 {
     Gui::refreshThemeIcons(m_actionManager);
 
@@ -1072,7 +945,7 @@ void GuiApplicationPrivate::refreshThemeIcons() const
         Gui::refreshThemeIcon(command ? command->action() : nullptr);
     }
 
-    Gui::refreshThemeIcons(m_self);
+    Gui::refreshThemeIcons(this);
 
     const auto widgets = QApplication::topLevelWidgets();
     for(QWidget* widget : widgets) {
@@ -1080,7 +953,7 @@ void GuiApplicationPrivate::refreshThemeIcons() const
     }
 }
 
-void GuiApplicationPrivate::refreshAutoDetectedIconTheme() const
+void GuiApplication::refreshAutoDetectedIconTheme() const
 {
     if(static_cast<IconThemeOption>(m_settings->value<Settings::Gui::IconTheme>()) != IconThemeOption::AutoDetect) {
         return;
@@ -1094,9 +967,9 @@ void GuiApplicationPrivate::refreshAutoDetectedIconTheme() const
     m_settings->refresh<Settings::Gui::IconTheme>();
 }
 
-void GuiApplicationPrivate::registerLayouts()
+void GuiApplication::registerLayouts()
 {
-    m_layoutProvider.registerLayout(
+    m_layoutProvider->registerLayout(
         R"({"Name":"Simple","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAHAAAAn0AAAAXAP////8BAAAAAgA=",
             "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAAggAABqEAAAA+AAAAHAD/////AQAAAAEA","Widgets":[
             {"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}},{"SplitterHorizontal":{
@@ -1104,7 +977,7 @@ void GuiApplicationPrivate::registerLayouts()
             "State":"AAAA/wAAAAEAAAACAAABfQAAAPEA/////wEAAAACAA==","Widgets":[{"LibraryTree":{}},{"ArtworkPanel":{}}]}},
             {"PlaylistTabs":{"Widgets":[{"Playlist":{}}]}}]}},{"StatusBar":{}}]}}]})");
 
-    m_layoutProvider.registerLayout(
+    m_layoutProvider->registerLayout(
         R"({"Name":"Vision","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAHAAAA6EAAAAWAP////8BAAAAAgA=",
             "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAAiQAABk8AAABHAAAAIwD/////AQAAAAEA",
             "Widgets":[{"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}},
@@ -1113,7 +986,7 @@ void GuiApplicationPrivate::registerLayouts()
             "Widgets":[{"ArtworkPanel":{}},{"SelectionInfo":{}},{"LibraryTree":{"Grouping":"Artist/Album"}},
             {"PlaylistOrganiser":{}}]}},{"Playlist":{}}]}},{"StatusBar":{}}]}}]})");
 
-    m_layoutProvider.registerLayout(
+    m_layoutProvider->registerLayout(
         R"({"Name":"Browser","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAFwAAA6YAAAAWAP////8BAAAAAgA=",
             "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAAcgAABRoAAAA2AAAAGAD/////AQAAAAEA",
             "Widgets":[{"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}},
@@ -1121,7 +994,7 @@ void GuiApplicationPrivate::registerLayouts()
             {"ArtworkPanel":{}}]}},{"StatusBar":{}}]}}]})");
 }
 
-void GuiApplicationPrivate::checkTracksNeedUpdate() const
+void GuiApplication::checkTracksNeedUpdate() const
 {
     const auto libraryOutOfDate = [this](int threshold) -> bool {
         const int prev = m_core->database()->previousRevision();
@@ -1139,19 +1012,20 @@ void GuiApplicationPrivate::checkTracksNeedUpdate() const
     }
 }
 
-void GuiApplicationPrivate::showNeedReloadMessage() const
+void GuiApplication::showNeedReloadMessage() const
 {
     QMessageBox message;
     message.setIcon(QMessageBox::Warning);
-    message.setText(GuiApplication::tr("Reload Required"));
-    message.setInformativeText(GuiApplication::tr(
-        "Due to a database change, tracks should be reloaded from disk to update their saved metadata."));
+    message.setText(tr("Reload Required"));
+    message.setInformativeText(
+        tr("Due to a database change, tracks should be reloaded from disk to update their saved metadata."));
 
     message.addButton(QMessageBox::Ok);
     if(auto* button = message.button(QMessageBox::Ok)) {
-        button->setText(GuiApplication::tr("Reload Now"));
+        button->setText(tr("Reload Now"));
     }
-    QPushButton* okButton = message.addButton(GuiApplication::tr("OK"), QMessageBox::ActionRole);
+
+    const QPushButton* okButton = message.addButton(tr("OK"), QMessageBox::ActionRole);
     message.setDefaultButton(QMessageBox::Ok);
 
     message.exec();
@@ -1161,41 +1035,41 @@ void GuiApplicationPrivate::showNeedReloadMessage() const
     }
 }
 
-void GuiApplicationPrivate::showScriptEditor()
+void GuiApplication::showScriptEditor()
 {
-    auto* scriptEditor
-        = new ScriptEditor(m_core->libraryManager(), &m_selectionController, m_playerController, m_mainWindow.get());
+    auto* scriptEditor = new ScriptEditor(m_core->libraryManager(), m_selectionController.get(), m_playerController,
+                                          m_mainWindow.get());
     scriptEditor->setAttribute(Qt::WA_DeleteOnClose);
     scriptEditor->show();
 }
 
-void GuiApplicationPrivate::showSearchPlaylistDialog()
+void GuiApplication::showSearchPlaylistDialog()
 {
     if(m_settings->value<Settings::Gui::PlaylistIntegratedSearch>() && focusIntegratedPlaylistSearch()) {
         return;
     }
 
-    auto* coverProvider = new CoverProvider(m_coverRepository, m_self);
+    auto* coverProvider = new CoverProvider(m_coverRepository, this);
     auto* search = new SearchDialog(m_actionManager, &m_playlistInteractor, coverProvider, m_core, m_styleProvider,
-                                    SearchDialog::Target::Playlist);
+                                    m_selectionController.get(), SearchDialog::Target::Playlist);
     search->setAttribute(Qt::WA_DeleteOnClose);
     coverProvider->setParent(search);
 
     search->show();
 }
 
-void GuiApplicationPrivate::showSearchLibraryDialog()
+void GuiApplication::showSearchLibraryDialog()
 {
-    auto* coverProvider = new CoverProvider(m_coverRepository, m_self);
+    auto* coverProvider = new CoverProvider(m_coverRepository, this);
     auto* search = new SearchDialog(m_actionManager, &m_playlistInteractor, coverProvider, m_core, m_styleProvider,
-                                    SearchDialog::Target::Library);
+                                    m_selectionController.get(), SearchDialog::Target::Library);
     search->setAttribute(Qt::WA_DeleteOnClose);
     coverProvider->setParent(search);
 
     search->show();
 }
 
-void GuiApplicationPrivate::showPlaylistManager()
+void GuiApplication::showPlaylistManager()
 {
     if(m_playlistManagerWidget) {
         m_playlistManagerWidget->show();
@@ -1204,15 +1078,15 @@ void GuiApplicationPrivate::showPlaylistManager()
         return;
     }
 
-    m_playlistManagerWidget
-        = new PlaylistManagerWidget(m_actionManager, m_playlistController.get(), &m_playlistInteractor, m_settings);
+    m_playlistManagerWidget = new PlaylistManagerWidget(m_actionManager, m_playlistController.get(),
+                                                        &m_playlistInteractor, m_selectionController.get(), m_settings);
     m_playlistManagerWidget->setAttribute(Qt::WA_DeleteOnClose);
     m_playlistManagerWidget->finalise();
 
     m_playlistManagerWidget->show();
 }
 
-bool GuiApplicationPrivate::focusIntegratedPlaylistSearch() const
+bool GuiApplication::focusIntegratedPlaylistSearch() const
 {
     const auto playlists = m_editableLayout->findWidgetsByType<PlaylistWidget>();
     for(auto* playlist : playlists) {
@@ -1224,7 +1098,7 @@ bool GuiApplicationPrivate::focusIntegratedPlaylistSearch() const
     return false;
 }
 
-void GuiApplicationPrivate::showPlaybackQueue()
+void GuiApplication::showPlaybackQueue()
 {
     if(m_playbackQueueWidget) {
         m_playbackQueueWidget->show();
@@ -1233,14 +1107,15 @@ void GuiApplicationPrivate::showPlaybackQueue()
         return;
     }
 
-    m_playbackQueueWidget = new QueueViewer(m_actionManager, &m_playlistInteractor, m_coverRepository, m_settings);
+    m_playbackQueueWidget = new QueueViewer(m_actionManager, &m_playlistInteractor, m_selectionController.get(),
+                                            m_coverRepository, m_settings);
     m_playbackQueueWidget->setAttribute(Qt::WA_DeleteOnClose);
     m_playbackQueueWidget->finalise();
 
     m_playbackQueueWidget->show();
 }
 
-void GuiApplicationPrivate::focusSearchBar() const
+void GuiApplication::focusSearchBar() const
 {
     const auto searchBars = m_editableLayout->findWidgetsByType<SearchWidget>();
     for(auto* searchBar : searchBars) {
@@ -1251,7 +1126,7 @@ void GuiApplicationPrivate::focusSearchBar() const
     }
 }
 
-void GuiApplicationPrivate::showQuickSearch() const
+void GuiApplication::showQuickSearch() const
 {
     auto* searchBar = new SearchWidget(m_searchController, m_playlistController.get(), m_library, m_settings);
     searchBar->setAttribute(Qt::WA_DeleteOnClose);
@@ -1259,14 +1134,14 @@ void GuiApplicationPrivate::showQuickSearch() const
     searchBar->show();
 }
 
-void GuiApplicationPrivate::showPropertiesDialog(const TrackList& tracks) const
+void GuiApplication::showPropertiesDialog(const TrackList& tracks) const
 {
     if(!tracks.empty()) {
         m_propertiesDialog->show(tracks);
     }
 }
 
-void GuiApplicationPrivate::showEngineError(const QString& error) const
+void GuiApplication::showEngineError(const QString& error) const
 {
     if(error.isEmpty()) {
         return;
@@ -1274,7 +1149,7 @@ void GuiApplicationPrivate::showEngineError(const QString& error) const
 
     QMessageBox message;
     message.setIcon(QMessageBox::Warning);
-    message.setText(GuiApplication::tr("Playback Error"));
+    message.setText(tr("Playback Error"));
     message.setInformativeText(error);
 
     message.addButton(QMessageBox::Ok);
@@ -1282,7 +1157,7 @@ void GuiApplicationPrivate::showEngineError(const QString& error) const
     message.exec();
 }
 
-void GuiApplicationPrivate::showMessage(const QString& title, const Track& track) const
+void GuiApplication::showMessage(const QString& title, const Track& track) const
 {
     if(m_settings->fileValue(Settings::Core::Internal::PlaylistSkipUnavailable).toBool()) {
         m_playerController->next();
@@ -1299,13 +1174,13 @@ void GuiApplicationPrivate::showMessage(const QString& title, const Track& track
 
     message.addButton(QMessageBox::Ok);
     if(auto* button = message.button(QMessageBox::Ok)) {
-        button->setText(GuiApplication::tr("Continue"));
+        button->setText(tr("Continue"));
     }
-    QPushButton* stopButton = message.addButton(GuiApplication::tr("Stop"), QMessageBox::ActionRole);
+    QPushButton* stopButton = message.addButton(tr("Stop"), QMessageBox::ActionRole);
     stopButton->setIcon(Gui::iconFromTheme(Constants::Icons::Stop));
     message.setDefaultButton(QMessageBox::Ok);
 
-    auto* alwaysSkip = new QCheckBox(GuiApplication::tr("Always continue playing if a track is unavailable"), &message);
+    auto* alwaysSkip = new QCheckBox(tr("Always continue playing if a track is unavailable"), &message);
     message.setCheckBox(alwaysSkip);
 
     message.exec();
@@ -1325,24 +1200,24 @@ void GuiApplicationPrivate::showMessage(const QString& title, const Track& track
     }
 }
 
-void GuiApplicationPrivate::showTrackNotFoundMessage(const Track& track) const
+void GuiApplication::showTrackNotFoundMessage(const Track& track) const
 {
-    showMessage(GuiApplication::tr("Track Not Found"), track);
+    showMessage(tr("Track Not Found"), track);
 }
 
-void GuiApplicationPrivate::showTrackUnreableMessage(const Track& track) const
+void GuiApplication::showTrackUnreableMessage(const Track& track) const
 {
-    showMessage(GuiApplication::tr("No Decoder Available"), track);
+    showMessage(tr("No Decoder Available"), track);
 }
 
-void GuiApplicationPrivate::createNewPlaylist() const
+void GuiApplication::createNewPlaylist() const
 {
     if(auto* playlist = m_playlistHandler->createEmptyPlaylist()) {
         m_playlistController->changeCurrentPlaylist(playlist);
     }
 }
 
-void GuiApplicationPrivate::createNewAutoPlaylist()
+void GuiApplication::createNewAutoPlaylist()
 {
     auto* autoDialog = new AutoPlaylistDialog(m_mainWindow.get());
     autoDialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -1356,14 +1231,14 @@ void GuiApplicationPrivate::createNewAutoPlaylist()
     autoDialog->show();
 }
 
-void GuiApplicationPrivate::addFiles()
+void GuiApplication::addFiles()
 {
     const QString audioExtensions
         = Utils::extensionsToWildcards(m_core->audioLoader()->supportedFileExtensions()).join(" "_L1);
     const QString allExtensions = u"%1 %2"_s.arg(audioExtensions, u"*.cue"_s);
 
-    const QString allFilter   = GuiApplication::tr("All Supported Media Files (%1)").arg(allExtensions);
-    const QString filesFilter = GuiApplication::tr("Audio Files (%1)").arg(audioExtensions);
+    const QString allFilter   = tr("All Supported Media Files (%1)").arg(allExtensions);
+    const QString filesFilter = tr("Audio Files (%1)").arg(audioExtensions);
     const QStringList filters{allFilter, filesFilter};
 
     FyStateSettings stateSettings;
@@ -1374,8 +1249,8 @@ void GuiApplicationPrivate::addFiles()
         dir = lastPath;
     }
 
-    const auto files = QFileDialog::getOpenFileUrls(m_mainWindow.get(), GuiApplication::tr("Add Files"), dir,
-                                                    filters.join(";;"_L1), nullptr, QFileDialog::DontResolveSymlinks);
+    const auto files = QFileDialog::getOpenFileUrls(m_mainWindow.get(), tr("Add Files"), dir, filters.join(";;"_L1),
+                                                    nullptr, QFileDialog::DontResolveSymlinks);
 
     if(files.empty()) {
         return;
@@ -1386,10 +1261,10 @@ void GuiApplicationPrivate::addFiles()
     m_playlistInteractor.filesToCurrentPlaylist(files);
 }
 
-void GuiApplicationPrivate::addFolders()
+void GuiApplication::addFolders()
 {
-    const auto dirs = QFileDialog::getExistingDirectoryUrl(m_mainWindow.get(), GuiApplication::tr("Add Folders"),
-                                                           QDir::homePath(), QFileDialog::DontResolveSymlinks);
+    const auto dirs = QFileDialog::getExistingDirectoryUrl(m_mainWindow.get(), tr("Add Folders"), QDir::homePath(),
+                                                           QFileDialog::DontResolveSymlinks);
 
     if(dirs.isEmpty()) {
         return;
@@ -1398,11 +1273,11 @@ void GuiApplicationPrivate::addFolders()
     m_playlistInteractor.filesToCurrentPlaylist({dirs});
 }
 
-void GuiApplicationPrivate::addStreamUrl()
+void GuiApplication::addStreamUrl()
 {
     bool accepted{false};
-    const QString input = QInputDialog::getText(m_mainWindow.get(), GuiApplication::tr("Add Stream URL"),
-                                                GuiApplication::tr("Stream URL:"), QLineEdit::Normal, {}, &accepted)
+    const QString input = QInputDialog::getText(m_mainWindow.get(), tr("Add Stream URL"), tr("Stream URL:"),
+                                                QLineEdit::Normal, {}, &accepted)
                               .trimmed();
 
     if(!accepted || input.isEmpty()) {
@@ -1411,8 +1286,8 @@ void GuiApplicationPrivate::addStreamUrl()
 
     const QUrl url{input, QUrl::StrictMode};
     if(!url.isValid() || !Track::isRemotePath(url.toString())) {
-        QMessageBox::warning(m_mainWindow.get(), GuiApplication::tr("Invalid Stream URL"),
-                             GuiApplication::tr("Enter a valid http:// or https:// stream URL."));
+        QMessageBox::warning(m_mainWindow.get(), tr("Invalid Stream URL"),
+                             tr("Enter a valid http:// or https:// stream URL."));
         return;
     }
 
@@ -1426,7 +1301,7 @@ void GuiApplicationPrivate::addStreamUrl()
     m_playlistInteractor.tracksToCurrentPlaylist({Track{url.toString()}});
 }
 
-void GuiApplicationPrivate::openFiles(const QList<QUrl>& urls)
+void GuiApplication::openFilesNow(const QList<QUrl>& urls)
 {
     QList<QUrl> files{urls};
     QUrl fileToPlay;
@@ -1459,14 +1334,14 @@ void GuiApplicationPrivate::openFiles(const QList<QUrl>& urls)
     }
 }
 
-void GuiApplicationPrivate::loadPlaylist()
+void GuiApplication::loadPlaylist()
 {
     const QString allExtensions
         = Utils::extensionsToWildcards(m_core->playlistLoader()->supportedExtensions()).join(" "_L1);
     const auto playlistFilter
         = Utils::extensionsToFilterList(m_core->playlistLoader()->supportedExtensions(), u"playlists"_s);
 
-    const QString allFilter = GuiApplication::tr("All Supported Playlists (%1)").arg(allExtensions);
+    const QString allFilter = tr("All Supported Playlists (%1)").arg(allExtensions);
 
     const QStringList filters{allFilter, playlistFilter};
 
@@ -1476,8 +1351,8 @@ void GuiApplicationPrivate::loadPlaylist()
         dir = lastPath;
     }
 
-    const auto files = QFileDialog::getOpenFileUrls(m_mainWindow.get(), GuiApplication::tr("Load Playlist"), dir,
-                                                    filters.join(";;"_L1), nullptr, QFileDialog::DontResolveSymlinks);
+    const auto files = QFileDialog::getOpenFileUrls(m_mainWindow.get(), tr("Load Playlist"), dir, filters.join(";;"_L1),
+                                                    nullptr, QFileDialog::DontResolveSymlinks);
 
     if(files.empty()) {
         return;
@@ -1495,13 +1370,13 @@ void GuiApplicationPrivate::loadPlaylist()
     m_playlistInteractor.loadPlaylist(info);
 }
 
-void GuiApplicationPrivate::savePlaylist() const
+void GuiApplication::saveCurrentPlaylist() const
 {
     auto* playlist = m_playlistController->currentPlaylist();
-    savePlaylist(playlist);
+    savePlaylistToFile(playlist);
 }
 
-void GuiApplicationPrivate::savePlaylist(const Playlist* playlist) const
+void GuiApplication::savePlaylistToFile(const Playlist* playlist) const
 {
     if(!playlist || playlist->trackCount() == 0) {
         return;
@@ -1516,7 +1391,7 @@ void GuiApplicationPrivate::savePlaylist(const Playlist* playlist) const
         dir = lastPath;
     }
 
-    QFileDialog saveDialog{m_mainWindow.get(), GuiApplication::tr("Save Playlist"), dir.absolutePath(), playlistFilter};
+    QFileDialog saveDialog{m_mainWindow.get(), tr("Save Playlist"), dir.absolutePath(), playlistFilter};
     saveDialog.setAcceptMode(QFileDialog::AcceptSave);
     saveDialog.setFileMode(QFileDialog::AnyFile);
     saveDialog.setOption(QFileDialog::DontResolveSymlinks);
@@ -1581,28 +1456,14 @@ void GuiApplicationPrivate::savePlaylist(const Playlist* playlist) const
 
 void GuiApplication::savePlaylist(const UId& playlistId) const
 {
-    p->savePlaylist(p->m_playlistHandler->playlistById(playlistId));
+    savePlaylistToFile(m_playlistHandler->playlistById(playlistId));
 }
 
-void GuiApplicationPrivate::saveAllPlaylist() const
+void GuiApplication::saveAllPlaylist() const
 {
     auto* savePlaylists = new SavePlaylistsDialog(m_core, m_mainWindow.get());
     savePlaylists->setAttribute(Qt::WA_DeleteOnClose);
     savePlaylists->show();
-}
-
-GuiApplication::GuiApplication(Application* core)
-    : p{createGuiApplicationPrivate(this, core)}
-{
-    QObject::connect(p->m_settings->settingsDialog(), &SettingsDialogController::opening, this, [this]() {
-        const bool isLayoutEditing = p->m_settings->value<Settings::Gui::LayoutEditing>();
-        // Layout editing mode overrides the global action context, so disable it until the dialog closes
-        p->m_settings->set<Settings::Gui::LayoutEditing>(false);
-        QObject::connect(
-            p->m_settings->settingsDialog(), &SettingsDialogController::closing, this,
-            [this, isLayoutEditing]() { p->m_settings->set<Settings::Gui::LayoutEditing>(isLayoutEditing); },
-            Qt::SingleShotConnection);
-    });
 }
 
 bool GuiApplication::eventFilter(QObject* watched, QEvent* event)
@@ -1610,27 +1471,27 @@ bool GuiApplication::eventFilter(QObject* watched, QEvent* event)
     if(watched == qApp) {
         switch(event->type()) {
             case QEvent::ApplicationFontChange:
-                p->handleSystemThemeChanged();
+                handleSystemThemeChanged();
                 break;
             case QEvent::ApplicationPaletteChange:
             case QEvent::ThemeChange:
-                p->refreshAutoDetectedIconTheme();
-                p->handleSystemThemeChanged();
+                refreshAutoDetectedIconTheme();
+                handleSystemThemeChanged();
                 break;
             default:
                 break;
         }
     }
-    else if(watched == p->m_mainWindow.get()) {
+    else if(watched == m_mainWindow.get()) {
         switch(event->type()) {
             case QEvent::FontChange:
-                p->handleSystemThemeChanged();
+                handleSystemThemeChanged();
                 break;
             case QEvent::PaletteChange:
             case QEvent::StyleChange:
             case QEvent::ThemeChange:
-                p->refreshAutoDetectedIconTheme();
-                p->handleSystemThemeChanged();
+                refreshAutoDetectedIconTheme();
+                handleSystemThemeChanged();
                 break;
             default:
                 break;
@@ -1640,9 +1501,21 @@ bool GuiApplication::eventFilter(QObject* watched, QEvent* event)
     return QObject::eventFilter(watched, event);
 }
 
+void GuiApplication::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_themeUpdateTimer.timerId()) {
+        m_themeUpdateTimer.stop();
+        m_themeUpdatePending = false;
+        applyTheme();
+        return;
+    }
+
+    QObject::timerEvent(event);
+}
+
 void GuiApplication::startup()
 {
-    p->initialise();
+    initialise();
 }
 
 GuiApplication::~GuiApplication() = default;
@@ -1650,55 +1523,55 @@ GuiApplication::~GuiApplication() = default;
 void GuiApplication::shutdown()
 {
     qApp->removeEventFilter(this);
-    p->m_actionManager->saveSettings();
-    p->m_editableLayout->saveLayout();
-    p->m_editableLayout.reset();
-    p->m_playlistController.reset();
-    p->m_mainWindow.reset();
+    m_actionManager->saveSettings();
+    m_editableLayout->saveLayout();
+    m_editableLayout.reset();
+    m_playlistController.reset();
+    m_mainWindow.reset();
 }
 
 void GuiApplication::raise()
 {
-    p->m_mainWindow->raiseWindow();
+    m_mainWindow->raiseWindow();
 }
 
 void GuiApplication::openFiles(const QList<QUrl>& files)
 {
-    if(p->m_playlistController->playlistsHaveLoaded()) {
-        p->openFiles(files);
+    if(m_playlistController->playlistsHaveLoaded()) {
+        openFilesNow(files);
         return;
     }
 
     QObject::connect(
-        p->m_playlistController.get(), &PlaylistController::playlistsLoaded, this,
-        [this, files]() { p->openFiles(files); }, Qt::SingleShotConnection);
+        m_playlistController.get(), &PlaylistController::playlistsLoaded, this,
+        [this, files]() { openFilesNow(files); }, Qt::SingleShotConnection);
 }
 
 void GuiApplication::searchForArtwork(const TrackList& tracks, Track::Cover type, bool quick)
 {
     if(!quick) {
-        auto* search = new ArtworkDialog(p->m_core->networkManager(), p->m_core->library(), p->m_settings,
-                                         p->m_coverRepository, tracks, type, p->m_mainWindow.get());
+        auto* search = new ArtworkDialog(m_core->networkManager(), m_core->library(), m_settings, m_coverRepository,
+                                         tracks, type, m_mainWindow.get());
         search->setAttribute(Qt::WA_DeleteOnClose);
         search->show();
         return;
     }
 
-    StatusEvent::post(GuiApplication::tr("Searching for artwork…"), 0);
+    StatusEvent::post(tr("Searching for artwork…"), 0);
 
-    auto* artworkFinder = new ArtworkFinder(p->m_core->networkManager(), p->m_settings, this);
+    auto* artworkFinder = new ArtworkFinder(m_core->networkManager(), m_settings, this);
 
     const Track& track = tracks.front();
     ScriptParser parser;
 
-    const QString artist = parser.evaluate(p->m_settings->value<Settings::Gui::Internal::ArtworkArtistField>(), track);
-    const QString album  = parser.evaluate(p->m_settings->value<Settings::Gui::Internal::ArtworkAlbumField>(), track);
+    const QString artist = parser.evaluate(m_settings->value<Settings::Gui::Internal::ArtworkArtistField>(), track);
+    const QString album  = parser.evaluate(m_settings->value<Settings::Gui::Internal::ArtworkAlbumField>(), track);
     const QString title{u"%title%"_s};
 
     const auto finishSearch = [artworkFinder]() {
         artworkFinder->disconnect();
         artworkFinder->deleteLater();
-        StatusEvent::post(GuiApplication::tr("Artwork search finished"));
+        StatusEvent::post(tr("Artwork search finished"));
     };
 
     QObject::connect(
@@ -1707,7 +1580,7 @@ void GuiApplication::searchForArtwork(const TrackList& tracks, Track::Cover type
             finishSearch();
 
             const auto saveMethods
-                = p->m_settings->value<Settings::Gui::Internal::ArtworkSaveMethods>().value<ArtworkSaveMethods>();
+                = m_settings->value<Settings::Gui::Internal::ArtworkSaveMethods>().value<ArtworkSaveMethods>();
             const auto& frontMethod = saveMethods[Track::Cover::Front];
             const auto saveResult   = prepareArtworkForSave(result, frontMethod.format, frontMethod.quality);
 
@@ -1716,10 +1589,10 @@ void GuiApplication::searchForArtwork(const TrackList& tracks, Track::Cover type
                 coverData.tracks = tracks;
                 coverData.coverData.emplace(Track::Cover::Front,
                                             CoverImage{.mimeType = saveResult.mimeType, .data = saveResult.image});
-                p->m_library->writeTrackCovers(coverData).finished.then(
+                m_library->writeTrackCovers(coverData).finished.then(
                     this, [this, tracks](const WriteResult& /*result*/) {
                         for(const Track& updatedTrack : tracks) {
-                            p->m_coverRepository->removeFromCache(updatedTrack, *p->m_settings);
+                            m_coverRepository->removeFromCache(updatedTrack, *m_settings);
                         }
                     });
             }
@@ -1732,9 +1605,9 @@ void GuiApplication::searchForArtwork(const TrackList& tracks, Track::Cover type
                 QFile file{cleanPath};
                 if(file.open(QIODevice::WriteOnly) && file.write(saveResult.image) == saveResult.image.size()) {
                     for(const Track& updatedTrack : tracks) {
-                        p->m_coverRepository->removeFromCache(updatedTrack, *p->m_settings);
+                        m_coverRepository->removeFromCache(updatedTrack, *m_settings);
                     }
-                    p->m_widgets->refreshCoverWidgets();
+                    m_widgets->refreshCoverWidgets();
                 }
             }
         });
@@ -1753,9 +1626,9 @@ void GuiApplication::removeArtwork(const TrackList& tracks, const std::set<Track
         coverData.coverData.emplace(coverType, CoverImage{});
     }
 
-    p->m_library->writeTrackCovers(coverData).finished.then(this, [this, tracks](const WriteResult& /*result*/) {
+    m_library->writeTrackCovers(coverData).finished.then(this, [this, tracks](const WriteResult& /*result*/) {
         for(const Track& track : tracks) {
-            p->m_coverRepository->removeFromCache(track, *p->m_settings);
+            m_coverRepository->removeFromCache(track, *m_settings);
         }
     });
 }
@@ -1784,9 +1657,9 @@ void GuiApplication::attachArtwork(const TrackList& tracks, Track::Cover type, c
     coverData.tracks = tracks;
     coverData.coverData.emplace(type, CoverImage{.mimeType = mimeType, .data = image});
 
-    p->m_library->writeTrackCovers(coverData).finished.then(this, [this, tracks](const WriteResult& /*result*/) {
+    m_library->writeTrackCovers(coverData).finished.then(this, [this, tracks](const WriteResult& /*result*/) {
         for(const Track& track : tracks) {
-            p->m_coverRepository->removeFromCache(track, *p->m_settings);
+            m_coverRepository->removeFromCache(track, *m_settings);
         }
     });
 }
@@ -1798,67 +1671,67 @@ void GuiApplication::removeAllArtwork(const TrackList& tracks)
 
 ActionManager* GuiApplication::actionManager() const
 {
-    return p->m_actionManager;
+    return m_actionManager;
 }
 
 LayoutProvider* GuiApplication::layoutProvider() const
 {
-    return &p->m_layoutProvider;
+    return m_layoutProvider.get();
 }
 
 PlaylistController* GuiApplication::playlistController() const
 {
-    return p->m_playlistController.get();
+    return m_playlistController.get();
 }
 
 TrackSelectionController* GuiApplication::trackSelection() const
 {
-    return &p->m_selectionController;
+    return m_selectionController.get();
 }
 
 SearchController* GuiApplication::searchController() const
 {
-    return p->m_searchController;
+    return m_searchController;
 }
 
 PropertiesDialog* GuiApplication::propertiesDialog() const
 {
-    return p->m_propertiesDialog;
+    return m_propertiesDialog;
 }
 
 ScriptCommandHandler* GuiApplication::scriptCommandHandler() const
 {
-    return p->m_scriptCommandHandler.get();
+    return m_scriptCommandHandler.get();
 }
 
 EditableLayout* GuiApplication::editableLayout() const
 {
-    return p->m_editableLayout.get();
+    return m_editableLayout.get();
 }
 
 WidgetProvider* GuiApplication::widgetProvider() const
 {
-    return &p->m_widgetProvider;
+    return m_widgetProvider.get();
 }
 
 ThemeRegistry* GuiApplication::themeRegistry() const
 {
-    return p->m_themeRegistry;
+    return m_themeRegistry;
 }
 
 GuiStyleProvider* GuiApplication::styleProvider() const
 {
-    return p->m_styleProvider;
+    return m_styleProvider;
 }
 
 AdvancedSettingsRegistry* GuiApplication::advancedSettingsRegistry() const
 {
-    return p->m_advancedSettingsRegistry.get();
+    return m_advancedSettingsRegistry.get();
 }
 
 CoverRepository* GuiApplication::coverRepository() const
 {
-    return p->m_coverRepository;
+    return m_coverRepository;
 }
 } // namespace Fooyin
 
