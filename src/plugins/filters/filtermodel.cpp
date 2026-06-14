@@ -87,36 +87,24 @@ bool rowMatchesItem(const Fooyin::Filters::FilterRow& row, const Fooyin::Filters
         return false;
     }
 
-    const int columnCount = item.columns().size();
     std::vector<Fooyin::RichText> richColumns;
-    richColumns.reserve(columnCount);
+    richColumns.reserve(item.columns().size());
 
-    for(int column = 0; column < columnCount; ++column) {
+    for(int column{0}; std::cmp_less(column, item.columns().size()); ++column) {
         richColumns.push_back(item.richColumn(column));
     }
 
-    const auto richColumnCount = std::cmp_greater(row.richColumns.size(), columnCount)
-                                   ? columnCount
-                                   : static_cast<int>(row.richColumns.size());
-    if(!std::ranges::equal(row.richColumns.cbegin(), row.richColumns.cbegin() + richColumnCount, richColumns.cbegin(),
-                           richColumns.cbegin() + richColumnCount)) {
+    if(row.richColumns != richColumns) {
         return false;
     }
 
-    if(richColumnCount != static_cast<int>(richColumns.size())) {
+    const QStringList sortColumns = row.sortColumns.empty() ? row.columns : row.sortColumns;
+    if(sortColumns.size() != item.columns().size()) {
         return false;
     }
 
-    if(!std::cmp_greater(row.richColumns.size(), columnCount)) {
-        return true;
-    }
-
-    if(row.richColumns.size() != richColumns.size() + static_cast<size_t>(columnCount)) {
-        return false;
-    }
-
-    for(int column{0}; column < columnCount; ++column) {
-        if(row.richColumns.at(columnCount + column).joinedText() != item.sortColumn(column)) {
+    for(int column{0}; std::cmp_less(column, sortColumns.size()); ++column) {
+        if(sortColumns.at(column) != item.sortColumn(column)) {
             return false;
         }
     }
@@ -676,6 +664,7 @@ void FilterModel::setRows(const FilterColumnList& columns, const FilterRowList& 
             auto [it, _] = p->m_nodes.emplace(row.key, FilterItem{row.key, row.columns, parent});
             auto& item   = it->second;
 
+            item.setSortColumns(row.sortColumns);
             item.setRichColumns(row.richColumns);
             item.setTrackIds(row.trackIds);
             parent->appendChild(&item);
@@ -725,6 +714,7 @@ void FilterModel::setRows(const FilterColumnList& columns, const FilterRowList& 
         beginInsertRows({}, rowOffset + rowIndex, rowOffset + rowIndex);
         auto [it, _]  = p->m_nodes.emplace(row.key, FilterItem{row.key, row.columns, parent});
         auto& newItem = it->second;
+        newItem.setSortColumns(row.sortColumns);
         newItem.setRichColumns(row.richColumns);
         newItem.setTrackIds(row.trackIds);
         parent->insertChild(rowOffset + rowIndex, &newItem);
@@ -747,6 +737,7 @@ void FilterModel::setRows(const FilterColumnList& columns, const FilterRowList& 
         }
 
         item->setColumns(row.columns);
+        item->setSortColumns(row.sortColumns);
         item->setRichColumns(row.richColumns);
         item->setTrackIds(row.trackIds);
 

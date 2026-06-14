@@ -43,15 +43,6 @@ struct ColumnData
     std::vector<RichText> richColumns;
 };
 
-RichText sortRichText(const QString& text)
-{
-    RichText richText;
-    if(!text.isEmpty()) {
-        richText.blocks.push_back({.text = text, .format = {}});
-    }
-    return richText;
-}
-
 RichText placeholderRichText()
 {
     RichText richText;
@@ -120,7 +111,8 @@ FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumn
     }
 
     QStringList fields;
-    fields.reserve(columns.size());
+    fields.reserve(static_cast<qsizetype>(columns.size()));
+
     std::ranges::transform(columns, std::back_inserter(fields),
                            [](const FilterColumn& column) { return column.field; });
 
@@ -128,8 +120,9 @@ FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumn
         = std::ranges::any_of(columns, [](const FilterColumn& column) { return !column.sortField.isEmpty(); });
 
     QStringList sortFields;
+
     if(hasCustomSortField) {
-        sortFields.reserve(columns.size());
+        sortFields.reserve(static_cast<qsizetype>(columns.size()));
         std::ranges::transform(columns, std::back_inserter(sortFields), [](const FilterColumn& column) {
             return column.sortField.isEmpty() ? column.field : column.sortField;
         });
@@ -143,12 +136,14 @@ FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumn
     scriptEnvironment.setRatingStarSymbols(context.ratingSymbols);
     scriptEnvironment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, false, context.useVarious);
 
-    const ParsedScript script = parser.parse(fields.join("\036"_L1));
+    const ParsedScript script = parser.parse(fields.join(QLatin1StringView{Constants::RecordSeparator}));
     ScriptContext scriptContext;
     scriptContext.environment = &scriptEnvironment;
 
     std::map<RowKey, FilterRow> items;
-    const ParsedScript sortScript = hasCustomSortField ? parser.parse(sortFields.join("\036"_L1)) : ParsedScript{};
+    const ParsedScript sortScript = hasCustomSortField
+                                      ? parser.parse(sortFields.join(QLatin1StringView{Constants::RecordSeparator}))
+                                      : ParsedScript{};
 
     for(const Track& track : tracks) {
         if(!track.isInLibrary()) {
@@ -164,8 +159,8 @@ FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumn
         }
 
         auto addColumns = [&columns, &hasCustomSortField, &items, &formatter,
-                           &track](const QStringList& columnValues, const QStringList& sortColumnValues) {
-            const ColumnData columnData = buildColumnData(columnValues, formatter);
+                           &track](const QStringList& rowColumnValues, const QStringList& sortColumnValues) {
+            const ColumnData columnData = buildColumnData(rowColumnValues, formatter);
             const RowKey key            = Utils::generateMd5Hash(columnData.plainColumns.join(QString{}));
 
             auto [it, inserted] = items.try_emplace(key);
@@ -177,13 +172,15 @@ FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumn
                 row.richColumns = columnData.richColumns;
 
                 if(hasCustomSortField) {
+                    const bool pairSortColumns = sortColumnValues.size() == rowColumnValues.size();
+                    row.sortColumns.reserve(columnData.plainColumns.size());
                     for(int column{0}; column < columnData.plainColumns.size(); ++column) {
-                        if(std::cmp_greater_equal(column, columns.size()) || columns.at(column).sortField.isEmpty()) {
-                            row.richColumns.push_back(sortRichText(columnData.plainColumns.value(column)));
+                        if(!pairSortColumns || std::cmp_greater_equal(column, columns.size())
+                           || columns.at(column).sortField.isEmpty()) {
+                            row.sortColumns.push_back(columnData.plainColumns.value(column));
                         }
                         else {
-                            row.richColumns.push_back(
-                                sortRichText(sortColumnText(sortColumnValues.value(column), formatter)));
+                            row.sortColumns.push_back(sortColumnText(sortColumnValues.value(column), formatter));
                         }
                     }
                 }
@@ -192,10 +189,11 @@ FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumn
             row.trackIds.push_back(track.id());
         };
 
+        const bool pairSortRows = hasCustomSortField && columnValues.size() == sortValues.size();
         for(int index{0}; std::cmp_less(index, columnValues.size()); ++index) {
             QStringList rowSortValues;
-            if(hasCustomSortField && !sortValues.empty()) {
-                rowSortValues = sortValues.at(std::min(index, static_cast<int>(sortValues.size()) - 1));
+            if(pairSortRows) {
+                rowSortValues = sortValues.at(index);
             }
             addColumns(columnValues.at(index), rowSortValues);
         }
@@ -224,6 +222,12 @@ FilterRowList patchFilterRows(LibraryManager* libraryManager, const FilterColumn
 
     if(changedTrackIds.empty() && previousTracks == tracks) {
         return previousRows;
+    }
+
+    const bool hasCustomSortField
+        = std::ranges::any_of(columns, [](const FilterColumn& column) { return !column.sortField.isEmpty(); });
+    if(hasCustomSortField) {
+        return buildFilterRows(libraryManager, columns, tracks, context);
     }
 
     std::unordered_map<int, Track> previousTracksById;
@@ -288,6 +292,7 @@ FilterRowList patchFilterRows(LibraryManager* libraryManager, const FilterColumn
         auto [it, inserted] = patchedRows.try_emplace(row.key, row);
         if(!inserted) {
             it->second.columns     = row.columns;
+            it->second.sortColumns = row.sortColumns;
             it->second.richColumns = row.richColumns;
             std::ranges::copy(row.trackIds, std::back_inserter(it->second.trackIds));
         }

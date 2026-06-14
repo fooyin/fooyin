@@ -214,31 +214,14 @@ void FilterItem::setColumns(const QStringList& columns)
     invalidateIconCaches();
 }
 
+void FilterItem::setSortColumns(const QStringList& columns)
+{
+    m_sortColumns = columns.isEmpty() ? m_columns : columns;
+}
+
 void FilterItem::setRichColumns(const std::vector<RichText>& columns)
 {
-    const auto columnCount = static_cast<int>(m_columns.size());
-
-    if(std::cmp_greater(columns.size(), columnCount)) {
-        m_richColumns.assign(columns.cbegin(), columns.cbegin() + columnCount);
-
-        m_sortColumns.clear();
-        m_sortColumns.reserve(columnCount);
-
-        const int sortColumnCount = static_cast<int>(columns.size()) - columnCount;
-        for(int column{0}; column < columnCount; ++column) {
-            if(column < sortColumnCount) {
-                m_sortColumns.push_back(columns.at(columnCount + column).joinedText());
-            }
-            else {
-                m_sortColumns.push_back(m_columns.at(column));
-            }
-        }
-    }
-    else {
-        m_richColumns = columns;
-        m_sortColumns = m_columns;
-    }
-
+    m_richColumns = columns;
     invalidateIconCaches();
 }
 

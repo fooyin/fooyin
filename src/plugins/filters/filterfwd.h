@@ -22,8 +22,6 @@
 #include <QDataStream>
 #include <QString>
 
-#include <tuple>
-
 namespace Fooyin::Filters {
 struct FilterColumn
 {
@@ -37,11 +35,7 @@ struct FilterColumn
     QString field;
     QString sortField;
 
-    bool operator==(const FilterColumn& other) const
-    {
-        return std::tie(id, index, name, field, sortField)
-            == std::tie(other.id, other.index, other.name, other.field, other.sortField);
-    }
+    bool operator==(const FilterColumn& other) const = default;
 
     [[nodiscard]] bool isValid() const
     {
@@ -73,11 +67,9 @@ struct FilterColumn
             stream >> column.index;
             stream >> column.name;
             stream >> column.field;
+
             if(version >= 2) {
                 stream >> column.sortField;
-            }
-            else {
-                column.sortField.clear();
             }
         }
         else {
@@ -85,7 +77,6 @@ struct FilterColumn
             stream >> column.index;
             stream >> column.name;
             stream >> column.field;
-            column.sortField.clear();
         }
 
         return stream;

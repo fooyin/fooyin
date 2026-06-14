@@ -64,8 +64,9 @@ FilterColumnEditorWidget::FilterColumnEditorWidget(FilterColumnRegistry* columnR
     m_columnList->hideColumn(0);
     m_columnList->setExtendableColumn(1);
     m_columnList->verticalHeader()->hide();
-    m_columnList->horizontalHeader()->setStretchLastSection(true);
+    m_columnList->horizontalHeader()->setStretchLastSection(false);
     m_columnList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    m_columnList->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
 
     m_openEditor->setText(tr("Script Editor"));
     m_columnList->addCustomTool(m_openEditor);
@@ -79,7 +80,7 @@ FilterColumnEditorWidget::FilterColumnEditorWidget(FilterColumnRegistry* columnR
     QObject::connect(m_openEditor, &QToolButton::clicked, this, [this]() {
         const auto selection    = m_columnList->selectionModel()->selectedIndexes();
         const QModelIndex index = selection.front();
-        ScriptEditor::openEditor(index.data().toString(), [this, index](const QString& script) {
+        ScriptEditor::openEditor(index.data(Qt::EditRole).toString(), [this, index](const QString& script) {
             m_model->setData(index, script, Qt::EditRole);
         });
     });
@@ -115,7 +116,8 @@ void FilterColumnEditorWidget::updateButtonState()
         selection, [](const QModelIndex& index) { return !index.data(Qt::UserRole).value<FilterColumn>().isDefault; });
 
     m_columnList->removeRowAction()->setEnabled(hasCustom);
-    m_openEditor->setEnabled(selection.size() == 1 && selection.front().column() == 2);
+    m_openEditor->setEnabled(selection.size() == 1
+                             && (selection.front().column() == 2 || selection.front().column() == 3));
 }
 
 FilterColumnEditorDialog::FilterColumnEditorDialog(FilterColumnRegistry* columnRegistry, QWidget* parent)
