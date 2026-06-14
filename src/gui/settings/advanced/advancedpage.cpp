@@ -83,11 +83,9 @@ AdvancedPageWidget::AdvancedPageWidget(AdvancedSettingsRegistry* registry)
 
     m_tree->setModel(m_proxyModel);
     m_tree->setItemDelegate(new AdvancedItemDelegate(m_tree));
-    m_tree->setAlternatingRowColors(true);
-    m_tree->setRootIsDecorated(true);
     m_tree->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed
                             | QAbstractItemView::SelectedClicked);
-    m_tree->header()->hide();
+    m_tree->setHeaderHidden(true);
 
     auto* layout = new QGridLayout(this);
     layout->addWidget(m_filter, 0, 0);
