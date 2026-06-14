@@ -50,6 +50,8 @@ struct RadioGuideConfigItem : TreeItem<RadioGuideConfigItem>
 
 class RadioGuideConfigModel : public TreeModel<RadioGuideConfigItem>
 {
+    Q_OBJECT
+
 public:
     enum Role : uint16_t
     {
