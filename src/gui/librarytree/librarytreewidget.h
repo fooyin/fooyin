@@ -19,10 +19,12 @@
 
 #pragma once
 
-#include "gui/fywidget.h"
+#include "librarytreecontroller.h"
 #include "librarytreegroup.h"
+#include "librarytreescriptenvironment.h"
 
 #include <core/track.h>
+#include <gui/fywidget.h>
 #include <utils/crypto.h>
 
 #include <QByteArray>
@@ -88,15 +90,16 @@ public:
         bool playlistEnabled{false};
         bool autoSwitch{true};
         bool keepAlive{false};
-        QString playlistName;
+        QString playlistName{LibraryTreeController::defaultPlaylistName()};
         bool restoreState{true};
         bool expandOnSingleClick{false};
+        int autoExpandSearchResultLimit{10};
         bool animated{true};
         bool showHeader{true};
         bool showScrollbar{true};
         bool alternatingRows{false};
         bool showSummaryNode{true};
-        QString summaryNodeTitle;
+        QString summaryNodeTitle{defaultLibraryTreeSummaryTitle()};
         int rowHeight{0};
         QSize iconSize{36, 36};
     };
@@ -138,6 +141,8 @@ private:
     void dequeueSelectedTracks() const;
 
     void searchChanged(const SearchRequest& request);
+    [[nodiscard]] bool shouldAutoExpandSearchResults(const TrackList& tracks) const;
+    void expandSearchResults();
 
     void handlePlayback(const QModelIndexList& indexes, int row = 0);
     void handlePlayTrack(const QModelIndex& index);
