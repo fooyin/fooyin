@@ -13658,7 +13658,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="79"/>
         <source>Filter scrobbles</source>
-        <translation>Filtrovat scrobblování</translation>
+        <translation>Filtrovat scroblování</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="88"/>
@@ -13668,12 +13668,12 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="77"/>
         <source>Scrobble delay</source>
-        <translation>Zpoždění scrobblování</translation>
+        <translation>Zpoždění scroblování</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="91"/>
         <source>Time to wait before submitting scrobbles</source>
-        <translation>Čas po který čekat než bude odesláno scrobblování</translation>
+        <translation>Čas po který čekat než bude odesláno scroblování</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="80"/>
@@ -13683,7 +13683,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="100"/>
         <source>Enter a query - tracks that match the query will NOT be scrobbled</source>
-        <translation>Zadejte dotaz - skladby které odpovídají dotazu nebudou scrobblovány</translation>
+        <translation>Zadejte dotaz - skladby které odpovídají dotazu nebudou scroblovány</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="104"/>
@@ -13726,12 +13726,12 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="63"/>
         <source>Scrobbler</source>
-        <translation>Scrobblovač</translation>
+        <translation>Scroblovač</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="67"/>
         <source>Scrobble Toggle</source>
-        <translation>Přepínač scrobblování</translation>
+        <translation>Přepínač scroblování</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="68"/>
@@ -13849,7 +13849,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="68"/>
         <source>Scrobble Toggle</source>
-        <translation>Přepínač scrobblování</translation>
+        <translation>Přepínač scroblování</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="81"/>
