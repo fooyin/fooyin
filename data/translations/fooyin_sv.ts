@@ -6040,7 +6040,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="297"/>
         <source>Track Peak</source>
-        <translation type="unfinished">Spår-peak</translation>
+        <translation>Spår-peak</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="302"/>
@@ -6050,7 +6050,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="307"/>
         <source>Album Peak</source>
-        <translation type="unfinished">Album-peak</translation>
+        <translation>Album-peak</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="312"/>
@@ -15307,12 +15307,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="348"/>
         <source>&amp;Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Döp om</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="352"/>
         <source>Re&amp;move</source>
-        <translation type="unfinished">Ta &amp;bort</translation>
+        <translation>Ta b&amp;ort</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="355"/>
