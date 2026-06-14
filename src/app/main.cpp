@@ -56,31 +56,31 @@ void parseCmdOptions(Fooyin::Application& app, Fooyin::GuiApplication& guiApp, C
     if(playerAction != CommandLine::PlayerAction::None) {
         auto* player = app.playerController();
         switch(playerAction) {
-            case(CommandLine::PlayerAction::PlayPause):
+            case CommandLine::PlayerAction::PlayPause:
                 player->playPause();
                 break;
-            case(CommandLine::PlayerAction::Play):
+            case CommandLine::PlayerAction::Play:
                 player->play();
                 break;
-            case(CommandLine::PlayerAction::Pause):
+            case CommandLine::PlayerAction::Pause:
                 player->pause();
                 break;
-            case(CommandLine::PlayerAction::Stop):
+            case CommandLine::PlayerAction::Stop:
                 player->stop();
                 break;
-            case(CommandLine::PlayerAction::Next):
+            case CommandLine::PlayerAction::Next:
                 player->next();
                 break;
-            case(CommandLine::PlayerAction::Previous):
+            case CommandLine::PlayerAction::Previous:
                 player->previous();
                 break;
-            case(CommandLine::PlayerAction::SeekFwd):
+            case CommandLine::PlayerAction::SeekFwd:
                 player->seekForward(cmdLine.seekDelta());
                 break;
-            case(CommandLine::PlayerAction::SeekBack):
+            case CommandLine::PlayerAction::SeekBack:
                 player->seekBackward(cmdLine.seekDelta());
                 break;
-            case(CommandLine::PlayerAction::None):
+            case CommandLine::PlayerAction::None:
                 break;
         }
     }
@@ -152,12 +152,10 @@ int main(int argc, char** argv)
 
     if(!commandLine.empty()) {
         // Wait until playlists have been populated before parsing in case of playback commands
-        const auto delayedParse = [&]() {
-            parseCmdOptions(coreApp, guiApp, commandLine);
-        };
         auto* playlistHandler = coreApp.playlistHandler();
-        QObject::connect(playlistHandler, &Fooyin::PlaylistHandler::playlistsPopulated, playlistHandler,
-                         [delayedParse]() { delayedParse(); });
+        QObject::connect(
+            playlistHandler, &Fooyin::PlaylistHandler::playlistsPopulated, &guiApp,
+            [&]() { parseCmdOptions(coreApp, guiApp, commandLine); }, Qt::SingleShotConnection);
     }
 
     QObject::connect(&instance, &KDSingleApplication::messageReceived, &guiApp, [&](const QByteArray& options) {
