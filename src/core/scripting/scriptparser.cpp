@@ -430,6 +430,8 @@ Expression ScriptParserPrivate::expression()
         case TokenType::TokHour:
         case TokenType::TokDay:
         case TokenType::TokWeek:
+        case TokenType::TokMonth:
+        case TokenType::TokYear:
         case TokenType::TokRightSquare:
         case TokenType::TokAscending:
         case TokenType::TokDescending:
@@ -835,7 +837,15 @@ Expression ScriptParserPrivate::duringKeyword(const Expression& key)
             }
         }
 
-        if(currentToken(TokenType::TokWeek)) {
+        if(currentToken(TokenType::TokYear)) {
+            date  = date.addYears(-count);
+            valid = true;
+        }
+        else if(currentToken(TokenType::TokMonth)) {
+            date  = date.addMonths(-count);
+            valid = true;
+        }
+        else if(currentToken(TokenType::TokWeek)) {
             date  = date.addDays(-7LL * count);
             valid = true;
         }

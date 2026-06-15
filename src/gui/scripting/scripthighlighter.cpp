@@ -53,55 +53,57 @@ void ScriptHighlighter::expression()
 {
     advance();
     switch(m_previous.type) {
-        case(ScriptScanner::TokVar):
+        case ScriptScanner::TokVar:
             variable();
             break;
-        case(ScriptScanner::TokFunc):
+        case ScriptScanner::TokFunc:
             function();
             break;
-        case(ScriptScanner::TokQuote):
+        case ScriptScanner::TokQuote:
             quote();
             break;
-        case(ScriptScanner::TokLeftSquare):
+        case ScriptScanner::TokLeftSquare:
             conditional();
             break;
-        case(ScriptScanner::TokEscape):
-        case(ScriptScanner::TokLeftAngle):
-        case(ScriptScanner::TokRightAngle):
-        case(ScriptScanner::TokComma):
-        case(ScriptScanner::TokLeftParen):
-        case(ScriptScanner::TokRightParen):
-        case(ScriptScanner::TokRightSquare):
-        case(ScriptScanner::TokLiteral):
-        case(ScriptScanner::TokSlash):
-        case(ScriptScanner::TokColon):
-        case(ScriptScanner::TokEquals):
-        case(ScriptScanner::TokEos):
-        case(ScriptScanner::TokError):
-        case(ScriptScanner::TokNot):
-        case(ScriptScanner::TokAscending):
-        case(ScriptScanner::TokDescending):
-        case(ScriptScanner::TokAnd):
-        case(ScriptScanner::TokOr):
-        case(ScriptScanner::TokXOr):
-        case(ScriptScanner::TokMissing):
-        case(ScriptScanner::TokPresent):
-        case(ScriptScanner::TokAll):
-        case(ScriptScanner::TokSort):
-        case(ScriptScanner::TokBy):
-        case(ScriptScanner::TokBefore):
-        case(ScriptScanner::TokAfter):
-        case(ScriptScanner::TokSince):
-        case(ScriptScanner::TokDuring):
-        case(ScriptScanner::TokLast):
-        case(ScriptScanner::TokSecond):
-        case(ScriptScanner::TokMinute):
-        case(ScriptScanner::TokHour):
-        case(ScriptScanner::TokDay):
-        case(ScriptScanner::TokWeek):
-        case(ScriptScanner::TokLimit):
-        case(ScriptScanner::TokPlus):
-        case(ScriptScanner::TokMinus):
+        case ScriptScanner::TokEscape:
+        case ScriptScanner::TokLeftAngle:
+        case ScriptScanner::TokRightAngle:
+        case ScriptScanner::TokComma:
+        case ScriptScanner::TokLeftParen:
+        case ScriptScanner::TokRightParen:
+        case ScriptScanner::TokRightSquare:
+        case ScriptScanner::TokLiteral:
+        case ScriptScanner::TokSlash:
+        case ScriptScanner::TokColon:
+        case ScriptScanner::TokEquals:
+        case ScriptScanner::TokEos:
+        case ScriptScanner::TokError:
+        case ScriptScanner::TokNot:
+        case ScriptScanner::TokAscending:
+        case ScriptScanner::TokDescending:
+        case ScriptScanner::TokAnd:
+        case ScriptScanner::TokOr:
+        case ScriptScanner::TokXOr:
+        case ScriptScanner::TokMissing:
+        case ScriptScanner::TokPresent:
+        case ScriptScanner::TokAll:
+        case ScriptScanner::TokSort:
+        case ScriptScanner::TokBy:
+        case ScriptScanner::TokBefore:
+        case ScriptScanner::TokAfter:
+        case ScriptScanner::TokSince:
+        case ScriptScanner::TokDuring:
+        case ScriptScanner::TokLast:
+        case ScriptScanner::TokSecond:
+        case ScriptScanner::TokMinute:
+        case ScriptScanner::TokHour:
+        case ScriptScanner::TokDay:
+        case ScriptScanner::TokWeek:
+        case ScriptScanner::TokMonth:
+        case ScriptScanner::TokYear:
+        case ScriptScanner::TokLimit:
+        case ScriptScanner::TokPlus:
+        case ScriptScanner::TokMinus:
             break;
     }
 }

@@ -73,11 +73,13 @@ public:
         TokHour        = 33,
         TokDay         = 34,
         TokWeek        = 35,
-        TokMissing     = 36,
-        TokPresent     = 37,
-        TokLimit       = 38,
-        TokPlus        = 39,
-        TokMinus       = 40,
+        TokMonth       = 36,
+        TokYear        = 37,
+        TokMissing     = 38,
+        TokPresent     = 39,
+        TokLimit       = 40,
+        TokPlus        = 41,
+        TokMinus       = 42,
     };
 
     struct Token

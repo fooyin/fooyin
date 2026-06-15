@@ -1078,12 +1078,16 @@ TEST_F(ScriptParserTest, QueryTest)
     EXPECT_EQ(1, m_parser.filter(u"date AFTER 2000"_s, tracks).size());
     EXPECT_EQ(1, m_parser.filter(u"firstplayed SINCE 2022"_s, tracks).size());
     EXPECT_EQ(2, m_parser.filter(u"lastplayed DURING LAST WEEK"_s, tracks).size());
+    EXPECT_EQ(2, m_parser.filter(u"lastplayed DURING LAST MONTH"_s, tracks).size());
+    EXPECT_EQ(2, m_parser.filter(u"lastplayed DURING LAST YEAR"_s, tracks).size());
     EXPECT_EQ(0, m_parser.filter(u"lastplayed DURING 2"_s, tracks).size());
     EXPECT_EQ(1, m_parser.filter(u"date NOT BEFORE 2000"_s, tracks).size());
     EXPECT_EQ(1, m_parser.filter(u"date NOT AFTER 2000"_s, tracks).size());
     EXPECT_EQ(1, m_parser.filter(u"firstplayed NOT SINCE 2022"_s, tracks).size());
     EXPECT_EQ(0, m_parser.filter(u"lastplayed NOT DURING LAST WEEK"_s, tracks).size());
     EXPECT_EQ(2, m_parser.filter(u"%lastplayed% NOT DURING LAST 1 DAYS"_s, tracks).size());
+    EXPECT_EQ(1, m_parser.filter(u"%firstplayed% NOT DURING LAST 3 MONTHS"_s, tracks).size());
+    EXPECT_EQ(1, m_parser.filter(u"%firstplayed% NOT DURING LAST 2 YEARS"_s, tracks).size());
 
     // Grouping and complex queries
     EXPECT_EQ(2, m_parser.filter(u"(playcount>=1 AND bitrate>500) OR title:Celestial"_s, tracks).size());
