@@ -264,6 +264,10 @@ void PlaylistWidgetSession::cropSelection(PlaylistWidgetSessionHost& /*host*/) {
 
 void PlaylistWidgetSession::sortTracks(PlaylistWidgetSessionHost& /*host*/, const QString& /*script*/) { }
 
+void PlaylistWidgetSession::randomiseTracks(PlaylistWidgetSessionHost& /*host*/) { }
+
+void PlaylistWidgetSession::reverseTracks(PlaylistWidgetSessionHost& /*host*/) { }
+
 void PlaylistWidgetSession::sortColumn(PlaylistWidgetSessionHost& /*host*/, int /*column*/, Qt::SortOrder /*order*/) { }
 
 QAction* PlaylistWidgetSession::cropAction() const
@@ -307,6 +311,16 @@ QAction* PlaylistWidgetSession::queueNextAction() const
 }
 
 QAction* PlaylistWidgetSession::removeFromQueueAction() const
+{
+    return nullptr;
+}
+
+QAction* PlaylistWidgetSession::randomiseAction() const
+{
+    return nullptr;
+}
+
+QAction* PlaylistWidgetSession::reverseAction() const
 {
     return nullptr;
 }

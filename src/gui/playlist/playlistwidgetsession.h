@@ -115,6 +115,8 @@ public:
     virtual void pasteTracks(PlaylistWidgetSessionHost& host);
     virtual void cropSelection(PlaylistWidgetSessionHost& host);
     virtual void sortTracks(PlaylistWidgetSessionHost& host, const QString& script);
+    virtual void randomiseTracks(PlaylistWidgetSessionHost& host);
+    virtual void reverseTracks(PlaylistWidgetSessionHost& host);
     virtual void sortColumn(PlaylistWidgetSessionHost& host, int column, Qt::SortOrder order);
     [[nodiscard]] virtual QAction* cropAction() const;
     [[nodiscard]] virtual QAction* stopAfterAction() const;
@@ -125,6 +127,8 @@ public:
     [[nodiscard]] virtual QAction* addToQueueAction() const;
     [[nodiscard]] virtual QAction* queueNextAction() const;
     [[nodiscard]] virtual QAction* removeFromQueueAction() const;
+    [[nodiscard]] virtual QAction* randomiseAction() const;
+    [[nodiscard]] virtual QAction* reverseAction() const;
 
     [[nodiscard]] bool isSorting() const;
     [[nodiscard]] bool isSortingColumn() const;

@@ -205,7 +205,7 @@ GuiApplication::GuiApplication(Application* core)
                                                                        m_settings, m_playlistController.get())}
     , m_searchController{new SearchController(m_editableLayout.get(), this)}
     , m_fileMenu{new FileMenu(m_actionManager, this)}
-    , m_editMenu{new EditMenu(m_actionManager, m_settings, this)}
+    , m_editMenu{new EditMenu(m_actionManager, m_core->sortingRegistry(), m_settings, this)}
     , m_viewMenu{new ViewMenu(m_actionManager, m_settings, this)}
     , m_layoutMenu{new LayoutMenu(m_actionManager, m_layoutProvider.get(), m_settings, this)}
     , m_playbackMenu{new PlaybackMenu(m_actionManager, m_playerController, m_settings, this)}

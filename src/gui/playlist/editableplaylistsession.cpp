@@ -47,6 +47,7 @@
 #include <QScrollBar>
 
 #include <algorithm>
+#include <random>
 #include <ranges>
 #include <utility>
 
@@ -98,6 +99,8 @@ EditablePlaylistSession::EditablePlaylistSession()
     , m_addToQueueAction{nullptr}
     , m_queueNextAction{nullptr}
     , m_removeFromQueueAction{nullptr}
+    , m_randomiseAction{nullptr}
+    , m_reverseAction{nullptr}
 { }
 
 uint64_t EditablePlaylistSession::beginSortRequest()
@@ -243,6 +246,12 @@ void EditablePlaylistSession::ensureActions(QWidget* parent)
     if(!m_removeFromQueueAction) {
         m_removeFromQueueAction = new QAction(PlaylistWidget::tr("Remove from playback q&ueue"), parent);
         Gui::setThemeIcon(m_removeFromQueueAction, Constants::Icons::Remove);
+    }
+    if(!m_randomiseAction) {
+        m_randomiseAction = new QAction(PlaylistWidget::tr("Randomise"), parent);
+    }
+    if(!m_reverseAction) {
+        m_reverseAction = new QAction(PlaylistWidget::tr("Reverse"), parent);
     }
 }
 
@@ -517,6 +526,10 @@ void EditablePlaylistSession::refreshActionState(PlaylistWidget* widget)
     const bool canReorderTracks = canReorderPlaylist(currentPlaylist);
     const bool hasSelection
         = host.playlistView()->selectionModel() && host.playlistView()->selectionModel()->hasSelection();
+    const auto selectedIndexes = filterSelectedIndexes(host.playlistView());
+    const bool canSortTracks
+        = canReorderTracks
+       && (selectedIndexes.size() > 1 || (selectedIndexes.empty() && currentPlaylist->trackCount() > 1));
 
     m_undoAction->setEnabled(canReorderTracks && host.playlistController()->canUndo());
     m_redoAction->setEnabled(canReorderTracks && host.playlistController()->canRedo());
@@ -528,6 +541,8 @@ void EditablePlaylistSession::refreshActionState(PlaylistWidget* widget)
     m_removeTrackAction->setEnabled(canEditTracks && hasSelection);
     m_removeDuplicatesAction->setEnabled(canEditTracks);
     m_removeDeadTracksAction->setEnabled(canEditTracks);
+    m_randomiseAction->setEnabled(canSortTracks);
+    m_reverseAction->setEnabled(canSortTracks);
 }
 
 void EditablePlaylistSession::applyPlaylistChangeSet(PlaylistWidgetSessionHost& sessionHost,
@@ -1165,6 +1180,76 @@ void EditablePlaylistSession::sortTracks(PlaylistWidgetSessionHost& sessionHost,
     }
 }
 
+void EditablePlaylistSession::randomiseTracks(PlaylistWidgetSessionHost& sessionHost)
+{
+    reorderSelectedTracks(sessionHost, SelectedTrackOrder::Randomise);
+}
+
+void EditablePlaylistSession::reverseTracks(PlaylistWidgetSessionHost& sessionHost)
+{
+    reorderSelectedTracks(sessionHost, SelectedTrackOrder::Reverse);
+}
+
+void EditablePlaylistSession::reorderSelectedTracks(PlaylistWidgetSessionHost& sessionHost, SelectedTrackOrder order)
+{
+    auto& host = editableHost(sessionHost.sessionWidget());
+    if(!canReorderPlaylist(host.playlistController()->currentPlaylist())) {
+        return;
+    }
+
+    auto* currentPlaylist = host.playlistController()->currentPlaylist();
+    auto currentTracks    = currentPlaylist->playlistTracks();
+    auto reorderedTracks  = currentTracks;
+
+    std::vector<int> indexes;
+    const auto selected = filterSelectedIndexes(host.playlistView());
+    for(const QModelIndex& index : selected) {
+        if(index.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
+            indexes.push_back(index.data(PlaylistItem::Index).toInt());
+        }
+    }
+
+    std::ranges::sort(indexes);
+    indexes.erase(std::ranges::unique(indexes).begin(), indexes.end());
+    if(indexes.empty()) {
+        indexes.reserve(currentTracks.size());
+        for(size_t i{0}; i < currentTracks.size(); ++i) {
+            indexes.push_back(static_cast<int>(i));
+        }
+    }
+
+    PlaylistTrackList selectedTracks;
+    selectedTracks.reserve(indexes.size());
+    for(const int index : indexes) {
+        if(index >= 0 && std::cmp_less(index, reorderedTracks.size())) {
+            selectedTracks.push_back(reorderedTracks.at(index));
+        }
+    }
+
+    if(selectedTracks.size() < 2) {
+        return;
+    }
+
+    if(order == SelectedTrackOrder::Randomise) {
+        const auto originalSelectedTracks = selectedTracks;
+        std::ranges::shuffle(selectedTracks, std::mt19937{std::random_device{}()});
+        if(selectedTracks == originalSelectedTracks) {
+            std::ranges::rotate(selectedTracks, std::next(selectedTracks.begin()));
+        }
+    }
+    else {
+        std::ranges::reverse(selectedTracks);
+    }
+
+    for(size_t i{0}; i < selectedTracks.size(); ++i) {
+        reorderedTracks.at(indexes.at(i)) = selectedTracks.at(i);
+    }
+
+    auto* sortCmd = new ResetTracks(host.playlistController()->playlistHandler(), currentPlaylist->id(), currentTracks,
+                                    PlaylistTrack::updateIndexes(reorderedTracks));
+    host.playlistController()->addToHistory(sortCmd);
+}
+
 void EditablePlaylistSession::sortColumn(PlaylistWidgetSessionHost& sessionHost, int column, Qt::SortOrder order)
 {
     auto* widget = sessionHost.sessionWidget();
@@ -1273,6 +1358,16 @@ QAction* EditablePlaylistSession::queueNextAction() const
 QAction* EditablePlaylistSession::removeFromQueueAction() const
 {
     return m_removeFromQueueAction;
+}
+
+QAction* EditablePlaylistSession::randomiseAction() const
+{
+    return m_randomiseAction;
+}
+
+QAction* EditablePlaylistSession::reverseAction() const
+{
+    return m_reverseAction;
 }
 
 void EditablePlaylistSession::syncTrackChangeState(EditablePlaylistSessionHost& host, int playingIndex)

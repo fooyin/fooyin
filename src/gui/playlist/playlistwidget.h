@@ -36,6 +36,8 @@
 #include <QModelIndexList>
 #include <QString>
 
+#include <vector>
+
 class QVBoxLayout;
 class QAction;
 class QMenu;
@@ -58,6 +60,7 @@ class SortingRegistry;
 class StarDelegate;
 class WidgetContext;
 class PlaylistWidgetSession;
+class Command;
 
 struct PlaylistWidgetLayoutState
 {
@@ -132,6 +135,8 @@ private:
     void populateTrackContextMenu(QMenu* menu, const QModelIndexList& selected);
     void showHeaderMenu(const QPoint& pos);
     void addSortMenu(QMenu* parent, bool disabled);
+    void refreshSortActions();
+    void updateSortActionState();
     void addClipboardMenu(QMenu* parent, bool hasSelection) const;
     void addSingleModeAction(QMenu* parent);
     void addPresetMenu(QMenu* parent);
@@ -154,6 +159,12 @@ private:
 
     void handleMetadataWriteRequested(const TrackList& tracks);
     void handleBulkWriteRequested(const TrackList& tracks);
+
+    struct SortPresetAction
+    {
+        int presetId;
+        QAction* action;
+    };
 
 public:
     void setupConnections();
@@ -226,6 +237,9 @@ private:
     WidgetContext* m_playlistContext;
     TrackAction m_middleClickAction;
     QAction* m_playAction;
+    Command* m_randomiseCmd;
+    Command* m_reverseCmd;
+    std::vector<SortPresetAction> m_sortPresetActions;
 
     int m_bgCoverRequestId;
     PlaylistBgImage m_bgImageMode;

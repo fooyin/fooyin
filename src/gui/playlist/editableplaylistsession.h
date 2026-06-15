@@ -79,6 +79,8 @@ public:
     void pasteTracks(PlaylistWidgetSessionHost& host) override;
     void cropSelection(PlaylistWidgetSessionHost& host) override;
     void sortTracks(PlaylistWidgetSessionHost& host, const QString& script) override;
+    void randomiseTracks(PlaylistWidgetSessionHost& host) override;
+    void reverseTracks(PlaylistWidgetSessionHost& host) override;
     void sortColumn(PlaylistWidgetSessionHost& host, int column, Qt::SortOrder order) override;
 
     [[nodiscard]] QAction* cropAction() const override;
@@ -90,11 +92,20 @@ public:
     [[nodiscard]] QAction* addToQueueAction() const override;
     [[nodiscard]] QAction* queueNextAction() const override;
     [[nodiscard]] QAction* removeFromQueueAction() const override;
+    [[nodiscard]] QAction* randomiseAction() const override;
+    [[nodiscard]] QAction* reverseAction() const override;
 
 private:
+    enum class SelectedTrackOrder : uint8_t
+    {
+        Randomise = 0,
+        Reverse,
+    };
+
     [[nodiscard]] uint64_t beginSortRequest();
     void finishSortRequest(uint64_t token, bool sortingColumn);
 
+    static void reorderSelectedTracks(PlaylistWidgetSessionHost& host, SelectedTrackOrder order);
     void applyPlaylistChangeSet(PlaylistWidgetSessionHost& host, const PlaylistChangeset& changeSet);
     void handlePlaylistTracksRemoved(PlaylistWidgetSessionHost& host, const std::vector<int>& indexes);
     void refreshActionState(PlaylistWidget* widget);
@@ -127,5 +138,7 @@ private:
     QAction* m_addToQueueAction;
     QAction* m_queueNextAction;
     QAction* m_removeFromQueueAction;
+    QAction* m_randomiseAction;
+    QAction* m_reverseAction;
 };
 } // namespace Fooyin

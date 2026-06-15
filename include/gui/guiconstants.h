@@ -86,6 +86,7 @@ namespace Menus {
 constexpr auto File           = "Fooyin.Menu.File";
 constexpr auto Edit           = "Fooyin.Menu.Edit";
 constexpr auto View           = "Fooyin.Menu.View";
+constexpr auto EditSort       = "Fooyin.Menu.Edit.Sort";
 constexpr auto Layout         = "Fooyin.Menu.Layout";
 constexpr auto Playback       = "Fooyin.Menu.Playback";
 constexpr auto PlaybackRandom = "Fooyin.Menu.Playback.Random";
@@ -193,6 +194,8 @@ constexpr auto Undo                      = "Edit.Undo";
 constexpr auto Redo                      = "Edit.Redo";
 constexpr auto Remove                    = "Edit.Remove";
 constexpr auto Rename                    = "Edit.Rename";
+constexpr auto SortRandomise             = "Edit.Sort.Randomise";
+constexpr auto SortReverse               = "Edit.Sort.Reverse";
 constexpr auto VolumeUp                  = "Volume.VolumeUp";
 constexpr auto VolumeDown                = "Volume.VolumeDown";
 constexpr auto Mute                      = "Volume.Mute";

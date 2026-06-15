@@ -92,6 +92,17 @@ QModelIndexList selectedRows(const QAbstractItemView* view)
     return view->selectionModel()->selectedRows();
 }
 
+Id sortPresetActionId(int presetId)
+{
+    return Id{u"Edit.Sort.Preset.%1"_s.arg(presetId)};
+}
+
+QString sortPresetActionText(const QString& presetName)
+{
+    //: %1 refers to the name of a sorting preset e.g. "Sort by Album"
+    return PlaylistWidget::tr("Sort by %1").arg(presetName);
+}
+
 class PlaylistWidgetHost : public EditablePlaylistSessionHost
 {
 public:
@@ -252,6 +263,8 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
           this)}
     , m_middleClickAction{static_cast<TrackAction>(m_settings->value<PlaylistMiddleClick>())}
     , m_playAction{new QAction(tr("&Play"), this)}
+    , m_randomiseCmd{nullptr}
+    , m_reverseCmd{nullptr}
     , m_bgCoverRequestId{0}
     , m_bgImageMode{PlaylistBgImage::None}
     , m_bgCoverType{Track::Cover::Front}
@@ -647,7 +660,10 @@ void PlaylistWidget::setupConnections()
     QObject::connect(m_header, &QHeaderView::sectionResized, this, [this](int column, int /*oldSize*/, int newSize) { m_model->setPixmapColumnSize(column, newSize); });
     QObject::connect(m_header, &QHeaderView::sortIndicatorChanged, this, [this](int column, Qt::SortOrder order) { m_session->sortColumn(sessionHost(), column, order); });
     QObject::connect(m_header, &QHeaderView::customContextMenuRequested, this, &PlaylistWidget::showHeaderMenu);
-    QObject::connect(m_playlistView->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() { m_session->selectionChanged(sessionHost()); });
+    QObject::connect(m_playlistView->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
+        m_session->selectionChanged(sessionHost());
+        updateSortActionState();
+    });
     QObject::connect(m_playlistView, &PlaylistView::tracksRated, m_library, qOverload<const TrackList&>(&MusicLibrary::updateTrackStats));
     QObject::connect(m_playlistView, &PlaylistView::displayChanged, this, &PlaylistWidget::updateVisibleCoverPins);
     QObject::connect(m_playlistView->verticalScrollBar(), &QScrollBar::valueChanged, this, &PlaylistWidget::updateVisibleCoverPins);
@@ -782,6 +798,28 @@ void PlaylistWidget::setupActions()
     const QStringList editCategory = {tr("Edit")};
     m_session->setupActions(sessionHost(), editMenu, editCategory);
 
+    const QStringList sortCategory = {tr("Edit"), tr("Sort")};
+    if(auto* randomiseAction = m_session->randomiseAction()) {
+        randomiseAction->setStatusTip(tr("Randomise the selected tracks or current playlist"));
+        m_randomiseCmd
+            = m_actionManager->registerAction(randomiseAction, Constants::Actions::SortRandomise, actionContext);
+        m_randomiseCmd->setCategories(sortCategory);
+        QObject::connect(randomiseAction, &QAction::triggered, this,
+                         [this]() { m_session->randomiseTracks(sessionHost()); });
+    }
+    if(auto* reverseAction = m_session->reverseAction()) {
+        reverseAction->setStatusTip(tr("Reverse the selected tracks or current playlist"));
+        m_reverseCmd = m_actionManager->registerAction(reverseAction, Constants::Actions::SortReverse, actionContext);
+        m_reverseCmd->setCategories(sortCategory);
+        QObject::connect(reverseAction, &QAction::triggered, this,
+                         [this]() { m_session->reverseTracks(sessionHost()); });
+    }
+
+    QObject::connect(m_sortRegistry, &RegistryBase::itemAdded, this, &PlaylistWidget::refreshSortActions);
+    QObject::connect(m_sortRegistry, &RegistryBase::itemChanged, this, &PlaylistWidget::refreshSortActions);
+    QObject::connect(m_sortRegistry, &RegistryBase::itemRemoved, this, &PlaylistWidget::refreshSortActions);
+    refreshSortActions();
+
     auto* selectAllAction = new QAction(tr("Select &all"), this);
     selectAllAction->setStatusTip(tr("Select all tracks in the current playlist"));
     auto* selectAllCmd = m_actionManager->registerAction(selectAllAction, Constants::Actions::SelectAll, actionContext);
@@ -825,6 +863,7 @@ void PlaylistWidget::setReadOnly(bool readOnly, bool allowSorting)
     m_header->setSectionsClickable(!readOnly || allowSorting);
     updateMetadataEditTriggers(readOnly);
     m_session->applyReadOnlyState(sessionHost(), readOnly);
+    updateSortActionState();
 }
 
 void PlaylistWidget::doubleClicked(const QModelIndex& index)
@@ -1189,25 +1228,93 @@ void PlaylistWidget::addSortMenu(QMenu* parent, bool disabled)
         sortMenu->setEnabled(false);
     }
     else {
-        const auto& groups = m_sortRegistry->items();
-        for(const auto& script : groups) {
-            auto* switchSort = new QAction(script.name, sortMenu);
-            QObject::connect(switchSort, &QAction::triggered, this,
-                             [this, script]() { m_session->sortTracks(sessionHost(), script.script); });
-            sortMenu->addAction(switchSort);
+        if(m_randomiseCmd) {
+            sortMenu->addAction(m_randomiseCmd->action());
+        }
+        if(m_reverseCmd) {
+            sortMenu->addAction(m_reverseCmd->action());
+        }
+        if(!m_sortPresetActions.empty()) {
+            sortMenu->addSeparator();
+        }
+
+        for(const auto& presetAction : m_sortPresetActions) {
+            if(auto* presetCmd = m_actionManager->command(sortPresetActionId(presetAction.presetId))) {
+                sortMenu->addAction(presetCmd->action());
+            }
         }
 
         auto* moreSettings = new QAction(tr("More…"), sortMenu);
         QObject::connect(moreSettings, &QAction::triggered, this,
                          [this]() { m_settingsDialog->openAtPage(Constants::Page::LibrarySorting); });
 
-        if(!groups.empty()) {
-            sortMenu->addSeparator();
-        }
+        sortMenu->addSeparator();
         sortMenu->addAction(moreSettings);
     }
 
     parent->addMenu(sortMenu);
+}
+
+void PlaylistWidget::refreshSortActions()
+{
+    Context actionContext = m_playlistContext->context();
+    actionContext.erase(Constants::Context::TrackSelection);
+
+    for(const auto& presetAction : m_sortPresetActions) {
+        if(!presetAction.action) {
+            continue;
+        }
+
+        m_actionManager->unregisterAction(presetAction.action, sortPresetActionId(presetAction.presetId),
+                                          actionContext);
+        presetAction.action->deleteLater();
+    }
+
+    m_sortPresetActions.clear();
+
+    const QStringList sortCategory = {tr("Edit"), tr("Sort")};
+    const auto presets             = m_sortRegistry->items();
+
+    for(const auto& preset : presets) {
+        auto* presetAction = new QAction(sortPresetActionText(preset.name), this);
+        presetAction->setStatusTip(tr("Sort the selected tracks or current playlist using this preset"));
+
+        const Id actionId = sortPresetActionId(preset.id);
+        auto* presetCmd   = m_actionManager->registerAction(presetAction, actionId, actionContext);
+        presetCmd->setCategories(sortCategory);
+
+        QObject::connect(presetAction, &QAction::triggered, this, [this, presetId = preset.id]() {
+            if(const auto sortPreset = m_sortRegistry->itemById(presetId)) {
+                m_session->sortTracks(sessionHost(), sortPreset->script);
+            }
+        });
+
+        m_sortPresetActions.push_back({.presetId = preset.id, .action = presetAction});
+    }
+
+    updateSortActionState();
+}
+
+void PlaylistWidget::updateSortActionState()
+{
+    const auto* playlist          = m_playlistController->currentPlaylist();
+    const bool canReorderPlaylist = playlist && (!playlist->isAutoPlaylist() || !playlist->forceSorted());
+    const auto selected           = selectedRows(m_playlistView);
+    const bool canSortTracks
+        = canReorderPlaylist && (selected.size() > 1 || (selected.empty() && playlist->trackCount() > 1));
+
+    if(auto* randomiseAction = m_session->randomiseAction()) {
+        randomiseAction->setEnabled(canSortTracks);
+    }
+    if(auto* reverseAction = m_session->reverseAction()) {
+        reverseAction->setEnabled(canSortTracks);
+    }
+
+    for(const auto& presetAction : m_sortPresetActions) {
+        if(presetAction.action) {
+            presetAction.action->setEnabled(canSortTracks);
+        }
+    }
 }
 
 void PlaylistWidget::addClipboardMenu(QMenu* parent, bool hasSelection) const

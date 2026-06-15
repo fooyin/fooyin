@@ -21,22 +21,42 @@
 
 #include <QObject>
 
+#include <vector>
+
+class QAction;
+
 namespace Fooyin {
 class ActionManager;
+class Command;
 class SettingsManager;
+class SortingRegistry;
 
 class EditMenu : public QObject
 {
     Q_OBJECT
 
 public:
-    EditMenu(ActionManager* actionManager, SettingsManager* settings, QObject* parent = nullptr);
+    EditMenu(ActionManager* actionManager, SortingRegistry* sortingRegistry, SettingsManager* settings,
+             QObject* parent = nullptr);
 
 Q_SIGNALS:
     void requestSearch();
 
 private:
+    struct SortPresetAction
+    {
+        int presetId;
+        QAction* action;
+    };
+
+    void refreshSortActions();
+
     ActionManager* m_actionManager;
+    SortingRegistry* m_sortingRegistry;
     SettingsManager* m_settings;
+
+    QAction* m_randomiseAction;
+    QAction* m_reverseAction;
+    std::vector<SortPresetAction> m_sortPresetActions;
 };
 } // namespace Fooyin
