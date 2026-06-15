@@ -27,6 +27,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QPixmap>
+#include <QPointer>
 #include <QRandomGenerator>
 #include <QRegularExpression>
 #include <QScreen>
@@ -254,6 +255,19 @@ void appendMenuActions(QMenu* originalMenu, QMenu* menu)
     for(QAction* action : actions) {
         menu->addAction(action);
     }
+}
+
+void forwardMenuStatusTips(QMenu* menu, QWidget* target)
+{
+    if(!menu) {
+        return;
+    }
+
+    QObject::connect(menu, &QMenu::hovered, menu, [target = QPointer{target}](QAction* action) {
+        if(action) {
+            action->showStatusText(target ? target.data() : getMainWindow());
+        }
+    });
 }
 
 QAction* cloneMenuAction(QMenu* menu, const QAction* source, const std::function<void()>& handler)
