@@ -43,13 +43,6 @@ LibraryTreeView::LibraryTreeView(QWidget* parent)
     header()->setSortIndicator(0, Qt::AscendingOrder);
     header()->setContextMenuPolicy(Qt::CustomContextMenu);
     setTextElideMode(Qt::ElideRight);
-
-    QObject::connect(this, &QTreeView::clicked, this, [this](const QModelIndex& index) {
-        if(m_expandsOnSingleClick && index.isValid() && index == m_singleClickToggleIndex) {
-            setExpanded(index, !isExpanded(index));
-        }
-        m_singleClickToggleIndex = {};
-    });
 }
 
 void LibraryTreeView::setLoading(bool isLoading)
@@ -85,8 +78,9 @@ void LibraryTreeView::mousePressEvent(QMouseEvent* event)
         return;
     }
 
-    const QModelIndex index  = indexAt(event->position().toPoint());
-    m_singleClickToggleIndex = {};
+    const QModelIndex index = indexAt(event->position().toPoint());
+
+    m_singleClickToggleIndex = QPersistentModelIndex{};
 
     if(!index.isValid()) {
         clearSelection();
@@ -108,12 +102,39 @@ void LibraryTreeView::mousePressEvent(QMouseEvent* event)
     QTreeView::mousePressEvent(event);
 }
 
+void LibraryTreeView::mouseReleaseEvent(QMouseEvent* event)
+{
+    QTreeView::mouseReleaseEvent(event);
+
+    if(m_expandsOnSingleClick && event->button() == Qt::LeftButton && m_singleClickToggleIndex.isValid()
+       && m_singleClickToggleIndex == indexAt(event->position().toPoint())) {
+        setExpanded(m_singleClickToggleIndex, !isExpanded(m_singleClickToggleIndex));
+    }
+
+    m_singleClickToggleIndex = QPersistentModelIndex{};
+}
+
 void LibraryTreeView::mouseDoubleClickEvent(QMouseEvent* event)
 {
     if(event->button() != Qt::LeftButton) {
         event->ignore();
         return;
     }
+
+    m_singleClickToggleIndex = QPersistentModelIndex{};
+
+    if(m_expandsOnSingleClick) {
+        const QModelIndex index = indexAt(event->position().toPoint());
+        if(index.isValid()) {
+            if(expandsOnDoubleClick() && model()->hasChildren(index)) {
+                setExpanded(index, !isExpanded(index));
+            }
+            Q_EMIT doubleClicked(index);
+        }
+        event->accept();
+        return;
+    }
+
     QTreeView::mouseDoubleClickEvent(event);
 }
 

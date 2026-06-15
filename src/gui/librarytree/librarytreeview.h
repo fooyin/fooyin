@@ -20,6 +20,7 @@
 #pragma once
 
 #include <QObject>
+#include <QPersistentModelIndex>
 #include <QTreeView>
 
 class QEvent;
@@ -42,6 +43,7 @@ Q_SIGNALS:
 protected:
     void changeEvent(QEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
     void mouseDoubleClickEvent(QMouseEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
@@ -50,6 +52,6 @@ protected:
 private:
     bool m_isLoading;
     bool m_expandsOnSingleClick;
-    QModelIndex m_singleClickToggleIndex;
+    QPersistentModelIndex m_singleClickToggleIndex;
 };
 } // namespace Fooyin
