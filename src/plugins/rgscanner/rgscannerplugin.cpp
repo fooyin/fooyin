@@ -117,13 +117,11 @@ void RGScannerPlugin::setupReplayGainMenu()
         this, TrackContextMenuArea::Track, Constants::Menus::Context::TrackSelection,
         Constants::Menus::Context::ReplayGain, tr("ReplayGain"), Constants::Menus::Context::TrackFinalSeparator);
 
-    auto* window = Utils::getMainWindow();
-
-    auto* rgTrackAction        = new QAction(tr("Calculate ReplayGain values per-file"), window);
-    auto* rgSingleAlbumAction  = new QAction(tr("Calculate ReplayGain values as a single album"), window);
-    auto* rgAlbumAction        = new QAction(tr("Calculate ReplayGain values as albums (by tags)"), window);
-    auto* opusHeaderGainAction = new QAction(tr("Edit Opus header gain"), window);
-    auto* rgRemoveAction       = new QAction(tr("Remove ReplayGain information from files"), window);
+    auto* rgTrackAction        = new QAction(tr("Calculate ReplayGain values per-file"), this);
+    auto* rgSingleAlbumAction  = new QAction(tr("Calculate ReplayGain values as a single album"), this);
+    auto* rgAlbumAction        = new QAction(tr("Calculate ReplayGain values as albums (by tags)"), this);
+    auto* opusHeaderGainAction = new QAction(tr("Edit Opus header gain"), this);
+    auto* rgRemoveAction       = new QAction(tr("Remove ReplayGain information from files"), this);
     rgTrackAction->setStatusTip(
         tr("Calculate ReplayGain values for selected files, considering each file individually"));
     rgSingleAlbumAction->setStatusTip(

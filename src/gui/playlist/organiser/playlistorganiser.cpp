@@ -435,6 +435,7 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
 {
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
+    Utils::forwardMenuStatusTips(menu);
 
     QObject::connect(menu, &QObject::destroyed, this, [this]() {
         m_removePlaylist->setEnabled(true);

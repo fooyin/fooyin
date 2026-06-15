@@ -53,6 +53,7 @@
 #include <utils/fileutils.h>
 #include <utils/signalthrottler.h>
 #include <utils/tooltipfilter.h>
+#include <utils/utils.h>
 
 #include <QActionGroup>
 #include <QComboBox>
@@ -433,6 +434,7 @@ void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
 {
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
+    Utils::forwardMenuStatusTips(menu);
 
     populateContextMenu(menu);
     menu->popup(event->globalPos());

@@ -680,6 +680,7 @@ void TrackSelectionControllerPrivate::renderNode(QMenu* menu, const MenuNode& no
         }
         case MenuNodeType::Submenu: {
             auto submenu = std::make_unique<QMenu>(node.title, menu);
+            Utils::forwardMenuStatusTips(submenu.get());
             if(node.renderer) {
                 node.renderer(submenu.get(), selection);
             }

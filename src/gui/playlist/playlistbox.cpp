@@ -262,6 +262,7 @@ void PlaylistBox::showContextMenu(const QPoint& pos)
 {
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
+    Utils::forwardMenuStatusTips(menu);
 
     updateActionState();
 
