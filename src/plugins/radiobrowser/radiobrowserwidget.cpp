@@ -335,6 +335,7 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
 
     refreshThemeIcons();
     m_controller->fetchCategories(RadioCategoryType::Country);
+    m_controller->fetchCategories(RadioCategoryType::Language);
     m_controller->fetchCategories(RadioCategoryType::Tag);
     m_controller->fetchCategories(RadioCategoryType::Codec);
 
@@ -822,6 +823,10 @@ void RadioBrowserWidget::handleCategoriesChanged(RadioCategoryType type, const R
         m_countryCategories = categories;
         m_countryCategoryError.clear();
     }
+    else if(type == RadioCategoryType::Language) {
+        m_languageCategories = categories;
+        m_languageCategoryError.clear();
+    }
     else if(type == RadioCategoryType::Tag) {
         m_tagCategories = categories;
         m_tagCategoryError.clear();
@@ -843,6 +848,9 @@ void RadioBrowserWidget::handleCategoriesFailed(RadioCategoryType type, const QS
     if(type == RadioCategoryType::Country) {
         m_countryCategoryError = error;
     }
+    else if(type == RadioCategoryType::Language) {
+        m_languageCategoryError = error;
+    }
     else if(type == RadioCategoryType::Tag) {
         m_tagCategoryError = error;
     }
@@ -856,6 +864,9 @@ void RadioBrowserWidget::handleCategoriesFailed(RadioCategoryType type, const QS
 
     if(type == RadioCategoryType::Country && m_countryCategories.empty()) {
         m_filterBar->setCountryCategoriesFailed(error);
+    }
+    else if(type == RadioCategoryType::Language && m_languageCategories.empty()) {
+        m_filterBar->setLanguageCategoriesFailed(error);
     }
     else if(type == RadioCategoryType::Tag && m_tagCategories.empty()) {
         m_filterBar->setTagCategoriesFailed(error);
@@ -2017,6 +2028,12 @@ void RadioBrowserWidget::updateFilterBarCategories()
     }
     else if(!m_countryCategoryError.isEmpty()) {
         m_filterBar->setCountryCategoriesFailed(m_countryCategoryError);
+    }
+    if(!m_languageCategories.empty()) {
+        m_filterBar->setLanguageCategories(m_languageCategories);
+    }
+    else if(!m_languageCategoryError.isEmpty()) {
+        m_filterBar->setLanguageCategoriesFailed(m_languageCategoryError);
     }
     if(!m_tagCategories.empty()) {
         m_filterBar->setTagCategories(m_tagCategories);

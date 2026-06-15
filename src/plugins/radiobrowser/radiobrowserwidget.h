@@ -257,9 +257,11 @@ private:
     bool m_visibleIconRequestPending;
     RadioSearchRequest m_filterRequest;
     RadioCategoryList m_countryCategories;
+    RadioCategoryList m_languageCategories;
     RadioCategoryList m_tagCategories;
     RadioCategoryList m_codecCategories;
     QString m_countryCategoryError;
+    QString m_languageCategoryError;
     QString m_tagCategoryError;
     QString m_codecCategoryError;
     std::unordered_map<int, PendingTrackAction> m_pendingTrackActions;

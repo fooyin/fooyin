@@ -64,9 +64,11 @@ public:
     void reset();
 
     void setCountryCategories(const RadioCategoryList& categories);
+    void setLanguageCategories(const RadioCategoryList& categories);
     void setTagCategories(const RadioCategoryList& categories);
     void setCodecCategories(const RadioCategoryList& categories);
     void setCountryCategoriesFailed(const QString& error);
+    void setLanguageCategoriesFailed(const QString& error);
     void setTagCategoriesFailed(const QString& error);
     void setCodecCategoriesFailed(const QString& error);
     [[nodiscard]] QString countryName(const QString& countryCode) const;
@@ -98,6 +100,7 @@ private:
     {
         QString searchText;
         QString countryCode;
+        QString language;
         QString genreTag;
         QString tag;
         QString codec;
@@ -108,6 +111,7 @@ private:
     enum class FilterControl : size_t
     {
         Country = 0,
+        Language,
         Genre,
         Tag,
         Codec,
@@ -150,15 +154,18 @@ private:
     QHBoxLayout* m_mainLayout;
     QLineEdit* m_searchEdit;
     QPointer<ExpandingComboBox> m_countryCombo;
+    QPointer<ExpandingComboBox> m_languageCombo;
     QPointer<ExpandingComboBox> m_genreCombo;
     QPointer<ExpandingComboBox> m_tagCombo;
     QPointer<ExpandingComboBox> m_codecCombo;
     QPointer<QSpinBox> m_minBitrate;
     QPointer<QSpinBox> m_maxBitrate;
     RadioCategoryList m_countryCategories;
+    RadioCategoryList m_languageCategories;
     RadioCategoryList m_tagCategories;
     RadioCategoryList m_codecCategories;
     ExpandingComboBox* m_popupCountryCombo;
+    ExpandingComboBox* m_popupLanguageCombo;
     ExpandingComboBox* m_popupGenreCombo;
     ExpandingComboBox* m_popupTagCombo;
     ExpandingComboBox* m_popupCodecCombo;
