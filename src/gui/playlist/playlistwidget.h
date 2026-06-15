@@ -25,6 +25,7 @@
 #include "playlistcontroller.h"
 #include "playlistmodel.h"
 #include "playlistpreset.h"
+#include "sortactionhandler.h"
 
 #include <gui/fywidget.h>
 #include <gui/trackselectioncontroller.h>
@@ -36,7 +37,7 @@
 #include <QModelIndexList>
 #include <QString>
 
-#include <vector>
+#include <memory>
 
 class QVBoxLayout;
 class QAction;
@@ -60,7 +61,6 @@ class SortingRegistry;
 class StarDelegate;
 class WidgetContext;
 class PlaylistWidgetSession;
-class Command;
 
 struct PlaylistWidgetLayoutState
 {
@@ -160,12 +160,6 @@ private:
     void handleMetadataWriteRequested(const TrackList& tracks);
     void handleBulkWriteRequested(const TrackList& tracks);
 
-    struct SortPresetAction
-    {
-        int presetId;
-        QAction* action;
-    };
-
 public:
     void setupConnections();
     void setupActions();
@@ -237,9 +231,7 @@ private:
     WidgetContext* m_playlistContext;
     TrackAction m_middleClickAction;
     QAction* m_playAction;
-    Command* m_randomiseCmd;
-    Command* m_reverseCmd;
-    std::vector<SortPresetAction> m_sortPresetActions;
+    std::unique_ptr<SortActionHandler> m_sortActions;
 
     int m_bgCoverRequestId;
     PlaylistBgImage m_bgImageMode;

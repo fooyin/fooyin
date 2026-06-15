@@ -526,10 +526,7 @@ void EditablePlaylistSession::refreshActionState(PlaylistWidget* widget)
     const bool canReorderTracks = canReorderPlaylist(currentPlaylist);
     const bool hasSelection
         = host.playlistView()->selectionModel() && host.playlistView()->selectionModel()->hasSelection();
-    const auto selectedIndexes = filterSelectedIndexes(host.playlistView());
-    const bool canSortTracks
-        = canReorderTracks
-       && (selectedIndexes.size() > 1 || (selectedIndexes.empty() && currentPlaylist->trackCount() > 1));
+    const bool canSortTracks = canReorderTracks && currentPlaylist && currentPlaylist->trackCount() > 1;
 
     m_undoAction->setEnabled(canReorderTracks && host.playlistController()->canUndo());
     m_redoAction->setEnabled(canReorderTracks && host.playlistController()->canRedo());
@@ -1147,7 +1144,7 @@ void EditablePlaylistSession::cropSelection(PlaylistWidgetSessionHost& sessionHo
     host.playlistModel()->updateHeader(currentPlaylist);
 }
 
-void EditablePlaylistSession::sortTracks(PlaylistWidgetSessionHost& sessionHost, const QString& script)
+void EditablePlaylistSession::sortTracks(PlaylistWidgetSessionHost& sessionHost, const QString& script, SortScope scope)
 {
     auto* widget = sessionHost.sessionWidget();
     auto& host   = editableHost(widget);
@@ -1174,7 +1171,7 @@ void EditablePlaylistSession::sortTracks(PlaylistWidgetSessionHost& sessionHost,
         hostPtr->playlistController()->addToHistory(sortCmd);
     };
 
-    if(host.playlistView()->selectionModel()->hasSelection()) {
+    if(scope == SortScope::SelectedOrAll && host.playlistView()->selectionModel()->hasSelection()) {
         const auto selected = filterSelectedIndexes(host.playlistView());
 
         std::vector<int> indexesToSort;
@@ -1202,17 +1199,18 @@ void EditablePlaylistSession::sortTracks(PlaylistWidgetSessionHost& sessionHost,
     }
 }
 
-void EditablePlaylistSession::randomiseTracks(PlaylistWidgetSessionHost& sessionHost)
+void EditablePlaylistSession::randomiseTracks(PlaylistWidgetSessionHost& sessionHost, SortScope scope)
 {
-    reorderSelectedTracks(sessionHost, SelectedTrackOrder::Randomise);
+    reorderTracks(sessionHost, SelectedTrackOrder::Randomise, scope);
 }
 
-void EditablePlaylistSession::reverseTracks(PlaylistWidgetSessionHost& sessionHost)
+void EditablePlaylistSession::reverseTracks(PlaylistWidgetSessionHost& sessionHost, SortScope scope)
 {
-    reorderSelectedTracks(sessionHost, SelectedTrackOrder::Reverse);
+    reorderTracks(sessionHost, SelectedTrackOrder::Reverse, scope);
 }
 
-void EditablePlaylistSession::reorderSelectedTracks(PlaylistWidgetSessionHost& sessionHost, SelectedTrackOrder order)
+void EditablePlaylistSession::reorderTracks(PlaylistWidgetSessionHost& sessionHost, SelectedTrackOrder order,
+                                            SortScope scope)
 {
     auto& host = editableHost(sessionHost.sessionWidget());
     if(!canReorderPlaylist(host.playlistController()->currentPlaylist())) {
@@ -1224,10 +1222,13 @@ void EditablePlaylistSession::reorderSelectedTracks(PlaylistWidgetSessionHost& s
     auto reorderedTracks  = currentTracks;
 
     std::vector<int> indexes;
-    const auto selected = filterSelectedIndexes(host.playlistView());
-    for(const QModelIndex& index : selected) {
-        if(index.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
-            indexes.push_back(index.data(PlaylistItem::Index).toInt());
+
+    if(scope == SortScope::SelectedOrAll) {
+        const auto selected = filterSelectedIndexes(host.playlistView());
+        for(const QModelIndex& index : selected) {
+            if(index.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
+                indexes.push_back(index.data(PlaylistItem::Index).toInt());
+            }
         }
     }
 

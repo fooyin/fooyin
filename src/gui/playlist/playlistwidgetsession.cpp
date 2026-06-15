@@ -262,11 +262,13 @@ void PlaylistWidgetSession::pasteTracks(PlaylistWidgetSessionHost& /*host*/) { }
 
 void PlaylistWidgetSession::cropSelection(PlaylistWidgetSessionHost& /*host*/) { }
 
-void PlaylistWidgetSession::sortTracks(PlaylistWidgetSessionHost& /*host*/, const QString& /*script*/) { }
+void PlaylistWidgetSession::sortTracks(PlaylistWidgetSessionHost& /*host*/, const QString& /*script*/,
+                                       SortScope /*scope*/)
+{ }
 
-void PlaylistWidgetSession::randomiseTracks(PlaylistWidgetSessionHost& /*host*/) { }
+void PlaylistWidgetSession::randomiseTracks(PlaylistWidgetSessionHost& /*host*/, SortScope /*scope*/) { }
 
-void PlaylistWidgetSession::reverseTracks(PlaylistWidgetSessionHost& /*host*/) { }
+void PlaylistWidgetSession::reverseTracks(PlaylistWidgetSessionHost& /*host*/, SortScope /*scope*/) { }
 
 void PlaylistWidgetSession::sortColumn(PlaylistWidgetSessionHost& /*host*/, int /*column*/, Qt::SortOrder /*order*/) { }
 

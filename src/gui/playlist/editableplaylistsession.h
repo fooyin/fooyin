@@ -78,9 +78,9 @@ public:
     void copyTracks(PlaylistWidgetSessionHost& host) override;
     void pasteTracks(PlaylistWidgetSessionHost& host) override;
     void cropSelection(PlaylistWidgetSessionHost& host) override;
-    void sortTracks(PlaylistWidgetSessionHost& host, const QString& script) override;
-    void randomiseTracks(PlaylistWidgetSessionHost& host) override;
-    void reverseTracks(PlaylistWidgetSessionHost& host) override;
+    void sortTracks(PlaylistWidgetSessionHost& host, const QString& script, SortScope scope) override;
+    void randomiseTracks(PlaylistWidgetSessionHost& host, SortScope scope) override;
+    void reverseTracks(PlaylistWidgetSessionHost& host, SortScope scope) override;
     void sortColumn(PlaylistWidgetSessionHost& host, int column, Qt::SortOrder order) override;
 
     [[nodiscard]] QAction* cropAction() const override;
@@ -105,7 +105,7 @@ private:
     [[nodiscard]] uint64_t beginSortRequest();
     void finishSortRequest(uint64_t token, bool sortingColumn);
 
-    static void reorderSelectedTracks(PlaylistWidgetSessionHost& host, SelectedTrackOrder order);
+    static void reorderTracks(PlaylistWidgetSessionHost& host, SelectedTrackOrder order, SortScope scope);
     void applyPlaylistChangeSet(PlaylistWidgetSessionHost& host, const PlaylistChangeset& changeSet);
     void handlePlaylistTracksRemoved(PlaylistWidgetSessionHost& host, const std::vector<int>& indexes);
     void refreshActionState(PlaylistWidget* widget);

@@ -26,6 +26,7 @@
 #include "queueviewerdelegate.h"
 #include "queueviewermodel.h"
 #include "queueviewerview.h"
+#include "sortactionhandler.h"
 
 #include <core/coresettings.h>
 #include <core/library/sortingregistry.h>
@@ -77,17 +78,6 @@ constexpr auto QueueViewerShowCurrentKey = u"PlaybackQueue/ShowCurrent";
 constexpr auto QueueViewerStateKey       = "PlaybackQueue/State"_L1;
 
 namespace Fooyin {
-namespace {
-Id sortPresetActionId(int presetId)
-{
-    return Id{u"Edit.Sort.Preset.%1"_s.arg(presetId)};
-}
-
-QString sortPresetActionText(const QString& presetName)
-{
-    return QueueViewer::tr("Sort by %1").arg(presetName);
-}
-} // namespace
 
 QueueViewer::QueueViewer(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
                          TrackSelectionController* selectionController, CoverRepository* coverRepository,
@@ -108,9 +98,8 @@ QueueViewer::QueueViewer(ActionManager* actionManager, PlaylistInteractor* playl
     , m_clear{new QAction(tr("&Clear"), this)}
     , m_clearCmd{nullptr}
     , m_randomise{new QAction(tr("Randomise"), this)}
-    , m_randomiseCmd{nullptr}
     , m_reverse{new QAction(tr("Reverse"), this)}
-    , m_reverseCmd{nullptr}
+    , m_sortActions{std::make_unique<SortActionHandler>(m_actionManager, m_sortingRegistry, m_context->context(), this)}
     , m_topLevelStateLoaded{false}
 {
     setObjectName(QueueViewer::name());
@@ -250,17 +239,13 @@ void QueueViewer::setupActions()
     editMenu->addAction(selectAllCmd);
     QObject::connect(selectAllAction, &QAction::triggered, m_view, &QAbstractItemView::selectAll);
 
-    const QStringList sortCategory = {tr("Edit"), tr("Sort")};
-
-    m_randomise->setStatusTip(tr("Randomise the selected tracks or playback queue"));
-    m_randomiseCmd = m_actionManager->registerAction(m_randomise, Constants::Actions::SortRandomise, actionContext);
-    m_randomiseCmd->setCategories(sortCategory);
-    QObject::connect(m_randomise, &QAction::triggered, this, &QueueViewer::randomiseTracks);
-
-    m_reverse->setStatusTip(tr("Reverse the selected tracks or playback queue"));
-    m_reverseCmd = m_actionManager->registerAction(m_reverse, Constants::Actions::SortReverse, actionContext);
-    m_reverseCmd->setCategories(sortCategory);
-    QObject::connect(m_reverse, &QAction::triggered, this, &QueueViewer::reverseTracks);
+    m_sortActions->registerRandomiseAction(m_randomise, tr("Randomise the playback queue"));
+    m_sortActions->registerReverseAction(m_reverse, tr("Reverse the playback queue"));
+    QObject::connect(m_sortActions.get(), &SortActionHandler::randomiseRequested, this, &QueueViewer::randomiseTracks);
+    QObject::connect(m_sortActions.get(), &SortActionHandler::reverseRequested, this, &QueueViewer::reverseTracks);
+    QObject::connect(m_sortActions.get(), &SortActionHandler::sortPresetRequested, this, &QueueViewer::sortTracks);
+    QObject::connect(m_sortActions.get(), &SortActionHandler::settingsRequested, this,
+                     [this]() { m_settings->settingsDialog()->openAtPage(Constants::Page::LibrarySorting); });
 
     QObject::connect(m_sortingRegistry, &RegistryBase::itemAdded, this, &QueueViewer::refreshSortActions);
     QObject::connect(m_sortingRegistry, &RegistryBase::itemChanged, this, &QueueViewer::refreshSortActions);
@@ -316,91 +301,29 @@ void QueueViewer::resetModel() const
 
 void QueueViewer::addSortMenu(QMenu* menu) const
 {
-    auto* sortMenu = new QMenu(tr("Sort"), menu);
-
-    if(m_randomiseCmd) {
-        sortMenu->addAction(m_randomiseCmd->action());
-    }
-    if(m_reverseCmd) {
-        sortMenu->addAction(m_reverseCmd->action());
-    }
-    if(!m_sortPresetActions.empty()) {
-        sortMenu->addSeparator();
-    }
-
-    for(const auto& presetAction : m_sortPresetActions) {
-        if(auto* presetCmd = m_actionManager->command(sortPresetActionId(presetAction.presetId))) {
-            sortMenu->addAction(presetCmd->action());
-        }
-    }
-
-    auto* moreSettings = new QAction(tr("More…"), sortMenu);
-    QObject::connect(moreSettings, &QAction::triggered, this,
-                     [this]() { m_settings->settingsDialog()->openAtPage(Constants::Page::LibrarySorting); });
-
-    sortMenu->addSeparator();
-    sortMenu->addAction(moreSettings);
-
     if(!menu->actions().empty()) {
         menu->addSeparator();
     }
-    menu->addMenu(sortMenu);
+
+    m_sortActions->addSortMenu(menu, false, SortScope::SelectedOrAll);
 }
 
 void QueueViewer::refreshSortActions()
 {
-    Context actionContext{m_context->context()};
-    actionContext.erase(Constants::Context::TrackSelection);
-
-    for(const auto& presetAction : m_sortPresetActions) {
-        if(!presetAction.action) {
-            continue;
-        }
-
-        m_actionManager->unregisterAction(presetAction.action, sortPresetActionId(presetAction.presetId),
-                                          actionContext);
-        presetAction.action->deleteLater();
-    }
-
-    m_sortPresetActions.clear();
-
-    const QStringList sortCategory = {tr("Edit"), tr("Sort")};
-    const auto presets             = m_sortingRegistry->items();
-
-    for(const auto& preset : presets) {
-        auto* presetAction = new QAction(sortPresetActionText(preset.name), this);
-        presetAction->setStatusTip(tr("Sort the selected tracks or playback queue using this preset"));
-
-        const Id actionId = sortPresetActionId(preset.id);
-        auto* presetCmd   = m_actionManager->registerAction(presetAction, actionId, actionContext);
-        presetCmd->setCategories(sortCategory);
-
-        QObject::connect(presetAction, &QAction::triggered, this, [this, presetId = preset.id]() {
-            if(const auto sortPreset = m_sortingRegistry->itemById(presetId)) {
-                sortTracks(sortPreset->script);
-            }
-        });
-
-        m_sortPresetActions.push_back({.presetId = preset.id, .action = presetAction});
-    }
-
+    m_sortActions->refreshPresetActions(tr("Sort the playback queue using this preset"));
     updateSortActionState();
 }
 
 void QueueViewer::updateSortActionState() const
 {
-    const auto selected      = selectedQueueIndexes();
-    const bool hasSelection  = m_view->selectionModel() && m_view->selectionModel()->hasSelection();
     const auto queueSize     = static_cast<int>(m_playerController->playbackQueue().tracks().size());
-    const bool canSortTracks = selected.size() > 1 || (!hasSelection && queueSize > 1);
+    const bool canSortTracks = queueSize > 1;
 
     m_randomise->setEnabled(canSortTracks);
     m_reverse->setEnabled(canSortTracks);
 
-    for(const auto& presetAction : m_sortPresetActions) {
-        if(presetAction.action) {
-            presetAction.action->setEnabled(canSortTracks);
-        }
+    if(m_sortActions) {
+        m_sortActions->setEnabled(canSortTracks);
     }
 }
 
@@ -705,21 +628,21 @@ void QueueViewer::handleQueueDoubleClicked(const QModelIndex& index) const
     m_playerController->next();
 }
 
-void QueueViewer::randomiseTracks() const
+void QueueViewer::randomiseTracks(SortScope scope) const
 {
-    reorderTracks(QueueReorder::Randomise);
+    reorderTracks(QueueReorder::Randomise, scope);
 }
 
-void QueueViewer::reverseTracks() const
+void QueueViewer::reverseTracks(SortScope scope) const
 {
-    reorderTracks(QueueReorder::Reverse);
+    reorderTracks(QueueReorder::Reverse, scope);
 }
 
-void QueueViewer::sortTracks(const QString& script) const
+void QueueViewer::sortTracks(const QString& script, SortScope scope) const
 {
     const QueueTracks tracks = m_playerController->playbackQueue().tracks();
 
-    auto indexes = queueIndexesToSort();
+    auto indexes = queueIndexesToSort(scope);
     if(indexes.size() < 2) {
         return;
     }
@@ -728,11 +651,11 @@ void QueueViewer::sortTracks(const QString& script) const
     reorderTracks(sorter.calcSortTracks(script, tracks, indexes, PlaylistTrack::extractor));
 }
 
-void QueueViewer::reorderTracks(QueueReorder reorder) const
+void QueueViewer::reorderTracks(QueueReorder reorder, SortScope scope) const
 {
     QueueTracks tracks = m_playerController->playbackQueue().tracks();
 
-    auto indexes = queueIndexesToSort();
+    auto indexes = queueIndexesToSort(scope);
     if(indexes.size() < 2) {
         return;
     }
@@ -776,10 +699,11 @@ void QueueViewer::reorderTracks(QueueTracks reorderedTracks) const
     replaceQueueTracks(std::move(reorderedTracks));
 }
 
-std::vector<int> QueueViewer::queueIndexesToSort() const
+std::vector<int> QueueViewer::queueIndexesToSort(SortScope scope) const
 {
     auto indexes = selectedQueueIndexes();
-    if(!indexes.empty() || (m_view->selectionModel() && m_view->selectionModel()->hasSelection())) {
+    if(scope == SortScope::SelectedOrAll
+       && (!indexes.empty() || (m_view->selectionModel() && m_view->selectionModel()->hasSelection()))) {
         return indexes;
     }
 

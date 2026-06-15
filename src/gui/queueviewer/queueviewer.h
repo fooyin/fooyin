@@ -23,6 +23,11 @@
 #include <core/playlist/playlist.h>
 #include <gui/fywidget.h>
 
+#include "sortactionhandler.h"
+
+#include <memory>
+#include <vector>
+
 class QCloseEvent;
 class QJsonObject;
 class QMenu;
@@ -135,12 +140,12 @@ private:
     void handleTracksDropped(int row, const QMimeData* mimeData) const;
     void handlePlaylistTracksDropped(int row, const QByteArray& mimeData) const;
     void handleQueueDoubleClicked(const QModelIndex& index) const;
-    void randomiseTracks() const;
-    void reverseTracks() const;
-    void sortTracks(const QString& script) const;
-    void reorderTracks(QueueReorder reorder) const;
+    void randomiseTracks(SortScope scope) const;
+    void reverseTracks(SortScope scope) const;
+    void sortTracks(const QString& script, SortScope scope) const;
+    void reorderTracks(QueueReorder reorder, SortScope scope) const;
     void reorderTracks(QueueTracks reorderedTracks) const;
-    [[nodiscard]] std::vector<int> queueIndexesToSort() const;
+    [[nodiscard]] std::vector<int> queueIndexesToSort(SortScope scope) const;
     [[nodiscard]] std::vector<int> selectedQueueIndexes() const;
     void replaceQueueTracks(QueueTracks tracks) const;
     void insertQueueTracks(int row, const QueueTracks& tracks) const;
@@ -170,17 +175,9 @@ private:
     Command* m_clearCmd;
 
     QAction* m_randomise;
-    Command* m_randomiseCmd;
     QAction* m_reverse;
-    Command* m_reverseCmd;
 
-    struct SortPresetAction
-    {
-        int presetId;
-        QAction* action;
-    };
-
-    std::vector<SortPresetAction> m_sortPresetActions;
+    std::unique_ptr<SortActionHandler> m_sortActions;
 
     bool m_topLevelStateLoaded;
 };

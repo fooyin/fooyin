@@ -56,11 +56,13 @@ EditMenu::EditMenu(ActionManager* actionManager, SortingRegistry* sortingRegistr
     m_randomiseAction->setEnabled(false);
     auto* randomiseCmd = m_actionManager->registerAction(m_randomiseAction, Constants::Actions::SortRandomise);
     randomiseCmd->setCategories(sortCategory);
+    randomiseCmd->setAttribute(ProxyAction::UpdateText);
     sortMenu->addAction(randomiseCmd, Actions::Groups::One);
 
     m_reverseAction->setEnabled(false);
     auto* reverseCmd = m_actionManager->registerAction(m_reverseAction, Constants::Actions::SortReverse);
     reverseCmd->setCategories(sortCategory);
+    reverseCmd->setAttribute(ProxyAction::UpdateText);
     sortMenu->addAction(reverseCmd, Actions::Groups::One);
 
     QObject::connect(m_sortingRegistry, &RegistryBase::itemAdded, this, &EditMenu::refreshSortActions);
@@ -92,7 +94,7 @@ void EditMenu::refreshSortActions()
     const auto sortActionId = [](int presetId) {
         return Id{u"Edit.Sort.Preset.%1"_s.arg(presetId)};
     };
-    const auto sortActionText = [this](const QString& presetName) {
+    const auto sortActionText = [](const QString& presetName) {
         return tr("Sort by %1").arg(presetName);
     };
 
@@ -126,6 +128,7 @@ void EditMenu::refreshSortActions()
         const Id actionId = sortActionId(preset.id);
         auto* presetCmd   = m_actionManager->registerAction(presetAction, actionId);
         presetCmd->setCategories(sortCategory);
+        presetCmd->setAttribute(ProxyAction::UpdateText);
         sortMenu->addAction(presetCmd, Actions::Groups::Two);
 
         m_sortPresetActions.emplace_back(preset.id, presetAction);

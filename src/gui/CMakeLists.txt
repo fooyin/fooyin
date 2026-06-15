@@ -214,6 +214,8 @@ set(SOURCES
     menubar/playbackmenu.h
     menubar/viewmenu.cpp
     menubar/viewmenu.h
+    sortactionhandler.cpp
+    sortactionhandler.h
     nowplayingoutput/nowplayingoutputservice.cpp
     nowplayingoutput/nowplayingoutputservice.h
     nowplayingoutput/nowplayingoutputpage.cpp

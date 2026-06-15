@@ -21,6 +21,7 @@
 
 #include "playlistwidget.h"
 #include "playlistwidgetsessionhost.h"
+#include "sortactionhandler.h"
 
 #include <QAbstractItemModel>
 #include <QAbstractItemView>
@@ -114,9 +115,9 @@ public:
     virtual void copyTracks(PlaylistWidgetSessionHost& host);
     virtual void pasteTracks(PlaylistWidgetSessionHost& host);
     virtual void cropSelection(PlaylistWidgetSessionHost& host);
-    virtual void sortTracks(PlaylistWidgetSessionHost& host, const QString& script);
-    virtual void randomiseTracks(PlaylistWidgetSessionHost& host);
-    virtual void reverseTracks(PlaylistWidgetSessionHost& host);
+    virtual void sortTracks(PlaylistWidgetSessionHost& host, const QString& script, SortScope scope);
+    virtual void randomiseTracks(PlaylistWidgetSessionHost& host, SortScope scope);
+    virtual void reverseTracks(PlaylistWidgetSessionHost& host, SortScope scope);
     virtual void sortColumn(PlaylistWidgetSessionHost& host, int column, Qt::SortOrder order);
     [[nodiscard]] virtual QAction* cropAction() const;
     [[nodiscard]] virtual QAction* stopAfterAction() const;
