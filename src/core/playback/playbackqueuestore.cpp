@@ -23,7 +23,39 @@
 #include <core/playlist/playlisthandler.h>
 #include <utils/database/dbconnectionprovider.h>
 
+#include <optional>
+
 namespace Fooyin {
+namespace {
+std::optional<PlaylistTrack> findPlaylistTrack(const Playlist& playlist, int trackId, int index)
+{
+    if(index >= 0) {
+        if(const auto playlistTrack = playlist.playlistTrack(index);
+           playlistTrack && playlistTrack->track.id() == trackId) {
+            return playlistTrack;
+        }
+    }
+
+    std::optional<PlaylistTrack> matchingTrack;
+
+    const auto playlistTracks = playlist.playlistTracks();
+    for(const PlaylistTrack& playlistTrack : playlistTracks) {
+        if(playlistTrack.track.id() != trackId) {
+            continue;
+        }
+
+        // If there are multiple matching tracks, leave entry detached rather than picking one arbitrarily
+        if(matchingTrack.has_value()) {
+            return {};
+        }
+
+        matchingTrack = playlistTrack;
+    }
+
+    return matchingTrack;
+}
+} // namespace
+
 PlaybackQueueStore::PlaybackQueueStore(DbConnectionPoolPtr dbPool, MusicLibrary* library,
                                        PlaylistHandler* playlistHandler)
     : m_library{library}
@@ -35,7 +67,7 @@ PlaybackQueueStore::PlaybackQueueStore(DbConnectionPoolPtr dbPool, MusicLibrary*
 
 void PlaybackQueueStore::save(const PlaybackQueue& queue) const
 {
-    const auto queueTracks = queue.tracks();
+    const auto& queueTracks = queue.tracks();
 
     std::vector<PlaybackQueueInfo> items;
     items.reserve(queueTracks.size());
@@ -79,10 +111,10 @@ QueueTracks PlaybackQueueStore::load() const
 
         if(item.playlistDbId >= 0 && item.playlistTrackIndex >= 0) {
             if(auto* playlist = m_playlistHandler->playlistByDbId(item.playlistDbId)) {
-                if(const auto playlistTrack = playlist->playlistTrack(item.playlistTrackIndex);
-                   playlistTrack && playlistTrack->track.id() == item.trackId) {
+                if(const auto playlistTrack = findPlaylistTrack(*playlist, item.trackId, item.playlistTrackIndex)) {
                     queueTrack.playlistId      = playlist->id();
-                    queueTrack.indexInPlaylist = item.playlistTrackIndex;
+                    queueTrack.entryId         = playlistTrack->entryId;
+                    queueTrack.indexInPlaylist = playlistTrack->indexInPlaylist;
                 }
             }
         }
