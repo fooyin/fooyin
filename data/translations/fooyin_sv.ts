@@ -5643,12 +5643,13 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="110"/>
         <source>Used for the half-step portion of %rating_stars% and %rating_stars_padded%.
 If the default half-star does not render correctly with your system font, choose a different symbol here.</source>
-        <translation type="unfinished"></translation>
+        <translation>Används för halvstegsdelen av %rating_stars% och %rating_stars_padded%.
+Om standardhalvstjärnan inte renderas korrekt med ditt systemtypsnitt välj en annan symbol här.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="113"/>
         <source>Used for the trailing empty portion of %rating_stars_padded%</source>
-        <translation type="unfinished"></translation>
+        <translation>Används för den efterföljande tomma delen av %rating_stars_padded%</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="114"/>
@@ -6640,13 +6641,14 @@ och senast spelad använder det senare värdet.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="180"/>
         <source>Read ratings from WM/SharedUserRating attributes in ASF/WMA files after text rating tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>Läs betyg från WM/SharedUserRating-attribut i ASF-/WMA-filer efter textbetygstaggar.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="182"/>
         <source>Additionally save ratings to WM/SharedUserRating attributes when writing ASF/WMA files.
 This improves compatibility with other players, but stores whole-star values only.</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara additionellt betyg till WM/SharedUserRating-attribut nät ASF-/WMA-filer skrivs.
+Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjärnvärden.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="185"/>
@@ -7165,7 +7167,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="96"/>
         <source>Debug</source>
-        <translation type="unfinished"></translation>
+        <translation>Avbugga</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="97"/>
@@ -8279,7 +8281,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="105"/>
         <source>Append instead of overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till i slutet istället för att överskriva</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="106"/>
@@ -10656,7 +10658,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="207"/>
         <source>&amp;Crop</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">S&amp;kär</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="210"/>
@@ -10666,7 +10668,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="214"/>
         <source>Cu&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">K&amp;lipp</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="217"/>
@@ -10681,7 +10683,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="223"/>
         <source>C&amp;lear</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">R&amp;ensa</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="226"/>
@@ -12990,12 +12992,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="89"/>
         <source>Append imported stations to My Stations, or replace the current list?</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till importerade stationer längst sist i mina stationer, eller byt ut aktuell lista?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="91"/>
         <source>Append</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till i slutet</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="92"/>
@@ -13961,7 +13963,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="72"/>
         <source>Append search string to the playlist name</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till söksträng i slutet av spellistsnamnet</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="73"/>
@@ -16303,7 +16305,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="52"/>
         <source>Show progress cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa progressionsmarkör</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="59"/>
@@ -16360,12 +16362,12 @@ This does not support full scripting.</source>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="118"/>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="222"/>
         <source>Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Markör</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="125"/>
         <source>Cursor width</source>
-        <translation type="unfinished"></translation>
+        <translation>Markörbredd</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="142"/>
@@ -16606,7 +16608,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="546"/>
         <source>Show cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa markör</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="555"/>
