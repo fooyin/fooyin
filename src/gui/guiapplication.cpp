@@ -1352,7 +1352,7 @@ void GuiApplication::showPlaybackQueue()
     }
 
     m_playbackQueueWidget = new QueueViewer(m_actionManager, &m_playlistInteractor, m_selectionController.get(),
-                                            m_coverRepository, m_settings);
+                                            m_coverRepository, m_core->sortingRegistry(), m_settings);
     m_playbackQueueWidget->setAttribute(Qt::WA_DeleteOnClose);
     m_playbackQueueWidget->finalise();
 

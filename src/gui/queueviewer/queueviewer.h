@@ -25,6 +25,7 @@
 
 class QCloseEvent;
 class QJsonObject;
+class QMenu;
 class QModelIndex;
 class QMimeData;
 class QShowEvent;
@@ -39,6 +40,7 @@ class CoverRepository;
 class QueueViewerModel;
 class QueueViewerView;
 class SettingsManager;
+class SortingRegistry;
 class TrackSelectionController;
 class WidgetContext;
 
@@ -49,7 +51,7 @@ class QueueViewer : public FyWidget
 public:
     explicit QueueViewer(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
                          TrackSelectionController* selectionController, CoverRepository* coverRepository,
-                         SettingsManager* settings, QWidget* parent = nullptr);
+                         SortingRegistry* sortingRegistry, SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -105,10 +107,19 @@ private:
         int scrollValue{0};
     };
 
+    enum class QueueReorder : uint8_t
+    {
+        Randomise = 0,
+        Reverse,
+    };
+
     void setupActions();
     void setupConnections();
 
     void resetModel() const;
+    void addSortMenu(QMenu* menu) const;
+    void refreshSortActions();
+    void updateSortActionState() const;
 
     [[nodiscard]] ViewState captureViewState() const;
     void restoreViewState(const ViewState& state) const;
@@ -124,6 +135,13 @@ private:
     void handleTracksDropped(int row, const QMimeData* mimeData) const;
     void handlePlaylistTracksDropped(int row, const QByteArray& mimeData) const;
     void handleQueueDoubleClicked(const QModelIndex& index) const;
+    void randomiseTracks() const;
+    void reverseTracks() const;
+    void sortTracks(const QString& script) const;
+    void reorderTracks(QueueReorder reorder) const;
+    void reorderTracks(QueueTracks reorderedTracks) const;
+    [[nodiscard]] std::vector<int> queueIndexesToSort() const;
+    [[nodiscard]] std::vector<int> selectedQueueIndexes() const;
     void replaceQueueTracks(QueueTracks tracks) const;
     void insertQueueTracks(int row, const QueueTracks& tracks) const;
 
@@ -137,6 +155,7 @@ private:
     PlaylistInteractor* m_playlistInteractor;
     PlayerController* m_playerController;
     TrackSelectionController* m_selectionController;
+    SortingRegistry* m_sortingRegistry;
     SettingsManager* m_settings;
 
     QueueViewerView* m_view;
@@ -149,6 +168,19 @@ private:
 
     QAction* m_clear;
     Command* m_clearCmd;
+
+    QAction* m_randomise;
+    Command* m_randomiseCmd;
+    QAction* m_reverse;
+    Command* m_reverseCmd;
+
+    struct SortPresetAction
+    {
+        int presetId;
+        QAction* action;
+    };
+
+    std::vector<SortPresetAction> m_sortPresetActions;
 
     bool m_topLevelStateLoaded;
 };

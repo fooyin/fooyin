@@ -217,7 +217,7 @@ void Widgets::registerWidgets()
         u"PlaybackQueue"_s,
         [this]() {
             return new QueueViewer(m_gui->actionManager(), m_playlistInteractor, m_gui->trackSelection(),
-                                   m_coverRepository, m_settings, m_window);
+                                   m_coverRepository, m_core->sortingRegistry(), m_settings, m_window);
         },
         tr("Playback Queue"));
 
