@@ -575,6 +575,10 @@ void EditablePlaylistSession::applyPlaylistChangeSet(PlaylistWidgetSessionHost& 
                   return;
               }
 
+              std::vector<int> movedIndexes;
+              movedIndexes.reserve(moves.size());
+              std::vector<int> indexesToRefresh;
+
               for(const auto& move : moves) {
                   if(!move.isValid()) {
                       continue;
@@ -591,10 +595,28 @@ void EditablePlaylistSession::applyPlaylistChangeSet(PlaylistWidgetSessionHost& 
                   operation.emplace_back(move.targetIndex, TrackIndexRangeList{{.first = sourcePlaylistIndex,
                                                                                 .last  = sourcePlaylistIndex}});
                   model->moveTracks(operation);
-                  if(model->playlistIndexForTrackEntry(move.entryId) != move.targetIndex) {
+                  const int movedEntryIndex = model->playlistIndexForTrackEntry(move.entryId);
+                  if(movedEntryIndex != move.targetIndex) {
                       handleTracksChanged(widgetSessionHost(widget), {}, false);
                       return;
                   }
+
+                  movedIndexes.emplace_back(movedEntryIndex);
+
+                  const auto [firstAffected, lastAffected] = std::minmax(sourcePlaylistIndex, move.targetIndex);
+                  for(int index{firstAffected}; index <= lastAffected; ++index) {
+                      indexesToRefresh.emplace_back(index);
+                  }
+              }
+
+              std::ranges::sort(movedIndexes);
+              movedIndexes.erase(std::ranges::unique(movedIndexes).begin(), movedIndexes.end());
+
+              std::ranges::sort(indexesToRefresh);
+              indexesToRefresh.erase(std::ranges::unique(indexesToRefresh).begin(), indexesToRefresh.end());
+
+              if(!indexesToRefresh.empty()) {
+                  model->refreshTracks(indexesToRefresh);
               }
 
               std::vector<int> updatedIndexes;
