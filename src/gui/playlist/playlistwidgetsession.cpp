@@ -26,13 +26,14 @@
 #include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
-#include <core/scripting/scriptparser.h>
+#include <core/scripting/trackqueryfilter.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/async.h>
+#include <utils/settings/settingsmanager.h>
 #include <utils/signalthrottler.h>
 
 #include <QAction>
@@ -192,9 +193,10 @@ void PlaylistWidgetSession::searchEvent(PlaylistWidgetSessionHost& host, const S
     }
 
     auto* receiver = host.sessionWidget();
+
     Utils::asyncExec([search = request.text, sourceTracks]() {
-        ScriptParser parser;
-        return parser.filter(search, sourceTracks);
+        TrackQueryFilter filter;
+        return filter.filter(search, sourceTracks);
     }).then(receiver, [this, search = request.text, hostPtr = &host](const PlaylistTrackList& filteredTracks) {
         if(this->search() != search) {
             return;

@@ -37,6 +37,7 @@
 #include <core/player/playercontroller.h>
 #include <core/player/playerdefs.h>
 #include <core/playlist/playlisthandler.h>
+#include <core/scripting/trackqueryfilter.h>
 #include <gui/configdialog.h>
 #include <gui/contextmenuutils.h>
 #include <gui/guiconstants.h>
@@ -1020,8 +1021,8 @@ void LibraryTreeWidget::searchChanged(const SearchRequest& request)
     }
 
     Utils::asyncExec([search = m_currentSearch, tracks = m_library->libraryTracks()]() {
-        ScriptParser parser;
-        return parser.filter(search, tracks);
+        TrackQueryFilter filter;
+        return filter.filter(search, tracks);
     }).then(this, [this, search = m_currentSearch](const TrackList& filteredTracks) {
         if(m_currentSearch != search) {
             return;
@@ -1207,8 +1208,8 @@ void LibraryTreeWidget::handleTracksAdded(const TrackList& tracks)
 
     if(!m_currentSearch.isEmpty()) {
         Utils::asyncExec([search = m_currentSearch, tracks]() {
-            ScriptParser parser;
-            return parser.filter(search, tracks);
+            TrackQueryFilter filter;
+            return filter.filter(search, tracks);
         }).then(this, [this, search = m_currentSearch](const TrackList& filteredTracks) {
             if(m_currentSearch != search) {
                 return;

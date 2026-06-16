@@ -27,6 +27,7 @@
 #include <core/playlist/playlist.h>
 #include <core/scripting/scriptenvironmenthelpers.h>
 #include <core/scripting/scriptparser.h>
+#include <core/scripting/trackqueryfilter.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/iconloader.h>
@@ -48,60 +49,6 @@
 
 namespace Fooyin {
 namespace {
-QStringList searchWords(const QString& text)
-{
-    QStringList words;
-    QString word;
-
-    for(const QChar& ch : text) {
-        if(ch.isLetterOrNumber()) {
-            word.append(ch);
-        }
-        else if(!word.isEmpty()) {
-            words.push_back(word);
-            word.clear();
-        }
-    }
-
-    if(!word.isEmpty()) {
-        words.push_back(word);
-    }
-
-    return words;
-}
-
-bool matchesWordBeginnings(const QString& text, const QString& query)
-{
-    const QStringList queryWords = searchWords(query);
-    if(queryWords.empty()) {
-        return false;
-    }
-
-    const QStringList titleWords = searchWords(text);
-    for(const QString& queryWord : queryWords) {
-        const auto match = std::ranges::find_if(titleWords, [&queryWord](const QString& titleWord) {
-            return titleWord.startsWith(queryWord, Qt::CaseInsensitive);
-        });
-        if(match == titleWords.cend()) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool matchesSearch(const QString& text, const QString& query, PlaylistSearchController::Mode mode)
-{
-    switch(mode) {
-        case PlaylistSearchController::Mode::MatchWordBeginnings:
-            return matchesWordBeginnings(text, query);
-        case PlaylistSearchController::Mode::MatchAnywhere:
-            return text.contains(query, Qt::CaseInsensitive);
-    }
-
-    return false;
-}
-
 struct MatchEvalRequest
 {
     UId playlistId;
@@ -137,7 +84,7 @@ std::vector<int> evaluateMatches(const MatchEvalRequest& request)
         environment.setTrackState(track.indexInPlaylist, -1, -1, 0);
 
         const QString matchText = parser.evaluate(parsedScript, track.track, context);
-        if(matchesSearch(matchText, request.search, request.mode)) {
+        if(TrackQueryFilter::matchesSearch(matchText, request.search, static_cast<ScriptSearchMode>(request.mode))) {
             matches.emplace_back(track.indexInPlaylist);
         }
     }

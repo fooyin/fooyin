@@ -22,6 +22,7 @@
 #include <core/constants.h>
 #include <core/scripting/scriptenvironmenthelpers.h>
 #include <core/scripting/scriptparser.h>
+#include <core/scripting/trackqueryfilter.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/scripting/scriptformatter.h>
 #include <utils/crypto.h>
@@ -323,8 +324,8 @@ TrackList filterTracksBySearch(const QString& search, const TrackList& tracks)
         return tracks;
     }
 
-    ScriptParser parser;
-    return parser.filter(search, tracks);
+    TrackQueryFilter filter;
+    return filter.filter(search, tracks);
 }
 
 FilterRowList filterRowsBySearch(const QString& search, const FilterRowList& rows, const TrackList& tracks)

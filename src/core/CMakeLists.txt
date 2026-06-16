@@ -48,6 +48,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scripttypes.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptscanner.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptvalue.h
+    ${CMAKE_SOURCE_DIR}/include/core/scripting/trackqueryfilter.h
     ${CMAKE_SOURCE_DIR}/include/core/ratingsymbols.h
     ${CMAKE_SOURCE_DIR}/include/core/stringpool.h
     ${CMAKE_SOURCE_DIR}/include/core/track.h
@@ -298,7 +299,10 @@ set(SOURCES
     scripting/scriptparser.cpp
     scripting/scriptregistry.cpp
     scripting/scripttrackwriter.cpp
+    scripting/scriptruntime.cpp
+    scripting/scriptruntime.h
     scripting/scriptscanner.cpp
+    scripting/trackqueryfilter.cpp
     stringpool.cpp
     track.cpp
     translationloader.cpp

@@ -29,7 +29,7 @@
 #include <cstdint>
 
 namespace Fooyin {
-class ScriptParserPrivate;
+class ScriptRuntime;
 class ScriptVariableProvider;
 class ScriptFunctionProvider;
 
@@ -92,6 +92,9 @@ public:
     ParsedScript parse(const QString& input);
     ParsedScript parseQuery(const QString& input);
 
+    [[nodiscard]] static bool canEvaluateAsQuery(const ParsedScript& input);
+    [[nodiscard]] static bool containsQueryExpression(const ParsedScript& input);
+
     QString evaluate(const QString& input);
     QString evaluate(const ParsedScript& input);
     QString evaluate(const QString& input, const ScriptContext& context);
@@ -119,11 +122,6 @@ public:
                      const ScriptEvaluationOptions& options);
     QString evaluate(const ParsedScript& input, const Playlist& playlist, const ScriptContext& context);
 
-    TrackList filter(const QString& input, const TrackList& tracks);
-    TrackList filter(const ParsedScript& input, const TrackList& tracks);
-    PlaylistTrackList filter(const QString& input, const PlaylistTrackList& tracks);
-    PlaylistTrackList filter(const ParsedScript& input, const PlaylistTrackList& tracks);
-
     /*!
      * Returns the maximum number of cached parsed and bound scripts.
      */
@@ -138,6 +136,6 @@ public:
     void clearCache();
 
 private:
-    std::unique_ptr<ScriptParserPrivate> p;
+    std::unique_ptr<ScriptRuntime> p;
 };
 } // namespace Fooyin

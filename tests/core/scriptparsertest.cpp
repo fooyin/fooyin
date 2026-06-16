@@ -22,6 +22,7 @@
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scriptproviders.h>
 #include <core/scripting/scripttrackwriter.h>
+#include <core/scripting/trackqueryfilter.h>
 #include <core/track.h>
 
 #include <gtest/gtest.h>
@@ -35,7 +36,12 @@ namespace Fooyin::Testing {
 class ScriptParserTest : public ::testing::Test
 {
 protected:
+    ScriptParserTest()
+        : m_filter{ScriptSearchOptions{}}
+    { }
+
     ScriptParser m_parser;
+    TrackQueryFilter m_filter;
 };
 
 static const StaticScriptVariableProvider ProviderVariableProvider{makeScriptVariableDescriptor<[]() -> ScriptResult {
@@ -1020,87 +1026,87 @@ TEST_F(ScriptParserTest, QueryTest)
     tracks.push_back(track2);
 
     // Basic operator tests
-    EXPECT_EQ(1, m_parser.filter(u"$info(duration)=210000"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"playcount>1"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"playcount GREATER 1"_s, tracks).size());
-    EXPECT_EQ(0, m_parser.filter(u"playcount LESS 1"_s, tracks).size());
-    EXPECT_EQ(2, m_parser.filter(u"playcount>=1"_s, tracks).size());
-    EXPECT_EQ(0, m_parser.filter(u"playcount>=A"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"stars>=3"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"rating>=3"_s, tracks).size());
-    EXPECT_EQ(2, m_parser.filter(u"rating>1"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"rating_normalized>=0.6"_s, tracks).size());
-    EXPECT_EQ(0, m_parser.filter(u"$unknown(duration)=210000"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"$info(duration)=210000"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"playcount>1"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"playcount GREATER 1"_s, tracks).size());
+    EXPECT_EQ(0, m_filter.filter(u"playcount LESS 1"_s, tracks).size());
+    EXPECT_EQ(2, m_filter.filter(u"playcount>=1"_s, tracks).size());
+    EXPECT_EQ(0, m_filter.filter(u"playcount>=A"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"stars>=3"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"rating>=3"_s, tracks).size());
+    EXPECT_EQ(2, m_filter.filter(u"rating>1"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"rating_normalized>=0.6"_s, tracks).size());
+    EXPECT_EQ(0, m_filter.filter(u"$unknown(duration)=210000"_s, tracks).size());
 
     // Logical operator tests
-    EXPECT_EQ(1, m_parser.filter(u"title=Wandering Horizon AND genre MISSING"_s, tracks).size());
-    EXPECT_EQ(2, m_parser.filter(u"playcount=1 OR playcount=8"_s, tracks).size());
-    EXPECT_EQ(2, m_parser.filter(u"playcount=1 XOR playcount=8"_s, tracks).size());
-    EXPECT_EQ(0, m_parser.filter(u"playcount=1 XOR playcount=1"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"title=Wandering Horizon AND genre MISSING"_s, tracks).size());
+    EXPECT_EQ(2, m_filter.filter(u"playcount=1 OR playcount=8"_s, tracks).size());
+    EXPECT_EQ(2, m_filter.filter(u"playcount=1 XOR playcount=8"_s, tracks).size());
+    EXPECT_EQ(0, m_filter.filter(u"playcount=1 XOR playcount=1"_s, tracks).size());
 
     // Negation test
-    EXPECT_EQ(1, m_parser.filter(u"!playcount=1"_s, tracks).size());
-    EXPECT_EQ(0, m_parser.filter(u"NOT playcount>=1"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"NOT (playcount=1 OR bitrate=1000)"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"NOT (playcount=8 AND bitrate=950)"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"playcount NOT = 1"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"playcount NOT GREATER 1"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"playcount NOT LESS 8"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"playcount NOT >= 8"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"bitrate NOT < 1000"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"title NOT : Celestial"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"title NOT = Wandering Horizon"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"!playcount=1"_s, tracks).size());
+    EXPECT_EQ(0, m_filter.filter(u"NOT playcount>=1"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"NOT (playcount=1 OR bitrate=1000)"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"NOT (playcount=8 AND bitrate=950)"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"playcount NOT = 1"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"playcount NOT GREATER 1"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"playcount NOT LESS 8"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"playcount NOT >= 8"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"bitrate NOT < 1000"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"title NOT : Celestial"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"title NOT = Wandering Horizon"_s, tracks).size());
 
     // PRESENT/MISSING keyword tests
-    EXPECT_EQ(1, m_parser.filter(u"performer PRESENT"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"performer MISSING"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"performer NOT PRESENT"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"performer NOT MISSING"_s, tracks).size());
-    EXPECT_EQ(0, m_parser.filter(u"rating_stars PRESENT"_s, tracks).size());
-    EXPECT_EQ(2, m_parser.filter(u"rating_stars MISSING"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"performer PRESENT"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"performer MISSING"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"performer NOT PRESENT"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"performer NOT MISSING"_s, tracks).size());
+    EXPECT_EQ(0, m_filter.filter(u"rating_stars PRESENT"_s, tracks).size());
+    EXPECT_EQ(2, m_filter.filter(u"rating_stars MISSING"_s, tracks).size());
 
     // String matching tests
-    EXPECT_EQ(1, m_parser.filter(u"title:wandering hor"_s, tracks).size());
-    EXPECT_EQ(0, m_parser.filter(u"title=wandering hor"_s, tracks).size());
-    EXPECT_EQ(2, m_parser.filter(u"title:Wa"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"title:wandering hor"_s, tracks).size());
+    EXPECT_EQ(0, m_filter.filter(u"title=wandering hor"_s, tracks).size());
+    EXPECT_EQ(2, m_filter.filter(u"title:Wa"_s, tracks).size());
     track1.setArtists({u"Ke$ha"_s});
     track1.setComment(u"Costs $5 [sale] 100% %artist%"_s);
     tracks[0] = track1;
-    EXPECT_EQ(1, m_parser.filter(u"Ke$ha"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"$5"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"$"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"[sale]"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"100%"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"%artist%"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"Ke$ha"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"$5"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"$"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"[sale]"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"100%"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"%artist%"_s, tracks).size());
 
     // Date comparisons
-    EXPECT_EQ(1, m_parser.filter(u"date BEFORE 2000"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"date AFTER 2000"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"firstplayed SINCE 2022"_s, tracks).size());
-    EXPECT_EQ(2, m_parser.filter(u"lastplayed DURING LAST WEEK"_s, tracks).size());
-    EXPECT_EQ(2, m_parser.filter(u"lastplayed DURING LAST MONTH"_s, tracks).size());
-    EXPECT_EQ(2, m_parser.filter(u"lastplayed DURING LAST YEAR"_s, tracks).size());
-    EXPECT_EQ(0, m_parser.filter(u"lastplayed DURING 2"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"date NOT BEFORE 2000"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"date NOT AFTER 2000"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"firstplayed NOT SINCE 2022"_s, tracks).size());
-    EXPECT_EQ(0, m_parser.filter(u"lastplayed NOT DURING LAST WEEK"_s, tracks).size());
-    EXPECT_EQ(2, m_parser.filter(u"%lastplayed% NOT DURING LAST 1 DAYS"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"%firstplayed% NOT DURING LAST 3 MONTHS"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"%firstplayed% NOT DURING LAST 2 YEARS"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"date BEFORE 2000"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"date AFTER 2000"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"firstplayed SINCE 2022"_s, tracks).size());
+    EXPECT_EQ(2, m_filter.filter(u"lastplayed DURING LAST WEEK"_s, tracks).size());
+    EXPECT_EQ(2, m_filter.filter(u"lastplayed DURING LAST MONTH"_s, tracks).size());
+    EXPECT_EQ(2, m_filter.filter(u"lastplayed DURING LAST YEAR"_s, tracks).size());
+    EXPECT_EQ(0, m_filter.filter(u"lastplayed DURING 2"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"date NOT BEFORE 2000"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"date NOT AFTER 2000"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"firstplayed NOT SINCE 2022"_s, tracks).size());
+    EXPECT_EQ(0, m_filter.filter(u"lastplayed NOT DURING LAST WEEK"_s, tracks).size());
+    EXPECT_EQ(2, m_filter.filter(u"%lastplayed% NOT DURING LAST 1 DAYS"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"%firstplayed% NOT DURING LAST 3 MONTHS"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"%firstplayed% NOT DURING LAST 2 YEARS"_s, tracks).size());
 
     // Grouping and complex queries
-    EXPECT_EQ(2, m_parser.filter(u"(playcount>=1 AND bitrate>500) OR title:Celestial"_s, tracks).size());
-    EXPECT_EQ(2, m_parser.filter(u"(playcount>=1 AND (bitrate>500 OR bitrate=950))"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"(playcount=8 OR (bitrate>950 AND duration>200000))"_s, tracks).size());
-    EXPECT_EQ(0, m_parser.filter(u"(playcount=8 AND (bitrate<900 OR duration<180000))"_s, tracks).size());
+    EXPECT_EQ(2, m_filter.filter(u"(playcount>=1 AND bitrate>500) OR title:Celestial"_s, tracks).size());
+    EXPECT_EQ(2, m_filter.filter(u"(playcount>=1 AND (bitrate>500 OR bitrate=950))"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"(playcount=8 OR (bitrate>950 AND duration>200000))"_s, tracks).size());
+    EXPECT_EQ(0, m_filter.filter(u"(playcount=8 AND (bitrate<900 OR duration<180000))"_s, tracks).size());
 
     QString query = u"(title:Wand AND album:Elec) OR (title:Celest AND playcount=8)"_s;
-    EXPECT_EQ(2, m_parser.filter(query, tracks).size());
+    EXPECT_EQ(2, m_filter.filter(query, tracks).size());
     query = u"(title:Wandering OR (playcount=1 AND bitrate>900))"_s;
-    EXPECT_EQ(1, m_parser.filter(query, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(query, tracks).size());
     query = u"((playcount>=1 AND bitrate>500) OR title:Celest) AND (duration_ms>180000)"_s;
-    EXPECT_EQ(2, m_parser.filter(query, tracks).size());
+    EXPECT_EQ(2, m_filter.filter(query, tracks).size());
 }
 
 TEST_F(ScriptParserTest, QueryAccentInsensitiveSearch)
@@ -1114,11 +1120,52 @@ TEST_F(ScriptParserTest, QueryAccentInsensitiveSearch)
 
     const TrackList tracks{track};
 
-    EXPECT_EQ(1, m_parser.filter(u"gabor"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"\"gabor szabo\""_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"artist:gabor"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"album:mas"_s, tracks).size());
-    EXPECT_EQ(1, m_parser.filter(u"title:cafe"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"gabor"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"\"gabor szabo\""_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"artist:gabor"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"album:mas"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"title:cafe"_s, tracks).size());
+}
+
+TEST_F(ScriptParserTest, QueryLiteralSearchOptions)
+{
+    Track track;
+    track.setId(0);
+    track.setTitle(u"Moonlight Sketches"_s);
+    track.setAlbum(u"Hidden Album"_s);
+
+    const TrackList tracks{track};
+
+    ScriptSearchOptions titleOnly;
+    titleOnly.script = u"%title%"_s;
+    titleOnly.mode   = ScriptSearchMode::MatchWordBeginnings;
+
+    TrackQueryFilter filter{titleOnly};
+    EXPECT_EQ(1, filter.filter(u"Moon"_s, tracks).size());
+    EXPECT_EQ(0, filter.filter(u"light"_s, tracks).size());
+    EXPECT_EQ(0, filter.filter(u"Hidden"_s, tracks).size());
+    EXPECT_EQ(1, filter.filter(u"album:hidden"_s, tracks).size());
+
+    titleOnly.mode = ScriptSearchMode::MatchAnywhere;
+    TrackQueryFilter anywhereFilter{titleOnly};
+    EXPECT_EQ(1, anywhereFilter.filter(u"light"_s, tracks).size());
+}
+
+TEST_F(ScriptParserTest, QueryClassification)
+{
+    ScriptParser parser;
+
+    const ParsedScript literal = parser.parseQuery(u"radiohead moon"_s);
+    EXPECT_TRUE(ScriptParser::canEvaluateAsQuery(literal));
+    EXPECT_FALSE(ScriptParser::containsQueryExpression(literal));
+
+    const ParsedScript fieldQuery = parser.parseQuery(u"artist:radiohead"_s);
+    EXPECT_TRUE(ScriptParser::canEvaluateAsQuery(fieldQuery));
+    EXPECT_TRUE(ScriptParser::containsQueryExpression(fieldQuery));
+
+    const ParsedScript invalidQuery = parser.parseQuery(u"$unknown(duration)=210000"_s);
+    EXPECT_FALSE(ScriptParser::canEvaluateAsQuery(invalidQuery));
+    EXPECT_FALSE(ScriptParser::containsQueryExpression(invalidQuery));
 }
 
 TEST_F(ScriptParserTest, QueryAndLiteralCachesStaySeparate)
@@ -1129,7 +1176,7 @@ TEST_F(ScriptParserTest, QueryAndLiteralCachesStaySeparate)
     track.setPlayCount(2);
     tracks.push_back(track);
 
-    EXPECT_EQ(1, m_parser.filter(u"playcount>1"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"playcount>1"_s, tracks).size());
     EXPECT_EQ(u"playcount>1", m_parser.evaluate(u"playcount>1"_s, track));
 }
 } // namespace Fooyin::Testing

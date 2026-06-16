@@ -19,13 +19,17 @@
 
 #include "searchpage.h"
 
+#include <core/coresettings.h>
+#include <core/scripting/trackqueryfilter.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/widgets/colourbutton.h>
+#include <gui/widgets/scriptlineedit.h>
 #include <gui/widgets/slidereditor.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
+#include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
@@ -57,6 +61,8 @@ private:
     QCheckBox* m_appendSearchString;
     QCheckBox* m_focusOnSuccess;
     QCheckBox* m_closeOnSuccess;
+    QComboBox* m_searchMode;
+    ScriptLineEdit* m_searchScript;
 
     QCheckBox* m_failBg;
     ColourButton* m_failBgColour;
@@ -72,11 +78,16 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     , m_appendSearchString{new QCheckBox(tr("Append search string to the playlist name"), this)}
     , m_focusOnSuccess{new QCheckBox(tr("Switch focus to playlist on successful search"), this)}
     , m_closeOnSuccess{new QCheckBox(tr("Close quick search when successful"), this)}
+    , m_searchMode{new QComboBox(this)}
+    , m_searchScript{new ScriptLineEdit(this)}
     , m_failBg{new QCheckBox(tr("Error background") + ":"_L1, this)}
     , m_failBgColour{new ColourButton(this)}
     , m_failFg{new QCheckBox(tr("Error foreground") + ":"_L1, this)}
     , m_failFgColour{new ColourButton(this)}
 {
+    auto* matchingGroup       = new QGroupBox(tr("Search Matching"), this);
+    auto* matchingGroupLayout = new QGridLayout(matchingGroup);
+
     auto* searchGroup       = new QGroupBox(tr("Search"), this);
     auto* searchGroupLayout = new QGridLayout(searchGroup);
 
@@ -86,20 +97,32 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     m_autosearchDelay->addSpecialValue(2, tr("Medium"));
     m_autosearchDelay->addSpecialValue(3, tr("Slow"));
 
-    auto* successHint = new QLabel(u"🛈 "_s + tr("These settings will only apply if autosearch is disabled."), this);
+    m_searchMode->addItem(tr("Match beginnings of words"), 0);
+    m_searchMode->addItem(tr("Match anywhere"), 1);
 
     int row{0};
-    searchGroupLayout->addWidget(m_clearOnSuccess, row++, 0, 1, 3);
-    searchGroupLayout->addWidget(m_closeOnSuccess, row++, 0, 1, 3);
-    searchGroupLayout->addWidget(successHint, row++, 0, 1, 3);
-    searchGroupLayout->addWidget(m_autosearchDelay, row++, 0, 1, 3);
-    searchGroupLayout->addWidget(m_failBg, row, 0);
-    searchGroupLayout->addWidget(m_failBgColour, row++, 1, 1, 2);
-    searchGroupLayout->addWidget(m_failFg, row, 0);
-    searchGroupLayout->addWidget(m_failFgColour, row++, 1, 1, 2);
-    searchGroupLayout->setColumnStretch(2, 1);
+    matchingGroupLayout->addWidget(new QLabel(tr("Search mode") + ":"_L1, this), row, 0);
+    matchingGroupLayout->addWidget(m_searchMode, row++, 1);
+    matchingGroupLayout->addWidget(new QLabel(tr("Search script") + ":"_L1, this), row, 0);
+    matchingGroupLayout->addWidget(m_searchScript, row++, 1, 1, 2);
+    matchingGroupLayout->addWidget(
+        new QLabel(u"🛈 "_s + tr("These settings are used for plain text searches, not query expressions."), this),
+        row++, 0, 1, 3);
+    matchingGroupLayout->setColumnStretch(2, 1);
 
-    auto* resultsGroup       = new QGroupBox(tr("Search Results"), this);
+    row = 0;
+    searchGroupLayout->addWidget(m_clearOnSuccess, row++, 0, 1, 2);
+    searchGroupLayout->addWidget(m_closeOnSuccess, row++, 0, 1, 2);
+    searchGroupLayout->addWidget(new QLabel(u"🛈 "_s + tr("Only applies when autosearch is disabled."), this), row++, 0,
+                                 1, 2);
+    searchGroupLayout->addWidget(m_autosearchDelay, row++, 0, 1, 2);
+    searchGroupLayout->addWidget(m_failBg, row, 0);
+    searchGroupLayout->addWidget(m_failBgColour, row++, 1);
+    searchGroupLayout->addWidget(m_failFg, row, 0);
+    searchGroupLayout->addWidget(m_failFgColour, row++, 1);
+    searchGroupLayout->setColumnStretch(1, 1);
+
+    auto* resultsGroup       = new QGroupBox(tr("Results Playlist"), this);
     auto* resultsGroupLayout = new QGridLayout(resultsGroup);
 
     row = 0;
@@ -111,6 +134,7 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     auto* layout = new QGridLayout(this);
 
     row = 0;
+    layout->addWidget(matchingGroup, row++, 0);
     layout->addWidget(searchGroup, row++, 0);
     layout->addWidget(resultsGroup, row++, 0);
     layout->setRowStretch(layout->rowCount(), 1);
@@ -124,6 +148,12 @@ void SearchPageWidget::load()
     m_clearOnSuccess->setChecked(m_settings->value<Settings::Gui::SearchSuccessClear>());
     m_closeOnSuccess->setChecked(m_settings->value<Settings::Gui::SearchSuccessClose>());
     m_autosearchDelay->setValue(m_settings->value<Settings::Gui::SearchAutoDelay>());
+    m_searchMode->setCurrentIndex(m_searchMode->findData(
+        m_settings->fileValue(Settings::Core::SearchModeKey, TrackQueryFilter::DefaultSearchMode).toInt()));
+    m_searchScript->setText(
+        m_settings
+            ->fileValue(Settings::Core::SearchScriptKey, QString::fromLatin1(TrackQueryFilter::DefaultSearchScript))
+            .toString());
 
     loadColours();
 
@@ -137,6 +167,8 @@ void SearchPageWidget::apply()
     m_settings->set<Settings::Gui::SearchSuccessClear>(m_clearOnSuccess->isChecked());
     m_settings->set<Settings::Gui::SearchSuccessClose>(m_closeOnSuccess->isChecked());
     m_settings->set<Settings::Gui::SearchAutoDelay>(m_autosearchDelay->value());
+    m_settings->fileSet(Settings::Core::SearchModeKey, m_searchMode->currentData().toInt());
+    m_settings->fileSet(Settings::Core::SearchScriptKey, m_searchScript->text());
     m_settings->set<Settings::Gui::SearchPlaylistName>(m_playlistName->text());
     m_settings->set<Settings::Gui::SearchPlaylistAppendSearch>(m_appendSearchString->isChecked());
     m_settings->set<Settings::Gui::SearchSuccessFocus>(m_focusOnSuccess->isChecked());
@@ -162,6 +194,8 @@ void SearchPageWidget::reset()
     m_settings->reset<Settings::Gui::SearchSuccessClear>();
     m_settings->reset<Settings::Gui::SearchSuccessClose>();
     m_settings->reset<Settings::Gui::SearchAutoDelay>();
+    m_settings->fileRemove(Settings::Core::SearchModeKey);
+    m_settings->fileRemove(Settings::Core::SearchScriptKey);
     m_settings->reset<Settings::Gui::SearchPlaylistName>();
     m_settings->reset<Settings::Gui::SearchPlaylistAppendSearch>();
     m_settings->reset<Settings::Gui::SearchSuccessFocus>();

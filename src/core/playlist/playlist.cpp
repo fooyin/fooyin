@@ -22,6 +22,7 @@
 #include <core/coresettings.h>
 #include <core/library/tracksort.h>
 #include <core/scripting/scriptparser.h>
+#include <core/scripting/trackqueryfilter.h>
 #include <core/track.h>
 #include <utils/crypto.h>
 #include <utils/settings/settingsmanager.h>
@@ -222,8 +223,8 @@ TrackList PlaylistPrivate::filteredAutoTracks(const TrackList& tracks)
         query.append(m_sortQuery);
     }
 
-    m_parser.clearCache();
-    return m_parser.filter(query, tracks);
+    TrackQueryFilter filter;
+    return filter.filter(query, tracks);
 }
 
 TrackList PlaylistPrivate::updatedAutoTracks(const TrackList& tracks)

@@ -43,7 +43,9 @@ public:
 namespace Settings::Core {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 
-const auto PlayModeKey = "Player/PlayMode";
+const auto PlayModeKey     = "Player/PlayMode";
+const auto SearchModeKey   = "Searching/SearchMode";
+const auto SearchScriptKey = "Searching/SearchScript";
 
 enum CoreSettings : uint32_t
 {

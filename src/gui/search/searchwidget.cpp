@@ -28,7 +28,7 @@
 #include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
 #include <core/playlist/playlisthandler.h>
-#include <core/scripting/scriptparser.h>
+#include <core/scripting/trackqueryfilter.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/iconloader.h>
@@ -330,7 +330,7 @@ Playlist* SearchWidget::findOrAddPlaylist(const TrackList& tracks)
 PlaylistTrackList SearchWidget::getTracksToSearch(SearchMode mode) const
 {
     switch(mode) {
-        case(SearchMode::AllPlaylists): {
+        case SearchMode::AllPlaylists: {
             const QString searchResultsName = m_settings->value<Settings::Gui::SearchPlaylistName>();
             const auto playlists            = m_playlistHandler->playlists();
             PlaylistTrackList allTracks;
@@ -342,11 +342,11 @@ PlaylistTrackList SearchWidget::getTracksToSearch(SearchMode mode) const
             }
             return allTracks;
         }
-        case(SearchMode::Library):
+        case SearchMode::Library:
             return PlaylistTrack::fromTracks(m_library->tracks(), {});
-        case(SearchMode::PlaylistFilter):
+        case SearchMode::PlaylistFilter:
             return {};
-        case(SearchMode::Playlist):
+        case SearchMode::Playlist:
             if(m_playlistController->currentPlaylist()) {
                 return m_playlistController->currentPlaylist()->playlistTracks();
             }
@@ -487,8 +487,8 @@ void SearchWidget::searchChanged(bool enterKey)
         if(search.isEmpty()) {
             return emptyMode == EmptySearchMode::ShowAll ? tracks : PlaylistTrackList{};
         }
-        ScriptParser parser;
-        return parser.filter(search, tracks);
+        TrackQueryFilter filter;
+        return filter.filter(search, tracks);
     }).then(this, [this, mode, request, requestToken, enterKey](const PlaylistTrackList& filteredTracks) {
         const SearchRequest currentRequest = currentSearchRequest();
         if(requestToken != m_searchRequestToken || currentRequest.text != request.text

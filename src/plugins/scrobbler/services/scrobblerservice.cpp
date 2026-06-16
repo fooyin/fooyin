@@ -22,6 +22,7 @@
 #include "settings/scrobblersettings.h"
 
 #include <core/network/networkaccessmanager.h>
+#include <core/scripting/trackqueryfilter.h>
 #include <utils/fypaths.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -393,7 +394,8 @@ bool ScrobblerService::shouldUpdateNowPlaying(const Track& track)
 bool ScrobblerService::allowedByFilter(const Track& track)
 {
     const QString query = m_settings->value<Settings::Scrobbler::ScrobbleFilter>();
-    return m_scriptParser.filter(query, {track}).empty();
+    TrackQueryFilter filter;
+    return filter.filter(query, {track}).empty();
 }
 
 bool ScrobblerService::extractJsonObj(const QByteArray& data, QJsonObject* obj, QString* errorDesc)

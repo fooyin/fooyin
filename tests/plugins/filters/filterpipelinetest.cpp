@@ -20,6 +20,8 @@
 #include "plugins/filters/filterpipeline.h"
 #include "plugins/filters/filterrows.h"
 
+#include <core/scripting/trackqueryfilter.h>
+
 #include <gtest/gtest.h>
 
 #include <unordered_set>
@@ -152,7 +154,7 @@ TEST(FilterPipelineTest, FilterRowsBySearchKeepsCanonicalRowsWhenEveryTrackMatch
         makeRow(keyFor(u"B"_s), {2}),
     };
 
-    const Filters::FilterRowList filteredRows = Filters::filterRowsBySearch(u"/music"_s, rows, inputTracks);
+    const Filters::FilterRowList filteredRows = Filters::filterRowsBySearch(u"music"_s, rows, inputTracks);
 
     ASSERT_EQ(rows.size(), filteredRows.size());
     EXPECT_EQ(rows.at(0).key, filteredRows.at(0).key);
