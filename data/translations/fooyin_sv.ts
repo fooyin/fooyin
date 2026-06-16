@@ -8525,7 +8525,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="98"/>
         <source>Try to play consecutive tracks with no silence or disruption at the point of file change</source>
-        <translation type="unfinished"></translation>
+        <translation>Försök att spela konsekutiva spår utan tystnad eller störning vid punkten av filbytet</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="117"/>
@@ -9782,12 +9782,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="111"/>
         <source>Only add media files from folders, without loading playlist files found inside</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg endast till mediafiler från mappar utan att läsa in spellistsfiler som hittats inuti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="112"/>
         <source>Skip playlist entries that are already present in the target playlist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hoppa över spellistsartiklar som redan är närvarande i målspellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="114"/>
@@ -16057,7 +16057,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="93"/>
         <source>Focus the first Search Bar found in the current layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Fokusera det första sökfältet hittat i den aktuella layouten</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="99"/>
@@ -16067,7 +16067,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="100"/>
         <source>Show the currently playing track in the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa det aktuellt spelande spåret i spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="118"/>
