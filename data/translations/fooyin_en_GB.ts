@@ -67,6 +67,25 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::FileOps::FileOpsDeleteDialog</name>
+    <message numerus="yes">
+        <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="51"/>
+        <source>Are you sure you want to permanently delete %Ln track(s)?</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="52"/>
+        <source>Are you sure you want to delete %Ln track(s)?</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::FileOps::FileOpsDialog</name>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="475"/>
@@ -91,7 +110,7 @@
 <context>
     <name>Fooyin::LibraryMenu</name>
     <message numerus="yes">
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="138"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="156"/>
         <source>%Ln track(s) added</source>
         <translation>
             <numerusform>%Ln track added</numerusform>
@@ -99,7 +118,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="139"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="157"/>
         <source>%Ln track(s) updated</source>
         <translation>
             <numerusform>%Ln track updated</numerusform>
@@ -107,7 +126,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="140"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="158"/>
         <source>%Ln track(s) removed</source>
         <translation>
             <numerusform>%Ln track removed</numerusform>
@@ -148,7 +167,7 @@
 <context>
     <name>Fooyin::PlaylistModel</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1522"/>
+        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1524"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln track</numerusform>
@@ -159,7 +178,7 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="725"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="759"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
@@ -193,7 +212,7 @@
 <context>
     <name>Fooyin::RadioBrowser::RadioSearch</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="704"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="827"/>
         <source>%Ln active filter(s)</source>
         <translation>
             <numerusform>%Ln active filter</numerusform>
@@ -231,7 +250,7 @@
 <context>
     <name>Fooyin::SearchDialog</name>
     <message numerus="yes">
-        <location filename="../../src/gui/dialog/searchdialog.cpp" line="142"/>
+        <location filename="../../src/gui/dialog/searchdialog.cpp" line="148"/>
         <source>%Ln result(s)</source>
         <translation>
             <numerusform>%Ln result</numerusform>
