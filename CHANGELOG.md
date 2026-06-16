@@ -18,25 +18,32 @@
 * FileOps
   - Add advanced settings for immediate delete and deleting empty folders ([#1266](https://github.com/fooyin/fooyin/pull/1266))
   - Suggest library roots in the destination field ([#1285](https://github.com/fooyin/fooyin/pull/1285))
+* Filters
+  - Add a separate sort script to filter columns ([#1279](https://github.com/fooyin/fooyin/issues/1279), [#1284](https://github.com/fooyin/fooyin/pull/1284))
 * Interface
   - Add device refresh support ([#1225](https://github.com/fooyin/fooyin/issues/1225))
   - Hide the checked frame for flat tool buttons
   - Rework layout management and add widget margin editing ([#1267](https://github.com/fooyin/fooyin/pull/1267))
   - Add support for configuring individual splitter spacing
   - Add an integrated playlist search bar with result navigation
+  - Add recently played and recently added library search actions
   - Add configurable auto-expand for Library Tree search results ([#1278](https://github.com/fooyin/fooyin/issues/1278))
   - Add a Script Display option to toggle the vertical scrollbar ([#1260](https://github.com/fooyin/fooyin/issues/1260))
   - Add random play icons
+  - Add randomise and reverse playlist and queue sort actions ([#344](https://github.com/fooyin/fooyin/issues/344), [#395](https://github.com/fooyin/fooyin/issues/395))
   - Add Player Controls settings for toggling individual buttons
   - Stretch tool buttons by default
   - Remember the last selected Tab Stack tab by default
+  - Improve Advanced settings tree view appearance
 * Library/Metadata
   - Add support for monitoring individual library files ([#1212](https://github.com/fooyin/fooyin/issues/1212))
+  - Add configurable literal track searches ([#1256](https://github.com/fooyin/fooyin/issues/1256))
 * Lyrics
   - Add line and word progress fill options
   - Add a seek tooltip
 * Scripting
   - Add `$join`
+  - Add `MONTH` and `YEAR` intervals for queries
   - Always evaluate Script Display scripts using the playback environment
 * VU Meter
   - Add peak falloff support and align peak decay with spectrum behaviour
@@ -49,6 +56,7 @@
   - Fix repeat-track handling for the same logical segment ([#1232](https://github.com/fooyin/fooyin/issues/1232))
   - Fix watchdog warnings for pause fades
   - Fix fade interruption during track changes
+  - Restore playback queue indexes correctly after playlist reordering
 * Filters
   - Fix filter copy grouping and preserve saved filter order ([#1252](https://github.com/fooyin/fooyin/issues/1252))
   - Ignore stale asynchronous search results ([#1235](https://github.com/fooyin/fooyin/issues/1235))
@@ -70,6 +78,8 @@
   - Avoid clearing playlist model while finalising widget
   - Activate Playlist Manager items on selection without changing selection on right-click
   - Clear the search bar on Escape ([#1278](https://github.com/fooyin/fooyin/issues/1278))
+  - Fix Library Tree double-click actions when single-click expansion is enabled ([#1294](https://github.com/fooyin/fooyin/issues/1294))
+  - Refresh moved playlist rows after reordering
 * Lyrics
   - Avoid resetting editor text on Apply ([#1234](https://github.com/fooyin/fooyin/issues/1234))
   - Fix current line highlighting mutating the undo stack
