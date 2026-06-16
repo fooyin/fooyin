@@ -39,6 +39,11 @@
 #include <QMenu>
 #include <QPointer>
 
+using namespace Qt::StringLiterals;
+
+constexpr auto RecentlyPlayedQuery = "lastplayed DURING LAST 2 WEEKS SORT DESCENDING BY %lastplayed%"_L1;
+constexpr auto RecentlyAddedQuery  = "addedtime DURING LAST 2 WEEKS SORT DESCENDING BY %addedtime%"_L1;
+
 namespace Fooyin {
 LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObject* parent)
     : QObject{parent}
@@ -86,7 +91,20 @@ LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObjec
     search->setStatusTip(tr("Search all libraries"));
     auto* searchCmd = actionManager->registerAction(search, Constants::Actions::SearchLibrary);
     searchCmd->setCategories(libraryCategory);
-    QObject::connect(search, &QAction::triggered, this, &LibraryMenu::requestSearch);
+    QObject::connect(search, &QAction::triggered, this, [this]() { Q_EMIT requestSearch({}); });
+
+    auto* recentlyPlayed = new QAction(tr("Show Recently &Played"), this);
+    recentlyPlayed->setStatusTip(tr("Show tracks played in the last few weeks"));
+    auto* recentlyPlayedCmd = actionManager->registerAction(recentlyPlayed, "Library.ShowRecentlyPlayed");
+    recentlyPlayedCmd->setCategories(libraryCategory);
+    QObject::connect(recentlyPlayed, &QAction::triggered, this,
+                     [this]() { Q_EMIT requestSearch(RecentlyPlayedQuery); });
+
+    auto* recentlyAdded = new QAction(tr("Show Recently &Added"), this);
+    recentlyAdded->setStatusTip(tr("Show tracks added in the last few weeks"));
+    auto* recentlyAddedCmd = actionManager->registerAction(recentlyAdded, "Library.ShowRecentlyAdded");
+    recentlyAddedCmd->setCategories(libraryCategory);
+    QObject::connect(recentlyAdded, &QAction::triggered, this, [this]() { Q_EMIT requestSearch(RecentlyAddedQuery); });
 
     auto* quickSearch = new QAction(tr("&Quick Search"), this);
     quickSearch->setStatusTip(tr("Show quick search popup"));
@@ -147,6 +165,9 @@ LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObjec
     libraryMenu->addMenu(dbMenu);
     libraryMenu->addAction(searchCmd);
     libraryMenu->addAction(quickSearchCmd);
+    libraryMenu->addSeparator();
+    libraryMenu->addAction(recentlyPlayedCmd);
+    libraryMenu->addAction(recentlyAddedCmd);
     libraryMenu->addSeparator();
     libraryMenu->addAction(openSettingsCmd);
 }

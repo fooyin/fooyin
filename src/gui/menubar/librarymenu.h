@@ -24,6 +24,8 @@
 
 #include <QObject>
 
+class QString;
+
 namespace Fooyin {
 class Application;
 class ActionManager;
@@ -37,7 +39,7 @@ public:
     LibraryMenu(Application* core, ActionManager* actionManager, QObject* parent = nullptr);
 
 Q_SIGNALS:
-    void requestSearch();
+    void requestSearch(const QString& search);
     void requestQuickSearch();
 
 private:

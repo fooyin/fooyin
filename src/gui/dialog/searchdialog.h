@@ -26,6 +26,7 @@
 
 class QLineEdit;
 class QItemSelection;
+class QString;
 
 namespace Fooyin {
 class ActionManager;
@@ -54,6 +55,8 @@ public:
     void done(int value) override;
 
     [[nodiscard]] QSize sizeHint() const override;
+
+    void setSearch(const QString& search);
 
 protected:
     void keyPressEvent(QKeyEvent* event) override;

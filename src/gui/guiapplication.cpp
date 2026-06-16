@@ -1331,13 +1331,17 @@ void GuiApplication::showSearchPlaylistDialog()
     search->show();
 }
 
-void GuiApplication::showSearchLibraryDialog()
+void GuiApplication::showSearchLibraryDialog(const QString& searchText)
 {
     auto* coverProvider = new CoverProvider(m_coverRepository, this);
     auto* search = new SearchDialog(m_actionManager, &m_playlistInteractor, coverProvider, m_core, m_styleProvider,
                                     m_selectionController.get(), SearchDialog::Target::Library);
     search->setAttribute(Qt::WA_DeleteOnClose);
     coverProvider->setParent(search);
+
+    if(!searchText.isEmpty()) {
+        search->setSearch(searchText);
+    }
 
     search->show();
 }

@@ -154,7 +154,7 @@ private:
 
     void showScriptEditor();
     void showSearchPlaylistDialog();
-    void showSearchLibraryDialog();
+    void showSearchLibraryDialog(const QString& search = {});
     void showPlaybackQueue();
     void showPlaylistManager();
     bool focusIntegratedPlaylistSearch() const;

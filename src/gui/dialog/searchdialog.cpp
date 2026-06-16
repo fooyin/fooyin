@@ -116,6 +116,12 @@ QSize SearchDialog::sizeHint() const
     return {800, 480};
 }
 
+void SearchDialog::setSearch(const QString& search)
+{
+    m_searchBar->setText(search);
+    this->search();
+}
+
 void SearchDialog::keyPressEvent(QKeyEvent* event)
 {
     if(event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
