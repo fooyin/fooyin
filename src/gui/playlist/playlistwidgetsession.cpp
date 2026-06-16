@@ -222,7 +222,7 @@ void PlaylistWidgetSession::handleDeferredFollowTrack(PlaylistWidgetSessionHost&
 void PlaylistWidgetSession::followCurrentTrack(PlaylistWidgetSessionHost& /*host*/) { }
 
 void PlaylistWidgetSession::updateContextMenuState(PlaylistWidgetSessionHost& /*host*/,
-                                                   const QModelIndexList& /*selected*/,
+                                                   const PlaylistWidget::ContextMenuRequest& /*request*/,
                                                    PlaylistWidget::ContextMenuState& /*state*/)
 { }
 

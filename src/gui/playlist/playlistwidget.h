@@ -92,6 +92,11 @@ public:
         bool disableSortMenu{false};
     };
 
+    struct ContextMenuRequest
+    {
+        qsizetype selectedCount{0};
+    };
+
     static PlaylistWidget* createMainPlaylist(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
                                               TrackSelectionController* selectionController,
                                               CoverProvider* coverProvider, Application* core,
@@ -132,7 +137,7 @@ private:
     PlaylistWidget(ActionManager* actionManager, PlaylistInteractor* playlistInteractor, CoverProvider* coverProvider,
                    Application* core, GuiStyleProvider* styleProvider, TrackSelectionController* selectionController,
                    std::unique_ptr<PlaylistWidgetSession> session, QWidget* parent);
-    void populateTrackContextMenu(QMenu* menu, const QModelIndexList& selected);
+    void populateTrackContextMenu(QMenu* menu, const ContextMenuRequest& request);
     void showHeaderMenu(const QPoint& pos);
     void addSortMenu(QMenu* parent, bool disabled);
     void refreshSortActions();

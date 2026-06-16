@@ -870,7 +870,7 @@ void EditablePlaylistSession::applyReadOnlyState(PlaylistWidgetSessionHost& sess
 }
 
 void EditablePlaylistSession::updateContextMenuState(PlaylistWidgetSessionHost& sessionHost,
-                                                     const QModelIndexList& selected,
+                                                     const PlaylistWidget::ContextMenuRequest& request,
                                                      PlaylistWidget::ContextMenuState& state)
 {
     const auto& host   = editableHost(sessionHost.sessionWidget());
@@ -884,7 +884,7 @@ void EditablePlaylistSession::updateContextMenuState(PlaylistWidgetSessionHost& 
     state.showSortMenu                = canSort;
     state.showClipboard               = canEdit;
     state.usePlaylistQueueCommands    = true;
-    state.disableSortMenu             = selected.size() == 1;
+    state.disableSortMenu             = request.selectedCount == 1;
 }
 
 void EditablePlaylistSession::updateSelectionState(PlaylistWidgetSessionHost& sessionHost,

@@ -49,6 +49,7 @@
 #include <QPointer>
 
 #include <functional>
+#include <memory>
 #include <ranges>
 #include <unordered_map>
 
@@ -1046,6 +1047,8 @@ void TrackSelectionControllerPrivate::addPlaylistTargets(QMenu* menu, const Trac
         return;
     }
 
+    const auto tracks = std::make_shared<TrackList>(selection.tracks);
+
     for(const auto* playlist : playlists) {
         if(!playlist || playlist->isAutoPlaylist() || playlist->isTemporary()) {
             continue;
@@ -1055,9 +1058,8 @@ void TrackSelectionControllerPrivate::addPlaylistTargets(QMenu* menu, const Trac
         }
 
         const auto* action = menu->addAction(playlist->name());
-        QObject::connect(
-            action, &QAction::triggered, m_self,
-            [this, playlistId = playlist->id(), tracks = selection.tracks]() { addToPlaylist(playlistId, tracks); });
+        QObject::connect(action, &QAction::triggered, m_self,
+                         [this, playlistId = playlist->id(), tracks]() { addToPlaylist(playlistId, *tracks); });
     }
 }
 

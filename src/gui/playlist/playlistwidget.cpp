@@ -65,6 +65,7 @@
 #include <QActionGroup>
 #include <QByteArray>
 #include <QHeaderView>
+#include <QItemSelection>
 #include <QJsonObject>
 #include <QKeyEvent>
 #include <QMenu>
@@ -84,13 +85,22 @@ namespace Fooyin {
 using namespace Settings::Gui::Internal;
 
 namespace {
-QModelIndexList selectedRows(const QAbstractItemView* view)
+qsizetype selectedRowCount(const QAbstractItemView* view)
 {
     if(!view || !view->selectionModel()) {
-        return {};
+        return 0;
     }
 
-    return view->selectionModel()->selectedRows();
+    qsizetype count{0};
+    const QItemSelection selection = view->selectionModel()->selection();
+
+    for(const QItemSelectionRange& range : selection) {
+        if(range.isValid() && range.left() <= 0 && range.right() >= 0) {
+            count += range.bottom() - range.top() + 1;
+        }
+    }
+
+    return count;
 }
 
 class PlaylistWidgetHost : public EditablePlaylistSessionHost
@@ -490,8 +500,7 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    const auto selected = selectedRows(m_playlistView);
-    populateTrackContextMenu(menu, selected);
+    populateTrackContextMenu(menu, {.selectedCount = selectedRowCount(m_playlistView)});
 
     const QPoint viewportPos = m_playlistView->viewport()->mapFromGlobal(event->globalPos());
     if(!m_playlistView->indexAt(viewportPos).isValid()) {
@@ -502,11 +511,11 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->popup(event->globalPos());
 }
 
-void PlaylistWidget::populateTrackContextMenu(QMenu* menu, const QModelIndexList& selected)
+void PlaylistWidget::populateTrackContextMenu(QMenu* menu, const ContextMenuRequest& request)
 {
     ContextMenuState state;
-    state.hasSelection = !selected.empty();
-    m_session->updateContextMenuState(sessionHost(), selected, state);
+    state.hasSelection = request.selectedCount > 0;
+    m_session->updateContextMenuState(sessionHost(), request, state);
 
     ContextMenuUtils::renderStaticContextMenu(
         menu, ContextMenuIds::Playlist::DefaultItems, m_settings->value<ContextMenuPlaylistLayout>(),

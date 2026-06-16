@@ -61,7 +61,7 @@ public:
     void followCurrentTrack(PlaylistWidgetSessionHost& host) override;
     void handleTracksChanged(PlaylistWidgetSessionHost& host, const std::vector<int>& indexes, bool allNew) override;
     void applyReadOnlyState(PlaylistWidgetSessionHost& host, bool readOnly) override;
-    void updateContextMenuState(PlaylistWidgetSessionHost& host, const QModelIndexList& selected,
+    void updateContextMenuState(PlaylistWidgetSessionHost& host, const PlaylistWidget::ContextMenuRequest& request,
                                 PlaylistWidget::ContextMenuState& state) override;
     void updateSelectionState(PlaylistWidgetSessionHost& host, const std::set<int>& trackIndexes,
                               const std::set<Track>& selectedTracks, const PlaylistTrack& firstTrack) override;

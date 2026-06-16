@@ -98,7 +98,8 @@ public:
     virtual void handleRestoredState(PlaylistWidgetSessionHost& host);
     virtual void handleDeferredFollowTrack(PlaylistWidgetSessionHost& host);
     virtual void followCurrentTrack(PlaylistWidgetSessionHost& host);
-    virtual void updateContextMenuState(PlaylistWidgetSessionHost& host, const QModelIndexList& selected,
+    virtual void updateContextMenuState(PlaylistWidgetSessionHost& host,
+                                        const PlaylistWidget::ContextMenuRequest& request,
                                         PlaylistWidget::ContextMenuState& state);
     virtual void updateSelectionState(PlaylistWidgetSessionHost& host, const std::set<int>& trackIndexes,
                                       const std::set<Track>& selectedTracks, const PlaylistTrack& firstTrack);
