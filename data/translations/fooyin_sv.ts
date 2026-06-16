@@ -3893,7 +3893,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="46"/>
         <source>Are you sure you want to permanently delete &quot;%1&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Är du säker på att du permanent vill radera ”%1”?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="47"/>
@@ -4054,7 +4054,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="446"/>
         <source>Source archive files will be permanently deleted after every file from each archive has been extracted. Continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>Källarkivsfiler kommer raderas permanent efter att varje fil från varje arkiv har extraherats. Fortsätt?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="450"/>
@@ -5480,7 +5480,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="224"/>
         <source>Duplicate</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplicera</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="337"/>
@@ -6152,7 +6152,7 @@ Om standardhalvstjärnan inte renderas korrekt med ditt systemtypsnitt välj en 
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="160"/>
         <source>Switch</source>
-        <translation type="unfinished"></translation>
+        <translation>Byt</translation>
     </message>
 </context>
 <context>
@@ -6780,7 +6780,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="48"/>
         <source>Switch when changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Byt när ändrad</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="49"/>
@@ -10352,7 +10352,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="79"/>
         <source>Save any changes made to a playlist before it was deleted</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara ändringar gjort till en spellista innan den var raderad</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="84"/>
@@ -14256,12 +14256,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="84"/>
         <source>When opening files, always replace the playlist contents with the incoming tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>När filer öppnas, byt alltid ut spellistsinnehållen med de inkommande spåren</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="86"/>
         <source>When opening one file from the file manager, add all supported files from the same folder and play the opened file</source>
-        <translation type="unfinished"></translation>
+        <translation>När en fil från filhanteraren öppnas, lägg till alla stödda filer från samma mapp och spela den öppnade filen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="92"/>
@@ -14285,7 +14285,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="327"/>
         <source>Resolve duplicate shortcuts before applying changes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bory dubbla genvägar innan ändringar verkställs.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="348"/>
