@@ -1145,6 +1145,8 @@ TEST_F(ScriptParserTest, QueryLiteralSearchOptions)
     EXPECT_EQ(0, filter.filter(u"light"_s, tracks).size());
     EXPECT_EQ(0, filter.filter(u"Hidden"_s, tracks).size());
     EXPECT_EQ(1, filter.filter(u"album:hidden"_s, tracks).size());
+    EXPECT_EQ(1, filter.filter(u"\"Moonlight Sketches\""_s, tracks).size());
+    EXPECT_EQ(0, filter.filter(u"\"Moon Sketches\""_s, tracks).size());
 
     titleOnly.mode = ScriptSearchMode::MatchAnywhere;
     TrackQueryFilter anywhereFilter{titleOnly};

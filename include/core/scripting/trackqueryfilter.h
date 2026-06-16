@@ -57,7 +57,7 @@ public:
     ~TrackQueryFilter();
 
     [[nodiscard]] static bool matchesSearch(const QString& text, const QString& search, ScriptSearchMode mode,
-                                            bool singleString = false);
+                                            bool phraseMatch = false);
 
     void addProvider(const ScriptVariableProvider& provider);
     void addProvider(const ScriptFunctionProvider& provider);

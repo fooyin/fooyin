@@ -146,19 +146,19 @@ void TrackQueryFilter::addProvider(const ScriptFunctionProvider& provider)
 }
 
 bool TrackQueryFilter::matchesSearch(const QString& text, const QString& search, ScriptSearchMode mode,
-                                     bool singleString)
+                                     bool phraseMatch)
 {
     if(search.isEmpty()) {
         return true;
     }
 
-    if(mode == ScriptSearchMode::MatchWordBeginnings) {
-        return matchesWordBeginnings(text, search);
+    const QString foldedText = Utils::foldForSearch(text);
+    if(phraseMatch) {
+        return foldedText.contains(Utils::foldForSearch(search));
     }
 
-    const QString foldedText = Utils::foldForSearch(text);
-    if(singleString) {
-        return foldedText.contains(Utils::foldForSearch(search));
+    if(mode == ScriptSearchMode::MatchWordBeginnings) {
+        return matchesWordBeginnings(text, search);
     }
 
     const QStringList terms = search.split(u' ', Qt::SkipEmptyParts);

@@ -114,13 +114,13 @@ QStringList evalStringList(const ScriptResult& evalExpr, const QStringList& resu
     return listResult;
 }
 
-bool matchSearch(const Track& track, const QString& search, bool singleString)
+bool matchSearch(const Track& track, const QString& search, bool phraseMatch)
 {
     if(search.isEmpty()) {
         return true;
     }
 
-    if(singleString) {
+    if(phraseMatch) {
         return track.hasMatch(search);
     }
 
@@ -1713,7 +1713,7 @@ TrackListType ScriptRuntime::evaluateQuery(const ParsedScript& input, const Trac
     const ParsedScript searchScript = useSearchScript ? parse(options.script) : ParsedScript{};
     m_isQuery                       = wasQuery;
 
-    const auto literalMatches = [&](const auto& item, const QString& search, bool singleString) {
+    const auto literalMatches = [&](const auto& item, const QString& search, bool phraseMatch) {
         const Track& track = [&]() -> const Track& {
             if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
                 return item.track;
@@ -1724,7 +1724,7 @@ TrackListType ScriptRuntime::evaluateQuery(const ParsedScript& input, const Trac
         }();
 
         if(!useSearchScript) {
-            return matchSearch(track, search, singleString);
+            return matchSearch(track, search, phraseMatch);
         }
         if(!searchScript.isValid()) {
             return false;
@@ -1738,7 +1738,7 @@ TrackListType ScriptRuntime::evaluateQuery(const ParsedScript& input, const Trac
         m_isQuery               = false;
         const QString text      = m_registry->withContext(context, [&] { return evaluate(searchScript, track); });
         m_isQuery               = wasQueryEval;
-        return TrackQueryFilter::matchesSearch(text, search, options.mode, singleString);
+        return TrackQueryFilter::matchesSearch(text, search, options.mode, phraseMatch);
     };
 
     if(bound.expressions.size() == 1) {
