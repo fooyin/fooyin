@@ -300,10 +300,11 @@ void GuiApplication::savePlaylist(const UId& playlistId) const
 void Fooyin::GuiApplication::createNewLayout()
 {
     const QString defaultName = m_layoutProvider->uniqueLayoutName(tr("New Layout"));
+
     bool success{false};
-    const QString name = QInputDialog::getText(m_mainWindow.get(), tr("New Layout"), tr("Layout Name") + u":"_s,
-                                               QLineEdit::Normal, defaultName, &success)
-                             .trimmed();
+    QString name = QInputDialog::getText(m_mainWindow.get(), tr("New Layout"), tr("Layout Name") + u":"_s,
+                                         QLineEdit::Normal, defaultName, &success)
+                       .trimmed();
 
     const QJsonObject layout{
         {u"Name"_s, name},
@@ -311,7 +312,9 @@ void Fooyin::GuiApplication::createNewLayout()
         {u"Widgets"_s, QJsonArray{QJsonObject{{u"Playlist"_s, QJsonObject{}}}}},
     };
 
-    if(success && !name.isEmpty() && m_layoutProvider->createLayout(name, FyLayout{name, layout})) {
+    if(success && !name.isEmpty()) {
+        name = m_layoutProvider->uniqueLayoutName(name);
+        m_layoutProvider->createLayout(name, FyLayout{name, layout});
         m_editableLayout->changeLayout(m_layoutProvider->layoutByName(name));
     }
 }
