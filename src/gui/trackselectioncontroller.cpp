@@ -638,11 +638,13 @@ void TrackSelectionControllerPrivate::renderArea(QMenu* menu, TrackContextMenuAr
 
     m_menuSelection     = selection;
     m_menuSelectionMenu = menu;
+    updateActionState();
 
     QObject::connect(menu, &QObject::destroyed, m_self, [this, menu]() {
         if(m_menuSelectionMenu == menu) {
             m_menuSelection.reset();
             m_menuSelectionMenu.clear();
+            updateActionState();
         }
     });
 
