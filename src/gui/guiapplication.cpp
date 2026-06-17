@@ -41,6 +41,7 @@
 #include "playlist/playlistuicontroller.h"
 #include "playlist/playlistwidget.h"
 #include "queueviewer/queueviewer.h"
+#include "quicksetup/quicksetupdialog.h"
 #include "scripting/scriptcommandhandler.h"
 #include "scripting/scriptvariableproviders.h"
 #include "search/searchcontroller.h"
@@ -590,7 +591,7 @@ void GuiApplication::initialise()
     auto openMainWindow = [this]() {
         m_mainWindow->open();
         if(m_settings->value<Settings::Core::FirstRun>()) {
-            QMetaObject::invokeMethod(m_editableLayout.get(), &EditableLayout::showQuickSetup, Qt::QueuedConnection);
+            QMetaObject::invokeMethod(this, &GuiApplication::showQuickSetup, Qt::QueuedConnection);
         }
         QMetaObject::invokeMethod(m_mainWindow.get(), [this]() { checkTracksNeedUpdate(); }, Qt::QueuedConnection);
     };
@@ -667,7 +668,7 @@ void GuiApplication::setupConnections()
     QObject::connect(m_editMenu, &EditMenu::requestSearch, this, &GuiApplication::showSearchPlaylistDialog);
     QObject::connect(m_libraryMenu, &LibraryMenu::requestSearch, this, &GuiApplication::showSearchLibraryDialog);
     QObject::connect(m_libraryMenu, &LibraryMenu::requestQuickSearch, this, &GuiApplication::showQuickSearch);
-    QObject::connect(m_viewMenu, &ViewMenu::openQuickSetup, m_editableLayout.get(), &EditableLayout::showQuickSetup);
+    QObject::connect(m_viewMenu, &ViewMenu::openQuickSetup, this, &GuiApplication::showQuickSetup);
     QObject::connect(m_viewMenu, &ViewMenu::openPlaybackQueue, this, &GuiApplication::showPlaybackQueue);
     QObject::connect(m_viewMenu, &ViewMenu::openPlaylistManager, this, &GuiApplication::showPlaylistManager);
     QObject::connect(m_viewMenu, &ViewMenu::focusSearchBar, this, &GuiApplication::focusSearchBar);
@@ -1403,6 +1404,31 @@ void GuiApplication::showPlaylistManager()
     m_playlistManagerWidget->finalise();
 
     m_playlistManagerWidget->show();
+}
+
+void GuiApplication::showQuickSetup()
+{
+    auto* quickSetup = new QuickSetupDialog(m_layoutProvider.get(), m_themeRegistry,
+                                            m_playlistController->presetRegistry(), m_settings, m_mainWindow.get());
+    quickSetup->setAttribute(Qt::WA_DeleteOnClose);
+
+    QObject::connect(quickSetup, &QuickSetupDialog::layoutChanged, m_editableLayout.get(),
+                     &EditableLayout::changeLayout);
+    QObject::connect(quickSetup, &QuickSetupDialog::systemThemeRequested, this,
+                     [this] { m_settings->reset<Settings::Gui::CustomTheme>(); });
+    QObject::connect(quickSetup, &QuickSetupDialog::themeChanged, this, [this](const FyTheme& theme) {
+        m_settings->set<Settings::Gui::CustomTheme>(QVariant::fromValue(theme));
+    });
+    QObject::connect(quickSetup, &QuickSetupDialog::playlistPresetChanged, this, [this](const PlaylistPreset& preset) {
+        const auto playlists = m_editableLayout->findWidgetsByType<PlaylistWidget>();
+        for(auto* playlist : playlists) {
+            if(playlist) {
+                playlist->changePreset(preset);
+            }
+        }
+    });
+
+    quickSetup->show();
 }
 
 bool GuiApplication::focusIntegratedPlaylistSearch() const

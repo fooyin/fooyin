@@ -25,13 +25,16 @@ namespace Fooyin {
 class SettingsManager;
 class EditableLayout;
 class LayoutProvider;
+class PresetRegistry;
+class ThemeRegistry;
 
 class GuiGeneralPage : public SettingsPage
 {
     Q_OBJECT
 
 public:
-    explicit GuiGeneralPage(LayoutProvider* layoutProvider, EditableLayout* editableLayout, SettingsManager* settings,
+    explicit GuiGeneralPage(LayoutProvider* layoutProvider, EditableLayout* editableLayout,
+                            ThemeRegistry* themeRegistry, PresetRegistry* presetRegistry, SettingsManager* settings,
                             QObject* parent = nullptr);
 };
 } // namespace Fooyin

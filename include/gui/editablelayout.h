@@ -101,8 +101,6 @@ public:
     static QJsonObject saveBaseWidget(FyWidget* widget);
     static FyWidget* loadWidget(WidgetProvider* provider, const QJsonObject& layout);
 
-    void showQuickSetup();
-
 Q_SIGNALS:
     void layoutChanged();
 

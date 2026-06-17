@@ -129,6 +129,43 @@ public:
     void searchEvent(const SearchRequest& request) override;
     bool openIntegratedSearch();
 
+    void resetModel();
+    void resetModelThrottled() const;
+    void changePreset(const PlaylistPreset& preset);
+    void setReadOnly(bool readOnly, bool allowSorting);
+    void doubleClicked(const QModelIndex& index);
+    void middleClicked(const QModelIndex& index);
+    void resetSort(bool force = false);
+    void setHeaderVisible(bool visible);
+    void setScrollbarVisible(bool visible);
+    void selectAll();
+
+    void handlePresetChanged(const PlaylistPreset& preset);
+    void setMiddleClickAction(TrackAction action);
+    bool followCurrentTrack();
+    void sessionHandleRestoredState();
+    [[nodiscard]] bool hasDelayedStateLoad() const;
+    void clearDelayedStateLoad();
+    void setDelayedStateLoad(QMetaObject::Connection connection);
+
+    [[nodiscard]] const PlaylistWidgetLayoutState& layoutState() const;
+    [[nodiscard]] ActionManager* actionManager() const;
+    [[nodiscard]] PresetRegistry* presetRegistry() const;
+    [[nodiscard]] PlaylistController* playlistController() const;
+    [[nodiscard]] PlayerController* playerController() const;
+    [[nodiscard]] MusicLibrary* musicLibrary() const;
+    [[nodiscard]] PlaylistInteractor* playlistInteractor() const;
+    [[nodiscard]] SettingsManager* settingsManager() const;
+    [[nodiscard]] SignalThrottler* resetThrottler() const;
+    [[nodiscard]] LibraryManager* libraryManager() const;
+    [[nodiscard]] TrackSelectionController* selectionController() const;
+    [[nodiscard]] WidgetContext* playlistContext() const;
+    [[nodiscard]] PlaylistModel* playlistModel() const;
+    [[nodiscard]] PlaylistView* playlistView() const;
+
+    [[nodiscard]] PlaylistWidgetSessionHost& sessionHost();
+    [[nodiscard]] EditablePlaylistSessionHost& editableSessionHost();
+
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
@@ -153,7 +190,6 @@ private:
     void updateMetadataEditTriggers(bool readOnly);
     void handleColumnChanged(const PlaylistColumn& column);
     void handleColumnRemoved(int id);
-    void changePreset(const PlaylistPreset& preset);
     void resetColumnsToDefault();
     void setColumnVisible(int columnId, bool visible);
     void setSingleMode(bool enabled);
@@ -165,46 +201,9 @@ private:
     void handleMetadataWriteRequested(const TrackList& tracks);
     void handleBulkWriteRequested(const TrackList& tracks);
 
-public:
     void setupConnections();
     void setupActions();
-    void resetModel();
-    void resetModelThrottled() const;
-    void setReadOnly(bool readOnly, bool allowSorting);
-    void doubleClicked(const QModelIndex& index);
-    void middleClicked(const QModelIndex& index);
-    void resetSort(bool force = false);
-    void setHeaderVisible(bool visible);
-    void setScrollbarVisible(bool visible);
-    void selectAll();
 
-    [[nodiscard]] const PlaylistWidgetLayoutState& layoutState() const;
-    [[nodiscard]] ActionManager* actionManager() const;
-    [[nodiscard]] PresetRegistry* presetRegistry() const;
-    [[nodiscard]] PlaylistController* playlistController() const;
-    [[nodiscard]] PlayerController* playerController() const;
-    [[nodiscard]] MusicLibrary* musicLibrary() const;
-    [[nodiscard]] PlaylistInteractor* playlistInteractor() const;
-    [[nodiscard]] SettingsManager* settingsManager() const;
-    [[nodiscard]] SignalThrottler* resetThrottler() const;
-    [[nodiscard]] LibraryManager* libraryManager() const;
-    [[nodiscard]] TrackSelectionController* selectionController() const;
-    [[nodiscard]] WidgetContext* playlistContext() const;
-    [[nodiscard]] PlaylistModel* playlistModel() const;
-    [[nodiscard]] PlaylistView* playlistView() const;
-
-    void handlePresetChanged(const PlaylistPreset& preset);
-    void setMiddleClickAction(TrackAction action);
-    bool followCurrentTrack();
-    void sessionHandleRestoredState();
-    [[nodiscard]] bool hasDelayedStateLoad() const;
-    void clearDelayedStateLoad();
-    void setDelayedStateLoad(QMetaObject::Connection connection);
-
-    [[nodiscard]] PlaylistWidgetSessionHost& sessionHost();
-    [[nodiscard]] EditablePlaylistSessionHost& editableSessionHost();
-
-private:
     ActionManager* m_actionManager;
     PlaylistInteractor* m_playlistInteractor;
     PlaylistController* m_playlistController;

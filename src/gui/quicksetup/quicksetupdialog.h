@@ -19,37 +19,57 @@
 
 #pragma once
 
-#include "gui/layoutprovider.h"
-
 #include <QDialog>
-#include <QItemSelection>
 
-class QListView;
+class QListWidget;
 class QPushButton;
 
 namespace Fooyin {
-class QuickSetupModel;
+class FyLayout;
+struct FyTheme;
+class LayoutProvider;
+struct PlaylistPreset;
+class PresetRegistry;
+class SettingsManager;
+class ThemeRegistry;
 
 class QuickSetupDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit QuickSetupDialog(LayoutProvider* layoutProvider, QWidget* parent = nullptr);
+    explicit QuickSetupDialog(LayoutProvider* layoutProvider, ThemeRegistry* themeRegistry,
+                              PresetRegistry* presetRegistry, SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QSize sizeHint() const override;
 
 Q_SIGNALS:
     void layoutChanged(const Fooyin::FyLayout& layout);
-
-protected:
-    void showEvent(QShowEvent* event) override;
+    void systemThemeRequested();
+    void themeChanged(const Fooyin::FyTheme& theme);
+    void playlistPresetChanged(const Fooyin::PlaylistPreset& preset);
 
 private:
-    void changeLayout(const QItemSelection& selected, const QItemSelection& deselected);
+    enum ItemRole
+    {
+        Id = Qt::UserRole
+    };
 
-    QListView* m_layoutList;
-    QuickSetupModel* m_model;
+    void populateLayouts() const;
+    void populateThemes() const;
+    void populatePlaylistPresets() const;
+    void changeLayout();
+    void changeTheme();
+    void changePlaylistPreset();
+
+    LayoutProvider* m_layoutProvider;
+    ThemeRegistry* m_themeRegistry;
+    PresetRegistry* m_presetRegistry;
+    SettingsManager* m_settings;
+
+    QListWidget* m_layoutList;
+    QListWidget* m_themeList;
+    QListWidget* m_playlistPresetList;
     QPushButton* m_accept;
 };
 } // namespace Fooyin

@@ -106,22 +106,37 @@ QSize ExportLayoutDialog::sizeHint() const
 
 void ExportLayoutDialog::accept()
 {
-    auto layout = m_editableLayout->saveCurrentToLayout(m_nameEdit->text(), m_saveWindowSize->isChecked());
+    auto layout = m_editableLayout->saveCurrentToLayout(m_nameEdit->text(), false);
     if(!layout.isValid()) {
         m_errorLabel->setText(tr("Failed to save the current layout"));
         return;
     }
 
+    if(m_saveWindowSize->isChecked()) {
+        layout.saveWindowSize();
+    }
+    else {
+        layout.removeWindowSize();
+    }
+
     const auto currentTheme = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
     if(currentTheme.isValid()) {
-        FyLayout::ThemeOptions themeOptions;
+        FyLayout::ThemeOptions themeOptions{};
         if(m_saveColours->isChecked()) {
             themeOptions |= FyLayout::SaveColours;
         }
         if(m_saveFonts->isChecked()) {
             themeOptions |= FyLayout::SaveFonts;
         }
-        layout.saveTheme(currentTheme, themeOptions);
+        if(themeOptions) {
+            layout.saveTheme(currentTheme, themeOptions);
+        }
+        else {
+            layout.removeTheme();
+        }
+    }
+    else if(m_saveColours->isChecked() || m_saveFonts->isChecked()) {
+        layout.setAppliesTheme(true);
     }
 
     if(QFileInfo(m_pathEdit->text()).isDir() && !m_pathEdit->text().endsWith(QDir::separator())) {

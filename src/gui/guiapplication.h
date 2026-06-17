@@ -122,6 +122,7 @@ private:
     void initialise();
     void setupConnections();
     void initialisePlugins();
+    void showQuickSetup();
 
     void showPluginsNotFoundMessage();
     void initialiseTray();

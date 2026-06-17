@@ -25,6 +25,11 @@
 #include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/layoutprovider.h>
+#include <gui/theme/fytheme.h>
+#include <gui/theme/themeregistry.h>
+#include <playlist/playlistwidget.h>
+#include <playlist/presetregistry.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
@@ -47,6 +52,7 @@ class GuiGeneralPageWidget : public SettingsPageWidget
 
 public:
     explicit GuiGeneralPageWidget(LayoutProvider* layoutProvider, EditableLayout* editableLayout,
+                                  ThemeRegistry* themeRegistry, PresetRegistry* presetRegistry,
                                   SettingsManager* settings);
 
     void load() override;
@@ -60,6 +66,8 @@ private:
 
     LayoutProvider* m_layoutProvider;
     EditableLayout* m_editableLayout;
+    ThemeRegistry* m_themeRegistry;
+    PresetRegistry* m_presetRegistry;
     SettingsManager* m_settings;
 
     QCheckBox* m_showMenuBar;
@@ -77,9 +85,12 @@ private:
 };
 
 GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, EditableLayout* editableLayout,
+                                           ThemeRegistry* themeRegistry, PresetRegistry* presetRegistry,
                                            SettingsManager* settings)
     : m_layoutProvider{layoutProvider}
     , m_editableLayout{editableLayout}
+    , m_themeRegistry{themeRegistry}
+    , m_presetRegistry{presetRegistry}
     , m_settings{settings}
     , m_showMenuBar{new QCheckBox(tr("Show menu bar"), this)}
     , m_overrideMargin{new QCheckBox(tr("Override root margin") + u":"_s, this)}
@@ -203,9 +214,21 @@ void GuiGeneralPageWidget::reset()
 
 void GuiGeneralPageWidget::showQuickSetup()
 {
-    auto* quickSetup = new QuickSetupDialog(m_layoutProvider, this);
+    auto* quickSetup = new QuickSetupDialog(m_layoutProvider, m_themeRegistry, m_presetRegistry, m_settings, this);
     quickSetup->setAttribute(Qt::WA_DeleteOnClose);
     QObject::connect(quickSetup, &QuickSetupDialog::layoutChanged, m_editableLayout, &EditableLayout::changeLayout);
+    QObject::connect(quickSetup, &QuickSetupDialog::systemThemeRequested, this,
+                     [this] { m_settings->reset<CustomTheme>(); });
+    QObject::connect(quickSetup, &QuickSetupDialog::themeChanged, this,
+                     [this](const FyTheme& theme) { m_settings->set<CustomTheme>(QVariant::fromValue(theme)); });
+    QObject::connect(quickSetup, &QuickSetupDialog::playlistPresetChanged, this, [this](const PlaylistPreset& preset) {
+        const auto playlists = m_editableLayout->findWidgetsByType<PlaylistWidget>();
+        for(auto* playlist : playlists) {
+            if(playlist) {
+                playlist->changePreset(preset);
+            }
+        }
+    });
     quickSetup->show();
 }
 
@@ -220,14 +243,15 @@ void GuiGeneralPageWidget::exportLayout()
 }
 
 GuiGeneralPage::GuiGeneralPage(LayoutProvider* layoutProvider, EditableLayout* editableLayout,
-                               SettingsManager* settings, QObject* parent)
+                               ThemeRegistry* themeRegistry, PresetRegistry* presetRegistry, SettingsManager* settings,
+                               QObject* parent)
     : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::InterfaceGeneral);
     setName(tr("Layout"));
     setCategory({tr("Interface")});
-    setWidgetCreator([layoutProvider, editableLayout, settings] {
-        return new GuiGeneralPageWidget(layoutProvider, editableLayout, settings);
+    setWidgetCreator([layoutProvider, editableLayout, themeRegistry, presetRegistry, settings] {
+        return new GuiGeneralPageWidget(layoutProvider, editableLayout, themeRegistry, presetRegistry, settings);
     });
 }
 } // namespace Fooyin

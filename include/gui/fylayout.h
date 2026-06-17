@@ -40,19 +40,25 @@ public:
     [[nodiscard]] QString name() const;
     [[nodiscard]] QJsonObject json() const;
 
+    [[nodiscard]] bool appliesWindowSize() const;
+    void setAppliesWindowSize(bool enabled);
     void saveWindowSize();
+    void removeWindowSize();
     void loadWindowSize() const;
 
     enum ThemeOption : uint8_t
     {
-        SaveColours = 0,
-        SaveFonts,
-        All = SaveColours | SaveFonts
+        SaveColours = 1 << 0,
+        SaveFonts   = 1 << 1,
+        All         = SaveColours | SaveFonts
     };
     Q_DECLARE_FLAGS(ThemeOptions, ThemeOption)
     Q_FLAG(ThemeOptions)
 
+    [[nodiscard]] bool appliesTheme() const;
+    void setAppliesTheme(bool enabled);
     void saveTheme(const FyTheme& theme, ThemeOptions options = All);
+    void removeTheme();
     [[nodiscard]] FyTheme loadTheme() const;
 
 private:

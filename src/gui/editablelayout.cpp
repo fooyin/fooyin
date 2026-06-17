@@ -24,7 +24,6 @@
 #include "dialog/exportlayoutdialog.h"
 #include "internalguisettings.h"
 #include "layoutcommands.h"
-#include "quicksetup/quicksetupdialog.h"
 #include "utils/actions/command.h"
 #include "widgets/dummy.h"
 #include "widgets/menuheader.h"
@@ -712,12 +711,18 @@ FyLayout EditableLayout::saveCurrentToLayout(const QString& name, bool saveWindo
     const QByteArray json = QJsonDocument(root).toJson();
 
     FyLayout layout{json};
+    const auto sourceLayout = p->m_layoutProvider->layoutByName(layoutName);
 
-    const auto theme = p->m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
-    if(theme.isValid()) {
-        layout.saveTheme(theme);
+    layout.setAppliesTheme(sourceLayout.appliesTheme());
+    if(layout.appliesTheme()) {
+        const auto theme = p->m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
+        if(theme.isValid()) {
+            layout.saveTheme(theme);
+        }
     }
-    if(saveWindowSize) {
+
+    layout.setAppliesWindowSize(sourceLayout.appliesWindowSize());
+    if(layout.appliesWindowSize() && saveWindowSize) {
         layout.saveWindowSize();
     }
 
@@ -788,7 +793,7 @@ void EditableLayout::saveLayout()
 {
     const auto currentLayout = p->m_layoutProvider->currentLayout();
     const QString layoutName = currentLayout.name().isEmpty() ? u"Default"_s : currentLayout.name();
-    const auto layout        = saveCurrentToLayout(layoutName, false);
+    const auto layout        = saveCurrentToLayout(layoutName, true);
     if(layout.isValid()) {
         p->m_layoutProvider->changeLayout(layout);
         p->m_layoutProvider->saveCurrentLayout();
@@ -803,7 +808,9 @@ bool EditableLayout::loadLayout(const FyLayout& layout)
 
     const auto json = layout.json();
 
-    layout.loadWindowSize();
+    if(layout.appliesWindowSize()) {
+        layout.loadWindowSize();
+    }
 
     if(!json.contains("Widgets"_L1)) {
         return false;
@@ -819,9 +826,14 @@ bool EditableLayout::loadLayout(const FyLayout& layout)
         return false;
     }
 
-    const FyTheme theme = layout.loadTheme();
-    if(theme.isValid()) {
-        p->m_settings->set<Settings::Gui::CustomTheme>(QVariant::fromValue(theme));
+    if(layout.appliesTheme()) {
+        const FyTheme theme = layout.loadTheme();
+        if(theme.isValid()) {
+            p->m_settings->set<Settings::Gui::CustomTheme>(QVariant::fromValue(theme));
+        }
+        else {
+            p->m_settings->reset<Settings::Gui::CustomTheme>();
+        }
     }
 
     const auto rootObject = rootWidgets.cbegin()->toObject();
@@ -913,13 +925,6 @@ FyWidget* EditableLayout::loadWidget(WidgetProvider* provider, const QJsonObject
     return nullptr;
 }
 
-void EditableLayout::showQuickSetup()
-{
-    auto* quickSetup = new QuickSetupDialog(p->m_layoutProvider, this);
-    quickSetup->setAttribute(Qt::WA_DeleteOnClose);
-    QObject::connect(quickSetup, &QuickSetupDialog::layoutChanged, this, &EditableLayout::changeLayout);
-    quickSetup->show();
-}
 } // namespace Fooyin
 
 #include "gui/moc_editablelayout.cpp"

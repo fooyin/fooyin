@@ -19,72 +19,163 @@
 
 #include "quicksetupdialog.h"
 
-#include "quicksetupmodel.h"
+#include "playlist/presetregistry.h"
 
-#include <utils/fypaths.h>
+#include <gui/guisettings.h>
+#include <gui/layoutprovider.h>
+#include <gui/theme/themeregistry.h>
 
-#include <QDir>
+#include <QDialogButtonBox>
+#include <QGridLayout>
+#include <QGroupBox>
 #include <QListWidget>
 #include <QPushButton>
-#include <QVBoxLayout>
+#include <QSignalBlocker>
+#include <QStyle>
+#include <QTimer>
 
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
-QuickSetupDialog::QuickSetupDialog(LayoutProvider* layoutProvider, QWidget* parent)
+QuickSetupDialog::QuickSetupDialog(LayoutProvider* layoutProvider, ThemeRegistry* themeRegistry,
+                                   PresetRegistry* presetRegistry, SettingsManager* settings, QWidget* parent)
     : QDialog{parent}
-    , m_layoutList{new QListView(this)}
-    , m_model{new QuickSetupModel(layoutProvider, parent)}
+    , m_layoutProvider{layoutProvider}
+    , m_themeRegistry{themeRegistry}
+    , m_presetRegistry{presetRegistry}
+    , m_settings{settings}
+    , m_layoutList{new QListWidget(this)}
+    , m_themeList{new QListWidget(this)}
+    , m_playlistPresetList{new QListWidget(this)}
     , m_accept{new QPushButton(tr("OK"), this)}
 {
     setObjectName(u"Quick Setup"_s);
     setWindowTitle(tr("Quick Setup"));
     setModal(true);
 
-    auto* layout = new QVBoxLayout(this);
+    auto* layout = new QGridLayout(this);
+
+    auto* layoutGroup       = new QGroupBox(tr("Layout"), this);
+    auto* layoutGroupLayout = new QGridLayout(layoutGroup);
+    layoutGroupLayout->addWidget(m_layoutList, 0, 0);
+
+    auto* themeGroup       = new QGroupBox(tr("Colours"), this);
+    auto* themeGroupLayout = new QGridLayout(themeGroup);
+    themeGroupLayout->addWidget(m_themeList, 0, 0);
+
+    auto* presetGroup       = new QGroupBox(tr("Playlist Layout"), this);
+    auto* presetGroupLayout = new QGridLayout(presetGroup);
+    presetGroupLayout->addWidget(m_playlistPresetList, 0, 0);
+
+    auto* buttons = new QDialogButtonBox(this);
+    buttons->addButton(m_accept, QDialogButtonBox::AcceptRole);
+    QObject::connect(buttons, &QDialogButtonBox::accepted, this, &QuickSetupDialog::close);
+
+    int row{0};
+    layout->addWidget(layoutGroup, row, 0, 2, 1);
+    layout->addWidget(themeGroup, row++, 1);
+    layout->addWidget(presetGroup, row++, 1);
+    layout->addWidget(buttons, row++, 0, 1, 2);
 
     m_layoutList->setSelectionMode(QAbstractItemView::SingleSelection);
-    m_layoutList->setModel(m_model);
+    m_themeList->setSelectionMode(QAbstractItemView::SingleSelection);
+    m_playlistPresetList->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    layout->addWidget(m_layoutList);
-    layout->addWidget(m_accept);
+    populateLayouts();
+    populateThemes();
+    populatePlaylistPresets();
 
-    QObject::connect(m_layoutList->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-                     &QuickSetupDialog::changeLayout);
-    QObject::connect(m_accept, &QPushButton::pressed, this, &QuickSetupDialog::close);
+    QObject::connect(m_layoutList, &QListWidget::currentItemChanged, this, &QuickSetupDialog::changeLayout);
+    QObject::connect(m_themeList, &QListWidget::currentItemChanged, this, &QuickSetupDialog::changeTheme);
+    QObject::connect(m_playlistPresetList, &QListWidget::currentItemChanged, this,
+                     &QuickSetupDialog::changePlaylistPreset);
 }
 
 QSize QuickSetupDialog::sizeHint() const
 {
-    QSize size     = QDialog::sizeHint();
-    size.rheight() = static_cast<int>(size.height() * 1.2);
-    return size;
+    return {620, 360};
 }
 
-void QuickSetupDialog::changeLayout(const QItemSelection& selected, const QItemSelection& /*deselected*/)
+void QuickSetupDialog::populateLayouts() const
 {
-    if(selected.isEmpty()) {
+    const auto current = m_layoutProvider->currentLayout();
+
+    const auto layouts = m_layoutProvider->layouts();
+    for(const auto& layout : layouts) {
+        auto* item = new QListWidgetItem(layout.name(), m_layoutList);
+        item->setData(Id, layout.name());
+        if(layout.name() == current.name()) {
+            m_layoutList->setCurrentItem(item);
+        }
+    }
+}
+
+void QuickSetupDialog::populateThemes() const
+{
+    auto* systemDefaults = new QListWidgetItem(tr("System defaults"), m_themeList);
+    systemDefaults->setData(Id, -1);
+
+    const auto current = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
+
+    const auto themes = m_themeRegistry->items();
+    for(const auto& theme : themes) {
+        auto* item = new QListWidgetItem(theme.name, m_themeList);
+        item->setData(Id, theme.id);
+        if(theme.id == current.id) {
+            m_themeList->setCurrentItem(item);
+        }
+    }
+}
+
+void QuickSetupDialog::populatePlaylistPresets() const
+{
+    const auto presets = m_presetRegistry->items();
+    for(const auto& preset : presets) {
+        auto* item = new QListWidgetItem(preset.name, m_playlistPresetList);
+        item->setData(Id, preset.id);
+    }
+}
+
+void QuickSetupDialog::changeLayout()
+{
+    if(!m_layoutList->currentItem()) {
         return;
     }
 
-    const auto indexes = selected.indexes();
+    const QString name = m_layoutList->currentItem()->data(Id).toString();
+    const auto layout  = m_layoutProvider->layoutByName(name);
+    if(layout.isValid()) {
+        Q_EMIT layoutChanged(layout);
+    }
+}
 
-    if(indexes.isEmpty() || !indexes.constFirst().isValid()) {
+void QuickSetupDialog::changeTheme()
+{
+    if(!m_themeList->currentItem()) {
         return;
     }
 
-    const auto layout = indexes.constFirst().data(QuickSetupModel::Layout).value<FyLayout>();
+    const int id = m_themeList->currentItem()->data(Id).toInt();
+    if(id < 0) {
+        Q_EMIT systemThemeRequested();
+        return;
+    }
 
-    Q_EMIT layoutChanged(layout);
+    if(const auto theme = m_themeRegistry->itemById(id)) {
+        Q_EMIT themeChanged(theme.value());
+    }
 }
 
-void QuickSetupDialog::showEvent(QShowEvent* event)
+void QuickSetupDialog::changePlaylistPreset()
 {
-    // Centre to parent widget
-    const QRect parentRect{parentWidget()->mapToGlobal(QPoint{0, 0}), parentWidget()->size()};
-    move(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, size(), parentRect).topLeft());
+    if(!m_playlistPresetList->currentItem()) {
+        return;
+    }
 
-    QDialog::showEvent(event);
+    const int id = m_playlistPresetList->currentItem()->data(Id).toInt();
+    if(const auto preset = m_presetRegistry->itemById(id)) {
+        Q_EMIT playlistPresetChanged(preset.value());
+    }
 }
 } // namespace Fooyin
 

@@ -337,7 +337,8 @@ void Widgets::registerWidgets()
 void Widgets::registerPages()
 {
     new GeneralPage(m_settings, this);
-    new GuiGeneralPage(m_gui->layoutProvider(), m_gui->editableLayout(), m_settings, this);
+    new GuiGeneralPage(m_gui->layoutProvider(), m_gui->editableLayout(), m_gui->themeRegistry(),
+                       m_gui->playlistController()->presetRegistry(), m_settings, this);
     new GuiDisplayPage(m_settings, this);
     new GuiTrackDisplayPage(m_settings, this);
     new GuiLayoutPage(m_gui->layoutProvider(), m_gui->editableLayout(), m_gui->widgetProvider(), m_settings, this);

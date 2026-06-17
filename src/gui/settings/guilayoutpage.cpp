@@ -25,6 +25,7 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/layoutprovider.h>
+#include <gui/theme/fytheme.h>
 #include <gui/widgetprovider.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -133,6 +134,7 @@ private:
     void onCustomSplitterSpacingChanged(bool enabled);
     void updateMarginControls();
     void updateSplitterControls();
+    void updateMetadataControls();
     void updateModelMargins();
     void updateModelSplitterSpacing();
     void updateButtonStates();
@@ -161,6 +163,9 @@ private:
     QGroupBox* m_splitterGroup;
     QCheckBox* m_customSplitterSpacing;
     QSpinBox* m_splitterSpacing;
+    QGroupBox* m_metadataGroup;
+    QCheckBox* m_applyTheme;
+    QCheckBox* m_applyWindowSize;
 
     QComboBox* m_layoutCombo;
     QPushButton* m_deleteLayout;
@@ -186,6 +191,9 @@ GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, Editabl
     , m_splitterGroup{new QGroupBox(tr("Splitter"), this)}
     , m_customSplitterSpacing{new QCheckBox(tr("Use custom spacing"), this)}
     , m_splitterSpacing{new QSpinBox(this)}
+    , m_metadataGroup{new QGroupBox(tr("Layout options"), this)}
+    , m_applyTheme{new QCheckBox(tr("Restore theme when switching to this layout"), this)}
+    , m_applyWindowSize{new QCheckBox(tr("Restore window size when switching to this layout"), this)}
     , m_layoutCombo{new QComboBox(this)}
     , m_deleteLayout{new QPushButton(this)}
 {
@@ -219,6 +227,10 @@ GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, Editabl
     splitterLayout->addWidget(m_splitterSpacing, 1, 1);
     splitterLayout->setColumnStretch(2, 1);
 
+    auto* metadataLayout = new QGridLayout(m_metadataGroup);
+    metadataLayout->addWidget(m_applyTheme, 0, 0);
+    metadataLayout->addWidget(m_applyWindowSize, 1, 0);
+
     auto* newLayout       = new QPushButton(tr("New"), this);
     auto* renameLayout    = new QPushButton(tr("Rename"), this);
     auto* duplicateLayout = new QPushButton(tr("Duplicate"), this);
@@ -233,11 +245,12 @@ GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, Editabl
 
     auto* layout = new QGridLayout(this);
     layout->addLayout(topBarLayout, 0, 0, 1, 2);
-    layout->addWidget(m_layoutTree, 1, 0, 2, 1);
+    layout->addWidget(m_layoutTree, 1, 0, 3, 1);
     layout->addWidget(m_marginsGroup, 1, 1, Qt::AlignTop);
     layout->addWidget(m_splitterGroup, 2, 1, Qt::AlignTop);
+    layout->addWidget(m_metadataGroup, 3, 1, Qt::AlignTop);
     layout->setColumnStretch(0, 1);
-    layout->setRowStretch(2, 1);
+    layout->setRowStretch(3, 1);
 
     m_layoutTree->setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(m_layoutTree, &QWidget::customContextMenuRequested, this,
@@ -265,6 +278,7 @@ GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, Editabl
 
     updateMarginControls();
     updateSplitterControls();
+    updateMetadataControls();
 }
 
 void GuiLayoutPageWidget::load()
@@ -300,6 +314,7 @@ void GuiLayoutPageWidget::load()
     m_layoutTree->setEnabled(idx >= 0);
     updateMarginControls();
     updateSplitterControls();
+    updateMetadataControls();
     updateButtonStates();
 
     m_loading = false;
@@ -307,8 +322,27 @@ void GuiLayoutPageWidget::load()
 
 void GuiLayoutPageWidget::apply()
 {
-    const FyLayout layout = m_model->layout();
+    FyLayout layout = m_model->layout();
     if(layout.isValid()) {
+        if(m_applyTheme->isChecked()) {
+            const auto theme = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
+            layout.removeTheme();
+            layout.setAppliesTheme(true);
+            if(theme.isValid()) {
+                layout.saveTheme(theme);
+            }
+        }
+        else {
+            layout.removeTheme();
+        }
+
+        if(m_applyWindowSize->isChecked()) {
+            layout.saveWindowSize();
+        }
+        else {
+            layout.removeWindowSize();
+        }
+
         const FyLayout currentLayout = m_layoutProvider->currentLayout();
         if(currentLayout.isValid() && layout.name() == currentLayout.name() && layout.json() == currentLayout.json()) {
             return;
@@ -384,6 +418,7 @@ void GuiLayoutPageWidget::onChangeLayout()
     updateButtonStates();
     updateMarginControls();
     updateSplitterControls();
+    updateMetadataControls();
 }
 
 void GuiLayoutPageWidget::onSelectionChanged()
@@ -459,6 +494,16 @@ void GuiLayoutPageWidget::updateSplitterControls()
 
     m_splitterGroup->setVisible(enabled);
     m_splitterSpacing->setEnabled(enabled && custom);
+}
+
+void GuiLayoutPageWidget::updateMetadataControls()
+{
+    const FyLayout layout = m_model->layout();
+    const bool enabled    = layout.isValid();
+
+    m_metadataGroup->setEnabled(enabled);
+    m_applyTheme->setChecked(enabled && layout.appliesTheme());
+    m_applyWindowSize->setChecked(enabled && layout.appliesWindowSize());
 }
 
 void GuiLayoutPageWidget::updateModelMargins()
