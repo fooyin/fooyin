@@ -183,6 +183,16 @@ void GuiColoursPageWidget::load()
 
     loadDefaults();
     loadCurrentTheme();
+
+    const auto currentTheme = this->currentTheme();
+    for(const auto& theme : themes) {
+        if(theme.colours == currentTheme.colours && theme.fonts == currentTheme.fonts) {
+            if(const int index = m_themesBox->findText(theme.name); index >= 0) {
+                m_themesBox->setCurrentIndex(index);
+            }
+            break;
+        }
+    }
 }
 
 void GuiColoursPageWidget::apply()
