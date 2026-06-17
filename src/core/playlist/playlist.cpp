@@ -25,8 +25,11 @@
 #include <core/scripting/trackqueryfilter.h>
 #include <core/track.h>
 #include <utils/crypto.h>
+#include <utils/datastream.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QDataStream>
+#include <QIODevice>
 #include <functional>
 #include <random>
 #include <ranges>
@@ -40,6 +43,35 @@ namespace Fooyin {
 using AlbumTracks = std::vector<int>;
 
 namespace {
+bool readExtraProperties(QDataStream& stream, Playlist::ExtraProperties& out)
+{
+    out.clear();
+
+    quint32 size{0};
+    stream >> size;
+    if(stream.status() != QDataStream::Ok) {
+        return false;
+    }
+
+    out.reserve(size);
+
+    for(quint32 i{0}; i < size; ++i) {
+        QString key;
+        QString value;
+
+        stream >> key >> value;
+
+        if(stream.status() != QDataStream::Ok) {
+            out.clear();
+            return false;
+        }
+
+        out.insertOrAssign(std::move(key), std::move(value));
+    }
+
+    return true;
+}
+
 int groupIndexContainingTrack(const std::vector<AlbumTracks>& groups, const int currentIndex)
 {
     for(int i{0}; std::cmp_less(i, groups.size()); ++i) {
@@ -203,6 +235,7 @@ public:
     QString m_query;
     QString m_sortQuery;
     bool m_forceSorted{false};
+    Playlist::ExtraProperties m_extraProps;
 };
 
 PlaylistPrivate::PlaylistPrivate(int dbId, QString name, int index, SettingsManager* settings)
@@ -979,6 +1012,84 @@ TrackList Playlist::autoPlaylistTracks(const TrackList& tracks) const
     return p->updatedAutoTracks(tracks);
 }
 
+bool Playlist::hasExtraProperty(const QString& prop) const
+{
+    return p->m_extraProps.contains(prop);
+}
+
+Playlist::ExtraProperties Playlist::extraProperties() const
+{
+    return p->m_extraProps;
+}
+
+void Playlist::setExtraProperty(const QString& prop, const QString& value)
+{
+    if(prop.isEmpty()) {
+        return;
+    }
+
+    if(value.isEmpty()) {
+        removeExtraProperty(prop);
+        return;
+    }
+
+    const QString* existingValue = p->m_extraProps.find(prop);
+    if(existingValue && *existingValue == value) {
+        return;
+    }
+
+    p->m_extraProps.insertOrAssign(prop, value);
+    p->m_modified = true;
+}
+
+void Playlist::removeExtraProperty(const QString& prop)
+{
+    if(p->m_extraProps.erase(prop)) {
+        p->m_modified = true;
+    }
+}
+
+void Playlist::clearExtraProperties()
+{
+    if(!p->m_extraProps.empty()) {
+        p->m_extraProps.clear();
+        p->m_modified = true;
+    }
+}
+
+QByteArray Playlist::serialiseExtraProperties() const
+{
+    if(p->m_extraProps.empty()) {
+        return {};
+    }
+
+    QByteArray out;
+    QDataStream stream{&out, QIODevice::WriteOnly};
+    stream.setVersion(QDataStream::Qt_6_0);
+
+    DataStream::writeContainer(stream, p->m_extraProps);
+
+    return out;
+}
+
+void Playlist::storeExtraProperties(const QByteArray& props)
+{
+    p->m_extraProps.clear();
+
+    if(props.isEmpty()) {
+        return;
+    }
+
+    QByteArray in{props};
+    QDataStream stream{&in, QIODevice::ReadOnly};
+    stream.setVersion(QDataStream::Qt_6_0);
+
+    ExtraProperties loaded;
+    if(readExtraProperties(stream, loaded)) {
+        p->m_extraProps = std::move(loaded);
+    }
+}
+
 bool Playlist::regenerateTracks(const TrackList& tracks)
 {
     if(!isAutoPlaylist()) {
@@ -1085,14 +1196,14 @@ int Playlist::lastIndex(PlayModes mode)
     return trackCount() - 1;
 }
 
-int Playlist::randomAlbumIndexFrom(const int currentIndex)
-{
-    return p->randomAlbumIndexFrom(currentIndex);
-}
-
 int Playlist::randomTrackIndexFrom(const int currentIndex)
 {
     return p->randomTrackIndexFrom(currentIndex);
+}
+
+int Playlist::randomAlbumIndexFrom(const int currentIndex)
+{
+    return p->randomAlbumIndexFrom(currentIndex);
 }
 
 int Playlist::previousAlbumIndexFrom(const int currentIndex, const PlayModes mode)

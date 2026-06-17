@@ -82,7 +82,8 @@ bool createPlaylistTables(const DbConnectionPoolPtr& dbPool)
                                              "IsAutoPlaylist INTEGER DEFAULT 0, "
                                              "Query TEXT, "
                                              "SortQuery TEXT, "
-                                             "ForceSorted INTEGER DEFAULT 1);"_s};
+                                             "ForceSorted INTEGER DEFAULT 1, "
+                                             "ExtraProperties BLOB);"_s};
     if(!createPlaylists.exec()) {
         return false;
     }

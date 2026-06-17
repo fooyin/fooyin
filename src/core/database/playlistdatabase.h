@@ -33,6 +33,7 @@ struct PlaylistInfo
     QString query;
     QString sortQuery;
     bool forceSorted{true};
+    QByteArray extraProperties;
 };
 
 class PlaylistDatabase : public DbModule
@@ -42,7 +43,8 @@ public:
     TrackList getPlaylistTracks(const Playlist& playlist, const std::unordered_map<int, Track>& tracks);
 
     int insertPlaylist(const QString& name, int index, bool isAutoPlaylist, const QString& autoQuery,
-                       const QString& autoSortQuery = {}, bool forceSorted = true);
+                       const QString& autoSortQuery = {}, bool forceSorted = true,
+                       const QByteArray& extraProperties = {});
 
     Track ensureTrack(Track track) const;
     bool savePlaylist(Playlist& playlist);

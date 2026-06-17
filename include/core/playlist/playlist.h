@@ -22,6 +22,7 @@
 #include "fycore_export.h"
 
 #include <core/track.h>
+#include <utils/containers.h>
 #include <utils/id.h>
 
 #include <QObject>
@@ -86,6 +87,8 @@ class FYCORE_EXPORT Playlist final
     struct PrivateKey;
 
 public:
+    using ExtraProperties = FlatStringMap<QString>;
+
     enum PlayMode : uint16_t
     {
         Default        = 0,
@@ -137,6 +140,16 @@ public:
     [[nodiscard]] bool forceSorted() const;
     /** Returns the tracks this autoplaylist would contain after regeneration with @p tracks. */
     [[nodiscard]] TrackList autoPlaylistTracks(const TrackList& tracks) const;
+
+    [[nodiscard]] bool hasExtraProperty(const QString& prop) const;
+    [[nodiscard]] ExtraProperties extraProperties() const;
+
+    void setExtraProperty(const QString& prop, const QString& value);
+    void removeExtraProperty(const QString& prop);
+    void clearExtraProperties();
+
+    [[nodiscard]] QByteArray serialiseExtraProperties() const;
+    void storeExtraProperties(const QByteArray& props);
 
     /** Regenerates this autoplaylist using the tracks @p tracks. */
     bool regenerateTracks(const TrackList& tracks);

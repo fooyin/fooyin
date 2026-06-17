@@ -30,7 +30,7 @@ namespace Fooyin {
 std::vector<PlaylistInfo> PlaylistDatabase::getAllPlaylists()
 {
     static const QString query
-        = u"SELECT PlaylistID, Name, PlaylistIndex, IsAutoPlaylist, Query, SortQuery, ForceSorted "
+        = u"SELECT PlaylistID, Name, PlaylistIndex, IsAutoPlaylist, Query, SortQuery, ForceSorted, ExtraProperties "
           "FROM Playlists ORDER BY PlaylistIndex;"_s;
 
     DbQuery q{db(), query};
@@ -44,13 +44,14 @@ std::vector<PlaylistInfo> PlaylistDatabase::getAllPlaylists()
     while(q.next()) {
         PlaylistInfo playlist;
 
-        playlist.dbId           = q.value(0).toInt();
-        playlist.name           = q.value(1).toString();
-        playlist.index          = q.value(2).toInt();
-        playlist.isAutoPlaylist = q.value(3).toBool();
-        playlist.query          = q.value(4).toString();
-        playlist.sortQuery      = q.value(5).toString();
-        playlist.forceSorted    = q.value(6).toBool();
+        playlist.dbId            = q.value(0).toInt();
+        playlist.name            = q.value(1).toString();
+        playlist.index           = q.value(2).toInt();
+        playlist.isAutoPlaylist  = q.value(3).toBool();
+        playlist.query           = q.value(4).toString();
+        playlist.sortQuery       = q.value(5).toString();
+        playlist.forceSorted     = q.value(6).toBool();
+        playlist.extraProperties = q.value(7).toByteArray();
 
         playlists.emplace_back(playlist);
     }
@@ -64,15 +65,16 @@ TrackList PlaylistDatabase::getPlaylistTracks(const Playlist& playlist, const st
 }
 
 int PlaylistDatabase::insertPlaylist(const QString& name, int index, bool isAutoPlaylist, const QString& autoQuery,
-                                     const QString& autoSortQuery, bool forceSorted)
+                                     const QString& autoSortQuery, bool forceSorted, const QByteArray& extraProperties)
 {
     if(name.isEmpty() || index < 0) {
         return -1;
     }
 
-    static const QString statement = u"INSERT INTO Playlists (Name, PlaylistIndex, IsAutoPlaylist, Query, SortQuery, "
-                                     "ForceSorted) VALUES (:name, :index, :isAutoPlaylist, :query, :sortQuery, "
-                                     ":forceSorted);"_s;
+    static const QString statement
+        = u"INSERT INTO Playlists (Name, PlaylistIndex, IsAutoPlaylist, Query, SortQuery, ForceSorted, "
+          u"ExtraProperties) "
+          "VALUES (:name, :index, :isAutoPlaylist, :query, :sortQuery, :forceSorted, :extraProperties);"_s;
 
     DbQuery query{db(), statement};
     query.bindValue(u":name"_s, name);
@@ -81,6 +83,7 @@ int PlaylistDatabase::insertPlaylist(const QString& name, int index, bool isAuto
     query.bindValue(u":query"_s, autoQuery);
     query.bindValue(u":sortQuery"_s, autoSortQuery);
     query.bindValue(u":forceSorted"_s, forceSorted);
+    query.bindValue(u":extraProperties"_s, extraProperties);
 
     if(!query.exec()) {
         return -1;
@@ -96,7 +99,8 @@ bool PlaylistDatabase::savePlaylist(Playlist& playlist)
     if(playlist.modified()) {
         static const QString statement = u"UPDATE Playlists SET Name = :name, PlaylistIndex = :index, IsAutoPlaylist = "
                                          ":isAutoPlaylist, Query = :query, SortQuery = :sortQuery, "
-                                         "ForceSorted = :forceSorted WHERE PlaylistID = :id;"_s;
+                                         "ForceSorted = :forceSorted, ExtraProperties = :extraProperties "
+                                         "WHERE PlaylistID = :id;"_s;
 
         DbQuery query{db(), statement};
 
@@ -106,6 +110,7 @@ bool PlaylistDatabase::savePlaylist(Playlist& playlist)
         query.bindValue(u":query"_s, playlist.query());
         query.bindValue(u":sortQuery"_s, playlist.sortQuery());
         query.bindValue(u":forceSorted"_s, playlist.forceSorted());
+        query.bindValue(u":extraProperties"_s, playlist.serialiseExtraProperties());
         query.bindValue(u":id"_s, playlist.dbId());
 
         updated = query.exec();

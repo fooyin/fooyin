@@ -204,12 +204,20 @@ void PlaylistHandlerPrivate::reloadPlaylists()
     const std::vector<PlaylistInfo> infos = m_playlistConnector.getAllPlaylists();
 
     for(const auto& info : infos) {
+        Playlist* playlist{nullptr};
+
         if(info.isAutoPlaylist) {
-            m_playlists.emplace_back(Playlist::createAuto(info.dbId, info.name, info.index, info.query, info.sortQuery,
-                                                          info.forceSorted, m_settings));
+            playlist = m_playlists
+                           .emplace_back(Playlist::createAuto(info.dbId, info.name, info.index, info.query,
+                                                              info.sortQuery, info.forceSorted, m_settings))
+                           .get();
         }
         else {
-            m_playlists.emplace_back(Playlist::create(info.dbId, info.name, info.index, m_settings));
+            playlist = m_playlists.emplace_back(Playlist::create(info.dbId, info.name, info.index, m_settings)).get();
+        }
+
+        if(playlist) {
+            playlist->storeExtraProperties(info.extraProperties);
         }
     }
 }
