@@ -117,13 +117,22 @@ void QuickSetupDialog::populateThemes() const
 
     const auto current = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
 
+    QListWidgetItem* currentThemeItem{nullptr};
+
     const auto themes = m_themeRegistry->items();
     for(const auto& theme : themes) {
         auto* item = new QListWidgetItem(theme.name, m_themeList);
         item->setData(Id, theme.id);
-        if(theme.id == current.id) {
-            m_themeList->setCurrentItem(item);
+        if(theme.id == current.id && theme.name == current.name) {
+            currentThemeItem = item;
         }
+        else if(!currentThemeItem && theme.name == current.name) {
+            currentThemeItem = item;
+        }
+    }
+
+    if(currentThemeItem) {
+        m_themeList->setCurrentItem(currentThemeItem);
     }
 }
 
