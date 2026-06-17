@@ -365,13 +365,7 @@ void PlaylistManagerWidget::setupActions()
 
 void PlaylistManagerWidget::updateActionState() const
 {
-    Playlist* playlist{nullptr};
-
-    const QModelIndex proxyIndex = m_view->currentIndex();
-    if(proxyIndex.isValid()) {
-        const QModelIndex sourceIndex = m_proxyModel->mapToSource(proxyIndex);
-        playlist                      = m_model->playlistForRow(sourceIndex.row());
-    }
+    Playlist* playlist = actionPlaylist();
 
     const bool hasPlaylist = playlist != nullptr;
     const bool isAuto      = hasPlaylist && playlist->isAutoPlaylist();
@@ -401,6 +395,25 @@ void PlaylistManagerWidget::updateActionState() const
     }
 }
 
+QModelIndex PlaylistManagerWidget::actionProxyIndex() const
+{
+    if(m_contextMenuIndex.isValid()) {
+        return m_contextMenuIndex;
+    }
+    return m_view->currentIndex();
+}
+
+Playlist* PlaylistManagerWidget::actionPlaylist() const
+{
+    const QModelIndex proxyIndex = actionProxyIndex();
+    if(!proxyIndex.isValid()) {
+        return nullptr;
+    }
+
+    const QModelIndex sourceIndex = m_proxyModel->mapToSource(proxyIndex);
+    return m_model->playlistForRow(sourceIndex.row());
+}
+
 void PlaylistManagerWidget::activatePlaylist(const QModelIndex& proxyIndex) const
 {
     if(!proxyIndex.isValid()) {
@@ -415,7 +428,7 @@ void PlaylistManagerWidget::activatePlaylist(const QModelIndex& proxyIndex) cons
 
 void PlaylistManagerWidget::activateCurrentPlaylist() const
 {
-    activatePlaylist(m_view->currentIndex());
+    activatePlaylist(actionProxyIndex());
 }
 
 void PlaylistManagerWidget::editAutoPlaylist(Playlist* playlist) const
@@ -441,22 +454,12 @@ void PlaylistManagerWidget::removePlaylist(const Playlist* playlist)
 
 void PlaylistManagerWidget::editCurrentAutoPlaylist()
 {
-    const QModelIndex proxyIndex = m_view->currentIndex();
-    if(!proxyIndex.isValid()) {
-        return;
-    }
-    const QModelIndex sourceIndex = m_proxyModel->mapToSource(proxyIndex);
-    editAutoPlaylist(m_model->playlistForRow(sourceIndex.row()));
+    editAutoPlaylist(actionPlaylist());
 }
 
 void PlaylistManagerWidget::removeCurrentPlaylist()
 {
-    const QModelIndex proxyIndex = m_view->currentIndex();
-    if(!proxyIndex.isValid()) {
-        return;
-    }
-    const QModelIndex sourceIndex = m_proxyModel->mapToSource(proxyIndex);
-    removePlaylist(m_model->playlistForRow(sourceIndex.row()));
+    removePlaylist(actionPlaylist());
 }
 
 void PlaylistManagerWidget::showPlaylistContextMenu(const QPoint& pos)
@@ -472,43 +475,30 @@ void PlaylistManagerWidget::showPlaylistContextMenu(const QPoint& pos)
 
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
+    Utils::forwardMenuStatusTips(menu);
 
     if(playlist) {
-        const UId playlistId = playlist->id();
+        m_contextMenuIndex = proxyIndex;
+        updateActionState();
+        QObject::connect(menu, &QObject::destroyed, this, [this]() {
+            m_contextMenuIndex = QPersistentModelIndex{};
+            updateActionState();
+        });
 
-        auto* activateAction = new QAction(tr("Activate"), menu);
-        QObject::connect(activateAction, &QAction::triggered, this,
-                         [this, playlistId]() { m_playlistController->changeCurrentPlaylist(playlistId); });
-        menu->addAction(activateAction);
+        menu->addAction(m_activateAction);
 
         if(playlist->isAutoPlaylist()) {
-            auto* editAutoPlaylistAction = new QAction(tr("Edit autoplaylist"), menu);
-            QObject::connect(editAutoPlaylistAction, &QAction::triggered, this, [this, playlist]() {
-                auto* autoDialog
-                    = new AutoPlaylistDialog(m_playlistController->playlistHandler(), playlist, Utils::getMainWindow());
-                autoDialog->setAttribute(Qt::WA_DeleteOnClose);
-                autoDialog->show();
-            });
-            menu->addAction(editAutoPlaylistAction);
+            menu->addAction(m_editAutoPlaylistCmd->action());
         }
 
-        auto* renameAction
-            = new QAction(playlist->isAutoPlaylist() ? tr("Rename autoplaylist") : tr("Rename playlist"), menu);
-        QObject::connect(renameAction, &QAction::triggered, this,
-                         [this, proxyIndex]() { showRenameEditor(proxyIndex); });
-        menu->addAction(renameAction);
-
-        auto* removeAction
-            = new QAction(playlist->isAutoPlaylist() ? tr("Remove autoplaylist") : tr("Remove playlist"), menu);
-        QObject::connect(removeAction, &QAction::triggered, this,
-                         [this, playlistId]() { m_playlistController->playlistHandler()->removePlaylist(playlistId); });
-        menu->addAction(removeAction);
+        menu->addAction(m_renameCmd->action());
+        menu->addAction(m_removeCmd->action());
 
         menu->addSeparator();
     }
 
-    menu->addAction(m_newPlaylistAction);
-    menu->addAction(m_newAutoPlaylistAction);
+    menu->addAction(m_newPlaylistCmd->action());
+    menu->addAction(m_newAutoPlaylistCmd->action());
 
     const auto removedPlaylists = m_playlistController->playlistHandler()->removedPlaylists();
     if(!removedPlaylists.empty()) {
@@ -574,7 +564,7 @@ void PlaylistManagerWidget::showHeaderContextMenu(const QPoint& pos)
 
 void PlaylistManagerWidget::showRenameEditor() const
 {
-    showRenameEditor(m_view->currentIndex());
+    showRenameEditor(actionProxyIndex());
 }
 
 void PlaylistManagerWidget::showRenameEditor(const QModelIndex& proxyIndex) const

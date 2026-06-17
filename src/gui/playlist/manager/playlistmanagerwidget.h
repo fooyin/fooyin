@@ -21,6 +21,8 @@
 
 #include <gui/fywidget.h>
 
+#include <QPersistentModelIndex>
+
 class QCloseEvent;
 class QPoint;
 class QAbstractItemModel;
@@ -71,6 +73,8 @@ private:
     void addPlaylistContentsMenu(QMenu* menu, const Playlist* playlist) const;
     void setupActions();
     void updateActionState() const;
+    [[nodiscard]] QModelIndex actionProxyIndex() const;
+    [[nodiscard]] Playlist* actionPlaylist() const;
 
     void activatePlaylist(const QModelIndex& proxyIndex) const;
     void editAutoPlaylist(Playlist* playlist) const;
@@ -112,6 +116,7 @@ private:
     Command* m_newPlaylistCmd;
     QAction* m_newAutoPlaylistAction;
     Command* m_newAutoPlaylistCmd;
+    QPersistentModelIndex m_contextMenuIndex;
 
     bool m_activateOnSelection;
     bool m_selectingPlaylist;
