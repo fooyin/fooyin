@@ -127,6 +127,7 @@ public:
 
     void renamePlaylist(const UId& id, const QString& name);
     void removePlaylist(const UId& id);
+    Playlist* restorePlaylist(const UId& id);
 
     /** Returns the playlist currently being played (nullptr if not playing) */
     [[nodiscard]] Playlist* activePlaylist() const;

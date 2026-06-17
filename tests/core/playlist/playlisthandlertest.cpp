@@ -339,6 +339,39 @@ TEST(PlaylistHandlerTest, ReaddingSameNameCancelsPendingRemovedExportOnly)
     EXPECT_TRUE(harness.handler.pendingRemovedPlaylists().empty());
 }
 
+TEST(PlaylistHandlerTest, RestoreRemovedPlaylistReaddsSameObjectWithFreshDatabaseRow)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_restore_removed_test.ini"_s};
+    registerCoreSettings(settings);
+    PlaylistHandlerHarness harness{settings};
+    ASSERT_TRUE(harness.dbInitialised);
+
+    auto* playlist = harness.handler.createPlaylist(u"Restore Me"_s, {makeTrack(u"/tmp/restore.flac"_s, 1)});
+    ASSERT_NE(playlist, nullptr);
+    playlist->setExtraProperty(u"restore/property"_s, u"kept"_s);
+
+    const UId playlistId = playlist->id();
+    const int oldDbId    = playlist->dbId();
+
+    harness.handler.removePlaylist(playlistId);
+    ASSERT_EQ(harness.handler.removedPlaylists().size(), 1U);
+    ASSERT_EQ(harness.handler.pendingRemovedPlaylists().size(), 1U);
+
+    auto* restored = harness.handler.restorePlaylist(playlistId);
+    ASSERT_EQ(restored, playlist);
+    EXPECT_EQ(restored->id(), playlistId);
+    EXPECT_NE(restored->dbId(), oldDbId);
+    EXPECT_EQ(restored->name(), u"Restore Me"_s);
+    EXPECT_EQ(restored->trackCount(), 1);
+    ASSERT_TRUE(restored->hasExtraProperty(u"restore/property"_s));
+    EXPECT_EQ(restored->extraProperties().value(u"restore/property"_s), u"kept"_s);
+
+    EXPECT_TRUE(harness.handler.removedPlaylists().empty());
+    EXPECT_TRUE(harness.handler.pendingRemovedPlaylists().empty());
+    EXPECT_EQ(harness.handler.playlistById(playlistId), restored);
+}
+
 TEST(PlaylistHandlerTest, TracksMetadataChangedUpdatesPlaylistTrackWhenFilepathChanges)
 {
     ensureCoreApplication();

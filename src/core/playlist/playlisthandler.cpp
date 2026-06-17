@@ -1099,6 +1099,50 @@ void PlaylistHandler::removePlaylist(const UId& id)
     createDefaultIfEmpty();
 }
 
+Playlist* PlaylistHandler::restorePlaylist(const UId& id)
+{
+    if(!id.isValid()) {
+        return nullptr;
+    }
+
+    const auto playlistIt = std::ranges::find_if(p->m_removedPlaylists, [&id](const auto& playlist) {
+        return playlist && !playlist->isTemporary() && playlist->id() == id;
+    });
+    if(playlistIt == p->m_removedPlaylists.cend()) {
+        return nullptr;
+    }
+
+    auto* playlist = playlistIt->get();
+
+    const QString oldName = playlist->name();
+    const QString newName = p->findUniqueName(oldName.isEmpty() ? u"Playlist"_s : oldName);
+    const int index       = p->nextValidIndex();
+    const int dbId        = p->m_playlistConnector.insertPlaylist(
+        newName, index, playlist->isAutoPlaylist(), playlist->query(), playlist->sortQuery(), playlist->forceSorted(),
+        playlist->serialiseExtraProperties());
+
+    if(dbId < 0) {
+        return nullptr;
+    }
+
+    auto restoredPlaylist = std::move(*playlistIt);
+    p->m_removedPlaylists.erase(playlistIt);
+
+    playlist = restoredPlaylist.get();
+    playlist->setName(newName);
+    playlist->setDbId(dbId);
+    playlist->setIndex(index);
+    playlist->setTracksModified(true);
+
+    p->cancelPendingRemovedPlaylist(oldName);
+    p->m_playlists.emplace_back(std::move(restoredPlaylist));
+    p->m_playlistConnector.savePlaylist(*playlist);
+
+    Q_EMIT playlistAdded(playlist);
+
+    return playlist;
+}
+
 Playlist* PlaylistHandler::activePlaylist() const
 {
     return p->m_activePlaylist;

@@ -1328,6 +1328,11 @@ void Playlist::setName(const QString& name)
     }
 }
 
+void Playlist::setDbId(int id)
+{
+    p->m_dbId = id;
+}
+
 void Playlist::setIndex(int index)
 {
     if(std::exchange(p->m_index, index) != index) {

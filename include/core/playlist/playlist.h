@@ -200,6 +200,7 @@ private:
                                                 const QString& sortQuery, bool forceSorted, SettingsManager* settings);
 
     void setName(const QString& name);
+    void setDbId(int id);
     void setIndex(int index);
     void setQuery(const QString& query);
     void setSortQuery(const QString& query);

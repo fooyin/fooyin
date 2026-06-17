@@ -362,6 +362,20 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(createPlaylist);
     menu->addAction(createAutoPlaylist);
 
+    const auto removedPlaylists = m_playlistHandler->removedPlaylists();
+    if(!removedPlaylists.empty()) {
+        auto* restoreMenu = new QMenu(tr("Restore deleted playlist"), menu);
+        for(const auto* removedPlaylist : removedPlaylists) {
+            const UId removedPlaylistId = removedPlaylist->id();
+            auto* restoreAction         = new QAction(removedPlaylist->name(), restoreMenu);
+            QObject::connect(restoreAction, &QAction::triggered, this,
+                             [this, removedPlaylistId]() { m_playlistHandler->restorePlaylist(removedPlaylistId); });
+            restoreMenu->addAction(restoreAction);
+        }
+
+        menu->addMenu(restoreMenu);
+    }
+
     if(playlist) {
         menu->addSeparator();
 
