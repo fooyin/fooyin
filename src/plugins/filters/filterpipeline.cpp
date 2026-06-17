@@ -19,7 +19,6 @@
 
 #include "filterpipeline.h"
 
-#include <ranges>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -68,30 +67,26 @@ FilterSelectionResolution resolveFilterSelection(const FilterRowList& rows, cons
         tracksById.emplace(track.id(), track);
     }
 
-    std::unordered_set<RowKey> validKeys;
-    validKeys.reserve(rows.size());
+    std::unordered_map<RowKey, const FilterRow*> rowsByKey;
+    rowsByKey.reserve(rows.size());
     for(const FilterRow& row : rows) {
-        validKeys.emplace(row.key);
+        rowsByKey.emplace(row.key, &row);
     }
 
     std::vector<RowKey> prunedKeys;
     prunedKeys.reserve(resolution.selectedKeys.size());
 
     for(const RowKey& key : resolution.selectedKeys) {
-        if(!validKeys.contains(key)) {
+        const auto rowIt = rowsByKey.find(key);
+        if(rowIt == rowsByKey.cend()) {
             continue;
         }
 
         prunedKeys.push_back(key);
 
-        auto rowIt = std::ranges::find_if(rows, [&key](const FilterRow& row) { return row.key == key; });
-        if(rowIt == rows.cend()) {
-            continue;
-        }
-
-        for(const int trackId : rowIt->trackIds) {
-            if(tracksById.contains(trackId)) {
-                resolution.selectedTracks.push_back(tracksById.at(trackId));
+        for(const int trackId : rowIt->second->trackIds) {
+            if(const auto trackIt = tracksById.find(trackId); trackIt != tracksById.cend()) {
+                resolution.selectedTracks.push_back(trackIt->second);
             }
         }
     }

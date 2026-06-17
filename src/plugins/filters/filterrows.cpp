@@ -142,6 +142,8 @@ FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumn
     scriptContext.environment = &scriptEnvironment;
 
     std::map<RowKey, FilterRow> items;
+    std::unordered_map<QString, ColumnData> columnDataCache;
+
     const ParsedScript sortScript = hasCustomSortField
                                       ? parser.parse(sortFields.join(QLatin1StringView{Constants::RecordSeparator}))
                                       : ParsedScript{};
@@ -159,10 +161,16 @@ FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumn
             sortValues = splitColumnValues(parser.evaluate(sortScript, track, scriptContext));
         }
 
-        auto addColumns = [&columns, &hasCustomSortField, &items, &formatter,
+        auto addColumns = [&columns, &hasCustomSortField, &items, &formatter, &columnDataCache,
                            &track](const QStringList& rowColumnValues, const QStringList& sortColumnValues) {
-            const ColumnData columnData = buildColumnData(rowColumnValues, formatter);
-            const RowKey key            = Utils::generateMd5Hash(columnData.plainColumns.join(QString{}));
+            const QString cacheKey             = rowColumnValues.join(QLatin1StringView{Constants::RecordSeparator});
+            auto [columnDataIt, cacheInserted] = columnDataCache.try_emplace(cacheKey);
+            if(cacheInserted) {
+                columnDataIt->second = buildColumnData(rowColumnValues, formatter);
+            }
+
+            const ColumnData& columnData = columnDataIt->second;
+            const RowKey key             = Utils::generateMd5Hash(columnData.plainColumns.join(QString{}));
 
             auto [it, inserted] = items.try_emplace(key);
             FilterRow& row      = it->second;
