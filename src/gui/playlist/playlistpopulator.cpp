@@ -116,8 +116,6 @@ public:
     std::vector<Md5Hash> m_prevBaseSubheaderKey;
     std::vector<UId> m_prevSubheaderKey;
 
-    std::vector<PlaylistContainerItem> m_subheaders;
-
     PlaylistItem m_root;
     PendingData m_data;
     struct ContainerState
@@ -385,39 +383,17 @@ void PlaylistPopulatorPrivate::iterateHeader(const Track& track, PlaylistItem*& 
 
 void PlaylistPopulatorPrivate::iterateSubheaders(const Track& track, PlaylistItem*& parent, int index)
 {
-    for(int i{0}; i < m_currentPreset.subHeaders.size(); ++i) {
-        auto subheader              = m_currentPreset.subHeaders.at(i);
-        const auto& parsedSubheader = m_parsedSubheaders.at(i);
-        const auto& context         = makeContext(index, m_trackDepth);
-        const auto leftText         = evaluateTrackScript(parsedSubheader.leftText, track, context);
-        const auto rightText        = evaluateTrackScript(parsedSubheader.rightText, track, context);
-
-        PlaylistContainerItem currentContainer{PlaylistContainerItem::LayoutKind::Subheader};
-        currentContainer.setTitle(leftText);
-        currentContainer.setSubtitle(rightText);
-        currentContainer.setRowHeight(subheader.rowHeight);
-        currentContainer.setScriptIndex(i);
-        currentContainer.calculateSize();
-        m_subheaders.push_back(currentContainer);
-    }
-
-    const int subheaderCount = static_cast<int>(m_subheaders.size());
+    const auto subheaderCount = static_cast<int>(m_currentPreset.subHeaders.size());
     m_prevSubheaderKey.resize(subheaderCount);
     m_prevBaseSubheaderKey.resize(subheaderCount);
 
-    auto generateSubheaderKey = [](const PlaylistContainerItem& subheader) {
-        QString subheaderKey;
-        for(const auto& block : subheader.title().blocks) {
-            subheaderKey += block.text;
-        }
-        for(const auto& block : subheader.subtitle().blocks) {
-            subheaderKey += block.text;
-        }
-        return subheaderKey;
-    };
-
-    for(int i{0}; const auto& subheader : m_subheaders) {
-        const QString subheaderKey = generateSubheaderKey(subheader);
+    for(int i{0}; i < subheaderCount; ++i) {
+        auto subheader              = m_currentPreset.subHeaders.at(i);
+        const auto& parsedSubheader = m_parsedSubheaders.at(i);
+        const auto& context         = makeContext(index, m_trackDepth);
+        const auto leftScript       = m_parser.evaluate(parsedSubheader.leftText, track, context);
+        const auto rightScript      = m_parser.evaluate(parsedSubheader.rightText, track, context);
+        const QString subheaderKey  = leftScript + rightScript;
 
         if(subheaderKey.isEmpty()) {
             m_prevBaseSubheaderKey[i] = {};
@@ -435,7 +411,11 @@ void PlaylistPopulatorPrivate::iterateSubheaders(const Track& track, PlaylistIte
         m_prevSubheaderKey[i]     = key;
 
         if(!m_headers.contains(key)) {
-            getOrInsertItem(key, PlaylistItem::Subheader, subheader, parent, baseKey);
+            PlaylistContainerItem subheaderData{PlaylistContainerItem::LayoutKind::Subheader};
+            subheaderData.setRowHeight(subheader.rowHeight);
+            subheaderData.setScriptIndex(i);
+
+            getOrInsertItem(key, PlaylistItem::Subheader, subheaderData, parent, baseKey);
             ContainerState state;
             state.itemKey     = key;
             state.scriptIndex = i;
@@ -447,11 +427,8 @@ void PlaylistPopulatorPrivate::iterateSubheaders(const Track& track, PlaylistIte
 
         auto* subheaderItem = &m_data.items.at(key);
         parent              = subheaderItem;
-        ++i;
         ++m_trackDepth;
     }
-
-    m_subheaders.clear();
 }
 
 PlaylistItem* PlaylistPopulatorPrivate::iterateTrack(const PlaylistTrack& track, int index)
