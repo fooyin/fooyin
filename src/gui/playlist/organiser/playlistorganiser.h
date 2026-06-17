@@ -21,6 +21,8 @@
 
 #include <gui/fywidget.h>
 
+#include <QPersistentModelIndex>
+
 class QJsonObject;
 class QTreeView;
 
@@ -68,6 +70,8 @@ protected:
     void openConfigDialog() override;
 
 private:
+    [[nodiscard]] QModelIndex actionIndex() const;
+    [[nodiscard]] QModelIndexList actionIndexes() const;
     void selectionChanged();
     void selectCurrentPlaylist();
     void createGroup(const QModelIndex& index) const;
@@ -113,6 +117,7 @@ private:
     Command* m_sortGroupPlaylistsCmd;
 
     ConfigData m_config;
+    QPersistentModelIndex m_contextMenuIndex;
     UId m_currentPlaylistId;
     bool m_creatingPlaylist{false};
 };

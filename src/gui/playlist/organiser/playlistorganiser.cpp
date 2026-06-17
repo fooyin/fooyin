@@ -45,6 +45,7 @@
 #include <QJsonObject>
 #include <QMainWindow>
 #include <QMenu>
+#include <QMouseEvent>
 #include <QTreeView>
 #include <QVBoxLayout>
 
@@ -133,7 +134,7 @@ public:
 protected:
     void mousePressEvent(QMouseEvent* event) override
     {
-        if(event->button() > Qt::RightButton) {
+        if(event->button() > Qt::LeftButton) {
             event->ignore();
             return;
         }
@@ -254,36 +255,20 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
         restoreExpandedState(m_organiserTree, m_model, state);
     };
 
-    QAction::connect(m_newGroup, &QAction::triggered, this, [this]() {
-        const auto indexes = m_organiserTree->selectionModel()->selectedIndexes();
-        createGroup(indexes.empty() ? QModelIndex{} : indexes.front());
-    });
+    QAction::connect(m_newGroup, &QAction::triggered, this, [this]() { createGroup(actionIndex()); });
     QAction::connect(m_sortAllPlaylists, &QAction::triggered, this, [this, sortAndRestoreState]() {
         sortAndRestoreState([this]() { m_model->sortAllPlaylists(PlaylistOrganiserModel::SortOrder::Ascending); });
     });
     QAction::connect(m_sortGroupPlaylists, &QAction::triggered, this, [this, sortAndRestoreState]() {
-        const auto indexes = m_organiserTree->selectionModel()->selectedIndexes();
+        const auto indexes = actionIndexes();
         sortAndRestoreState(
             [this, indexes]() { m_model->sortGroupPlaylists(indexes, PlaylistOrganiserModel::SortOrder::Ascending); });
     });
-    QObject::connect(m_removePlaylist, &QAction::triggered, this,
-                     [this]() { m_model->removeItems(m_organiserTree->selectionModel()->selectedIndexes()); });
-    QObject::connect(m_renamePlaylist, &QAction::triggered, this, [this]() {
-        const auto indexes = m_organiserTree->selectionModel()->selectedIndexes();
-        m_organiserTree->edit(indexes.empty() ? QModelIndex{} : indexes.front());
-    });
-    QObject::connect(m_newPlaylist, &QAction::triggered, this, [this]() {
-        const auto indexes = m_organiserTree->selectionModel()->selectedIndexes();
-        createPlaylist(indexes.empty() ? QModelIndex{} : indexes.front(), false);
-    });
-    QObject::connect(m_newAutoPlaylist, &QAction::triggered, this, [this]() {
-        const auto indexes = m_organiserTree->selectionModel()->selectedIndexes();
-        createPlaylist(indexes.empty() ? QModelIndex{} : indexes.front(), true);
-    });
-    QObject::connect(m_editAutoPlaylist, &QAction::triggered, this, [this]() {
-        const auto indexes = m_organiserTree->selectionModel()->selectedIndexes();
-        editAutoPlaylist(indexes.empty() ? QModelIndex{} : indexes.front());
-    });
+    QObject::connect(m_removePlaylist, &QAction::triggered, this, [this]() { m_model->removeItems(actionIndexes()); });
+    QObject::connect(m_renamePlaylist, &QAction::triggered, this, [this]() { m_organiserTree->edit(actionIndex()); });
+    QObject::connect(m_newPlaylist, &QAction::triggered, this, [this]() { createPlaylist(actionIndex(), false); });
+    QObject::connect(m_newAutoPlaylist, &QAction::triggered, this, [this]() { createPlaylist(actionIndex(), true); });
+    QObject::connect(m_editAutoPlaylist, &QAction::triggered, this, [this]() { editAutoPlaylist(actionIndex()); });
 
     QObject::connect(m_model, &QAbstractItemModel::rowsMoved, this,
                      [this](const QModelIndex& /*source*/, int /*first*/, int /*last*/, const QModelIndex& target) {
@@ -438,19 +423,21 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
     Utils::forwardMenuStatusTips(menu);
 
     QObject::connect(menu, &QObject::destroyed, this, [this]() {
+        m_contextMenuIndex = QPersistentModelIndex{};
         m_removePlaylist->setEnabled(true);
         m_renamePlaylist->setEnabled(true);
     });
 
     const QPoint point      = m_organiserTree->viewport()->mapFrom(this, event->pos());
     const QModelIndex index = m_organiserTree->indexAt(point);
+    m_contextMenuIndex      = index;
 
     int playlistCount{0};
     int groupCount{0};
 
-    const auto selected = m_organiserTree->selectionModel()->selectedRows();
-    for(const auto& selectedIndex : selected) {
-        if(selectedIndex.data(PlaylistOrganiserItem::ItemType).toInt() == PlaylistOrganiserItem::PlaylistItem) {
+    const auto actionRows = actionIndexes();
+    for(const auto& actionIndex : actionRows) {
+        if(actionIndex.data(PlaylistOrganiserItem::ItemType).toInt() == PlaylistOrganiserItem::PlaylistItem) {
             ++playlistCount;
         }
         else {
@@ -471,7 +458,7 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
     }
 
     m_removePlaylist->setEnabled(index.isValid());
-    m_renamePlaylist->setEnabled(selected.size() == 1 && index.isValid());
+    m_renamePlaylist->setEnabled(actionRows.size() == 1 && index.isValid());
 
     menu->addAction(m_newPlaylistCmd->action());
     menu->addAction(m_newAutoPlaylistCmd->action());
@@ -511,7 +498,7 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
     menu->addSeparator();
 
     if(playlistCount == 1) {
-        if(auto* playlist = index.data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>()) {
+        if(auto* playlist = actionIndex().data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>()) {
             if(playlist->isAutoPlaylist()) {
                 menu->addAction(m_editAutoPlaylistCmd->action());
             }
@@ -522,6 +509,25 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(m_removeCmd->action());
 
     menu->popup(event->globalPos());
+}
+
+QModelIndex PlaylistOrganiser::actionIndex() const
+{
+    if(m_contextMenuIndex.isValid()) {
+        return m_contextMenuIndex;
+    }
+
+    const auto indexes = actionIndexes();
+    return indexes.empty() ? QModelIndex{} : indexes.front();
+}
+
+QModelIndexList PlaylistOrganiser::actionIndexes() const
+{
+    if(m_contextMenuIndex.isValid()) {
+        return {m_contextMenuIndex};
+    }
+
+    return m_organiserTree->selectionModel()->selectedIndexes();
 }
 
 void PlaylistOrganiser::selectionChanged()
