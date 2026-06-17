@@ -269,6 +269,20 @@ void PlaylistBox::showContextMenu(const QPoint& pos)
     menu->addAction(m_newPlaylistCmd ? m_newPlaylistCmd->action() : m_newPlaylistAction);
     menu->addAction(m_newAutoPlaylistCmd ? m_newAutoPlaylistCmd->action() : m_newAutoPlaylistAction);
 
+    const auto removedPlaylists = m_playlistHandler->removedPlaylists();
+    if(!removedPlaylists.empty()) {
+        auto* restoreMenu = new QMenu(tr("Restore deleted playlist"), menu);
+        for(const auto* removedPlaylist : removedPlaylists) {
+            const UId removedPlaylistId = removedPlaylist->id();
+            auto* restoreAction         = new QAction(removedPlaylist->name(), restoreMenu);
+            QObject::connect(restoreAction, &QAction::triggered, this,
+                             [this, removedPlaylistId]() { m_playlistHandler->restorePlaylist(removedPlaylistId); });
+            restoreMenu->addAction(restoreAction);
+        }
+
+        menu->addMenu(restoreMenu);
+    }
+
     if(auto* playlist = currentPlaylist()) {
         menu->addSeparator();
 
@@ -276,8 +290,8 @@ void PlaylistBox::showContextMenu(const QPoint& pos)
             menu->addAction(m_editAutoPlaylistCmd ? m_editAutoPlaylistCmd->action() : m_editAutoPlaylistAction);
         }
 
-        menu->addAction(m_renameCmd ? m_renameCmd->action() : m_renameAction);
-        menu->addAction(m_removeCmd ? m_removeCmd->action() : m_removeAction);
+        menu->addAction(m_renameCmd->action());
+        menu->addAction(m_removeCmd->action());
     }
 
     menu->popup(m_playlistBox->mapToGlobal(pos));
