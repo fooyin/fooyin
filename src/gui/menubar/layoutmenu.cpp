@@ -46,6 +46,7 @@ LayoutMenu::LayoutMenu(ActionManager* actionManager, LayoutProvider* layoutProvi
     , m_layoutEditingCmd{nullptr}
     , m_lockSplitters{nullptr}
     , m_lockSplittersCmd{nullptr}
+    , m_newLayout{nullptr}
     , m_clearLayout{nullptr}
     , m_resetLayout{nullptr}
     , m_layoutActionGroup{nullptr}
@@ -93,6 +94,12 @@ void LayoutMenu::setup()
     exportLayout->setStatusTip(tr("Save the current layout to the specified file"));
     QObject::connect(exportLayout, &QAction::triggered, this, &LayoutMenu::exportLayout);
 
+    if(!m_newLayout) {
+        m_newLayout = new QAction(tr("&New layout…"), this);
+        m_newLayout->setStatusTip(tr("Create a new layout"));
+        QObject::connect(m_newLayout, &QAction::triggered, this, &LayoutMenu::newLayout);
+    }
+
     if(!m_clearLayout) {
         m_clearLayout = new QAction(tr("&Clear layout"), this);
         m_clearLayout->setStatusTip(tr("Clear the current layout"));
@@ -108,6 +115,7 @@ void LayoutMenu::setup()
     m_layoutMenu->addAction(m_layoutEditingCmd, Actions::Groups::One);
     m_layoutMenu->addAction(m_lockSplittersCmd);
     m_layoutMenu->addSeparator();
+    m_layoutMenu->addAction(m_newLayout);
     m_layoutMenu->addAction(m_clearLayout);
     m_layoutMenu->addAction(m_resetLayout);
     m_layoutMenu->addSeparator();

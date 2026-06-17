@@ -104,7 +104,9 @@
 #include <QFileInfo>
 #include <QImageReader>
 #include <QInputDialog>
+#include <QJsonArray>
 #include <QJsonObject>
+#include <QLineEdit>
 #include <QLoggingCategory>
 #include <QMessageBox>
 #include <QMimeDatabase>
@@ -293,6 +295,25 @@ void GuiApplication::openFiles(const QList<QUrl>& files)
 void GuiApplication::savePlaylist(const UId& playlistId) const
 {
     savePlaylistToFile(m_playlistHandler->playlistById(playlistId));
+}
+
+void Fooyin::GuiApplication::createNewLayout()
+{
+    const QString defaultName = m_layoutProvider->uniqueLayoutName(tr("New Layout"));
+    bool success{false};
+    const QString name = QInputDialog::getText(m_mainWindow.get(), tr("New Layout"), tr("Layout Name") + u":"_s,
+                                               QLineEdit::Normal, defaultName, &success)
+                             .trimmed();
+
+    const QJsonObject layout{
+        {u"Name"_s, name},
+        {u"Version"_s, 1},
+        {u"Widgets"_s, QJsonArray{QJsonObject{{u"Playlist"_s, QJsonObject{}}}}},
+    };
+
+    if(success && !name.isEmpty() && m_layoutProvider->createLayout(name, FyLayout{name, layout})) {
+        m_editableLayout->changeLayout(m_layoutProvider->layoutByName(name));
+    }
 }
 
 void GuiApplication::searchForArtwork(const TrackList& tracks, Track::Cover type, bool quick)
@@ -656,6 +677,7 @@ void GuiApplication::setupConnections()
         }
     });
     QObject::connect(m_layoutMenu, &LayoutMenu::changeLayout, m_editableLayout.get(), &EditableLayout::changeLayout);
+    QObject::connect(m_layoutMenu, &LayoutMenu::newLayout, this, &GuiApplication::createNewLayout);
     QObject::connect(m_layoutMenu, &LayoutMenu::clearLayout, this, [this] {
         const QString name = m_layoutProvider->currentLayout().name();
         QJsonObject layout;

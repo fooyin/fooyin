@@ -46,6 +46,7 @@ public:
 
 Q_SIGNALS:
     void changeLayout(const Fooyin::FyLayout& layout);
+    void newLayout();
     void clearLayout();
     void importLayout();
     void exportLayout();
@@ -64,6 +65,7 @@ private:
     Command* m_layoutEditingCmd;
     QAction* m_lockSplitters;
     Command* m_lockSplittersCmd;
+    QAction* m_newLayout;
     QAction* m_clearLayout;
     QAction* m_resetLayout;
     QActionGroup* m_layoutActionGroup;
