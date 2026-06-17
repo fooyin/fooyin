@@ -347,39 +347,13 @@ void PlaylistPopulatorPrivate::iterateHeader(const Track& track, PlaylistItem*& 
         return;
     }
 
-    const auto& context = makeContext(index, m_trackDepth);
+    const auto& context       = makeContext(index, m_trackDepth);
+    const auto titleScript    = m_parser.evaluate(m_parsedHeader.title, track, context);
+    const auto subtitleScript = m_parser.evaluate(m_parsedHeader.subtitle, track, context);
+    const auto sideScript     = m_parser.evaluate(m_parsedHeader.sideText, track, context);
+    const auto infoScript     = m_parser.evaluate(m_parsedHeader.info, track, context);
 
-    auto evaluateBlocks = [this, &track, &context](const ParsedScript& parsed) -> std::pair<QString, RichText> {
-        const auto evalScript = m_parser.evaluate(parsed, track, context);
-        RichText richText;
-        if(!evalScript.isEmpty()) {
-            richText = m_formatter.evaluate(evalScript);
-        }
-        return {evalScript, std::move(richText)};
-    };
-
-    auto generateHeaderKey = [this, &evaluateBlocks]() {
-        const auto [titleScript, titleText]       = evaluateBlocks(m_parsedHeader.title);
-        const auto [subtitleScript, subtitleText] = evaluateBlocks(m_parsedHeader.subtitle);
-        const auto [sideScript, sideText]         = evaluateBlocks(m_parsedHeader.sideText);
-        const auto [infoScript, infoText]         = evaluateBlocks(m_parsedHeader.info);
-
-        const auto layoutKind = m_currentPreset.header.simple ? PlaylistContainerItem::LayoutKind::SimpleHeader
-                                                              : PlaylistContainerItem::LayoutKind::Header;
-        PlaylistContainerItem header{layoutKind};
-        header.setTitle(titleText);
-        header.setSubtitle(subtitleText);
-        header.setSideText(sideText);
-        header.setInfo(infoText);
-        header.setRowHeight(m_currentPreset.header.rowHeight);
-        header.setScriptIndex(-1);
-        header.calculateSize();
-
-        return std::pair{Utils::generateMd5Hash(titleScript, subtitleScript, sideScript, infoScript),
-                         std::move(header)};
-    };
-
-    const auto [baseKey, headerData] = generateHeaderKey();
+    const auto baseKey = Utils::generateMd5Hash(titleScript, subtitleScript, sideScript, infoScript);
     UId key{UId::create()};
     if(m_prevHeaderKey.isValid() && m_prevBaseHeaderKey == baseKey && index == m_prevIndex + 1) {
         key = m_prevHeaderKey;
@@ -388,11 +362,18 @@ void PlaylistPopulatorPrivate::iterateHeader(const Track& track, PlaylistItem*& 
     m_prevHeaderKey     = key;
 
     if(!m_headers.contains(key)) {
+        const auto layoutKind = m_currentPreset.header.simple ? PlaylistContainerItem::LayoutKind::SimpleHeader
+                                                              : PlaylistContainerItem::LayoutKind::Header;
+        PlaylistContainerItem headerData{layoutKind};
+        headerData.setRowHeight(m_currentPreset.header.rowHeight);
+        headerData.setScriptIndex(-1);
+
         getOrInsertItem(key, PlaylistItem::Header, headerData, parent, baseKey);
         ContainerState state;
         state.itemKey = key;
         m_headers.emplace(key, std::move(state));
     }
+
     auto& headerState = m_headers.at(key);
     headerState.tracks.emplace_back(track);
     m_data.trackParents[track.id()].push_back(key);
@@ -503,7 +484,7 @@ PlaylistItem* PlaylistPopulatorPrivate::iterateTrack(const PlaylistTrack& track,
 
     playlistTrack.setRowHeight(m_currentPreset.track.rowHeight);
     playlistTrack.setDepth(m_trackDepth);
-    playlistTrack.calculateSize();
+    playlistTrack.calculateHeight();
 
     const auto baseKey
         = Utils::generateMd5Hash(parent->key().toString(UId::Id128), track.track.hash(), QString::number(index));

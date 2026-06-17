@@ -102,6 +102,7 @@ public:
     void setDepth(int depth);
     void removeColumn(int column);
 
+    void calculateHeight() const;
     void calculateSize() const;
 
 private:

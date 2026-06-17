@@ -39,6 +39,37 @@ QSize singleLineTrackSize(const RichText& richText)
 
     return blockSize;
 }
+
+int singleLineTrackHeight(const RichText& richText)
+{
+    int height{0};
+
+    for(const auto& block : richText.blocks) {
+        const QFont font = resolvedRichTextFont(block.format, {});
+        const QFontMetrics fm{font};
+        height = std::max(height, fm.height());
+    }
+
+    return std::max(height, QFontMetrics{QFont{}}.height());
+}
+
+int trackExtraLineHeight(const RichText& richText)
+{
+    if(richText.empty()) {
+        return 0;
+    }
+
+    if(!richTextHasLineBreaks(richText)) {
+        return 0;
+    }
+
+    const auto lines = splitRichTextLines(richText);
+    int height{0};
+    for(size_t i{1}; i < lines.size(); ++i) {
+        height += singleLineTrackHeight(lines.at(i));
+    }
+    return height;
+}
 } // namespace
 
 PlaylistContainerItem::PlaylistContainerItem(LayoutKind layoutKind)
@@ -323,6 +354,31 @@ void PlaylistTrackItem::removeColumn(int column)
 
     m_columns.erase(m_columns.cbegin() + column);
     m_sizes.clear();
+}
+
+void PlaylistTrackItem::calculateHeight() const
+{
+    m_sizes.clear();
+
+    if(!m_columns.empty()) {
+        int calculatedHeight{m_rowHeight};
+        if(calculatedHeight <= 0) {
+            for(const auto& column : m_columns) {
+                calculatedHeight = std::max(calculatedHeight, trackExtraLineHeight(column));
+            }
+        }
+
+        m_sizes.reserve(m_columns.size());
+        for(size_t i{0}; i < m_columns.size(); ++i) {
+            m_sizes.emplace_back(0, calculatedHeight);
+        }
+
+        return;
+    }
+
+    const int calculatedHeight
+        = m_rowHeight > 0 ? m_rowHeight : std::max(trackExtraLineHeight(m_left), trackExtraLineHeight(m_right));
+    m_sizes.emplace_back(0, calculatedHeight);
 }
 
 void PlaylistTrackItem::calculateSize() const
