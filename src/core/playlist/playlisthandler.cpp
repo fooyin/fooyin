@@ -1070,6 +1070,9 @@ void PlaylistHandler::removePlaylist(const UId& id)
         return;
     }
 
+    const bool skipRestoreArchive = playlist->name() == "Default"_L1 && playlist->trackCount() == 0
+                                 && playlistCount() == 1 && !playlist->isTemporary();
+
     auto createDefaultIfEmpty = [this]() {
         if(p->noConcretePlaylists()) {
             createPlaylist(u"Default"_s, {});
@@ -1087,10 +1090,13 @@ void PlaylistHandler::removePlaylist(const UId& id)
         Q_EMIT activePlaylistDeleted();
     }
 
-    const int index = p->indexFromName(p->m_playlists, playlist->name());
-    p->m_removedPlaylists.emplace_back(std::move(p->m_playlists.at(index)));
+    const int index      = p->indexFromName(p->m_playlists, playlist->name());
+    auto removedPlaylist = std::move(p->m_playlists.at(index));
     p->m_playlists.erase(p->m_playlists.begin() + index);
-    p->trackPendingRemovedPlaylist(playlist);
+    if(!skipRestoreArchive) {
+        p->m_removedPlaylists.emplace_back(std::move(removedPlaylist));
+        p->trackPendingRemovedPlaylist(playlist);
+    }
 
     p->updateIndices();
 

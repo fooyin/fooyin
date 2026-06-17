@@ -281,7 +281,7 @@ struct PlaylistHandlerHarness
 };
 } // namespace
 
-TEST(PlaylistHandlerTest, RecreatedDefaultCancelsPendingRemovalButRetainsArchivedPointer)
+TEST(PlaylistHandlerTest, RecreatedEmptyDefaultDoesNotAccumulateRestoreHistory)
 {
     ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_default_recreate_test.ini"_s};
@@ -300,12 +300,16 @@ TEST(PlaylistHandlerTest, RecreatedDefaultCancelsPendingRemovalButRetainsArchive
     EXPECT_NE(recreatedDefault, originalDefault);
     EXPECT_NE(recreatedDefault->id(), originalId);
 
-    const auto archived = harness.handler.removedPlaylists();
-    ASSERT_EQ(archived.size(), 1U);
-    EXPECT_EQ(archived.front(), originalDefault);
-    EXPECT_EQ(originalDefault->name(), u"Default"_s);
-    EXPECT_EQ(originalDefault->id(), originalId);
+    EXPECT_TRUE(harness.handler.removedPlaylists().empty());
+    EXPECT_TRUE(harness.handler.pendingRemovedPlaylists().empty());
 
+    const UId recreatedId = recreatedDefault->id();
+    harness.handler.removePlaylist(recreatedId);
+
+    auto* secondRecreatedDefault = harness.handler.playlistByName(u"Default"_s);
+    ASSERT_NE(secondRecreatedDefault, nullptr);
+    EXPECT_NE(secondRecreatedDefault->id(), recreatedId);
+    EXPECT_TRUE(harness.handler.removedPlaylists().empty());
     EXPECT_TRUE(harness.handler.pendingRemovedPlaylists().empty());
 }
 
@@ -336,6 +340,31 @@ TEST(PlaylistHandlerTest, ReaddingSameNameCancelsPendingRemovedExportOnly)
     ASSERT_EQ(archived.size(), 1U);
     EXPECT_EQ(archived.front(), firstPlaylist);
     EXPECT_EQ(firstPlaylist->name(), u"Session A"_s);
+    EXPECT_TRUE(harness.handler.pendingRemovedPlaylists().empty());
+}
+
+TEST(PlaylistHandlerTest, RemovingLastNonEmptyPlaylistKeepsRestoreHistory)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_last_non_empty_restore_test.ini"_s};
+    registerCoreSettings(settings);
+    PlaylistHandlerHarness harness{settings};
+    ASSERT_TRUE(harness.dbInitialised);
+
+    auto* defaultPlaylist = harness.handler.playlistByName(u"Default"_s);
+    ASSERT_NE(defaultPlaylist, nullptr);
+    harness.handler.replacePlaylistTracks(defaultPlaylist->id(), {makeTrack(u"/tmp/default.flac"_s, 1)});
+
+    harness.handler.removePlaylist(defaultPlaylist->id());
+
+    auto* recreatedDefault = harness.handler.playlistByName(u"Default"_s);
+    ASSERT_NE(recreatedDefault, nullptr);
+    EXPECT_NE(recreatedDefault, defaultPlaylist);
+
+    const auto archived = harness.handler.removedPlaylists();
+    ASSERT_EQ(archived.size(), 1U);
+    EXPECT_EQ(archived.front(), defaultPlaylist);
+
     EXPECT_TRUE(harness.handler.pendingRemovedPlaylists().empty());
 }
 
