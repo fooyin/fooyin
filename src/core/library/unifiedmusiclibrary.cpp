@@ -49,6 +49,7 @@ using namespace Qt::StringLiterals;
 
 Q_LOGGING_CATEGORY(LIBRARY, "fy.library")
 
+namespace Fooyin {
 namespace {
 enum class LibraryTrackUpdateType : uint8_t
 {
@@ -56,21 +57,21 @@ enum class LibraryTrackUpdateType : uint8_t
     Stats,
 };
 
-int updatedTrackCount(const Fooyin::TrackList& tracks)
+int updatedTrackCount(const TrackList& tracks)
 {
-    return static_cast<int>(std::ranges::count_if(
-        tracks, [](const Fooyin::Track& track) { return track.isEnabled() && track.isInLibrary(); }));
+    return static_cast<int>(
+        std::ranges::count_if(tracks, [](const Track& track) { return track.isEnabled() && track.isInLibrary(); }));
 }
 
-int removedTrackCount(const Fooyin::TrackList& tracks)
+int removedTrackCount(const TrackList& tracks)
 {
-    return static_cast<int>(std::ranges::count_if(
-        tracks, [](const Fooyin::Track& track) { return !track.isEnabled() || !track.isInLibrary(); }));
+    return static_cast<int>(
+        std::ranges::count_if(tracks, [](const Track& track) { return !track.isEnabled() || !track.isInLibrary(); }));
 }
 
-void logScanSummary(int id, const Fooyin::ScanRequest::Type type, const Fooyin::ScanSummaryCounts& summary)
+void logScanSummary(int id, const ScanRequest::Type type, const ScanSummaryCounts& summary)
 {
-    if(type != Fooyin::ScanRequest::Library || id < 0) {
+    if(type != ScanRequest::Library || id < 0) {
         return;
     }
 
@@ -78,10 +79,9 @@ void logScanSummary(int id, const Fooyin::ScanRequest::Type type, const Fooyin::
                     << "updated=" << summary.updated << "removed=" << summary.removed;
 }
 
-Fooyin::Track mergeTrackUpdate(const Fooyin::Track& currentTrack, const Fooyin::Track& updatedTrack,
-                               LibraryTrackUpdateType updateType)
+Track mergeTrackUpdate(const Track& currentTrack, const Track& updatedTrack, LibraryTrackUpdateType updateType)
 {
-    Fooyin::Track mergedTrack{currentTrack};
+    Track mergedTrack{currentTrack};
 
     switch(updateType) {
         case LibraryTrackUpdateType::Availability:
@@ -99,9 +99,84 @@ Fooyin::Track mergeTrackUpdate(const Fooyin::Track& currentTrack, const Fooyin::
     return mergedTrack;
 }
 
+struct TrackPathKey
+{
+    QString filepath;
+    int subsong;
+
+    bool operator==(const TrackPathKey& other) const = default;
+};
+
+struct TrackPathKeyHash
+{
+    size_t operator()(const TrackPathKey& key) const
+    {
+        return qHashMulti(0, key.filepath, key.subsong);
+    }
+};
+
+TrackPathKey trackPathKey(const Track& track)
+{
+    return {.filepath = track.uniqueFilepath(), .subsong = track.subsong()};
+}
+
+class TrackLookup
+{
+public:
+    explicit TrackLookup(const TrackList& tracks)
+    {
+        m_byId.reserve(tracks.size());
+        m_byPath.reserve(tracks.size());
+        m_byPathWithoutId.reserve(tracks.size());
+
+        for(size_t i{0}; i < tracks.size(); ++i) {
+            add(tracks.at(i), i);
+        }
+    }
+
+    void add(const Track& track, size_t index)
+    {
+        m_byId.emplace(track.id(), index);
+
+        if(track.id() < 0) {
+            m_byPathWithoutId.emplace(trackPathKey(track), index);
+        }
+        m_byPath.emplace(trackPathKey(track), index);
+    }
+
+    std::optional<size_t> findForAdd(const Track& track) const
+    {
+        if(track.id() >= 0) {
+            if(const auto it = m_byId.find(track.id()); it != m_byId.cend()) {
+                return it->second;
+            }
+            if(const auto it = m_byPathWithoutId.find(trackPathKey(track)); it != m_byPathWithoutId.cend()) {
+                return it->second;
+            }
+            return {};
+        }
+
+        if(const auto it = m_byPath.find(trackPathKey(track)); it != m_byPath.cend()) {
+            return it->second;
+        }
+
+        return {};
+    }
+
+    std::optional<size_t> findById(const Track& track) const
+    {
+        const auto it = m_byId.find(track.id());
+        return it != m_byId.cend() ? std::optional{it->second} : std::nullopt;
+    }
+
+private:
+    std::unordered_map<int, size_t> m_byId;
+    std::unordered_map<TrackPathKey, size_t, TrackPathKeyHash> m_byPath;
+    std::unordered_map<TrackPathKey, size_t, TrackPathKeyHash> m_byPathWithoutId;
+};
+
 } // namespace
 
-namespace Fooyin {
 class UnifiedMusicLibraryPrivate
 {
 public:
@@ -333,17 +408,7 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitAddTracks(TrackList newTracks)
     attachMetadataStore(newTracks);
 
     const TrackList sortedTracks = co_await sortTracks(librarySortScript(), std::move(newTracks));
-
-    const auto findExistingTrack = [this](const Track& track) {
-        return std::ranges::find_if(m_tracks, [&track](const Track& existingTrack) {
-            if(track.id() >= 0 && existingTrack.id() >= 0) {
-                return existingTrack.id() == track.id();
-            }
-
-            return existingTrack.uniqueFilepath() == track.uniqueFilepath()
-                && existingTrack.subsong() == track.subsong();
-        });
-    };
+    TrackLookup lookup{m_tracks};
 
     TrackList addedTracks;
     addedTracks.reserve(sortedTracks.size());
@@ -351,13 +416,14 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitAddTracks(TrackList newTracks)
     updatedTracks.reserve(sortedTracks.size());
 
     for(const Track& track : sortedTracks) {
-        if(auto it = findExistingTrack(track); it != m_tracks.end()) {
-            *it = track;
-            it->clearWasModified();
+        if(const auto index = lookup.findForAdd(track)) {
+            m_tracks.at(*index) = track;
+            m_tracks.at(*index).clearWasModified();
             updatedTracks.emplace_back(track);
         }
         else {
             addedTracks.push_back(track);
+            lookup.add(track, m_tracks.size());
             m_tracks.push_back(track);
         }
     }
@@ -376,12 +442,12 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitAddTracks(TrackList newTracks)
 
 void UnifiedMusicLibraryPrivate::updateLibraryTracks(const TrackList& updatedTracks)
 {
+    const TrackLookup lookup{m_tracks};
+
     for(const auto& track : updatedTracks) {
-        auto trackIt
-            = std::ranges::find_if(m_tracks, [&track](const Track& oldTrack) { return oldTrack.id() == track.id(); });
-        if(trackIt != m_tracks.end()) {
-            *trackIt = track;
-            trackIt->clearWasModified();
+        if(const auto index = lookup.findById(track)) {
+            m_tracks.at(*index) = track;
+            m_tracks.at(*index).clearWasModified();
         }
     }
 }
@@ -437,11 +503,11 @@ TrackList UnifiedMusicLibraryPrivate::mergeTrackUpdates(const TrackList& tracksT
     TrackList mergedTracks;
     mergedTracks.reserve(tracksToUpdate.size());
 
+    TrackLookup lookup{m_tracks};
+
     for(const auto& track : tracksToUpdate) {
-        auto trackIt
-            = std::ranges::find_if(m_tracks, [&track](const Track& oldTrack) { return oldTrack.id() == track.id(); });
-        if(trackIt != m_tracks.end()) {
-            mergedTracks.emplace_back(mergeTrackUpdate(*trackIt, track, updateType));
+        if(const auto index = lookup.findById(track)) {
+            mergedTracks.emplace_back(mergeTrackUpdate(m_tracks.at(*index), track, updateType));
         }
         else {
             mergedTracks.emplace_back(track);
