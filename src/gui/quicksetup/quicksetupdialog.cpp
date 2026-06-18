@@ -19,8 +19,10 @@
 
 #include "quicksetupdialog.h"
 
+#include "playlist/playlistwidget.h"
 #include "playlist/presetregistry.h"
 
+#include <gui/editablelayout.h>
 #include <gui/guisettings.h>
 #include <gui/layoutprovider.h>
 #include <gui/theme/themeregistry.h>
@@ -38,15 +40,18 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 QuickSetupDialog::QuickSetupDialog(LayoutProvider* layoutProvider, ThemeRegistry* themeRegistry,
-                                   PresetRegistry* presetRegistry, SettingsManager* settings, QWidget* parent)
+                                   PresetRegistry* presetRegistry, EditableLayout* editableLayout,
+                                   SettingsManager* settings, QWidget* parent)
     : QDialog{parent}
     , m_layoutProvider{layoutProvider}
     , m_themeRegistry{themeRegistry}
     , m_presetRegistry{presetRegistry}
+    , m_editableLayout{editableLayout}
     , m_settings{settings}
     , m_layoutList{new QListWidget(this)}
     , m_themeList{new QListWidget(this)}
     , m_playlistPresetList{new QListWidget(this)}
+    , m_playlistPresetGroup{new QGroupBox(tr("Playlist Layout"), this)}
     , m_accept{new QPushButton(tr("OK"), this)}
 {
     setObjectName(u"Quick Setup"_s);
@@ -63,8 +68,7 @@ QuickSetupDialog::QuickSetupDialog(LayoutProvider* layoutProvider, ThemeRegistry
     auto* themeGroupLayout = new QGridLayout(themeGroup);
     themeGroupLayout->addWidget(m_themeList, 0, 0);
 
-    auto* presetGroup       = new QGroupBox(tr("Playlist Layout"), this);
-    auto* presetGroupLayout = new QGridLayout(presetGroup);
+    auto* presetGroupLayout = new QGridLayout(m_playlistPresetGroup);
     presetGroupLayout->addWidget(m_playlistPresetList, 0, 0);
 
     auto* buttons = new QDialogButtonBox(this);
@@ -74,7 +78,7 @@ QuickSetupDialog::QuickSetupDialog(LayoutProvider* layoutProvider, ThemeRegistry
     int row{0};
     layout->addWidget(layoutGroup, row, 0, 2, 1);
     layout->addWidget(themeGroup, row++, 1);
-    layout->addWidget(presetGroup, row++, 1);
+    layout->addWidget(m_playlistPresetGroup, row++, 1);
     layout->addWidget(buttons, row++, 0, 1, 2);
 
     m_layoutList->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -89,6 +93,9 @@ QuickSetupDialog::QuickSetupDialog(LayoutProvider* layoutProvider, ThemeRegistry
     QObject::connect(m_themeList, &QListWidget::currentItemChanged, this, &QuickSetupDialog::changeTheme);
     QObject::connect(m_playlistPresetList, &QListWidget::currentItemChanged, this,
                      &QuickSetupDialog::changePlaylistPreset);
+
+    const auto playlists = m_editableLayout->findWidgetsByType<PlaylistWidget>();
+    m_playlistPresetGroup->setEnabled(!playlists.empty());
 }
 
 QSize QuickSetupDialog::sizeHint() const
@@ -153,9 +160,14 @@ void QuickSetupDialog::changeLayout()
 
     const QString name = m_layoutList->currentItem()->data(Id).toString();
     const auto layout  = m_layoutProvider->layoutByName(name);
-    if(layout.isValid()) {
-        Q_EMIT layoutChanged(layout);
+    if(!layout.isValid()) {
+        return;
     }
+
+    m_editableLayout->changeLayout(layout);
+
+    const auto playlists = m_editableLayout->findWidgetsByType<PlaylistWidget>();
+    m_playlistPresetGroup->setEnabled(!playlists.empty());
 }
 
 void QuickSetupDialog::changeTheme()
@@ -166,12 +178,12 @@ void QuickSetupDialog::changeTheme()
 
     const int id = m_themeList->currentItem()->data(Id).toInt();
     if(id < 0) {
-        Q_EMIT systemThemeRequested();
+        m_settings->reset<Settings::Gui::CustomTheme>();
         return;
     }
 
     if(const auto theme = m_themeRegistry->itemById(id)) {
-        Q_EMIT themeChanged(theme.value());
+        m_settings->set<Settings::Gui::CustomTheme>(QVariant::fromValue(theme.value()));
     }
 }
 
@@ -183,7 +195,12 @@ void QuickSetupDialog::changePlaylistPreset()
 
     const int id = m_playlistPresetList->currentItem()->data(Id).toInt();
     if(const auto preset = m_presetRegistry->itemById(id)) {
-        Q_EMIT playlistPresetChanged(preset.value());
+        const auto playlists = m_editableLayout->findWidgetsByType<PlaylistWidget>();
+        for(auto* playlist : playlists) {
+            if(playlist) {
+                playlist->changePreset(preset.value());
+            }
+        }
     }
 }
 } // namespace Fooyin

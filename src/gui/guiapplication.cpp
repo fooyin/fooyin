@@ -1408,25 +1408,10 @@ void GuiApplication::showPlaylistManager()
 
 void GuiApplication::showQuickSetup()
 {
-    auto* quickSetup = new QuickSetupDialog(m_layoutProvider.get(), m_themeRegistry,
-                                            m_playlistController->presetRegistry(), m_settings, m_mainWindow.get());
+    auto* quickSetup
+        = new QuickSetupDialog(m_layoutProvider.get(), m_themeRegistry, m_playlistController->presetRegistry(),
+                               m_editableLayout.get(), m_settings, m_mainWindow.get());
     quickSetup->setAttribute(Qt::WA_DeleteOnClose);
-
-    QObject::connect(quickSetup, &QuickSetupDialog::layoutChanged, m_editableLayout.get(),
-                     &EditableLayout::changeLayout);
-    QObject::connect(quickSetup, &QuickSetupDialog::systemThemeRequested, this,
-                     [this] { m_settings->reset<Settings::Gui::CustomTheme>(); });
-    QObject::connect(quickSetup, &QuickSetupDialog::themeChanged, this, [this](const FyTheme& theme) {
-        m_settings->set<Settings::Gui::CustomTheme>(QVariant::fromValue(theme));
-    });
-    QObject::connect(quickSetup, &QuickSetupDialog::playlistPresetChanged, this, [this](const PlaylistPreset& preset) {
-        const auto playlists = m_editableLayout->findWidgetsByType<PlaylistWidget>();
-        for(auto* playlist : playlists) {
-            if(playlist) {
-                playlist->changePreset(preset);
-            }
-        }
-    });
 
     quickSetup->show();
 }

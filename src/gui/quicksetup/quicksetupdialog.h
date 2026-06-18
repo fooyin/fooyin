@@ -23,12 +23,11 @@
 
 class QListWidget;
 class QPushButton;
+class QGroupBox;
 
 namespace Fooyin {
-class FyLayout;
-struct FyTheme;
+class EditableLayout;
 class LayoutProvider;
-struct PlaylistPreset;
 class PresetRegistry;
 class SettingsManager;
 class ThemeRegistry;
@@ -39,15 +38,10 @@ class QuickSetupDialog : public QDialog
 
 public:
     explicit QuickSetupDialog(LayoutProvider* layoutProvider, ThemeRegistry* themeRegistry,
-                              PresetRegistry* presetRegistry, SettingsManager* settings, QWidget* parent = nullptr);
+                              PresetRegistry* presetRegistry, EditableLayout* editableLayout, SettingsManager* settings,
+                              QWidget* parent = nullptr);
 
     [[nodiscard]] QSize sizeHint() const override;
-
-Q_SIGNALS:
-    void layoutChanged(const Fooyin::FyLayout& layout);
-    void systemThemeRequested();
-    void themeChanged(const Fooyin::FyTheme& theme);
-    void playlistPresetChanged(const Fooyin::PlaylistPreset& preset);
 
 private:
     enum ItemRole
@@ -65,11 +59,13 @@ private:
     LayoutProvider* m_layoutProvider;
     ThemeRegistry* m_themeRegistry;
     PresetRegistry* m_presetRegistry;
+    EditableLayout* m_editableLayout;
     SettingsManager* m_settings;
 
     QListWidget* m_layoutList;
     QListWidget* m_themeList;
     QListWidget* m_playlistPresetList;
+    QGroupBox* m_playlistPresetGroup;
     QPushButton* m_accept;
 };
 } // namespace Fooyin
