@@ -238,16 +238,23 @@ bool TrackDatabase::reloadTrack(Track& track) const
 
 bool TrackDatabase::reloadTracks(TrackList& tracks) const
 {
-    static const QString statement
-        = u"SELECT %1 FROM TracksView WHERE TrackID IN (:trackIds);"_s.arg(fetchTrackColumns());
+    if(tracks.empty()) {
+        return true;
+    }
+
+    QStringList placeholders;
+    placeholders.reserve(static_cast<qsizetype>(tracks.size()));
+    for(size_t i{0}; i < tracks.size(); ++i) {
+        placeholders.emplace_back(u":trackId%1"_s.arg(i));
+    }
+
+    const QString statement
+        = u"SELECT %1 FROM TracksView WHERE TrackID IN (%2);"_s.arg(fetchTrackColumns(), placeholders.join(u','));
 
     DbQuery q{db(), statement};
-
-    QStringList trackIds;
-    std::transform(tracks.cbegin(), tracks.cend(), std::back_inserter(trackIds),
-                   [](const Track& track) { return QString::number(track.id()); });
-
-    q.bindValue(u":trackIds"_s, trackIds);
+    for(size_t i{0}; i < tracks.size(); ++i) {
+        q.bindValue(placeholders.at(static_cast<qsizetype>(i)), tracks.at(i).id());
+    }
 
     if(!q.exec()) {
         return false;

@@ -168,10 +168,22 @@ bool WaveBarDatabase::removeFromCache(const QString& key) const
 
 bool WaveBarDatabase::removeFromCache(const QStringList& keys) const
 {
-    const QString statement = u"DELETE FROM WaveCache WHERE TrackKey IN (:keys);"_s;
+    if(keys.empty()) {
+        return true;
+    }
+
+    QStringList placeholders;
+    placeholders.reserve(keys.size());
+    for(qsizetype i{0}; i < keys.size(); ++i) {
+        placeholders.emplace_back(u":key%1"_s.arg(i));
+    }
+
+    const QString statement = u"DELETE FROM WaveCache WHERE TrackKey IN (%1);"_s.arg(placeholders.join(u','));
 
     DbQuery query{db(), statement};
-    query.bindValue(u":keys"_s, keys);
+    for(qsizetype i{0}; i < keys.size(); ++i) {
+        query.bindValue(placeholders.at(i), keys.at(i));
+    }
 
     return query.exec();
 }
