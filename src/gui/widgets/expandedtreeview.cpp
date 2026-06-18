@@ -34,6 +34,7 @@
 #include <QTimer>
 #include <QWheelEvent>
 
+#include <algorithm>
 #include <set>
 
 using namespace Qt::StringLiterals;
@@ -2823,10 +2824,46 @@ bool ExpandedTreeViewPrivate::isIndexDropEnabled(const QModelIndex& index) const
     return m_model->flags(index) & Qt::ItemIsDropEnabled;
 }
 
+bool ExpandedTreeViewPrivate::isRowSelected(const QModelIndex& index) const
+{
+    if(!index.isValid()) {
+        return false;
+    }
+
+    const QModelIndex parent = index.parent();
+    const int row            = index.row();
+
+    const auto selection = m_self->selectionModel()->selection();
+    return std::ranges::any_of(selection, [&](const auto& range) {
+        return range.isValid() && range.parent() == parent && row >= range.top() && row <= range.bottom();
+    });
+}
+
 QModelIndexList ExpandedTreeViewPrivate::selectedDraggableIndexes(bool fullRow) const
 {
-    QModelIndexList indexes
-        = fullRow ? m_self->selectionModel()->selectedRows(m_header->logicalIndex(0)) : m_self->selectedIndexes();
+    QModelIndexList indexes;
+
+    if(fullRow) {
+        const auto selection = m_self->selectionModel()->selection();
+        for(const QItemSelectionRange& range : selection) {
+            if(!range.isValid()) {
+                continue;
+            }
+
+            const QModelIndex parent = range.parent();
+            const int column         = std::max(0, firstVisibleColumn(parent));
+
+            for(int row{range.top()}; row <= range.bottom(); ++row) {
+                const QModelIndex index = m_model->index(row, column, parent);
+                if(index.isValid() && !indexes.contains(index)) {
+                    indexes.append(index);
+                }
+            }
+        }
+    }
+    else {
+        indexes = m_self->selectedIndexes();
+    }
 
     auto isNotDragEnabled = [this](const QModelIndex& index) {
         return !(m_model->flags(index) & Qt::ItemIsDragEnabled);
@@ -3803,7 +3840,7 @@ void ExpandedTreeView::mousePressEvent(QMouseEvent* event)
     }
 
     if(p->m_selectBeforeDrag && !model()->hasChildren(modelIndex)) {
-        setDragEnabled(selectModel->isSelected(modelIndex)); // Prevent drag-and-drop when first selecting leafs
+        setDragEnabled(p->isRowSelected(modelIndex)); // Prevent drag-and-drop when first selecting leafs
         QAbstractItemView::mousePressEvent(event);
         return;
     }

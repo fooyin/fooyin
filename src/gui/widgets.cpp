@@ -441,7 +441,7 @@ void Widgets::registerAdvancedSettings()
     advancedSettingsRegistry->add<Settings::Gui::Internal::EditingMenuLevels>(
         {.category    = {tr("Interface"), tr("Layout Editing")},
          .label       = tr("Menu levels"),
-         .description = tr("Number of widget levels shown in the layout editing context menu."),
+         .description = tr("Number of widget levels shown in the layout editing context menu"),
          .editor
          = AdvancedSettingSpinBox{.minimum = 1, .maximum = 4, .singleStep = 1, .suffix = {}, .specialValueText = {}},
          .normalise = {},
@@ -449,7 +449,14 @@ void Widgets::registerAdvancedSettings()
     advancedSettingsRegistry->add<Settings::Gui::SeekBarMouseFocus>(
         {.category    = {tr("Interface"), tr("Seeking")},
          .label       = tr("Focus seekbars when clicked"),
-         .description = tr("Give seekbars keyboard focus after clicking them."),
+         .description = tr("Give seekbars keyboard focus after clicking them"),
+         .editor      = AdvancedSettingCheckBox{},
+         .normalise   = {},
+         .validate    = {}});
+    advancedSettingsRegistry->add<Settings::Gui::DragOnlyAfterSelect>(
+        {.category    = {tr("Interface"), tr("Selection")},
+         .label       = tr("Drag only after selecting"),
+         .description = tr("Require a row to be selected before it can be dragged from item views"),
          .editor      = AdvancedSettingCheckBox{},
          .normalise   = {},
          .validate    = {}});
@@ -479,7 +486,7 @@ void Widgets::registerAdvancedSettings()
     advancedSettingsRegistry->add<Settings::Core::Internal::RemoteBufferLengthMs>(
         {.category    = {tr("Playback"), tr("Buffering")},
          .label       = tr("Buffer length for remote streams"),
-         .description = tr("Maximum decoded audio buffered for remote streams."),
+         .description = tr("Maximum decoded audio buffered for remote streams"),
          .editor      = AdvancedSettingSpinBox{.minimum          = 2000,
                                                .maximum          = 30000,
                                                .singleStep       = 500,
@@ -502,7 +509,7 @@ void Widgets::registerAdvancedSettings()
     advancedSettingsRegistry->add<Settings::Core::Internal::RemoteOpenTimeoutMs>(
         {.category    = {tr("Playback"), tr("Buffering")},
          .label       = tr("Open timeout for remote streams"),
-         .description = tr("Maximum time spent opening and probing remote streams."),
+         .description = tr("Maximum time spent opening and probing remote streams"),
          .editor      = AdvancedSettingSpinBox{.minimum          = 1000,
                                                .maximum          = 120000,
                                                .singleStep       = 1000,
@@ -528,7 +535,7 @@ void Widgets::registerAdvancedSettings()
     advancedSettingsRegistry->add<Settings::Core::PreserveTimestamps>(
         {.category    = {tr("Tagging")},
          .label       = tr("Preserve timestamps"),
-         .description = tr("Preserve file access and modification timestamps when updating tags."),
+         .description = tr("Preserve file access and modification timestamps when updating tags"),
          .editor      = AdvancedSettingCheckBox{},
          .normalise   = {},
          .validate    = {}});
@@ -553,7 +560,7 @@ void Widgets::registerAdvancedSettings()
         {.id           = QString::fromLatin1(Settings::Core::Internal::FFmpegAllExtensions),
          .category     = {tr("Playback"), tr("Decoding"), u"FFmpeg"_s},
          .label        = tr("Enable all supported extensions"),
-         .description  = tr("Enabled all extensions supported by the FFmpeg input."),
+         .description  = tr("Enabled all extensions supported by the FFmpeg input"),
          .defaultValue = false,
          .editor       = AdvancedSettingCheckBox{},
          .read = [this] { return m_settings->fileValue(Settings::Core::Internal::FFmpegAllExtensions).toBool(); },
@@ -591,7 +598,7 @@ void Widgets::registerAdvancedSettings()
     advancedSettingsRegistry->add<Settings::Core::Internal::OpusHeaderWriteMode>(
         {.category    = {tr("Playback"), tr("ReplayGain")},
          .label       = tr("Opus header gain"),
-         .description = tr("ReplayGain value written to the Opus header when updating metadata."),
+         .description = tr("ReplayGain value written to the Opus header when updating metadata"),
          .editor      = AdvancedSettingRadioButtons{.options = {{.value = static_cast<int>(OpusRGWriteMode::Track),
                                                                  .label = tr("Use Track Gain")},
                                                                 {.value = static_cast<int>(OpusRGWriteMode::Album),

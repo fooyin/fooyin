@@ -141,7 +141,8 @@ FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* c
     m_view->setDropIndicatorShown(true);
     m_view->setUniformRowHeights(false);
     m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
-    m_view->setSelectBeforeDrag(true);
+    m_view->setSelectBeforeDrag(m_settings->value<Settings::Gui::DragOnlyAfterSelect>());
+    m_settings->subscribe<Settings::Gui::DragOnlyAfterSelect>(m_view, &FilterView::setSelectBeforeDrag);
 
     m_header->setStretchEnabled(true);
     m_header->setSortIndicatorShown(true);

@@ -747,6 +747,8 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     m_playlistView->setItemDelegate(m_delgate);
     m_playlistView->viewport()->setAcceptDrops(modeCaps.editablePlaylist);
     m_playlistView->viewport()->installEventFilter(new ToolTipFilter(this));
+    m_playlistView->setSelectBeforeDrag(m_settings->value<Settings::Gui::DragOnlyAfterSelect>());
+    m_settings->subscribe<Settings::Gui::DragOnlyAfterSelect>(m_playlistView, &PlaylistView::setSelectBeforeDrag);
 
     QObject::connect(m_searchController, &PlaylistSearchController::playCurrentRequested, this,
                      &PlaylistWidget::startPlayback);

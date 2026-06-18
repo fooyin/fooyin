@@ -201,6 +201,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::ArtworkDownloadThumbSize>(150, u"Artwork/DownloadThumbSize"_s);
     m_settings->createSetting<Internal::ImageAllocationLimit>(QImageReader::allocationLimit(),
                                                               u"Interface/ImageAllocationLimit"_s);
+    m_settings->createSetting<DragOnlyAfterSelect>(true, u"Interface/DragOnlyAfterSelect"_s);
     m_settings->createSetting<Internal::PlaylistTrackPreloadCount>(2000, u"Playlist/TrackPreloadCount"_s);
     m_settings->createSetting<Internal::PlaylistInlineTagEditing>(false, u"PlaylistWidget/InlineTagEditing"_s);
     m_settings->createSetting<Internal::ContextMenuTrackDisabledSections>(

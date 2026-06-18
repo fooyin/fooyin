@@ -106,6 +106,7 @@ public:
     [[nodiscard]] QModelIndex iconItemIndex(const QModelIndex& index) const;
 
     bool isIndexDropEnabled(const QModelIndex& index) const;
+    bool isRowSelected(const QModelIndex& index) const;
     QModelIndexList selectedDraggableIndexes(bool fullRow = false) const;
     bool shouldAutoScroll() const;
     void startAutoScroll();
