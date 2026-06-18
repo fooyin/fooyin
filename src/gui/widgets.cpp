@@ -114,6 +114,7 @@
 #include <gui/theme/themeregistry.h>
 #include <gui/widgetprovider.h>
 #include <utils/settings/advancedsettingsregistry.h>
+#include <utils/stringutils.h>
 
 using namespace Qt::StringLiterals;
 
@@ -531,6 +532,15 @@ void Widgets::registerAdvancedSettings()
          .editor      = AdvancedSettingCheckBox{},
          .normalise   = {},
          .validate    = {}});
+    advancedSettingsRegistry->add(
+        Utils::PreferredFallbackEncodingSetting, QString{},
+        {.category    = {tr("General"), tr("Text Encoding")},
+         .label       = tr("Preferred fallback encoding"),
+         .description = tr("Encoding preferred when the best automatic match is Latin-compatible single-byte text"),
+         .editor = AdvancedSettingRadioButtons{.options = {{.value = QString{}, .label = tr("Auto")},
+                                                           {.value = u"windows-1251"_s, .label = u"Windows-1251"_s}}},
+         .normalise = {},
+         .validate  = {}});
     advancedSettingsRegistry->add(
         Settings::Core::Internal::SplitId3v23SemicolonSeparatedTags, true,
         {.category    = {tr("Tagging"), u"ID3"_s},

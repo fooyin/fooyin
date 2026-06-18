@@ -19,6 +19,7 @@
 
 #include <core/playlist/playlistparser.h>
 
+#include <core/coresettings.h>
 #include <utils/stringutils.h>
 
 #include <QFileInfo>
@@ -28,6 +29,15 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
+namespace {
+Utils::DetectEncodingOptions detectEncodingOptions()
+{
+    const FySettings settings;
+    return {.preferredFallbackEncoding
+            = settings.value(QString::fromLatin1(Utils::PreferredFallbackEncodingSetting)).toString().toLatin1()};
+}
+} // namespace
+
 size_t PlaylistParser::countEntries(QIODevice* /*device*/, const QString& /*filepath*/, const QDir& /*dir*/) const
 {
     return 0;
@@ -77,7 +87,7 @@ QByteArray PlaylistParser::toUtf8(QIODevice* file)
         toUtf16 = QStringDecoder{encoding.value()};
     }
     else {
-        const auto encodingName = Utils::detectEncoding(data);
+        const auto encodingName = Utils::detectEncoding(data, detectEncodingOptions());
         if(encodingName.isEmpty()) {
             return {};
         }

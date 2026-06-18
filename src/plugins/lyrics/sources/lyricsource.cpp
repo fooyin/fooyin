@@ -19,6 +19,7 @@
 
 #include "lyricsource.h"
 
+#include <core/coresettings.h>
 #include <utils/stringutils.h>
 
 #include <QIODevice>
@@ -32,6 +33,15 @@ Q_LOGGING_CATEGORY(LYRICS, "fy.lyrics")
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::Lyrics {
+namespace {
+Utils::DetectEncodingOptions detectEncodingOptions()
+{
+    const FySettings settings;
+    return {.preferredFallbackEncoding
+            = settings.value(QString::fromLatin1(Utils::PreferredFallbackEncodingSetting)).toString().toLatin1()};
+}
+} // namespace
+
 LyricSource::LyricSource(NetworkAccessManager* network, SettingsManager* settings, int index, bool enabled,
                          QObject* parent)
     : QObject{parent}
@@ -90,7 +100,7 @@ QString LyricSource::toUtf8(QIODevice* file)
         toUtf16 = QStringDecoder{encoding.value()};
     }
     else {
-        const auto encodingName = Utils::detectEncoding(data);
+        const auto encodingName = Utils::detectEncoding(data, detectEncodingOptions());
         if(encodingName.isEmpty()) {
             return {};
         }

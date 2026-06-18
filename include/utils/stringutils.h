@@ -21,6 +21,7 @@
 
 #include "fyutils_export.h"
 
+#include <QByteArray>
 #include <QString>
 
 #include <chrono>
@@ -30,11 +31,18 @@ class QJsonValue;
 class QKeySequence;
 
 namespace Fooyin::Utils {
+constexpr auto PreferredFallbackEncodingSetting = "Encoding/PreferredFallbackEncoding";
+
+struct DetectEncodingOptions
+{
+    QByteArray preferredFallbackEncoding;
+};
+
 FYUTILS_EXPORT QString readMultiLineString(const QJsonValue& value);
 FYUTILS_EXPORT QString elideTextWithBreaks(const QString& text, const QFontMetrics& fontMetrics, int maxWidth,
                                            Qt::TextElideMode mode);
 FYUTILS_EXPORT QString capitalise(const QString& str);
-FYUTILS_EXPORT QByteArray detectEncoding(const QByteArray& content);
+FYUTILS_EXPORT QByteArray detectEncoding(const QByteArray& content, const DetectEncodingOptions& options = {});
 FYUTILS_EXPORT QString foldForSearch(QStringView text);
 
 FYUTILS_EXPORT QString msToString(std::chrono::milliseconds ms, bool includeMs);

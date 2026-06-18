@@ -19,6 +19,7 @@
 
 #include "artworksource.h"
 
+#include <core/coresettings.h>
 #include <utils/stringutils.h>
 #include <utils/utils.h>
 
@@ -39,6 +40,14 @@ using namespace Qt::StringLiterals;
 constexpr auto MaxSize = 1024;
 
 namespace {
+Fooyin::Utils::DetectEncodingOptions detectEncodingOptions()
+{
+    const Fooyin::FySettings settings;
+    return {
+        .preferredFallbackEncoding
+        = settings.value(QString::fromLatin1(Fooyin::Utils::PreferredFallbackEncodingSetting)).toString().toLatin1()};
+}
+
 QSize calculateScaledSize(const QSize& originalSize, int maxSize)
 {
     int newWidth{0};
@@ -174,7 +183,7 @@ QString ArtworkSource::toUtf8(QIODevice* file)
         toUtf16 = QStringDecoder{encoding.value()};
     }
     else {
-        const auto encodingName = Utils::detectEncoding(data);
+        const auto encodingName = Utils::detectEncoding(data, detectEncodingOptions());
         if(encodingName.isEmpty()) {
             return {};
         }

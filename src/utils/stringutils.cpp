@@ -25,9 +25,45 @@
 #include <QKeySequence>
 #include <algorithm>
 
+#include <unicode/ucnv.h>
 #include <unicode/ucsdet.h>
 
 using namespace Qt::StringLiterals;
+
+namespace {
+bool isEncoding(const QByteArray& encoding, const char* name)
+{
+    return encoding.compare(name, Qt::CaseInsensitive) == 0;
+}
+
+bool isLatinEncoding(const QByteArray& encoding)
+{
+    return encoding.startsWith("ISO-8859-") || isEncoding(encoding, "windows-1252");
+}
+
+bool canDecode(const QByteArray& encoding, const QByteArray& content)
+{
+    UErrorCode status{U_ZERO_ERROR};
+    UConverter* converter = ucnv_open(encoding.constData(), &status);
+    if(U_FAILURE(status) || !converter) {
+        return false;
+    }
+
+    UConverterToUCallback oldAction{nullptr};
+    const void* oldContext{nullptr};
+    ucnv_setToUCallBack(converter, UCNV_TO_U_CALLBACK_STOP, nullptr, &oldAction, &oldContext, &status);
+    if(U_FAILURE(status)) {
+        ucnv_close(converter);
+        return false;
+    }
+
+    status = U_ZERO_ERROR;
+    ucnv_toUChars(converter, nullptr, 0, content.constData(), static_cast<int32_t>(content.size()), &status);
+    ucnv_close(converter);
+
+    return U_SUCCESS(status) || status == U_BUFFER_OVERFLOW_ERROR;
+}
+} // namespace
 
 namespace Fooyin::Utils {
 QString readMultiLineString(const QJsonValue& value)
@@ -78,19 +114,51 @@ QString capitalise(const QString& str)
     return capitalised;
 }
 
-QByteArray detectEncoding(const QByteArray& content)
+QByteArray detectEncoding(const QByteArray& content, const DetectEncodingOptions& options)
 {
     QByteArray encoding;
     UErrorCode status{U_ZERO_ERROR};
 
     UCharsetDetector* csd = ucsdet_open(&status);
-    ucsdet_setText(csd, content.constData(), static_cast<int32_t>(content.length()), &status);
+    if(U_FAILURE(status) || !csd) {
+        return {};
+    }
 
-    const UCharsetMatch* ucm = ucsdet_detect(csd, &status);
-    if(U_SUCCESS(status) && ucm) {
-        const char* cname = ucsdet_getName(ucm, &status);
-        if(U_SUCCESS(status)) {
-            encoding = QByteArray{cname};
+    ucsdet_setText(csd, content.constData(), static_cast<int32_t>(content.length()), &status);
+    if(U_FAILURE(status)) {
+        ucsdet_close(csd);
+        return {};
+    }
+
+    int32_t count{0};
+    const UCharsetMatch** matches = ucsdet_detectAll(csd, &count, &status);
+    if(U_SUCCESS(status) && matches) {
+        QByteArray preferredFallbackEncoding;
+
+        for(int32_t i{0}; i < count; ++i) {
+            UErrorCode matchStatus{U_ZERO_ERROR};
+            const char* name = ucsdet_getName(matches[i], &matchStatus);
+            if(U_FAILURE(matchStatus) || !name) {
+                continue;
+            }
+
+            const QByteArray candidate{name};
+            if(!canDecode(candidate, content)) {
+                continue;
+            }
+
+            if(!options.preferredFallbackEncoding.isEmpty()
+               && isEncoding(candidate, options.preferredFallbackEncoding.constData())) {
+                preferredFallbackEncoding = candidate;
+            }
+
+            if(encoding.isEmpty()) {
+                encoding = candidate;
+            }
+        }
+
+        if(!preferredFallbackEncoding.isEmpty() && isLatinEncoding(encoding)) {
+            encoding = preferredFallbackEncoding;
         }
     }
 
