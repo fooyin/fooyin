@@ -57,6 +57,7 @@
 #include <gui/contextmenuutils.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/iconloader.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/autoheaderview.h>
 #include <utils/actions/actionmanager.h>
@@ -1192,6 +1193,8 @@ void RadioBrowserWidget::setFilterBarVisible(bool visible)
 
 void RadioBrowserWidget::refreshThemeIcons()
 {
+    Gui::setThemeIcon(m_saveStationsAction, Constants::Icons::Add);
+
     updateSavedSearchState();
 
     if(m_filterBar) {
@@ -1489,6 +1492,7 @@ void RadioBrowserWidget::showContextMenu(const QPoint& pos)
             if(id == QLatin1StringView{RadioBrowserContextMenu::Play}) {
                 if(hasSelection && sectionEnabled(RadioBrowserContextMenu::Play)) {
                     auto* playAction = targetMenu->addAction(tr("Play"));
+                    Gui::setThemeIcon(playAction, Constants::Icons::Play);
                     playAction->setStatusTip(tr("Play the selected station"));
                     QObject::connect(playAction, &QAction::triggered, this, [this]() { addSelectedStations(true); });
                 }
