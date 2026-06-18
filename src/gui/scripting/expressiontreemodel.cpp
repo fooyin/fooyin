@@ -158,7 +158,8 @@ QString ExpressionTreeModel::generateKey(const QString& parentKey, const QString
 
 QString ExpressionTreeModel::parseHtmlAttribute(const QString& attrs, const QString& name)
 {
-    static const QRegularExpression attrRegex{uR"(?:^|\s)%1\s*=\s*(?:"([^"]*)\"|'([^']*)'|([^\s"'>]+))"_s.arg(name)};
+    const QRegularExpression attrRegex{
+        uR"(?:^|\s)%1\s*=\s*(?:"([^"]*)\"|'([^']*)'|([^\s"'>]+))"_s.arg(QRegularExpression::escape(name))};
     const QRegularExpressionMatch match = attrRegex.match(attrs);
 
     if(!match.hasMatch()) {
