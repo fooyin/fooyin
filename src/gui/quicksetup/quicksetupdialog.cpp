@@ -124,7 +124,7 @@ void QuickSetupDialog::populateThemes() const
 
     const auto current = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
 
-    QListWidgetItem* currentThemeItem{nullptr};
+    QListWidgetItem* currentThemeItem{systemDefaults};
 
     const auto themes = m_themeRegistry->items();
     for(const auto& theme : themes) {
@@ -133,14 +133,12 @@ void QuickSetupDialog::populateThemes() const
         if(theme.id == current.id && theme.name == current.name) {
             currentThemeItem = item;
         }
-        else if(!currentThemeItem && theme.name == current.name) {
+        else if(currentThemeItem == systemDefaults && current.isValid() && theme.name == current.name) {
             currentThemeItem = item;
         }
     }
 
-    if(currentThemeItem) {
-        m_themeList->setCurrentItem(currentThemeItem);
-    }
+    m_themeList->setCurrentItem(currentThemeItem);
 }
 
 void QuickSetupDialog::populatePlaylistPresets() const
@@ -150,6 +148,42 @@ void QuickSetupDialog::populatePlaylistPresets() const
         auto* item = new QListWidgetItem(preset.name, m_playlistPresetList);
         item->setData(Id, preset.id);
     }
+
+    selectCurrentPlaylistPreset();
+}
+
+void QuickSetupDialog::selectCurrentPlaylistPreset() const
+{
+    const auto playlists = m_editableLayout->findWidgetsByType<PlaylistWidget>();
+    if(playlists.empty()) {
+        m_playlistPresetList->clearSelection();
+        m_playlistPresetList->setCurrentItem(nullptr);
+        return;
+    }
+
+    const PlaylistPreset currentPreset = playlists.front()->layoutState().currentPreset;
+    if(!currentPreset.isValid()) {
+        m_playlistPresetList->clearSelection();
+        m_playlistPresetList->setCurrentItem(nullptr);
+        return;
+    }
+
+    QListWidgetItem* currentPresetItem{nullptr};
+    for(int row{0}; row < m_playlistPresetList->count(); ++row) {
+        auto* item = m_playlistPresetList->item(row);
+        if(!item) {
+            continue;
+        }
+
+        const int presetId = item->data(Id).toInt();
+        if(presetId == currentPreset.id) {
+            currentPresetItem = item;
+            break;
+        }
+    }
+
+    const QSignalBlocker blocker{m_playlistPresetList};
+    m_playlistPresetList->setCurrentItem(currentPresetItem);
 }
 
 void QuickSetupDialog::changeLayout()
@@ -168,6 +202,7 @@ void QuickSetupDialog::changeLayout()
 
     const auto playlists = m_editableLayout->findWidgetsByType<PlaylistWidget>();
     m_playlistPresetGroup->setEnabled(!playlists.empty());
+    selectCurrentPlaylistPreset();
 }
 
 void QuickSetupDialog::changeTheme()

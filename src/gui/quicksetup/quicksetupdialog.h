@@ -52,6 +52,7 @@ private:
     void populateLayouts() const;
     void populateThemes() const;
     void populatePlaylistPresets() const;
+    void selectCurrentPlaylistPreset() const;
     void changeLayout();
     void changeTheme();
     void changePlaylistPreset();
