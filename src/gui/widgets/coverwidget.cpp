@@ -95,7 +95,7 @@ CoverWidget::CoverWidget(PlayerController* playerController, PlaylistHandler* pl
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &CoverWidget::checkTrackArtwork);
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistsPopulated, this, &CoverWidget::reloadCover);
     QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this, &CoverWidget::reloadCover);
-    QObject::connect(m_trackSelection, &TrackSelectionController::selectionChanged, this,
+    QObject::connect(m_trackSelection, &TrackSelectionController::displaySelectionChanged, this,
                      &CoverWidget::handleSelectionChanged);
     QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this, &CoverWidget::reloadCover,
                      Qt::QueuedConnection);
@@ -234,8 +234,8 @@ QPixmap CoverWidget::scaledCover(const QPixmap& cover) const
 
 Track CoverWidget::displayTrack() const
 {
-    if(m_displayOption == SelectionDisplay::PreferSelection && m_trackSelection->hasTracks()) {
-        return m_trackSelection->selectedTrack();
+    if(m_displayOption == SelectionDisplay::PreferSelection && m_trackSelection->hasDisplayTracks()) {
+        return m_trackSelection->displayTrack();
     }
 
     if(const Track track = m_playerController->currentTrack(); track.isValid()) {

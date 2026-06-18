@@ -227,7 +227,7 @@ InfoPanel::InfoPanel(Application* app, ActionManager* actionManager, TrackSelect
     m_view->header()->setSectionResizeMode(0, QHeaderView::Interactive);
     m_view->header()->setSectionResizeMode(1, QHeaderView::Fixed);
 
-    QObject::connect(selectionController, &TrackSelectionController::selectionChanged, this,
+    QObject::connect(selectionController, &TrackSelectionController::displaySelectionChanged, this,
                      [this]() { m_resetTimer.start(50, this); });
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
                      [this]() { m_resetTimer.start(50, this); });
@@ -644,8 +644,8 @@ void InfoPanel::resetModel()
     if(m_displayOption == SelectionDisplay::PreferPlaying && currentTrack.isValid()) {
         m_model->resetModel({currentTrack});
     }
-    else if(m_selectionController->hasTracks()) {
-        m_model->resetModel(m_selectionController->selectedTracks());
+    else if(m_selectionController->hasDisplayTracks()) {
+        m_model->resetModel(m_selectionController->displayTracks());
     }
     else if(currentTrack.isValid()) {
         m_model->resetModel({currentTrack});

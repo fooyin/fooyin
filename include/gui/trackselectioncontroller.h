@@ -116,12 +116,19 @@ public:
                              PlaylistController* playlistController, QObject* parent = nullptr);
     ~TrackSelectionController() override;
 
+    //! Focus-sensitive selection used by track actions.
     [[nodiscard]] bool hasTracks() const;
-
     [[nodiscard]] const TrackSelection* selectedSelection() const;
     [[nodiscard]] Track selectedTrack() const;
     [[nodiscard]] TrackList selectedTracks() const;
     [[nodiscard]] int selectedTrackCount() const;
+
+    //! Last selection provided by a track-selection context, retained when focus moves to a non-selection widget.
+    [[nodiscard]] const TrackSelection* displaySelection() const;
+    [[nodiscard]] Track displayTrack() const;
+    [[nodiscard]] TrackList displayTracks() const;
+    [[nodiscard]] bool hasDisplayTracks() const;
+
     void changeSelectedTracks(WidgetContext* context, const TrackSelection& selection);
     void changeSelectedTracks(const TrackSelection& selection);
     void changePlaybackOnSend(WidgetContext* context, bool enabled);
@@ -153,6 +160,7 @@ public:
 Q_SIGNALS:
     void actionExecuted(Fooyin::TrackAction action);
     void selectionChanged();
+    void displaySelectionChanged();
     void requestPropertiesDialog(const Fooyin::TrackList& tracks);
     void requestArtworkSearch(const Fooyin::TrackList& tracks, bool quick);
     void requestArtworkAttach(const Fooyin::TrackList& tracks, Fooyin::Track::Cover type, const QString& filepath);

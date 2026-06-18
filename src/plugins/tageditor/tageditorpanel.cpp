@@ -70,7 +70,7 @@ TagEditorPanel::TagEditorPanel(ActionManager* actionManager, TagEditorFieldRegis
     m_editor->addTool(m_applyButton);
 
     QObject::connect(m_applyButton, &QPushButton::clicked, this, &TagEditorPanel::apply);
-    QObject::connect(m_selectionController, &TrackSelectionController::selectionChanged, this,
+    QObject::connect(m_selectionController, &TrackSelectionController::displaySelectionChanged, this,
                      &TagEditorPanel::selectionChanged);
 
     selectionChanged();
@@ -108,14 +108,7 @@ void TagEditorPanel::loadLayoutData(const QJsonObject& layout)
 
 void TagEditorPanel::selectionChanged()
 {
-    const TrackList newTracks = m_selectionController->selectedTracks();
-
-    // Ignore empty selections: focus moving to a widget with no registered track context
-    // (e.g. the Apply button) makes selectedTracks() return empty. Keep displaying the
-    // current tracks in that case rather than clearing the editor or showing a save dialog.
-    if(newTracks.empty() && !m_currentTracks.empty()) {
-        return;
-    }
+    const TrackList newTracks = m_selectionController->displayTracks();
 
     const bool tracksActuallyChanged
         = newTracks.size() != m_currentTracks.size()

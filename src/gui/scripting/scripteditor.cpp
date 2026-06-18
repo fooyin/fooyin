@@ -657,7 +657,7 @@ void ScriptEditorPrivate::setupConnections()
     });
 
     if(m_selectionController) {
-        QObject::connect(m_selectionController, &TrackSelectionController::selectionChanged, this,
+        QObject::connect(m_selectionController, &TrackSelectionController::displaySelectionChanged, this,
                          &ScriptEditorPrivate::trackContextChanged);
     }
     if(m_playerController) {
@@ -837,7 +837,7 @@ void ScriptEditorPrivate::updateResults(const Expression& expression)
 
 void ScriptEditorPrivate::trackContextChanged()
 {
-    m_track = m_selectionController ? m_selectionController->selectedTrack() : Track{};
+    m_track = m_selectionController ? m_selectionController->displayTrack() : Track{};
     if(!m_track.isValid() && m_playerController) {
         m_track = m_playerController->currentTrack();
     }
@@ -973,8 +973,8 @@ ScriptEditor::ScriptEditor(LibraryManager* libraryManager, TrackSelectionControl
                            PlayerController* playerController, QWidget* parent)
     : QDialog{parent}
     , p{std::make_unique<ScriptEditorPrivate>(this, libraryManager,
-                                              selectionController && selectionController->selectedTrack().isValid()
-                                                  ? selectionController->selectedTrack()
+                                              selectionController && selectionController->displayTrack().isValid()
+                                                  ? selectionController->displayTrack()
                                               : playerController ? playerController->currentTrack()
                                                                  : Track{},
                                               selectionController, playerController)}

@@ -163,6 +163,7 @@ public:
     [[nodiscard]] bool canWrite(const TrackSelection& selection) const;
 
     const TrackSelection* currentSelection() const;
+    bool setDisplaySelection(WidgetContext* context, const TrackSelection& selection);
 
     void updateActionState();
 
@@ -177,6 +178,8 @@ public:
     std::unordered_map<QWidget*, WidgetContext*> m_contextWidgets;
     std::unordered_map<WidgetContext*, TrackSelection> m_contextSelection;
     WidgetContext* m_activeContext{nullptr};
+    WidgetContext* m_displayContext{nullptr};
+    TrackSelection m_displaySelection;
     TrackSelection m_tracks;
     std::optional<TrackSelection> m_menuSelection;
     QPointer<QMenu> m_menuSelectionMenu;
@@ -890,6 +893,12 @@ void TrackSelectionControllerPrivate::removeContextObject(WidgetContext* context
 
     m_contextSelection.erase(context);
 
+    if(m_displayContext == context) {
+        m_displayContext   = nullptr;
+        m_displaySelection = {};
+        Q_EMIT m_self->displaySelectionChanged();
+    }
+
     if(m_activeContext == context) {
         m_activeContext = nullptr;
     }
@@ -907,8 +916,14 @@ void TrackSelectionControllerPrivate::updateActiveContext(QWidget* widget)
             widgetContext = contextObject(focusedWidget);
             if(widgetContext) {
                 if(std::exchange(m_activeContext, widgetContext) != widgetContext) {
+                    const bool displayChanged = setDisplaySelection(widgetContext, m_contextSelection[widgetContext]);
                     updateActionState();
-                    QMetaObject::invokeMethod(m_self, &TrackSelectionController::selectionChanged);
+                    QMetaObject::invokeMethod(m_self, [this, displayChanged]() {
+                        Q_EMIT m_self->selectionChanged();
+                        if(displayChanged) {
+                            Q_EMIT m_self->displaySelectionChanged();
+                        }
+                    });
                 }
                 return;
             }
@@ -1338,6 +1353,13 @@ const TrackSelection* TrackSelectionControllerPrivate::currentSelection() const
     return nullptr;
 }
 
+bool TrackSelectionControllerPrivate::setDisplaySelection(WidgetContext* context, const TrackSelection& selection)
+{
+    const bool contextChanged   = std::exchange(m_displayContext, context) != context;
+    const bool selectionChanged = std::exchange(m_displaySelection, selection) != selection;
+    return contextChanged || selectionChanged;
+}
+
 void TrackSelectionControllerPrivate::updateActionState()
 {
     const auto* selection         = currentSelection();
@@ -1423,6 +1445,28 @@ int TrackSelectionController::selectedTrackCount() const
     return 0;
 }
 
+const TrackSelection* TrackSelectionController::displaySelection() const
+{
+    return p->m_displaySelection.tracks.empty() ? nullptr : &p->m_displaySelection;
+}
+
+Track TrackSelectionController::displayTrack() const
+{
+    const auto* selection = displaySelection();
+    return selection ? selection->tracks.front() : Track{};
+}
+
+TrackList TrackSelectionController::displayTracks() const
+{
+    const auto* selection = displaySelection();
+    return selection ? selection->tracks : TrackList{};
+}
+
+bool TrackSelectionController::hasDisplayTracks() const
+{
+    return !p->m_displaySelection.tracks.empty();
+}
+
 void TrackSelectionController::changeSelectedTracks(WidgetContext* context, const TrackSelection& selection)
 {
     if(!p->addContextObject(context)) {
@@ -1437,12 +1481,21 @@ void TrackSelectionController::changeSelectedTracks(WidgetContext* context, cons
         p->m_activeContext = context;
     }
 
-    if(std::exchange(existing, updatedSelection) == updatedSelection) {
+    const bool selectionChanged = std::exchange(existing, updatedSelection) != updatedSelection;
+    const bool updatesDisplay   = p->m_activeContext == context || p->m_displayContext == context;
+    const bool displayChanged   = updatesDisplay && p->setDisplaySelection(context, updatedSelection);
+
+    if(!selectionChanged && !displayChanged) {
         return;
     }
 
     p->updateActionState();
-    Q_EMIT selectionChanged();
+    if(selectionChanged) {
+        Q_EMIT this->selectionChanged();
+    }
+    if(displayChanged) {
+        Q_EMIT displaySelectionChanged();
+    }
 }
 
 void TrackSelectionController::changeSelectedTracks(const TrackSelection& selection)
@@ -1640,24 +1693,34 @@ void TrackSelectionController::executeAction(TrackAction action, PlaylistAction:
 
 void TrackSelectionController::tracksUpdated(const TrackList& tracks)
 {
+    const TrackSelection previousDisplay{p->m_displaySelection};
     Utils::updateCommonTracks(p->m_tracks.tracks, tracks, Utils::CommonOperation::Update);
-    for(auto& [_, selection] : p->m_contextSelection) {
+    for(auto& selection : p->m_contextSelection | std::views::values) {
         Utils::updateCommonTracks(selection.tracks, tracks, Utils::CommonOperation::Update);
     }
+    Utils::updateCommonTracks(p->m_displaySelection.tracks, tracks, Utils::CommonOperation::Update);
 
     p->updateActionState();
     Q_EMIT selectionChanged();
+    if(previousDisplay != p->m_displaySelection) {
+        Q_EMIT displaySelectionChanged();
+    }
 }
 
 void TrackSelectionController::tracksRemoved(const TrackList& tracks)
 {
+    const TrackSelection previousDisplay{p->m_displaySelection};
     Utils::updateCommonTracks(p->m_tracks.tracks, tracks, Utils::CommonOperation::Remove);
-    for(auto& [_, selection] : p->m_contextSelection) {
+    for(auto& selection : p->m_contextSelection | std::views::values) {
         Utils::updateCommonTracks(selection.tracks, tracks, Utils::CommonOperation::Remove);
     }
+    Utils::updateCommonTracks(p->m_displaySelection.tracks, tracks, Utils::CommonOperation::Remove);
 
     p->updateActionState();
     Q_EMIT selectionChanged();
+    if(previousDisplay != p->m_displaySelection) {
+        Q_EMIT displaySelectionChanged();
+    }
 }
 } // namespace Fooyin
 

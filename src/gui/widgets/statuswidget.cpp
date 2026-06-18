@@ -191,7 +191,7 @@ void StatusWidgetPrivate::setupConnections()
     QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this,
                      &StatusWidgetPrivate::updatePlayingText);
     QObject::connect(m_playerController, &PlayerController::bitrateChanged, this, [this](int) { updatePlayingText(); });
-    QObject::connect(m_selectionController, &TrackSelectionController::selectionChanged, this,
+    QObject::connect(m_selectionController, &TrackSelectionController::displaySelectionChanged, this,
                      &StatusWidgetPrivate::updateSelectionText);
     QObject::connect(m_playlistController, &PlaylistController::currentPlaylistChanged, this,
                      &StatusWidgetPrivate::updateSelectionText);
@@ -486,7 +486,7 @@ void StatusWidgetPrivate::updateSelectionText()
 
     QString selectionText;
 
-    const auto* selection  = m_selectionController->selectedSelection();
+    const auto* selection  = m_selectionController->displaySelection();
     const auto contextData = makeSelectionContext(selection);
 
     if(showSelection && selection && !selection->tracks.empty()) {
