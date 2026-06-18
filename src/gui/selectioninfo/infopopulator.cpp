@@ -175,25 +175,36 @@ void InfoPopulatorPrivate::addTrackMetadata(const Track& track, bool extended)
 
 void InfoPopulatorPrivate::addTrackLocation(int total, const Track& track)
 {
+    const bool isRemote = track.isRemote();
+
     checkAddEntryNode(u"FileName"_s, total > 1 ? InfoPopulator::tr("File Names") : InfoPopulator::tr("File Name"),
                       ItemParent::Location, track.filename());
-    checkAddEntryNode(u"FolderName"_s, total > 1 ? InfoPopulator::tr("Folder Names") : InfoPopulator::tr("Folder Name"),
-                      ItemParent::Location, track.path());
+    if(!isRemote) {
+        checkAddEntryNode(u"FolderName"_s,
+                          total > 1 ? InfoPopulator::tr("Folder Names") : InfoPopulator::tr("Folder Name"),
+                          ItemParent::Location, track.path());
+    }
 
     if(total == 1) {
-        checkAddEntryNode(u"FilePath"_s, InfoPopulator::tr("File Path"), ItemParent::Location, track.prettyFilepath());
+        checkAddEntryNode(isRemote ? u"Url"_s : u"FilePath"_s,
+                          isRemote ? InfoPopulator::tr("URL") : InfoPopulator::tr("File Path"), ItemParent::Location,
+                          track.prettyFilepath());
         if(track.subsong() >= 0) {
             checkAddEntryNode(u"SubsongIndex"_s, InfoPopulator::tr("Subsong Index"), ItemParent::Location,
                               track.subsong());
         }
     }
 
-    checkAddEntryNode(
-        u"FileSize"_s, total > 1 ? InfoPopulator::tr("Total Size") : InfoPopulator::tr("File Size"),
-        ItemParent::Location, fileSize(track), InfoItem::Total,
-        InfoItem::FormatUIntFunc{[](uint64_t size) -> QString { return Utils::formatFileSize(size, true); }});
-    checkAddEntryNode(u"LastModified"_s, InfoPopulator::tr("Last Modified"), ItemParent::Location, track.modifiedTime(),
-                      InfoItem::Max, InfoItem::FormatUIntFunc{Utils::formatTimeMs});
+    if(!isRemote) {
+        checkAddEntryNode(
+            u"FileSize"_s, total > 1 ? InfoPopulator::tr("Total Size") : InfoPopulator::tr("File Size"),
+            ItemParent::Location, fileSize(track), InfoItem::Total,
+            InfoItem::FormatUIntFunc{[](uint64_t size) -> QString { return Utils::formatFileSize(size, true); }});
+        if(track.modifiedTime() > 0) {
+            checkAddEntryNode(u"LastModified"_s, InfoPopulator::tr("Last Modified"), ItemParent::Location,
+                              track.modifiedTime(), InfoItem::Max, InfoItem::FormatUIntFunc{Utils::formatTimeMs});
+        }
+    }
 
     if(track.isInLibrary()) {
         if(const auto library = m_libraryManager->libraryInfo(track.libraryId())) {
@@ -202,10 +213,14 @@ void InfoPopulatorPrivate::addTrackLocation(int total, const Track& track)
     }
 
     if(total == 1) {
-        checkAddEntryNode(u"Created"_s, InfoPopulator::tr("Created"), ItemParent::Location, track.createdTime(),
-                          InfoItem::Max, InfoItem::FormatUIntFunc{Utils::formatTimeMs});
-        checkAddEntryNode(u"Added"_s, InfoPopulator::tr("Added"), ItemParent::Location, track.addedTime(),
-                          InfoItem::Max, InfoItem::FormatUIntFunc{Utils::formatTimeMs});
+        if(!isRemote && track.createdTime() > 0) {
+            checkAddEntryNode(u"Created"_s, InfoPopulator::tr("Created"), ItemParent::Location, track.createdTime(),
+                              InfoItem::Max, InfoItem::FormatUIntFunc{Utils::formatTimeMs});
+        }
+        if(track.addedTime() > 0) {
+            checkAddEntryNode(u"Added"_s, InfoPopulator::tr("Added"), ItemParent::Location, track.addedTime(),
+                              InfoItem::Max, InfoItem::FormatUIntFunc{Utils::formatTimeMs});
+        }
     }
 }
 
@@ -227,8 +242,10 @@ void InfoPopulatorPrivate::addTrackGeneral(int total, const Track& track)
             ItemParent::General, track.bitrate(), InfoItem::Average,
             InfoItem::FormatUIntFunc{[](uint64_t bitrate) -> QString { return u"%1 kbps"_s.arg(bitrate); }});
     }
-    checkAddEntryNode(u"SampleRate"_s, InfoPopulator::tr("Sample Rate"), ItemParent::General,
-                      u"%1 Hz"_s.arg(track.sampleRate()), InfoItem::Percentage);
+    if(track.sampleRate() > 0) {
+        checkAddEntryNode(u"SampleRate"_s, InfoPopulator::tr("Sample Rate"), ItemParent::General,
+                          u"%1 Hz"_s.arg(track.sampleRate()), InfoItem::Percentage);
+    }
 
     if(track.hasEffectiveTrackGain()) {
         m_trackGain.emplace(track.effectiveRGTrackGain());
