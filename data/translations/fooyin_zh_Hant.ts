@@ -11709,17 +11709,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="738"/>
         <source>Failed to load radio browser stations: %1</source>
-        <translation>無法載入廣播瀏覽器站台： % 1</translation>
+        <translation>失敗載入廣播瀏覽器站台： % 1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="762"/>
         <source>Failed to load radio browser %1: %2</source>
-        <translation>無法載入廣播瀏覽器 %1: %2</translation>
+        <translation>失敗載入廣播瀏覽器 %1: %2</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="827"/>
         <source>Failed to refresh imported station metadata: %1</source>
-        <translation>無法重新整理已經匯入的站台詮釋資料： %1</translation>
+        <translation>失敗重新整理已經匯入的站台詮釋資料： %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="846"/>
@@ -17761,7 +17761,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/core/network/networkstreamdevice.cpp" line="380"/>
         <source>Failed to queue network request.</source>
-        <translation>無法對網路請求進行排佇。</translation>
+        <translation>對網路請求排佇失敗。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationm3u.cpp" line="78"/>
