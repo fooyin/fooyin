@@ -1456,7 +1456,7 @@ void PlaylistModel::refreshTracks(const std::vector<int>& indexes, const std::se
         if(!end) {
             if(const auto track = m_currentPlaylist->playlistTrack(index)) {
                 PlaylistTrack displayTrack{track.value()};
-                if(playbackTrackMatchesPlaylistIndex(m_playingTrack, index)) {
+                if(m_playingTrack.track.isRemote() && playbackTrackMatchesPlaylistIndex(m_playingTrack, index)) {
                     displayTrack = m_playingTrack;
                 }
                 items.emplace(displayTrack, *itemForIndex(modelIndex));
@@ -3382,7 +3382,7 @@ PlaylistTrackList PlaylistModel::tracksWithPlayingTrackOverlay(const PlaylistTra
         auto& track = displayTracks.at(i);
 
         const int index = track.indexInPlaylist >= 0 ? track.indexInPlaylist : static_cast<int>(i);
-        if(playingTrackMatchesPlaylistTrack(track, index)) {
+        if(m_playingTrack.track.isRemote() && playingTrackMatchesPlaylistTrack(track, index)) {
             PlaylistTrack playingTrack{m_playingTrack};
             playingTrack.playlistId      = track.playlistId;
             playingTrack.entryId         = track.entryId;
