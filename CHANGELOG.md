@@ -20,6 +20,7 @@
   - Suggest library roots in the destination field ([#1285](https://github.com/fooyin/fooyin/pull/1285))
 * Filters
   - Add a separate sort script to filter columns ([#1279](https://github.com/fooyin/fooyin/issues/1279), [#1284](https://github.com/fooyin/fooyin/pull/1284))
+  - Optimise row population and selection lookup
 * Interface
   - Add device refresh support ([#1225](https://github.com/fooyin/fooyin/issues/1225))
   - Hide the checked frame for flat tool buttons
@@ -32,12 +33,21 @@
   - Add random play icons
   - Add randomise and reverse playlist and queue sort actions ([#344](https://github.com/fooyin/fooyin/issues/344), [#395](https://github.com/fooyin/fooyin/issues/395))
   - Add Player Controls settings for toggling individual buttons
+  - Add restore support for deleted playlists ([#1301](https://github.com/fooyin/fooyin/issues/1301))
+  - Include configured shortcuts in the Playlist Manager context menu
+  - Expand built-in themes
+  - Improve and extend Quick Setup with theme and playlist options
+  - Improve large playlist population and context menu performance ([#1053](https://github.com/fooyin/fooyin/issues/1053))
+  - Improve playlist default preset names
   - Stretch tool buttons by default
   - Remember the last selected Tab Stack tab by default
+  - Replace the theme dropdown in settings with an editable list widget
+  - Show the active theme in theme settings ([#1302](https://github.com/fooyin/fooyin/pull/1302))
   - Improve Advanced settings tree view appearance
 * Library/Metadata
   - Add support for monitoring individual library files ([#1212](https://github.com/fooyin/fooyin/issues/1212))
   - Add configurable literal track searches ([#1256](https://github.com/fooyin/fooyin/issues/1256))
+  - Optimise library track update lookups
 * Lyrics
   - Add line and word progress fill options
   - Add a seek tooltip
@@ -79,6 +89,9 @@
   - Activate Playlist Manager items on selection without changing selection on right-click
   - Clear the search bar on Escape ([#1278](https://github.com/fooyin/fooyin/issues/1278))
   - Fix Library Tree double-click actions when single-click expansion is enabled ([#1294](https://github.com/fooyin/fooyin/issues/1294))
+  - Fix dynamic HTML attribute parsing in Script Editor expression tree
+  - Keep Playlist Organiser selection unchanged when opening the context menu
+  - Refresh track selection action states for explicit context menus
   - Refresh moved playlist rows after reordering
 * Lyrics
   - Avoid resetting editor text on Apply ([#1234](https://github.com/fooyin/fooyin/issues/1234))
@@ -92,6 +105,8 @@
   - Migrate stored track ratings to the correct REAL type ([#1216](https://github.com/fooyin/fooyin/issues/1216), [#1277](https://github.com/fooyin/fooyin/pull/1277))
   - Defer metadata and embedded artwork writes for files currently being played ([#1276](https://github.com/fooyin/fooyin/issues/1276))
   - Disable library auto-refresh by default
+* WaveBar
+  - Fix SQL list binding for bulk queries
 
 ### Build/System
 
@@ -101,7 +116,7 @@
   - Remove unnecessary executable bits ([#1213](https://github.com/fooyin/fooyin/pull/1213))
   - Compress PNG assets ([#1265](https://github.com/fooyin/fooyin/pull/1265))
 * Translations
-  - Update translations and translation sources ([#1250](https://github.com/fooyin/fooyin/pull/1250), [#1251](https://github.com/fooyin/fooyin/pull/1251), [#1274](https://github.com/fooyin/fooyin/pull/1274), [#1275](https://github.com/fooyin/fooyin/pull/1275), [#1286](https://github.com/fooyin/fooyin/pull/1286), [#1287](https://github.com/fooyin/fooyin/pull/1287))
+  - Update translations and translation sources ([#1250](https://github.com/fooyin/fooyin/pull/1250), [#1251](https://github.com/fooyin/fooyin/pull/1251), [#1274](https://github.com/fooyin/fooyin/pull/1274), [#1275](https://github.com/fooyin/fooyin/pull/1275), [#1286](https://github.com/fooyin/fooyin/pull/1286), [#1287](https://github.com/fooyin/fooyin/pull/1287), [#1298](https://github.com/fooyin/fooyin/pull/1298), [#1299](https://github.com/fooyin/fooyin/pull/1299))
 
 ### Dev/API
 * Plugin/Widget API
@@ -110,6 +125,8 @@
   - Add special value text support to Advanced settings
   - Add support for inserting actions before others by ID
   - Add support for unregistering actions
+* Playlist API
+  - Add persistent playlist extra properties
 
 
 ## [0.10.8](https://github.com/fooyin/fooyin/releases/tag/v0.10.8) (2026-05-21)
