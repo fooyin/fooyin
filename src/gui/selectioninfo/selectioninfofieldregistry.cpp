@@ -41,13 +41,13 @@ void SelectionInfoFieldRegistry::loadDefaultFields()
 {
     using namespace Constants::MetaData;
 
-    addDefaultItem({.name = tr("Artist"), .scriptField = QString::fromLatin1(Artist)}, true);
-    addDefaultItem({.name = tr("Title"), .scriptField = QString::fromLatin1(Title)}, true);
-    addDefaultItem({.name = tr("Album"), .scriptField = QString::fromLatin1(Album)}, true);
-    addDefaultItem({.name = tr("Date"), .scriptField = QString::fromLatin1(Date)}, true);
-    addDefaultItem({.name = tr("Genre"), .scriptField = QString::fromLatin1(Genre)}, true);
-    addDefaultItem({.name = tr("Album Artist"), .scriptField = QString::fromLatin1(AlbumArtist)}, true);
-    addDefaultItem({.name = tr("Track Number"), .scriptField = QString::fromLatin1(TrackNumber)}, true);
+    addDefaultItem({.name = tr("Artist"), .scriptField = QString::fromLatin1(Artist).toLower()}, true);
+    addDefaultItem({.name = tr("Title"), .scriptField = QString::fromLatin1(Title).toLower()}, true);
+    addDefaultItem({.name = tr("Album"), .scriptField = QString::fromLatin1(Album).toLower()}, true);
+    addDefaultItem({.name = tr("Date"), .scriptField = QString::fromLatin1(Date).toLower()}, true);
+    addDefaultItem({.name = tr("Genre"), .scriptField = QString::fromLatin1(Genre).toLower()}, true);
+    addDefaultItem({.name = tr("Album Artist"), .scriptField = QString::fromLatin1(AlbumArtist).toLower()}, true);
+    addDefaultItem({.name = tr("Track Number"), .scriptField = QString::fromLatin1(TrackNumber).toLower()}, true);
 }
 
 void SelectionInfoFieldRegistry::resetToDefaults()

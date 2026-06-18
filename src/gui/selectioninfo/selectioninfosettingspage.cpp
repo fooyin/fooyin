@@ -124,7 +124,7 @@ SelectionInfoSettingsPage::SelectionInfoSettingsPage(SelectionInfoFieldRegistry*
 {
     setId(Constants::Page::InterfaceSelectionInfo);
     setName(tr("Selection Info"));
-    setCategory({tr("Interface")});
+    setCategory({tr("Interface"), tr("Selection Info")});
     setRelativePosition(SettingsPageRelativePosition::After, Constants::Page::InterfaceTrackDisplay);
     setWidgetCreator([registry] { return new SelectionInfoSettingsPageWidget(registry); });
 }
