@@ -80,4 +80,21 @@ QIcon placeholderIcon(const RadioStation& station, int size)
 
     return QIcon{pixmap};
 }
+
+QString displayNetworkError(const QString& error)
+{
+    static constexpr auto ErrorTransferPrefix    = "Error transferring "_L1;
+    static constexpr auto ErrorTransferSeparator = " - "_L1;
+
+    if(!error.startsWith(ErrorTransferPrefix)) {
+        return error;
+    }
+
+    const qsizetype separator = error.indexOf(ErrorTransferSeparator, ErrorTransferPrefix.size());
+    if(separator < 0) {
+        return error;
+    }
+
+    return error.sliced(separator + ErrorTransferSeparator.size()).trimmed();
+}
 } // namespace Fooyin::RadioBrowser::Utils

@@ -19,6 +19,8 @@
 
 #include "radiobrowserservice.h"
 
+#include "radiobrowserutils.h"
+
 #include <core/network/networkutils.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -603,7 +605,7 @@ void RadioBrowserService::handleReply()
                                      << "attempts=" << (m_stationRequest ? m_stationRequest->attempts : 0)
                                      << "error=" << failure;
             m_stationRequest.reset();
-            Q_EMIT searchFailed(requestText, error);
+            Q_EMIT searchFailed(requestText, Utils::displayNetworkError(error));
         }
         return;
     }
@@ -663,7 +665,7 @@ void RadioBrowserService::handleStationLookupReply()
                                      << "attempts=" << (m_lookupRequest ? m_lookupRequest->attempts : 0)
                                      << "error=" << failure;
             m_lookupRequest.reset();
-            Q_EMIT stationLookupFailed(requestId, error);
+            Q_EMIT stationLookupFailed(requestId, Utils::displayNetworkError(error));
         }
         return;
     }
@@ -742,7 +744,7 @@ void RadioBrowserService::handleCategoriesReply(const RadioCategoryType type)
                                      << (requestIt != m_categoryRequests.end() ? requestIt->second.attempts : 0)
                                      << "error=" << failure;
             m_categoryRequests.erase(type);
-            Q_EMIT categoriesFailed(type, error);
+            Q_EMIT categoriesFailed(type, Utils::displayNetworkError(error));
         }
         return;
     }

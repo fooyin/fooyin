@@ -22,7 +22,9 @@
 #include "radiostation.h"
 
 #include <QIcon>
+#include <QString>
 
 namespace Fooyin::RadioBrowser::Utils {
 QIcon placeholderIcon(const RadioStation& station, int size = 128);
-}
+QString displayNetworkError(const QString& error);
+} // namespace Fooyin::RadioBrowser::Utils

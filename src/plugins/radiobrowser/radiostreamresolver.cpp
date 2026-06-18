@@ -19,6 +19,8 @@
 
 #include "radiostreamresolver.h"
 
+#include "radiobrowserutils.h"
+
 #include <core/network/networkutils.h>
 #include <core/playlist/playlistloader.h>
 
@@ -278,7 +280,7 @@ void RadioStreamResolver::handleReply(int requestId, const QPointer<QNetworkRepl
     reply->deleteLater();
 
     if(error != QNetworkReply::NoError && error != QNetworkReply::OperationCanceledError) {
-        Q_EMIT failed(requestId, url.toString(), errorString);
+        Q_EMIT failed(requestId, url.toString(), Utils::displayNetworkError(errorString));
         return;
     }
 
