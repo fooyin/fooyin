@@ -31,6 +31,7 @@ namespace Fooyin {
 struct InfoData;
 class InfoPopulator;
 class LibraryManager;
+class SelectionInfoFieldRegistry;
 
 class InfoModel : public TreeModel<InfoItem>
 {
@@ -49,7 +50,7 @@ public:
     };
     Q_ENUM(ItemParent)
 
-    explicit InfoModel(LibraryManager* libraryManager, QObject* parent = nullptr);
+    InfoModel(LibraryManager* libraryManager, SelectionInfoFieldRegistry* fieldRegistry, QObject* parent = nullptr);
     ~InfoModel() override;
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
@@ -69,6 +70,8 @@ private:
 
     QThread m_populatorThread;
     InfoPopulator m_populator;
+    SelectionInfoFieldRegistry* m_fieldRegistry;
+    TrackList m_tracks;
     std::unordered_map<QString, InfoItem> m_nodes;
 
     InfoItem::Options m_options{InfoItem::Default};

@@ -23,6 +23,7 @@
 #include "infomodel.h"
 #include "infoview.h"
 #include "internalguisettings.h"
+#include "selectioninfofieldregistry.h"
 
 #include <core/application.h>
 #include <core/coresettings.h>
@@ -84,9 +85,9 @@ class InfoPanel : public QWidget
 
 public:
     InfoPanel(TrackList tracks, LibraryManager* libraryManager, ActionManager* actionManager, SettingsManager* settings,
-              bool persistSettings = false, QWidget* parent = nullptr);
+              SelectionInfoFieldRegistry* fieldRegistry, bool persistSettings = false, QWidget* parent = nullptr);
     InfoPanel(Application* app, ActionManager* actionManager, TrackSelectionController* selectionController,
-              QWidget* parent = nullptr);
+              SelectionInfoFieldRegistry* fieldRegistry, QWidget* parent = nullptr);
     ~InfoPanel() override;
 
     void saveLayoutData(QJsonObject& layout) const;
@@ -145,7 +146,8 @@ void setupInfoHost(QWidget* host, QWidget* panel)
 }
 
 InfoPanel::InfoPanel(TrackList tracks, LibraryManager* libraryManager, ActionManager* actionManager,
-                     SettingsManager* settings, bool persistSettings, QWidget* parent)
+                     SettingsManager* settings, SelectionInfoFieldRegistry* fieldRegistry, bool persistSettings,
+                     QWidget* parent)
     : QWidget{parent}
     , m_actionManager{actionManager}
     , m_selectionController{nullptr}
@@ -154,7 +156,7 @@ InfoPanel::InfoPanel(TrackList tracks, LibraryManager* libraryManager, ActionMan
     , m_persistSettings{persistSettings}
     , m_view{new InfoView(this)}
     , m_proxyModel{new InfoFilterModel(this)}
-    , m_model{new InfoModel(libraryManager, this)}
+    , m_model{new InfoModel(libraryManager, fieldRegistry, this)}
     , m_context{new WidgetContext(
           this, Context{Id{"Fooyin.Context.SelectionInfo."}.append(reinterpret_cast<uintptr_t>(this))}, this)}
     , m_copyAction{new QAction(tr("&Copy"), this)}
@@ -192,7 +194,7 @@ InfoPanel::InfoPanel(TrackList tracks, LibraryManager* libraryManager, ActionMan
 }
 
 InfoPanel::InfoPanel(Application* app, ActionManager* actionManager, TrackSelectionController* selectionController,
-                     QWidget* parent)
+                     SelectionInfoFieldRegistry* fieldRegistry, QWidget* parent)
     : QWidget{parent}
     , m_actionManager{actionManager}
     , m_selectionController{selectionController}
@@ -201,7 +203,7 @@ InfoPanel::InfoPanel(Application* app, ActionManager* actionManager, TrackSelect
     , m_persistSettings{false}
     , m_view{new InfoView(this)}
     , m_proxyModel{new InfoFilterModel(this)}
-    , m_model{new InfoModel(app->libraryManager(), this)}
+    , m_model{new InfoModel(app->libraryManager(), fieldRegistry, this)}
     , m_context{new WidgetContext(
           this, Context{Id{"Fooyin.Context.SelectionInfo."}.append(reinterpret_cast<uintptr_t>(this))}, this)}
     , m_copyAction{new QAction(tr("&Copy"), this)}
@@ -253,18 +255,18 @@ InfoPanel::~InfoPanel()
 }
 
 InfoWidget::InfoWidget(const TrackList& tracks, LibraryManager* libraryManager, ActionManager* actionManager,
-                       SettingsManager* settings, QWidget* parent)
+                       SettingsManager* settings, SelectionInfoFieldRegistry* fieldRegistry, QWidget* parent)
     : FyWidget{parent}
-    , m_panel{new InfoPanel(tracks, libraryManager, actionManager, settings, false, this)}
+    , m_panel{new InfoPanel(tracks, libraryManager, actionManager, settings, fieldRegistry, false, this)}
 {
     setObjectName(InfoWidget::name());
     setupInfoHost(this, m_panel);
 }
 
 InfoWidget::InfoWidget(Application* app, ActionManager* actionManager, TrackSelectionController* selectionController,
-                       QWidget* parent)
+                       SelectionInfoFieldRegistry* fieldRegistry, QWidget* parent)
     : FyWidget{parent}
-    , m_panel{new InfoPanel(app, actionManager, selectionController, this)}
+    , m_panel{new InfoPanel(app, actionManager, selectionController, fieldRegistry, this)}
 {
     setObjectName(InfoWidget::name());
     setupInfoHost(this, m_panel);
@@ -298,9 +300,10 @@ void InfoWidget::finalise()
 }
 
 InfoPropertiesTab::InfoPropertiesTab(const TrackList& tracks, LibraryManager* libraryManager,
-                                     ActionManager* actionManager, SettingsManager* settings, QWidget* parent)
+                                     ActionManager* actionManager, SettingsManager* settings,
+                                     SelectionInfoFieldRegistry* fieldRegistry, QWidget* parent)
     : PropertiesTabWidget{parent}
-    , m_panel{new InfoPanel(tracks, libraryManager, actionManager, settings, true, this)}
+    , m_panel{new InfoPanel(tracks, libraryManager, actionManager, settings, fieldRegistry, true, this)}
 {
     setupInfoHost(this, m_panel);
 }

@@ -46,6 +46,7 @@ class OutputProfileManager;
 class PlaylistController;
 class PlaylistInteractor;
 class ScriptCommandHandler;
+class SelectionInfoFieldRegistry;
 class SettingsManager;
 class StatusWidget;
 class ThemeRegistry;
@@ -91,6 +92,7 @@ private:
     PlaylistInteractor* m_playlistInteractor;
     PlaylistController* m_playlistController;
     LibraryTreeController* m_libraryTreeController;
+    SelectionInfoFieldRegistry* m_selectionInfoFieldRegistry;
     DspPresetRegistry* m_dspPresetRegistry;
     OutputProfileManager* m_outputProfileManager;
     NowPlayingOutputService* m_nowPlayingOutputService;

@@ -349,6 +349,13 @@ set(SOURCES
     selectioninfo/infoview.h
     selectioninfo/infowidget.cpp
     selectioninfo/infowidget.h
+    selectioninfo/selectioninfofield.h
+    selectioninfo/selectioninfofieldregistry.cpp
+    selectioninfo/selectioninfofieldregistry.h
+    selectioninfo/selectioninfofieldsmodel.cpp
+    selectioninfo/selectioninfofieldsmodel.h
+    selectioninfo/selectioninfosettingspage.cpp
+    selectioninfo/selectioninfosettingspage.h
     settings/advanced/advanceditemdelegate.cpp
     settings/advanced/advanceditemdelegate.h
     settings/advanced/advancedpage.cpp

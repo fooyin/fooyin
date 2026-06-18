@@ -21,10 +21,8 @@
 
 #include "infomodel.h"
 
-#include <core/constants.h>
 #include <core/library/librarymanager.h>
 #include <core/track.h>
-#include <utils/enum.h>
 #include <utils/fileutils.h>
 #include <utils/stringutils.h>
 #include <utils/utils.h>
@@ -36,6 +34,29 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 using ItemParent = InfoModel::ItemParent;
+
+namespace {
+QString parentKey(ItemParent parent)
+{
+    switch(parent) {
+        case ItemParent::Root:
+            return u"Root"_s;
+        case ItemParent::Metadata:
+            return u"Metadata"_s;
+        case ItemParent::Location:
+            return u"Location"_s;
+        case ItemParent::General:
+            return u"General"_s;
+        case ItemParent::PlayStats:
+            return u"PlayStats"_s;
+        case ItemParent::ReplayGain:
+            return u"ReplayGain"_s;
+        case ItemParent::Other:
+            return u"Other"_s;
+    }
+    return {};
+}
+} // namespace
 
 class InfoPopulatorPrivate
 {
@@ -73,7 +94,7 @@ public:
         }
     }
 
-    void addTrackMetadata(const Track& track, bool extended);
+    void addTrackMetadata(const Track& track, bool extended, const std::vector<SelectionInfoField>& fields);
     void addTrackLocation(int total, const Track& track);
     void addTrackGeneral(int total, const Track& track);
     void addTrackPlayStats(const Track& track);
@@ -81,7 +102,8 @@ public:
     void addTrackOther(const Track& track);
     uint64_t fileSize(const Track& track);
 
-    void addTrackNodes(InfoItem::Options options, const TrackList& tracks);
+    void addTrackNodes(InfoItem::Options options, const TrackList& tracks,
+                       const std::vector<SelectionInfoField>& fields);
 
     InfoPopulator* m_self;
     LibraryManager* m_libraryManager;
@@ -123,7 +145,7 @@ InfoItem* InfoPopulatorPrivate::getOrAddNode(const QString& key, const QString& 
     auto [it, inserted] = m_data.nodes.emplace(std::piecewise_construct, std::forward_as_tuple(key),
                                                std::forward_as_tuple(type, name, nullptr, valueType, numFunc));
     InfoItem* node      = &it->second;
-    m_data.parents[Utils::Enum::toString(parent)].emplace_back(key);
+    m_data.parents[parentKey(parent)].emplace_back(key);
 
     return node;
 }
@@ -150,23 +172,27 @@ void InfoPopulatorPrivate::checkAddParentNode(InfoModel::ItemParent parent)
     }
 }
 
-void InfoPopulatorPrivate::addTrackMetadata(const Track& track, bool extended)
+void InfoPopulatorPrivate::addTrackMetadata(const Track& track, bool extended,
+                                            const std::vector<SelectionInfoField>& fields)
 {
-    checkAddEntryNode(u"Artist"_s, InfoPopulator::tr("Artist"), ItemParent::Metadata, track.artists());
-    checkAddEntryNode(u"Title"_s, InfoPopulator::tr("Title"), ItemParent::Metadata, track.title());
-    checkAddEntryNode(u"Album"_s, InfoPopulator::tr("Album"), ItemParent::Metadata, track.album());
-    checkAddEntryNode(u"Date"_s, InfoPopulator::tr("Date"), ItemParent::Metadata, track.date());
-    checkAddEntryNode(u"Genre"_s, InfoPopulator::tr("Genre"), ItemParent::Metadata, track.genres());
-    checkAddEntryNode(u"AlbumArtist"_s, InfoPopulator::tr("Album Artist"), ItemParent::Metadata, track.albumArtists());
+    for(const auto& field : fields) {
+        if(!field.enabled || field.name.isEmpty() || field.scriptField.isEmpty()) {
+            continue;
+        }
 
-    if(!track.trackNumber().isEmpty()) {
-        checkAddEntryNode(u"TrackNumber"_s, InfoPopulator::tr("Track Number"), ItemParent::Metadata,
-                          track.trackNumber());
+        checkAddEntryNode(u"Metadata/%1"_s.arg(field.scriptField.toUpper()), field.name, ItemParent::Metadata,
+                          track.metaValues(field.scriptField));
     }
 
     if(extended) {
         const auto extras = track.extraTags();
         for(const auto& [tag, values] : extras) {
+            const bool isConfigured = std::ranges::any_of(fields, [&tag](const auto& field) {
+                return field.enabled && field.scriptField.compare(tag, Qt::CaseInsensitive) == 0;
+            });
+            if(isConfigured) {
+                continue;
+            }
             const auto extraTag = u"<%1>"_s.arg(tag);
             checkAddEntryNode(extraTag, extraTag, ItemParent::Metadata, values);
         }
@@ -359,7 +385,8 @@ uint64_t InfoPopulatorPrivate::fileSize(const Track& track)
     return inserted ? track.fileSize() : 0;
 }
 
-void InfoPopulatorPrivate::addTrackNodes(InfoItem::Options options, const TrackList& tracks)
+void InfoPopulatorPrivate::addTrackNodes(InfoItem::Options options, const TrackList& tracks,
+                                         const std::vector<SelectionInfoField>& fields)
 {
     const int total = static_cast<int>(tracks.size());
 
@@ -369,7 +396,7 @@ void InfoPopulatorPrivate::addTrackNodes(InfoItem::Options options, const TrackL
         }
 
         if(options & InfoItem::Metadata) {
-            addTrackMetadata(track, options & InfoItem::ExtendedMetadata);
+            addTrackMetadata(track, options & InfoItem::ExtendedMetadata, fields);
         }
         if(options & InfoItem::Location) {
             addTrackLocation(total, track);
@@ -397,13 +424,14 @@ InfoPopulator::InfoPopulator(LibraryManager* libraryManager, QObject* parent)
 
 InfoPopulator::~InfoPopulator() = default;
 
-void InfoPopulator::run(InfoItem::Options options, const TrackList& tracks)
+void InfoPopulator::run(InfoItem::Options options, const TrackList& tracks,
+                        const std::vector<SelectionInfoField>& fields)
 {
     setState(Running);
 
     p->reset();
 
-    p->addTrackNodes(options, tracks);
+    p->addTrackNodes(options, tracks, fields);
 
     if(mayRun()) {
         Q_EMIT populated(std::make_shared<InfoData>(std::move(p->m_data)));

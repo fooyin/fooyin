@@ -57,6 +57,8 @@
 #include "scriptdisplay/scriptdisplay.h"
 #include "search/searchwidget.h"
 #include "selectioninfo/infowidget.h"
+#include "selectioninfo/selectioninfofieldregistry.h"
+#include "selectioninfo/selectioninfosettingspage.h"
 #include "settings/advanced/advancedpage.h"
 #include "settings/artwork/artworkdownloadpage.h"
 #include "settings/artwork/artworkgeneralpage.h"
@@ -145,6 +147,7 @@ Widgets::Widgets(Application* core, GuiApplication* gui, const GuiPluginContext&
     , m_playlistInteractor{playlistInteractor}
     , m_playlistController{playlistInteractor->playlistController()}
     , m_libraryTreeController{new LibraryTreeController(m_settings, this)}
+    , m_selectionInfoFieldRegistry{new SelectionInfoFieldRegistry(m_settings, this)}
     , m_dspPresetRegistry{new DspPresetRegistry(m_settings, this)}
     , m_outputProfileManager{new OutputProfileManager(m_core->engine(), m_core->dspChainStore(), m_dspPresetRegistry,
                                                       m_settings, this)}
@@ -275,7 +278,10 @@ void Widgets::registerWidgets()
 
     provider->registerWidget(
         u"SelectionInfo"_s,
-        [this]() { return new InfoWidget(m_core, m_gui->actionManager(), m_gui->trackSelection(), m_window); },
+        [this]() {
+            return new InfoWidget(m_core, m_gui->actionManager(), m_gui->trackSelection(), m_selectionInfoFieldRegistry,
+                                  m_window);
+        },
         tr("Selection Info"));
 
     provider->registerWidget(
@@ -342,6 +348,7 @@ void Widgets::registerPages()
                        m_gui->playlistController()->presetRegistry(), m_settings, this);
     new GuiDisplayPage(m_settings, this);
     new GuiTrackDisplayPage(m_settings, this);
+    new SelectionInfoSettingsPage(m_selectionInfoFieldRegistry, m_settings, this);
     new GuiLayoutPage(m_gui->layoutProvider(), m_gui->editableLayout(), m_gui->widgetProvider(), m_settings, this);
     new GuiThemesPage(m_gui->themeRegistry(), m_settings, this);
     new TrackContextMenuPage(m_gui->trackSelection(), m_settings, this);
@@ -642,7 +649,8 @@ void Widgets::registerDspWidgets()
 void Widgets::registerPropertiesTabs()
 {
     m_gui->propertiesDialog()->addTab(tr("Details"), [this](const TrackList& tracks) {
-        return new InfoPropertiesTab(tracks, m_core->libraryManager(), m_gui->actionManager(), m_settings, m_window);
+        return new InfoPropertiesTab(tracks, m_core->libraryManager(), m_gui->actionManager(), m_settings,
+                                     m_selectionInfoFieldRegistry, m_window);
     });
     m_gui->propertiesDialog()->addTab(tr("ReplayGain"), [this](const TrackList& tracks) {
         const bool canWrite = std::ranges::all_of(tracks, [this](const Track& track) {

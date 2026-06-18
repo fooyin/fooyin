@@ -20,11 +20,13 @@
 #pragma once
 
 #include "infoitem.h"
+#include "selectioninfofield.h"
 
 #include <core/track.h>
 #include <utils/worker.h>
 
 #include <memory>
+#include <vector>
 
 namespace Fooyin {
 class InfoPopulatorPrivate;
@@ -52,7 +54,7 @@ public:
     explicit InfoPopulator(LibraryManager* libraryManager, QObject* parent = nullptr);
     ~InfoPopulator() override;
 
-    void run(InfoItem::Options options, const TrackList& tracks);
+    void run(InfoItem::Options options, const TrackList& tracks, const std::vector<SelectionInfoField>& fields);
 
 Q_SIGNALS:
     void populated(Fooyin::InfoDataPtr data);
