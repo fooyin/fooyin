@@ -26,6 +26,7 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
+#include <core/internalcoresettings.h>
 #include <core/network/remoteioservice.h>
 #include <core/playlist/playlistloader.h>
 #include <core/playlist/playlistparser.h>
@@ -37,6 +38,7 @@
 #include <QFile>
 #include <QLoggingCategory>
 #include <QUrl>
+
 #include <optional>
 #include <utility>
 
@@ -46,8 +48,37 @@ using namespace Qt::StringLiterals;
 
 constexpr auto ArchivePath = R"(unpack://%1|%2|file://%3!)";
 
+namespace Fooyin {
 namespace {
-void applyExistingTrackIdentity(Fooyin::Track& track, const Fooyin::Track& existingTrack)
+QStringList normaliseExtensions(QStringList extensions)
+{
+    for(QString& extension : extensions) {
+        extension = extension.trimmed().toLower();
+    }
+
+    extensions.removeAll(QString{});
+    std::ranges::sort(extensions);
+    extensions.removeDuplicates();
+
+    return extensions;
+}
+
+bool shouldProbeAllReadersForFile(const QString& file)
+{
+    const QString ext = QFileInfo{file}.suffix().toLower();
+    if(ext.isEmpty()) {
+        return false;
+    }
+
+    const FySettings settings;
+    const QVariant value = settings.contains(Settings::Core::Internal::ReaderProbeAllExtensions)
+                             ? settings.value(Settings::Core::Internal::ReaderProbeAllExtensions)
+                             : settings.value(Settings::Core::Internal::FFmpegPriorityExtensions,
+                                              Settings::Core::Internal::defaultReaderProbeAllExtensions());
+    return normaliseExtensions(value.toStringList()).contains(ext);
+}
+
+void applyExistingTrackIdentity(Track& track, const Track& existingTrack)
 {
     track.setId(existingTrack.id());
     track.setLibraryId(existingTrack.libraryId());
@@ -55,9 +86,9 @@ void applyExistingTrackIdentity(Fooyin::Track& track, const Fooyin::Track& exist
     track.setIsEnabled(existingTrack.isEnabled());
 }
 
-bool cueTracksUseEmbeddedCue(const Fooyin::TrackList& tracks)
+bool cueTracksUseEmbeddedCue(const TrackList& tracks)
 {
-    return std::ranges::any_of(tracks, [](const Fooyin::Track& track) { return track.hasExtraTag(u"CUESHEET"_s); });
+    return std::ranges::any_of(tracks, [](const Track& track) { return track.hasExtraTag(u"CUESHEET"_s); });
 }
 
 bool isRemotePlaylistUrl(const QUrl& url)
@@ -72,7 +103,6 @@ QString playlistExtension(const QUrl& url)
 
 } // namespace
 
-namespace Fooyin {
 LibraryTrackResolver::LibraryTrackResolver(LibraryInfo currentLibrary, PlaylistLoader* playlistLoader,
                                            AudioLoader* audioLoader, const bool playlistSkipMissing,
                                            std::shared_ptr<RemoteIoService> remoteIo,
@@ -628,7 +658,12 @@ TrackList LibraryTrackResolver::readArchiveTracks(const QString& filepath)
         const QString& entry = entryData.info.path;
         QIODevice* device    = entryData.device.get();
 
-        bool readersFound = false;
+        bool readersFound{false};
+        const bool probeAllReaders = shouldProbeAllReadersForFile(entry);
+        std::unique_ptr<AudioReader> selectedReader;
+        AudioSource selectedSource;
+        int selectedSubsongCount{0};
+
         for(auto& fileReader : m_audioLoader->readersForFile(entry)) {
             readersFound = true;
 
@@ -648,6 +683,25 @@ TrackList LibraryTrackResolver::readArchiveTracks(const QString& filepath)
             }
 
             const int subsongCount = std::max(fileReader->subsongCount(), 1);
+            if(probeAllReaders) {
+                if(!selectedReader || subsongCount > selectedSubsongCount) {
+                    selectedReader       = std::move(fileReader);
+                    selectedSource       = source;
+                    selectedSubsongCount = subsongCount;
+                }
+                continue;
+            }
+
+            selectedReader       = std::move(fileReader);
+            selectedSource       = source;
+            selectedSubsongCount = subsongCount;
+            break;
+        }
+
+        if(selectedReader) {
+            AudioSource source{selectedSource};
+            const int subsongCount = selectedSubsongCount;
+            auto& fileReader       = selectedReader;
 
             for(int subIndex{0}; subIndex < subsongCount; ++subIndex) {
                 if(!m_state->mayRun()) {

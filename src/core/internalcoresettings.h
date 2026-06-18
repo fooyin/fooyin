@@ -57,6 +57,7 @@ constexpr auto ExternalRestrictTypes             = "Library/ExternalRestrictType
 constexpr auto ExternalExcludeTypes              = "Library/ExternalExcludeTypes";
 constexpr auto FFmpegAllExtensions               = "Engine/FFmpegAllExtensions";
 constexpr auto FFmpegPriorityExtensions          = "Engine/FFmpegPriorityExtensions";
+constexpr auto ReaderProbeAllExtensions          = "Engine/ReaderProbeAllExtensions";
 constexpr auto SplitId3v23SemicolonSeparatedTags = "Tagging/SplitId3v23SemicolonSeparatedTags";
 
 constexpr auto DefaultRemoteReadAheadKb   = 2048;
@@ -64,6 +65,7 @@ constexpr auto DefaultRemotePrebufferMs   = 0;
 constexpr auto DefaultRemoteOpenTimeoutMs = 8000;
 
 [[nodiscard]] FYCORE_EXPORT QStringList defaultFFmpegPriorityExtensions();
+[[nodiscard]] FYCORE_EXPORT QStringList defaultReaderProbeAllExtensions();
 
 enum CoreInternalSettings : uint32_t
 {

@@ -40,7 +40,6 @@ public:
     ~FFmpegDecoder() override;
 
     [[nodiscard]] QStringList extensions() const override;
-    [[nodiscard]] QStringList preferredExtensions() const override;
     [[nodiscard]] bool supportsRemoteSources() const override;
     [[nodiscard]] int bitrate() const override;
     [[nodiscard]] bool trackHasChanged() const override;
@@ -70,7 +69,6 @@ public:
     ~FFmpegReader() override;
 
     [[nodiscard]] QStringList extensions() const override;
-    [[nodiscard]] QStringList preferredExtensions() const override;
     [[nodiscard]] bool supportsRemoteSources() const override;
     [[nodiscard]] bool canReadCover() const override;
     [[nodiscard]] bool canWriteMetaData() const override;

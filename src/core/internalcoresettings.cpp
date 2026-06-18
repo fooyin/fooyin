@@ -49,6 +49,11 @@ QStringList defaultFFmpegPriorityExtensions()
 {
     return {u"m4a"_s, u"m4b"_s, u"mp4"_s, u"mka"_s, u"mkv"_s};
 }
+
+QStringList defaultReaderProbeAllExtensions()
+{
+    return defaultFFmpegPriorityExtensions();
+}
 } // namespace Settings::Core::Internal
 
 CoreSettings::CoreSettings(SettingsManager* settingsManager)

@@ -20,6 +20,7 @@
 #include <core/engine/audioloader.h>
 
 #include <core/coresettings.h>
+#include <core/internalcoresettings.h>
 #include <core/network/remotesourceprovider.h>
 #include <core/track.h>
 #include <utils/helpers.h>
@@ -39,6 +40,7 @@ using namespace Qt::StringLiterals;
 constexpr auto DecoderState = "Engine/DecoderState";
 constexpr auto ReaderState  = "Engine/ReaderState";
 
+namespace Fooyin {
 namespace {
 QStringList normaliseExtensions(QStringList extensions)
 {
@@ -141,7 +143,23 @@ void prioritisePreferredLoaders(std::vector<std::unique_ptr<T>>& loaders, const 
     });
 }
 
-bool openFileSource(Fooyin::LoadedSource& input, const QString& filepath)
+QStringList readerProbeAllExtensions()
+{
+    const FySettings settings;
+    const QVariant value = settings.contains(Settings::Core::Internal::ReaderProbeAllExtensions)
+                             ? settings.value(Settings::Core::Internal::ReaderProbeAllExtensions)
+                             : settings.value(Settings::Core::Internal::FFmpegPriorityExtensions,
+                                              Settings::Core::Internal::defaultReaderProbeAllExtensions());
+    return normaliseExtensions(value.toStringList());
+}
+
+bool shouldProbeAllReadersForFile(const QString& file)
+{
+    const QString ext = QFileInfo{file}.suffix().toLower();
+    return !ext.isEmpty() && readerProbeAllExtensions().contains(ext);
+}
+
+bool openFileSource(LoadedSource& input, const QString& filepath)
 {
     if(!input.device) {
         auto file = std::make_unique<QFile>(filepath);
@@ -163,8 +181,8 @@ bool openFileSource(Fooyin::LoadedSource& input, const QString& filepath)
     return true;
 }
 
-bool openRemoteSource(Fooyin::LoadedSource& input, const QString& filepath,
-                      const std::shared_ptr<Fooyin::RemoteSourceProvider>& provider)
+bool openRemoteSource(LoadedSource& input, const QString& filepath,
+                      const std::shared_ptr<RemoteSourceProvider>& provider)
 {
     if(!provider) {
         input.device.reset();
@@ -201,7 +219,7 @@ bool openRemoteSource(Fooyin::LoadedSource& input, const QString& filepath,
     return true;
 }
 
-bool openArchiveSource(Fooyin::LoadedSource& input, const Fooyin::AudioLoader& loader, const QString& archivePath,
+bool openArchiveSource(LoadedSource& input, const AudioLoader& loader, const QString& archivePath,
                        const QString& entryPath)
 {
     if(!input.archiveReader) {
@@ -217,7 +235,7 @@ bool openArchiveSource(Fooyin::LoadedSource& input, const Fooyin::AudioLoader& l
         }
     }
 
-    Fooyin::ArchiveEntryData entryData = input.archiveReader->entry(entryPath);
+    ArchiveEntryData entryData = input.archiveReader->entry(entryPath);
     if(!entryData.device) {
         qCWarning(AUD_LDR) << "Failed to open archive entry" << entryPath << "from" << archivePath;
         return false;
@@ -234,7 +252,6 @@ bool openArchiveSource(Fooyin::LoadedSource& input, const Fooyin::AudioLoader& l
 }
 } // namespace
 
-namespace Fooyin {
 class AudioLoaderPrivate
 {
 public:
@@ -441,9 +458,13 @@ LoadedReader AudioLoader::loadReaderForTrack(const Track& track) const
         return {};
     }
 
-    LoadedReader ret;
+    const bool probeAllReaders = shouldProbeAllReadersForFile(track.filepath());
+
+    LoadedReader best;
+    int bestSubsongCount{0};
 
     for(auto& reader : readers) {
+        LoadedReader ret;
         if(track.isRemote()) {
             std::shared_ptr<RemoteSourceProvider> remoteSourceProvider;
             {
@@ -466,11 +487,19 @@ LoadedReader AudioLoader::loadReaderForTrack(const Track& track) const
 
         if(reader->init(ret.input.source)) {
             ret.reader = std::move(reader);
-            return ret;
+            if(!probeAllReaders) {
+                return ret;
+            }
+
+            const int subsongCount = std::max(ret.reader->subsongCount(), 1);
+            if(!best.reader || subsongCount > bestSubsongCount) {
+                best             = std::move(ret);
+                bestSubsongCount = subsongCount;
+            }
         }
     }
 
-    return {};
+    return best;
 }
 
 LoadedDecoder AudioLoader::loadDecoderForArchiveTrack(const Track& track, AudioDecoder::DecoderOptions options,
@@ -510,24 +539,32 @@ LoadedReader AudioLoader::loadReaderForArchiveTrack(const Track& track) const
         return {};
     }
 
-    LoadedReader ret;
-    if(!openArchiveSource(ret.input, *this, track.archivePath(), track.pathInArchive())) {
-        return {};
-    }
+    const bool probeAllReaders = shouldProbeAllReadersForFile(track.pathInArchive());
+
+    LoadedReader best;
+    int bestSubsongCount{0};
 
     for(auto& reader : readers) {
-        if(ret.input.device && !ret.input.device->seek(0)
-           && !openArchiveSource(ret.input, *this, track.archivePath(), track.pathInArchive())) {
+        LoadedReader ret;
+        if(!openArchiveSource(ret.input, *this, track.archivePath(), track.pathInArchive())) {
             return {};
         }
 
         if(reader->init(ret.input.source)) {
             ret.reader = std::move(reader);
-            return ret;
+            if(!probeAllReaders) {
+                return ret;
+            }
+
+            const int subsongCount = std::max(ret.reader->subsongCount(), 1);
+            if(!best.reader || subsongCount > bestSubsongCount) {
+                best             = std::move(ret);
+                bestSubsongCount = subsongCount;
+            }
         }
     }
 
-    return {};
+    return best;
 }
 
 std::vector<std::unique_ptr<AudioDecoder>> AudioLoader::decodersForFile(const QString& file) const

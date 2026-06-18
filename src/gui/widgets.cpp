@@ -568,13 +568,26 @@ void Widgets::registerAdvancedSettings()
          .normalise = {},
          .validate  = {}});
     advancedSettingsRegistry->add(
-        Settings::Core::Internal::FFmpegPriorityExtensions, Settings::Core::Internal::defaultFFmpegPriorityExtensions(),
-        {.category    = {tr("Playback"), tr("Decoding"), u"FFmpeg"_s},
-         .label       = tr("Prefer FFmpeg for extensions"),
-         .description = tr("Semicolon-separated extensions where FFmpeg is tried first."),
-         .editor      = AdvancedSettingStringListLineEdit{.separator = u';'},
-         .normalise   = [](const QVariant& value) { return normaliseExtensionList(value.toStringList()); },
-         .validate    = {}});
+        {.id           = QString::fromLatin1(Settings::Core::Internal::ReaderProbeAllExtensions),
+         .category     = {tr("Playback"), tr("Decoding")},
+         .label        = tr("Probe all readers for extensions"),
+         .description  = tr("Semicolon-separated extensions where all readers are tried and the reader with the most "
+                            "subsongs or chapters is used."),
+         .defaultValue = Settings::Core::Internal::defaultReaderProbeAllExtensions(),
+         .editor       = AdvancedSettingStringListLineEdit{.separator = u';'},
+         .read =
+             [this] {
+                 return m_settings->fileContains(Settings::Core::Internal::ReaderProbeAllExtensions)
+                          ? m_settings->fileValue(Settings::Core::Internal::ReaderProbeAllExtensions)
+                          : m_settings->fileValue(Settings::Core::Internal::FFmpegPriorityExtensions,
+                                                  Settings::Core::Internal::defaultReaderProbeAllExtensions());
+             },
+         .write =
+             [this](const QVariant& value) {
+                 return m_settings->fileSet(Settings::Core::Internal::ReaderProbeAllExtensions, value.toStringList());
+             },
+         .normalise = [](const QVariant& value) { return normaliseExtensionList(value.toStringList()); },
+         .validate  = {}});
     advancedSettingsRegistry->add<Settings::Core::Internal::OpusHeaderWriteMode>(
         {.category    = {tr("Playback"), tr("ReplayGain")},
          .label       = tr("Opus header gain"),

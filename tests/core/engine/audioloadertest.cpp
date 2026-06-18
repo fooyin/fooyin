@@ -19,6 +19,7 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
+#include <core/internalcoresettings.h>
 #include <core/network/remotesourceprovider.h>
 #include <core/network/remotestreamdevice.h>
 
@@ -754,6 +755,84 @@ TEST_F(AudioLoaderTest, PrioritisesLoadersWithPreferredExtensions)
               readerLabels(loader.readersForFile(u"/tmp/test.m4b"_s)));
     EXPECT_EQ((QStringList{u"first-reader"_s, u"preferred-reader"_s}),
               readerLabels(loader.readersForFile(u"/tmp/test.mp3"_s)));
+}
+
+TEST_F(AudioLoaderTest, ProbesAllReadersForConfiguredExtensionsAndChoosesHighestSubsongCount)
+{
+    FySettings settings;
+    settings.setValue(Settings::Core::Internal::ReaderProbeAllExtensions, QStringList{u"mp3"_s});
+    settings.sync();
+
+    AudioLoader loader;
+    const QString filePath = createFile(u"chapters.mp3"_s, "chapter-track");
+    const Track track{filePath};
+
+    const auto firstReader     = addReader(loader, u"first-reader"_s, {u"mp3"_s}, 0);
+    firstReader->requireDevice = true;
+    firstReader->subsongCount  = 2;
+
+    const auto secondReader     = addReader(loader, u"second-reader"_s, {u"mp3"_s}, 99);
+    secondReader->requireDevice = true;
+    secondReader->subsongCount  = 5;
+
+    const auto loadedReader = loader.loadReaderForTrack(track);
+    ASSERT_NE(loadedReader.reader, nullptr);
+    EXPECT_EQ(u"second-reader"_s, readerLabel(loadedReader.reader));
+    EXPECT_EQ(1, firstReader->initCalls);
+    EXPECT_EQ(1, secondReader->initCalls);
+    EXPECT_TRUE(secondReader->lastHadDevice);
+    EXPECT_TRUE(secondReader->lastDeviceOpen);
+    EXPECT_EQ(5, loadedReader.reader->subsongCount());
+}
+
+TEST_F(AudioLoaderTest, ReaderProbeKeepsConfiguredPriorityWhenSubsongCountsTie)
+{
+    FySettings settings;
+    settings.setValue(Settings::Core::Internal::ReaderProbeAllExtensions, QStringList{u"mp3"_s});
+    settings.sync();
+
+    AudioLoader loader;
+    const QString filePath = createFile(u"chapters.mp3"_s, "chapter-track");
+    const Track track{filePath};
+
+    const auto firstReader     = addReader(loader, u"first-reader"_s, {u"mp3"_s}, 0);
+    firstReader->requireDevice = true;
+    firstReader->subsongCount  = 3;
+
+    const auto secondReader     = addReader(loader, u"second-reader"_s, {u"mp3"_s}, 99);
+    secondReader->requireDevice = true;
+    secondReader->subsongCount  = 3;
+
+    const auto loadedReader = loader.loadReaderForTrack(track);
+    ASSERT_NE(loadedReader.reader, nullptr);
+    EXPECT_EQ(u"first-reader"_s, readerLabel(loadedReader.reader));
+    EXPECT_EQ(1, firstReader->initCalls);
+    EXPECT_EQ(1, secondReader->initCalls);
+}
+
+TEST_F(AudioLoaderTest, ReaderProbeUsesLegacyFFmpegPriorityExtensionsWhenNewSettingIsUnset)
+{
+    FySettings settings;
+    settings.setValue(Settings::Core::Internal::FFmpegPriorityExtensions, QStringList{u"mp3"_s});
+    settings.sync();
+
+    AudioLoader loader;
+    const QString filePath = createFile(u"legacy.mp3"_s, "chapter-track");
+    const Track track{filePath};
+
+    const auto firstReader     = addReader(loader, u"first-reader"_s, {u"mp3"_s}, 0);
+    firstReader->requireDevice = true;
+    firstReader->subsongCount  = 1;
+
+    const auto secondReader     = addReader(loader, u"second-reader"_s, {u"mp3"_s}, 99);
+    secondReader->requireDevice = true;
+    secondReader->subsongCount  = 4;
+
+    const auto loadedReader = loader.loadReaderForTrack(track);
+    ASSERT_NE(loadedReader.reader, nullptr);
+    EXPECT_EQ(u"second-reader"_s, readerLabel(loadedReader.reader));
+    EXPECT_EQ(1, firstReader->initCalls);
+    EXPECT_EQ(1, secondReader->initCalls);
 }
 
 TEST_F(AudioLoaderTest, LoadsDecoderAndReaderForRegularTracks)
