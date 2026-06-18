@@ -273,6 +273,7 @@ void LyricsWidget::updateLyrics(const Track& track, bool force)
     }
 
     if(preserveLyrics) {
+        m_model->setTrackDuration(track.duration());
         return;
     }
 
@@ -667,6 +668,7 @@ void LyricsWidget::changeLyrics(const Lyrics& lyrics, const Track* sourceTrack)
     if(lyrics.isValid()) {
         m_lyricsView->setDisplayString({});
         m_model->setLyrics(m_currentLyrics);
+        m_model->setTrackDuration(m_currentTrack.duration());
         updateEdgeFadeState();
     }
     else {

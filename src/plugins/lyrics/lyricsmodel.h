@@ -55,6 +55,7 @@ public:
     explicit LyricsModel(GuiStyleProvider* styleProvider, QObject* parent = nullptr);
 
     void setLyrics(const Lyrics& lyrics);
+    void setTrackDuration(uint64_t duration);
     [[nodiscard]] Lyrics lyrics() const;
 
     void setMargins(const QMargins& margins);

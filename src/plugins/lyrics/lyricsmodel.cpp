@@ -69,6 +69,37 @@ void LyricsModel::setLyrics(const Lyrics& lyrics)
     endResetModel();
 }
 
+void LyricsModel::setTrackDuration(uint64_t duration)
+{
+    if(!m_lyrics.isSynced() || m_lyrics.lines.empty()) {
+        return;
+    }
+
+    const uint64_t lastTimestamp = m_lyrics.lines.back().timestamp;
+    if(duration <= lastTimestamp) {
+        return;
+    }
+
+    const auto firstLastLine = std::ranges::lower_bound(m_lyrics.lines, lastTimestamp, {}, &ParsedLine::timestamp);
+    const int firstIndex     = static_cast<int>(std::distance(m_lyrics.lines.begin(), firstLastLine));
+
+    for(auto line = firstLastLine; line != m_lyrics.lines.end(); ++line) {
+        line->duration = duration - line->timestamp;
+
+        if(m_lyrics.type == Lyrics::Type::SyncedWords && !line->words.empty()) {
+            auto& lastWord = line->words.back();
+            if(duration > lastWord.timestamp) {
+                lastWord.duration = duration - lastWord.timestamp;
+            }
+        }
+
+        m_text[static_cast<size_t>(std::distance(m_lyrics.lines.begin(), line))] = textForLine(*line);
+    }
+
+    Q_EMIT dataChanged(index(firstIndex + 1, 0), index(static_cast<int>(m_lyrics.lines.size()), 0),
+                       {RichTextRole, DurationRole, WordsRole, CurrentTimeRole});
+}
+
 Lyrics LyricsModel::lyrics() const
 {
     return m_lyrics;
