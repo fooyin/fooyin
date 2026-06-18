@@ -40,6 +40,8 @@
 #include <QPushButton>
 #include <QTabWidget>
 
+#include <optional>
+
 namespace Fooyin {
 class GuiColoursPageWidget : public SettingsPageWidget
 {
@@ -58,6 +60,7 @@ private:
     void addFontOption(QGridLayout* layout, const QString& title, const QString& className);
 
     void updateButtonState() const;
+    [[nodiscard]] std::optional<FyTheme> selectedTheme() const;
     [[nodiscard]] FyTheme currentTheme() const;
     void loadDefaults();
     void loadCurrentTheme();
@@ -77,6 +80,7 @@ private:
     QString m_defaultTheme;
     std::map<PaletteKey, std::pair<ColourButton*, QCheckBox*>> m_colourMapping;
     std::map<QString, std::pair<FontButton*, QCheckBox*>> m_fontMapping;
+    std::optional<FyTheme> m_loadedTheme;
 };
 
 GuiColoursPageWidget::GuiColoursPageWidget(ThemeRegistry* themeRegistry, SettingsManager* settings)
@@ -174,25 +178,26 @@ void GuiColoursPageWidget::load()
 {
     m_themesBox->clear();
 
-    m_themesBox->addItem(m_defaultTheme, 1);
+    m_themesBox->addItem(m_defaultTheme, -1);
 
-    const auto themes = m_themeRegistry->items();
+    const auto current = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
+    const auto themes  = m_themeRegistry->items();
+    int currentThemeIndex{-1};
     for(const auto& theme : themes) {
-        m_themesBox->addItem(theme.name);
+        m_themesBox->addItem(theme.name, theme.id);
+        if(theme.id == current.id && theme.name == current.name) {
+            currentThemeIndex = m_themesBox->count() - 1;
+        }
+        else if(currentThemeIndex < 0 && theme.name == current.name) {
+            currentThemeIndex = m_themesBox->count() - 1;
+        }
+    }
+    if(currentThemeIndex >= 0) {
+        m_themesBox->setCurrentIndex(currentThemeIndex);
     }
 
     loadDefaults();
     loadCurrentTheme();
-
-    const auto currentTheme = this->currentTheme();
-    for(const auto& theme : themes) {
-        if(theme.colours == currentTheme.colours && theme.fonts == currentTheme.fonts) {
-            if(const int index = m_themesBox->findText(theme.name); index >= 0) {
-                m_themesBox->setCurrentIndex(index);
-            }
-            break;
-        }
-    }
 }
 
 void GuiColoursPageWidget::apply()
@@ -206,6 +211,7 @@ void GuiColoursPageWidget::apply()
 void GuiColoursPageWidget::reset()
 {
     m_settings->reset<Settings::Gui::CustomTheme>();
+    m_loadedTheme.reset();
 }
 
 void GuiColoursPageWidget::addColourOption(QGridLayout* layout, const QString& title, QPalette::ColorRole role,
@@ -247,9 +253,25 @@ void GuiColoursPageWidget::updateButtonState() const
     m_deleteButton->setEnabled(!isDefault);
 }
 
+std::optional<FyTheme> GuiColoursPageWidget::selectedTheme() const
+{
+    if(const int index = m_themesBox->currentIndex(); index >= 0) {
+        if(const int themeId = m_themesBox->itemData(index).toInt();
+           themeId >= 0 && m_themesBox->itemText(index) == m_themesBox->currentText()) {
+            return m_themeRegistry->itemById(themeId);
+        }
+    }
+    return m_themeRegistry->itemByName(m_themesBox->currentText());
+}
+
 FyTheme GuiColoursPageWidget::currentTheme() const
 {
     FyTheme theme;
+    if(m_loadedTheme) {
+        theme = *m_loadedTheme;
+        theme.colours.clear();
+        theme.fonts.clear();
+    }
 
     for(const auto& [key, pair] : m_colourMapping) {
         const auto& [button, option] = pair;
@@ -290,6 +312,7 @@ void GuiColoursPageWidget::loadDefaults()
 void GuiColoursPageWidget::loadCurrentTheme()
 {
     const auto currentTheme = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
+    m_loadedTheme           = currentTheme.isValid() ? std::make_optional(currentTheme) : std::nullopt;
     if(currentTheme.isValid()) {
         for(const auto& [key, colour] : Utils::asRange(currentTheme.colours)) {
             if(m_colourMapping.contains(key)) {
@@ -325,12 +348,14 @@ void GuiColoursPageWidget::saveTheme()
             theme.index = existingTheme->index;
             m_themeRegistry->changeItem(theme);
             m_themesBox->setCurrentIndex(m_themesBox->findText(name));
+            m_loadedTheme = m_themeRegistry->itemById(existingTheme->id).value_or(theme);
         }
     }
     else {
         const auto newItem = m_themeRegistry->addItem(theme);
-        m_themesBox->addItem(newItem.name);
+        m_themesBox->addItem(newItem.name, newItem.id);
         m_themesBox->setCurrentIndex(m_themesBox->count() - 1);
+        m_loadedTheme = newItem;
         updateButtonState();
     }
 }
@@ -341,15 +366,19 @@ void GuiColoursPageWidget::loadTheme()
         return;
     }
 
-    if(m_themesBox->currentData().toInt() == 1) {
+    if(m_themesBox->currentData().toInt() < 0) {
         loadDefaults();
+        m_loadedTheme.reset();
         return;
     }
 
-    const auto theme = m_themeRegistry->itemByName(m_themesBox->currentText());
+    const auto theme = selectedTheme();
     if(!theme) {
         return;
     }
+
+    loadDefaults();
+    m_loadedTheme = *theme;
 
     for(const auto& [key, pair] : m_colourMapping) {
         if(theme->colours.contains(key)) {
