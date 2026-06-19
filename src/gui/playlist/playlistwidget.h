@@ -38,6 +38,7 @@
 #include <QString>
 
 #include <memory>
+#include <optional>
 
 class QVBoxLayout;
 class QAction;
@@ -67,6 +68,7 @@ struct PlaylistWidgetLayoutState
     PlaylistPreset currentPreset;
     bool singleMode{false};
     PlaylistColumnList columns;
+    std::vector<Qt::Alignment> columnAlignments;
     QByteArray headerState;
 };
 
@@ -141,6 +143,7 @@ public:
     void selectAll();
 
     void handlePresetChanged(const PlaylistPreset& preset);
+    void changePlaylistLayout(Playlist* previousPlaylist, const Playlist* playlist);
     void setMiddleClickAction(TrackAction action);
     bool followCurrentTrack();
     void sessionHandleRestoredState();
@@ -181,6 +184,7 @@ private:
     void updateSortActionState();
     void addClipboardMenu(QMenu* parent, bool hasSelection) const;
     void addSingleModeAction(QMenu* parent);
+    void addCustomLayoutAction(QMenu* parent);
     void addPresetMenu(QMenu* parent);
     void addColumnsMenu(QMenu* parent);
     void addSettingsAction(QMenu* menu);
@@ -193,6 +197,14 @@ private:
     void resetColumnsToDefault();
     void setColumnVisible(int columnId, bool visible);
     void setSingleMode(bool enabled);
+    void ensureDefaultColumns(PlaylistWidgetLayoutState& state) const;
+    void applyDefaultHeaderConfiguration();
+    [[nodiscard]] PlaylistWidgetLayoutState captureLayoutState() const;
+    [[nodiscard]] QString serialiseLayoutState(const PlaylistWidgetLayoutState& state) const;
+    [[nodiscard]] std::optional<PlaylistWidgetLayoutState> deserialiseLayoutState(const QString& encoded) const;
+    void applyLayoutState(const PlaylistWidgetLayoutState& state);
+    void saveRememberedLayout(Playlist* playlist);
+    [[nodiscard]] bool remembersLayout(const Playlist* playlist) const;
     void updateSpans();
     void applyBackgroundSettings();
     void reloadBackgroundCover(const Track& track = {});
@@ -231,6 +243,8 @@ private:
     PlaylistView* m_playlistView;
     AutoHeaderView* m_header;
     PlaylistWidgetLayoutState m_layoutState;
+    PlaylistWidgetLayoutState m_defaultLayoutState;
+    QString m_loadedPlaylistLayout;
 
     WidgetContext* m_playlistContext;
     TrackAction m_middleClickAction;

@@ -28,17 +28,21 @@ class ActionManager;
 enum class TrackAction;
 struct PlaylistPreset;
 class PresetRegistry;
+class Playlist;
 
 class EditablePlaylistSessionHost : public PlaylistWidgetSessionHost
 {
 public:
     ~EditablePlaylistSessionHost() override = default;
 
-    [[nodiscard]] virtual ActionManager* actionManager() const     = 0;
-    [[nodiscard]] virtual PresetRegistry* presetRegistry() const   = 0;
-    virtual void handlePresetChanged(const PlaylistPreset& preset) = 0;
-    virtual void setHeaderVisible(bool visible)                    = 0;
-    virtual void setScrollbarVisible(bool visible)                 = 0;
-    virtual void setMiddleClickAction(TrackAction action)          = 0;
+    [[nodiscard]] virtual ActionManager* actionManager() const   = 0;
+    [[nodiscard]] virtual PresetRegistry* presetRegistry() const = 0;
+
+    virtual void handlePresetChanged(const PlaylistPreset& preset)                    = 0;
+    virtual void changePlaylistLayout(Playlist* previousPlaylist, Playlist* playlist) = 0;
+
+    virtual void setHeaderVisible(bool visible)           = 0;
+    virtual void setScrollbarVisible(bool visible)        = 0;
+    virtual void setMiddleClickAction(TrackAction action) = 0;
 };
 } // namespace Fooyin

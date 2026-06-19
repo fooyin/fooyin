@@ -66,6 +66,8 @@
 #include <QByteArray>
 #include <QHeaderView>
 #include <QItemSelection>
+#include <QJsonArray>
+#include <QJsonDocument>
 #include <QJsonObject>
 #include <QKeyEvent>
 #include <QMenu>
@@ -75,16 +77,36 @@
 #include <QStringList>
 #include <QVBoxLayout>
 
+#include <array>
+#include <map>
 #include <set>
 #include <utility>
 
 using namespace std::chrono_literals;
 using namespace Qt::StringLiterals;
 
+constexpr auto PlaylistLayoutProperty = "gui/playlist-layout"_L1;
+constexpr auto PlaylistLayoutVersion  = 1;
+
 namespace Fooyin {
 using namespace Settings::Gui::Internal;
 
 namespace {
+struct DefaultPlaylistColumn
+{
+    int id;
+    Qt::Alignment alignment;
+    double width;
+};
+
+constexpr std::array DefaultPlaylistColumns{
+    DefaultPlaylistColumn{.id = 8, .alignment = Qt::AlignCenter, .width = 0.06},
+    DefaultPlaylistColumn{.id = 3, .alignment = Qt::AlignLeft, .width = 0.38},
+    DefaultPlaylistColumn{.id = 0, .alignment = Qt::AlignRight, .width = 0.08},
+    DefaultPlaylistColumn{.id = 1, .alignment = Qt::AlignLeft, .width = 0.38},
+    DefaultPlaylistColumn{.id = 7, .alignment = Qt::AlignRight, .width = 0.10},
+};
+
 qsizetype selectedRowCount(const QAbstractItemView* view)
 {
     if(!view || !view->selectionModel()) {
@@ -121,6 +143,10 @@ public:
     void handlePresetChanged(const PlaylistPreset& preset) override
     {
         m_widget->handlePresetChanged(preset);
+    }
+    void changePlaylistLayout(Playlist* previousPlaylist, Playlist* playlist) override
+    {
+        m_widget->changePlaylistLayout(previousPlaylist, playlist);
     }
     void setHeaderVisible(bool visible) override
     {
@@ -261,6 +287,8 @@ PlaylistWidget* PlaylistWidget::createDetachedLibrarySearch(ActionManager* actio
 
 PlaylistWidget::~PlaylistWidget()
 {
+    resetSort();
+    saveRememberedLayout(m_playlistController->currentPlaylist());
     m_session->destroy(sessionHost());
 }
 
@@ -298,15 +326,28 @@ QString PlaylistWidget::layoutName() const
 
 void PlaylistWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout["Preset"_L1]     = m_layoutState.currentPreset.id;
-    layout["SingleMode"_L1] = m_layoutState.singleMode;
+    resetSort();
 
-    if(!m_layoutState.columns.empty()) {
+    if(auto* playlist = m_playlistController->currentPlaylist(); remembersLayout(playlist)) {
+        saveRememberedLayout(playlist);
+    }
+    else {
+        m_defaultLayoutState = captureLayoutState();
+    }
+
+    const auto& state       = m_defaultLayoutState.currentPreset.isValid() ? m_defaultLayoutState : m_layoutState;
+    layout["Preset"_L1]     = state.currentPreset.id;
+    layout["SingleMode"_L1] = state.singleMode;
+
+    if(!state.columns.empty()) {
         QStringList columns;
 
-        for(int i{0}; const auto& column : m_layoutState.columns) {
-            const auto alignment = m_model->columnAlignment(i++);
-            QString colStr       = QString::number(column.id);
+        for(int i{0}; const auto& column : state.columns) {
+            const auto alignment = std::cmp_less(i, state.columnAlignments.size())
+                                     ? state.columnAlignments.at(static_cast<size_t>(i))
+                                     : Qt::AlignLeft;
+            ++i;
+            QString colStr = QString::number(column.id);
 
             if(alignment != Qt::AlignLeft) {
                 colStr += ":"_L1 + QString::number(alignment.toInt());
@@ -318,14 +359,9 @@ void PlaylistWidget::saveLayoutData(QJsonObject& layout)
         layout["Columns"_L1] = columns.join(u"|"_s);
     }
 
-    resetSort();
-
-    if(!m_layoutState.singleMode || !m_layoutState.headerState.isEmpty()) {
-        QByteArray state         = m_layoutState.singleMode && !m_layoutState.headerState.isEmpty()
-                                     ? m_layoutState.headerState
-                                     : m_header->saveHeaderState();
-        state                    = qCompress(state, 9);
-        layout["HeaderState"_L1] = QString::fromUtf8(state.toBase64());
+    if(!state.headerState.isEmpty()) {
+        const QByteArray headerState = qCompress(state.headerState, 9);
+        layout["HeaderState"_L1]     = QString::fromUtf8(headerState.toBase64());
     }
 }
 
@@ -344,6 +380,7 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
 
     if(layout.contains("Columns"_L1)) {
         m_layoutState.columns.clear();
+        m_layoutState.columnAlignments.clear();
 
         const QString columnData    = layout.value("Columns"_L1).toString();
         const QStringList columnIds = columnData.split(u'|');
@@ -355,9 +392,12 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
                 m_layoutState.columns.push_back(columnItem.value());
 
                 if(column.size() > 1) {
-                    m_model->changeColumnAlignment(i, static_cast<Qt::Alignment>(column.at(1).toInt()));
+                    const auto alignment = static_cast<Qt::Alignment>(column.at(1).toInt());
+                    m_layoutState.columnAlignments.push_back(alignment);
+                    m_model->changeColumnAlignment(i, alignment);
                 }
                 else {
+                    m_layoutState.columnAlignments.emplace_back(Qt::AlignLeft);
                     m_model->changeColumnAlignment(i, Qt::AlignLeft);
                 }
             }
@@ -387,6 +427,9 @@ void PlaylistWidget::finalise()
             changePreset(preset.value());
         }
     }
+
+    m_defaultLayoutState = captureLayoutState();
+    changePlaylistLayout(nullptr, m_playlistController->currentPlaylist());
 
     m_header->setSectionsClickable(!layoutState().singleMode);
     m_header->setSortIndicatorShown(!layoutState().singleMode);
@@ -447,7 +490,9 @@ void PlaylistWidget::resetModelThrottled() const
 void PlaylistWidget::changePreset(const PlaylistPreset& preset)
 {
     m_layoutState.currentPreset = preset;
-    m_settings->fileSet(PlaylistCurrentPreset, preset.id);
+    if(!remembersLayout(m_playlistController->currentPlaylist())) {
+        m_settings->fileSet(PlaylistCurrentPreset, preset.id);
+    }
     m_playlistView->setExtendSpansIntoParents(m_layoutState.currentPreset.insetSubheadersToImageColumns);
     resetModelThrottled();
 }
@@ -504,9 +549,185 @@ void PlaylistWidget::selectAll()
 
 void PlaylistWidget::handlePresetChanged(const PlaylistPreset& preset)
 {
+    if(m_defaultLayoutState.currentPreset.id == preset.id) {
+        m_defaultLayoutState.currentPreset = preset;
+    }
     if(m_layoutState.currentPreset.id == preset.id) {
         changePreset(preset);
     }
+}
+
+PlaylistWidgetLayoutState PlaylistWidget::captureLayoutState() const
+{
+    PlaylistWidgetLayoutState state{m_layoutState};
+
+    state.columnAlignments.clear();
+    state.columnAlignments.reserve(state.columns.size());
+
+    for(int i{0}; std::cmp_less(i, state.columns.size()); ++i) {
+        state.columnAlignments.push_back(m_model->columnAlignment(i));
+    }
+
+    if(!state.singleMode && m_header->count() > 0) {
+        state.headerState = m_header->saveHeaderState();
+    }
+
+    return state;
+}
+
+QString PlaylistWidget::serialiseLayoutState(const PlaylistWidgetLayoutState& state) const
+{
+    QJsonObject layout;
+    layout["Version"_L1]    = PlaylistLayoutVersion;
+    layout["Preset"_L1]     = state.currentPreset.id;
+    layout["SingleMode"_L1] = state.singleMode;
+
+    QJsonArray columns;
+    for(size_t i{0}; i < state.columns.size(); ++i) {
+        QJsonObject column;
+        column["Id"_L1] = state.columns.at(i).id;
+        if(i < state.columnAlignments.size() && state.columnAlignments.at(i) != Qt::AlignLeft) {
+            column["Alignment"_L1] = static_cast<int>(state.columnAlignments.at(i).toInt());
+        }
+        columns.append(column);
+    }
+    layout["Columns"_L1] = columns;
+
+    if(!state.headerState.isEmpty()) {
+        layout["HeaderState"_L1] = QString::fromUtf8(qCompress(state.headerState, 9).toBase64());
+    }
+
+    return QString::fromUtf8(QJsonDocument{layout}.toJson(QJsonDocument::Compact));
+}
+
+std::optional<PlaylistWidgetLayoutState> PlaylistWidget::deserialiseLayoutState(const QString& encoded) const
+{
+    QJsonParseError error;
+    const QJsonDocument document = QJsonDocument::fromJson(encoded.toUtf8(), &error);
+    if(error.error != QJsonParseError::NoError || !document.isObject()) {
+        return {};
+    }
+
+    const QJsonObject layout = document.object();
+    if(layout.value("Version"_L1).toInt() != PlaylistLayoutVersion) {
+        return {};
+    }
+
+    PlaylistWidgetLayoutState state;
+    if(const auto preset = m_presetRegistry->itemById(layout.value("Preset"_L1).toInt())) {
+        state.currentPreset = preset.value();
+    }
+    else {
+        state.currentPreset = m_defaultLayoutState.currentPreset;
+    }
+    state.singleMode = layout.value("SingleMode"_L1).toBool();
+
+    const QJsonArray columns = layout.value("Columns"_L1).toArray();
+    for(const auto& value : columns) {
+        const QJsonObject columnData = value.toObject();
+        if(const auto column = m_columnRegistry->itemById(columnData.value("Id"_L1).toInt(-1))) {
+            state.columns.push_back(column.value());
+            state.columnAlignments.push_back(
+                static_cast<Qt::Alignment>(columnData.value("Alignment"_L1).toInt(Qt::AlignLeft)));
+        }
+    }
+
+    if(!state.singleMode && state.columns.empty()) {
+        state.columns          = m_defaultLayoutState.columns;
+        state.columnAlignments = m_defaultLayoutState.columnAlignments;
+    }
+
+    const QByteArray encodedState = layout.value("HeaderState"_L1).toString().toUtf8();
+    if(!encodedState.isEmpty()) {
+        state.headerState = qUncompress(QByteArray::fromBase64(encodedState));
+    }
+
+    if(!state.currentPreset.isValid()) {
+        return {};
+    }
+
+    return state;
+}
+
+void PlaylistWidget::applyLayoutState(const PlaylistWidgetLayoutState& state)
+{
+    m_layoutState = state;
+    if(!m_layoutState.singleMode) {
+        ensureDefaultColumns(m_layoutState);
+    }
+
+    m_model->resetColumnAlignments();
+    for(int i{0}; const Qt::Alignment alignment : m_layoutState.columnAlignments) {
+        m_model->changeColumnAlignment(i++, alignment);
+    }
+
+    m_header->setSectionsClickable(!m_layoutState.singleMode);
+    m_header->setSortIndicatorShown(!m_layoutState.singleMode);
+    m_playlistView->setExtendSpansIntoParents(m_layoutState.currentPreset.insetSubheadersToImageColumns);
+
+    if(!m_layoutState.singleMode) {
+        QObject::connect(
+            m_model, &QAbstractItemModel::modelReset, this,
+            [this, headerState = m_layoutState.headerState]() {
+                if(!headerState.isEmpty()) {
+                    m_header->restoreHeaderState(headerState);
+                }
+                else {
+                    applyDefaultHeaderConfiguration();
+                }
+            },
+            Qt::SingleShotConnection);
+    }
+
+    updateSpans();
+}
+
+void PlaylistWidget::saveRememberedLayout(Playlist* playlist)
+{
+    if(playlist && remembersLayout(playlist)) {
+        const QString encoded = serialiseLayoutState(captureLayoutState());
+        const QString stored  = playlist->extraProperties().value(PlaylistLayoutProperty);
+
+        if(stored != m_loadedPlaylistLayout && encoded == m_loadedPlaylistLayout) {
+            return;
+        }
+
+        playlist->setExtraProperty(PlaylistLayoutProperty, encoded);
+        m_loadedPlaylistLayout = encoded;
+    }
+}
+
+bool PlaylistWidget::remembersLayout(const Playlist* playlist) const
+{
+    return m_session->capabilities().editablePlaylist && playlist && playlist->hasExtraProperty(PlaylistLayoutProperty);
+}
+
+void PlaylistWidget::changePlaylistLayout(Playlist* previousPlaylist, const Playlist* playlist)
+{
+    if(!m_session->capabilities().editablePlaylist) {
+        return;
+    }
+
+    if(previousPlaylist) {
+        if(remembersLayout(previousPlaylist)) {
+            saveRememberedLayout(previousPlaylist);
+        }
+        else {
+            m_defaultLayoutState = captureLayoutState();
+        }
+    }
+
+    if(playlist && remembersLayout(playlist)) {
+        const QString encoded = playlist->extraProperties().value(PlaylistLayoutProperty);
+        if(const auto state = deserialiseLayoutState(encoded)) {
+            m_loadedPlaylistLayout = encoded;
+            applyLayoutState(state.value());
+            return;
+        }
+    }
+
+    m_loadedPlaylistLayout.clear();
+    applyLayoutState(m_defaultLayoutState);
 }
 
 void PlaylistWidget::setMiddleClickAction(TrackAction action)
@@ -656,10 +877,18 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
+    const QPoint viewportPos = m_playlistView->viewport()->mapFromGlobal(event->globalPos());
+    const bool invalidIndex  = !m_playlistView->indexAt(viewportPos).isValid();
+
+    if(invalidIndex) {
+        addSingleModeAction(menu);
+        addCustomLayoutAction(menu);
+        menu->addSeparator();
+    }
+
     populateTrackContextMenu(menu, {.selectedCount = selectedRowCount(m_playlistView)});
 
-    const QPoint viewportPos = m_playlistView->viewport()->mapFromGlobal(event->globalPos());
-    if(!m_playlistView->indexAt(viewportPos).isValid()) {
+    if(invalidIndex) {
         menu->addSeparator();
         addSettingsAction(menu);
     }
@@ -910,6 +1139,10 @@ void PlaylistWidget::showHeaderMenu(const QPoint& pos)
 
     addSingleModeAction(menu);
 
+    if(m_session->capabilities().editablePlaylist) {
+        addCustomLayoutAction(menu);
+    }
+
     menu->addSeparator();
     addPresetMenu(menu);
     menu->addSeparator();
@@ -970,6 +1203,37 @@ void PlaylistWidget::addSingleModeAction(QMenu* parent)
     QObject::connect(columnModeAction, &QAction::triggered, this,
                      [this]() { setSingleMode(!layoutState().singleMode); });
     parent->addAction(columnModeAction);
+}
+
+void PlaylistWidget::addCustomLayoutAction(QMenu* parent)
+{
+    auto* currentPlaylist = m_playlistController->currentPlaylist();
+
+    auto* action = new QAction(tr("Use custom layout for this playlist"), parent);
+    action->setStatusTip(tr("Use a separate view layout instead of the default"));
+    action->setCheckable(true);
+    action->setChecked(remembersLayout(currentPlaylist));
+    action->setEnabled(currentPlaylist != nullptr);
+
+    QObject::connect(action, &QAction::toggled, this, [this, currentPlaylist](bool enabled) {
+        if(!currentPlaylist || currentPlaylist != m_playlistController->currentPlaylist()) {
+            return;
+        }
+
+        if(enabled) {
+            resetSort();
+            m_loadedPlaylistLayout = serialiseLayoutState(captureLayoutState());
+            currentPlaylist->setExtraProperty(PlaylistLayoutProperty, m_loadedPlaylistLayout);
+            return;
+        }
+
+        currentPlaylist->removeExtraProperty(PlaylistLayoutProperty);
+        m_loadedPlaylistLayout.clear();
+        applyLayoutState(m_defaultLayoutState);
+        resetModelThrottled();
+    });
+
+    parent->addAction(action);
 }
 
 void PlaylistWidget::addPresetMenu(QMenu* parent)
@@ -1088,23 +1352,41 @@ void PlaylistWidget::updateMetadataEditTriggers(bool readOnly)
 
 void PlaylistWidget::handleColumnChanged(const PlaylistColumn& changedColumn)
 {
-    auto existingIt = std::ranges::find_if(m_layoutState.columns, [&changedColumn](const auto& column) {
-        return (column.isDefault && changedColumn.isDefault && column.name == changedColumn.name)
-            || column.id == changedColumn.id;
-    });
-
-    if(existingIt != m_layoutState.columns.end()) {
+    const auto updateColumn = [&changedColumn](PlaylistColumnList& columns) {
+        auto existingIt = std::ranges::find_if(columns, [&changedColumn](const auto& column) {
+            return (column.isDefault && changedColumn.isDefault && column.name == changedColumn.name)
+                || column.id == changedColumn.id;
+        });
+        if(existingIt == columns.end()) {
+            return false;
+        }
         *existingIt = changedColumn;
+        return true;
+    };
+
+    updateColumn(m_defaultLayoutState.columns);
+    if(updateColumn(m_layoutState.columns)) {
         resetModelThrottled();
     }
 }
 
 void PlaylistWidget::handleColumnRemoved(int id)
 {
-    PlaylistColumnList columns;
-    std::ranges::copy_if(m_layoutState.columns, std::back_inserter(columns),
-                         [id](const auto& column) { return column.id != id; });
-    if(std::exchange(m_layoutState.columns, columns) != columns) {
+    const auto removeColumn = [id](PlaylistWidgetLayoutState& state) {
+        const auto it = std::ranges::find(state.columns, id, &PlaylistColumn::id);
+        if(it == state.columns.end()) {
+            return false;
+        }
+        const auto index = static_cast<int>(std::distance(state.columns.begin(), it));
+        state.columns.erase(it);
+        if(std::cmp_less(index, state.columnAlignments.size())) {
+            state.columnAlignments.erase(state.columnAlignments.begin() + index);
+        }
+        return true;
+    };
+
+    removeColumn(m_defaultLayoutState);
+    if(removeColumn(m_layoutState)) {
         resetModelThrottled();
     }
 }
@@ -1158,21 +1440,10 @@ void PlaylistWidget::setSingleMode(bool enabled)
     m_header->setSortIndicatorShown(!m_layoutState.singleMode);
 
     if(!m_layoutState.singleMode) {
-        if(m_layoutState.columns.empty()) {
-            for(const int id : {8, 3, 0, 1, 7}) {
-                if(const auto column = m_columnRegistry->itemById(id)) {
-                    m_layoutState.columns.push_back(column.value());
-                }
-            }
-        }
+        ensureDefaultColumns(m_layoutState);
 
         auto resetColumns = [this]() {
-            m_model->resetColumnAlignments();
-            m_header->resetSectionPositions();
-            m_header->setHeaderSectionWidths({{0, 0.06}, {1, 0.38}, {2, 0.08}, {3, 0.38}, {4, 0.10}});
-            m_model->changeColumnAlignment(0, Qt::AlignCenter);
-            m_model->changeColumnAlignment(2, Qt::AlignRight);
-            m_model->changeColumnAlignment(4, Qt::AlignRight);
+            applyDefaultHeaderConfiguration();
         };
 
         auto resetState = [this, resetColumns]() {
@@ -1197,6 +1468,33 @@ void PlaylistWidget::setSingleMode(bool enabled)
     }
 
     resetModelThrottled();
+}
+
+void PlaylistWidget::ensureDefaultColumns(PlaylistWidgetLayoutState& state) const
+{
+    if(!state.columns.empty()) {
+        return;
+    }
+
+    for(const auto& defaultColumn : DefaultPlaylistColumns) {
+        if(const auto column = m_columnRegistry->itemById(defaultColumn.id)) {
+            state.columns.push_back(column.value());
+            state.columnAlignments.push_back(defaultColumn.alignment);
+        }
+    }
+}
+
+void PlaylistWidget::applyDefaultHeaderConfiguration()
+{
+    m_model->resetColumnAlignments();
+    m_header->resetSectionPositions();
+
+    std::map<int, double> widths;
+    for(int i{0}; const auto& defaultColumn : DefaultPlaylistColumns) {
+        widths.emplace(i, defaultColumn.width);
+        m_model->changeColumnAlignment(i++, defaultColumn.alignment);
+    }
+    m_header->setHeaderSectionWidths(widths);
 }
 
 void PlaylistWidget::updateSpans()

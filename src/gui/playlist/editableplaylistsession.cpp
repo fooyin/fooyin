@@ -491,8 +491,10 @@ void EditablePlaylistSession::changePlaylist(PlaylistWidgetSessionHost& sessionH
         savePlaylistViewState(host, prevPlaylist);
     }
 
-    host.playlistController()->setSearch(prevPlaylist, search());
     host.resetSort(true);
+    host.changePlaylistLayout(prevPlaylist, playlist);
+
+    host.playlistController()->setSearch(prevPlaylist, search());
     setFilteredTracks({});
 
     const QString currentSearch = host.playlistController()->currentSearch(playlist);
