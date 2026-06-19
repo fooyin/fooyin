@@ -63,10 +63,7 @@ protected:
     void timerEvent(QTimerEvent* event) override;
 
 private:
-    void currentTrackChanged(const Track& track);
     void handlePlayStateChanged(Player::PlayState state, Player::PlayState previous);
-    [[nodiscard]] bool currentTrackReachedScrobbleThreshold() const;
-    void updateScrobbleThreshold();
 
     [[nodiscard]] int nextNowPlayingRefreshDelay() const;
     void updateNowPlaying(const Track& track);
@@ -82,7 +79,6 @@ private:
 
     std::vector<std::unique_ptr<ScrobblerService>> m_services;
     QBasicTimer m_nowPlayingTimer;
-    bool m_scrobbledCurrentTrack;
 };
 } // namespace Scrobbler
 } // namespace Fooyin

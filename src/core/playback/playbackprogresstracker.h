@@ -38,7 +38,7 @@ public:
     PlaybackProgressTracker();
 
     void reset();
-    void onTrackCommitted(uint64_t totalDurationMs, double playedThresholdFraction);
+    void onTrackCommitted(uint64_t totalDurationMs, double playedThresholdFraction, uint64_t playedThresholdTimeMs);
     bool restartTracking();
 
     [[nodiscard]] PositionUpdate restorePosition(uint64_t posMs);

@@ -77,6 +77,7 @@ private:
     QDoubleSpinBox* m_volumeStep;
 
     SliderEditor* m_playedSlider;
+    SliderEditor* m_playedTimeSlider;
     ScriptLineEdit* m_shuffleAlbumsGroup;
     ScriptLineEdit* m_shuffleAlbumsSort;
 };
@@ -98,7 +99,8 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     , m_seekStep{new QSpinBox(this)}
     , m_seekStepLarge{new QSpinBox(this)}
     , m_volumeStep{new QDoubleSpinBox(this)}
-    , m_playedSlider{new SliderEditor(tr("Played threshold"), this)}
+    , m_playedSlider{new SliderEditor(tr("Played threshold (%)"), this)}
+    , m_playedTimeSlider{new SliderEditor(tr("Played threshold (time)"), this)}
     , m_shuffleAlbumsGroup{new ScriptLineEdit(this)}
     , m_shuffleAlbumsSort{new ScriptLineEdit(this)}
 {
@@ -120,13 +122,17 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     auto* generalGroup       = new QGroupBox(tr("General"), this);
     auto* generalGroupLayout = new QGridLayout(generalGroup);
 
-    const auto playedToolTip
-        = tr("The percentage of a track that must be listened to before it is counted as 'played'");
+    const auto playedToolTip = tr("Track is counted as 'played' once either threshold is reached");
     m_playedSlider->setToolTip(playedToolTip);
+    m_playedTimeSlider->setToolTip(playedToolTip);
 
     m_playedSlider->setRange(0, 100);
     m_playedSlider->setSingleStep(25);
     m_playedSlider->setSuffix(u" %"_s);
+
+    m_playedTimeSlider->setRange(30, 600);
+    m_playedTimeSlider->setSingleStep(30);
+    m_playedTimeSlider->setSuffix(u" s"_s);
 
     int row{0};
     generalGroupLayout->addWidget(m_restoreActivePlaylistState, row, 0, 1, 2);
@@ -141,6 +147,7 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     generalGroupLayout->addWidget(m_skipUnavailable, row++, 2, 1, 2);
     generalGroupLayout->addWidget(m_stopIfActiveDeleted, row++, 0, 1, 4);
     generalGroupLayout->addWidget(m_playedSlider, row++, 0, 1, 4);
+    generalGroupLayout->addWidget(m_playedTimeSlider, row++, 0, 1, 4);
     generalGroupLayout->setColumnStretch(1, 1);
     generalGroupLayout->setColumnStretch(3, 1);
 
@@ -218,6 +225,7 @@ void PlaybackPageWidget::load()
     const double playedThreshold = m_settings->value<Settings::Core::PlayedThreshold>();
     const auto playedPercent     = static_cast<int>(playedThreshold * 100);
     m_playedSlider->setValue(playedPercent);
+    m_playedTimeSlider->setValue(m_settings->value<Settings::Core::PlayedThresholdTime>() / 1000);
 
     m_shuffleAlbumsGroup->setText(m_settings->value<Settings::Core::ShuffleAlbumsGroupScript>());
     m_shuffleAlbumsSort->setText(m_settings->value<Settings::Core::ShuffleAlbumsSortScript>());
@@ -247,6 +255,7 @@ void PlaybackPageWidget::apply()
     const int playedPercent    = m_playedSlider->value();
     const auto playedThreshold = static_cast<double>(playedPercent) / 100;
     m_settings->set<Settings::Core::PlayedThreshold>(playedThreshold);
+    m_settings->set<Settings::Core::PlayedThresholdTime>(m_playedTimeSlider->value() * 1000);
 
     m_settings->set<Settings::Core::ShuffleAlbumsGroupScript>(m_shuffleAlbumsGroup->text());
     m_settings->set<Settings::Core::ShuffleAlbumsSortScript>(m_shuffleAlbumsSort->text());
@@ -270,6 +279,7 @@ void PlaybackPageWidget::reset()
     m_settings->reset<Settings::Gui::SeekStepLarge>();
     m_settings->reset<Settings::Gui::VolumeStep>();
     m_settings->reset<Settings::Core::PlayedThreshold>();
+    m_settings->reset<Settings::Core::PlayedThresholdTime>();
     m_settings->reset<Settings::Core::ShuffleAlbumsGroupScript>();
     m_settings->reset<Settings::Core::ShuffleAlbumsSortScript>();
 }

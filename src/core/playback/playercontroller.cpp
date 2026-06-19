@@ -1369,7 +1369,8 @@ void PlayerController::commitCurrentTrack(const Player::TrackChangeRequest& requ
     p->saveActiveTrack();
     p->m_cursor.onTrackCommitted();
     p->m_progressTracker.onTrackCommitted(p->m_session.currentTrack().track.duration(),
-                                          p->m_settings->value<Settings::Core::PlayedThreshold>());
+                                          p->m_settings->value<Settings::Core::PlayedThreshold>(),
+                                          p->m_settings->value<Settings::Core::PlayedThresholdTime>());
     p->updateBitrate(0);
 
     if(result.isQueueTrack) {
