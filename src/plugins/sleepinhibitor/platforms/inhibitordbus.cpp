@@ -89,8 +89,9 @@ void InhibitorDbus::inhibitSleep()
 
     qCDebug(SLEEPINHIBITOR) << "Inhibiting sleep";
 
+    static constexpr auto BlockLogoutFlag  = 1U;
     static constexpr auto BlockSuspendFlag = 4U;
-    static const auto Reason               = u"fooyin is running"_s;
+    static const auto Reason               = tr("fooyin is running");
 
     QList<QVariant> args;
     switch(m_interface) {
@@ -98,7 +99,7 @@ void InhibitorDbus::inhibitSleep()
             break;
         case Interface::GnomeSessionManager: {
             static constexpr auto XWindowId = 0U;
-            args                            = {"fooyin"_L1, XWindowId, Reason, BlockSuspendFlag};
+            args = {"org.fooyin.fooyin"_L1, XWindowId, Reason, BlockLogoutFlag | BlockSuspendFlag};
             break;
         }
         case Interface::FreedesktopPower:
@@ -109,7 +110,7 @@ void InhibitorDbus::inhibitSleep()
             options["reason"_L1] = Reason;
             // Pass empty string for parent_window
             // https://flatpak.github.io/xdg-desktop-portal/docs/window-identifiers.html
-            args = {QString{}, BlockSuspendFlag, options};
+            args = {QString{}, BlockLogoutFlag | BlockSuspendFlag, options};
             break;
         }
     }
