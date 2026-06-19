@@ -1943,7 +1943,7 @@ QModelIndex IconView::findIndexAt(const QPoint& point, bool /*includeSpans*/, bo
         const auto& item = viewItem(i);
 
         if(item.rect().contains(contentsXCoord, contentsYCoord)) {
-            return item.index;
+            return iconItemIndex(item.index);
         }
     }
 

@@ -194,14 +194,18 @@ bool FilterWidget::isActive() const
 
 std::vector<RowKey> FilterWidget::selectedKeys() const
 {
-    const QModelIndexList selectedRows = m_view->selectionModel()->selectedRows();
+    const QModelIndexList selectedIndexes = m_view->selectionModel()->selectedIndexes();
 
     std::vector<RowKey> keys;
-    keys.reserve(selectedRows.size());
+    keys.reserve(selectedIndexes.size());
+    std::set<RowKey> seen;
 
-    for(const QModelIndex& index : selectedRows) {
+    for(const QModelIndex& index : selectedIndexes) {
         if(index.isValid()) {
-            keys.emplace_back(index.data(FilterItem::Key).toByteArray());
+            RowKey key = index.data(FilterItem::Key).toByteArray();
+            if(seen.emplace(key).second) {
+                keys.emplace_back(std::move(key));
+            }
         }
     }
 
@@ -255,7 +259,7 @@ QString FilterWidget::playlistName() const
 
 bool FilterWidget::hasSelection() const
 {
-    return !m_view->selectionModel()->selectedRows().empty();
+    return m_view->selectionModel()->hasSelection();
 }
 
 void FilterWidget::setGroup(const Id& group)
