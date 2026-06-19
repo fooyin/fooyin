@@ -8,6 +8,8 @@
   - Add a spectrum visualisation plugin ([#52](https://github.com/fooyin/fooyin/issues/52), [#1025](https://github.com/fooyin/fooyin/issues/1025), [#1238](https://github.com/fooyin/fooyin/pull/1238))
 * Radio Browser
   - Add a Radio Browser plugin ([#84](https://github.com/fooyin/fooyin/issues/84), [#332](https://github.com/fooyin/fooyin/issues/332), [#1270](https://github.com/fooyin/fooyin/pull/1270))
+* Sleep Inhibitor
+  - Add a plugin to prevent sleep while playing ([#1144](https://github.com/fooyin/fooyin/issues/1144), [#1159](https://github.com/fooyin/fooyin/pull/1159))
 * Streaming
   - Add support for remote audio streams ([#1261](https://github.com/fooyin/fooyin/pull/1261))
 
@@ -15,6 +17,7 @@
 
 * Audio/Playback
   - Improve gapless playback handling ([#1248](https://github.com/fooyin/fooyin/issues/1248))
+  - Add separate playback progress and scrobbling thresholds ([#1307](https://github.com/fooyin/fooyin/pull/1307))
 * FileOps
   - Add advanced settings for immediate delete and deleting empty folders ([#1266](https://github.com/fooyin/fooyin/pull/1266))
   - Suggest library roots in the destination field ([#1285](https://github.com/fooyin/fooyin/pull/1285))
@@ -34,11 +37,15 @@
   - Add randomise and reverse playlist and queue sort actions ([#344](https://github.com/fooyin/fooyin/issues/344), [#395](https://github.com/fooyin/fooyin/issues/395))
   - Add Player Controls settings for toggling individual buttons
   - Add restore support for deleted playlists ([#1301](https://github.com/fooyin/fooyin/issues/1301))
+  - Add configurable Selection Info metadata fields ([#1123](https://github.com/fooyin/fooyin/issues/1123))
+  - Add per-playlist view layout option ([#523](https://github.com/fooyin/fooyin/issues/523), [#842](https://github.com/fooyin/fooyin/issues/842))
   - Include configured shortcuts in the Playlist Manager context menu
   - Expand built-in themes
   - Improve and extend Quick Setup with theme and playlist options
   - Improve large playlist population and context menu performance ([#1053](https://github.com/fooyin/fooyin/issues/1053))
   - Improve playlist default preset names
+  - Improve row dragging in expanded tree views and add a drag-before-selection setting
+  - Preserve displayed track selection across focus changes
   - Stretch tool buttons by default
   - Remember the last selected Tab Stack tab by default
   - Replace the theme dropdown in settings with an editable list widget
@@ -48,9 +55,12 @@
   - Add support for monitoring individual library files ([#1212](https://github.com/fooyin/fooyin/issues/1212))
   - Add configurable literal track searches ([#1256](https://github.com/fooyin/fooyin/issues/1256))
   - Optimise library track update lookups
+  - Improve encoding detection and add a configurable fallback encoding ([#892](https://github.com/fooyin/fooyin/issues/892), [#1288](https://github.com/fooyin/fooyin/issues/1288))
+  - Add setting to probe all readers for configured extensions and prefer the reader with most subsongs/chapters
 * Lyrics
   - Add line and word progress fill options
   - Add a seek tooltip
+  - Search enabled lyrics sources concurrently
 * Scripting
   - Add `$join`
   - Add `MONTH` and `YEAR` intervals for queries
@@ -67,12 +77,14 @@
   - Fix watchdog warnings for pause fades
   - Fix fade interruption during track changes
   - Restore playback queue indexes correctly after playlist reordering
+  - Fix current track not being remembered after system shutdown/restart ([#1269](https://github.com/fooyin/fooyin/issues/1269))
 * Filters
   - Fix filter copy grouping and preserve saved filter order ([#1252](https://github.com/fooyin/fooyin/issues/1252))
   - Ignore stale asynchronous search results ([#1235](https://github.com/fooyin/fooyin/issues/1235))
   - Clear selection on linked search changes ([#1235](https://github.com/fooyin/fooyin/issues/1235))
   - Keep filter search recomputes in sync ([#1235](https://github.com/fooyin/fooyin/issues/1235))
   - Restore default disabled context menus on settings page reset
+  - Fix selection when the first column is hidden ([#1306](https://github.com/fooyin/fooyin/issues/1306))
 * Interface
   - Fix layout editing overlay geometry for containers
   - Keep inactive commands visible in the shortcut editor ([#1233](https://github.com/fooyin/fooyin/issues/1233))
@@ -93,6 +105,7 @@
   - Keep Playlist Organiser selection unchanged when opening the context menu
   - Refresh track selection action states for explicit context menus
   - Refresh moved playlist rows after reordering
+  - Fix artwork repainting when the first column is hidden
 * Lyrics
   - Avoid resetting editor text on Apply ([#1234](https://github.com/fooyin/fooyin/issues/1234))
   - Fix current line highlighting mutating the undo stack
