@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "../inhibitor.h"
+#include "inhibitor.h"
 
 namespace Fooyin::SleepInhibitor {
 class InhibitorWin32 : public InhibitorPrivate

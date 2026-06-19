@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2026, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  * Copyright © 2026, Gustav Oechler <gustavoechler@gmail.com>
  *
  * Fooyin is free software: you can redistribute it and/or modify
@@ -18,10 +18,14 @@
  *
  */
 
-#include "../inhibitor.h"
+#pragma once
 
+#include "inhibitor.h"
+
+#include <QPointer>
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusObjectPath>
+#include <QtDBus/QDBusPendingCallWatcher>
 
 namespace Fooyin::SleepInhibitor {
 class InhibitorDbus : public InhibitorPrivate
@@ -46,7 +50,7 @@ private:
     void onInhibitCallFinished(QDBusPendingCallWatcher* watcher);
     void onUninhibitCallFinished(QDBusPendingCallWatcher* watcher);
 
-    QDBusInterface* m_busInterface{nullptr};
+    QPointer<QDBusInterface> m_busInterface;
     Interface m_interface{Interface::None};
     uint32_t m_inhibitCookie{0};     // Used by GnomeSessionManager and FreedesktopPower
     QDBusObjectPath m_inhibitHandle; // Used by FreedesktopPortal

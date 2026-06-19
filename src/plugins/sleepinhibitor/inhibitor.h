@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2026, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  * Copyright © 2026, Gustav Oechler <gustavoechler@gmail.com>
  *
  * Fooyin is free software: you can redistribute it and/or modify
@@ -20,7 +20,10 @@
 
 #pragma once
 
+#include <QLoggingCategory>
 #include <QObject>
+
+Q_DECLARE_LOGGING_CATEGORY(SLEEPINHIBITOR)
 
 namespace Fooyin::SleepInhibitor {
 class InhibitorPrivate : public QObject

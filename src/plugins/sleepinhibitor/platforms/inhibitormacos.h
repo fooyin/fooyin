@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "../inhibitor.h"
+#include "inhibitor.h"
 
 #include <IOKit/pwr_mgt/IOPMLib.h>
 

@@ -19,7 +19,6 @@
  */
 
 #include "inhibitormacos.h"
-#include "../sleepinhibitorplugin.h"
 
 namespace Fooyin::SleepInhibitor {
 InhibitorMacOs::InhibitorMacOs(QObject* parent)

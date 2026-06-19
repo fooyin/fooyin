@@ -28,6 +28,9 @@ endif()
 
 if(APPLE)
     list(APPEND SOURCES platforms/inhibitormacos.cpp platforms/inhibitormacos.h)
+    find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation REQUIRED)
+    find_library(IOKIT_FRAMEWORK IOKit REQUIRED)
+    list(APPEND DEPENDS ${CORE_FOUNDATION_FRAMEWORK} ${IOKIT_FRAMEWORK})
 endif()
 
 if(WIN32)

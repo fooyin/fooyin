@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2026, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  * Copyright © 2026, Gustav Oechler <gustavoechler@gmail.com>
  *
  * Fooyin is free software: you can redistribute it and/or modify
@@ -19,6 +19,8 @@
  */
 
 #include "inhibitor.h"
+
+Q_LOGGING_CATEGORY(SLEEPINHIBITOR, "fy.sleepinhibitor")
 
 #if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
 #include "platforms/inhibitordbus.h"

@@ -19,9 +19,8 @@
  */
 
 #include "inhibitorwin32.h"
-#include "../sleepinhibitorplugin.h"
 
-#include <Windows.h>
+#include <windows.h>
 
 namespace Fooyin::SleepInhibitor {
 InhibitorWin32::InhibitorWin32(QObject* parent)

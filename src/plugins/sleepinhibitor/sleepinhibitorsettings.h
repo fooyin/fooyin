@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2026, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  * Copyright © 2026, Gustav Oechler <gustavoechler@gmail.com>
  *
  * Fooyin is free software: you can redistribute it and/or modify
@@ -17,6 +17,8 @@
  * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#pragma once
 
 #include <core/coresettings.h>
 
@@ -38,6 +40,9 @@ public:
     explicit SleepInhibitorSettings(QWidget* parent = nullptr);
 
     void accept() override;
+
+Q_SIGNALS:
+    void settingsChanged();
 
 private:
     FySettings m_settings;

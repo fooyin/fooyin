@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2026, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  * Copyright © 2026, Gustav Oechler <gustavoechler@gmail.com>
  *
  * Fooyin is free software: you can redistribute it and/or modify
@@ -24,56 +24,65 @@
 
 #include <core/coresettings.h>
 #include <core/player/playercontroller.h>
-#include <utils/enum.h>
 
 namespace Fooyin::SleepInhibitor {
-Q_LOGGING_CATEGORY(SLEEPINHIBITOR, "fy.sleepinhibitor")
-
-namespace {
-constexpr auto SleepInhibitIntervalMs = 30000;
-
-class SleepInhibitorPluginSettingsProvider : public PluginSettingsProvider
+class SleepInhibitorPluginSettingsProvider : public QObject,
+                                             public PluginSettingsProvider
 {
+    Q_OBJECT
+
 public:
     void showSettings(QWidget* parent) override
     {
         auto* dialog = new SleepInhibitorSettings(parent);
         dialog->setAttribute(Qt::WA_DeleteOnClose);
+        QObject::connect(dialog, &SleepInhibitorSettings::settingsChanged, this,
+                         &SleepInhibitorPluginSettingsProvider::settingsChanged);
         dialog->show();
     }
+
+Q_SIGNALS:
+    void settingsChanged();
 };
-} // namespace
 
 SleepInhibitorPlugin::SleepInhibitorPlugin()
     : m_inhibitor{new Inhibitor(this)}
-{
-    m_inhibitTimer.start(SleepInhibitIntervalMs, this);
-}
+{ }
 
 void SleepInhibitorPlugin::initialise(const CorePluginContext& context)
 {
     m_playerController = context.playerController;
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
+                     &SleepInhibitorPlugin::updateInhibition);
+    updateInhibition();
+}
+
+void SleepInhibitorPlugin::shutdown()
+{
+    m_inhibitor->uninhibitSleep();
 }
 
 std::unique_ptr<PluginSettingsProvider> SleepInhibitorPlugin::settingsProvider() const
 {
-    return std::make_unique<SleepInhibitorPluginSettingsProvider>();
+    auto provider = std::make_unique<SleepInhibitorPluginSettingsProvider>();
+    QObject::connect(provider.get(), &SleepInhibitorPluginSettingsProvider::settingsChanged, this,
+                     &SleepInhibitorPlugin::updateInhibition);
+    return provider;
 }
 
-void SleepInhibitorPlugin::timerEvent(QTimerEvent* event)
+void SleepInhibitorPlugin::updateInhibition()
 {
-    if(event->timerId() == m_inhibitTimer.timerId()) {
-        const auto enabled            = m_settings.value(Settings::Enabled, true).toBool();
-        const auto onlyDuringPlayback = m_settings.value(Settings::OnlyDuringPlayback, true).toBool();
-        if(enabled && (!onlyDuringPlayback || m_playerController->playState() == Player::PlayState::Playing)) {
-            m_inhibitor->inhibitSleep();
-        }
-        else {
-            m_inhibitor->uninhibitSleep();
-        }
+    const auto enabled            = m_settings.value(Settings::Enabled, true).toBool();
+    const auto onlyDuringPlayback = m_settings.value(Settings::OnlyDuringPlayback, true).toBool();
+    if(enabled && (!onlyDuringPlayback || m_playerController->playState() == Player::PlayState::Playing)) {
+        m_inhibitor->inhibitSleep();
     }
-
-    QObject::timerEvent(event);
+    else {
+        m_inhibitor->uninhibitSleep();
+    }
 }
 
 } // namespace Fooyin::SleepInhibitor
+
+#include "moc_sleepinhibitorplugin.cpp"
+#include "sleepinhibitorplugin.moc"

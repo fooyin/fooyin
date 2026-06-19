@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2026, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  * Copyright © 2026, Gustav Oechler <gustavoechler@gmail.com>
  *
  * Fooyin is free software: you can redistribute it and/or modify
@@ -64,6 +64,7 @@ void SleepInhibitorSettings::accept()
     m_settings.setValue(Settings::Enabled, m_enabled->isChecked());
     m_settings.setValue(Settings::OnlyDuringPlayback, m_onlyDuringPlayback->isChecked());
 
+    Q_EMIT settingsChanged();
     done(Accepted);
 }
 } // namespace Fooyin

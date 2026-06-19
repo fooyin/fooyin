@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2026, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  * Copyright © 2026, Gustav Oechler <gustavoechler@gmail.com>
  *
  * Fooyin is free software: you can redistribute it and/or modify
@@ -26,14 +26,9 @@
 #include <gui/plugins/pluginconfigguiplugin.h>
 #include <gui/plugins/pluginsettingsprovider.h>
 
-#include <QBasicTimer>
-#include <QLoggingCategory>
 #include <QObject>
-#include <QTimerEvent>
 
 namespace Fooyin::SleepInhibitor {
-Q_DECLARE_LOGGING_CATEGORY(SLEEPINHIBITOR)
-
 class Inhibitor;
 
 class SleepInhibitorPlugin : public QObject,
@@ -49,16 +44,15 @@ public:
     SleepInhibitorPlugin();
 
     void initialise(const CorePluginContext& context) override;
+    void shutdown() override;
 
     [[nodiscard]] std::unique_ptr<PluginSettingsProvider> settingsProvider() const override;
 
-protected:
-    void timerEvent(QTimerEvent* event) override;
-
 private:
+    void updateInhibition();
+
     PlayerController* m_playerController;
     FySettings m_settings;
     Inhibitor* m_inhibitor;
-    QBasicTimer m_inhibitTimer;
 };
 } // namespace Fooyin::SleepInhibitor

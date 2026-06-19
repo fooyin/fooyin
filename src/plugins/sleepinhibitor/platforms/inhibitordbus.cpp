@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2026, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  * Copyright © 2026, Gustav Oechler <gustavoechler@gmail.com>
  *
  * Fooyin is free software: you can redistribute it and/or modify
@@ -19,27 +19,25 @@
  */
 
 #include "inhibitordbus.h"
-#include "../sleepinhibitorplugin.h"
 
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusPendingCall>
-#include <QtDBus/QDBusPendingCallWatcher>
 #include <QtDBus/QDBusPendingReply>
 
 using namespace Qt::StringLiterals;
 
 namespace DbusConstants {
-static const auto GnomeSessionManagerService   = "org.gnome.SessionManager"_L1;
-static const auto GnomeSessionManagerPath      = "/org/gnome/SessionManager"_L1;
-static const auto GnomeSessionManagerInterface = "org.gnome.SessionManager"_L1;
+constexpr auto GnomeSessionManagerService   = "org.gnome.SessionManager"_L1;
+constexpr auto GnomeSessionManagerPath      = "/org/gnome/SessionManager"_L1;
+constexpr auto GnomeSessionManagerInterface = "org.gnome.SessionManager"_L1;
 
-static const auto FreedesktopPowerMgmtService   = "org.freedesktop.PowerManagement"_L1;
-static const auto FreedesktopPowerMgmtPath      = "/org/freedesktop/PowerManagement/Inhibit"_L1;
-static const auto FreedesktopPowerMgmtInterface = "org.freedesktop.PowerManagement.Inhibit"_L1;
+constexpr auto FreedesktopPowerMgmtService   = "org.freedesktop.PowerManagement"_L1;
+constexpr auto FreedesktopPowerMgmtPath      = "/org/freedesktop/PowerManagement/Inhibit"_L1;
+constexpr auto FreedesktopPowerMgmtInterface = "org.freedesktop.PowerManagement.Inhibit"_L1;
 
-static const auto FreedesktopPortalService   = "org.freedesktop.portal.Desktop"_L1;
-static const auto FreedesktopPortalPath      = "/org/freedesktop/portal/desktop"_L1;
-static const auto FreedesktopPortalInterface = "org.freedesktop.portal.Inhibit"_L1;
+constexpr auto FreedesktopPortalService   = "org.freedesktop.portal.Desktop"_L1;
+constexpr auto FreedesktopPortalPath      = "/org/freedesktop/portal/desktop"_L1;
+constexpr auto FreedesktopPortalInterface = "org.freedesktop.portal.Inhibit"_L1;
 } // namespace DbusConstants
 
 namespace Fooyin::SleepInhibitor {
@@ -50,7 +48,6 @@ InhibitorDbus::InhibitorDbus(QObject* parent)
 
     const auto invalidateBusInterface = [this] {
         delete m_busInterface;
-        m_busInterface = nullptr;
     };
 
     m_busInterface = new QDBusInterface(GnomeSessionManagerService, GnomeSessionManagerPath,
@@ -92,16 +89,16 @@ void InhibitorDbus::inhibitSleep()
 
     qCDebug(SLEEPINHIBITOR) << "Inhibiting sleep";
 
-    constexpr auto BlockSuspendFlag = 4U;
-    static const auto Reason        = QStringLiteral("fooyin is running");
+    static constexpr auto BlockSuspendFlag = 4U;
+    static const auto Reason               = u"fooyin is running"_s;
 
     QList<QVariant> args;
     switch(m_interface) {
         case Interface::None:
             break;
         case Interface::GnomeSessionManager: {
-            constexpr auto XWindowId = 0U;
-            args                     = {"fooyin"_L1, XWindowId, Reason, BlockSuspendFlag};
+            static constexpr auto XWindowId = 0U;
+            args                            = {"fooyin"_L1, XWindowId, Reason, BlockSuspendFlag};
             break;
         }
         case Interface::FreedesktopPower:
@@ -110,7 +107,9 @@ void InhibitorDbus::inhibitSleep()
         case Interface::FreedesktopPortal: {
             QMap<QString, QVariant> options;
             options["reason"_L1] = Reason;
-            args                 = {"fooyin"_L1, BlockSuspendFlag, options};
+            // Pass empty string for parent_window
+            // https://flatpak.github.io/xdg-desktop-portal/docs/window-identifiers.html
+            args = {QString{}, BlockSuspendFlag, options};
             break;
         }
     }
@@ -134,6 +133,7 @@ void InhibitorDbus::uninhibitSleep()
                                  "org.freedesktop.portal.Request"_L1, QDBusConnection::sessionBus());
         if(!inhibitRequestInterface->isValid()) [[unlikely]] {
             qCWarning(SLEEPINHIBITOR) << "Bad inhibit handle? Object path:" << m_inhibitHandle.path();
+            delete inhibitRequestInterface;
             setState(State::Error);
             return;
         }
@@ -190,6 +190,8 @@ void InhibitorDbus::onUninhibitCallFinished(QDBusPendingCallWatcher* watcher)
 
     if(reply.isValid()) {
         setState(State::Uninhibited);
+        m_inhibitCookie = 0;
+        m_inhibitHandle = {};
     }
     else {
         qCWarning(SLEEPINHIBITOR) << "Uninhibit call error:" << reply.error().message();
