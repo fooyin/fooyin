@@ -767,14 +767,19 @@ bool PlayerControllerPrivate::stopAtBoundary(PlaybackCursor::BoundaryStop bounda
 
 void PlayerControllerPrivate::saveActiveTrack() const
 {
-    PlaybackState::clearActiveTrackIndex();
-
     if(!m_settings->fileValue(Settings::Core::Internal::SaveActivePlaylistState).toBool()) {
+        PlaybackState::clearActiveTrackIndex();
+        return;
+    }
+
+    if(!m_playlistHandler) {
+        PlaybackState::clearActiveTrackIndex();
         return;
     }
 
     auto* playlist = m_playlistHandler->activePlaylist();
     if(!playlist || playlist->isTemporary()) {
+        PlaybackState::clearActiveTrackIndex();
         return;
     }
 
@@ -787,7 +792,10 @@ void PlayerControllerPrivate::saveActiveTrack() const
     const int currentIndex = playlist->currentTrackIndex();
     if(currentIndex >= 0 && currentIndex < playlist->trackCount()) {
         PlaybackState::saveActiveTrackIndex(currentIndex);
+        return;
     }
+
+    PlaybackState::clearActiveTrackIndex();
 }
 
 void PlayerControllerPrivate::restoreActiveTrack() const
@@ -1358,6 +1366,7 @@ void PlayerController::commitCurrentTrack(const Player::TrackChangeRequest& requ
 
     const auto result = p->m_session.commitRequest(requestWithId);
     p->syncCommittedPlaylistTrack();
+    p->saveActiveTrack();
     p->m_cursor.onTrackCommitted();
     p->m_progressTracker.onTrackCommitted(p->m_session.currentTrack().track.duration(),
                                           p->m_settings->value<Settings::Core::PlayedThreshold>());
