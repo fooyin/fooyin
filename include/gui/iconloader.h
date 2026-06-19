@@ -27,8 +27,11 @@ class QIcon;
 class QPixmap;
 class QAction;
 class QObject;
+class QPainter;
+class QRect;
 class QSize;
 class QString;
+class QStyleOptionViewItem;
 
 namespace Fooyin::Gui {
 /*!
@@ -62,4 +65,8 @@ FYGUI_EXPORT void refreshThemeIcons(QObject* object);
 FYGUI_EXPORT QPixmap pixmapFromTheme(const char* icon);
 /*! Returns a cached pixmap for the requested size. */
 FYGUI_EXPORT QPixmap pixmapFromTheme(const char* icon, const QSize& size);
+
+/*! Draws a monochrome item-view icon using the text colour for its selection, focus and enabled state. */
+FYGUI_EXPORT void drawItemViewIcon(QPainter* painter, const QStyleOptionViewItem& option, const QIcon& icon,
+                                   const QRect& rect, Qt::Alignment alignment = Qt::AlignCenter);
 } // namespace Fooyin::Gui

@@ -19,10 +19,44 @@
 
 #include "radioguideview.h"
 
+#include <gui/iconloader.h>
+
+#include <QApplication>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QStyle>
+#include <QStyledItemDelegate>
+
+namespace {
+class RadioGuideDelegate : public QStyledItemDelegate
+{
+public:
+    using QStyledItemDelegate::QStyledItemDelegate;
+
+    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override
+    {
+        QStyleOptionViewItem opt{option};
+        initStyleOption(&opt, index);
+
+        const QIcon icon     = opt.icon;
+        const QStyle* style  = opt.widget ? opt.widget->style() : QApplication::style();
+        const QRect iconRect = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
+
+        opt.icon = {};
+        style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+
+        Fooyin::Gui::drawItemViewIcon(painter, opt, icon, iconRect, opt.decorationAlignment);
+    }
+};
+} // namespace
 
 namespace Fooyin::RadioBrowser {
+RadioGuideView::RadioGuideView(QWidget* parent)
+    : QTreeView{parent}
+{
+    setItemDelegate(new RadioGuideDelegate(this));
+}
+
 void RadioGuideView::setStatusText(const QString& text)
 {
     if(std::exchange(m_statusText, text) != text) {

@@ -27,7 +27,7 @@ class RadioGuideView : public QTreeView
     Q_OBJECT
 
 public:
-    using QTreeView::QTreeView;
+    explicit RadioGuideView(QWidget* parent = nullptr);
 
     void setStatusText(const QString& text);
     void clearStatusText();

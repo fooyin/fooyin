@@ -213,6 +213,8 @@ QVariant QueueViewerModel::data(const QModelIndex& index, int role) const
             return item->richTitle();
         case QueueViewerItem::RichRightText:
             return item->richSubtitle();
+        case QueueViewerItem::IsPlaybackIcon:
+            return isPlaying && m_playerController->playState() != Player::PlayState::Stopped;
         case Qt::DecorationRole:
             if(isPlaying) {
                 switch(m_playerController->playState()) {

@@ -217,9 +217,6 @@ void drawIconInRect(QPainter* painter, const QStyleOptionViewItem& option, const
     if(!(option.state & QStyle::State_Enabled)) {
         mode = QIcon::Disabled;
     }
-    else if(option.state & QStyle::State_Selected) {
-        mode = QIcon::Selected;
-    }
 
     const qreal dpr = option.widget ? option.widget->devicePixelRatioF() : qApp->devicePixelRatio();
     QPixmap pixmap  = icon.pixmap(target.size() * dpr, dpr, mode);
@@ -320,23 +317,12 @@ void drawSavedBadge(QPainter* painter, const QStyleOptionViewItem& option, const
     painter->setBrush(background);
     painter->drawEllipse(rect);
 
-    const int iconInset = std::max(2, rect.width() / 4);
-    const QSize iconSize{std::max(1, rect.width() - (2 * iconInset)), std::max(1, rect.height() - (2 * iconInset))};
+    const int iconInset   = std::max(2, rect.width() / 4);
+    const QRectF iconRect = QRectF{rect}.adjusted(iconInset, iconInset, -iconInset, -iconInset);
 
-    if(iconSize.width() >= 6 && iconSize.height() >= 6) {
-        const qreal dpr = option.widget ? option.widget->devicePixelRatioF() : qApp->devicePixelRatio();
-
-        QPixmap pixmap = Gui::iconFromTheme(Constants::Icons::Bookmarks).pixmap(iconSize * dpr, dpr);
-        pixmap         = pixmap.scaled(iconSize * dpr, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        pixmap.setDevicePixelRatio(dpr);
-
-        const QSize pixmapSize = pixmap.deviceIndependentSize().toSize();
-        const QRect pixmapRect{rect.topLeft()
-                                   + QPoint{std::max(0, (rect.width() - pixmapSize.width()) / 2),
-                                            std::max(0, (rect.height() - pixmapSize.height()) / 2)},
-                               pixmapSize};
-
-        painter->drawPixmap(pixmapRect, pixmap);
+    if(iconRect.width() >= 6 && iconRect.height() >= 6) {
+        Gui::drawItemViewIcon(painter, option, Gui::iconFromTheme(Constants::Icons::Bookmarks),
+                              iconRect.toAlignedRect());
     }
 
     painter->restore();

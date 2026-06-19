@@ -36,6 +36,7 @@ public:
         RightText = Qt::UserRole,
         RichTitle,
         RichRightText,
+        IsPlaybackIcon,
         Track
     };
 

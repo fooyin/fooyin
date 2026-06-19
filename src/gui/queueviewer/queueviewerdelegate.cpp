@@ -21,6 +21,7 @@
 
 #include "queuevieweritem.h"
 
+#include <gui/iconloader.h>
 #include <gui/scripting/richtext.h>
 #include <gui/scripting/richtextutils.h>
 
@@ -219,7 +220,16 @@ void QueueViewerDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     const auto leftLines  = prepareTextLines(opt, leftRect.width(), leftRichText);
     const auto rightLines = prepareTextLines(opt, rightRect.width(), rightRichText);
 
+    QIcon playbackIcon;
+    QRect playbackIconRect;
+    if(index.data(QueueViewerItem::IsPlaybackIcon).toBool()) {
+        playbackIcon     = opt.icon;
+        playbackIconRect = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
+        opt.icon         = {};
+    }
+
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, option.widget);
+    Gui::drawItemViewIcon(painter, opt, playbackIcon, playbackIconRect, opt.decorationAlignment);
     drawPreparedTextLines(painter, opt, leftRect, leftLines, Qt::AlignLeft);
     drawPreparedTextLines(painter, opt, rightRect, rightLines, Qt::AlignRight);
 }

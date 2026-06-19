@@ -21,14 +21,17 @@
 #include <gui/iconloader.h>
 
 #include <QAction>
+#include <QApplication>
 #include <QDir>
 #include <QFile>
 #include <QIcon>
 #include <QObject>
+#include <QPainter>
 #include <QPixmap>
 #include <QPixmapCache>
 #include <QSet>
 #include <QStringList>
+#include <QStyleOptionViewItem>
 
 using namespace Qt::StringLiterals;
 
@@ -213,5 +216,30 @@ QPixmap pixmapFromTheme(const char* icon)
 QPixmap pixmapFromTheme(const char* icon, const QSize& size)
 {
     return IconLoader::pixmap(QString::fromLatin1(icon), size);
+}
+
+void drawItemViewIcon(QPainter* painter, const QStyleOptionViewItem& option, const QIcon& icon, const QRect& rect,
+                      Qt::Alignment alignment)
+{
+    if(!painter || icon.isNull() || rect.isEmpty()) {
+        return;
+    }
+
+    const bool enabled = option.state & QStyle::State_Enabled;
+    const auto mode    = enabled ? QIcon::Normal : QIcon::Disabled;
+    const auto group   = !enabled                                    ? QPalette::Disabled
+                       : option.widget && !option.widget->hasFocus() ? QPalette::Inactive
+                                                                     : QPalette::Active;
+    const auto role    = option.state & QStyle::State_Selected ? QPalette::HighlightedText : QPalette::Text;
+    const qreal dpr    = option.widget ? option.widget->devicePixelRatioF() : qApp->devicePixelRatio();
+
+    QPixmap pixmap = icon.pixmap(rect.size() * dpr, dpr, mode);
+    QPainter pixmapPainter{&pixmap};
+    pixmapPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+    pixmapPainter.fillRect(pixmap.rect(), option.palette.color(group, role));
+    pixmapPainter.end();
+
+    const QSize pixmapSize = pixmap.deviceIndependentSize().toSize();
+    painter->drawPixmap(QStyle::alignedRect(option.direction, alignment, pixmapSize, rect), pixmap);
 }
 } // namespace Fooyin::Gui

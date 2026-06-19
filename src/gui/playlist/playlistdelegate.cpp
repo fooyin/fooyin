@@ -21,6 +21,7 @@
 
 #include "playlistitem.h"
 
+#include <gui/iconloader.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/widgets/expandedtreeview.h>
 #include <gui/widgets/metadatacompleter.h>
@@ -353,14 +354,6 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 
     const bool singleColumn = index.data(PlaylistItem::Role::SingleColumnMode).toBool();
 
-    QIcon::Mode mode{QIcon::Normal};
-    if(!(opt.state & QStyle::State_Enabled)) {
-        mode = QIcon::Disabled;
-    }
-    else if(opt.state & QStyle::State_Selected) {
-        mode = QIcon::Selected;
-    }
-
     const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) * 2;
 
     if(singleColumn) {
@@ -381,7 +374,7 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 
         if(!opt.icon.isNull()) {
             iconRect.moveLeft(iconRect.x() + indent);
-            opt.icon.paint(painter, iconRect, Qt::AlignVCenter | Qt::AlignLeft, mode, QIcon::On);
+            Gui::drawItemViewIcon(painter, opt, opt.icon, iconRect, Qt::AlignVCenter | Qt::AlignLeft);
         }
     }
     else {
@@ -420,8 +413,8 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
                 if(decPos == QStyleOptionViewItem::Right) {
                     iconRect = textRect.adjusted(totalWidth + textMargin, 0, totalWidth + textMargin, 0);
                 }
-                opt.icon.paint(painter, columnText.empty() ? opt.rect : iconRect, opt.displayAlignment, mode,
-                               QIcon::On);
+                Gui::drawItemViewIcon(painter, opt, opt.icon, columnText.empty() ? opt.rect : iconRect,
+                                      opt.displayAlignment);
             }
         }
     }
