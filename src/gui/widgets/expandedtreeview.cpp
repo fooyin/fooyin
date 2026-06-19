@@ -1781,7 +1781,7 @@ void IconView::drawView(QPainter* painter, const QRegion& region) const
     }
 }
 
-QRect IconView::visualRect(const QModelIndex& index, RectRule rule, bool /*includePadding*/) const
+QRect IconView::visualRect(const QModelIndex& index, RectRule /*rule*/, bool /*includePadding*/) const
 {
     if(!isIndexValid(index)) {
         return {};
@@ -1794,16 +1794,7 @@ QRect IconView::visualRect(const QModelIndex& index, RectRule rule, bool /*inclu
         return {};
     }
 
-    if(rule == RectRule::FullRow) {
-        return mapToViewport(viewItem(viewIndex).rect());
-    }
-
-    const QModelIndex iconIndex = iconItemIndex(index);
-    if(iconIndex.isValid() && iconIndex.column() == index.column()) {
-        return mapToViewport(viewItem(viewIndex).rect());
-    }
-
-    return {};
+    return mapToViewport(viewItem(viewIndex).rect());
 }
 
 void IconView::invalidate()
