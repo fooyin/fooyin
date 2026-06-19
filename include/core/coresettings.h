@@ -92,6 +92,7 @@ enum CoreSettings : uint32_t
     OpenFileAddDirectory          = 41 | Type::Bool,
     AddFoldersIgnorePlaylists     = 42 | Type::Bool,
     PlaylistPreventDuplicates     = 43 | Type::Bool,
+    PlayedThresholdTime           = 44 | Type::Int,
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Settings::Core

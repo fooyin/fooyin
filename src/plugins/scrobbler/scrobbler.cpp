@@ -36,15 +36,6 @@ using namespace Qt::StringLiterals;
 constexpr auto NowPlayingRefreshIntervalMs  = 180000;
 constexpr auto NowPlayingFinalRefreshLeadMs = 180000;
 constexpr auto MinNowPlayingRefreshDelayMs  = 1000;
-constexpr auto MinScrobbleTrackDurationMs   = 30000;
-constexpr auto MaxScrobbleThresholdMs       = 240000;
-
-namespace {
-uint64_t scrobbleThresholdMs(uint64_t durationMs)
-{
-    return std::min<uint64_t>(durationMs / 2, MaxScrobbleThresholdMs);
-}
-} // namespace
 
 namespace Fooyin::Scrobbler {
 Scrobbler::Scrobbler(PlayerController* playerController, std::shared_ptr<NetworkAccessManager> network,
@@ -52,7 +43,6 @@ Scrobbler::Scrobbler(PlayerController* playerController, std::shared_ptr<Network
     : m_playerController{playerController}
     , m_network{std::move(network)}
     , m_settings{settings}
-    , m_scrobbledCurrentTrack{false}
 {
     addDefaultServices();
     restoreServices();
@@ -63,8 +53,8 @@ Scrobbler::Scrobbler(PlayerController* playerController, std::shared_ptr<Network
         service->resumePendingSubmissions();
     }
 
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &Scrobbler::currentTrackChanged);
-    QObject::connect(m_playerController, &PlayerController::positionChanged, this, &Scrobbler::updateScrobbleThreshold);
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &Scrobbler::updateNowPlaying);
+    QObject::connect(m_playerController, &PlayerController::trackPlayed, this, &Scrobbler::scrobble);
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &Scrobbler::handlePlayStateChanged);
 }
 
@@ -90,17 +80,9 @@ ScrobblerService* Scrobbler::service(const QString& name) const
     return nullptr;
 }
 
-void Scrobbler::currentTrackChanged(const Track& track)
-{
-    m_scrobbledCurrentTrack = false;
-    updateNowPlaying(track);
-}
-
 void Scrobbler::handlePlayStateChanged(Player::PlayState state, Player::PlayState previous)
 {
     if(previous == Player::PlayState::Stopped && state == Player::PlayState::Playing) {
-        m_scrobbledCurrentTrack = false;
-
         const Track track = m_playerController->currentTrack();
         for(auto& service : m_services) {
             service->restartScrobbleSession(track);
@@ -117,27 +99,6 @@ void Scrobbler::scrobble(const Track& track)
             service->scrobble(track);
         }
     }
-}
-
-bool Scrobbler::currentTrackReachedScrobbleThreshold() const
-{
-    const Track track = m_playerController->currentTrack();
-    if(!track.isValid() || track.isRemote() || !track.hasArtists() || track.title().isEmpty()
-       || track.duration() < MinScrobbleTrackDurationMs) {
-        return false;
-    }
-
-    return m_playerController->currentTimeListened() >= scrobbleThresholdMs(track.duration());
-}
-
-void Scrobbler::updateScrobbleThreshold()
-{
-    if(m_scrobbledCurrentTrack || !currentTrackReachedScrobbleThreshold()) {
-        return;
-    }
-
-    m_scrobbledCurrentTrack = true;
-    scrobble(m_playerController->currentTrack());
 }
 
 std::unique_ptr<ScrobblerService> Scrobbler::createCustomService(const ServiceDetails& details)

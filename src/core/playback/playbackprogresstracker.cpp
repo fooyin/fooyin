@@ -19,6 +19,7 @@
 
 #include "playbackprogresstracker.h"
 
+#include <algorithm>
 #include <utility>
 
 namespace Fooyin {
@@ -48,7 +49,8 @@ void PlaybackProgressTracker::reset()
     m_counted               = false;
 }
 
-void PlaybackProgressTracker::onTrackCommitted(uint64_t totalDurationMs, double playedThresholdFraction)
+void PlaybackProgressTracker::onTrackCommitted(uint64_t totalDurationMs, double playedThresholdFraction,
+                                               uint64_t playedThresholdTimeMs)
 {
     m_totalDuration   = totalDurationMs;
     m_position        = 0;
@@ -59,7 +61,9 @@ void PlaybackProgressTracker::onTrackCommitted(uint64_t totalDurationMs, double 
     m_counted         = false;
 
     if(m_totalDuration > 200) {
-        m_playedThreshold = static_cast<uint64_t>(static_cast<double>(m_totalDuration - 200) * playedThresholdFraction);
+        const auto playedThresholdFractionMs
+            = static_cast<uint64_t>(static_cast<double>(m_totalDuration - 200) * playedThresholdFraction);
+        m_playedThreshold = std::min(playedThresholdFractionMs, playedThresholdTimeMs);
     }
 }
 

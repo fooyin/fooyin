@@ -75,6 +75,7 @@ void registerControllerSettings(SettingsManager& settings)
     settings.createSetting<Settings::Core::StopAfterCurrent>(false, u"Playback/StopAfterCurrent"_s);
     settings.createSetting<Settings::Core::ResetStopAfterCurrent>(false, u"Playback/ResetStopAfterCurrent"_s);
     settings.createSetting<Settings::Core::PlayedThreshold>(0.5, u"Playback/PlayedThreshold"_s);
+    settings.createSetting<Settings::Core::PlayedThresholdTime>(240000, u"Playback/PlayedThresholdTime"_s);
     settings.createSetting<Settings::Core::RewindPreviousTrack>(false, u"Playlist/RewindPreviousTrack"_s);
     settings.createSetting<Settings::Core::PlaybackQueueStopWhenFinished>(false,
                                                                           u"Playback/PlaybackQueueStopWhenFinished"_s);
@@ -379,6 +380,29 @@ TEST(PlayerControllerTest, TrackPlayedEmitsOnceAfterCrossingThreshold)
     const QVariantList playedArgs = playedSpy.takeFirst();
     ASSERT_EQ(playedArgs.size(), 1);
     EXPECT_EQ(playedArgs.front().value<Track>(), makeTrack(u"/tmp/played.flac"_s, 13, 1000));
+}
+
+TEST(PlayerControllerTest, TrackPlayedUsesEarlierElapsedThreshold)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_elapsed_track_played_test.ini"_s};
+    registerControllerSettings(settings);
+    settings.set<Settings::Core::PlayedThreshold>(0.9);
+    settings.set<Settings::Core::PlayedThresholdTime>(30000);
+    PlayerController controller{&settings, nullptr};
+
+    QSignalSpy playedSpy{&controller, &PlayerController::trackPlayed};
+
+    controller.commitCurrentTrack(makeTrack(u"/tmp/elapsed-played.flac"_s, 23, 120000));
+    controller.setCurrentPosition(29000);
+    EXPECT_EQ(playedSpy.count(), 0);
+
+    controller.setCurrentPosition(30000);
+
+    ASSERT_EQ(playedSpy.count(), 1);
+    const QVariantList playedArgs = playedSpy.takeFirst();
+    ASSERT_EQ(playedArgs.size(), 1);
+    EXPECT_EQ(playedArgs.front().value<Track>(), makeTrack(u"/tmp/elapsed-played.flac"_s, 23, 120000));
 }
 
 TEST(PlayerControllerTest, RestartingCurrentTrackAfterStoppedCountsListenedTime)
