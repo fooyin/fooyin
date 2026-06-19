@@ -35,6 +35,7 @@
 #include <QWheelEvent>
 
 #include <algorithm>
+#include <limits>
 #include <set>
 
 using namespace Qt::StringLiterals;
@@ -2916,6 +2917,35 @@ void ExpandedTreeViewPrivate::doAutoScroll()
     }
 }
 
+QModelIndex ExpandedTreeViewPrivate::indexAtDropPosition(const QPoint& pos) const
+{
+    QModelIndex index = m_self->findIndexAt(pos, true);
+    if(index.isValid() || m_viewMode != ViewMode::Icon || m_viewItems.empty()) {
+        return index;
+    }
+
+    layoutItems();
+
+    qint64 nearestDistance               = std::numeric_limits<qint64>::max();
+    const QModelIndexList visibleIndexes = m_view->visibleIndexes(0);
+    for(const QModelIndex& visibleIndex : visibleIndexes) {
+        const QRect rect = m_view->visualRect(visibleIndex, RectRule::FullRow, false);
+        if(!rect.isValid()) {
+            continue;
+        }
+
+        const int dx          = std::max({rect.left() - pos.x(), 0, pos.x() - rect.right()});
+        const int dy          = std::max({rect.top() - pos.y(), 0, pos.y() - rect.bottom()});
+        const qint64 distance = (static_cast<qint64>(dx) * dx) + (static_cast<qint64>(dy) * dy);
+        if(distance < nearestDistance) {
+            nearestDistance = distance;
+            index           = iconItemIndex(visibleIndex);
+        }
+    }
+
+    return index;
+}
+
 bool ExpandedTreeViewPrivate::dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelIndex& dropIndex)
 {
     if(event->isAccepted()) {
@@ -3732,7 +3762,7 @@ void ExpandedTreeView::dragMoveEvent(QDragMoveEvent* event)
         event->setDropAction(Qt::CopyAction);
     }
 
-    QModelIndex index = findIndexAt(pos, true);
+    QModelIndex index = p->indexAtDropPosition(pos);
     p->m_hoverIndex   = index;
 
     if(!index.isValid() && p->itemCount() > 0) {
@@ -3747,7 +3777,9 @@ void ExpandedTreeView::dragMoveEvent(QDragMoveEvent* event)
         switch(p->m_dropIndicatorPos) {
             case AboveItem: {
                 if(p->isIndexDropEnabled(index.parent())) {
-                    p->m_dropIndicatorRect = {rect.left(), rect.top(), rect.width(), 0};
+                    p->m_dropIndicatorRect = p->m_viewMode == ViewMode::Icon
+                                               ? QRect{rect.left(), rect.top(), 0, rect.height()}
+                                               : QRect{rect.left(), rect.top(), rect.width(), 0};
                     acceptAction();
                 }
                 else {
@@ -3757,7 +3789,9 @@ void ExpandedTreeView::dragMoveEvent(QDragMoveEvent* event)
             }
             case BelowItem: {
                 if(p->isIndexDropEnabled(index.parent())) {
-                    p->m_dropIndicatorRect = {rect.left(), rect.bottom(), rect.width(), 0};
+                    p->m_dropIndicatorRect = p->m_viewMode == ViewMode::Icon
+                                               ? QRect{rect.right(), rect.top(), 0, rect.height()}
+                                               : QRect{rect.left(), rect.bottom(), rect.width(), 0};
                     acceptAction();
                 }
                 else {
@@ -3800,7 +3834,9 @@ void ExpandedTreeView::dragLeaveEvent(QDragLeaveEvent* /*event*/)
 {
     setState(NoState);
     p->stopAutoScroll();
-    p->m_hoverIndex = QModelIndex{};
+    p->m_hoverIndex        = QModelIndex{};
+    p->m_dropIndicatorRect = {};
+    p->m_dropIndicatorPos  = OnViewport;
     viewport()->update();
 }
 
@@ -3906,7 +3942,7 @@ void ExpandedTreeView::dropEvent(QDropEvent* event)
 
     int col{-1};
     int row{-1};
-    QModelIndex index = findIndexAt(event->position().toPoint(), true);
+    QModelIndex index = p->indexAtDropPosition(event->position().toPoint());
 
     if(!index.isValid() && p->itemCount() > 0) {
         index = p->m_viewItems.back().index;
@@ -4115,7 +4151,7 @@ void ExpandedTreeView::verticalScrollbarValueChanged(int value)
 {
     QAbstractItemView::verticalScrollbarValueChanged(value);
 
-    if(state() == QAbstractItemView::DraggingState) {
+    if(state() == DraggingState) {
         p->setHoverIndex({});
         return;
     }
@@ -4129,21 +4165,31 @@ void ExpandedTreeView::verticalScrollbarValueChanged(int value)
 QAbstractItemView::DropIndicatorPosition ExpandedTreeView::dropPosition(const QPoint& pos, const QRect& rect,
                                                                         const QModelIndex& index)
 {
+    if(p->m_viewMode == ViewMode::Icon) {
+        if(pos.y() < rect.top()) {
+            return AboveItem;
+        }
+        if(pos.y() > rect.bottom()) {
+            return BelowItem;
+        }
+        return pos.x() < rect.center().x() ? AboveItem : BelowItem;
+    }
+
     DropIndicatorPosition dropPos{OnViewport};
     const int margin = std::clamp(static_cast<int>(std::round(static_cast<double>(rect.height()) / 5.5)), 2, 12);
 
     if(pos.y() - rect.top() < margin) {
-        dropPos = QAbstractItemView::AboveItem;
+        dropPos = AboveItem;
     }
     else if(rect.bottom() - pos.y() < margin) {
-        dropPos = QAbstractItemView::BelowItem;
+        dropPos = BelowItem;
     }
     else if(rect.contains(pos, true)) {
-        dropPos = QAbstractItemView::OnItem;
+        dropPos = OnItem;
     }
 
-    if(dropPos == QAbstractItemView::OnItem && (!(p->m_model->flags(index) & Qt::ItemIsDropEnabled))) {
-        dropPos = pos.y() < rect.center().y() ? QAbstractItemView::AboveItem : QAbstractItemView::BelowItem;
+    if(dropPos == OnItem && (!(p->m_model->flags(index) & Qt::ItemIsDropEnabled))) {
+        dropPos = pos.y() < rect.center().y() ? AboveItem : BelowItem;
     }
 
     return dropPos;

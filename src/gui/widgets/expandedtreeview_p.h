@@ -112,6 +112,7 @@ public:
     void startAutoScroll();
     void stopAutoScroll();
     void doAutoScroll();
+    [[nodiscard]] QModelIndex indexAtDropPosition(const QPoint& pos) const;
     bool dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelIndex& dropIndex);
     std::vector<std::pair<int, int>> columnRanges(const QModelIndex& topIndex, const QModelIndex& bottomIndex) const;
     std::vector<QRect> rectsToPaint(const QModelIndex& index, const QStyleOptionViewItem& option, int y) const;
