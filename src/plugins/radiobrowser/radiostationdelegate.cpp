@@ -322,7 +322,7 @@ void drawSavedBadge(QPainter* painter, const QStyleOptionViewItem& option, const
 
     if(iconRect.width() >= 6 && iconRect.height() >= 6) {
         Gui::drawItemViewIcon(painter, option, Gui::iconFromTheme(Constants::Icons::Bookmarks),
-                              iconRect.toAlignedRect());
+                              iconRect.toAlignedRect(), Qt::AlignCenter, QPalette::HighlightedText);
     }
 
     painter->restore();

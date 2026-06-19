@@ -219,7 +219,7 @@ QPixmap pixmapFromTheme(const char* icon, const QSize& size)
 }
 
 void drawItemViewIcon(QPainter* painter, const QStyleOptionViewItem& option, const QIcon& icon, const QRect& rect,
-                      Qt::Alignment alignment)
+                      Qt::Alignment alignment, QPalette::ColorRole role)
 {
     if(!painter || icon.isNull() || rect.isEmpty()) {
         return;
@@ -230,8 +230,10 @@ void drawItemViewIcon(QPainter* painter, const QStyleOptionViewItem& option, con
     const auto group   = !enabled                                    ? QPalette::Disabled
                        : option.widget && !option.widget->hasFocus() ? QPalette::Inactive
                                                                      : QPalette::Active;
-    const auto role    = option.state & QStyle::State_Selected ? QPalette::HighlightedText : QPalette::Text;
-    const qreal dpr    = option.widget ? option.widget->devicePixelRatioF() : qApp->devicePixelRatio();
+    if(role == QPalette::NoRole) {
+        role = option.state & QStyle::State_Selected ? QPalette::HighlightedText : QPalette::Text;
+    }
+    const qreal dpr = option.widget ? option.widget->devicePixelRatioF() : qApp->devicePixelRatio();
 
     QPixmap pixmap = icon.pixmap(rect.size() * dpr, dpr, mode);
     QPainter pixmapPainter{&pixmap};

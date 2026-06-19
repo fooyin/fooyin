@@ -21,6 +21,7 @@
 
 #include "fygui_export.h"
 
+#include <QPalette>
 #include <QStringList>
 
 class QIcon;
@@ -68,5 +69,6 @@ FYGUI_EXPORT QPixmap pixmapFromTheme(const char* icon, const QSize& size);
 
 /*! Draws a monochrome item-view icon using the text colour for its selection, focus and enabled state. */
 FYGUI_EXPORT void drawItemViewIcon(QPainter* painter, const QStyleOptionViewItem& option, const QIcon& icon,
-                                   const QRect& rect, Qt::Alignment alignment = Qt::AlignCenter);
+                                   const QRect& rect, Qt::Alignment alignment = Qt::AlignCenter,
+                                   QPalette::ColorRole role = QPalette::NoRole);
 } // namespace Fooyin::Gui
