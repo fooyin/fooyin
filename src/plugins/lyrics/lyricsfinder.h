@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "lyrics.h"
 #include "sources/lyricsource.h"
 
 #include <core/network/networkaccessmanager.h>
@@ -68,11 +69,32 @@ Q_SIGNALS:
     void lyricsSearchFinished(const Fooyin::Track& track, bool foundAny);
 
 private:
+    enum class SearchStatus : uint8_t
+    {
+        NotStarted = 0,
+        Pending,
+        Complete,
+        Skipped
+    };
+
+    struct SourceSearch
+    {
+        LyricSource* source;
+        SearchStatus status{SearchStatus::NotStarted};
+        std::vector<Lyrics> results;
+    };
+
     void loadDefaults();
     void startLyricsSearch(const Track& track);
-    void finishOrStartNextSource(bool forceFinish = false);
-    bool findNextAvailableSource();
-    void onSearchResult(const std::vector<LyricData>& data);
+    void startSources(bool local);
+    void advanceSearch();
+    void drainResults();
+    void finishSearch();
+    void cancelSearches();
+    void onSearchResult(LyricSource* source, const std::vector<LyricData>& data);
+    [[nodiscard]] std::vector<Lyrics> validatedResults(LyricSource* source, const std::vector<LyricData>& data) const;
+    [[nodiscard]] bool localSearchComplete() const;
+    [[nodiscard]] bool foundLocalResults() const;
 
     std::shared_ptr<NetworkAccessManager> m_networkManager;
     SettingsManager* m_settings;
@@ -82,10 +104,12 @@ private:
     ScriptParser m_parser;
     SearchParams m_params;
     LyricsSearchRequest m_request;
+    std::vector<SourceSearch> m_searches;
     bool m_foundAnyResults;
-    bool m_foundLocalResults;
-    int m_currentSourceIndex;
-    LyricSource* m_currentSource;
+    bool m_externalPhaseStarted;
+    bool m_searchFinished;
+    size_t m_nextResultIndex;
+    uint64_t m_searchGeneration;
 };
 } // namespace Lyrics
 } // namespace Fooyin

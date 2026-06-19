@@ -60,8 +60,6 @@ void LyricsPlugin::initialise(const CorePluginContext& context)
     m_lyricsSettings = std::make_unique<LyricsSettings>(m_settings);
     m_lyricsFinder   = new LyricsFinder(context.networkAccess, m_settings, this);
     m_lyricsSaver    = new LyricsSaver(context.library, m_settings, this);
-
-    m_lyricsFinder->restoreState();
 }
 
 void LyricsPlugin::initialise(const GuiPluginContext& context)

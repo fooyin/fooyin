@@ -70,6 +70,7 @@ public:
     [[nodiscard]] virtual bool isLocal() const;
 
     virtual void search(const SearchParams& params) = 0;
+    virtual void cancel();
 
     void setIndex(int index);
     void setEnabled(bool enabled);

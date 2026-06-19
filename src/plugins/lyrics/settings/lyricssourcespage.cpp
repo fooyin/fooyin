@@ -117,6 +117,7 @@ void LyricsSourcesPageWidget::apply()
     }
 
     m_lyricsFinder->sort();
+    m_lyricsFinder->saveState();
 
     m_settings->fileSet(Settings::SearchTags, m_lyricTags->text().split(u';', Qt::SkipEmptyParts));
     m_settings->fileSet(Settings::Paths, m_lyricPaths->toPlainText().split(u'\n', Qt::SkipEmptyParts));

@@ -66,6 +66,11 @@ bool LyricSource::isLocal() const
     return false;
 }
 
+void LyricSource::cancel()
+{
+    resetReply();
+}
+
 void LyricSource::setIndex(int index)
 {
     m_index = index;
@@ -187,7 +192,8 @@ void LyricSource::setReply(QNetworkReply* reply)
 void LyricSource::resetReply()
 {
     if(m_reply) {
-        QObject::disconnect(m_reply);
+        QObject::disconnect(m_reply, nullptr, nullptr, nullptr);
+        m_reply->abort();
         m_reply->deleteLater();
     }
 }
