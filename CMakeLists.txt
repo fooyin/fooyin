@@ -437,6 +437,7 @@ if(APPLE)
     set_target_properties(
         fooyin
         PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist"
+                   MACOSX_BUNDLE_GUI_IDENTIFIER org.fooyin.fooyin
     )
     if(TARGET Qt6::macdeployqt)
         get_target_property(MACDEPLOYQT_EXECUTABLE Qt6::macdeployqt IMPORTED_LOCATION)

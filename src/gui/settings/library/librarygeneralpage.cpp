@@ -32,17 +32,94 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QApplication>
 #include <QCheckBox>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHeaderView>
-#include <QInputDialog>
 #include <QLabel>
+#include <QLineEdit>
+#include <QLoggingCategory>
+#include <QMainWindow>
 #include <QMenu>
+#include <QTimer>
+
+Q_LOGGING_CATEGORY(LIB_SETTINGS, "fy.librarysettings")
 
 using namespace Qt::StringLiterals;
+
+namespace {
+QString normalizeDirectoryPath(const QString& path)
+{
+    if(path.isEmpty()) {
+        return {};
+    }
+
+    const QFileInfo info{path};
+    if(!info.exists() || !info.isDir()) {
+        return {};
+    }
+
+    return info.canonicalFilePath();
+}
+
+QString pickExistingDirectory(QWidget* widget, const QString& caption)
+{
+    QWidget* settingsWindow = widget ? widget->window() : nullptr;
+    const bool hideSettings = settingsWindow && settingsWindow->isVisible();
+    if(hideSettings) {
+        settingsWindow->hide();
+    }
+
+    const auto restoreSettings = [&] {
+        if(hideSettings && settingsWindow) {
+            settingsWindow->show();
+            settingsWindow->raise();
+            settingsWindow->activateWindow();
+        }
+    };
+
+    QWidget* parent = nullptr;
+#ifndef Q_OS_MAC
+    parent = settingsWindow;
+    if(!parent) {
+        parent = QApplication::activeModalWidget();
+    }
+    if(!parent) {
+        parent = Fooyin::Utils::getMainWindow();
+    }
+#endif
+
+    QFileDialog dialog(parent, caption, QDir::homePath());
+    dialog.setFileMode(QFileDialog::Directory);
+    dialog.setOption(QFileDialog::ShowDirsOnly);
+    dialog.setOption(QFileDialog::DontResolveSymlinks);
+#ifdef Q_OS_MAC
+    dialog.setOption(QFileDialog::DontUseNativeDialog);
+#endif
+
+    QString dir;
+    if(dialog.exec() == QDialog::Accepted) {
+        const QStringList selected = dialog.selectedFiles();
+        if(!selected.isEmpty()) {
+            dir = normalizeDirectoryPath(selected.constFirst());
+        }
+    }
+
+    restoreSettings();
+
+    if(dir.isEmpty()) {
+        qCWarning(LIB_SETTINGS) << "No library directory selected";
+    }
+    else {
+        qCInfo(LIB_SETTINGS) << "Selected library directory:" << dir;
+    }
+
+    return dir;
+}
+} // namespace
 
 namespace Fooyin {
 class LibraryTableView : public ExtendableTableView
@@ -105,7 +182,9 @@ public:
     void reset() override;
 
 private:
-    void addLibrary() const;
+    void addLibrary();
+
+    void promptForLibraryDirectory();
 
     LibraryManager* m_libraryManager;
     MusicLibrary* m_library;
@@ -248,10 +327,15 @@ void LibraryGeneralPageWidget::reset()
     m_settings->fileRemove(Settings::Core::Internal::MarkUnavailableStartup);
 }
 
-void LibraryGeneralPageWidget::addLibrary() const
+void LibraryGeneralPageWidget::addLibrary()
 {
-    const QString dir = QFileDialog::getExistingDirectory(m_libraryView, tr("Directory"), QDir::homePath(),
-                                                          QFileDialog::DontResolveSymlinks);
+    // Defer so the Settings modal dialog can yield before we open another modal picker.
+    QTimer::singleShot(0, this, [this] { promptForLibraryDirectory(); });
+}
+
+void LibraryGeneralPageWidget::promptForLibraryDirectory()
+{
+    const QString dir = pickExistingDirectory(m_libraryView, tr("Directory"));
 
     if(dir.isEmpty()) {
         m_model->markForAddition({});
