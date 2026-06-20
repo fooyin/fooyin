@@ -1828,18 +1828,6 @@ void RadioBrowserWidget::addDisplayMenu(QMenu* menu)
         setViewConfig(config);
     });
 
-    QAction* separateSavedState{nullptr};
-    if(m_separateSavedStationsViewStateAllowed) {
-        separateSavedState = new QAction(tr("Remember My Stations display separately"), displayMenu);
-        separateSavedState->setCheckable(true);
-        separateSavedState->setChecked(m_viewConfig.separateSavedStationsViewState);
-        QObject::connect(separateSavedState, &QAction::triggered, this, [this](bool checked) {
-            auto config{m_viewConfig};
-            config.separateSavedStationsViewState = checked;
-            setViewConfig(config);
-        });
-    }
-
     auto* showHeader = new QAction(tr("Show header"), displayMenu);
     showHeader->setCheckable(true);
     showHeader->setChecked(m_viewConfig.showHeader);
@@ -1870,9 +1858,6 @@ void RadioBrowserWidget::addDisplayMenu(QMenu* menu)
     displayMenu->addAction(showIcons);
     displayMenu->addAction(showSavedIcons);
     displayMenu->addAction(showToolTips);
-    if(separateSavedState) {
-        displayMenu->addAction(separateSavedState);
-    }
     displayMenu->addAction(showHeader);
     displayMenu->addAction(showScrollbar);
     displayMenu->addAction(alternatingRows);
