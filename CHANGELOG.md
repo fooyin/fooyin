@@ -17,7 +17,7 @@
 
 * Audio/Playback
   - Improve gapless playback handling ([#1248](https://github.com/fooyin/fooyin/issues/1248))
-  - Add separate playback progress and scrobbling thresholds ([#1307](https://github.com/fooyin/fooyin/pull/1307))
+  - Add separate time-based played threshold ([#1307](https://github.com/fooyin/fooyin/pull/1307))
 * FileOps
   - Add advanced settings for immediate delete and deleting empty folders ([#1266](https://github.com/fooyin/fooyin/pull/1266))
   - Suggest library roots in the destination field ([#1285](https://github.com/fooyin/fooyin/pull/1285))
@@ -44,13 +44,18 @@
   - Improve and extend Quick Setup with theme and playlist options
   - Improve large playlist population and context menu performance ([#1053](https://github.com/fooyin/fooyin/issues/1053))
   - Improve playlist default preset names
+  - Improve drag and drop in expanded tree icon views
+  - Improve playing icon colours in the Library Tree and Directory Browser
   - Improve row dragging in expanded tree views and add a drag-before-selection setting
+  - Preserve scroll position when view state changes ([#1221](https://github.com/fooyin/fooyin/issues/1221), [#1313](https://github.com/fooyin/fooyin/pull/1313))
   - Preserve displayed track selection across focus changes
   - Stretch tool buttons by default
   - Remember the last selected Tab Stack tab by default
   - Replace the theme dropdown in settings with an editable list widget
   - Show the active theme in theme settings ([#1302](https://github.com/fooyin/fooyin/pull/1302))
   - Improve Advanced settings tree view appearance
+  - Use placeholder styling for the Library Tree default sort
+  - Add theme font entry for Script Display
 * Library/Metadata
   - Add support for monitoring individual library files ([#1212](https://github.com/fooyin/fooyin/issues/1212))
   - Add configurable literal track searches ([#1256](https://github.com/fooyin/fooyin/issues/1256))
@@ -106,17 +111,24 @@
   - Refresh track selection action states for explicit context menus
   - Refresh moved playlist rows after reordering
   - Fix artwork repainting when the first column is hidden
+  - Fix adding library paths with trailing separators
+  - Fix playing row height after expanding the Library Tree
+  - Fix volume control size after restart
 * Lyrics
   - Avoid resetting editor text on Apply ([#1234](https://github.com/fooyin/fooyin/issues/1234))
   - Fix current line highlighting mutating the undo stack
   - Avoid a crash parsing blank lines ([#833](https://github.com/fooyin/fooyin/issues/833))
+  - Fix stalls when searching for local lyric files ([#1311](https://github.com/fooyin/fooyin/issues/1311))
 * Scrobbling
   - Reset the timestamp when replaying the current track after stop ([#1217](https://github.com/fooyin/fooyin/pull/1217))
+* Scripting
+  - Prevent out-of-bounds access in `$chop` ([#1312](https://github.com/fooyin/fooyin/pull/1312))
 * Library/Metadata
   - Use track identity when comparing tracks
   - Avoid unnecessary FFmpeg temporary buffers
   - Migrate stored track ratings to the correct REAL type ([#1216](https://github.com/fooyin/fooyin/issues/1216), [#1277](https://github.com/fooyin/fooyin/pull/1277))
   - Defer metadata and embedded artwork writes for files currently being played ([#1276](https://github.com/fooyin/fooyin/issues/1276))
+  - Avoid filesystem access when checking pending covers ([#1311](https://github.com/fooyin/fooyin/issues/1311))
   - Disable library auto-refresh by default
 * WaveBar
   - Fix SQL list binding for bulk queries
@@ -129,7 +141,7 @@
   - Remove unnecessary executable bits ([#1213](https://github.com/fooyin/fooyin/pull/1213))
   - Compress PNG assets ([#1265](https://github.com/fooyin/fooyin/pull/1265))
 * Translations
-  - Update translations and translation sources ([#1250](https://github.com/fooyin/fooyin/pull/1250), [#1251](https://github.com/fooyin/fooyin/pull/1251), [#1274](https://github.com/fooyin/fooyin/pull/1274), [#1275](https://github.com/fooyin/fooyin/pull/1275), [#1286](https://github.com/fooyin/fooyin/pull/1286), [#1287](https://github.com/fooyin/fooyin/pull/1287), [#1298](https://github.com/fooyin/fooyin/pull/1298), [#1299](https://github.com/fooyin/fooyin/pull/1299))
+  - Update translations and translation sources ([#1250](https://github.com/fooyin/fooyin/pull/1250), [#1251](https://github.com/fooyin/fooyin/pull/1251), [#1274](https://github.com/fooyin/fooyin/pull/1274), [#1275](https://github.com/fooyin/fooyin/pull/1275), [#1286](https://github.com/fooyin/fooyin/pull/1286), [#1287](https://github.com/fooyin/fooyin/pull/1287), [#1298](https://github.com/fooyin/fooyin/pull/1298), [#1299](https://github.com/fooyin/fooyin/pull/1299), [#1314](https://github.com/fooyin/fooyin/pull/1314), [#1315](https://github.com/fooyin/fooyin/pull/1315))
 
 ### Dev/API
 * Plugin/Widget API
