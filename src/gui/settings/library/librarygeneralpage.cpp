@@ -258,7 +258,7 @@ void LibraryGeneralPageWidget::addLibrary() const
         return;
     }
 
-    const QFileInfo info{dir};
+    const QFileInfo info{QDir::cleanPath(dir)};
     const QString name = info.fileName();
 
     m_model->markForAddition({.name = name, .path = dir});
