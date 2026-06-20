@@ -23,6 +23,8 @@
 
 #include <core/scripting/scriptparser.h>
 
+#include <stop_token>
+
 namespace Fooyin {
 class SettingsManager;
 
@@ -38,9 +40,11 @@ public:
     [[nodiscard]] bool isLocal() const override;
 
     void search(const SearchParams& params) override;
+    void cancel() override;
 
 private:
     ScriptParser m_parser;
+    std::stop_source m_stopSource;
 };
 } // namespace Lyrics
 } // namespace Fooyin
