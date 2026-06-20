@@ -178,7 +178,7 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="759"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1676"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
