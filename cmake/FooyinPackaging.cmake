@@ -11,29 +11,32 @@ set(CPACK_PACKAGE_VERSION_MAJOR "${FOOYIN_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${FOOYIN_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${FOOYIN_VERSION_PATCH}")
 set(CPACK_PACKAGE_VERSION "${FOOYIN_VERSION}")
-set(CPACK_PACKAGE_RELOCATABLE ON CACHE BOOL "Build relocatable package")
+set(CPACK_PACKAGE_RELOCATABLE
+    ON
+    CACHE BOOL "Build relocatable package"
+)
 set(CPACK_PACKAGE_RELEASE 1)
 
 set(FOOYIN_PACKAGE_ARCH "${CMAKE_SYSTEM_PROCESSOR}")
-if (CMAKE_VS_PLATFORM_NAME)
+if(CMAKE_VS_PLATFORM_NAME)
     set(FOOYIN_PACKAGE_ARCH "${CMAKE_VS_PLATFORM_NAME}")
-elseif (APPLE AND CMAKE_OSX_ARCHITECTURES)
+elseif(APPLE AND CMAKE_OSX_ARCHITECTURES)
     list(GET CMAKE_OSX_ARCHITECTURES 0 FOOYIN_PACKAGE_ARCH)
-endif ()
+endif()
 
-if (FOOYIN_PACKAGE_ARCH MATCHES "^(ARM64|arm64|AARCH64|aarch64)$")
+if(FOOYIN_PACKAGE_ARCH MATCHES "^(ARM64|arm64|AARCH64|aarch64)$")
     set(FOOYIN_PACKAGE_ARCH "arm64")
-elseif (FOOYIN_PACKAGE_ARCH MATCHES "^(AMD64|amd64|X64|x64|x86_64|X86_64)$")
-    if (APPLE)
+elseif(FOOYIN_PACKAGE_ARCH MATCHES "^(AMD64|amd64|X64|x64|x86_64|X86_64)$")
+    if(APPLE)
         set(FOOYIN_PACKAGE_ARCH "x86_64")
-    else ()
+    else()
         set(FOOYIN_PACKAGE_ARCH "x64")
-    endif ()
-else ()
+    endif()
+else()
     string(TOLOWER "${FOOYIN_PACKAGE_ARCH}" FOOYIN_PACKAGE_ARCH)
-endif ()
+endif()
 
-if (WIN32)
+if(WIN32)
     set(CPACK_GENERATOR "NSIS" "ZIP")
     set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-windows-${FOOYIN_PACKAGE_ARCH}")
     set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/data/icons\\\\fooyin.ico")
@@ -59,7 +62,7 @@ else()
     set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/data/icons/sc-fooyin.svg")
 endif()
 
-set(CPACK_SOURCE_IGNORE_FILES  "\\\\.#;/#;.*~;\\\\.o$")
+set(CPACK_SOURCE_IGNORE_FILES "\\\\.#;/#;.*~;\\\\.o$")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "/\\\\.git/")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "/\\\\.github/")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "/build/")
@@ -70,30 +73,30 @@ set(CPACK_DEBIAN_PACKAGE_HOMEPAGE ${CPACK_PROJECT_URL})
 set(CPACK_DEBIAN_PACKAGE_SECTION "sound")
 set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
-        "libc6,
-        libstdc++6,
-        libqt6sql6-sqlite (>= 6.4.0),
-        libqt6svg6 (>= 6.4.0),
-        qt6-image-formats-plugins (>= 6.4.0),
-        qt6-qpa-plugins,
-        zlib1g,
-        libasound2,
-        ffmpeg (>= 7:4.4),
-        pipewire,
-        libsdl2-2.0-0,
-        libgme0,
-        libopenmpt0,
-        libarchive13,
-        libsndfile1,
-        libebur128-1,
-        libsoundtouch1,
-        libsoxr0"
+    "libc6,
+    libstdc++6,
+    libqt6sql6-sqlite (>= 6.4.0),
+    libqt6svg6 (>= 6.4.0),
+    qt6-image-formats-plugins (>= 6.4.0),
+    qt6-qpa-plugins,
+    zlib1g,
+    libasound2,
+    ffmpeg (>= 7:4.4),
+    pipewire,
+    libsdl2-2.0-0,
+    libgme0,
+    libopenmpt0,
+    libarchive13,
+    libsndfile1,
+    libebur128-1,
+    libsoundtouch1,
+    libsoxr0"
 )
 
 set(CPACK_RPM_PACKAGE_LICENSE "GPLv3")
 set(CPACK_RPM_PACKAGE_GROUP "Applications/Multimedia")
-SET(CPACK_RPM_PACKAGE_REQUIRES_POST "qt6-qtimageformats")
+set(CPACK_RPM_PACKAGE_REQUIRES_POST "qt6-qtimageformats")
 
-set(CPACK_PROJECT_CONFIG_FILE "${CMAKE_SOURCE_DIR}/cmake/FooyinPackageConfig.cmake" )
+set(CPACK_PROJECT_CONFIG_FILE "${CMAKE_SOURCE_DIR}/cmake/FooyinPackageConfig.cmake")
 
 include(CPack)

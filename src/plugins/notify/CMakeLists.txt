@@ -1,4 +1,8 @@
-find_package(Qt6 COMPONENTS DBus QUIET)
+find_package(
+    Qt6
+    COMPONENTS DBus
+    QUIET
+)
 
 if(NOT Qt6DBus_FOUND)
     message(STATUS "Qt6::DBus not found; skipping notify plugin.")
@@ -6,14 +10,14 @@ if(NOT Qt6DBus_FOUND)
 endif()
 
 set(SOURCES
-        notificationbackend.cpp
-        notificationbackend.h
+    notificationbackend.cpp
+    notificationbackend.h
     notifyplugin.cpp
     notifyplugin.h
-        backends/freedesktopnotificationbackend.cpp
-        backends/freedesktopnotificationbackend.h
-        backends/portalnotificationbackend.cpp
-        backends/portalnotificationbackend.h
+    backends/freedesktopnotificationbackend.cpp
+    backends/freedesktopnotificationbackend.h
+    backends/portalnotificationbackend.cpp
+    backends/portalnotificationbackend.h
     settings/notifypage.cpp
     settings/notifypage.h
     settings/notifysettings.cpp

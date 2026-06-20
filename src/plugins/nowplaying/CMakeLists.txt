@@ -1,9 +1,6 @@
 message(STATUS "On macOS, enabling NowPlaying plugin")
 
-set(SOURCES
-    nowplayingplugin.mm
-    nowplayingplugin.h
-)
+set(SOURCES nowplayingplugin.mm nowplayingplugin.h)
 
 create_fooyin_plugin_internal(
     nowplaying

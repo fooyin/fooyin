@@ -19,6 +19,4 @@ create_fooyin_plugin_internal(
             openmptsettings.h
 )
 
-target_include_directories(
-    openmpt PRIVATE ${OPENMPT_INCLUDE_DIRS}
-)
+target_include_directories(openmpt PRIVATE ${OPENMPT_INCLUDE_DIRS})

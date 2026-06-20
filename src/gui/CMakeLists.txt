@@ -544,11 +544,10 @@ create_fooyin_library(
     EXPORT_NAME Gui
     SOURCES ${SOURCES}
 )
-
 target_link_libraries(
     fooyin_gui
-    PUBLIC Fooyin::Core 
-           Fooyin::Utils
-    PRIVATE Fooyin::CorePrivate 
+    PRIVATE Fooyin::CorePrivate
             Qt::Svg
+    PUBLIC Fooyin::Core
+           Fooyin::Utils
 )

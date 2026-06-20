@@ -1,7 +1,6 @@
 include(FooyinPluginSelection)
 
-set(
-    FOOYIN_KNOWN_PLUGINS
+set(FOOYIN_KNOWN_PLUGINS
     alsa
     discord
     equaliser
@@ -33,8 +32,7 @@ set(
     wavebar
 )
 
-set(
-    FOOYIN_DEFAULT_PLUGINS
+set(FOOYIN_DEFAULT_PLUGINS
     discord
     equaliser
     fileops
@@ -77,10 +75,14 @@ if(APPLE)
 endif()
 
 fooyin_resolve_plugin_selection(
-    OUT_VAR FOOYIN_RESOLVED_PLUGINS
-    SELECTION "${PLUGIN_SELECTION}"
-    KNOWN ${FOOYIN_KNOWN_PLUGINS}
-    DEFAULT ${FOOYIN_DEFAULT_PLUGINS}
+    OUT_VAR
+    FOOYIN_RESOLVED_PLUGINS
+    SELECTION
+    "${PLUGIN_SELECTION}"
+    KNOWN
+    ${FOOYIN_KNOWN_PLUGINS}
+    DEFAULT
+    ${FOOYIN_DEFAULT_PLUGINS}
 )
 
 if(BUILD_ALSA)
@@ -137,7 +139,7 @@ else()
     endif()
 endif()
 
-if (APPLE)
+if(APPLE)
     fooyin_add_selected_plugin(nowplaying)
 else()
     if("nowplaying" IN_LIST FOOYIN_RESOLVED_PLUGINS)

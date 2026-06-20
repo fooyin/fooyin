@@ -309,11 +309,28 @@ set(SOURCES
     translationloader.h
 )
 
-create_fooyin_library(fooyin_core ADD_PRIVATE_TARGET EXPORT_NAME Core SOURCES ${SOURCES})
+create_fooyin_library(
+    fooyin_core
+    ADD_PRIVATE_TARGET
+    EXPORT_NAME Core
+    SOURCES ${SOURCES}
+)
 
 target_link_libraries(
-        fooyin_core PRIVATE fooyin_version fooyin_config QCoro6::Core ${FFMPEG_LIBRARIES} PFFFT::PFFFT PUBLIC
-            Qt6::Core Qt6::Widgets Qt6::Sql Qt6::Concurrent Qt6::Network Taglib::Taglib Fooyin::Utils)
+    fooyin_core
+    PRIVATE fooyin_version
+            fooyin_config
+            QCoro6::Core
+            ${FFMPEG_LIBRARIES}
+            PFFFT::PFFFT
+    PUBLIC Qt6::Core
+           Qt6::Widgets
+           Qt6::Sql
+           Qt6::Concurrent
+           Qt6::Network
+           Taglib::Taglib
+           Fooyin::Utils
+)
 
 target_include_directories(
     fooyin_core

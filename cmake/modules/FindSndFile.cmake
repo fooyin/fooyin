@@ -23,17 +23,12 @@ else()
 endif()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(
-    SndFile
-    DEFAULT_MSG
-    SndFile_LINK_LIBRARIES
-    SndFile_INCLUDEDIR
-)
+find_package_handle_standard_args(SndFile DEFAULT_MSG SndFile_LINK_LIBRARIES SndFile_INCLUDEDIR)
 
 if(EXISTS "${SndFile_INCLUDEDIR}/sndfile.h")
-    file(STRINGS "${SndFile_INCLUDEDIR}/sndfile.h"
-         SndFile_SUPPORTS_SET_COMPRESSION_LEVEL
-         REGEX ".*SFC_SET_COMPRESSION_LEVEL.*")
+    file(STRINGS "${SndFile_INCLUDEDIR}/sndfile.h" SndFile_SUPPORTS_SET_COMPRESSION_LEVEL
+         REGEX ".*SFC_SET_COMPRESSION_LEVEL.*"
+    )
 endif()
 
 if(SndFile_SUPPORTS_SET_COMPRESSION_LEVEL)
@@ -46,11 +41,7 @@ mark_as_advanced(SndFile_SUPPORTS_SET_COMPRESSION_LEVEL)
 if(SndFile_FOUND)
     if(NOT TARGET SndFile::sndfile)
         add_library(SndFile::sndfile INTERFACE IMPORTED)
-        target_link_libraries(
-            SndFile::sndfile INTERFACE "${SndFile_LINK_LIBRARIES}"
-        )
-        target_include_directories(
-            SndFile::sndfile INTERFACE "${SndFile_INCLUDEDIR}"
-        )
+        target_link_libraries(SndFile::sndfile INTERFACE "${SndFile_LINK_LIBRARIES}")
+        target_include_directories(SndFile::sndfile INTERFACE "${SndFile_INCLUDEDIR}")
     endif()
 endif()

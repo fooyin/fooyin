@@ -1,7 +1,5 @@
 if(APPLE AND NOT LibArchive_ROOT)
-    foreach(homebrew_libarchive_root
-            "/opt/homebrew/opt/libarchive"
-            "/usr/local/opt/libarchive")
+    foreach(homebrew_libarchive_root "/opt/homebrew/opt/libarchive" "/usr/local/opt/libarchive")
         if(EXISTS "${homebrew_libarchive_root}")
             set(LibArchive_ROOT "${homebrew_libarchive_root}")
             break()

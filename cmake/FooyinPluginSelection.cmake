@@ -63,21 +63,17 @@ function(fooyin_resolve_plugin_selection)
         list(REMOVE_DUPLICATES fooyin_unknown_plugins)
         list(JOIN fooyin_unknown_plugins ", " fooyin_unknown_plugins_text)
         list(JOIN PLUGIN_KNOWN ", " fooyin_known_plugins_text)
-        message(
-            FATAL_ERROR
-            "Unknown plugin(s) in PLUGIN_SELECTION: ${fooyin_unknown_plugins_text}. "
-            "Known plugins: ${fooyin_known_plugins_text}"
+        message(FATAL_ERROR "Unknown plugin(s) in PLUGIN_SELECTION: ${fooyin_unknown_plugins_text}. "
+                            "Known plugins: ${fooyin_known_plugins_text}"
         )
     endif()
 
     if(fooyin_use_no_plugins
        AND (fooyin_use_all_plugins
             OR fooyin_has_positive_selection
-            OR fooyin_plugins_to_remove))
-        message(
-            FATAL_ERROR
-            "PLUGIN_SELECTION keyword 'none' cannot be combined with other selections."
-        )
+            OR fooyin_plugins_to_remove)
+    )
+        message(FATAL_ERROR "PLUGIN_SELECTION keyword 'none' cannot be combined with other selections.")
     endif()
 
     if(fooyin_use_no_plugins)
@@ -99,13 +95,13 @@ function(fooyin_resolve_plugin_selection)
         else()
             list(JOIN fooyin_resolved_plugins ", " fooyin_resolved_plugins_text)
         endif()
-        message(
-            STATUS
-            "Plugin selection resolved to: ${fooyin_resolved_plugins_text}"
-        )
+        message(STATUS "Plugin selection resolved to: ${fooyin_resolved_plugins_text}")
     endif()
 
-    set(${PLUGIN_OUT_VAR} ${fooyin_resolved_plugins} PARENT_SCOPE)
+    set(${PLUGIN_OUT_VAR}
+        ${fooyin_resolved_plugins}
+        PARENT_SCOPE
+    )
 endfunction()
 
 function(fooyin_add_selected_plugin plugin_name)

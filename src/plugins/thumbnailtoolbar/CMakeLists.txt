@@ -1,9 +1,6 @@
 message(STATUS "On Windows, enabling thumbnailtoolbar plugin")
 
-set(SOURCES
-    thumbnailtoolbarplugin.cpp
-    thumbnailtoolbarplugin.h
-)
+set(SOURCES thumbnailtoolbarplugin.cpp thumbnailtoolbarplugin.h)
 
 create_fooyin_plugin_internal(
     thumbnailtoolbar

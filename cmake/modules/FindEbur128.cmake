@@ -26,12 +26,7 @@ find_library(
 )
 mark_as_advanced(Ebur128_LIBRARY)
 
-if(DEFINED PC_Ebur128_VERSION
-   AND NOT
-       PC_Ebur128_VERSION
-       STREQUAL
-       ""
-)
+if(DEFINED PC_Ebur128_VERSION AND NOT PC_Ebur128_VERSION STREQUAL "")
     set(Ebur128_VERSION "${PC_Ebur128_VERSION}")
 endif()
 

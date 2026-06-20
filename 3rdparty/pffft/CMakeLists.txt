@@ -7,16 +7,12 @@ if(PFFFT_SYSTEM_PROCESSOR MATCHES "^(ppc|powerpc)")
     set(PFFFT_USE_SIMD_DEFAULT OFF)
 endif()
 
-option(
-    PFFFT_USE_SIMD
-    "Use SIMD optimisations in the bundled PFFFT library"
-    ${PFFFT_USE_SIMD_DEFAULT}
-)
+option(PFFFT_USE_SIMD "Use SIMD optimisations in the bundled PFFFT library" ${PFFFT_USE_SIMD_DEFAULT})
 
 add_library(
     fooyin_pffft STATIC
-    src/pffft.h
     src/pffft.c
+    src/pffft.h
     src/pffft_common.c
     src/pffft_priv_impl.h
     src/simd/pf_altivec_float.h
@@ -27,16 +23,12 @@ add_library(
 )
 add_library(PFFFT::PFFFT ALIAS fooyin_pffft)
 
-target_include_directories(
-    fooyin_pffft
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
-)
+target_include_directories(fooyin_pffft PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 target_compile_definitions(
     fooyin_pffft
     PUBLIC PFFFT_STATIC_DEFINE
-    PRIVATE PFFFT_SCALVEC_ENABLED=1
-            _USE_MATH_DEFINES
+    PRIVATE PFFFT_SCALVEC_ENABLED=1 _USE_MATH_DEFINES
 )
 
 if(PFFFT_USE_SIMD)

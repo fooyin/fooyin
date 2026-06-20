@@ -13,11 +13,32 @@ function(fooyin_prepare_macos_icu)
     file(REAL_PATH "${ICU_I18N_LIBRARY_RELEASE}" _fooyin_icu_i18n_realpath)
     file(REAL_PATH "${_fooyin_icu_data_library}" _fooyin_icu_data_realpath)
 
-    set(FOOYIN_ICU_INCLUDE_DIR "${ICU_INCLUDE_DIR}" PARENT_SCOPE)
-    set(FOOYIN_ICU_UC_LIBRARY_NAME "${_fooyin_icu_uc_name}" PARENT_SCOPE)
-    set(FOOYIN_ICU_I18N_LIBRARY_NAME "${_fooyin_icu_i18n_name}" PARENT_SCOPE)
-    set(FOOYIN_ICU_DATA_LIBRARY_NAME "${_fooyin_icu_data_name}" PARENT_SCOPE)
-    set(FOOYIN_ICU_UC_LIBRARY_REALPATH "${_fooyin_icu_uc_realpath}" PARENT_SCOPE)
-    set(FOOYIN_ICU_I18N_LIBRARY_REALPATH "${_fooyin_icu_i18n_realpath}" PARENT_SCOPE)
-    set(FOOYIN_ICU_DATA_LIBRARY_REALPATH "${_fooyin_icu_data_realpath}" PARENT_SCOPE)
+    set(FOOYIN_ICU_INCLUDE_DIR
+        "${ICU_INCLUDE_DIR}"
+        PARENT_SCOPE
+    )
+    set(FOOYIN_ICU_UC_LIBRARY_NAME
+        "${_fooyin_icu_uc_name}"
+        PARENT_SCOPE
+    )
+    set(FOOYIN_ICU_I18N_LIBRARY_NAME
+        "${_fooyin_icu_i18n_name}"
+        PARENT_SCOPE
+    )
+    set(FOOYIN_ICU_DATA_LIBRARY_NAME
+        "${_fooyin_icu_data_name}"
+        PARENT_SCOPE
+    )
+    set(FOOYIN_ICU_UC_LIBRARY_REALPATH
+        "${_fooyin_icu_uc_realpath}"
+        PARENT_SCOPE
+    )
+    set(FOOYIN_ICU_I18N_LIBRARY_REALPATH
+        "${_fooyin_icu_i18n_realpath}"
+        PARENT_SCOPE
+    )
+    set(FOOYIN_ICU_DATA_LIBRARY_REALPATH
+        "${_fooyin_icu_data_realpath}"
+        PARENT_SCOPE
+    )
 endfunction()

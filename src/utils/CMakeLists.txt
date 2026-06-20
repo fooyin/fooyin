@@ -114,7 +114,4 @@ target_link_libraries(
             ICU::i18n
 )
 
-target_include_directories(
-    fooyin_utils
-    PUBLIC ${ICU_INCLUDE_DIRS}
-)
+target_include_directories(fooyin_utils PUBLIC ${ICU_INCLUDE_DIRS})

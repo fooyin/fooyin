@@ -39,8 +39,16 @@ The following cache variables may also be set:
   the absolute path of the libvgm library
 #]=======================================================================]
 
-find_path(LIBVGM_INCLUDE_DIR NAMES vgm DOC "The libvgm include directory")
-find_library(LIBVGM_LIBRARY NAMES vgm-player DOC "The libvgm library")
+find_path(
+    LIBVGM_INCLUDE_DIR
+    NAMES vgm
+    DOC "The libvgm include directory"
+)
+find_library(
+    LIBVGM_LIBRARY
+    NAMES vgm-player
+    DOC "The libvgm library"
+)
 
 mark_as_advanced(LIBVGM_INCLUDE_DIR LIBVGM_LIBRARY)
 
@@ -48,11 +56,11 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(LibVgm REQUIRED_VARS LIBVGM_LIBRARY LIBVGM_INCLUDE_DIR)
 
 if(LIBVGM_FOUND)
-  set(LIBVGM_INCLUDE_DIRS "${LIBVGM_INCLUDE_DIR}/vgm")
-  set(LIBVGM_LIBRARIES "${LIBVGM_LIBRARY}")
-  if(NOT TARGET libvgm::vgm-player)
-    add_library(libvgm::vgm-player UNKNOWN IMPORTED)
-    set_target_properties(libvgm::vgm-player PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${LIBVGM_INCLUDE_DIRS}")
-    set_target_properties(libvgm::vgm-player PROPERTIES IMPORTED_LOCATION "${LIBVGM_LIBRARY}")
-  endif()
+    set(LIBVGM_INCLUDE_DIRS "${LIBVGM_INCLUDE_DIR}/vgm")
+    set(LIBVGM_LIBRARIES "${LIBVGM_LIBRARY}")
+    if(NOT TARGET libvgm::vgm-player)
+        add_library(libvgm::vgm-player UNKNOWN IMPORTED)
+        set_target_properties(libvgm::vgm-player PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${LIBVGM_INCLUDE_DIRS}")
+        set_target_properties(libvgm::vgm-player PROPERTIES IMPORTED_LOCATION "${LIBVGM_LIBRARY}")
+    endif()
 endif()

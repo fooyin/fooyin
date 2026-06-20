@@ -14,8 +14,7 @@ if(NOT LIBGME_FOUND)
     include(FindPackageHandleStandardArgs)
     # handle the QUIET and REQUIRED arguments
     # set LIBGME_FOUND to TRUE if all listed variables are TRUE
-    find_package_handle_standard_args(LIBGME DEFAULT_MSG
-                                      LIBGME_LIBRARY LIBGME_INCLUDE_DIR)
+    find_package_handle_standard_args(LIBGME DEFAULT_MSG LIBGME_LIBRARY LIBGME_INCLUDE_DIR)
 
     mark_as_advanced(LIBGME_INCLUDE_DIR LIBGME_LIBRARY)
 

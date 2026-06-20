@@ -18,13 +18,13 @@ create_fooyin_plugin_internal(
             services/lastfmservice.cpp
             services/lastfmservice.h
             services/librefmservice.cpp
-        services/librefmservice.h
+            services/librefmservice.h
             services/listenbrainzservice.cpp
             services/listenbrainzservice.h
             services/scrobblerservice.cpp
             services/scrobblerservice.h
-        services/servicedetails.cpp
-        services/servicedetails.h
+            services/servicedetails.cpp
+            services/servicedetails.h
             settings/scrobblerpage.cpp
             settings/scrobblerpage.h
             settings/scrobblerservicespage.cpp

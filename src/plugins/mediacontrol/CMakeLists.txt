@@ -1,9 +1,6 @@
 message(STATUS "On Windows, enabling mediacontrol plugin")
 
-set(SOURCES
-    mediacontrolplugin.cpp
-    mediacontrolplugin.h
-)
+set(SOURCES mediacontrolplugin.cpp mediacontrolplugin.h)
 
 create_fooyin_plugin_internal(
     mediacontrol

@@ -1,10 +1,11 @@
-set(DEPENDS
-    Fooyin::Core
-    Fooyin::Gui
-)
+set(DEPENDS Fooyin::Core Fooyin::Gui)
 
 if(UNIX AND NOT APPLE)
-    find_package(Qt6 COMPONENTS DBus QUIET)
+    find_package(
+        Qt6
+        COMPONENTS DBus
+        QUIET
+    )
     if(NOT Qt6DBus_FOUND)
         message(STATUS "Qt6::DBus not found; skipping sleepinhibitor plugin.")
         return()

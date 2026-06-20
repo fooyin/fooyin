@@ -27,13 +27,13 @@ function(create_fooyin_plugin plugin_name)
     set(output_name "fyplugin_${name}")
 
     # Configure json file:
-    if (LIB_JSON_IN)
+    if(LIB_JSON_IN)
         set(json_file "${CMAKE_CURRENT_SOURCE_DIR}/${LIB_JSON_IN}")
     else()
         set(json_file "${CMAKE_CURRENT_SOURCE_DIR}/${name}.json.in")
     endif()
 
-    if (EXISTS "${json_file}")
+    if(EXISTS "${json_file}")
         list(APPEND LIB_SOURCES "${json_file}")
         configure_file("${json_file}" "${CMAKE_CURRENT_BINARY_DIR}/${name}.json")
     endif()
@@ -42,13 +42,9 @@ function(create_fooyin_plugin plugin_name)
 
     target_link_libraries(${plugin_name} PRIVATE ${LIB_DEPENDS})
 
-    target_include_directories(
-        ${plugin_name}
-        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
-                ${CMAKE_CURRENT_BINARY_DIR}
-    )
+    target_include_directories(${plugin_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
-    if (NOT LIB_VERSION)
+    if(NOT LIB_VERSION)
         set(LIB_VERSION ${FOOYIN_PLUGIN_VERSION})
     endif()
 

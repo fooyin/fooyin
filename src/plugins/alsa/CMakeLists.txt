@@ -16,6 +16,4 @@ create_fooyin_plugin_internal(
             alsasettings.h
 )
 
-target_include_directories(
-    alsa PRIVATE ${ALSA_INCLUDE_DIRS}
-)
+target_include_directories(alsa PRIVATE ${ALSA_INCLUDE_DIRS})

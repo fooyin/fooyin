@@ -8,14 +8,14 @@ function(fooyin_add_test name)
     target_include_directories(${name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     target_compile_definitions(${name} PRIVATE FOOYIN_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
     target_link_libraries(
-            ${name}
-            PRIVATE Fooyin::Core
-                    Fooyin::CorePrivate
-                    Fooyin::Gui
-                    Fooyin::GuiPrivate
-                    Fooyin::Utils
-                    Qt6::Test
-                    GTest::gtest_main
+        ${name}
+        PRIVATE Fooyin::Core
+                Fooyin::CorePrivate
+                Fooyin::Gui
+                Fooyin::GuiPrivate
+                Fooyin::Utils
+                Qt6::Test
+                GTest::gtest_main
     )
     gtest_discover_tests(${name})
 endfunction()
@@ -75,10 +75,7 @@ fooyin_add_test(test_scriptformatter gui/scriptformattertest.cpp)
 fooyin_add_test(test_helpers utils/helperstest.cpp)
 
 set(FILTERS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/plugins/filters)
-set(FILTER_PIPELINE_TEST_SOURCES
-    ${FILTERS_SOURCE_DIR}/filterpipeline.cpp
-    ${FILTERS_SOURCE_DIR}/filterrows.cpp
-)
+set(FILTER_PIPELINE_TEST_SOURCES ${FILTERS_SOURCE_DIR}/filterpipeline.cpp ${FILTERS_SOURCE_DIR}/filterrows.cpp)
 set(FILTER_CONTROLLER_TEST_SOURCES
     ${FILTERS_SOURCE_DIR}/filtercolumnregistry.cpp
     ${FILTERS_SOURCE_DIR}/filtercolumneditordialog.cpp
@@ -99,9 +96,13 @@ target_include_directories(test_filtercontroller PRIVATE ${CMAKE_SOURCE_DIR}/src
 fooyin_add_test(test_filterpipeline plugins/filters/filterpipelinetest.cpp ${FILTER_PIPELINE_TEST_SOURCES})
 target_include_directories(test_filterpipeline PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
-fooyin_add_test(test_tagfillpattern plugins/tageditor/tagfillpatterntest.cpp
-                ${CMAKE_SOURCE_DIR}/src/plugins/tageditor/tagfillpattern.cpp
-                ${CMAKE_SOURCE_DIR}/src/plugins/tageditor/tageditorsettings.cpp)
+fooyin_add_test(
+    test_tagfillpattern
+    plugins/tageditor/tagfillpatterntest.cpp ${CMAKE_SOURCE_DIR}/src/plugins/tageditor/tagfillpattern.cpp
+    ${CMAKE_SOURCE_DIR}/src/plugins/tageditor/tageditorsettings.cpp
+)
 
-fooyin_add_test(test_lyricsparser plugins/lyrics/lyricsparsertest.cpp ${CMAKE_SOURCE_DIR}/src/plugins/lyrics/lyricsparser.cpp)
+fooyin_add_test(
+    test_lyricsparser plugins/lyrics/lyricsparsertest.cpp ${CMAKE_SOURCE_DIR}/src/plugins/lyrics/lyricsparser.cpp
+)
 target_include_directories(test_lyricsparser PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/lyrics)

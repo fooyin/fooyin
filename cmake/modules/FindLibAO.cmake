@@ -39,8 +39,16 @@ The following cache variables may also be set:
   the absolute path of the libao library
 #]=======================================================================]
 
-find_path(LIBAO_INCLUDE_DIR NAMES ao/ao.h DOC "The libao include directory")
-find_library(LIBAO_LIBRARY NAMES ao DOC "The libao library")
+find_path(
+    LIBAO_INCLUDE_DIR
+    NAMES ao/ao.h
+    DOC "The libao include directory"
+)
+find_library(
+    LIBAO_LIBRARY
+    NAMES ao
+    DOC "The libao library"
+)
 
 mark_as_advanced(LIBAO_INCLUDE_DIR LIBAO_LIBRARY)
 
@@ -48,11 +56,11 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(LibAO REQUIRED_VARS LIBAO_LIBRARY LIBAO_INCLUDE_DIR)
 
 if(LIBAO_FOUND)
-  set(LIBAO_INCLUDE_DIRS "${LIBAO_INCLUDE_DIR}")
-  set(LIBAO_LIBRARIES "${LIBAO_LIBRARY}")
-  if(NOT TARGET libao::libao)
-    add_library(libao::libao UNKNOWN IMPORTED)
-    set_target_properties(libao::libao PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${LIBAO_INCLUDE_DIRS}")
-    set_target_properties(libao::libao PROPERTIES IMPORTED_LOCATION "${LIBAO_LIBRARY}")
-  endif()
+    set(LIBAO_INCLUDE_DIRS "${LIBAO_INCLUDE_DIR}")
+    set(LIBAO_LIBRARIES "${LIBAO_LIBRARY}")
+    if(NOT TARGET libao::libao)
+        add_library(libao::libao UNKNOWN IMPORTED)
+        set_target_properties(libao::libao PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${LIBAO_INCLUDE_DIRS}")
+        set_target_properties(libao::libao PROPERTIES IMPORTED_LOCATION "${LIBAO_LIBRARY}")
+    endif()
 endif()

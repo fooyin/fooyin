@@ -27,8 +27,8 @@ else()
         FetchContent_MakeAvailable(qcoro)
 
         set(log_level ${CMAKE_MESSAGE_LOG_LEVEL})
-        if (NOT VERBOSE_FETCH)
-          set(CMAKE_MESSAGE_LOG_LEVEL NOTICE)
+        if(NOT VERBOSE_FETCH)
+            set(CMAKE_MESSAGE_LOG_LEVEL NOTICE)
         endif()
 
         add_subdirectory(${qcoro_SOURCE_DIR} ${qcoro_BINARY_DIR} EXCLUDE_FROM_ALL)

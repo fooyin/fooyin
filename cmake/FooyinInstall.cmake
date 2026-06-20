@@ -48,13 +48,15 @@ elseif(UNIX)
         COMPONENT fooyin
     )
 
-    install(FILES "${CMAKE_BINARY_DIR}/dist/linux/org.fooyin.fooyin.desktop"
-            DESTINATION ${XDG_APPS_INSTALL_DIR}
-            COMPONENT fooyin
+    install(
+        FILES "${CMAKE_BINARY_DIR}/dist/linux/org.fooyin.fooyin.desktop"
+        DESTINATION ${XDG_APPS_INSTALL_DIR}
+        COMPONENT fooyin
     )
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/dist/linux/org.fooyin.fooyin.metainfo.xml"
-            DESTINATION ${APPDATA_INSTALL_DIR}
-            COMPONENT fooyin
+    install(
+        FILES "${CMAKE_CURRENT_SOURCE_DIR}/dist/linux/org.fooyin.fooyin.metainfo.xml"
+        DESTINATION ${APPDATA_INSTALL_DIR}
+        COMPONENT fooyin
     )
 
     set(ICON_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/data/icons)
@@ -90,17 +92,9 @@ endif()
 # ---- Fooyin executable ----
 
 if(APPLE)
-    install(
-        TARGETS fooyin
-        BUNDLE DESTINATION .
-        COMPONENT fooyin
-    )
+    install(TARGETS fooyin BUNDLE DESTINATION . COMPONENT fooyin)
 else()
-    install(
-        TARGETS fooyin
-        RUNTIME DESTINATION ${BIN_INSTALL_DIR}
-        COMPONENT fooyin
-    )
+    install(TARGETS fooyin RUNTIME DESTINATION ${BIN_INSTALL_DIR} COMPONENT fooyin)
 endif()
 
 # ---- Fooyin config ----
@@ -119,13 +113,11 @@ if(INSTALL_HEADERS)
     )
 
     write_basic_package_version_file(
-        "${CMAKE_CURRENT_BINARY_DIR}/FooyinConfigVersion.cmake"
-        COMPATIBILITY SameMajorVersion
+        "${CMAKE_CURRENT_BINARY_DIR}/FooyinConfigVersion.cmake" COMPATIBILITY SameMajorVersion
     )
 
     configure_package_config_file(
-        "${CMAKE_CURRENT_LIST_DIR}/FooyinConfig.cmake.in"
-        "${PROJECT_BINARY_DIR}/FooyinConfig.cmake"
+        "${CMAKE_CURRENT_LIST_DIR}/FooyinConfig.cmake.in" "${PROJECT_BINARY_DIR}/FooyinConfig.cmake"
         INSTALL_DESTINATION ${CMAKECONFIG_INSTALL_DIR}
         PATH_VARS FOOYIN_PLUGIN_INSTALL_DIR
     )
@@ -155,9 +147,7 @@ if(INSTALL_HEADERS)
         COMPONENT fooyin_development
     )
 
-    install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/modules/"
-            DESTINATION ${CMAKECONFIG_INSTALL_DIR}/modules
-    )
+    install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/modules/" DESTINATION ${CMAKECONFIG_INSTALL_DIR}/modules)
 
     # ---- Fooyin public headers ----
 
