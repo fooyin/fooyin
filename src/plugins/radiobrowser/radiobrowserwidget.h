@@ -94,6 +94,7 @@ public:
             QSize iconSize{36, 36};
             int iconHorizontalGap{-1};
             int iconVerticalGap{8};
+            bool useIconGapsForSideCaptions{true};
             int iconItemBorderWidth{2};
             bool uniformStationIcons{true};
         };

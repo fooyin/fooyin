@@ -55,6 +55,7 @@ private:
     QSpinBox* m_iconSize;
     QSpinBox* m_iconHorizontalGap;
     QSpinBox* m_iconVerticalGap;
+    QCheckBox* m_useIconGapsForSideCaptions;
     QSpinBox* m_iconItemBorder;
     QCheckBox* m_uniformStationIcons;
 };

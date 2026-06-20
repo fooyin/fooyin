@@ -74,20 +74,21 @@ using namespace Qt::StringLiterals;
 constexpr auto ToggleFilterBarAction = "RadioBrowser.ToggleFilterBar";
 constexpr auto SaveStationAction     = "RadioBrowser.SaveStation";
 
-constexpr auto HideBrokenKey        = "RadioBrowser/HideBroken";
-constexpr auto DoubleClickActionKey = "RadioBrowser/DoubleClickAction";
-constexpr auto MiddleClickActionKey = "RadioBrowser/MiddleClickAction";
-constexpr auto PlaybackOnSendKey    = "RadioBrowser/PlaybackOnSend";
-constexpr auto SendClicksKey        = "RadioBrowser/SendClicks";
-constexpr auto RowHeightKey         = "RadioBrowser/RowHeight";
-constexpr auto IconSizeKey          = "RadioBrowser/IconSize";
-constexpr auto IconHorizontalGapKey = "RadioBrowser/IconHorizontalGap";
-constexpr auto IconVerticalGapKey   = "RadioBrowser/IconVerticalGap";
-constexpr auto IconItemBorderKey    = "RadioBrowser/IconItemBorder";
-constexpr auto UniformIconsKey      = "RadioBrowser/UniformIcons";
-constexpr auto ShowIconsKey         = "RadioBrowser/ShowIcons";
-constexpr auto ShowSavedIconsKey    = "RadioBrowser/ShowSavedIcons";
-constexpr auto ShowToolTipsKey      = "RadioBrowser/ShowToolTips";
+constexpr auto HideBrokenKey                 = "RadioBrowser/HideBroken";
+constexpr auto DoubleClickActionKey          = "RadioBrowser/DoubleClickAction";
+constexpr auto MiddleClickActionKey          = "RadioBrowser/MiddleClickAction";
+constexpr auto PlaybackOnSendKey             = "RadioBrowser/PlaybackOnSend";
+constexpr auto SendClicksKey                 = "RadioBrowser/SendClicks";
+constexpr auto RowHeightKey                  = "RadioBrowser/RowHeight";
+constexpr auto IconSizeKey                   = "RadioBrowser/IconSize";
+constexpr auto IconHorizontalGapKey          = "RadioBrowser/IconHorizontalGap";
+constexpr auto IconVerticalGapKey            = "RadioBrowser/IconVerticalGap";
+constexpr auto UseIconGapsForSideCaptionsKey = "RadioBrowser/UseIconGapsForSideCaptions";
+constexpr auto IconItemBorderKey             = "RadioBrowser/IconItemBorder";
+constexpr auto UniformIconsKey               = "RadioBrowser/UniformIcons";
+constexpr auto ShowIconsKey                  = "RadioBrowser/ShowIcons";
+constexpr auto ShowSavedIconsKey             = "RadioBrowser/ShowSavedIcons";
+constexpr auto ShowToolTipsKey               = "RadioBrowser/ShowToolTips";
 
 namespace Fooyin::RadioBrowser {
 namespace {
@@ -365,29 +366,30 @@ void RadioBrowserWidget::saveLayoutData(QJsonObject& layout)
 {
     saveCurrentViewState();
 
-    layout["Display"_L1]           = static_cast<int>(m_browseViewState.viewMode);
-    layout["Captions"_L1]          = static_cast<int>(m_browseViewState.captions);
-    layout["SavedDisplay"_L1]      = static_cast<int>(m_savedStationsViewState.viewMode);
-    layout["SavedCaptions"_L1]     = static_cast<int>(m_savedStationsViewState.captions);
-    layout["SeparateSavedView"_L1] = m_viewConfig.separateSavedStationsViewState;
-    layout["ShowHeader"_L1]        = m_viewConfig.showHeader;
-    layout["ShowScrollbar"_L1]     = m_viewConfig.showScrollbar;
-    layout["AlternatingRows"_L1]   = m_viewConfig.alternatingRows;
-    layout["ShowIcons"_L1]         = m_viewConfig.showIcons;
-    layout["ShowSavedIcons"_L1]    = m_viewConfig.showSavedStationIcons;
-    layout["ShowToolTips"_L1]      = m_viewConfig.showToolTips;
-    layout["RowHeight"_L1]         = m_viewConfig.rowHeight;
-    layout["IconSize"_L1]          = m_viewConfig.iconSize.width();
-    layout["IconHorizontalGap"_L1] = m_viewConfig.iconHorizontalGap;
-    layout["IconVerticalGap"_L1]   = m_viewConfig.iconVerticalGap;
-    layout["IconItemBorder"_L1]    = m_viewConfig.iconItemBorderWidth;
-    layout["UniformIcons"_L1]      = m_viewConfig.uniformStationIcons;
-    layout["DoubleClickAction"_L1] = m_doubleClickAction;
-    layout["MiddleClickAction"_L1] = m_middleClickAction;
-    layout["PlaybackOnSend"_L1]    = m_playbackOnSend;
-    layout["HideBroken"_L1]        = m_hideBroken;
-    layout["State"_L1]             = encodeHeaderState(m_browseViewState.headerState);
-    layout["SavedState"_L1]        = encodeHeaderState(m_savedStationsViewState.headerState);
+    layout["Display"_L1]                    = static_cast<int>(m_browseViewState.viewMode);
+    layout["Captions"_L1]                   = static_cast<int>(m_browseViewState.captions);
+    layout["SavedDisplay"_L1]               = static_cast<int>(m_savedStationsViewState.viewMode);
+    layout["SavedCaptions"_L1]              = static_cast<int>(m_savedStationsViewState.captions);
+    layout["SeparateSavedView"_L1]          = m_viewConfig.separateSavedStationsViewState;
+    layout["ShowHeader"_L1]                 = m_viewConfig.showHeader;
+    layout["ShowScrollbar"_L1]              = m_viewConfig.showScrollbar;
+    layout["AlternatingRows"_L1]            = m_viewConfig.alternatingRows;
+    layout["ShowIcons"_L1]                  = m_viewConfig.showIcons;
+    layout["ShowSavedIcons"_L1]             = m_viewConfig.showSavedStationIcons;
+    layout["ShowToolTips"_L1]               = m_viewConfig.showToolTips;
+    layout["RowHeight"_L1]                  = m_viewConfig.rowHeight;
+    layout["IconSize"_L1]                   = m_viewConfig.iconSize.width();
+    layout["IconHorizontalGap"_L1]          = m_viewConfig.iconHorizontalGap;
+    layout["IconVerticalGap"_L1]            = m_viewConfig.iconVerticalGap;
+    layout["UseIconGapsForSideCaptions"_L1] = m_viewConfig.useIconGapsForSideCaptions;
+    layout["IconItemBorder"_L1]             = m_viewConfig.iconItemBorderWidth;
+    layout["UniformIcons"_L1]               = m_viewConfig.uniformStationIcons;
+    layout["DoubleClickAction"_L1]          = m_doubleClickAction;
+    layout["MiddleClickAction"_L1]          = m_middleClickAction;
+    layout["PlaybackOnSend"_L1]             = m_playbackOnSend;
+    layout["HideBroken"_L1]                 = m_hideBroken;
+    layout["State"_L1]                      = encodeHeaderState(m_browseViewState.headerState);
+    layout["SavedState"_L1]                 = encodeHeaderState(m_savedStationsViewState.headerState);
 
     layout.insert(u"ShowFilterBar"_s, m_toggleFilterBarAction->isChecked());
 }
@@ -435,6 +437,9 @@ void RadioBrowserWidget::loadLayoutData(const QJsonObject& layout)
     }
     if(layout.contains("IconVerticalGap"_L1)) {
         m_viewConfig.iconVerticalGap = layout.value("IconVerticalGap"_L1).toInt();
+    }
+    if(layout.contains("UseIconGapsForSideCaptions"_L1)) {
+        m_viewConfig.useIconGapsForSideCaptions = layout.value("UseIconGapsForSideCaptions"_L1).toBool();
     }
     if(layout.contains("IconItemBorder"_L1)) {
         m_viewConfig.iconItemBorderWidth = layout.value("IconItemBorder"_L1).toInt();
@@ -634,6 +639,8 @@ RadioBrowserWidget::ConfigData RadioBrowserWidget::defaultConfig() const
     config.view.iconSize          = m_settings->fileValue(IconSizeKey, config.view.iconSize).toSize();
     config.view.iconHorizontalGap = m_settings->fileValue(IconHorizontalGapKey, config.view.iconHorizontalGap).toInt();
     config.view.iconVerticalGap   = m_settings->fileValue(IconVerticalGapKey, config.view.iconVerticalGap).toInt();
+    config.view.useIconGapsForSideCaptions
+        = m_settings->fileValue(UseIconGapsForSideCaptionsKey, config.view.useIconGapsForSideCaptions).toBool();
     config.view.iconItemBorderWidth = m_settings->fileValue(IconItemBorderKey, config.view.iconItemBorderWidth).toInt();
     config.view.uniformStationIcons = m_settings->fileValue(UniformIconsKey, config.view.uniformStationIcons).toBool();
     config.view.showIcons           = m_settings->fileValue(ShowIconsKey, config.view.showIcons).toBool();
@@ -663,6 +670,7 @@ void RadioBrowserWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(IconSizeKey, config.view.iconSize);
     m_settings->fileSet(IconHorizontalGapKey, config.view.iconHorizontalGap);
     m_settings->fileSet(IconVerticalGapKey, config.view.iconVerticalGap);
+    m_settings->fileSet(UseIconGapsForSideCaptionsKey, config.view.useIconGapsForSideCaptions);
     m_settings->fileSet(IconItemBorderKey, config.view.iconItemBorderWidth);
     m_settings->fileSet(UniformIconsKey, config.view.uniformStationIcons);
     m_settings->fileSet(ShowIconsKey, config.view.showIcons);
@@ -680,6 +688,7 @@ void RadioBrowserWidget::clearSavedDefaults() const
     m_settings->fileRemove(IconSizeKey);
     m_settings->fileRemove(IconHorizontalGapKey);
     m_settings->fileRemove(IconVerticalGapKey);
+    m_settings->fileRemove(UseIconGapsForSideCaptionsKey);
     m_settings->fileRemove(IconItemBorderKey);
     m_settings->fileRemove(UniformIconsKey);
     m_settings->fileRemove(ShowIconsKey);
@@ -1967,7 +1976,7 @@ void RadioBrowserWidget::setViewConfig(const ConfigData::ViewConfig& config)
     m_resultsView->setCaptionDisplay(m_viewConfig.captions);
     m_resultsView->setIconHorizontalGap(m_viewConfig.iconHorizontalGap);
     m_resultsView->setIconVerticalGap(m_viewConfig.iconVerticalGap);
-    m_resultsView->setUseIconGapsForSideCaptions(true);
+    m_resultsView->setUseIconGapsForSideCaptions(m_viewConfig.useIconGapsForSideCaptions);
     m_resultsView->changeIconSize(m_viewConfig.iconSize);
     m_delegate->setUniformStationIcons(m_viewConfig.uniformStationIcons);
     m_delegate->setIconItemBorderWidth(m_viewConfig.iconItemBorderWidth);

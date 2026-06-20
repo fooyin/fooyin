@@ -47,6 +47,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     , m_iconSize{new QSpinBox(this)}
     , m_iconHorizontalGap{new QSpinBox(this)}
     , m_iconVerticalGap{new QSpinBox(this)}
+    , m_useIconGapsForSideCaptions{new QCheckBox(tr("Apply icon gaps with right captions"), this)}
     , m_iconItemBorder{new QSpinBox(this)}
     , m_uniformStationIcons{new QCheckBox(tr("Use uniform station icon frames"), this)}
 {
@@ -92,6 +93,8 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     m_iconVerticalGap->setRange(0, 256);
     m_iconVerticalGap->setSuffix(u" px"_s);
     m_iconVerticalGap->setToolTip(tr("Vertical spacing between stations in icon display mode."));
+    m_useIconGapsForSideCaptions->setToolTip(
+        tr("Apply the configured horizontal and vertical gaps when captions appear to the right of station icons"));
 
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
@@ -144,6 +147,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
                           row++, 0, 1, 3);
     iconLayout->addWidget(Gui::createSectionHeader(tr("Gap"), this), row++, 0);
     iconLayout->addLayout(gapLayout, row++, 0, 1, 3);
+    iconLayout->addWidget(m_useIconGapsForSideCaptions, row++, 0, 1, 3);
     iconLayout->setColumnStretch(2, 1);
 
     auto* layout{contentLayout()};
@@ -183,6 +187,7 @@ RadioBrowserWidget::ConfigData RadioBrowserConfigDialog::config() const
     config.view.iconSize                       = {m_iconSize->value(), m_iconSize->value()};
     config.view.iconHorizontalGap              = m_iconHorizontalGap->value();
     config.view.iconVerticalGap                = m_iconVerticalGap->value();
+    config.view.useIconGapsForSideCaptions     = m_useIconGapsForSideCaptions->isChecked();
     config.view.iconItemBorderWidth            = m_iconItemBorder->value();
     config.view.uniformStationIcons            = m_uniformStationIcons->isChecked();
     return config;
@@ -206,6 +211,7 @@ void RadioBrowserConfigDialog::setConfig(const RadioBrowserWidget::ConfigData& c
     m_iconSize->setValue(std::max(config.view.iconSize.width(), config.view.iconSize.height()));
     m_iconHorizontalGap->setValue(config.view.iconHorizontalGap);
     m_iconVerticalGap->setValue(config.view.iconVerticalGap);
+    m_useIconGapsForSideCaptions->setChecked(config.view.useIconGapsForSideCaptions);
     m_iconItemBorder->setValue(config.view.iconItemBorderWidth);
     m_uniformStationIcons->setChecked(config.view.uniformStationIcons);
 }
