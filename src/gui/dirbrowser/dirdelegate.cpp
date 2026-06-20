@@ -19,6 +19,10 @@
 
 #include "dirdelegate.h"
 
+#include "dirproxymodel.h"
+
+#include <gui/iconloader.h>
+
 #include <QApplication>
 #include <QPainter>
 
@@ -28,7 +32,11 @@ void DirDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, c
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
 
-    QStyle* style = option.widget ? option.widget->style() : QApplication::style();
+    QStyle* style           = option.widget ? option.widget->style() : QApplication::style();
+    const bool isPlaying    = index.data(DirProxyModel::IsPlaying).toBool();
+    const QIcon playingIcon = isPlaying ? opt.icon : QIcon{};
+    const QRect iconRect
+        = isPlaying ? style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, option.widget) : QRect{};
 
     painter->save();
 
@@ -36,7 +44,15 @@ void DirDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, c
         painter->fillRect(option.rect, opt.backgroundBrush);
         opt.backgroundBrush = Qt::NoBrush;
     }
+
+    if(isPlaying) {
+        opt.icon = {};
+    }
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, option.widget);
+
+    if(isPlaying) {
+        Gui::drawItemViewIcon(painter, opt, playingIcon, iconRect);
+    }
 
     painter->restore();
 }

@@ -159,8 +159,14 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
         sourcePath = QSortFilterProxyModel::data(proxyIndex, QFileSystemModel::FilePathRole).toString();
     }
 
-    if(m_playingState != Player::PlayState::Stopped && !m_playingTrackPath.isEmpty()
-       && sourcePath == m_playingTrackPath) {
+    const bool isPlayingTrack = m_playingState != Player::PlayState::Stopped && !m_playingTrackPath.isEmpty()
+                             && sourcePath == m_playingTrackPath;
+
+    if(role == IsPlaying) {
+        return isPlayingTrack;
+    }
+
+    if(isPlayingTrack) {
         if(role == Qt::BackgroundRole) {
             return m_playingColour;
         }
@@ -309,13 +315,13 @@ void DirProxyModel::setIconsEnabled(bool enabled)
 void DirProxyModel::setPlayState(Player::PlayState state)
 {
     m_playingState = state;
-    Utils::recursiveDataChanged(this, {}, {Qt::BackgroundRole, Qt::DecorationRole});
+    Utils::recursiveDataChanged(this, {}, {Qt::BackgroundRole, Qt::DecorationRole, IsPlaying});
 }
 
 void DirProxyModel::setPlayingPath(const QString& path)
 {
     m_playingTrackPath = path;
-    Utils::recursiveDataChanged(this, {}, {Qt::BackgroundRole, Qt::DecorationRole});
+    Utils::recursiveDataChanged(this, {}, {Qt::BackgroundRole, Qt::DecorationRole, IsPlaying});
 }
 
 void DirProxyModel::setSearchText(const QString& text)

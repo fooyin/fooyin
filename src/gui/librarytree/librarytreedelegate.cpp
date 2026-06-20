@@ -21,6 +21,7 @@
 
 #include "librarytreeitem.h"
 
+#include <gui/iconloader.h>
 #include <gui/scripting/richtext.h>
 #include <gui/scripting/richtextutils.h>
 
@@ -233,9 +234,12 @@ void LibraryTreeDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
         opt.decorationPosition = decPos;
     }
 
-    const QStyle* style  = option.widget ? option.widget->style() : QApplication::style();
-    const auto richText  = fallbackRichText(opt, index);
-    const auto rightText = rightRichText(index);
+    const QStyle* style     = option.widget ? option.widget->style() : QApplication::style();
+    const auto richText     = fallbackRichText(opt, index);
+    const auto rightText    = rightRichText(index);
+    const QIcon playingIcon = isPlaying ? opt.icon : QIcon{};
+    const QRect iconRect
+        = isPlaying ? style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, option.widget) : QRect{};
 
     painter->save();
 
@@ -245,7 +249,15 @@ void LibraryTreeDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     }
 
     opt.text.clear();
+    if(isPlaying) {
+        opt.icon = {};
+    }
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, option.widget);
+
+    if(isPlaying) {
+        opt.icon = playingIcon;
+        Gui::drawItemViewIcon(painter, opt, playingIcon, iconRect);
+    }
 
     if(!richText.empty()) {
         QRect textRect       = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, option.widget);

@@ -43,6 +43,11 @@ class DirProxyModel : public QSortFilterProxyModel
     Q_OBJECT
 
 public:
+    enum Role
+    {
+        IsPlaying = Qt::UserRole + 1000,
+    };
+
     explicit DirProxyModel(bool flat, QObject* parent = nullptr);
 
     void reset(const QModelIndex& root);
