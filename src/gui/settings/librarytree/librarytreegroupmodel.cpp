@@ -23,13 +23,13 @@
 
 #include <utils/treestatusitem.h>
 
+#include <QApplication>
 #include <QLoggingCategory>
+#include <QPalette>
 
 Q_LOGGING_CATEGORY(LIBTREE_MOD, "fy.libtreegroupmodel")
 
 using namespace Qt::StringLiterals;
-
-constexpr auto DefaultSort = "<same as display grouping>";
 
 namespace Fooyin {
 LibraryTreeGroupItem::LibraryTreeGroupItem()
@@ -186,21 +186,42 @@ QVariant LibraryTreeGroupModel::data(const QModelIndex& index, int role) const
         return QVariant::fromValue(item->group());
     }
 
-    if(role == Qt::DisplayRole || role == Qt::EditRole) {
+    const LibraryTreeGrouping& group = item->group();
+
+    if(role == Qt::ForegroundRole && index.column() == 3 && group.sortScript.isEmpty()) {
+        return QApplication::palette().color(QPalette::PlaceholderText);
+    }
+
+    if(role == Qt::EditRole) {
         switch(index.column()) {
             case 0:
-                return item->group().index;
+                return group.index;
+            case 1:
+                return group.name;
+            case 2:
+                return group.script;
+            case 3:
+                return group.sortScript;
+            default:
+                break;
+        }
+    }
+
+    if(role == Qt::DisplayRole) {
+        switch(index.column()) {
+            case 0:
+                return group.index;
             case 1: {
-                const QString& name = item->group().name;
+                const QString& name = group.name;
                 return !name.isEmpty() ? name : u"<enter name here>"_s;
             }
             case 2: {
-                const QString& field = item->group().script;
+                const QString& field = group.script;
                 return !field.isEmpty() ? field : u"<enter grouping here>"_s;
             }
             case 3: {
-                const QString& field = item->group().sortScript;
-                return !field.isEmpty() ? field : QLatin1String{DefaultSort};
+                const QString& field = group.sortScript;
+                return !field.isEmpty() ? field : tr("Use display grouping");
             }
             default:
                 break;
@@ -238,8 +259,7 @@ bool LibraryTreeGroupModel::setData(const QModelIndex& index, const QVariant& va
             break;
         }
         case 3: {
-            const QString sortScript
-                = value.toString() == QLatin1StringView{DefaultSort} ? QString{} : value.toString();
+            const QString sortScript = value.toString();
             if(group.sortScript == sortScript) {
                 return false;
             }
