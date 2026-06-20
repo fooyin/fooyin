@@ -32,6 +32,7 @@
 #include <gui/iconloader.h>
 #include <gui/layoutprovider.h>
 #include <gui/settings/context/staticcontextmenupage.h>
+#include <gui/theme/themeregistry.h>
 #include <gui/widgetprovider.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
@@ -130,6 +131,7 @@ void RadioBrowserPlugin::initialise(const GuiPluginContext& context)
         u"RadioGuide"_s, [this]() { return new RadioGuideWidget(m_controller, m_settings); }, tr("Radio Guide"));
     m_widgetProvider->setSubMenus(u"RadioGuide"_s, {tr("Internet")});
     m_widgetProvider->setLimit(u"RadioGuide"_s, 1);
+    context.themeRegistry->registerFontEntry(tr("Radio Browser"), u"Fooyin::RadioBrowser::RadioWidget"_s);
 
     QObject::connect(m_editableLayout, &EditableLayout::layoutChanged, this,
                      &RadioBrowserPlugin::scheduleRelinkRadioWidgets);

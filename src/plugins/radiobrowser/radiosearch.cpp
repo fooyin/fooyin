@@ -99,7 +99,7 @@ QStringList uniqueTagList(const QStringList& tags)
 } // namespace
 
 RadioSearch::RadioSearch(SettingsManager* settings, QWidget* parent)
-    : FyWidget{parent}
+    : RadioWidget{parent}
     , m_mainLayout{new QHBoxLayout(this)}
     , m_searchEdit{new QLineEdit(this)}
     , m_countryCombo{nullptr}

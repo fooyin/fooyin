@@ -22,8 +22,8 @@
 #include "radiodiscovery.h"
 #include "radiostation.h"
 #include "radiostationview.h"
+#include "radiowidget.h"
 
-#include <gui/fywidget.h>
 #include <gui/trackselectioncontroller.h>
 
 #include <QPointer>
@@ -51,7 +51,7 @@ class RadioBrowserController;
 class RadioBrowserModel;
 class RadioStationDelegate;
 
-class RadioBrowserWidget : public FyWidget
+class RadioBrowserWidget : public RadioWidget
 {
     Q_OBJECT
 

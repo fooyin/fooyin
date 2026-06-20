@@ -54,4 +54,5 @@ create_fooyin_plugin_internal(
             radiostationview.h
             radiostreamresolver.cpp
             radiostreamresolver.h
+            radiowidget.h
 )

@@ -185,7 +185,7 @@ QUrl radioBrowserStationUrl(const RadioStation& station)
 RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, ActionManager* actionManager,
                                        TrackSelectionController* trackSelection, SettingsManager* settings,
                                        bool applyInitialSearch, QWidget* parent)
-    : FyWidget{parent}
+    : RadioWidget{parent}
     , m_controller{controller}
     , m_actionManager{actionManager}
     , m_trackSelection{trackSelection}

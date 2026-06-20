@@ -21,8 +21,7 @@
 
 #include "radiodiscovery.h"
 #include "radiostation.h"
-
-#include <gui/fywidget.h>
+#include "radiowidget.h"
 
 #include <QPointer>
 
@@ -46,7 +45,7 @@ class SettingsManager;
 class ToolButton;
 
 namespace RadioBrowser {
-class RadioSearch : public FyWidget
+class RadioSearch : public RadioWidget
 {
     Q_OBJECT
 

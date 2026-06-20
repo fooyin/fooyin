@@ -155,7 +155,7 @@ QModelIndex findGuideEntryIndex(const QAbstractItemModel* model, const QString& 
 } // namespace
 
 RadioGuideWidget::RadioGuideWidget(RadioBrowserController* controller, SettingsManager* settings, QWidget* parent)
-    : FyWidget{parent}
+    : RadioWidget{parent}
     , m_controller{controller}
     , m_settings{settings}
     , m_treeView{new RadioGuideView(this)}

@@ -22,8 +22,7 @@
 #include "radiodiscovery.h"
 #include "radioguideconfig.h"
 #include "radiostation.h"
-
-#include <gui/fywidget.h>
+#include "radiowidget.h"
 
 #include <QQueue>
 
@@ -40,7 +39,7 @@ class RadioBrowserController;
 class RadioGuideModel;
 class RadioGuideView;
 
-class RadioGuideWidget : public FyWidget
+class RadioGuideWidget : public RadioWidget
 {
     Q_OBJECT
 
