@@ -794,19 +794,17 @@ void EditablePlaylistSession::handleTracksChanged(PlaylistWidgetSessionHost& ses
                   return;
               }
 
+              QModelIndex topIndex;
+              if(currentPlaylist->trackCount() > 0 && viewState.topIndex >= 0) {
+                  topIndex = host.playlistModel()->indexAtPlaylistIndex(viewState.topIndex, false);
+              }
+
               if(allNew) {
                   host.playlistView()->playlistReset();
                   host.playlistView()->scrollToTop();
                   return;
               }
 
-              if(currentPlaylist->trackCount() > 0 && viewState.topIndex >= 0) {
-                  const QModelIndex topIndex = host.playlistModel()->indexAtPlaylistIndex(viewState.topIndex, false);
-                  if(topIndex.isValid()) {
-                      host.playlistView()->scrollTo(topIndex, PlaylistView::PositionAtTop);
-                      host.playlistView()->verticalScrollBar()->setValue(viewState.scrollPos);
-                  }
-              }
               host.playlistView()->playlistReset();
 
               restoreSelectedPlaylistIndexes(host, selectedIndexes);
@@ -815,6 +813,11 @@ void EditablePlaylistSession::handleTracksChanged(PlaylistWidgetSessionHost& ses
                   if(index.isValid()) {
                       host.playlistView()->selectionModel()->setCurrentIndex(index, QItemSelectionModel::NoUpdate);
                   }
+              }
+
+              if(topIndex.isValid()) {
+                  host.playlistView()->scrollTo(topIndex, PlaylistView::PositionAtTop);
+                  host.playlistView()->verticalScrollBar()->setValue(viewState.scrollPos);
               }
           };
 
