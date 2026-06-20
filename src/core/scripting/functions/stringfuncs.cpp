@@ -201,7 +201,7 @@ QString chop(const QStringList& vec)
 
     bool numSuccess{false};
     const int num = vec.at(1).toInt(&numSuccess);
-    if(numSuccess && num >= 0) {
+    if(numSuccess && num >= 0 && num <= vec.at(0).size()) {
         return vec.at(0).chopped(num);
     }
 
