@@ -799,7 +799,7 @@ void EditablePlaylistSession::handleTracksChanged(PlaylistWidgetSessionHost& ses
                   topIndex = host.playlistModel()->indexAtPlaylistIndex(viewState.topIndex, false);
               }
 
-              if(allNew && !topIndex.isValid()) {
+              if(allNew) {
                   host.playlistView()->playlistReset();
                   host.playlistView()->scrollToTop();
                   return;
