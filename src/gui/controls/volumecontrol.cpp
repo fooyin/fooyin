@@ -105,6 +105,8 @@ void VolumeControlPrivate::changeDisplay(VolumeControl::Options options, bool in
     }
 
     if(m_volumeIcon) {
+        // Exclude the old icon from the layout's size hint while it awaits deletion
+        m_volumeIcon->hide();
         m_volumeIcon->deleteLater();
     }
     if(m_volumeMenu) {
