@@ -36,7 +36,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="248"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">再生キューに追加</translation>
+        <translation>再生キューに追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="251"/>
@@ -3766,7 +3766,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="51"/>
         <source>Ad&amp;d folders…</source>
-        <translation type="unfinished"></translation>
+        <translation>フォルダーを追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="52"/>
@@ -17302,7 +17302,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="189"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">再生キューに追加</translation>
+        <translation>再生キューに追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="193"/>
@@ -17390,7 +17390,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="133"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">再生キューに追加</translation>
+        <translation>再生キューに追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="136"/>

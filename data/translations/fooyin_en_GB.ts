@@ -71,17 +71,17 @@
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="51"/>
         <source>Are you sure you want to permanently delete %Ln track(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Are you sure you want to permanently delete %Ln track?</numerusform>
+            <numerusform>Are you sure you want to permanently delete %Ln tracks?</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="52"/>
         <source>Are you sure you want to delete %Ln track(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Are you sure you want to delete %Ln track?</numerusform>
+            <numerusform>Are you sure you want to delete %Ln tracks?</numerusform>
         </translation>
     </message>
 </context>

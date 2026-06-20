@@ -3113,12 +3113,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="44"/>
         <source>Randomise</source>
-        <translation type="unfinished"></translation>
+        <translation>随机化</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="45"/>
         <source>Reverse</source>
-        <translation type="unfinished">反向</translation>
+        <translation>反向</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="49"/>
@@ -3132,7 +3132,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="53"/>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="102"/>
         <source>Sort</source>
-        <translation type="unfinished">排序</translation>
+        <translation>排序</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="73"/>
@@ -3157,7 +3157,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="98"/>
         <source>Sort by %1</source>
-        <translation type="unfinished"></translation>
+        <translation>按 %1 排序</translation>
     </message>
 </context>
 <context>
@@ -3872,15 +3872,15 @@ Effects here process the final combined output.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="51"/>
         <source>Are you sure you want to permanently delete %Ln track(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>您确定要永久删除 %Ln 曲目吗？</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="52"/>
         <source>Are you sure you want to delete %Ln track(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>您确定要删除 %Ln 曲目吗？</numerusform>
         </translation>
     </message>
     <message>
@@ -4545,17 +4545,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterscolumnmodel.cpp" line="161"/>
         <source>Display Script</source>
-        <translation type="unfinished">显示脚本</translation>
+        <translation>显示脚本</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterscolumnmodel.cpp" line="163"/>
         <source>Sort Script</source>
-        <translation type="unfinished">排序脚本</translation>
+        <translation>排序脚本</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterscolumnmodel.cpp" line="224"/>
         <source>Use display script</source>
-        <translation type="unfinished">使用显示脚本</translation>
+        <translation>使用显示脚本</translation>
     </message>
 </context>
 <context>
@@ -6296,22 +6296,22 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="96"/>
         <source>Show Recently &amp;Played</source>
-        <translation type="unfinished"></translation>
+        <translation>显示最近已播放的曲目(&amp;P)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="97"/>
         <source>Show tracks played in the last few weeks</source>
-        <translation type="unfinished"></translation>
+        <translation>显示过去几周播放的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="103"/>
         <source>Show Recently &amp;Added</source>
-        <translation type="unfinished"></translation>
+        <translation>显示最近添加的内容(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="104"/>
         <source>Show tracks added in the last few weeks</source>
-        <translation type="unfinished"></translation>
+        <translation>显示最近几周已添加的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="109"/>
@@ -6795,7 +6795,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="73"/>
         <source>Disabled</source>
-        <translation type="unfinished">已禁用</translation>
+        <translation>已禁用</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="83"/>
@@ -6847,12 +6847,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="119"/>
         <source>Searching</source>
-        <translation type="unfinished">搜索</translation>
+        <translation>正在搜索</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="123"/>
         <source>Auto-expand if matching track count is at most</source>
-        <translation type="unfinished"></translation>
+        <translation>匹配曲目数不超过以下数值时自动展开</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="131"/>
@@ -7297,7 +7297,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="195"/>
         <source>Progress</source>
-        <translation type="unfinished"></translation>
+        <translation>进度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="212"/>
@@ -7375,22 +7375,22 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="227"/>
         <source>Synced lines</source>
-        <translation type="unfinished"></translation>
+        <translation>已同步行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="228"/>
         <source>Synced words</source>
-        <translation type="unfinished"></translation>
+        <translation>已同步词</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="229"/>
         <source>Synced lines and words</source>
-        <translation type="unfinished"></translation>
+        <translation>已同步的行和词</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="231"/>
         <source>Controls whether playback progress is shown for line-synced lyrics, word-synced lyrics, or both.</source>
-        <translation type="unfinished"></translation>
+        <translation>控制是否显示按行同步歌词、按字同步歌词或两者都显示播放进度。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="269"/>
@@ -9688,7 +9688,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="74"/>
         <source>Open search bar instead of pop-up playlist search</source>
-        <translation type="unfinished"></translation>
+        <translation>打开搜索栏，而不是弹出式播放列表搜索</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="78"/>
@@ -9743,27 +9743,27 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="119"/>
         <source>Search</source>
-        <translation type="unfinished">搜索</translation>
+        <translation>搜索</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
         <source>Match beginnings of words</source>
-        <translation type="unfinished"></translation>
+        <translation>匹配单词的开头</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="123"/>
         <source>Match anywhere</source>
-        <translation type="unfinished"></translation>
+        <translation>匹配任何</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="127"/>
         <source>Search mode</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="129"/>
         <source>Search script</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索脚本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="149"/>
@@ -10360,38 +10360,38 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="118"/>
         <source>Search playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="122"/>
         <source>Previous match</source>
-        <translation type="unfinished"></translation>
+        <translation>上一个匹配</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="126"/>
         <source>Next match</source>
-        <translation type="unfinished"></translation>
+        <translation>下一个匹配</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="130"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>关闭</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="419"/>
         <source>Results are out of date</source>
-        <translation type="unfinished"></translation>
+        <translation>结果已过时</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="423"/>
         <source>%1 of %2 matches</source>
         <extracomment>Search result matches e.g. &quot;6 of 11 matches&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>匹配 %1 / %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="426"/>
         <source>0 matches</source>
-        <translation type="unfinished"></translation>
+        <translation>0 个匹配</translation>
     </message>
 </context>
 <context>
@@ -10569,12 +10569,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="792"/>
         <source>Randomise the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>随机播放当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="795"/>
         <source>Reverse the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>反转当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="813"/>
@@ -10594,7 +10594,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1220"/>
         <source>Sort the current playlist using this preset</source>
-        <translation type="unfinished"></translation>
+        <translation>使用此预设对当前播放列表进行排序</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1259"/>
@@ -10720,12 +10720,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="251"/>
         <source>Randomise</source>
-        <translation type="unfinished"></translation>
+        <translation>随机化</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="254"/>
         <source>Reverse</source>
-        <translation type="unfinished">反向</translation>
+        <translation>反转</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="351"/>
@@ -11031,12 +11031,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="100"/>
         <source>Randomise</source>
-        <translation type="unfinished"></translation>
+        <translation>随机化</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="101"/>
         <source>Reverse</source>
-        <translation type="unfinished">反向</translation>
+        <translation>反转</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="188"/>
@@ -11066,17 +11066,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="242"/>
         <source>Randomise the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>随机化播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="243"/>
         <source>Reverse the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>反转播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="313"/>
         <source>Sort the playback queue using this preset</source>
-        <translation type="unfinished"></translation>
+        <translation>使用此预设对播放队列进行排序</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="125"/>
@@ -11512,17 +11512,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="42"/>
         <source>Show saved station icons</source>
-        <translation type="unfinished"></translation>
+        <translation>显示已保存的电台图标</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="43"/>
         <source>Show station tooltips</source>
-        <translation type="unfinished"></translation>
+        <translation>显示电台工具提示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="44"/>
         <source>Remember My Stations display separately</source>
-        <translation type="unfinished"></translation>
+        <translation>记住我的电台并单独显示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="45"/>
@@ -11550,42 +11550,42 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="55"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="59"/>
         <source>Add or remove from My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>从我的电台添加或移除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="63"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately</source>
-        <translation type="unfinished"></translation>
+        <translation>对于“替换当前播放列表”和“创建新播放列表”，立即开始播放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="64"/>
         <source>Exclude stations marked as broken by radio-browser.info from search results</source>
-        <translation type="unfinished"></translation>
+        <translation>从搜索结果中排除 radio-browser.info 标记为已损坏的电台</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="66"/>
         <source>Report played stations to radio-browser.info so click counts and station statistics stay up to date</source>
-        <translation type="unfinished"></translation>
+        <translation>向 radio-browser.info 报告已播放的电台，以便保持点击量和电台统计数据的最新状态</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="68"/>
         <source>Draw station icons inside equally sized frames so rows and icon captions align consistently</source>
-        <translation type="unfinished"></translation>
+        <translation>在大小相同的边框内绘制电台图标，以便行和图标标题保持一致</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="69"/>
         <source>Show an indicator for stations already in My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>显示“我的电台”中已存在的电台的指示器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="70"/>
         <source>Show station details when hovering over station rows and icons</source>
-        <translation type="unfinished"></translation>
+        <translation>将鼠标悬停在车站行和图标上时，显示电台详细信息</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="72"/>
         <source>Remember display mode and columns separately when browsing My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>浏览“我的电台”时，请分别记住显示模式和列</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="80"/>
@@ -11709,7 +11709,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="738"/>
         <source>Failed to load radio browser stations: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>无法加载电台浏览器电台：%1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="762"/>
@@ -11844,7 +11844,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="195"/>
         <source>Unknown error</source>
-        <translation type="unfinished"></translation>
+        <translation>未知错误</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="244"/>
@@ -11877,7 +11877,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="678"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="761"/>
         <source>Unexpected response format.</source>
-        <translation type="unfinished"></translation>
+        <translation>回复格式异常。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="634"/>
@@ -11954,12 +11954,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="910"/>
         <source>Failed to load stations.</source>
-        <translation type="unfinished"></translation>
+        <translation>电台加载失败。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="911"/>
         <source>Failed to load stations: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>电台加载失败：%1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1088"/>
@@ -12155,17 +12155,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1800"/>
         <source>Show station tooltips</source>
-        <translation type="unfinished"></translation>
+        <translation>显示电台工具提示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1809"/>
         <source>Show saved station icons</source>
-        <translation type="unfinished"></translation>
+        <translation>显示已保存的电台图标</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1820"/>
         <source>Remember My Stations display separately</source>
-        <translation type="unfinished"></translation>
+        <translation>记住我的电台并单独显示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1830"/>
@@ -12784,7 +12784,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="403"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="944"/>
         <source>Any language</source>
-        <translation type="unfinished"></translation>
+        <translation>任何语言</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="141"/>
@@ -12838,7 +12838,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="184"/>
         <source>Language</source>
-        <translation type="unfinished">语言</translation>
+        <translation>语言</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="185"/>
@@ -12885,42 +12885,42 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="396"/>
         <source>Countries unavailable - select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>国家/地区不可用 - 请选择重试</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="397"/>
         <source>Countries unavailable: %1 - select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>国家/地区不可用：%1 - 请选择重试</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="404"/>
         <source>Languages unavailable - select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>语言不可用 - 请选择重试</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="405"/>
         <source>Languages unavailable: %1 - select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>语言不可用：%1 - 请选择重试</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="412"/>
         <source>Tags unavailable - select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>标签不可用 - 请选择重试</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="413"/>
         <source>Tags unavailable: %1 - select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>标签不可用：%1 - 请选择重试</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="420"/>
         <source>Codecs unavailable - select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>编解码器不可用 - 请选择重试</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="421"/>
         <source>Codecs unavailable: %1 - select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>编解码器不可用：%1 - 请选择重试</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="826"/>
@@ -13152,7 +13152,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationview.cpp" line="37"/>
         <source>Retry</source>
-        <translation type="unfinished"></translation>
+        <translation>重试</translation>
     </message>
 </context>
 <context>
@@ -14111,7 +14111,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="88"/>
         <source>Search Matching</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索匹配</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="91"/>
@@ -14141,37 +14141,37 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="100"/>
         <source>Match beginnings of words</source>
-        <translation type="unfinished"></translation>
+        <translation>匹配单词的开头</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="101"/>
         <source>Match anywhere</source>
-        <translation type="unfinished"></translation>
+        <translation>匹配任何位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="104"/>
         <source>Search mode</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="106"/>
         <source>Search script</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索脚本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="109"/>
         <source>These settings are used for plain text searches, not query expressions.</source>
-        <translation type="unfinished"></translation>
+        <translation>这些设置用于纯文本搜索，而不是查询表达式。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="116"/>
         <source>Only applies when autosearch is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>仅在自动搜索功能禁用时适用。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="125"/>
         <source>Results Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>结果播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="129"/>
@@ -14510,7 +14510,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/sortactionhandler.cpp" line="76"/>
         <location filename="../../src/gui/sortactionhandler.cpp" line="95"/>
         <source>Edit</source>
-        <translation type="unfinished">编辑</translation>
+        <translation>编辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/sortactionhandler.cpp" line="66"/>
@@ -14518,23 +14518,23 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/sortactionhandler.cpp" line="95"/>
         <location filename="../../src/gui/sortactionhandler.cpp" line="110"/>
         <source>Sort</source>
-        <translation type="unfinished">排序</translation>
+        <translation>排序</translation>
     </message>
     <message>
         <location filename="../../src/gui/sortactionhandler.cpp" line="89"/>
         <source>Sort by %1</source>
         <extracomment>%1 refers to the name of a sorting preset e.g. &quot;Sort by Album&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>按 %1 排序</translation>
     </message>
     <message>
         <location filename="../../src/gui/sortactionhandler.cpp" line="140"/>
         <source>More…</source>
-        <translation type="unfinished">更多…</translation>
+        <translation>更多…</translation>
     </message>
     <message>
         <location filename="../../src/gui/sortactionhandler.cpp" line="141"/>
         <source>Open the sorting presets settings</source>
-        <translation type="unfinished"></translation>
+        <translation>打开排序预设设置</translation>
     </message>
 </context>
 <context>
@@ -17905,42 +17905,42 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1575"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">添加到当前播放列表</translation>
+        <translation>添加到当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1576"/>
         <source>Add to current playlist and play if stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到当前播放列表，如果已停止播放则播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1578"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">添加到活动播放列表</translation>
+        <translation>添加到活动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1579"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished">替换当前播放列表</translation>
+        <translation>替换当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1580"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">创建新的播放列表</translation>
+        <translation>创建新的播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1584"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">添加到播放队列</translation>
+        <translation>添加到播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1585"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished">添加到播放队列头</translation>
+        <translation>添加到播放队列头</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1586"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished">替换播放队列</translation>
+        <translation>替换播放队列</translation>
     </message>
 </context>
 </TS>

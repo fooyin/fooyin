@@ -6689,7 +6689,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="91"/>
         <source>Sort tracks in library by</source>
-        <translation>Sortera spår i bibliotek i</translation>
+        <translation>Sortera spår i bibliotek efter</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="93"/>
@@ -12906,42 +12906,42 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="396"/>
         <source>Countries unavailable - select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>­Länder otillgängliga – välj för att försöka igen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="397"/>
         <source>Countries unavailable: %1 - select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Länder otillgängliga: %1 – välj för att försöka igen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="404"/>
         <source>Languages unavailable - select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Språk otillgängliga – välj för att försöka igen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="405"/>
         <source>Languages unavailable: %1 - select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Språk otillgängliga: %1– välj för att försöka igen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="412"/>
         <source>Tags unavailable - select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Taggar otillgängliga – välj för att försöka igen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="413"/>
         <source>Tags unavailable: %1 - select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Taggar otillgängliga: %1 – välj för att försöka igen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="420"/>
         <source>Codecs unavailable - select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Kodek otillgängliga – välj för att försöka igen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="421"/>
         <source>Codecs unavailable: %1 - select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Kodek otillgängliga : %1 – välj för att försöka igen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="826"/>
@@ -13177,7 +13177,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationview.cpp" line="37"/>
         <source>Retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Förslk igen</translation>
     </message>
 </context>
 <context>
@@ -14197,7 +14197,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="125"/>
         <source>Results Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Resultatspellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="129"/>
@@ -14550,7 +14550,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/gui/sortactionhandler.cpp" line="89"/>
         <source>Sort by %1</source>
         <extracomment>%1 refers to the name of a sorting preset e.g. &quot;Sort by Album&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sortera efter %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/sortactionhandler.cpp" line="140"/>
