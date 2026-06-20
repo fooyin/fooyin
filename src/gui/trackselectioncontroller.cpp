@@ -639,6 +639,8 @@ void TrackSelectionControllerPrivate::renderArea(QMenu* menu, TrackContextMenuAr
         return;
     }
 
+    Utils::forwardMenuStatusTips(menu);
+
     m_menuSelection     = selection;
     m_menuSelectionMenu = menu;
     updateActionState();

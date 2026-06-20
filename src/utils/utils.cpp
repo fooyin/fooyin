@@ -32,6 +32,7 @@
 #include <QRegularExpression>
 #include <QScreen>
 #include <QSettings>
+#include <QStatusTipEvent>
 #include <QWidget>
 #include <QWindow>
 
@@ -39,6 +40,7 @@ using namespace Qt::StringLiterals;
 
 constexpr std::array<const char*, 6> DateFormats{"yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd hh:mm", "yyyy-MM-dd hh",
                                                  "yyyy-MM-dd",          "yyyy-MM",          "yyyy"};
+constexpr auto StatusTipsForwardedProp = "fooyin_statusTipsForwarded";
 
 namespace Fooyin::Utils {
 int randomNumber(int min, int max)
@@ -259,14 +261,19 @@ void appendMenuActions(QMenu* originalMenu, QMenu* menu)
 
 void forwardMenuStatusTips(QMenu* menu, QWidget* target)
 {
-    if(!menu) {
+    if(!menu || menu->property(StatusTipsForwardedProp).toBool()) {
         return;
     }
+    menu->setProperty(StatusTipsForwardedProp, true);
 
     QObject::connect(menu, &QMenu::hovered, menu, [target = QPointer{target}](QAction* action) {
         if(action) {
             action->showStatusText(target ? target.data() : getMainWindow());
         }
+    });
+    QObject::connect(menu, &QMenu::aboutToHide, menu, [target = QPointer{target}]() {
+        QStatusTipEvent event{QString{}};
+        QApplication::sendEvent(target ? target.data() : getMainWindow(), &event);
     });
 }
 
