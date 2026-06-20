@@ -428,7 +428,7 @@ void PlaylistWidget::finalise()
         }
     }
 
-    m_defaultLayoutState = captureLayoutState();
+    m_defaultLayoutState = m_layoutState;
     changePlaylistLayout(nullptr, m_playlistController->currentPlaylist());
 
     m_header->setSectionsClickable(!layoutState().singleMode);
