@@ -24,38 +24,35 @@
 * Filters
   - Add a separate sort script to filter columns ([#1279](https://github.com/fooyin/fooyin/issues/1279), [#1284](https://github.com/fooyin/fooyin/pull/1284))
   - Optimise row population and selection lookup
-* Interface
-  - Add device refresh support ([#1225](https://github.com/fooyin/fooyin/issues/1225))
+* Appearance
   - Hide the checked frame for flat tool buttons
-  - Rework layout management and add widget margin editing ([#1267](https://github.com/fooyin/fooyin/pull/1267))
-  - Add support for configuring individual splitter spacing
-  - Add an integrated playlist search bar with result navigation
-  - Add recently played and recently added library search actions
-  - Add configurable auto-expand for Library Tree search results ([#1278](https://github.com/fooyin/fooyin/issues/1278))
-  - Add a Script Display option to toggle the vertical scrollbar ([#1260](https://github.com/fooyin/fooyin/issues/1260))
-  - Add random play icons
-  - Add randomise and reverse playlist and queue sort actions ([#344](https://github.com/fooyin/fooyin/issues/344), [#395](https://github.com/fooyin/fooyin/issues/395))
-  - Add Player Controls settings for toggling individual buttons
-  - Add restore support for deleted playlists ([#1301](https://github.com/fooyin/fooyin/issues/1301))
-  - Add configurable Selection Info metadata fields ([#1123](https://github.com/fooyin/fooyin/issues/1123))
-  - Add per-playlist view layout option ([#523](https://github.com/fooyin/fooyin/issues/523), [#842](https://github.com/fooyin/fooyin/issues/842))
-  - Include configured shortcuts in the Playlist Manager context menu
   - Expand built-in themes
-  - Improve and extend Quick Setup with theme and playlist options
-  - Improve large playlist population and context menu performance ([#1053](https://github.com/fooyin/fooyin/issues/1053))
-  - Improve playlist default preset names
-  - Improve drag and drop in expanded tree icon views
-  - Improve playing icon colours in the Library Tree and Directory Browser
-  - Improve row dragging in expanded tree views and add a drag-before-selection setting
-  - Preserve scroll position when view state changes ([#1221](https://github.com/fooyin/fooyin/issues/1221), [#1313](https://github.com/fooyin/fooyin/pull/1313))
-  - Preserve displayed track selection across focus changes
-  - Stretch tool buttons by default
-  - Remember the last selected Tab Stack tab by default
   - Replace the theme dropdown in settings with an editable list widget
   - Show the active theme in theme settings ([#1302](https://github.com/fooyin/fooyin/pull/1302))
   - Improve Advanced settings tree view appearance
-  - Use placeholder styling for the Library Tree default sort
   - Add theme font entry for Script Display
+* Interface
+  - Add device refresh support ([#1225](https://github.com/fooyin/fooyin/issues/1225))
+  - Add a Script Display option to toggle the vertical scrollbar ([#1260](https://github.com/fooyin/fooyin/issues/1260))
+  - Add random play icons
+  - Add Player Controls settings for toggling individual buttons
+  - Add configurable Selection Info metadata fields ([#1123](https://github.com/fooyin/fooyin/issues/1123))
+  - Improve and extend Quick Setup with theme and playlist options
+  - Stretch tool buttons by default
+* Item Views
+  - Improve drag and drop in expanded tree icon views
+  - Improve row dragging in expanded tree views and add a drag-before-selection setting
+  - Preserve scroll position when view state changes ([#1221](https://github.com/fooyin/fooyin/issues/1221), [#1313](https://github.com/fooyin/fooyin/pull/1313))
+  - Preserve displayed track selection across focus changes
+* Layout
+  - Rework layout management and add widget margin editing ([#1267](https://github.com/fooyin/fooyin/pull/1267))
+  - Add support for configuring individual splitter spacing
+  - Remember the last selected Tab Stack tab by default
+* Library Tree/Directory Browser
+  - Add recently played and recently added library search actions
+  - Add configurable auto-expand for Library Tree search results ([#1278](https://github.com/fooyin/fooyin/issues/1278))
+  - Improve playing icon colours
+  - Use placeholder styling for the Library Tree default sort
 * Library/Metadata
   - Add support for monitoring individual library files ([#1212](https://github.com/fooyin/fooyin/issues/1212))
   - Add configurable literal track searches ([#1256](https://github.com/fooyin/fooyin/issues/1256))
@@ -66,6 +63,14 @@
   - Add line and word progress fill options
   - Add a seek tooltip
   - Search enabled lyrics sources concurrently
+* Playlist
+  - Add an integrated playlist search bar with result navigation
+  - Add randomise and reverse playlist and queue sort actions ([#344](https://github.com/fooyin/fooyin/issues/344), [#395](https://github.com/fooyin/fooyin/issues/395))
+  - Add restore support for deleted playlists ([#1301](https://github.com/fooyin/fooyin/issues/1301))
+  - Add per-playlist view layout option ([#523](https://github.com/fooyin/fooyin/issues/523), [#842](https://github.com/fooyin/fooyin/issues/842))
+  - Include configured shortcuts in the Playlist Manager context menu
+  - Improve large playlist population and context menu performance ([#1053](https://github.com/fooyin/fooyin/issues/1053))
+  - Improve playlist default preset names
 * Scripting
   - Add `$join`
   - Add `MONTH` and `YEAR` intervals for queries
@@ -91,29 +96,32 @@
   - Restore default disabled context menus on settings page reset
   - Fix selection when the first column is hidden ([#1306](https://github.com/fooyin/fooyin/issues/1306))
 * Interface
-  - Fix layout editing overlay geometry for containers
   - Keep inactive commands visible in the shortcut editor ([#1233](https://github.com/fooyin/fooyin/issues/1233))
-  - Avoid stale track selection use in context actions ([#1237](https://github.com/fooyin/fooyin/issues/1237))
-  - Fix edge cases in track move operations ([#1272](https://github.com/fooyin/fooyin/issues/1272), [#1273](https://github.com/fooyin/fooyin/issues/1273))
-  - Scale playlist background pixmaps with device pixel ratio ([#1247](https://github.com/fooyin/fooyin/pull/1247))
-  - Preserve missing widget metadata across layout reloads
-  - Fix TrackList mime data support in playlist tabs and playlists
   - Reload the Queue Viewer when current track metadata changes
   - Preserve artwork selection during download progress ([#1257](https://github.com/fooyin/fooyin/issues/1257))
   - Prevent a crash when updating proxy actions
+  - Fix volume control size after restart
+* Item Views
+  - Avoid stale track selection use in context actions ([#1237](https://github.com/fooyin/fooyin/issues/1237))
+  - Refresh track selection action states for explicit context menus
+  - Fix artwork repainting when the first column is hidden
+* Layout
+  - Fix layout editing overlay geometry for containers
+  - Preserve missing widget metadata across layout reloads
   - Save window size when switching layouts ([#1281](https://github.com/fooyin/fooyin/pull/1281))
-  - Avoid clearing playlist model while finalising widget
-  - Activate Playlist Manager items on selection without changing selection on right-click
+* Library Tree/Directory Browser
   - Clear the search bar on Escape ([#1278](https://github.com/fooyin/fooyin/issues/1278))
   - Fix Library Tree double-click actions when single-click expansion is enabled ([#1294](https://github.com/fooyin/fooyin/issues/1294))
-  - Fix dynamic HTML attribute parsing in Script Editor expression tree
-  - Keep Playlist Organiser selection unchanged when opening the context menu
-  - Refresh track selection action states for explicit context menus
-  - Refresh moved playlist rows after reordering
-  - Fix artwork repainting when the first column is hidden
   - Fix adding library paths with trailing separators
   - Fix playing row height after expanding the Library Tree
-  - Fix volume control size after restart
+* Playlist
+  - Fix edge cases in track move operations ([#1272](https://github.com/fooyin/fooyin/issues/1272), [#1273](https://github.com/fooyin/fooyin/issues/1273))
+  - Scale playlist background pixmaps with device pixel ratio ([#1247](https://github.com/fooyin/fooyin/pull/1247))
+  - Fix TrackList mime data support in playlist tabs and playlists
+  - Avoid clearing playlist model while finalising widget
+  - Activate Playlist Manager items on selection without changing selection on right-click
+  - Keep Playlist Organiser selection unchanged when opening the context menu
+  - Refresh moved playlist rows after reordering
 * Lyrics
   - Avoid resetting editor text on Apply ([#1234](https://github.com/fooyin/fooyin/issues/1234))
   - Fix current line highlighting mutating the undo stack
@@ -122,6 +130,7 @@
 * Scrobbling
   - Reset the timestamp when replaying the current track after stop ([#1217](https://github.com/fooyin/fooyin/pull/1217))
 * Scripting
+  - Fix dynamic HTML attribute parsing in Script Editor expression tree
   - Prevent out-of-bounds access in `$chop` ([#1312](https://github.com/fooyin/fooyin/pull/1312))
 * Library/Metadata
   - Use track identity when comparing tracks
