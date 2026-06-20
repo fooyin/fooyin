@@ -19,7 +19,7 @@
 
 #include <core/library/libraryutils.h>
 
-#include <QFileInfo>
+#include <QDir>
 
 namespace Fooyin::Utils {
 std::vector<int> updateCommonTracks(TrackList& tracks, const TrackList& updatedTracks, CommonOperation operation)
@@ -59,8 +59,7 @@ std::optional<QString> physicalSourceKey(const Track& track)
         return {};
     }
 
-    const QFileInfo info{filepath};
-    const QString canonicalPath = info.canonicalFilePath();
-    return canonicalPath.isEmpty() ? info.absoluteFilePath() : canonicalPath;
+    const QString absolutePath = QDir::isAbsolutePath(filepath) ? filepath : QDir::current().absoluteFilePath(filepath);
+    return QDir::cleanPath(absolutePath);
 }
 } // namespace Fooyin::Utils

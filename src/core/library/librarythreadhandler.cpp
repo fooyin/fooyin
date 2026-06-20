@@ -1213,12 +1213,16 @@ WriteRequest LibraryThreadHandler::writeTrackCovers(const TrackCoverData& tracks
 
 std::optional<CoverImage> LibraryThreadHandler::pendingTrackCover(const Track& track, Track::Cover type) const
 {
+    const std::scoped_lock lock{p->m_deferredWritesMutex};
+    if(p->m_deferredCoverWrites.empty() && p->m_flushingCoverWriteData.empty()) {
+        return {};
+    }
+
     const auto sourceKey = Utils::physicalSourceKey(track);
     if(!sourceKey.has_value()) {
         return {};
     }
 
-    const std::scoped_lock lock{p->m_deferredWritesMutex};
     const auto pendingIt = p->m_deferredCoverWrites.find(*sourceKey);
     if(pendingIt != p->m_deferredCoverWrites.end()) {
         const auto coverIt = pendingIt->second.second.find(type);
