@@ -947,14 +947,14 @@ void LibraryTreeModel::setSummaryNodeConfig(bool show, const QString& title)
 void LibraryTreeModel::setPlayState(Player::PlayState state)
 {
     p->m_playingState = state;
-    Q_EMIT dataUpdated({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
+    Q_EMIT dataUpdated({}, {}, {Qt::DecorationRole, Qt::BackgroundRole, LibraryTreeItem::IsPlaying});
 }
 
 void LibraryTreeModel::setPlayingPath(const QString& parentNode, const QString& path)
 {
     p->m_parentNode  = parentNode;
     p->m_playingPath = path;
-    Q_EMIT dataUpdated({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
+    Q_EMIT dataUpdated({}, {}, {Qt::DecorationRole, Qt::BackgroundRole, LibraryTreeItem::IsPlaying});
 }
 
 Qt::ItemFlags LibraryTreeModel::flags(const QModelIndex& index) const
@@ -989,25 +989,27 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
 
     const auto* item = itemForIndex(index);
 
-    if(p->m_playingState != Player::PlayState::Stopped) {
-        const QString parentTitle
-            = item->parent() && !item->parent()->title().isEmpty() ? item->parent()->title() : u"?"_s;
-        const bool isPlayingTrack = item->childCount() == 0 && item->trackCount() == 1
-                                 && item->tracks().front().uniqueFilepath() == p->m_playingPath
-                                 && parentTitle == p->m_parentNode;
-        if(isPlayingTrack) {
-            if(role == Qt::BackgroundRole) {
-                return p->m_playingColour;
-            }
-            if(role == Qt::DecorationRole) {
-                switch(p->m_playingState) {
-                    case Player::PlayState::Playing:
-                        return Gui::pixmapFromTheme(Constants::Icons::Play);
-                    case Player::PlayState::Paused:
-                        return Gui::pixmapFromTheme(Constants::Icons::Pause);
-                    case Player::PlayState::Stopped:
-                        break;
-                }
+    const QString parentTitle = item->parent() && !item->parent()->title().isEmpty() ? item->parent()->title() : u"?"_s;
+    const bool isPlayingTrack = p->m_playingState != Player::PlayState::Stopped && item->childCount() == 0
+                             && item->trackCount() == 1 && item->tracks().front().uniqueFilepath() == p->m_playingPath
+                             && parentTitle == p->m_parentNode;
+
+    if(role == LibraryTreeItem::IsPlaying) {
+        return isPlayingTrack;
+    }
+
+    if(isPlayingTrack) {
+        if(role == Qt::BackgroundRole) {
+            return p->m_playingColour;
+        }
+        if(role == Qt::DecorationRole) {
+            switch(p->m_playingState) {
+                case Player::PlayState::Playing:
+                    return Gui::pixmapFromTheme(Constants::Icons::Play);
+                case Player::PlayState::Paused:
+                    return Gui::pixmapFromTheme(Constants::Icons::Pause);
+                case Player::PlayState::Stopped:
+                    break;
             }
         }
     }

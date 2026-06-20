@@ -43,6 +43,7 @@ public:
         Tracks,
         TrackCount,
         DecorationPosition,
+        IsPlaying,
     };
 
     LibraryTreeItem();

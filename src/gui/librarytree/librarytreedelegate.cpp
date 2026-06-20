@@ -225,7 +225,8 @@ void LibraryTreeDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
 {
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
-    opt.decorationSize = option.decorationSize;
+    const bool isPlaying = index.data(LibraryTreeItem::IsPlaying).toBool();
+    opt.decorationSize = isPlaying ? QSize{opt.fontMetrics.height(), opt.fontMetrics.height()} : option.decorationSize;
 
     const auto decPos = index.data(LibraryTreeItem::Role::DecorationPosition).value<QStyleOptionViewItem::Position>();
     if(!opt.icon.isNull()) {
@@ -290,7 +291,8 @@ QSize LibraryTreeDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
 {
     QStyleOptionViewItem opt{option};
     initStyleOption(&opt, index);
-    opt.decorationSize = option.decorationSize;
+    const bool isPlaying = index.data(LibraryTreeItem::IsPlaying).toBool();
+    opt.decorationSize = isPlaying ? QSize{opt.fontMetrics.height(), opt.fontMetrics.height()} : option.decorationSize;
 
     const auto decPos = index.data(LibraryTreeItem::Role::DecorationPosition).value<QStyleOptionViewItem::Position>();
     if(!opt.icon.isNull()) {
