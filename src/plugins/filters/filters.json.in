@@ -9,7 +9,7 @@
                   "",
                   "You should have received a copy of the GNU General Public License along with Fooyin.  If not, see <http://www.gnu.org/licenses/>"
                 ],
-    "Category" : "Widgets",
+    "Category" : "Library.Browsing",
     "Description" : "Adds widgets to search and filter the music library",
     "Url" : "https://github.com/fooyin/fooyin"
 }

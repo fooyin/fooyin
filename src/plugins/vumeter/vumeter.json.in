@@ -9,7 +9,7 @@
                   "",
                   "You should have received a copy of the GNU General Public License along with Fooyin.  If not, see <http://www.gnu.org/licenses/>"
                 ],
-    "Category" : "Widgets",
+    "Category" : "Display.Visualisations",
     "Description" : "Adds VU and peak meter widgets",
     "Url" : "https://github.com/ludouzi/fooyin"
 }

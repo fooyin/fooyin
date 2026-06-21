@@ -9,7 +9,7 @@
                   "",
                   "You should have received a copy of the GNU General Public License along with Fooyin.  If not, see <http://www.gnu.org/licenses/>"
                 ],
-    "Category" : "General",
+    "Category" : "Library.File Management",
     "Description" : "Adds operations to copy, move and rename files",
     "Url" : "https://github.com/fooyin/fooyin"
 }

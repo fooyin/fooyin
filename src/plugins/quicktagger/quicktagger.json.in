@@ -10,7 +10,7 @@
     "",
     "You should have received a copy of the GNU General Public License along with Fooyin.  If not, see <http://www.gnu.org/licenses/>"
   ],
-  "Category": "General",
+  "Category": "Library.Tagging",
   "Description": "Adds configurable quick tagging actions",
   "Url": "https://github.com/fooyin/fooyin"
 }
