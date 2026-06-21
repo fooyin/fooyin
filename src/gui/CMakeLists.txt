@@ -68,6 +68,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/slider.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/slidereditor.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/specialvaluespinbox.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/textinputdialog.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/toolbutton.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/tooltip.h
     ${CMAKE_SOURCE_DIR}/include/gui/windowcontroller.h
@@ -532,6 +533,7 @@ set(SOURCES
     widgets/titletooltipgroupbox.h
     widgets/statuswidget.cpp
     widgets/statuswidget.h
+    widgets/textinputdialog.cpp
     widgets/toolbutton.cpp
     widgets/tooltip.cpp
     widgets/widgetcontainer.cpp

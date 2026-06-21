@@ -86,6 +86,7 @@
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
 #include <gui/widgets/elapsedprogressdialog.h>
+#include <gui/widgets/textinputdialog.h>
 #include <gui/windowcontroller.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
@@ -1588,22 +1589,23 @@ void GuiApplication::addFolders()
 
 void GuiApplication::addStreamUrl()
 {
-    bool accepted{false};
-    const QString input = QInputDialog::getText(m_mainWindow.get(), tr("Add Stream URL"), tr("Stream URL:"),
-                                                QLineEdit::Normal, {}, &accepted)
-                              .trimmed();
+    TextInputDialog dialog{tr("Add Stream URL"), tr("Stream URL:"), m_mainWindow.get()};
+    dialog.setPlaceholderText(u"https://"_s);
+    dialog.setAcceptButtonText(tr("&Add"));
+    dialog.setValidator([](const QString& text) {
+        const QUrl url{text.trimmed(), QUrl::StrictMode};
+        if(text.trimmed().isEmpty() || !url.isValid() || !Track::isRemotePath(url.toString())) {
+            return tr("Enter a valid http:// or https:// URL.");
+        }
+        return QString{};
+    });
 
-    if(!accepted || input.isEmpty()) {
+    if(dialog.exec() != QDialog::Accepted) {
         return;
     }
 
+    const QString input = dialog.text().trimmed();
     const QUrl url{input, QUrl::StrictMode};
-    if(!url.isValid() || !Track::isRemotePath(url.toString())) {
-        QMessageBox::warning(m_mainWindow.get(), tr("Invalid Stream URL"),
-                             tr("Enter a valid http:// or https:// stream URL."));
-        return;
-    }
-
     const QFileInfo urlInfo{url.path()};
     if(m_core->playlistLoader()->parserForExtension(urlInfo.suffix().toLower())) {
         const QString playlistName = !urlInfo.completeBaseName().isEmpty() ? urlInfo.completeBaseName() : url.host();
