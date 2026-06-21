@@ -100,7 +100,7 @@ QuickSetupDialog::QuickSetupDialog(LayoutProvider* layoutProvider, ThemeRegistry
 
 QSize QuickSetupDialog::sizeHint() const
 {
-    return {620, 360};
+    return {620, 420};
 }
 
 void QuickSetupDialog::populateLayouts() const
