@@ -297,11 +297,6 @@ void LyricsDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
 {
     painter->save();
 
-    const auto bg = index.data(Qt::BackgroundRole).value<QBrush>();
-    if(bg != Qt::NoBrush) {
-        painter->fillRect(option.rect, bg);
-    }
-
     if(index.data(LyricsModel::IsPaddingRole).toBool()) {
         painter->restore();
         return;

@@ -27,6 +27,7 @@
 #include <QPointer>
 
 class QColor;
+class QPaintEvent;
 class QPainter;
 
 namespace Fooyin {
@@ -80,6 +81,7 @@ private:
     [[nodiscard]] int visiblePaddingHeight(bool top) const;
 
     void updateScrollSingleStep();
+    void paintItems(QPainter& painter, const QPaintEvent* event) const;
     void paintEdgeFade(QPainter& painter) const;
     void updateSeekToolTip();
     void updateDragPreview(const QPoint& pos);

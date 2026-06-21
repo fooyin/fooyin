@@ -28,8 +28,8 @@
 
 #include <QAbstractTextDocumentLayout>
 #include <QApplication>
-#include <QBrush>
 #include <QContextMenuEvent>
+#include <QImage>
 #include <QLinearGradient>
 #include <QMouseEvent>
 #include <QPainter>
@@ -76,7 +76,7 @@ LyricsView::LyricsView(QWidget* parent)
     setWrapping(false);
     setFlow(QListView::TopToBottom);
     setFrameShape(QFrame::NoFrame);
-    viewport()->setAutoFillBackground(true);
+    viewport()->setAutoFillBackground(false);
 
     updateScrollSingleStep();
 }
@@ -144,8 +144,11 @@ void LyricsView::contextMenuEvent(QContextMenuEvent* event)
 
 void LyricsView::paintEvent(QPaintEvent* event)
 {
+    const QColor background = backgroundColour();
+    QPainter painter{viewport()};
+    painter.fillRect(event->rect(), background);
+
     if(!m_displayString.empty()) {
-        QPainter painter{viewport()};
         const QRect textRect = viewport()->rect().adjusted(m_displayMargins.left(), m_displayMargins.top(),
                                                            -m_displayMargins.right(), -m_displayMargins.bottom());
         if(textRect.isEmpty()) {
@@ -175,9 +178,21 @@ void LyricsView::paintEvent(QPaintEvent* event)
         return;
     }
 
-    QListView::paintEvent(event);
+    if(m_edgeFadeEnabled) {
+        QImage content{viewport()->size(), QImage::Format_ARGB32_Premultiplied};
+        content.fill(Qt::transparent);
 
-    QPainter painter{viewport()};
+        QPainter contentPainter{&content};
+        contentPainter.setClipRect(event->rect());
+        paintItems(contentPainter, event);
+        paintEdgeFade(contentPainter);
+        contentPainter.end();
+
+        painter.drawImage(QPoint{}, content);
+    }
+    else {
+        paintItems(painter, event);
+    }
 
     const auto paintSeekLine = [this, &painter]() {
         // TODO: Make configurable
@@ -194,12 +209,34 @@ void LyricsView::paintEvent(QPaintEvent* event)
         painter.drawLine(0, guideY, viewport()->width(), guideY);
     };
 
-    if(m_edgeFadeEnabled) {
-        paintEdgeFade(painter);
-    }
-
     if(m_dragSeeking && isSeekableIndex(m_dragIndex)) {
         paintSeekLine();
+    }
+}
+
+void LyricsView::paintItems(QPainter& painter, const QPaintEvent* event) const
+{
+    if(!model() || !itemDelegate()) {
+        return;
+    }
+
+    QStyleOptionViewItem option;
+    initViewItemOption(&option);
+    option.widget = this;
+
+    const QRect exposedRect = event->rect();
+    for(int row{0}; row < model()->rowCount({}); ++row) {
+        const QModelIndex index = model()->index(row, 0);
+        const QRect itemRect    = visualRect(index);
+        if(!itemRect.intersects(exposedRect)) {
+            continue;
+        }
+
+        option.rect = itemRect;
+        if(const QVariant font = index.data(Qt::FontRole); font.canConvert<QFont>()) {
+            option.font = font.value<QFont>();
+        }
+        itemDelegateForIndex(index)->paint(&painter, option, index);
     }
 }
 
@@ -333,14 +370,8 @@ void LyricsView::updateScrollSingleStep()
 
 QColor LyricsView::backgroundColour() const
 {
-    if(const auto* model = this->model(); model && model->rowCount({}) > 0) {
-        const auto background = model->index(0, 0).data(Qt::BackgroundRole).value<QBrush>();
-        if(background.style() != Qt::NoBrush) {
-            const QColor colour = background.color();
-            if(colour.isValid()) {
-                return colour;
-            }
-        }
+    if(const auto* lyricsModel = qobject_cast<const LyricsModel*>(model())) {
+        return lyricsModel->backgroundColour(palette());
     }
 
     return palette().color(QPalette::Base);
@@ -388,14 +419,6 @@ void LyricsView::paintEdgeFade(QPainter& painter) const
         return;
     }
 
-    QColor edgeColour = backgroundColour();
-    if(!edgeColour.isValid()) {
-        return;
-    }
-
-    QColor centreColour{edgeColour};
-    centreColour.setAlpha(0);
-
     if(!verticalScrollBar()) {
         return;
     }
@@ -408,6 +431,10 @@ void LyricsView::paintEdgeFade(QPainter& painter) const
     else {
         topFadeHeight = std::min(fadeHeight, verticalScrollBar()->value());
     }
+
+    const QColor edgeColour{Qt::transparent};
+    const QColor centreColour{Qt::black};
+    painter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
 
     if(topFadeHeight > 0) {
         const QRect topRect{viewportRect.left(), viewportRect.top(), viewportRect.width(), topFadeHeight};

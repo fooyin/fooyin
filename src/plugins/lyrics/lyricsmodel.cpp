@@ -161,6 +161,11 @@ void LyricsModel::setColours(const Colours& colours)
     endResetModel();
 }
 
+QColor LyricsModel::backgroundColour(const QPalette& palette) const
+{
+    return m_colours.colour(Colours::Type::Background, palette);
+}
+
 void LyricsModel::setFonts(const QString& baseFont, const QString& lineFont, const QString& wordLineFont,
                            const QString& wordFont)
 {

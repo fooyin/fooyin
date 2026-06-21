@@ -63,6 +63,7 @@ public:
     void setAlignment(Qt::Alignment alignment);
     void setLineSpacing(int spacing);
     void setColours(const Colours& colours);
+    [[nodiscard]] QColor backgroundColour(const QPalette& palette) const;
     void setFonts(const QString& baseFont, const QString& lineFont, const QString& wordLineFont,
                   const QString& wordFont);
     void setProgressMode(ProgressMode mode);
