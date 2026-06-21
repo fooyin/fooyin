@@ -582,7 +582,7 @@ QString abbr(const QStringList& vec)
 
 QString elideEnd(const QStringList& vec)
 {
-    if(vec.size() != 3) {
+    if(vec.size() != 2 && vec.size() != 3) {
         return {};
     }
 
@@ -592,9 +592,10 @@ QString elideEnd(const QStringList& vec)
         return {};
     }
 
-    const auto length = vec.at(0).size();
+    const QString ellipsis = vec.size() == 2 ? u"…"_s : vec.at(2);
+    const auto length      = vec.at(0).size();
     if(length > limit) {
-        return vec.at(0).first(limit) + vec.at(2);
+        return vec.at(0).first(limit) + ellipsis;
     }
 
     return vec.at(0);
@@ -602,7 +603,7 @@ QString elideEnd(const QStringList& vec)
 
 QString elideMid(const QStringList& vec)
 {
-    if(vec.size() != 3) {
+    if(vec.size() != 2 && vec.size() != 3) {
         return {};
     }
 
@@ -612,14 +613,15 @@ QString elideMid(const QStringList& vec)
         return {};
     }
 
-    const auto length = vec.at(0).size();
+    const QString ellipsis = vec.size() == 2 ? u"…"_s : vec.at(2);
+    const auto length      = vec.at(0).size();
     if(length > limit) {
         auto left        = limit / 2;
         const auto right = left;
         if(limit & 1) {
             ++left;
         }
-        return vec.at(0).first(left) + vec.at(2) + vec.at(0).last(right);
+        return vec.at(0).first(left) + ellipsis + vec.at(0).last(right);
     }
 
     return vec.at(0);
