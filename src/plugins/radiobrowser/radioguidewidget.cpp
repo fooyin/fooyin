@@ -31,6 +31,7 @@
 #include <gui/guisettings.h>
 #include <utils/modelutils.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QAbstractItemModel>
 #include <QJsonArray>
@@ -563,6 +564,7 @@ void RadioGuideWidget::showContextMenu(const QPoint& pos)
 
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
+    Utils::forwardMenuStatusTips(menu);
 
     auto* browseAction = menu->addAction(tr("Browse"));
     browseAction->setStatusTip(tr("Browse the selected section"));

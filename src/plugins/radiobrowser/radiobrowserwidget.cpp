@@ -1120,6 +1120,7 @@ void RadioBrowserWidget::showSavedSearchMenu()
 
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
+    Utils::forwardMenuStatusTips(menu);
 
     auto* titleAction = menu->addAction(tr("Saved as \"%1\"").arg(search.name));
     titleAction->setEnabled(false);
@@ -1484,6 +1485,7 @@ void RadioBrowserWidget::showContextMenu(const QPoint& pos)
 {
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
+    Utils::forwardMenuStatusTips(menu);
 
     updateSelectedTracks();
 
@@ -1683,6 +1685,7 @@ void RadioBrowserWidget::showHeaderContextMenu(const QPoint& pos)
 
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
+    Utils::forwardMenuStatusTips(menu);
 
     addColumnsMenu(menu);
     menu->addSeparator();
