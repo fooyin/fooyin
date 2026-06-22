@@ -24,6 +24,7 @@
 #include "artwork/artworkproperties.h"
 #include "contextmenuids.h"
 #include "controls/commandbutton.h"
+#include "controls/dspchainselector.h"
 #include "controls/outputselector.h"
 #include "controls/playercontrol.h"
 #include "controls/playlistcontrol.h"
@@ -274,6 +275,12 @@ void Widgets::registerWidgets()
         u"OutputSelector"_s, [this]() { return new OutputSelector(m_outputProfileManager, m_settings, m_window); },
         tr("Output Selector"));
     provider->setSubMenus(u"OutputSelector"_s, {tr("Controls")});
+
+    provider->registerWidget(
+        u"DspSelector"_s,
+        [this]() { return new DspChainSelector(m_core->dspChainStore(), m_dspPresetRegistry, m_settings, m_window); },
+        tr("DSP Selector"));
+    provider->setSubMenus(u"DspSelector"_s, {tr("Controls")});
 
     provider->registerWidget(
         u"SelectionInfo"_s,

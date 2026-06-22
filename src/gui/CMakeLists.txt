@@ -111,6 +111,8 @@ set(SOURCES
     controls/commandbuttonconfigdialog.h
     controls/playlistcontrol.cpp
     controls/playlistcontrol.h
+    controls/dspchainselector.cpp
+    controls/dspchainselector.h
     controls/outputselector.cpp
     controls/outputselector.h
     controls/seekbar.cpp
