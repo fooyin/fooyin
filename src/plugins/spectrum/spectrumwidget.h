@@ -98,6 +98,7 @@ public:
     void applyConfig(const ConfigData& config);
 
     [[nodiscard]] QSize minimumSizeHint() const override;
+    [[nodiscard]] QSize sizeHint() const override;
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

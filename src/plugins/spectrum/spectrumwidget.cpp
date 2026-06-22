@@ -359,6 +359,11 @@ QSize SpectrumWidget::minimumSizeHint() const
     return {32, 24};
 }
 
+QSize SpectrumWidget::sizeHint() const
+{
+    return {100, 60};
+}
+
 void SpectrumWidget::contextMenuEvent(QContextMenuEvent* event)
 {
     showContextMenu(event->globalPos());
