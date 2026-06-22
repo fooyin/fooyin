@@ -27,6 +27,8 @@
 namespace Fooyin::SleepInhibitor {
 class InhibitorMacOs : public InhibitorPrivate
 {
+    Q_OBJECT
+
 public:
     explicit InhibitorMacOs(QObject* parent = nullptr);
 
