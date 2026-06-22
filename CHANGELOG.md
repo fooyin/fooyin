@@ -1,6 +1,6 @@
 # Changelog
 
-# Unreleased
+## [0.11.0](https://github.com/fooyin/fooyin/releases/tag/v0.11.0) (2026-06-22)
 
 ### New Features
 
@@ -38,6 +38,7 @@
   - Add Player Controls settings for toggling individual buttons
   - Add configurable Selection Info metadata fields ([#1123](https://github.com/fooyin/fooyin/issues/1123))
   - Improve and extend Quick Setup with theme and playlist options
+  - Show hidden context menu actions with Shift + Right-click
   - Stretch tool buttons by default
 * Item Views
   - Improve drag and drop in expanded tree icon views
@@ -45,8 +46,12 @@
   - Preserve scroll position when view state changes ([#1221](https://github.com/fooyin/fooyin/issues/1221), [#1313](https://github.com/fooyin/fooyin/pull/1313))
   - Preserve displayed track selection across focus changes
 * Layout
+  - Add a dialog for importing layouts
+  - Merge display settings into the general layout settings page
   - Rework layout management and add widget margin editing ([#1267](https://github.com/fooyin/fooyin/pull/1267))
   - Add support for configuring individual splitter spacing
+  - Improve layout menu header sizing
+  - Show sibling insert actions on the selected layout widget
   - Remember the last selected Tab Stack tab by default
 * Library Tree/Directory Browser
   - Add recently played and recently added library search actions
@@ -63,6 +68,7 @@
   - Add line and word progress fill options
   - Add a seek tooltip
   - Search enabled lyrics sources concurrently
+  - Support transparent background colours
 * Playlist
   - Add an integrated playlist search bar with result navigation
   - Add randomise and reverse playlist and queue sort actions ([#344](https://github.com/fooyin/fooyin/issues/344), [#395](https://github.com/fooyin/fooyin/issues/395))
@@ -71,8 +77,11 @@
   - Include configured shortcuts in the Playlist Manager context menu
   - Improve large playlist population and context menu performance ([#1053](https://github.com/fooyin/fooyin/issues/1053))
   - Improve playlist default preset names
+* Plugins
+  - Reorganise plugins into purpose-based categories
 * Scripting
   - Add `$join`
+  - Add default arguments to `$elide_mid` and `$elide_end` ([#1318](https://github.com/fooyin/fooyin/pull/1318))
   - Add `MONTH` and `YEAR` intervals for queries
   - Always evaluate Script Display scripts using the playback environment
 * VU Meter

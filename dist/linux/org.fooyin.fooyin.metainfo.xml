@@ -24,6 +24,7 @@
         <ul>
             <li>Fully customisable layouts and widgets, with per-widget settings and configurable shortcuts</li>
             <li>Support for major audio formats, including archives, CUE sheets, VGM, and tracker formats</li>
+            <li>Internet radio discovery and remote audio stream playback</li>
             <li>Gapless playback, ReplayGain, and configurable fade and crossfade settings</li>
             <li>DSP plugin support with built-in effects such as equaliser, resampling, tempo and pitch adjustment,
                 and silence skipping</li>
@@ -32,7 +33,7 @@
             <li>Playlist management with autoplaylists and M3U/M3U8 import and export</li>
             <li>Built-in tag editing and metadata management, including artwork embedding</li>
             <li>Artwork tools for finding, viewing, exporting, extracting, and downloading covers</li>
-            <li>Visualisations including a waveform seekbar and VU meter</li>
+            <li>Visualisations including a waveform seekbar, spectrum, and VU meter</li>
             <li>Lyrics search, editing, syncing, and display, with configurable presentation for synced lyrics panels</li>
             <li>FooScript-powered scripting and display tools for rich formatting throughout the interface</li>
             <li>Plugin-based extensibility for widgets, decoders, tag readers, DSPs, and others</li>
@@ -67,6 +68,9 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="0.11.0" date="2026-06-22">
+            <url>https://github.com/fooyin/fooyin/releases/tag/v0.11.0</url>
+        </release>
         <release version="0.10.8" date="2026-05-21">
             <url>https://github.com/fooyin/fooyin/releases/tag/v0.10.8</url>
         </release>

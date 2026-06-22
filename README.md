@@ -30,11 +30,12 @@ The player is built around extensibility. fooyin supports plugins for widgets, d
 - Support for major formats including FLAC, MP3, MP4, Vorbis, Opus, WavPack, WAV, AIFF, MKA, Musepack, and Monkey's Audio
 - Native support for VGM and tracker/module formats through optional plugins
 - Playback of files directly from archives
+- Internet radio discovery and remote audio stream playback
 - Gapless and bit-perfect playback
 - ReplayGain support (including calculation)
 - Configurable fade and crossfade behaviour for pause, stop, seek, manual track changes, and automatic transitions
 - DSP chains with built-in and plugin-provided DSPs
-- Waveform seekbar and VU meter visualisations
+- Waveform seekbar, spectrum, and VU meter visualisations
 - Audio output and device configuration
 
 ### Library, playlists, and metadata
