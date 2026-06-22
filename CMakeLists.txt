@@ -397,7 +397,7 @@ set(SOURCES ${SOURCES} src/app/commandline.cpp src/app/main.cpp)
 qt_add_resources(SOURCES data/data.qrc)
 qt_add_resources(SOURCES data/icons.qrc)
 
-qt_add_executable(fooyin ${SOURCES} ${TRANSLATIONS})
+qt_add_executable(fooyin WIN32 MACOSX_BUNDLE ${SOURCES} ${TRANSLATIONS})
 if(APPLE)
     set_target_properties(fooyin PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${FOOYIN_OUTPUT_PREFIX}")
     target_include_directories(fooyin BEFORE PRIVATE "${FOOYIN_ICU_INCLUDE_DIR}")
