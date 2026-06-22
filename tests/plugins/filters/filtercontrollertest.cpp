@@ -151,7 +151,7 @@ public:
         return {};
     }
 
-    PendingTrackCoverProvider* pendingTrackCoverProvider() const override
+    [[nodiscard]] PendingTrackCoverProvider* pendingTrackCoverProvider() const override
     {
         return nullptr;
     }
@@ -197,7 +197,7 @@ Filters::FilterRow makeDisplayRow(const Filters::RowKey& key, const QStringList&
 
 Filters::FilterColumnList simpleColumns()
 {
-    return {{.id = 0, .name = u"Name"_s, .field = u"%title%"_s}};
+    return {{.id = 0, .name = u"Name"_s, .field = u"%title%"_s, .sortField = {}}};
 }
 
 void registerMinimalGuiSettings(SettingsManager& settings)
@@ -252,7 +252,7 @@ protected:
                                                                    m_settings.get(), m_styleProvider.get());
     }
 
-    Filters::FilterGroup defaultGroup() const
+    [[nodiscard]] Filters::FilterGroup defaultGroup() const
     {
         const auto group = m_controller->groupById(Id{"Default"});
         EXPECT_TRUE(group.has_value());
@@ -372,9 +372,9 @@ TEST_F(FilterControllerTest, FilterModelSetRowsInsertsWithoutModelResetWhenColum
     model.setRows(columns, {makeDisplayRow(keyFor(u"A"_s), {u"Alpha"_s}, {1})});
     model.setShowSummary(false);
 
-    QSignalSpy resetSpy{&model, &QAbstractItemModel::modelReset};
-    QSignalSpy rowsInsertedSpy{&model, &QAbstractItemModel::rowsInserted};
-    QSignalSpy rowsRemovedSpy{&model, &QAbstractItemModel::rowsRemoved};
+    const QSignalSpy resetSpy{&model, &QAbstractItemModel::modelReset};
+    const QSignalSpy rowsInsertedSpy{&model, &QAbstractItemModel::rowsInserted};
+    const QSignalSpy rowsRemovedSpy{&model, &QAbstractItemModel::rowsRemoved};
 
     model.setRows(
         columns, {makeDisplayRow(keyFor(u"A"_s), {u"Alpha"_s}, {1}), makeDisplayRow(keyFor(u"B"_s), {u"Beta"_s}, {2})});
@@ -399,9 +399,9 @@ TEST_F(FilterControllerTest, FilterModelSetRowsRemovesWithoutModelResetWhenColum
         columns, {makeDisplayRow(keyFor(u"A"_s), {u"Alpha"_s}, {1}), makeDisplayRow(keyFor(u"B"_s), {u"Beta"_s}, {2})});
     model.setShowSummary(false);
 
-    QSignalSpy resetSpy{&model, &QAbstractItemModel::modelReset};
-    QSignalSpy rowsRemovedSpy{&model, &QAbstractItemModel::rowsRemoved};
-    QSignalSpy rowsInsertedSpy{&model, &QAbstractItemModel::rowsInserted};
+    const QSignalSpy resetSpy{&model, &QAbstractItemModel::modelReset};
+    const QSignalSpy rowsRemovedSpy{&model, &QAbstractItemModel::rowsRemoved};
+    const QSignalSpy rowsInsertedSpy{&model, &QAbstractItemModel::rowsInserted};
 
     model.setRows(columns, {makeDisplayRow(keyFor(u"B"_s), {u"Beta"_s}, {2})});
 
@@ -423,10 +423,10 @@ TEST_F(FilterControllerTest, FilterModelSetRowsUpdatesExistingRowWithoutModelRes
     model.setRows(columns, {makeDisplayRow(keyFor(u"A"_s), {u"Alpha"_s}, {1})});
     model.setShowSummary(false);
 
-    QSignalSpy resetSpy{&model, &QAbstractItemModel::modelReset};
-    QSignalSpy rowsInsertedSpy{&model, &QAbstractItemModel::rowsInserted};
-    QSignalSpy rowsRemovedSpy{&model, &QAbstractItemModel::rowsRemoved};
-    QSignalSpy dataChangedSpy{&model, &QAbstractItemModel::dataChanged};
+    const QSignalSpy resetSpy{&model, &QAbstractItemModel::modelReset};
+    const QSignalSpy rowsInsertedSpy{&model, &QAbstractItemModel::rowsInserted};
+    const QSignalSpy rowsRemovedSpy{&model, &QAbstractItemModel::rowsRemoved};
+    const QSignalSpy dataChangedSpy{&model, &QAbstractItemModel::dataChanged};
 
     model.setRows(columns, {makeDisplayRow(keyFor(u"A"_s), {u"Alpha"_s}, {1, 2})});
 
@@ -444,7 +444,7 @@ int main(int argc, char** argv)
         qputenv("QT_QPA_PLATFORM", "offscreen");
     }
 
-    QApplication app(argc, argv);
+    const QApplication app(argc, argv);
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
