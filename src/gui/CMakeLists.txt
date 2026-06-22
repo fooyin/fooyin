@@ -384,8 +384,6 @@ set(SOURCES
     settings/context/trackcontextmenupage.h
     settings/generalpage.cpp
     settings/generalpage.h
-    settings/guidisplaypage.cpp
-    settings/guidisplaypage.h
     settings/guitrackdisplaypage.cpp
     settings/guitrackdisplaypage.h
     settings/guigeneralpage.cpp

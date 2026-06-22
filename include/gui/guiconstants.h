@@ -244,7 +244,6 @@ constexpr auto ReplayGain                         = "Fooyin.Page.Playback.Replay
 constexpr auto DspManager                         = "Fooyin.Page.Playback.DspManager";
 constexpr auto NowPlaying                         = "Fooyin.Page.Playback.NowPlaying";
 constexpr auto InterfaceGeneral                   = "Fooyin.Page.Interface.General";
-constexpr auto InterfaceDisplay                   = "Fooyin.Page.Interface.Display";
 constexpr auto InterfaceLayout                    = "Fooyin.Page.Interface.Layout";
 constexpr auto InterfaceTrackDisplay              = "Fooyin.Page.Interface.TrackDisplay";
 constexpr auto InterfaceSelectionInfo             = "Fooyin.Page.Interface.SelectionInfo";

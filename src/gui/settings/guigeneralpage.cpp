@@ -33,11 +33,15 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
+#include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
+#include <QLabel>
 #include <QPushButton>
+#include <QRadioButton>
 #include <QSpinBox>
+#include <QStyleFactory>
 #include <QVBoxLayout>
 
 using namespace Qt::StringLiterals;
@@ -70,6 +74,13 @@ private:
     PresetRegistry* m_presetRegistry;
     SettingsManager* m_settings;
 
+    QComboBox* m_styles;
+
+    QRadioButton* m_detectIconTheme;
+    QRadioButton* m_lightTheme;
+    QRadioButton* m_darkTheme;
+    QRadioButton* m_systemTheme;
+
     QCheckBox* m_showMenuBar;
 
     QCheckBox* m_overrideMargin;
@@ -92,6 +103,11 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_themeRegistry{themeRegistry}
     , m_presetRegistry{presetRegistry}
     , m_settings{settings}
+    , m_styles{new QComboBox(this)}
+    , m_detectIconTheme{new QRadioButton(tr("Auto-detect theme"), this)}
+    , m_lightTheme{new QRadioButton(tr("Light"), this)}
+    , m_darkTheme{new QRadioButton(tr("Dark"), this)}
+    , m_systemTheme{new QRadioButton(tr("Use system icons"), this)}
     , m_showMenuBar{new QCheckBox(tr("Show menu bar"), this)}
     , m_overrideMargin{new QCheckBox(tr("Override root margin") + u":"_s, this)}
     , m_editableLayoutMargin{new QSpinBox(this)}
@@ -112,10 +128,29 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     setupBoxLayout->addWidget(importLayoutBtn);
     setupBoxLayout->addWidget(exportLayoutBtn);
 
+    auto* appearanceGroup       = new QGroupBox(tr("Appearance"), this);
+    auto* appearanceGroupLayout = new QGridLayout(appearanceGroup);
+
+    auto* iconThemeBox       = new QGroupBox(tr("Icons"), appearanceGroup);
+    auto* iconThemeBoxLayout = new QGridLayout(iconThemeBox);
+
+    int row{0};
+    iconThemeBoxLayout->addWidget(m_detectIconTheme, row++, 0, 1, 2);
+    iconThemeBoxLayout->addWidget(m_lightTheme, row, 0);
+    iconThemeBoxLayout->addWidget(m_darkTheme, row++, 1);
+    iconThemeBoxLayout->addWidget(m_systemTheme, row++, 0, 1, 2);
+    iconThemeBoxLayout->setColumnStretch(2, 1);
+
+    row = 0;
+    appearanceGroupLayout->addWidget(new QLabel(tr("Style") + u":"_s, appearanceGroup), row, 0);
+    appearanceGroupLayout->addWidget(m_styles, row++, 1);
+    appearanceGroupLayout->addWidget(iconThemeBox, row++, 0, 1, 2);
+    appearanceGroupLayout->setColumnStretch(1, 1);
+
     auto* layoutGroup       = new QGroupBox(tr("Layout"), this);
     auto* layoutGroupLayout = new QGridLayout(layoutGroup);
 
-    int row{0};
+    row = 0;
     layoutGroupLayout->addWidget(m_showMenuBar, row++, 0, 1, 3);
     layoutGroupLayout->addWidget(m_splitterHandles, row++, 0, 1, 3);
     layoutGroupLayout->addWidget(m_lockSplitters, row++, 0, 1, 3);
@@ -141,6 +176,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
 
     row = 0;
     mainLayout->addWidget(setupBox, row++, 0, 1, 2);
+    mainLayout->addWidget(appearanceGroup, row++, 0, 1, 2);
     mainLayout->addWidget(layoutGroup, row++, 0, 1, 2);
     mainLayout->addWidget(toolButtonGroup, row++, 0, 1, 2);
     mainLayout->setColumnStretch(1, 1);
@@ -156,6 +192,30 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
 
 void GuiGeneralPageWidget::load()
 {
+    m_styles->clear();
+    m_styles->addItem(tr("System default"));
+    m_styles->addItems(QStyleFactory::keys());
+
+    const auto style     = m_settings->value<Style>();
+    const int styleIndex = m_styles->findText(style);
+    m_styles->setCurrentIndex(style.isEmpty() || styleIndex < 0 ? 0 : styleIndex);
+
+    const auto iconTheme = static_cast<IconThemeOption>(m_settings->value<IconTheme>());
+    switch(iconTheme) {
+        case IconThemeOption::AutoDetect:
+            m_detectIconTheme->setChecked(true);
+            break;
+        case IconThemeOption::System:
+            m_systemTheme->setChecked(true);
+            break;
+        case IconThemeOption::Light:
+            m_lightTheme->setChecked(true);
+            break;
+        case IconThemeOption::Dark:
+            m_darkTheme->setChecked(true);
+            break;
+    }
+
     m_showMenuBar->setChecked(m_settings->value<ShowMenuBar>());
 
     m_splitterHandles->setChecked(m_settings->value<ShowSplitterHandles>());
@@ -176,6 +236,23 @@ void GuiGeneralPageWidget::load()
 
 void GuiGeneralPageWidget::apply()
 {
+    m_settings->set<Style>(m_styles->currentIndex() == 0 ? QString{} : m_styles->currentText());
+
+    IconThemeOption iconThemeOption;
+    if(m_detectIconTheme->isChecked()) {
+        iconThemeOption = IconThemeOption::AutoDetect;
+    }
+    else if(m_lightTheme->isChecked()) {
+        iconThemeOption = IconThemeOption::Light;
+    }
+    else if(m_darkTheme->isChecked()) {
+        iconThemeOption = IconThemeOption::Dark;
+    }
+    else {
+        iconThemeOption = IconThemeOption::System;
+    }
+    m_settings->set<IconTheme>(static_cast<int>(iconThemeOption));
+
     m_settings->set<ShowMenuBar>(m_showMenuBar->isChecked());
 
     m_settings->set<ShowSplitterHandles>(m_splitterHandles->isChecked());
@@ -204,6 +281,8 @@ void GuiGeneralPageWidget::apply()
 
 void GuiGeneralPageWidget::reset()
 {
+    m_settings->reset<Style>();
+    m_settings->reset<IconTheme>();
     m_settings->reset<ShowMenuBar>();
     m_settings->reset<ShowSplitterHandles>();
     m_settings->reset<LockSplitterHandles>();
@@ -236,7 +315,7 @@ GuiGeneralPage::GuiGeneralPage(LayoutProvider* layoutProvider, EditableLayout* e
     : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::InterfaceGeneral);
-    setName(tr("Layout"));
+    setName(tr("General"));
     setCategory({tr("Interface")});
     setWidgetCreator([layoutProvider, editableLayout, themeRegistry, presetRegistry, settings] {
         return new GuiGeneralPageWidget(layoutProvider, editableLayout, themeRegistry, presetRegistry, settings);
