@@ -65,6 +65,8 @@ public:
 
     /** Sets the maximum number of instances which can be created of the widget at @p key. */
     void setLimit(const QString& key, int limit);
+    /** Sets whether the widget can be used to split an existing layout widget. */
+    void setCanSplit(const QString& key, bool canSplit);
     /** Sets whether the widget at @p key is shown in layout editing menus. */
     void setIsHidden(const QString& key, bool hidden);
     /** Sets a dynamic predicate controlling whether the widget is shown in layout editing menus. */

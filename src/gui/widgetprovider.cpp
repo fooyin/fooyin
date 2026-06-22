@@ -42,6 +42,7 @@ struct FactoryWidget
     std::function<bool()> isVisibleWhen;
     QStringList subMenus;
     bool isHidden{false};
+    bool canSplit{false};
     int limit{0};
     int count{0};
 };
@@ -80,7 +81,7 @@ public:
     }
 
     template <typename Func>
-    void setupWidgetMenu(QMenu* menu, Func&& func, const QString& singleMenu = {})
+    void setupWidgetMenu(QMenu* menu, Func&& func, bool splitOnly = false)
     {
         menu->clear();
 
@@ -93,16 +94,12 @@ public:
                 continue;
             }
 
-            auto* parentMenu = menu;
-            bool canInclude{false};
-
-            if(!singleMenu.isEmpty()) {
-                if(widget.subMenus.contains(singleMenu)) {
-                    canInclude = true;
-                }
+            if(splitOnly && !widget.canSplit) {
+                continue;
             }
-            else {
-                canInclude = true;
+
+            auto* parentMenu = menu;
+            if(!splitOnly) {
                 for(const auto& subMenu : widget.subMenus) {
                     if(!menuCache.contains(subMenu)) {
                         auto* childMenu = new QMenu(subMenu, menu);
@@ -113,13 +110,10 @@ public:
                 }
             }
 
-            if(canInclude) {
-                auto* addWidgetAction = new QAction(widget.name, parentMenu);
-                addWidgetAction->setEnabled(canCreateWidget(widget.key));
-                QObject::connect(addWidgetAction, &QAction::triggered, menu, [func, widget] { func(widget.key); });
-
-                parentMenu->addAction(addWidgetAction);
-            }
+            auto* addWidgetAction = new QAction(widget.name, parentMenu);
+            addWidgetAction->setEnabled(canCreateWidget(widget.key));
+            QObject::connect(addWidgetAction, &QAction::triggered, menu, [func, widget] { func(widget.key); });
+            parentMenu->addAction(addWidgetAction);
         }
     }
 
@@ -173,6 +167,16 @@ void WidgetProvider::setLimit(const QString& key, int limit)
     }
 
     p->m_widgets.at(key).limit = limit;
+}
+
+void WidgetProvider::setCanSplit(const QString& key, bool canSplit)
+{
+    if(!p->m_widgets.contains(key)) {
+        qCWarning(WIDGET_PROV) << "Subclass not registered";
+        return;
+    }
+
+    p->m_widgets.at(key).canSplit = canSplit;
 }
 
 void WidgetProvider::setIsHidden(const QString& key, bool hidden)
@@ -268,10 +272,11 @@ void WidgetProvider::setupSplitWidgetMenu(EditableLayout* layout, QMenu* menu, W
         return;
     }
 
-    p->setupWidgetMenu(menu,
-                       [this, layout, container, widgetId](const QString& key) {
-                           p->m_layoutCommands->push(new SplitWidgetCommand(layout, this, container, key, widgetId));
-                       },
-                       {u"Splitters"_s});
+    p->setupWidgetMenu(
+        menu,
+        [this, layout, container, widgetId](const QString& key) {
+            p->m_layoutCommands->push(new SplitWidgetCommand(layout, this, container, key, widgetId));
+        },
+        true);
 }
 } // namespace Fooyin

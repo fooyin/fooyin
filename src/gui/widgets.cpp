@@ -175,17 +175,20 @@ void Widgets::registerWidgets()
         [this, provider]() { return new VerticalSplitterWidget(provider, m_settings, m_window); },
         tr("Splitter (Top/Bottom)"));
     provider->setSubMenus(u"SplitterVertical"_s, {tr("Splitters")});
+    provider->setCanSplit(u"SplitterVertical"_s, true);
 
     provider->registerWidget(
         u"SplitterHorizontal"_s,
         [this]() { return new HorizontalSplitterWidget(m_gui->widgetProvider(), m_settings, m_window); },
         tr("Splitter (Left/Right)"));
     provider->setSubMenus(u"SplitterHorizontal"_s, {tr("Splitters")});
+    provider->setCanSplit(u"SplitterHorizontal"_s, true);
 
     provider->registerWidget(
         u"PlaylistSwitcher"_s,
         [this]() { return new PlaylistBox(m_gui->actionManager(), m_playlistController, m_window); },
         tr("Playlist Switcher"));
+    provider->setSubMenus(u"PlaylistSwitcher"_s, {tr("Playlist")});
 
     provider->registerWidget(
         u"PlaylistTabs"_s,
@@ -202,12 +205,14 @@ void Widgets::registerWidgets()
             return playlistTabs;
         },
         tr("Playlist Tabs"));
-    provider->setSubMenus(u"PlaylistTabs"_s, {tr("Splitters")});
+    provider->setSubMenus(u"PlaylistTabs"_s, {tr("Playlist")});
+    provider->setCanSplit(u"PlaylistTabs"_s, true);
 
     provider->registerWidget(
         u"PlaylistOrganiser"_s,
         [this]() { return new PlaylistOrganiser(m_gui->actionManager(), m_playlistInteractor, m_settings, m_window); },
         tr("Playlist Organiser"));
+    provider->setSubMenus(u"PlaylistOrganiser"_s, {tr("Playlist")});
 
     provider->registerWidget(
         u"PlaylistManager"_s,
@@ -216,6 +221,7 @@ void Widgets::registerWidgets()
                                              m_gui->trackSelection(), m_settings, m_window);
         },
         tr("Playlist Manager"));
+    provider->setSubMenus(u"PlaylistManager"_s, {tr("Playlist")});
 
     provider->registerWidget(
         u"PlaybackQueue"_s,
@@ -229,6 +235,7 @@ void Widgets::registerWidgets()
         u"TabStack"_s, [this, provider]() { return new TabStackWidget(provider, m_settings, m_window); },
         tr("Tab Stack"));
     provider->setSubMenus(u"TabStack"_s, {tr("Splitters")});
+    provider->setCanSplit(u"TabStack"_s, true);
 
     provider->registerWidget(
         u"LibraryTree"_s,
@@ -312,6 +319,7 @@ void Widgets::registerWidgets()
                                                       m_window);
         },
         tr("Playlist"));
+    provider->setSubMenus(u"Playlist"_s, {tr("Playlist")});
     provider->setLimit(u"Playlist"_s, 1);
 
     provider->registerWidget(u"Spacer"_s, [this]() { return new Spacer(m_window); }, tr("Spacer"));
