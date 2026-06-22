@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.11.1](https://github.com/fooyin/fooyin/releases/tag/v0.11.1) (2026-06-22)
+
+### New Features
+
+* Interface
+  - Add a DSP chain selector layout widget
+
+### Improvements
+
+* Interface
+  - Sort DSP presets alphabetically
+  - Reorganise playlist widgets in the layout editing menu
+
+### Fixes
+
+* Layout
+  - Fix legacy layouts overriding saved configuration
+
+
 ## [0.11.0](https://github.com/fooyin/fooyin/releases/tag/v0.11.0) (2026-06-22)
 
 ### New Features
