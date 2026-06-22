@@ -59,13 +59,13 @@ public:
     auto makeItem(const Id& id, ActionManager* parent) const
     {
         return std::make_unique<T>(id, parent);
-    };
+    }
 
     template <class T>
     auto makeItem(const Id& id) const
     {
         return std::make_unique<T>(id);
-    };
+    }
 
     ActionManager* m_self;
 
