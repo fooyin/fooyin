@@ -4,6 +4,7 @@ set(SOURCES nowplayingplugin.mm nowplayingplugin.h)
 
 create_fooyin_plugin_internal(
     nowplaying
+    NO_PCH
     DEPENDS Fooyin::Gui
     SOURCES ${SOURCES}
 )
