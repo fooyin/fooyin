@@ -1821,7 +1821,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="129"/>
         <source>Use built-in icon theme placeholder</source>
-        <translation>Använd inbyggd ikontemaplatshållare</translation>
+        <translation>Använd inbyggd ikon-tema-platshållare</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="133"/>
@@ -3879,17 +3879,17 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="51"/>
         <source>Are you sure you want to permanently delete %Ln track(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Är du säker att du vill permanent radera %Ln spår?</numerusform>
+            <numerusform>Är du säker att du vill permanent radera %Ln spår?</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="52"/>
         <source>Are you sure you want to delete %Ln track(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Är du säker att du vill radera %Ln spår?</numerusform>
+            <numerusform>Är du säker att du vill radera %Ln spår?</numerusform>
         </translation>
     </message>
     <message>
@@ -5071,7 +5071,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="94"/>
         <source>&amp;New</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ny</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="116"/>
@@ -5216,7 +5216,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="371"/>
         <source>New Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Nytt tema</translation>
     </message>
 </context>
 <context>
@@ -5390,17 +5390,17 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="194"/>
         <source>Layout options</source>
-        <translation type="unfinished"></translation>
+        <translation>Layoutalternativ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="195"/>
         <source>Restore theme when switching to this layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Återhämta tema vid byte till den här layouten</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="196"/>
         <source>Restore window size when switching to this layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Återhämta fönsterstorlek vid byte till den här layouten</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="215"/>
@@ -6057,12 +6057,12 @@ Om standardhalvstjärnan inte renderas korrekt med ditt systemtypsnitt välj en 
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="98"/>
         <source>&amp;New layout…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ny layout…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="99"/>
         <source>Create a new layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Skapa en ny layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="104"/>
@@ -6072,7 +6072,7 @@ Om standardhalvstjärnan inte renderas korrekt med ditt systemtypsnitt välj en 
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="105"/>
         <source>Clear the current layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Rensa den aktuella layouten</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="110"/>
@@ -6303,22 +6303,22 @@ Om standardhalvstjärnan inte renderas korrekt med ditt systemtypsnitt välj en 
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="96"/>
         <source>Show Recently &amp;Played</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa nyligen s&amp;pelade</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="97"/>
         <source>Show tracks played in the last few weeks</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa spår som spelats de senaste veckorna</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="103"/>
         <source>Show Recently &amp;Added</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa nyligen tillag&amp;da</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="104"/>
         <source>Show tracks added in the last few weeks</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa spår som lagts till de senaste veckorna</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="109"/>
@@ -8928,12 +8928,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="102"/>
         <source>Played threshold (%)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelad-gräns (%)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="103"/>
         <source>Played threshold (time)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelad-gräns (tid)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="109"/>
@@ -8973,7 +8973,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="125"/>
         <source>Track is counted as &apos;played&apos; once either threshold is reached</source>
-        <translation type="unfinished"></translation>
+        <translation>Spår räknas som ”spelat” när någon av gränserna är nådda</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="154"/>
@@ -9437,7 +9437,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="274"/>
         <source>Restore deleted playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Återhämta raderad spellista</translation>
     </message>
 </context>
 <context>
@@ -9776,17 +9776,17 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
         <source>Match beginnings of words</source>
-        <translation type="unfinished"></translation>
+        <translation>Matcha början av ord</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="123"/>
         <source>Match anywhere</source>
-        <translation type="unfinished"></translation>
+        <translation>Matcha var som helst</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="127"/>
         <source>Search mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Sökläge</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="129"/>
@@ -9968,7 +9968,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="505"/>
         <source>Restore deleted playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Återhämta raderad spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="527"/>
@@ -10077,7 +10077,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="469"/>
         <source>Restore deleted playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Återhämta raderad spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="449"/>
@@ -10383,28 +10383,28 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="126"/>
         <source>Next match</source>
-        <translation type="unfinished"></translation>
+        <translation>Nästa matchning</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="130"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>Stäng</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="419"/>
         <source>Results are out of date</source>
-        <translation type="unfinished"></translation>
+        <translation>Resultaten är inte aktuella</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="423"/>
         <source>%1 of %2 matches</source>
         <extracomment>Search result matches e.g. &quot;6 of 11 matches&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 av %2 matchningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="426"/>
         <source>0 matches</source>
-        <translation type="unfinished"></translation>
+        <translation>0 matchningar</translation>
     </message>
 </context>
 <context>
@@ -10437,7 +10437,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="367"/>
         <source>Restore deleted playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Återhämta raderad spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="397"/>
@@ -10555,7 +10555,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1212"/>
         <source>Use custom layout for this playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd en anpassad layout för den här spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1213"/>
@@ -10960,12 +10960,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="41"/>
         <source>Track list</source>
-        <translation type="unfinished"></translation>
+        <translation>Spårlista</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="49"/>
         <source>Albums grouped by disc</source>
-        <translation type="unfinished"></translation>
+        <translation>Album grupperade efter skiva</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="66"/>
@@ -10975,7 +10975,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="72"/>
         <source>Compact album headers</source>
-        <translation type="unfinished"></translation>
+        <translation>Kompakta albumrubriker</translation>
     </message>
 </context>
 <context>
@@ -11101,12 +11101,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="243"/>
         <source>Reverse the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Vänd uppspelningskön baklänges</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="313"/>
         <source>Sort the playback queue using this preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortera uppspelningskön med denna förinställning</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="125"/>
@@ -11203,7 +11203,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="54"/>
         <source>Playlist Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Spellistslayout</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="55"/>
@@ -11563,7 +11563,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="42"/>
         <source>Show saved station icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa sparade stationsikoner</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="43"/>
@@ -11601,17 +11601,17 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="55"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="59"/>
         <source>Add or remove from My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till eller ta bort från mina stationer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="63"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately</source>
-        <translation type="unfinished"></translation>
+        <translation>Starta uppspelning omedelbart för ”Ersätt aktuell spellista” och ”Skapa ny spellista”</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="64"/>
         <source>Exclude stations marked as broken by radio-browser.info from search results</source>
-        <translation type="unfinished"></translation>
+        <translation>Exkludera stationer markerade som trasig av radio-browser.info från sökresultat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="66"/>
@@ -11760,7 +11760,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="738"/>
         <source>Failed to load radio browser stations: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Misslyckades att läsa in radiobläddrarstationer: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="762"/>
@@ -11896,7 +11896,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="197"/>
         <source>Unknown error</source>
-        <translation type="unfinished"></translation>
+        <translation>Okänt fel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="246"/>
@@ -12006,12 +12006,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="911"/>
         <source>Failed to load stations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Misslyckades att läsa in stationer.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="912"/>
         <source>Failed to load stations: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Misslyckades att läsa in stationer: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1089"/>
@@ -12290,7 +12290,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="248"/>
         <source>Restore previous selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Återhämta föregående selektion</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="249"/>
@@ -12836,7 +12836,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="403"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="944"/>
         <source>Any language</source>
-        <translation type="unfinished"></translation>
+        <translation>Vilket språk som helst</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="141"/>
@@ -12952,7 +12952,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="405"/>
         <source>Languages unavailable: %1 - select to retry</source>
-        <translation>Språk otillgängliga: %1– välj för att försöka igen</translation>
+        <translation>Språk otillgängliga: %1 – välj för att försöka igen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="412"/>
@@ -14168,7 +14168,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="88"/>
         <source>Search Matching</source>
-        <translation type="unfinished"></translation>
+        <translation>Sökmatchning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="91"/>
@@ -14198,32 +14198,32 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="100"/>
         <source>Match beginnings of words</source>
-        <translation type="unfinished"></translation>
+        <translation>Matcha början av ord</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="101"/>
         <source>Match anywhere</source>
-        <translation type="unfinished"></translation>
+        <translation>Matcha var som helst</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="104"/>
         <source>Search mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Sökläge</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="106"/>
         <source>Search script</source>
-        <translation type="unfinished"></translation>
+        <translation>Sökskript</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="109"/>
         <source>These settings are used for plain text searches, not query expressions.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dessa inställningar används för klartextsökningar, inte frågeuttryck.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="116"/>
         <source>Only applies when autosearch is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tillämpas endast när autosökning är av.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="125"/>
@@ -14273,7 +14273,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="459"/>
         <source>Force the creation of a new results playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Tvinga skapandet av en ny resultatspellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="460"/>
@@ -14648,7 +14648,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/sleepinhibitor/platforms/inhibitordbus.cpp" line="94"/>
         <source>fooyin is running</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin är igång</translation>
     </message>
 </context>
 <context>
@@ -14656,7 +14656,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/sleepinhibitor/platforms/inhibitormacos.cpp" line="36"/>
         <source>fooyin is running</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin är igång</translation>
     </message>
 </context>
 <context>
@@ -14664,17 +14664,17 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="33"/>
         <source>Inhibit system sleep</source>
-        <translation type="unfinished"></translation>
+        <translation>Förhindra viloläge</translation>
     </message>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="34"/>
         <source>Inhibit system sleep during playback only</source>
-        <translation type="unfinished"></translation>
+        <translation>Förhindra viloläge endast under uppspelning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="38"/>
         <source>Sleep Inhibitor Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Vilolägesförhindrar-inställningar</translation>
     </message>
 </context>
 <context>
@@ -17381,7 +17381,7 @@ Set to 0 to choose automatically from the remote buffer length.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="451"/>
         <source>Number of widget levels shown in the layout editing context menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Antal widgetnivåer som visas i layoutredigeringens snabbmeny</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="459"/>
@@ -17396,7 +17396,7 @@ Set to 0 to choose automatically from the remote buffer length.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="465"/>
         <source>Drag only after selecting</source>
-        <translation type="unfinished"></translation>
+        <translation>Dra endast efter väljande</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="466"/>
@@ -17423,7 +17423,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="545"/>
         <source>Preserve file access and modification timestamps when updating tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Bevara filåtkomst och modifikationstidsstämplar när taggar uppdateras</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="551"/>
@@ -17448,7 +17448,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="570"/>
         <source>Enabled all extensions supported by the FFmpeg input</source>
-        <translation type="unfinished"></translation>
+        <translation>Satt på alla ändelser som stöds av FFmpeg-inmatningen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="587"/>
