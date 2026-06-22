@@ -130,7 +130,11 @@ function(create_fooyin_library name)
 endfunction()
 
 function(create_fooyin_plugin_internal plugin_name)
-    create_fooyin_plugin(${ARGV} NO_INSTALL)
+    set(plugin_args ${ARGN})
+    cmake_parse_arguments(INTERNAL "NO_PCH" "" "" ${plugin_args})
+    list(REMOVE_ITEM plugin_args NO_PCH)
+
+    create_fooyin_plugin(${plugin_name} ${plugin_args} NO_INSTALL)
 
     set_target_properties(
         ${plugin_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${FOOYIN_PLUGIN_OUTPUT_DIRECTORY}"
@@ -141,6 +145,10 @@ function(create_fooyin_plugin_internal plugin_name)
     target_compile_definitions(${plugin_name} PRIVATE ${FOOYIN_COMPILE_DEFINITIONS})
     target_compile_options(${plugin_name} PRIVATE ${FOOYIN_COMPILE_OPTIONS})
     target_link_options(${plugin_name} INTERFACE ${FOOYIN_LINK_OPTIONS})
+
+    if(BUILD_PCH AND NOT INTERNAL_NO_PCH)
+        target_precompile_headers(${plugin_name} REUSE_FROM fooyin_pch)
+    endif()
 
     if(NOT CMAKE_SKIP_INSTALL_RULES)
         install(

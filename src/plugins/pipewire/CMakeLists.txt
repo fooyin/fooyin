@@ -7,6 +7,7 @@ endif()
 
 create_fooyin_plugin_internal(
     pipewire
+    NO_PCH
     DEPENDS Fooyin::Core
             PipeWire::PipeWire
     SOURCES pipewirecontext.cpp
