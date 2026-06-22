@@ -128,6 +128,7 @@ public:
     FyLayout m_currentLayout;
     std::map<QString, QString> m_layoutPaths;
     QFile m_legacyLayoutFile{Gui::activeLayoutPath()};
+    bool m_migratingLegacyLayout{false};
 };
 
 LayoutProviderPrivate::LayoutProviderPrivate(LayoutProvider* self)
@@ -209,10 +210,7 @@ void LayoutProviderPrivate::updateLayout(const FyLayout& layout)
 void LayoutProviderPrivate::resolveActiveLayout()
 {
     if(const QString activeName = activeLayoutName(); !activeName.isEmpty()) {
-        if(m_currentLayout.name() == activeName) {
-            updateLayout(m_currentLayout);
-        }
-        else if(const auto activeLayout = layout(activeName); activeLayout != m_layouts.end()) {
+        if(const auto activeLayout = layout(activeName); activeLayout != m_layouts.end()) {
             m_currentLayout = *activeLayout;
         }
     }
@@ -225,12 +223,25 @@ void LayoutProviderPrivate::resolveActiveLayout()
     }
 
     updateLayout(m_currentLayout);
-    saveActiveLayoutName();
+    if(!m_currentLayout.isValid()) {
+        return;
+    }
 
-    if(m_currentLayout.isValid() && pathForLayout(m_currentLayout).isEmpty() && !isUnmodifiedBuiltIn(m_currentLayout)) {
-        const QString path = layoutFilePath(m_currentLayout.name());
+    QString path = pathForLayout(m_currentLayout);
+    if(m_migratingLegacyLayout || (path.isEmpty() && !isUnmodifiedBuiltIn(m_currentLayout))) {
+        if(path.isEmpty()) {
+            path = layoutFilePath(m_currentLayout.name());
+        }
+
+        if(!writeLayout(m_currentLayout, path)) {
+            return;
+        }
         setLayoutPath(m_currentLayout, path);
-        writeLayout(m_currentLayout, path);
+    }
+
+    saveActiveLayoutName();
+    if(m_migratingLegacyLayout && !m_legacyLayoutFile.remove()) {
+        qCWarning(LAYOUT_PROV) << "Couldn't remove legacy layout file";
     }
 }
 
@@ -254,7 +265,8 @@ void LayoutProviderPrivate::loadLegacyCurrentLayout()
         return;
     }
 
-    m_currentLayout = layout;
+    m_currentLayout         = layout;
+    m_migratingLegacyLayout = true;
 }
 
 QString LayoutProviderPrivate::pathForLayout(const FyLayout& layout) const
@@ -301,7 +313,9 @@ LayoutProvider::LayoutProvider(QObject* parent)
     : QObject{parent}
     , p{std::make_unique<LayoutProviderPrivate>(this)}
 {
-    p->loadLegacyCurrentLayout();
+    if(activeLayoutName().isEmpty()) {
+        p->loadLegacyCurrentLayout();
+    }
 }
 
 LayoutProvider::~LayoutProvider() = default;
