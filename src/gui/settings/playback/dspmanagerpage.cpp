@@ -434,7 +434,7 @@ void DspManagerPageWidget::refreshPresets()
 
     m_presetBox->clear();
 
-    const auto presets = m_presetRegistry->items();
+    const auto presets = m_presetRegistry->presetsByName();
     for(const auto& preset : presets) {
         m_presetBox->addItem(preset.name, preset.id);
     }

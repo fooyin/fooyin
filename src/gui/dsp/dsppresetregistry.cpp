@@ -19,6 +19,8 @@
 
 #include "dsppresetregistry.h"
 
+#include <ranges>
+
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
@@ -32,6 +34,16 @@ DspPresetRegistry::DspPresetRegistry(SettingsManager* settings, QObject* parent)
     });
 
     loadItems();
+}
+
+DspPresetRegistry::ItemList DspPresetRegistry::presetsByName() const
+{
+    auto presets = items();
+    std::ranges::sort(presets, [](const auto& lhs, const auto& rhs) {
+        const int comparison = QString::localeAwareCompare(lhs.name, rhs.name);
+        return comparison != 0 ? comparison < 0 : lhs.id < rhs.id;
+    });
+    return presets;
 }
 
 void DspPresetRegistry::loadDefaults() { }

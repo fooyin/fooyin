@@ -121,7 +121,7 @@ void DspChainSelector::contextMenuEvent(QContextMenuEvent* event)
 void DspChainSelector::reload()
 {
     const auto activeChain = m_chainStore->activeChain();
-    const auto presets     = m_presetRegistry->items();
+    const auto presets     = m_presetRegistry->presetsByName();
 
     const QSignalBlocker blocker{m_combo};
     m_combo->clear();

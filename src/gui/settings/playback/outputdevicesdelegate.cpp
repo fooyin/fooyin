@@ -66,7 +66,7 @@ QWidget* DspPresetDelegate::createEditor(QWidget* parent, const QStyleOptionView
     auto* box = new QComboBox(parent);
     box->addItem(tr("<not set>"), -1);
 
-    const auto presets = m_presetRegistry->items();
+    const auto presets = m_presetRegistry->presetsByName();
     for(const auto& preset : presets) {
         box->addItem(preset.name, preset.id);
     }
