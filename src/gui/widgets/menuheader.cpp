@@ -42,10 +42,13 @@ MenuHeader::MenuHeader(QString text, QWidget* parent)
     , m_textHeight{0}
     , m_margin{0}
 {
-    const QFontMetrics fm{fontMetrics()};
+    QFont font{this->font()};
+    font.setBold(true);
+
+    const QFontMetrics fm{font};
     m_textHeight = fm.height();
     m_margin     = fm.horizontalAdvance(u"..."_s);
-    m_minWidth   = fm.boundingRect(m_text).width() + (3 * m_margin);
+    m_minWidth   = fm.horizontalAdvance(m_text) + (2 * m_margin);
 
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     updateGeometry();
@@ -81,7 +84,7 @@ void MenuHeader::paintEvent(QPaintEvent* /*event*/)
     painter.setFont(font);
 
     painter.setPen(headerText);
-    painter.drawText(QRect{m_margin, 0, m_minWidth - (2 * m_margin), height()}, Qt::AlignVCenter, m_text);
+    painter.drawText(QRect{m_margin, 0, width() - (2 * m_margin), height()}, Qt::AlignVCenter, m_text);
 }
 
 MenuHeaderAction::MenuHeaderAction(const QString& text, QObject* parent)
