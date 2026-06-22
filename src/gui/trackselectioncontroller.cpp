@@ -828,7 +828,7 @@ void TrackSelectionControllerPrivate::refreshDisabledNodes()
 
 bool TrackSelectionControllerPrivate::isNodeDisabled(const Id& id) const
 {
-    return m_disabledNodeIds.contains(id);
+    return !ContextMenuUtils::showAllActions() && m_disabledNodeIds.contains(id);
 }
 
 bool TrackSelectionControllerPrivate::hasVisibleActions(const QMenu* menu)

@@ -21,12 +21,29 @@
 
 #include <gui/settings/context/staticcontextmenu.h>
 
+#include <QApplication>
 #include <QMenu>
 #include <QStringList>
 
 #include <utility>
 
 namespace Fooyin::ContextMenuUtils {
+inline bool showAllActions(Qt::KeyboardModifiers modifiers)
+{
+    return modifiers.testFlag(Qt::ShiftModifier);
+}
+
+inline bool showAllActions()
+{
+    return showAllActions(QApplication::keyboardModifiers());
+}
+
+inline bool isSectionEnabled(const QStringList& disabledSections, const char* sectionId,
+                             Qt::KeyboardModifiers modifiers)
+{
+    return showAllActions(modifiers) || !disabledSections.contains(QLatin1StringView{sectionId});
+}
+
 template <typename Callback>
 bool appendMenuSection(QMenu* menu, Callback&& callback)
 {
@@ -99,8 +116,9 @@ void renderStaticContextMenu(QMenu* menu, const std::array<StaticContextMenu::It
         return;
     }
 
-    const auto sectionEnabled = [&disabledSections](const char* sectionId) {
-        return !disabledSections.contains(QString::fromUtf8(sectionId));
+    const auto modifiers      = QApplication::keyboardModifiers();
+    const auto sectionEnabled = [&disabledSections, modifiers](const char* sectionId) {
+        return isSectionEnabled(disabledSections, sectionId, modifiers);
     };
 
     const QStringList orderedIds = effectiveContextMenuLayout(StaticContextMenu::defaultLayoutIds(items), savedLayout);
