@@ -698,11 +698,14 @@ FyLayout EditableLayout::saveCurrentToLayout(const QString& name, bool saveWindo
     FyLayout layout{json};
     const auto sourceLayout = p->m_layoutProvider->layoutByName(layoutName);
 
-    layout.setAppliesTheme(sourceLayout.appliesTheme());
-    if(layout.appliesTheme()) {
+    const auto themeOptions = sourceLayout.themeOptions();
+    if(sourceLayout.appliesTheme()) {
         const auto theme = p->m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
         if(theme.isValid()) {
-            layout.saveTheme(theme);
+            layout.saveTheme(theme, themeOptions);
+        }
+        else {
+            layout.setThemeOptions(themeOptions);
         }
     }
 
@@ -812,7 +815,16 @@ bool EditableLayout::loadLayout(const FyLayout& layout)
     }
 
     if(layout.appliesTheme()) {
-        const FyTheme theme = layout.loadTheme();
+        const FyTheme importedTheme = layout.loadTheme();
+        const auto themeOptions     = layout.themeOptions();
+        auto theme                  = p->m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
+        if(themeOptions.testFlag(FyLayout::SaveColours)) {
+            theme.colours = importedTheme.colours;
+        }
+        if(themeOptions.testFlag(FyLayout::SaveFonts)) {
+            theme.fonts = importedTheme.fonts;
+        }
+
         if(theme.isValid()) {
             p->m_settings->set<Settings::Gui::CustomTheme>(QVariant::fromValue(theme));
         }

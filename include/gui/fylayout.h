@@ -57,6 +57,8 @@ public:
 
     [[nodiscard]] bool appliesTheme() const;
     void setAppliesTheme(bool enabled);
+    [[nodiscard]] ThemeOptions themeOptions() const;
+    void setThemeOptions(ThemeOptions options);
     void saveTheme(const FyTheme& theme, ThemeOptions options = All);
     void removeTheme();
     [[nodiscard]] FyTheme loadTheme() const;

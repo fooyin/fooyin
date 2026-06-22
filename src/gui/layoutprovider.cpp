@@ -19,6 +19,8 @@
 
 #include <gui/layoutprovider.h>
 
+#include "dialog/importlayoutdialog.h"
+
 #include <core/coresettings.h>
 #include <gui/guipaths.h>
 #include <utils/fileutils.h>
@@ -31,7 +33,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLoggingCategory>
-#include <QMessageBox>
 #include <QRegularExpression>
 #include <QString>
 
@@ -103,9 +104,12 @@ QString activeLayoutName()
 class LayoutProviderPrivate
 {
 public:
+    explicit LayoutProviderPrivate(LayoutProvider* self);
+
     [[nodiscard]] LayoutList::iterator layout(const QString& name);
 
     FyLayout addLayout(const FyLayout& layout, bool import = false, const QString& path = {});
+    FyLayout importLayout(FyLayout layout);
     void updateLayout(const FyLayout& layout);
 
     void resolveActiveLayout();
@@ -117,12 +121,18 @@ public:
     void setLayoutPath(const FyLayout& layout, const QString& path);
     void saveActiveLayoutName() const;
 
+    LayoutProvider* m_self;
+
     LayoutList m_layouts;
     std::map<QString, FyLayout> m_builtInLayouts;
     FyLayout m_currentLayout;
     std::map<QString, QString> m_layoutPaths;
     QFile m_legacyLayoutFile{Gui::activeLayoutPath()};
 };
+
+LayoutProviderPrivate::LayoutProviderPrivate(LayoutProvider* self)
+    : m_self{self}
+{ }
 
 LayoutList::iterator LayoutProviderPrivate::layout(const QString& name)
 {
@@ -156,6 +166,29 @@ FyLayout LayoutProviderPrivate::addLayout(const FyLayout& layout, bool import, c
     if(path.isEmpty()) {
         m_builtInLayouts[layout.name()] = layout;
     }
+    return layout;
+}
+
+FyLayout LayoutProviderPrivate::importLayout(FyLayout layout)
+{
+    if(!layout.isValid()) {
+        return {};
+    }
+
+    if(const auto existing = this->layout(layout.name()); existing != m_layouts.end()) {
+        return *existing;
+    }
+
+    const QString layoutPath = layoutFilePath(layout.name());
+    if(!writeLayout(layout, layoutPath)) {
+        return {};
+    }
+
+    layout = addLayout(layout, true, layoutPath);
+    if(layout.isValid()) {
+        Q_EMIT m_self->layoutAdded(layout);
+    }
+
     return layout;
 }
 
@@ -266,7 +299,7 @@ void LayoutProviderPrivate::saveActiveLayoutName() const
 
 LayoutProvider::LayoutProvider(QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<LayoutProviderPrivate>()}
+    , p{std::make_unique<LayoutProviderPrivate>(this)}
 {
     p->loadLegacyCurrentLayout();
 }
@@ -560,7 +593,6 @@ bool LayoutProvider::resetLayout(const QString& name)
 FyLayout LayoutProvider::importLayout(const QString& path)
 {
     QFile file{path};
-    const QFileInfo fileInfo{file};
 
     if(!file.open(QIODevice::ReadOnly)) {
         qCWarning(LAYOUT_PROV) << "Could not open layout for reading: " << path;
@@ -574,21 +606,7 @@ FyLayout LayoutProvider::importLayout(const QString& path)
         return {};
     }
 
-    FyLayout layout{json};
-    const bool existing = p->layout(layout.name()) != p->m_layouts.end();
-
-    QString layoutPath = fileInfo.absoluteFilePath();
-    if(!Utils::File::isSamePath(fileInfo.absolutePath(), Gui::layoutsPath())) {
-        layoutPath = Gui::layoutsPath() + fileInfo.fileName();
-        file.copy(layoutPath);
-    }
-
-    layout = p->addLayout(layout, true, layoutPath);
-    if(layout.isValid() && !existing) {
-        Q_EMIT layoutAdded(layout);
-    }
-
-    return layout;
+    return p->importLayout(FyLayout{json});
 }
 
 void LayoutProvider::importLayout(QWidget* parent)
@@ -600,25 +618,38 @@ void LayoutProvider::importLayout(QWidget* parent)
         return;
     }
 
-    const auto layout = importLayout(layoutFile);
-    if(!layout.isValid()) {
+    const auto showInvalidMessage = []() {
         Utils::showMessageBox(tr("Invalid Layout"), tr("Layout could not be imported."));
+    };
+
+    QFile file{layoutFile};
+    if(!file.open(QIODevice::ReadOnly)) {
+        showInvalidMessage();
         return;
     }
 
-    QMessageBox message;
-    message.setIcon(QMessageBox::Warning);
-    message.setText(tr("Replace existing layout?"));
-    message.setInformativeText(tr("Unless exported, the current layout will be lost."));
-
-    message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    message.setDefaultButton(QMessageBox::No);
-
-    const int buttonClicked = message.exec();
-
-    if(buttonClicked == QMessageBox::Yes) {
-        Q_EMIT requestChangeLayout(layout);
+    const FyLayout layout{file.readAll()};
+    file.close();
+    if(!layout.isValid()) {
+        showInvalidMessage();
+        return;
     }
+
+    auto* dialog = new ImportLayoutDialog(layout, layoutFile, this, parent);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+
+    QObject::connect(dialog, &QDialog::accepted, this, [this, dialog, showInvalidMessage]() {
+        const FyLayout imported = p->importLayout(dialog->selectedLayout());
+        if(!imported.isValid()) {
+            showInvalidMessage();
+            return;
+        }
+        if(dialog->switchToLayout()) {
+            Q_EMIT requestChangeLayout(imported);
+        }
+    });
+
+    dialog->show();
 }
 
 bool LayoutProvider::exportLayout(const FyLayout& layout, const QString& path)

@@ -257,6 +257,7 @@ GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, Editabl
                      &GuiLayoutPageWidget::onContextMenuRequested);
 
     QObject::connect(m_layoutCombo, &QComboBox::currentIndexChanged, this, &GuiLayoutPageWidget::onChangeLayout);
+    QObject::connect(m_layoutProvider, &LayoutProvider::currentLayoutChanged, this, &GuiLayoutPageWidget::load);
 
     QObject::connect(newLayout, &QPushButton::clicked, this, &GuiLayoutPageWidget::onNewLayout);
     QObject::connect(m_deleteLayout, &QPushButton::clicked, this, &GuiLayoutPageWidget::onDeleteLayout);

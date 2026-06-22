@@ -126,6 +126,8 @@ set(SOURCES
     dialog/configdialog.cpp
     dialog/exportlayoutdialog.cpp
     dialog/exportlayoutdialog.h
+    dialog/importlayoutdialog.cpp
+    dialog/importlayoutdialog.h
     dialog/propertiesdialog.cpp
     dialog/saveplaylistsdialog.cpp
     dialog/saveplaylistsdialog.h

@@ -33,6 +33,7 @@ using namespace Qt::StringLiterals;
 constexpr auto OptionsKey         = "Options"_L1;
 constexpr auto ApplyThemeKey      = "ApplyTheme"_L1;
 constexpr auto ApplyWindowSizeKey = "ApplyWindowSize"_L1;
+constexpr auto ThemeOptionsKey    = "ThemeOptions"_L1;
 
 namespace {
 struct ReadResult
@@ -178,6 +179,41 @@ bool FyLayout::appliesTheme() const
 void FyLayout::setAppliesTheme(bool enabled)
 {
     setOptionValue(m_json, ApplyThemeKey, enabled);
+    if(!enabled) {
+        auto options = m_json.value(OptionsKey).toObject();
+        options.remove(ThemeOptionsKey);
+        m_json[OptionsKey] = options;
+    }
+}
+
+FyLayout::ThemeOptions FyLayout::themeOptions() const
+{
+    if(!appliesTheme()) {
+        return {};
+    }
+
+    const auto options = m_json.value(OptionsKey).toObject();
+    if(options.contains(ThemeOptionsKey)) {
+        return ThemeOptions::fromInt(options.value(ThemeOptionsKey).toInt());
+    }
+
+    const FyTheme theme = loadTheme();
+    if(!theme.isValid()) {
+        return ThemeOptions{All};
+    }
+
+    ThemeOptions inferred;
+    inferred.setFlag(SaveColours, !theme.colours.empty());
+    inferred.setFlag(SaveFonts, !theme.fonts.empty());
+    return inferred;
+}
+
+void FyLayout::setThemeOptions(ThemeOptions themeOptions)
+{
+    auto options             = m_json.value(OptionsKey).toObject();
+    options[ThemeOptionsKey] = static_cast<int>(themeOptions.toInt());
+    m_json[OptionsKey]       = options;
+    setAppliesTheme(themeOptions != ThemeOptions{});
 }
 
 void FyLayout::saveTheme(const FyTheme& theme, ThemeOptions options)
@@ -201,7 +237,7 @@ void FyLayout::saveTheme(const FyTheme& theme, ThemeOptions options)
 
     stream << saveTheme;
     m_json["Theme"_L1] = QString::fromUtf8(currTheme.toBase64());
-    setAppliesTheme(true);
+    setThemeOptions(options);
 }
 
 void FyLayout::removeTheme()

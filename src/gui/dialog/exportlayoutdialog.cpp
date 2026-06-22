@@ -136,7 +136,10 @@ void ExportLayoutDialog::accept()
         }
     }
     else if(m_saveColours->isChecked() || m_saveFonts->isChecked()) {
-        layout.setAppliesTheme(true);
+        FyLayout::ThemeOptions themeOptions{};
+        themeOptions.setFlag(FyLayout::SaveColours, m_saveColours->isChecked());
+        themeOptions.setFlag(FyLayout::SaveFonts, m_saveFonts->isChecked());
+        layout.setThemeOptions(themeOptions);
     }
 
     if(QFileInfo(m_pathEdit->text()).isDir() && !m_pathEdit->text().endsWith(QDir::separator())) {
