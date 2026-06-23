@@ -410,11 +410,13 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 
             if(!opt.icon.isNull()) {
                 QRect iconRect = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
-                if(decPos == QStyleOptionViewItem::Right) {
+                if(columnText.empty()) {
+                    iconRect = QStyle::alignedRect(opt.direction, opt.displayAlignment, iconRect.size(), opt.rect);
+                }
+                else if(decPos == QStyleOptionViewItem::Right) {
                     iconRect = textRect.adjusted(totalWidth + textMargin, 0, totalWidth + textMargin, 0);
                 }
-                Gui::drawItemViewIcon(painter, opt, opt.icon, columnText.empty() ? opt.rect : iconRect,
-                                      opt.displayAlignment);
+                Gui::drawItemViewIcon(painter, opt, opt.icon, iconRect, opt.displayAlignment);
             }
         }
     }
