@@ -179,7 +179,9 @@ void LyricsView::paintEvent(QPaintEvent* event)
     }
 
     if(m_edgeFadeEnabled) {
-        QImage content{viewport()->size(), QImage::Format_ARGB32_Premultiplied};
+        const qreal dpr = viewport()->devicePixelRatioF();
+        QImage content{viewport()->size() * dpr, QImage::Format_ARGB32_Premultiplied};
+        content.setDevicePixelRatio(dpr);
         content.fill(Qt::transparent);
 
         QPainter contentPainter{&content};
