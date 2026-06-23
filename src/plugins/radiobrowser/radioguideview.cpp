@@ -20,12 +20,17 @@
 #include "radioguideview.h"
 
 #include <gui/iconloader.h>
+#include <gui/widgets/messagebanner.h>
 
 #include <QApplication>
 #include <QPaintEvent>
 #include <QPainter>
 #include <QStyle>
 #include <QStyledItemDelegate>
+
+constexpr auto BannerMargin   = 8;
+constexpr auto BannerPaddingX = 12;
+constexpr auto BannerPaddingY = 8;
 
 namespace {
 class RadioGuideDelegate : public QStyledItemDelegate
@@ -48,6 +53,12 @@ public:
         Fooyin::Gui::drawItemViewIcon(painter, opt, icon, iconRect, opt.decorationAlignment);
     }
 };
+
+QRect textBoundingRect(const QFontMetrics& metrics, const QString& text, int maxWidth)
+{
+    maxWidth = std::max(1, maxWidth);
+    return metrics.boundingRect(QRect{0, 0, maxWidth, 0}, Qt::AlignCenter | Qt::TextWordWrap, text);
+}
 } // namespace
 
 namespace Fooyin::RadioBrowser {
@@ -69,6 +80,33 @@ void RadioGuideView::clearStatusText()
     setStatusText({});
 }
 
+void RadioGuideView::setErrorText(const QString& text)
+{
+    if(text.isEmpty()) {
+        if(m_errorBanner) {
+            m_errorBanner->deleteLater();
+        }
+        return;
+    }
+
+    ensureErrorBanner()->setText(text);
+}
+
+void RadioGuideView::clearErrorText()
+{
+    setErrorText({});
+}
+
+MessageBanner* RadioGuideView::ensureErrorBanner()
+{
+    if(!m_errorBanner) {
+        m_errorBanner = new MessageBanner(viewport());
+        QObject::connect(m_errorBanner, &MessageBanner::closed, m_errorBanner, &QObject::deleteLater);
+    }
+
+    return m_errorBanner;
+}
+
 void RadioGuideView::paintEvent(QPaintEvent* event)
 {
     QTreeView::paintEvent(event);
@@ -78,22 +116,32 @@ void RadioGuideView::paintEvent(QPaintEvent* event)
     }
 
     QPainter painter{viewport()};
-
-    QRect textRect = painter.fontMetrics().boundingRect(m_statusText);
-    textRect.moveCenter(viewport()->rect().center());
-    textRect.adjust(-12, -8, 12, 8);
-
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.setPen(Qt::NoPen);
 
-    QColor background = palette().color(QPalette::Base);
-    background.setAlpha(220);
-    painter.setBrush(background);
+    const QRect viewportRect = viewport()->rect();
 
-    painter.drawRoundedRect(textRect, 4, 4);
+    if(!m_statusText.isEmpty()) {
+        const int maxTextWidth = std::max(120, (viewportRect.width() * 4) / 5);
+        QRect textRect         = textBoundingRect(painter.fontMetrics(), m_statusText, maxTextWidth);
+        textRect.moveCenter(viewportRect.center());
+        textRect.adjust(-BannerPaddingX, -BannerPaddingY, BannerPaddingX, BannerPaddingY);
 
-    painter.setPen(palette().color(QPalette::Text));
-    painter.drawText(textRect, Qt::AlignCenter, m_statusText);
+        painter.setPen(Qt::NoPen);
+
+        QColor background = palette().color(QPalette::Base);
+        background.setAlpha(220);
+        painter.setBrush(background);
+
+        painter.drawRoundedRect(textRect, 4, 4);
+
+        painter.setPen(palette().color(QPalette::Text));
+        painter.drawText(textRect.adjusted(BannerPaddingX, BannerPaddingY, -BannerPaddingX, -BannerPaddingY),
+                         Qt::AlignCenter | Qt::TextWordWrap, m_statusText);
+    }
+
+    if(m_errorBanner) {
+        m_errorBanner->raise();
+    }
 }
 } // namespace Fooyin::RadioBrowser
 

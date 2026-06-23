@@ -206,7 +206,8 @@ RadioGuideWidget::RadioGuideWidget(RadioBrowserController* controller, SettingsM
                      [this](RadioCategoryType type, const QString& error) {
                          if(m_activeCategoryRequest == type) {
                              m_activeCategoryRequest.reset();
-                             m_treeView->setStatusText(error);
+                             m_treeView->clearStatusText();
+                             m_treeView->setErrorText(error);
                              requestNextCategory();
                          }
                      });
@@ -328,6 +329,7 @@ void RadioGuideWidget::reloadGuideConfig(const RadioGuideConfig& config)
 
     setSavedSearches(m_controller->savedSearches());
     initialiseModel();
+    m_treeView->clearErrorText();
 
     if(m_showCountries) {
         requestCategories(RadioCategoryType::Country);
@@ -342,6 +344,7 @@ void RadioGuideWidget::requestCategories(const RadioCategoryType type)
 {
     if(!m_categoryRequests.contains(type)) {
         m_categoryRequests.enqueue(type);
+        m_treeView->clearErrorText();
     }
     requestNextCategory();
 }

@@ -19,9 +19,13 @@
 
 #pragma once
 
+#include <QPointer>
 #include <QTreeView>
 
-namespace Fooyin::RadioBrowser {
+namespace Fooyin {
+class MessageBanner;
+
+namespace RadioBrowser {
 class RadioGuideView : public QTreeView
 {
     Q_OBJECT
@@ -31,11 +35,17 @@ public:
 
     void setStatusText(const QString& text);
     void clearStatusText();
+    void setErrorText(const QString& text);
+    void clearErrorText();
 
 protected:
     void paintEvent(QPaintEvent* event) override;
 
 private:
+    [[nodiscard]] MessageBanner* ensureErrorBanner();
+
     QString m_statusText;
+    QPointer<MessageBanner> m_errorBanner;
 };
-} // namespace Fooyin::RadioBrowser
+} // namespace RadioBrowser
+} // namespace Fooyin
