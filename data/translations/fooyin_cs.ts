@@ -11659,7 +11659,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="50"/>
         <source>Apply icon gaps with right captions</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít mezery ikony pro pravé popisky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="52"/>
@@ -11742,7 +11742,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="97"/>
         <source>Apply the configured horizontal and vertical gaps when captions appear to the right of station icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít nastavené horizontální a vertikální mezery pro popisky napravo od ikon stanic</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="99"/>
