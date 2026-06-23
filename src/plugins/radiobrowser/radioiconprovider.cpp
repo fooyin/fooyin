@@ -52,7 +52,7 @@ QByteArray readReplyData(QNetworkReply* reply, const qsizetype maxBytes)
        || reply->bytesAvailable() <= 0) {
         return {};
     }
-    return reply->read(std::min(maxBytes, reply->bytesAvailable()));
+    return reply->read(std::min(static_cast<qint64>(maxBytes), reply->bytesAvailable()));
 }
 
 QSize calculateScaledSize(const QSize& originalSize, int maxSize)
