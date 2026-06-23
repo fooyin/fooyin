@@ -12361,63 +12361,63 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="110"/>
         <source>Startup selection</source>
-        <translation type="unfinished">Выбор при запуске</translation>
+        <translation>Выбор при запуске</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="118"/>
         <source>Tags</source>
-        <translation type="unfinished">Теги</translation>
+        <translation>Теги</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="248"/>
         <source>Restore previous selection</source>
-        <translation type="unfinished">Восстанавливать предыдущий выбор</translation>
+        <translation>Восстанавливать предыдущий выбор</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="249"/>
         <source>Popular</source>
-        <translation type="unfinished">Популярное</translation>
+        <translation>Популярное</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="250"/>
         <source>Trending</source>
-        <translation type="unfinished">В тренде</translation>
+        <translation>Набирает популярность</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="251"/>
         <source>Now Listening</source>
-        <translation type="unfinished">Слушают сейчас</translation>
+        <translation>Слушают сейчас</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="252"/>
         <source>Newest</source>
-        <translation type="unfinished">Новые</translation>
+        <translation>Новые</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="253"/>
         <source>Random</source>
-        <translation type="unfinished">Случайные</translation>
+        <translation>Случайные</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="254"/>
         <source>My Stations</source>
-        <translation type="unfinished">Мои станции</translation>
+        <translation>Мои станции</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="255"/>
         <source>Latest Search</source>
-        <translation type="unfinished">Последний поиск</translation>
+        <translation>Последний поиск</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="275"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="286"/>
         <source>New Section</source>
-        <translation type="unfinished">Новый раздел</translation>
+        <translation>Новый раздел</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="290"/>
         <source>New Preset</source>
-        <translation type="unfinished">Новая предустановка</translation>
+        <translation>Новая предустановка</translation>
     </message>
 </context>
 <context>
@@ -12425,12 +12425,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigmodel.cpp" line="91"/>
         <source>Name</source>
-        <translation type="unfinished">Имя</translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigmodel.cpp" line="91"/>
         <source>Tag</source>
-        <translation type="unfinished">Тег</translation>
+        <translation>Тег</translation>
     </message>
 </context>
 <context>
@@ -12438,266 +12438,266 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="85"/>
         <source>Genres</source>
-        <translation type="unfinished">Жанры</translation>
+        <translation>Жанры</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="86"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="141"/>
         <source>Blues</source>
-        <translation type="unfinished">Блюз</translation>
+        <translation>Блюз</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="87"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="142"/>
         <source>Classical</source>
-        <translation type="unfinished">Классика</translation>
+        <translation>Классика</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="88"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="143"/>
         <source>Country</source>
-        <translation type="unfinished">Кантри</translation>
+        <translation>Кантри</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="89"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="144"/>
         <source>Dance</source>
-        <translation type="unfinished">Танцевальная</translation>
+        <translation>Танцевальная</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="90"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="145"/>
         <source>Disco</source>
-        <translation type="unfinished">Диско</translation>
+        <translation>Диско</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="91"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="146"/>
         <source>Easy</source>
-        <translation type="unfinished">Лёгкая</translation>
+        <translation>Лёгкая</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="92"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="147"/>
         <source>Folk</source>
-        <translation type="unfinished">Фолк</translation>
+        <translation>Фолк</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="93"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="148"/>
         <source>Hits</source>
-        <translation type="unfinished">Хиты</translation>
+        <translation>Хиты</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="94"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="149"/>
         <source>Jazz</source>
-        <translation type="unfinished">Джаз</translation>
+        <translation>Джаз</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="95"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="150"/>
         <source>Oldies</source>
-        <translation type="unfinished">Ретро</translation>
+        <translation>Ретро</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="96"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="151"/>
         <source>Pop</source>
-        <translation type="unfinished">Поп</translation>
+        <translation>Поп</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="97"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="152"/>
         <source>Rap</source>
-        <translation type="unfinished">Рэп</translation>
+        <translation>Рэп</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="98"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="153"/>
         <source>Rock</source>
-        <translation type="unfinished">Рок</translation>
+        <translation>Рок</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="99"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="154"/>
         <source>Soul</source>
-        <translation type="unfinished">Соул</translation>
+        <translation>Соул</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="101"/>
         <source>More Genres</source>
-        <translation type="unfinished">Больше жанров</translation>
+        <translation>Больше жанров</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="102"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="155"/>
         <source>Alternative</source>
-        <translation type="unfinished">Альтернатива</translation>
+        <translation>Альтернатива</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="103"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="156"/>
         <source>Ambient</source>
-        <translation type="unfinished">Эмбиент</translation>
+        <translation>Эмбиент</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="104"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="157"/>
         <source>Club</source>
-        <translation type="unfinished">Клубная</translation>
+        <translation>Клубная</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="105"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="158"/>
         <source>Electronic</source>
-        <translation type="unfinished">Электронная</translation>
+        <translation>Электронная</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="106"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="159"/>
         <source>Funk</source>
-        <translation type="unfinished">Фанк</translation>
+        <translation>Фанк</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="107"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="160"/>
         <source>Hip Hop</source>
-        <translation type="unfinished">Хип-хоп</translation>
+        <translation>Хип-хоп</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="108"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="161"/>
         <source>House</source>
-        <translation type="unfinished">Хаус</translation>
+        <translation>Хаус</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="109"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="162"/>
         <source>Indie</source>
-        <translation type="unfinished">Инди</translation>
+        <translation>Инди</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="110"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="163"/>
         <source>Latino</source>
-        <translation type="unfinished">Латино</translation>
+        <translation>Латино</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="111"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="164"/>
         <source>Metal</source>
-        <translation type="unfinished">Метал</translation>
+        <translation>Метал</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="112"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="165"/>
         <source>Punk</source>
-        <translation type="unfinished">Панк</translation>
+        <translation>Панк</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="113"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="166"/>
         <source>Reggae</source>
-        <translation type="unfinished">Регги</translation>
+        <translation>Регги</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="114"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="167"/>
         <source>Salsa</source>
-        <translation type="unfinished">Сальса</translation>
+        <translation>Сальса</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="115"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="168"/>
         <source>World Music</source>
-        <translation type="unfinished">Мировая музыка</translation>
+        <translation>Мировая музыка</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="117"/>
         <source>Eras</source>
-        <translation type="unfinished">Эпохи</translation>
+        <translation>Эпохи</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="118"/>
         <source>40s</source>
-        <translation type="unfinished">40-е</translation>
+        <translation>40-е</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="119"/>
         <source>50s</source>
-        <translation type="unfinished">50-е</translation>
+        <translation>50-е</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="120"/>
         <source>60s</source>
-        <translation type="unfinished">60-е</translation>
+        <translation>60-е</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="121"/>
         <source>70s</source>
-        <translation type="unfinished">70-е</translation>
+        <translation>70-е</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="122"/>
         <source>80s</source>
-        <translation type="unfinished">80-е</translation>
+        <translation>80-е</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="123"/>
         <source>90s</source>
-        <translation type="unfinished">90-е</translation>
+        <translation>90-е</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="124"/>
         <source>2000s</source>
-        <translation type="unfinished">2000-е</translation>
+        <translation>2000-е</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="125"/>
         <source>2010s</source>
-        <translation type="unfinished">2010-е</translation>
+        <translation>2010-е</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="127"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="135"/>
         <source>Talk</source>
-        <translation type="unfinished">Разговорная</translation>
+        <translation>Разговорная</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="128"/>
         <source>College Radio</source>
-        <translation type="unfinished">Студенческое радио</translation>
+        <translation>Студенческое радио</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="129"/>
         <source>Community Radio</source>
-        <translation type="unfinished">Местное радио</translation>
+        <translation>Местное радио</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="130"/>
         <source>Culture</source>
-        <translation type="unfinished">Культура</translation>
+        <translation>Культура</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="131"/>
         <source>News</source>
-        <translation type="unfinished">Новости</translation>
+        <translation>Новости</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="132"/>
         <source>Public Radio</source>
-        <translation type="unfinished">Общественное радио</translation>
+        <translation>Общественное радио</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="133"/>
         <source>Religion</source>
-        <translation type="unfinished">Религия</translation>
+        <translation>Религия</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="134"/>
         <source>Sport</source>
-        <translation type="unfinished">Спорт</translation>
+        <translation>Спорт</translation>
     </message>
 </context>
 <context>
@@ -12798,12 +12798,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="108"/>
         <source>Selections</source>
-        <translation type="unfinished">Подборки</translation>
+        <translation>Подборки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="108"/>
         <source>Library</source>
-        <translation type="unfinished">Библиотека</translation>
+        <translation>Фонотека</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="232"/>
@@ -12823,7 +12823,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="578"/>
         <source>Rename saved search</source>
-        <translation type="unfinished">Переименовать сохранённый поиск</translation>
+        <translation>Переименовать сохранённый поиск</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="579"/>
@@ -12917,7 +12917,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="403"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="944"/>
         <source>Any language</source>
-        <translation type="unfinished">Любой язык</translation>
+        <translation>Любой язык</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="141"/>
@@ -12931,7 +12931,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="621"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="624"/>
         <source>Any tag</source>
-        <translation type="unfinished">Любой тег</translation>
+        <translation>Любой тег</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="148"/>
@@ -12971,7 +12971,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="184"/>
         <source>Language</source>
-        <translation type="unfinished">Язык</translation>
+        <translation>Язык</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="185"/>
@@ -12981,7 +12981,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="186"/>
         <source>Tag</source>
-        <translation type="unfinished">Тег</translation>
+        <translation>Тег</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="187"/>
@@ -13018,42 +13018,42 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="396"/>
         <source>Countries unavailable - select to retry</source>
-        <translation type="unfinished">Страны недоступны — нажмите для повторной попытки</translation>
+        <translation>Страны недоступны — нажмите для повторной попытки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="397"/>
         <source>Countries unavailable: %1 - select to retry</source>
-        <translation type="unfinished">Страны недоступны: %1 — нажмите для повторной попытки</translation>
+        <translation>Страны недоступны: %1 — нажмите для повторной попытки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="404"/>
         <source>Languages unavailable - select to retry</source>
-        <translation type="unfinished">Языки недоступны — нажмите для повторной попытки</translation>
+        <translation>Языки недоступны — нажмите для повторной попытки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="405"/>
         <source>Languages unavailable: %1 - select to retry</source>
-        <translation type="unfinished">Языки недоступны: %1 — нажмите для повторной попытки</translation>
+        <translation>Языки недоступны: %1 — нажмите для повторной попытки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="412"/>
         <source>Tags unavailable - select to retry</source>
-        <translation type="unfinished">Теги недоступны — нажмите для повторной попытки</translation>
+        <translation>Теги недоступны — нажмите для повторной попытки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="413"/>
         <source>Tags unavailable: %1 - select to retry</source>
-        <translation type="unfinished">Теги недоступны: %1 — нажмите для повторной попытки</translation>
+        <translation>Теги недоступны: %1 — нажмите для повторной попытки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="420"/>
         <source>Codecs unavailable - select to retry</source>
-        <translation type="unfinished">Кодеки недоступны — нажмите для повторной попытки</translation>
+        <translation>Кодеки недоступны — нажмите для повторной попытки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="421"/>
         <source>Codecs unavailable: %1 - select to retry</source>
-        <translation type="unfinished">Кодеки недоступны: %1 — нажмите для повторной попытки</translation>
+        <translation>Кодеки недоступны: %1 — нажмите для повторной попытки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="826"/>
@@ -13293,7 +13293,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationview.cpp" line="37"/>
         <source>Retry</source>
-        <translation type="unfinished">Повторить</translation>
+        <translation>Повторить</translation>
     </message>
 </context>
 <context>
@@ -14254,7 +14254,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="88"/>
         <source>Search Matching</source>
-        <translation type="unfinished">Сопоставление при поиске</translation>
+        <translation>Сопоставление при поиске</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="91"/>
@@ -14284,37 +14284,37 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="100"/>
         <source>Match beginnings of words</source>
-        <translation type="unfinished">Совпадение с начала слов</translation>
+        <translation>Совпадение с начала слов</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="101"/>
         <source>Match anywhere</source>
-        <translation type="unfinished">Совпадение в любом месте</translation>
+        <translation>Совпадение в любом месте</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="104"/>
         <source>Search mode</source>
-        <translation type="unfinished">Режим поиска</translation>
+        <translation>Режим поиска</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="106"/>
         <source>Search script</source>
-        <translation type="unfinished">Скрипт поиска</translation>
+        <translation>Скрипт поиска</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="109"/>
         <source>These settings are used for plain text searches, not query expressions.</source>
-        <translation type="unfinished">Эти настройки используются для поиска по простому тексту, а не по поисковым выражениям.</translation>
+        <translation>Эти настройки используются для поиска по простому тексту, а не по поисковым выражениям.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="116"/>
         <source>Only applies when autosearch is disabled.</source>
-        <translation type="unfinished">Применяется только при отключённом автоматическом поиске.</translation>
+        <translation>Применяется только при отключённом автоматическом поиске.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="125"/>
         <source>Results Playlist</source>
-        <translation type="unfinished">Плейлист результатов</translation>
+        <translation>Плейлист результатов</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="129"/>
@@ -14463,37 +14463,37 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldregistry.cpp" line="44"/>
         <source>Artist</source>
-        <translation type="unfinished">Исполнитель</translation>
+        <translation>Артист</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldregistry.cpp" line="45"/>
         <source>Title</source>
-        <translation type="unfinished">Название</translation>
+        <translation>Название</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldregistry.cpp" line="46"/>
         <source>Album</source>
-        <translation type="unfinished">Альбом</translation>
+        <translation>Альбом</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldregistry.cpp" line="47"/>
         <source>Date</source>
-        <translation type="unfinished">Дата</translation>
+        <translation>Дата</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldregistry.cpp" line="48"/>
         <source>Genre</source>
-        <translation type="unfinished">Жанр</translation>
+        <translation>Жанр</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldregistry.cpp" line="49"/>
         <source>Album Artist</source>
-        <translation type="unfinished">Исполнитель альбома</translation>
+        <translation>Артист альбома</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldregistry.cpp" line="50"/>
         <source>Track Number</source>
-        <translation type="unfinished">Номер трека</translation>
+        <translation>Номер трека</translation>
     </message>
 </context>
 <context>
@@ -14501,22 +14501,22 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldsmodel.cpp" line="144"/>
         <source>Index</source>
-        <translation type="unfinished">Индекс</translation>
+        <translation>Индекс</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldsmodel.cpp" line="146"/>
         <source>Enabled</source>
-        <translation type="unfinished">Включено</translation>
+        <translation>Включено</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldsmodel.cpp" line="148"/>
         <source>Name</source>
-        <translation type="unfinished">Имя</translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldsmodel.cpp" line="150"/>
         <source>Field</source>
-        <translation type="unfinished">Поле</translation>
+        <translation>Поле</translation>
     </message>
 </context>
 <context>
@@ -14525,12 +14525,12 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/selectioninfo/selectioninfosettingspage.cpp" line="126"/>
         <location filename="../../src/gui/selectioninfo/selectioninfosettingspage.cpp" line="127"/>
         <source>Selection Info</source>
-        <translation type="unfinished">Информация о выделении</translation>
+        <translation>Информация о выделении</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfosettingspage.cpp" line="127"/>
         <source>Interface</source>
-        <translation type="unfinished">Интерфейс</translation>
+        <translation>Интерфейс</translation>
     </message>
 </context>
 <context>
@@ -14538,7 +14538,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfosettingspage.cpp" line="76"/>
         <source>Enabled fields use the configured name and order. Other tags are shown as &lt;TAG&gt; when extended metadata is enabled.</source>
-        <translation type="unfinished">Включённые поля используют настроенное имя и порядок. Другие теги отображаются как &lt;TAG&gt;, когда включены расширенные метаданные.</translation>
+        <translation>Включённые поля используют настроенное имя и порядок. Другие теги отображаются как &lt;TAG&gt;, когда включены расширенные метаданные.</translation>
     </message>
 </context>
 <context>
@@ -14734,7 +14734,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/platforms/inhibitordbus.cpp" line="94"/>
         <source>fooyin is running</source>
-        <translation type="unfinished">fooyin запущен</translation>
+        <translation>fooyin запущен</translation>
     </message>
 </context>
 <context>
@@ -14742,7 +14742,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/platforms/inhibitormacos.cpp" line="36"/>
         <source>fooyin is running</source>
-        <translation type="unfinished">fooyin запущен</translation>
+        <translation>fooyin запущен</translation>
     </message>
 </context>
 <context>
@@ -14750,17 +14750,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="33"/>
         <source>Inhibit system sleep</source>
-        <translation type="unfinished">Блокировать переход системы в режим сна</translation>
+        <translation>Блокировать переход системы в режим сна</translation>
     </message>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="34"/>
         <source>Inhibit system sleep during playback only</source>
-        <translation type="unfinished">Блокировать переход системы в режим сна только во время воспроизведения</translation>
+        <translation>Блокировать переход системы в режим сна только во время воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="38"/>
         <source>Sleep Inhibitor Settings</source>
-        <translation type="unfinished">Настройки блокировки сна</translation>
+        <translation>Настройки блокировки сна</translation>
     </message>
 </context>
 <context>
@@ -14770,7 +14770,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/sortactionhandler.cpp" line="76"/>
         <location filename="../../src/gui/sortactionhandler.cpp" line="95"/>
         <source>Edit</source>
-        <translation type="unfinished">Правка</translation>
+        <translation>Правка</translation>
     </message>
     <message>
         <location filename="../../src/gui/sortactionhandler.cpp" line="66"/>
@@ -14778,23 +14778,23 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/sortactionhandler.cpp" line="95"/>
         <location filename="../../src/gui/sortactionhandler.cpp" line="110"/>
         <source>Sort</source>
-        <translation type="unfinished">Сортировать</translation>
+        <translation>Сортировать</translation>
     </message>
     <message>
         <location filename="../../src/gui/sortactionhandler.cpp" line="89"/>
         <source>Sort by %1</source>
         <extracomment>%1 refers to the name of a sorting preset e.g. &quot;Sort by Album&quot;</extracomment>
-        <translation type="unfinished">Сортировать по %1</translation>
+        <translation>Сортировать по %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/sortactionhandler.cpp" line="140"/>
         <source>More…</source>
-        <translation type="unfinished">Ещё…</translation>
+        <translation>Ещё…</translation>
     </message>
     <message>
         <location filename="../../src/gui/sortactionhandler.cpp" line="141"/>
         <source>Open the sorting presets settings</source>
-        <translation type="unfinished">Открыть настройки предустановленных наборов сортировки</translation>
+        <translation>Открыть настройки предустановленных наборов сортировки</translation>
     </message>
 </context>
 <context>
@@ -17364,25 +17364,25 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="504"/>
         <source>Prebuffer for remote streams</source>
-        <translation type="unfinished">Предварительная буферизация для удалённых потоков</translation>
+        <translation>Предварительная буферизация для удалённых потоков</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="505"/>
         <source>Decoded audio buffered before starting or resuming remote playback.
 Set to 0 to choose automatically from the remote buffer length.</source>
-        <translation type="unfinished">Декодированное аудио, буферизируемое перед запуском или возобновлением удалённого воспроизведения.
+        <translation>Декодированное аудио, буферизируемое перед запуском или возобновлением удалённого воспроизведения.
 Установите 0, чтобы автоматически выбрать из длины удалённого буфера.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="511"/>
         <location filename="../../src/gui/widgets.cpp" line="552"/>
         <source>Auto</source>
-        <translation type="unfinished">Авто</translation>
+        <translation>Авто</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="516"/>
         <source>Open timeout for remote streams</source>
-        <translation type="unfinished">Тайм-аут открытия для удалённых потоков</translation>
+        <translation>Тайм-аут открытия для удалённых потоков</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="526"/>
@@ -17469,89 +17469,89 @@ Set to 0 to choose automatically from the remote buffer length.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="449"/>
         <source>Number of widget levels shown in the layout editing context menu</source>
-        <translation type="unfinished">Количество уровней виджетов, отображаемых в контекстном меню редактирования макета</translation>
+        <translation>Количество уровней виджетов, отображаемых в контекстном меню редактирования макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="457"/>
         <source>Give seekbars keyboard focus after clicking them</source>
-        <translation type="unfinished">Давать клавиатурный фокус полосам прокрутки после щелчка по ним</translation>
+        <translation>Давать клавиатурный фокус полосам прокрутки после щелчка по ним</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="462"/>
         <source>Selection</source>
-        <translation type="unfinished">Выделение</translation>
+        <translation>Выделение</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="463"/>
         <source>Drag only after selecting</source>
-        <translation type="unfinished">Перетаскивать только после выделения</translation>
+        <translation>Перетаскивать только после выделения</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="464"/>
         <source>Require a row to be selected before it can be dragged from item views</source>
-        <translation type="unfinished">Требовать выделения строки перед её перетаскиванием из представлений элементов</translation>
+        <translation>Требовать выделения строки перед её перетаскиванием из представлений элементов</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="482"/>
         <source>Maximum network data buffered for remote streams.
 Changes apply to newly opened streams.</source>
-        <translation type="unfinished">Максимальный объём сетевых данных, буферизируемых для удалённых потоков.
+        <translation>Максимальный объём сетевых данных, буферизируемых для удалённых потоков.
 Изменения применяются к вновь открываемым потокам.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="494"/>
         <source>Maximum decoded audio buffered for remote streams</source>
-        <translation type="unfinished">Максимальный объём декодированного аудио, буферизируемого для удалённых потоков</translation>
+        <translation>Максимальный объём декодированного аудио, буферизируемого для удалённых потоков</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="517"/>
         <source>Maximum time spent opening and probing remote streams</source>
-        <translation type="unfinished">Максимальное время, затрачиваемое на открытие и зондирование удалённых потоков</translation>
+        <translation>Максимальное время, затрачиваемое на открытие и зондирование удалённых потоков</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="543"/>
         <source>Preserve file access and modification timestamps when updating tags</source>
-        <translation type="unfinished">Сохранять временные метки доступа и изменения файлов при обновлении тегов</translation>
+        <translation>Сохранять временные метки доступа и изменения файлов при обновлении тегов</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="549"/>
         <source>General</source>
-        <translation type="unfinished">Основные</translation>
+        <translation>Основные</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="549"/>
         <source>Text Encoding</source>
-        <translation type="unfinished">Кодировка текста</translation>
+        <translation>Кодировка текста</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="550"/>
         <source>Preferred fallback encoding</source>
-        <translation type="unfinished">Предпочтительная резервная кодировка</translation>
+        <translation>Предпочтительная резервная кодировка</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="551"/>
         <source>Encoding preferred when the best automatic match is Latin-compatible single-byte text</source>
-        <translation type="unfinished">Кодировка, предпочитаемая, когда лучшее автоматическое совпадение — латиносовместимый однобайтовый текст</translation>
+        <translation>Кодировка, предпочитаемая, когда лучшее автоматическое совпадение — латиносовместимый однобайтовый текст</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="568"/>
         <source>Enabled all extensions supported by the FFmpeg input</source>
-        <translation type="unfinished">Включать все расширения, поддерживаемые FFmpeg-входом</translation>
+        <translation>Включать все расширения, поддерживаемые FFmpeg-входом</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="585"/>
         <source>Probe all readers for extensions</source>
-        <translation type="unfinished">Зондировать все программы чтения для расширений</translation>
+        <translation>Зондировать все программы чтения для расширений</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="586"/>
         <source>Semicolon-separated extensions where all readers are tried and the reader with the most subsongs or chapters is used.</source>
-        <translation type="unfinished">Расширения, разделённые точкой с запятой, для которых пробуются все программы чтения и используется программа чтения с наибольшим количеством подпесен или глав.</translation>
+        <translation>Расширения, разделённые точкой с запятой, для которых пробуются все программы чтения и используется программа чтения с наибольшим количеством подпесен или глав.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="606"/>
         <source>ReplayGain value written to the Opus header when updating metadata</source>
-        <translation type="unfinished">Значение ReplayGain, записываемое в заголовок Opus при обновлении метаданных</translation>
+        <translation>Значение ReplayGain, записываемое в заголовок Opus при обновлении метаданных</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="659"/>
@@ -18200,42 +18200,42 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1634"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Добавить в текущий плейлист</translation>
+        <translation>Добавить в текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1635"/>
         <source>Add to current playlist and play if stopped</source>
-        <translation type="unfinished">Добавить в текущий плейлист и воспроизвести, если остановлено</translation>
+        <translation>Добавить в текущий плейлист и воспроизвести, если остановлено</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1637"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Добавить в активный плейлист</translation>
+        <translation>Добавить в активный плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1638"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished">Заменить текущий плейлист</translation>
+        <translation>Заменить текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1639"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">Создать новый плейлист</translation>
+        <translation>Создать новый плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1643"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Добавить в очередь воспроизведения</translation>
+        <translation>Добавить в очередь воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1644"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished">Поставить в начало очереди воспроизведения</translation>
+        <translation>Поставить в начало очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1645"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished">Заменить очередь воспроизведения</translation>
+        <translation>Заменить очередь воспроизведения</translation>
     </message>
 </context>
 </TS>
