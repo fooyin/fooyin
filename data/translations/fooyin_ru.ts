@@ -11136,12 +11136,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="100"/>
         <source>Randomise</source>
-        <translation type="unfinished">Перемешать</translation>
+        <translation>Перемешать</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="101"/>
         <source>Reverse</source>
-        <translation type="unfinished">Обратить</translation>
+        <translation>Обратить</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="188"/>
@@ -11171,17 +11171,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="242"/>
         <source>Randomise the playback queue</source>
-        <translation type="unfinished">Перемешать очередь воспроизведения</translation>
+        <translation>Перемешать очередь воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="243"/>
         <source>Reverse the playback queue</source>
-        <translation type="unfinished">Обратить очередь воспроизведения</translation>
+        <translation>Обратить очередь воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="313"/>
         <source>Sort the playback queue using this preset</source>
-        <translation type="unfinished">Сортировать очередь воспроизведения с использованием этого предустановленного набора</translation>
+        <translation>Сортировать очередь воспроизведения с использованием этой предустановки</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="125"/>
@@ -11278,7 +11278,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="54"/>
         <source>Playlist Layout</source>
-        <translation type="unfinished">Макет плейлиста</translation>
+        <translation>Макет плейлиста</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="55"/>
@@ -11293,17 +11293,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="63"/>
         <source>Layout</source>
-        <translation type="unfinished">Макет</translation>
+        <translation>Макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="67"/>
         <source>Colours</source>
-        <translation type="unfinished">Цвета</translation>
+        <translation>Цвета</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="122"/>
         <source>System defaults</source>
-        <translation type="unfinished">Системные настройки по умолчанию</translation>
+        <translation>Системные настройки по умолчанию</translation>
     </message>
 </context>
 <context>
@@ -11639,12 +11639,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="42"/>
         <source>Show saved station icons</source>
-        <translation type="unfinished">Показывать значки сохранённых станций</translation>
+        <translation>Показывать значки сохранённых станций</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="43"/>
         <source>Show station tooltips</source>
-        <translation type="unfinished">Показывать всплывающие подсказки станций</translation>
+        <translation>Показывать всплывающие подсказки станций</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="44"/>
