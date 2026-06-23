@@ -58,6 +58,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/fontbutton.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/gradienteditor.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/lineediteditor.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/messagebanner.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/metadatacompleter.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/multilinedelegate.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/overlaywidget.h
@@ -517,6 +518,7 @@ set(SOURCES
     widgets/logslider.h
     widgets/menuheader.cpp
     widgets/menuheader.h
+    widgets/messagebanner.cpp
     widgets/metadatacompleter.cpp
     widgets/multilinedelegate.cpp
     widgets/overlaywidget.cpp
