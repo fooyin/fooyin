@@ -3109,7 +3109,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="120"/>
         <source>Enter layout editing mode to edit</source>
-        <translation>Gå in i layoutredigeringsläge för att ändra</translation>
+        <translation>Gå in i layoutredigeringsläge för att redigera</translation>
     </message>
 </context>
 <context>
@@ -5730,7 +5730,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="49"/>
         <source>Switch to imported layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Byt till importerad layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="53"/>
