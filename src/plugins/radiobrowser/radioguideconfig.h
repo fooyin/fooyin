@@ -45,7 +45,7 @@ using RadioGuideTagSections = std::vector<RadioGuideTagSection>;
 struct RadioGuideConfig
 {
     RadioGuideTagSections sections;
-    bool showCountries{true};
+    bool showCountries{false};
     QString startupEntryKey;
 };
 
