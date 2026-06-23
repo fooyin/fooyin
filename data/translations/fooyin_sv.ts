@@ -1612,7 +1612,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="302"/>
         <source>Loading artwork…</source>
-        <translation>Laddar konstverk…</translation>
+        <translation>Läser in konstverk…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="306"/>
@@ -4625,7 +4625,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="97"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
-        <translation>Fördröj att öppna fooyin tills alla spår har laddats in</translation>
+        <translation>Fördröj att öppna fooyin tills alla spår har lästs in</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="99"/>
@@ -5584,14 +5584,14 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="109"/>
         <source>Used for the filled portion of %rating_stars% and %rating_stars_padded%</source>
-        <translation>Använt för sen fyllda portionen av %rating_stars% och %rating_stars_padded%</translation>
+        <translation>Används för den fyllda portionen av %rating_stars% och %rating_stars_padded%</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="110"/>
         <source>Used for the half-step portion of %rating_stars% and %rating_stars_padded%.
 If the default half-star does not render correctly with your system font, choose a different symbol here.</source>
         <translation>Används för halvstegsdelen av %rating_stars% och %rating_stars_padded%.
-Om standardhalvstjärnan inte renderas korrekt med ditt systemtypsnitt välj en annan symbol här.</translation>
+Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med ditt systemtypsnitt.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="113"/>
@@ -6032,7 +6032,7 @@ Om standardhalvstjärnan inte renderas korrekt med ditt systemtypsnitt välj en 
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="335"/>
         <source>Track Gain</source>
-        <translation>Spår-förstärkning</translation>
+        <translation>Spårförstärkning</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="340"/>
@@ -7068,7 +7068,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/librarytree/librarytreeview.cpp" line="168"/>
         <source>Loading Library…</source>
-        <translation>Laddar bibliotek…</translation>
+        <translation>Läser in bibliotek…</translation>
     </message>
 </context>
 <context>
@@ -7607,12 +7607,12 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="87"/>
         <source>Autosave after 60 seconds or 1/3 of track duration</source>
-        <translation>Autospara efter 60 sekunder eller ⅓ av spårlängden</translation>
+        <translation>Autospara efter 60 sekunder eller 1/3 av spårlängden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="88"/>
         <source>Save to metadata tag</source>
-        <translation>Spara till metedata-tagg</translation>
+        <translation>Spara till metadata-tagg</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="89"/>
@@ -8605,8 +8605,8 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="176"/>
         <source>Resume decoding below %Ln ms</source>
         <translation>
-            <numerusform>Fortsätt avkodning under %L&#xa0;ms</numerusform>
-            <numerusform>Fortsätt avkodning under %L&#xa0;ms</numerusform>
+            <numerusform>Fortsätt avkodning under %Ln&#xa0;ms</numerusform>
+            <numerusform>Fortsätt avkodning under %Ln&#xa0;ms</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -9520,7 +9520,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="200"/>
         <source>Sort Script</source>
-        <translation>Sortera skript</translation>
+        <translation>Sorteringsskript</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="202"/>
@@ -9821,7 +9821,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="111"/>
         <source>Loading</source>
-        <translation>Laddar</translation>
+        <translation>Inläsning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="119"/>
@@ -9893,7 +9893,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.h" line="126"/>
         <source>Loading playlist…</source>
-        <translation>Laddar spellista…</translation>
+        <translation>Läser in spellista…</translation>
     </message>
 </context>
 <context>
@@ -10658,7 +10658,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1787"/>
         <source>Reverse the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Omvänd den aktuella spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1805"/>
@@ -10678,7 +10678,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1161"/>
         <source>Sort the current playlist using this preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortera den aktuella spellistan med denna förinställning</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1200"/>
@@ -10729,7 +10729,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="135"/>
         <source>Loading playlist…</source>
-        <translation>Laddar spellista…</translation>
+        <translation>Läser in spellista…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="204"/>
@@ -11623,7 +11623,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="43"/>
         <source>Show station tooltips</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa stationsinforutor</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="44"/>
@@ -11650,7 +11650,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="59"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="80"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Inget</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="55"/>
@@ -11741,7 +11741,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="110"/>
         <source>Search</source>
-        <translation type="unfinished">Sök</translation>
+        <translation>Sökning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="118"/>
@@ -12252,7 +12252,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1761"/>
         <source>Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1765"/>
@@ -12862,7 +12862,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="627"/>
         <source>Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="629"/>
@@ -13268,7 +13268,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationview.cpp" line="37"/>
         <source>Retry</source>
-        <translation>Förslk igen</translation>
+        <translation>Försök igen</translation>
     </message>
 </context>
 <context>
@@ -14624,7 +14624,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="94"/>
         <source>Sort incoming tracks by</source>
-        <translation>Sortera inkommande spår i</translation>
+        <translation>Sortera inkommande spår efter</translation>
     </message>
 </context>
 <context>
@@ -15060,7 +15060,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="207"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="472"/>
         <source>Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="248"/>
@@ -15323,12 +15323,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="372"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="377"/>
         <source>Falloff</source>
-        <translation type="unfinished"></translation>
+        <translation>Nedgång</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="394"/>
         <source>Update FPS</source>
-        <translation>Uppdatera FPS</translation>
+        <translation>Uppdateringsfrekvens</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="395"/>
@@ -16528,7 +16528,7 @@ This does not support full scripting.</source>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="83"/>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="96"/>
         <source>Falloff</source>
-        <translation type="unfinished"></translation>
+        <translation>Nedgång</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="137"/>
@@ -17493,17 +17493,17 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="549"/>
         <source>Text Encoding</source>
-        <translation type="unfinished"></translation>
+        <translation>Teckenkod</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="550"/>
         <source>Preferred fallback encoding</source>
-        <translation type="unfinished"></translation>
+        <translation>Föredragen reservtextkod</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="551"/>
         <source>Encoding preferred when the best automatic match is Latin-compatible single-byte text</source>
-        <translation type="unfinished"></translation>
+        <translation>Textkod föredragen när den bästa automatiska matchningen är latinkompatibel en-byte-text</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="568"/>
@@ -18142,7 +18142,7 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="127"/>
         <source>Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="130"/>
