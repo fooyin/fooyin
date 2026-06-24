@@ -281,7 +281,7 @@ struct PlaylistHandlerHarness
 };
 } // namespace
 
-TEST(PlaylistHandlerTest, RecreatedEmptyDefaultDoesNotAccumulateRestoreHistory)
+TEST(PlaylistHandlerTest, RemovingOnlyEmptyDefaultIsNoOp)
 {
     ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_default_recreate_test.ini"_s};
@@ -295,20 +295,20 @@ TEST(PlaylistHandlerTest, RecreatedEmptyDefaultDoesNotAccumulateRestoreHistory)
 
     harness.handler.removePlaylist(originalId);
 
-    auto* recreatedDefault = harness.handler.playlistByName(u"Default"_s);
-    ASSERT_NE(recreatedDefault, nullptr);
-    EXPECT_NE(recreatedDefault, originalDefault);
-    EXPECT_NE(recreatedDefault->id(), originalId);
+    auto* defaultAfterRemove = harness.handler.playlistByName(u"Default"_s);
+    ASSERT_NE(defaultAfterRemove, nullptr);
+    EXPECT_EQ(defaultAfterRemove, originalDefault);
+    EXPECT_EQ(defaultAfterRemove->id(), originalId);
 
     EXPECT_TRUE(harness.handler.removedPlaylists().empty());
     EXPECT_TRUE(harness.handler.pendingRemovedPlaylists().empty());
 
-    const UId recreatedId = recreatedDefault->id();
-    harness.handler.removePlaylist(recreatedId);
+    harness.handler.removePlaylist(originalId);
 
-    auto* secondRecreatedDefault = harness.handler.playlistByName(u"Default"_s);
-    ASSERT_NE(secondRecreatedDefault, nullptr);
-    EXPECT_NE(secondRecreatedDefault->id(), recreatedId);
+    auto* defaultAfterSecondRemove = harness.handler.playlistByName(u"Default"_s);
+    ASSERT_NE(defaultAfterSecondRemove, nullptr);
+    EXPECT_EQ(defaultAfterSecondRemove, originalDefault);
+    EXPECT_EQ(defaultAfterSecondRemove->id(), originalId);
     EXPECT_TRUE(harness.handler.removedPlaylists().empty());
     EXPECT_TRUE(harness.handler.pendingRemovedPlaylists().empty());
 }
