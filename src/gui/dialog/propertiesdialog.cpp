@@ -48,6 +48,7 @@
 
 #include <algorithm>
 #include <ranges>
+#include <unordered_set>
 #include <utility>
 
 using namespace Qt::StringLiterals;
@@ -58,6 +59,23 @@ constexpr auto BaseWidthKey            = "PropertiesDialog/BaseWidth";
 constexpr auto PropertiesDialogContext = "Fooyin.Context.PropertiesDialog";
 
 namespace {
+Fooyin::TrackList filterDuplicateTracks(const Fooyin::TrackList& tracks)
+{
+    std::unordered_set<QString> seenTracks;
+    seenTracks.reserve(tracks.size());
+
+    Fooyin::TrackList filteredTracks;
+    filteredTracks.reserve(tracks.size());
+
+    for(const auto& track : tracks) {
+        if(seenTracks.emplace(track.uniqueFilepath()).second) {
+            filteredTracks.push_back(track);
+        }
+    }
+
+    return filteredTracks;
+}
+
 bool metadataEqual(const Fooyin::Track& lhs, const Fooyin::Track& rhs)
 {
     return lhs.metadata() == rhs.metadata() && lhs.serialiseExtraTags() == rhs.serialiseExtraTags()
@@ -78,8 +96,9 @@ bool editorEqual(const Fooyin::Track& lhs, const Fooyin::Track& rhs)
 namespace Fooyin {
 void PropertiesDialogSession::reset(const TrackList& tracks)
 {
-    m_originalTracks = tracks;
-    m_workingTracks  = tracks;
+    const auto workingTracks = filterDuplicateTracks(tracks);
+    m_originalTracks         = workingTracks;
+    m_workingTracks          = workingTracks;
     m_activeTrackIndexes.clear();
 }
 
