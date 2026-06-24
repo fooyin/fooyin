@@ -686,17 +686,12 @@ QueueTracks DirBrowser::loadQueueTracks(const TrackList& tracks) const
     return queueTracks;
 }
 
-QList<QUrl> DirBrowser::selectedFiles() const
+QList<QUrl> DirBrowser::filesFromPaths(const QStringList& paths) const
 {
     QList<QUrl> files;
 
-    const QModelIndexList selected = m_dirTree->selectionModel()->selectedRows();
-    for(const QModelIndex& index : selected) {
-        if(!index.isValid()) {
-            continue;
-        }
-
-        const QFileInfo filePath{index.data(QFileSystemModel::FilePathRole).toString()};
+    for(const QString& path : paths) {
+        const QFileInfo filePath{path};
         if(filePath.isDir()) {
             files.append(Utils::File::getUrlsInDirRecursive(filePath.absoluteFilePath(), m_supportedExtensions));
         }
@@ -708,14 +703,30 @@ QList<QUrl> DirBrowser::selectedFiles() const
     return files;
 }
 
+QStringList DirBrowser::selectedFilePaths() const
+{
+    QStringList paths;
+
+    const QModelIndexList selected = m_dirTree->selectionModel()->selectedRows();
+    for(const QModelIndex& index : selected) {
+        if(!index.isValid()) {
+            continue;
+        }
+
+        paths.append(index.data(QFileSystemModel::FilePathRole).toString());
+    }
+
+    return paths;
+}
+
 void DirBrowser::addPlaylistMenu(QMenu* menu) const
 {
     if(!menu) {
         return;
     }
 
-    const QList<QUrl> files = selectedFiles();
-    if(files.empty()) {
+    const QStringList selectedPaths = selectedFilePaths();
+    if(selectedPaths.empty()) {
         return;
     }
 
@@ -731,7 +742,12 @@ void DirBrowser::addPlaylistMenu(QMenu* menu) const
         }
 
         auto* action = playlistMenu->addAction(playlist->name());
-        QObject::connect(action, &QAction::triggered, this, [this, playlistId = playlist->id(), files]() {
+        QObject::connect(action, &QAction::triggered, this, [this, playlistId = playlist->id(), selectedPaths]() {
+            const QList<QUrl> files = filesFromPaths(selectedPaths);
+            if(files.empty()) {
+                return;
+            }
+
             m_playlistInteractor->filesToPlaylist(files, playlistId);
         });
     }

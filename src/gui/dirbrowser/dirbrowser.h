@@ -26,6 +26,7 @@
 #include <QDir>
 #include <QList>
 #include <QPointer>
+#include <QStringList>
 #include <QUndoStack>
 
 class QAction;
@@ -117,7 +118,8 @@ private:
     void handleModelUpdated() const;
 
     [[nodiscard]] QueueTracks loadQueueTracks(const TrackList& tracks) const;
-    [[nodiscard]] QList<QUrl> selectedFiles() const;
+    [[nodiscard]] QList<QUrl> filesFromPaths(const QStringList& paths) const;
+    [[nodiscard]] QStringList selectedFilePaths() const;
 
     void handleAction(TrackAction action, bool onlySelection);
     void handlePlayAction(const QList<QUrl>& files, const QString& startingFile);
