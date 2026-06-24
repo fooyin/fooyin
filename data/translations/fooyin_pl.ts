@@ -124,7 +124,7 @@
     <message>
         <location filename="../../src/gui/widgets.cpp" line="392"/>
         <source>Layout Editing</source>
-        <translation>Edycja układu</translation>
+        <translation>Edytowanie układu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="394"/>
@@ -1276,7 +1276,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="51"/>
         <source>&amp;Edit</source>
-        <translation>&amp;Edytuj</translation>
+        <translation>&amp;Edycja</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="55"/>
@@ -3113,7 +3113,7 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="120"/>
         <source>Enter layout editing mode to edit</source>
-        <translation>Przejdź do trybu edycji układu, aby edytować</translation>
+        <translation>Przejdź do trybu edytowania układu, aby edytować</translation>
     </message>
 </context>
 <context>
@@ -3133,7 +3133,7 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="50"/>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="102"/>
         <source>Edit</source>
-        <translation>Edytuj</translation>
+        <translation>Edycja</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="50"/>
@@ -3288,7 +3288,7 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="646"/>
         <source>Edit</source>
-        <translation>Edytuj</translation>
+        <translation>Edycja</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="648"/>
@@ -5865,7 +5865,7 @@ Jeśli domyślna połowa nie renderuje się poprawnie z fontem systemowym, wybie
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="592"/>
         <source>Edit</source>
-        <translation>Edytuj</translation>
+        <translation>Edycja</translation>
     </message>
 </context>
 <context>
@@ -9459,7 +9459,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="192"/>
         <source>Edit</source>
-        <translation>Edytuj</translation>
+        <translation>Edycja</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="195"/>
@@ -9773,7 +9773,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="70"/>
         <source>Enable inline tag editing</source>
-        <translation>Włącz edycję tagów w linii</translation>
+        <translation>Włącz edytowanie tagów w wierszu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="72"/>
@@ -9803,7 +9803,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="89"/>
         <source>Allow editing writable track tag columns directly from the playlist</source>
-        <translation>Pozwalaj na edycję tagów utworów bezpośrednio z list odtwarzania</translation>
+        <translation>Pozwalaj na edytowanie tagów utworów bezpośrednio na listach odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="94"/>
@@ -9985,7 +9985,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="312"/>
         <source>Edit</source>
-        <translation>Edytuj</translation>
+        <translation>Edycja</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="315"/>
@@ -10115,7 +10115,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="232"/>
         <source>Edit</source>
-        <translation>Edytuj</translation>
+        <translation>Edycja</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="248"/>
@@ -10667,7 +10667,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1780"/>
         <source>Edit</source>
-        <translation>Edytuj</translation>
+        <translation>Edycja</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1784"/>
@@ -13587,7 +13587,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="134"/>
         <source>Edit</source>
-        <translation>Edytuj</translation>
+        <translation>Edycja</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="179"/>
@@ -14063,7 +14063,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="255"/>
         <source>Edit</source>
-        <translation>Edytuj</translation>
+        <translation>Edycja</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="257"/>
@@ -14770,7 +14770,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
         <location filename="../../src/gui/sortactionhandler.cpp" line="76"/>
         <location filename="../../src/gui/sortactionhandler.cpp" line="95"/>
         <source>Edit</source>
-        <translation>Edytuj</translation>
+        <translation>Edycja</translation>
     </message>
     <message>
         <location filename="../../src/gui/sortactionhandler.cpp" line="66"/>
@@ -16106,7 +16106,7 @@ Nie obsługują pełnego skryptowania.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="87"/>
         <source>Editing</source>
-        <translation>Edycja</translation>
+        <translation>Edytowanie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="88"/>
@@ -17296,7 +17296,7 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/gui/widgets.cpp" line="447"/>
         <source>Layout Editing</source>
-        <translation>Edycja układu</translation>
+        <translation>Edytowanie układu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="448"/>
@@ -17469,7 +17469,7 @@ Ustaw wartość 0, aby wybrać automatycznie na podstawie rozmiaru bufora.</tran
     <message>
         <location filename="../../src/gui/widgets.cpp" line="449"/>
         <source>Number of widget levels shown in the layout editing context menu</source>
-        <translation>Liczba poziomów widżetów wyświetlanych w menu kontekstowym edycji układu</translation>
+        <translation>Liczba poziomów widżetów wyświetlanych w menu kontekstowym edytowania układu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="457"/>
