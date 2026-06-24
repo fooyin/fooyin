@@ -387,7 +387,9 @@ private:
     void apply();
     void updateTracks(const TrackList& tracks);
 
+    void buildScopePanel();
     void refreshScopePanel();
+    void updateScopePanelButtons(bool hasMultipleTracks);
     void refreshScopeNavigation();
     void switchScope();
     void applyTrackScope(PropertiesTabWidget* widget) const;
@@ -554,7 +556,7 @@ PropertiesDialogWidget::PropertiesDialogWidget(ActionManager* actionManager, Set
         }
     }
 
-    refreshScopePanel();
+    buildScopePanel();
     updateTabAvailability();
     currentTabChanged(m_tabWidget->currentIndex());
 }
@@ -708,19 +710,12 @@ void PropertiesDialogWidget::updateTabAvailability()
     }
 }
 
-void PropertiesDialogWidget::refreshScopePanel()
+void PropertiesDialogWidget::buildScopePanel()
 {
-    const TrackList& tracks           = m_session.workingTracks();
-    const bool hasMultipleTracks      = canShowScopePanel();
-    const auto* currentWidget         = currentTabWidget();
-    const bool hasPendingScopeChanges = currentWidget && currentWidget->hasPendingScopeChanges();
-    const bool pendingAllTracks       = hasPendingScopeChanges && m_session.isAllTracksScope();
-    const bool pendingAnyTracks       = hasPendingScopeChanges && !m_session.activeTrackIndexes().empty();
+    const TrackList& tracks      = m_session.workingTracks();
+    const bool hasMultipleTracks = canShowScopePanel();
 
-    m_scopeButton->setVisible(hasMultipleTracks);
-    m_scopeButton->setEnabled(hasMultipleTracks);
-    m_previousTrackButton->setVisible(hasMultipleTracks);
-    m_nextTrackButton->setVisible(hasMultipleTracks);
+    updateScopePanelButtons(hasMultipleTracks);
 
     const QSignalBlocker blocker{m_scopeList};
     m_scopeList->clear();
@@ -731,42 +726,67 @@ void PropertiesDialogWidget::refreshScopePanel()
         return;
     }
 
-    m_scopeList->addItem(((m_session.hasChanges() || pendingAllTracks || pendingAnyTracks) ? u"* "_s : QString{})
-                         + scopeLabel(-1));
+    m_scopeList->addItem(scopeLabel(-1));
+    for(size_t i{0}; i < tracks.size(); ++i) {
+        m_scopeList->addItem(scopeLabel(static_cast<int>(i)));
+    }
+
+    m_scopeList->item(0)->setSelected(true);
+    m_scopeList->setCurrentRow(0);
+
+    setScopePanelVisible(m_scopePanelPreferredVisible, false);
+    refreshScopeNavigation();
+}
+
+void PropertiesDialogWidget::refreshScopePanel()
+{
+    const TrackList& tracks      = m_session.workingTracks();
+    const bool hasMultipleTracks = canShowScopePanel();
+
+    updateScopePanelButtons(hasMultipleTracks);
+
+    if(!hasMultipleTracks) {
+        setScopePanelVisible(m_scopePanelPreferredVisible, false);
+        refreshScopeNavigation();
+        return;
+    }
+
+    const auto* currentWidget         = currentTabWidget();
+    const bool hasPendingScopeChanges = currentWidget && currentWidget->hasPendingScopeChanges();
+    const bool pendingAllTracks       = hasPendingScopeChanges && m_session.isAllTracksScope();
+    const bool pendingAnyTracks       = hasPendingScopeChanges && !m_session.activeTrackIndexes().empty();
+
+    if(auto* allTracksItem = m_scopeList->item(0)) {
+        const bool markAllTracksPending = m_session.hasChanges() || pendingAllTracks || pendingAnyTracks;
+        allTracksItem->setText((markAllTracksPending ? u"* "_s : QString{}) + scopeLabel(-1));
+    }
 
     for(size_t i{0}; i < tracks.size(); ++i) {
         const int trackIndex = static_cast<int>(i);
-        const bool pendingTrack
-            = hasPendingScopeChanges && !pendingAllTracks && m_session.activeTrackIndexes().contains(trackIndex);
-        m_scopeList->addItem(((m_session.isTrackDirty(trackIndex) || pendingTrack) ? u"* "_s : QString{})
-                             + scopeLabel(trackIndex));
-    }
-
-    if(m_session.isAllTracksScope()) {
-        if(auto* item = m_scopeList->item(0)) {
-            item->setSelected(true);
-        }
-        m_scopeList->setCurrentRow(0);
-    }
-    else {
-        bool currentSet{false};
-        for(const int index : m_session.activeTrackIndexes()) {
-            if(index + 1 >= m_scopeList->count()) {
-                continue;
+        if(pendingAllTracks) {
+            if(auto* item = m_scopeList->item(trackIndex + 1)) {
+                item->setText(u"* "_s + scopeLabel(trackIndex));
             }
-
-            if(auto* item = m_scopeList->item(index + 1)) {
-                item->setSelected(true);
-                if(!currentSet) {
-                    m_scopeList->setCurrentRow(index + 1);
-                    currentSet = true;
-                }
+        }
+        else {
+            const bool pendingTrack = hasPendingScopeChanges && m_session.activeTrackIndexes().contains(trackIndex);
+            if(auto* item = m_scopeList->item(trackIndex + 1)) {
+                item->setText((pendingTrack || m_session.isTrackDirty(trackIndex) ? u"* "_s : QString{})
+                              + scopeLabel(trackIndex));
             }
         }
     }
 
     setScopePanelVisible(m_scopePanelPreferredVisible, false);
     refreshScopeNavigation();
+}
+
+void PropertiesDialogWidget::updateScopePanelButtons(bool hasMultipleTracks)
+{
+    m_scopeButton->setVisible(hasMultipleTracks);
+    m_scopeButton->setEnabled(hasMultipleTracks);
+    m_previousTrackButton->setVisible(hasMultipleTracks);
+    m_nextTrackButton->setVisible(hasMultipleTracks);
 }
 
 void PropertiesDialogWidget::setScopePanelVisible(bool visible, bool updatePreference)
