@@ -29,6 +29,7 @@
 #include <QIODevice>
 #include <QMainWindow>
 #include <QMenuBar>
+#include <QMouseEvent>
 
 #include <set>
 
@@ -167,7 +168,12 @@ void ActionManagerPrivate::updateFocusWidget(QWidget* widget)
 
     WidgetContextList newContext;
 
-    if(QWidget* focusedWidget = QApplication::focusWidget()) {
+    QWidget* focusedWidget{widget};
+    if(!focusedWidget) {
+        focusedWidget = QApplication::focusWidget();
+    }
+
+    if(focusedWidget) {
         while(focusedWidget) {
             if(auto* widgetContext = m_self->contextObject(focusedWidget)) {
                 if(widgetContext->isEnabled()) {
@@ -280,6 +286,7 @@ void ActionManager::addContextObject(WidgetContext* context)
     }
 
     p->m_contextWidgets.emplace(widget, context);
+    widget->installEventFilter(this);
     QObject::connect(context, &WidgetContext::isEnabledChanged, this,
                      [this] { p->updateFocusWidget(QApplication::focusWidget()); });
     QObject::connect(context, &QObject::destroyed, this, [this, context] { removeContextObject(context); });
@@ -317,6 +324,9 @@ void ActionManager::removeContextObject(WidgetContext* context)
     }
 
     QObject::disconnect(context, &QObject::destroyed, this, nullptr);
+    if(QWidget* widget = context->widget()) {
+        widget->removeEventFilter(this);
+    }
 
     if(!std::erase_if(p->m_contextWidgets, [context](const auto& v) { return v.second == context; })) {
         return;
@@ -437,6 +447,26 @@ ActionContainer* ActionManager::actionContainer(const Id& id) const
         return p->m_idContainerMap.at(id).get();
     }
     return nullptr;
+}
+
+bool ActionManager::eventFilter(QObject* watched, QEvent* event)
+{
+    auto* widget = qobject_cast<QWidget*>(watched);
+    if(widget) {
+        switch(event->type()) {
+            case QEvent::FocusIn:
+            case QEvent::MouseButtonPress:
+            case QEvent::MouseButtonDblClick:
+            case QEvent::ContextMenu:
+            case QEvent::WindowActivate:
+                p->updateFocusWidget(widget);
+                break;
+            default:
+                break;
+        }
+    }
+
+    return QObject::eventFilter(watched, event);
 }
 } // namespace Fooyin
 

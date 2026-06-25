@@ -66,6 +66,8 @@ public:
     [[nodiscard]] CommandList commands() const;
     [[nodiscard]] ActionContainer* actionContainer(const Id& id) const;
 
+    bool eventFilter(QObject* watched, QEvent* event) override;
+
 Q_SIGNALS:
     void commandsChanged();
     void contextChanged(const Fooyin::Context& context);
