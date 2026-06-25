@@ -46,10 +46,6 @@ InhibitorDbus::InhibitorDbus(QObject* parent)
 {
     using namespace DbusConstants;
 
-    const auto invalidateBusInterface = [this] {
-        delete m_busInterface;
-    };
-
     m_busInterface = new QDBusInterface(GnomeSessionManagerService, GnomeSessionManagerPath,
                                         GnomeSessionManagerInterface, QDBusConnection::sessionBus(), this);
     if(m_busInterface->isValid()) {
@@ -58,7 +54,7 @@ InhibitorDbus::InhibitorDbus(QObject* parent)
         return;
     }
 
-    invalidateBusInterface();
+    delete m_busInterface;
     m_busInterface = new QDBusInterface(FreedesktopPowerMgmtService, FreedesktopPowerMgmtPath,
                                         FreedesktopPowerMgmtInterface, QDBusConnection::sessionBus(), this);
     if(m_busInterface->isValid()) {
@@ -67,7 +63,7 @@ InhibitorDbus::InhibitorDbus(QObject* parent)
         return;
     }
 
-    invalidateBusInterface();
+    delete m_busInterface;
     m_busInterface = new QDBusInterface(FreedesktopPortalService, FreedesktopPortalPath, FreedesktopPortalInterface,
                                         QDBusConnection::sessionBus(), this);
     if(m_busInterface->isValid()) {
@@ -76,22 +72,39 @@ InhibitorDbus::InhibitorDbus(QObject* parent)
         return;
     }
 
-    invalidateBusInterface();
+    delete m_busInterface;
+    m_busInterface = nullptr;
     setState(State::Error);
-    qCWarning(SLEEPINHIBITOR) << "Could not get usable DBus interface";
+    qCWarning(SLEEPINHIBITOR) << "Could not get usable D-Bus interface";
 }
 
-void InhibitorDbus::inhibitSleep()
+void InhibitorDbus::inhibitSleep(InhibitionType type)
 {
+    if(m_interface == Interface::FreedesktopPower && type == InhibitionType::DisplayAndSystem) {
+        // TODO: Support org.freedesktop.ScreenSaver
+        qCWarning(SLEEPINHIBITOR) << "Freedesktop power interface does not support display idle inhibition. Switching "
+                                     "to system idle inhibition.";
+        type = InhibitionType::System;
+    }
+
+    m_desiredState = State::Inhibited;
+    m_desiredType  = type;
+
     if(state() == State::Error || state() == State::Inhibited) {
         return;
     }
 
     qCDebug(SLEEPINHIBITOR) << "Inhibiting sleep";
 
+    static const auto Reason               = tr("fooyin is running");
     static constexpr auto BlockLogoutFlag  = 1U;
     static constexpr auto BlockSuspendFlag = 4U;
-    static const auto Reason               = tr("fooyin is running");
+    static constexpr auto BlockIdleFlag    = 8U;
+
+    auto flags = BlockLogoutFlag | BlockSuspendFlag;
+    if(type == InhibitionType::DisplayAndSystem) {
+        flags |= BlockIdleFlag;
+    }
 
     QList<QVariant> args;
     switch(m_interface) {
@@ -99,7 +112,7 @@ void InhibitorDbus::inhibitSleep()
             break;
         case Interface::GnomeSessionManager: {
             static constexpr auto XWindowId = 0U;
-            args = {"org.fooyin.fooyin"_L1, XWindowId, Reason, BlockLogoutFlag | BlockSuspendFlag};
+            args                            = {"org.fooyin.fooyin"_L1, XWindowId, Reason, flags};
             break;
         }
         case Interface::FreedesktopPower:
@@ -110,7 +123,7 @@ void InhibitorDbus::inhibitSleep()
             options["reason"_L1] = Reason;
             // Pass empty string for parent_window
             // https://flatpak.github.io/xdg-desktop-portal/docs/window-identifiers.html
-            args = {QString{}, BlockLogoutFlag | BlockSuspendFlag, options};
+            args = {QString{}, flags, options};
             break;
         }
     }
@@ -122,6 +135,8 @@ void InhibitorDbus::inhibitSleep()
 
 void InhibitorDbus::uninhibitSleep()
 {
+    m_desiredState = State::Uninhibited;
+
     if(state() != State::Inhibited) {
         return;
     }
@@ -182,6 +197,11 @@ void InhibitorDbus::onInhibitCallFinished(QDBusPendingCallWatcher* watcher)
         const QDBusPendingReply<uint> reply = *watcher;
         handleReply(reply, m_inhibitCookie);
     }
+
+    if(m_desiredState == State::Uninhibited) {
+        uninhibitSleep();
+        m_desiredState = {};
+    }
 }
 
 void InhibitorDbus::onUninhibitCallFinished(QDBusPendingCallWatcher* watcher)
@@ -197,6 +217,11 @@ void InhibitorDbus::onUninhibitCallFinished(QDBusPendingCallWatcher* watcher)
     else {
         qCWarning(SLEEPINHIBITOR) << "Uninhibit call error:" << reply.error().message();
         setState(State::Error);
+    }
+
+    if(m_desiredState == State::Inhibited) {
+        inhibitSleep(m_desiredType);
+        m_desiredState = {};
     }
 }
 } // namespace Fooyin::SleepInhibitor

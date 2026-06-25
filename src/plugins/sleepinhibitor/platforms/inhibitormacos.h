@@ -32,7 +32,7 @@ class InhibitorMacOs : public InhibitorPrivate
 public:
     explicit InhibitorMacOs(QObject* parent = nullptr);
 
-    void inhibitSleep() override;
+    void inhibitSleep(InhibitionType type) override;
     void uninhibitSleep() override;
 
 private:

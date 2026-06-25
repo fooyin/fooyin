@@ -25,7 +25,7 @@ InhibitorMacOs::InhibitorMacOs(QObject* parent)
     : InhibitorPrivate{parent}
 { }
 
-void InhibitorMacOs::inhibitSleep()
+void InhibitorMacOs::inhibitSleep(InhibitionType type)
 {
     if(state() == State::Error || state() == State::Inhibited) {
         return;
@@ -34,8 +34,10 @@ void InhibitorMacOs::inhibitSleep()
     qCDebug(SLEEPINHIBITOR) << "Inhibiting sleep";
 
     const auto assertionName = tr("fooyin is running").toCFString();
-    const auto status = IOPMAssertionCreateWithName(kIOPMAssertionTypeNoIdleSleep, kIOPMAssertionLevelOn, assertionName,
-                                                    &m_assertionId);
+    const auto assertionType = type == InhibitionType::DisplayAndSystem ? kIOPMAssertionTypePreventUserIdleDisplaySleep
+                                                                        : kIOPMAssertionTypePreventUserIdleSystemSleep;
+    const auto status
+        = IOPMAssertionCreateWithName(assertionType, kIOPMAssertionLevelOn, assertionName, &m_assertionId);
     CFRelease(assertionName);
     if(status == kIOReturnSuccess) {
         setState(State::Inhibited);

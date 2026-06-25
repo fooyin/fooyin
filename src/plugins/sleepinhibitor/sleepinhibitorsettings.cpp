@@ -32,6 +32,7 @@ SleepInhibitorSettings::SleepInhibitorSettings(QWidget* parent)
     : QDialog{parent}
     , m_enabled{new QCheckBox(tr("Inhibit system sleep"), this)}
     , m_onlyDuringPlayback{new QCheckBox(tr("Inhibit system sleep during playback only"), this)}
+    , m_preventDisplaySleep{new QCheckBox(tr("Prevent display from turning off"), this)}
 {
     namespace Settings = SleepInhibitor::Settings;
 
@@ -48,13 +49,18 @@ SleepInhibitorSettings::SleepInhibitorSettings(QWidget* parent)
     int row{0};
     layout->addWidget(m_enabled, row++, 0);
     layout->addWidget(m_onlyDuringPlayback, row++, 0);
+    layout->addWidget(m_preventDisplaySleep, row++, 0);
     layout->addWidget(buttons, row++, 0, 1, 2, Qt::AlignBottom);
 
-    m_enabled->setChecked(m_settings.value(Settings::Enabled, true).toBool());
+    const auto enabled = m_settings.value(Settings::Enabled, true).toBool();
+    m_enabled->setChecked(enabled);
     m_onlyDuringPlayback->setChecked(m_settings.value(Settings::OnlyDuringPlayback, true).toBool());
-    m_onlyDuringPlayback->setEnabled(m_settings.value(Settings::Enabled, true).toBool());
+    m_onlyDuringPlayback->setEnabled(enabled);
+    m_preventDisplaySleep->setChecked(m_settings.value(Settings::PreventDisplaySleep, false).toBool());
+    m_preventDisplaySleep->setEnabled(enabled);
 
     QObject::connect(m_enabled, &QCheckBox::clicked, m_onlyDuringPlayback, &QCheckBox::setEnabled);
+    QObject::connect(m_enabled, &QCheckBox::clicked, m_preventDisplaySleep, &QCheckBox::setEnabled);
 }
 
 void SleepInhibitorSettings::accept()
@@ -63,6 +69,7 @@ void SleepInhibitorSettings::accept()
 
     m_settings.setValue(Settings::Enabled, m_enabled->isChecked());
     m_settings.setValue(Settings::OnlyDuringPlayback, m_onlyDuringPlayback->isChecked());
+    m_settings.setValue(Settings::PreventDisplaySleep, m_preventDisplaySleep->isChecked());
 
     Q_EMIT settingsChanged();
     done(Accepted);

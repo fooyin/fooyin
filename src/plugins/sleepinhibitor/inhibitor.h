@@ -26,6 +26,12 @@
 Q_DECLARE_LOGGING_CATEGORY(SLEEPINHIBITOR)
 
 namespace Fooyin::SleepInhibitor {
+enum class InhibitionType : uint8_t
+{
+    System,
+    DisplayAndSystem,
+};
+
 class InhibitorPrivate : public QObject
 {
     Q_OBJECT
@@ -51,8 +57,8 @@ public:
         m_state = state;
     }
 
-    virtual void inhibitSleep()   = 0;
-    virtual void uninhibitSleep() = 0;
+    virtual void inhibitSleep(InhibitionType type) = 0;
+    virtual void uninhibitSleep()                  = 0;
 
 private:
     State m_state{State::Initializing};
@@ -65,7 +71,7 @@ class Inhibitor : public QObject
 public:
     explicit Inhibitor(QObject* parent = nullptr);
 
-    void inhibitSleep();
+    void inhibitSleep(InhibitionType type);
     void uninhibitSleep();
 
 private:
