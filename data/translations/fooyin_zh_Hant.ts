@@ -1310,7 +1310,7 @@
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="211"/>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="212"/>
         <source>Advanced</source>
-        <translation>連階</translation>
+        <translation>進階</translation>
     </message>
 </context>
 <context>
@@ -1837,7 +1837,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="146"/>
         <source>Artwork will be searched for in the above order.</source>
-        <translation>圖面將會進行搜尋，按以上的順序。</translation>
+        <translation>圖面將會進行搜尋，依照以上的順序。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="228"/>
@@ -4429,17 +4429,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="894"/>
         <source>Artwork (bottom labels)</source>
-        <translation>專輯圖面 (底部標)</translation>
+        <translation>專輯圖面 (底部標籤)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="895"/>
         <source>Artwork (right labels)</source>
-        <translation>專輯圖面 (右側標)</translation>
+        <translation>專輯圖面 (右側標籤)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="896"/>
         <source>Artwork (no labels)</source>
-        <translation>專輯圖面 (無側標)</translation>
+        <translation>專輯圖面 (無標籤)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="900"/>
