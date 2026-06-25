@@ -83,6 +83,7 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
     libasound2,
     ffmpeg (>= 7:4.4),
     pipewire,
+    libpulse0,
     libsdl2-2.0-0,
     libgme0,
     libopenmpt0,

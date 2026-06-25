@@ -17,6 +17,7 @@ sudo pkg install -y \
      taglib \
      kdsingleapplication \
      pipewire-spa-oss \
+     pulseaudio \
      sdl2 \
      libopenmpt \
      libarchive \
