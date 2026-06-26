@@ -4955,12 +4955,12 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="304"/>
         <location filename="../../src/gui/guiapplication.cpp" line="307"/>
         <source>New Layout</source>
-        <translation type="unfinished">新建布局</translation>
+        <translation>新建布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="307"/>
         <source>Layout Name</source>
-        <translation type="unfinished">布局名称</translation>
+        <translation>布局名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="990"/>
@@ -5010,12 +5010,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1594"/>
         <source>&amp;Add</source>
-        <translation type="unfinished"></translation>
+        <translation>添加(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1598"/>
         <source>Enter a valid http:// or https:// URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入有效的 http:// 或 https:// URL。</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1659"/>
@@ -5058,7 +5058,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="94"/>
         <source>&amp;New</source>
-        <translation type="unfinished"></translation>
+        <translation>新建(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="116"/>
@@ -5203,7 +5203,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="371"/>
         <source>New Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>新建主题</translation>
     </message>
 </context>
 <context>
@@ -5211,7 +5211,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="318"/>
         <source>General</source>
-        <translation type="unfinished">常规</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="319"/>
@@ -5234,22 +5234,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="107"/>
         <source>Auto-detect theme</source>
-        <translation type="unfinished">自动检测主题图标</translation>
+        <translation>自动检测主题</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="108"/>
         <source>Light</source>
-        <translation type="unfinished">浅色</translation>
+        <translation>浅色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="109"/>
         <source>Dark</source>
-        <translation type="unfinished">深色</translation>
+        <translation>深色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="110"/>
         <source>Use system icons</source>
-        <translation type="unfinished">使用系统主题图标</translation>
+        <translation>使用系统图标</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="111"/>
@@ -5299,17 +5299,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="131"/>
         <source>Appearance</source>
-        <translation type="unfinished">外观</translation>
+        <translation>外观</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="134"/>
         <source>Icons</source>
-        <translation type="unfinished">图标</translation>
+        <translation>图标</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="145"/>
         <source>Style</source>
-        <translation type="unfinished">样式</translation>
+        <translation>样式</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="150"/>
@@ -5324,7 +5324,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="196"/>
         <source>System default</source>
-        <translation type="unfinished">系统默认</translation>
+        <translation>系统默认</translation>
     </message>
 </context>
 <context>
@@ -5366,17 +5366,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="194"/>
         <source>Layout options</source>
-        <translation type="unfinished"></translation>
+        <translation>布局选项</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="195"/>
         <source>Restore theme when switching to this layout</source>
-        <translation type="unfinished"></translation>
+        <translation>切换到此布局时恢复主题</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="196"/>
         <source>Restore window size when switching to this layout</source>
-        <translation type="unfinished"></translation>
+        <translation>切换到此布局时恢复窗口大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="215"/>
@@ -5704,77 +5704,77 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="46"/>
         <source>Import colours</source>
-        <translation type="unfinished"></translation>
+        <translation>导入颜色</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="47"/>
         <source>Import fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>导入字体</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="48"/>
         <source>Import window size</source>
-        <translation type="unfinished"></translation>
+        <translation>导入窗口大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="49"/>
         <source>Switch to imported layout</source>
-        <translation type="unfinished"></translation>
+        <translation>切换到导入的布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="53"/>
         <source>Import Layout</source>
-        <translation type="unfinished">导入布局</translation>
+        <translation>导入布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="72"/>
         <source>&amp;Import</source>
-        <translation type="unfinished"></translation>
+        <translation>导入(&amp;I)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="77"/>
         <source>&amp;Browse…</source>
-        <translation type="unfinished">浏览(&amp;B)…</translation>
+        <translation>浏览(&amp;B)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="91"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="93"/>
         <source>Path</source>
-        <translation type="unfinished">路径</translation>
+        <translation>路径</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="149"/>
         <source>Enter a layout name.</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入布局名称。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="153"/>
         <source>A layout with this name already exists.</source>
-        <translation type="unfinished"></translation>
+        <translation>该名称的布局已存在。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="167"/>
         <source>Layout file could not be opened.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法打开布局文件。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="175"/>
         <source>Layout file is invalid.</source>
-        <translation type="unfinished"></translation>
+        <translation>布局文件无效。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="200"/>
         <source>Open Layout</source>
-        <translation type="unfinished">打开布局</translation>
+        <translation>打开布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="200"/>
         <source>fooyin Layout (*.fyl)</source>
-        <translation type="unfinished">fooyin 布局 (*.fyl)</translation>
+        <translation>fooyin 布局 (*.fyl)</translation>
     </message>
 </context>
 <context>
@@ -5906,7 +5906,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="216"/>
         <source>URL</source>
-        <translation type="unfinished">URL</translation>
+        <translation>URL</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="219"/>
@@ -6111,12 +6111,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="98"/>
         <source>&amp;New layout…</source>
-        <translation type="unfinished"></translation>
+        <translation>新建布局(&amp;N)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="99"/>
         <source>Create a new layout</source>
-        <translation type="unfinished"></translation>
+        <translation>创建一个新的布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="104"/>
@@ -7015,7 +7015,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="224"/>
         <source>Use display grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>使用显示分组</translation>
     </message>
 </context>
 <context>
@@ -8966,12 +8966,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="102"/>
         <source>Played threshold (%)</source>
-        <translation type="unfinished"></translation>
+        <translation>已达到阈值（%）</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="103"/>
         <source>Played threshold (time)</source>
-        <translation type="unfinished"></translation>
+        <translation>已达到阈值（时间）</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="109"/>
@@ -9011,7 +9011,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="125"/>
         <source>Track is counted as &apos;played&apos; once either threshold is reached</source>
-        <translation type="unfinished"></translation>
+        <translation>一旦达到任一阈值，该曲目即被计为已播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="154"/>
@@ -9475,7 +9475,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="274"/>
         <source>Restore deleted playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复已删除的播放列表</translation>
     </message>
 </context>
 <context>
@@ -10006,7 +10006,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="505"/>
         <source>Restore deleted playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复已删除的播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="527"/>
@@ -10114,7 +10114,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="469"/>
         <source>Restore deleted playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复已删除的播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="449"/>
@@ -10474,7 +10474,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="367"/>
         <source>Restore deleted playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复已删除的播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="397"/>
@@ -10592,12 +10592,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1212"/>
         <source>Use custom layout for this playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>为该播放列表使用自定义布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1213"/>
         <source>Use a separate view layout instead of the default</source>
-        <translation type="unfinished"></translation>
+        <translation>使用单独的视图布局而不是默认布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1669"/>
@@ -10996,22 +10996,22 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="41"/>
         <source>Track list</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="49"/>
         <source>Albums grouped by disc</source>
-        <translation type="unfinished"></translation>
+        <translation>按唱片分组</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="66"/>
         <source>Albums with disc headers</source>
-        <translation type="unfinished"></translation>
+        <translation>带光盘标题的专辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="72"/>
         <source>Compact album headers</source>
-        <translation type="unfinished"></translation>
+        <translation>紧凑型专辑封面</translation>
     </message>
 </context>
 <context>
@@ -11238,7 +11238,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="54"/>
         <source>Playlist Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>播放列表布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="55"/>
@@ -11253,17 +11253,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="63"/>
         <source>Layout</source>
-        <translation type="unfinished">布局</translation>
+        <translation>布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="67"/>
         <source>Colours</source>
-        <translation type="unfinished">颜色</translation>
+        <translation>颜色</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="122"/>
         <source>System defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>系统默认</translation>
     </message>
 </context>
 <context>
@@ -11617,7 +11617,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="50"/>
         <source>Apply icon gaps with right captions</source>
-        <translation type="unfinished"></translation>
+        <translation>应用右对齐标题的图标间距</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="52"/>
@@ -11700,7 +11700,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="97"/>
         <source>Apply the configured horizontal and vertical gaps when captions appear to the right of station icons</source>
-        <translation type="unfinished"></translation>
+        <translation>当字幕出现在站点图标右侧时，应用已配置的水平和垂直间距</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="99"/>
@@ -14411,37 +14411,37 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldregistry.cpp" line="44"/>
         <source>Artist</source>
-        <translation type="unfinished">艺术家</translation>
+        <translation>艺术家</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldregistry.cpp" line="45"/>
         <source>Title</source>
-        <translation type="unfinished">标题</translation>
+        <translation>标题</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldregistry.cpp" line="46"/>
         <source>Album</source>
-        <translation type="unfinished">专辑</translation>
+        <translation>专辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldregistry.cpp" line="47"/>
         <source>Date</source>
-        <translation type="unfinished">日期</translation>
+        <translation>日期</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldregistry.cpp" line="48"/>
         <source>Genre</source>
-        <translation type="unfinished">流派</translation>
+        <translation>流派</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldregistry.cpp" line="49"/>
         <source>Album Artist</source>
-        <translation type="unfinished">专辑艺术家</translation>
+        <translation>专辑艺术家</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldregistry.cpp" line="50"/>
         <source>Track Number</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目编号</translation>
     </message>
 </context>
 <context>
@@ -14449,22 +14449,22 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldsmodel.cpp" line="144"/>
         <source>Index</source>
-        <translation type="unfinished">索引</translation>
+        <translation>索引</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldsmodel.cpp" line="146"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>启用</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldsmodel.cpp" line="148"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldsmodel.cpp" line="150"/>
         <source>Field</source>
-        <translation type="unfinished">字段</translation>
+        <translation>字段</translation>
     </message>
 </context>
 <context>
@@ -14473,12 +14473,12 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/selectioninfo/selectioninfosettingspage.cpp" line="126"/>
         <location filename="../../src/gui/selectioninfo/selectioninfosettingspage.cpp" line="127"/>
         <source>Selection Info</source>
-        <translation type="unfinished">选中信息</translation>
+        <translation>所选信息</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfosettingspage.cpp" line="127"/>
         <source>Interface</source>
-        <translation type="unfinished">界面</translation>
+        <translation>界面</translation>
     </message>
 </context>
 <context>
@@ -14486,7 +14486,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfosettingspage.cpp" line="76"/>
         <source>Enabled fields use the configured name and order. Other tags are shown as &lt;TAG&gt; when extended metadata is enabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>启用的字段使用已配置的名称和顺序。当启用扩展元数据时，其他标签将显示为 &lt;TAG&gt;。</translation>
     </message>
 </context>
 <context>
@@ -14682,7 +14682,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/platforms/inhibitordbus.cpp" line="94"/>
         <source>fooyin is running</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin 正在运行</translation>
     </message>
 </context>
 <context>
@@ -14690,7 +14690,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/platforms/inhibitormacos.cpp" line="36"/>
         <source>fooyin is running</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin 正在运行</translation>
     </message>
 </context>
 <context>
@@ -14698,17 +14698,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="33"/>
         <source>Inhibit system sleep</source>
-        <translation type="unfinished"></translation>
+        <translation>抑制系统睡眠</translation>
     </message>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="34"/>
         <source>Inhibit system sleep during playback only</source>
-        <translation type="unfinished"></translation>
+        <translation>播放时仅抑制系统睡眠</translation>
     </message>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="38"/>
         <source>Sleep Inhibitor Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>睡眠抑制设置</translation>
     </message>
 </context>
 <context>
@@ -17417,27 +17417,27 @@ Set to 0 to choose automatically from the remote buffer length.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="449"/>
         <source>Number of widget levels shown in the layout editing context menu</source>
-        <translation type="unfinished"></translation>
+        <translation>布局编辑上下文菜单中显示的控件层级数量</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="457"/>
         <source>Give seekbars keyboard focus after clicking them</source>
-        <translation type="unfinished"></translation>
+        <translation>点击进度条后赋予其键盘焦点</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="462"/>
         <source>Selection</source>
-        <translation type="unfinished">选择</translation>
+        <translation>选择</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="463"/>
         <source>Drag only after selecting</source>
-        <translation type="unfinished"></translation>
+        <translation>仅在选择后拖动</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="464"/>
         <source>Require a row to be selected before it can be dragged from item views</source>
-        <translation type="unfinished"></translation>
+        <translation>必须选中某一行后，才能从项目视图中将其拖出</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="482"/>
@@ -17449,57 +17449,57 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="494"/>
         <source>Maximum decoded audio buffered for remote streams</source>
-        <translation type="unfinished"></translation>
+        <translation>远程流的解码音频最大缓冲量</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="517"/>
         <source>Maximum time spent opening and probing remote streams</source>
-        <translation type="unfinished"></translation>
+        <translation>远程流打开和探测所花费的最长时间</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="543"/>
         <source>Preserve file access and modification timestamps when updating tags</source>
-        <translation type="unfinished"></translation>
+        <translation>更新标签时保留文件的访问和修改时间戳</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="549"/>
         <source>General</source>
-        <translation type="unfinished">常规</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="549"/>
         <source>Text Encoding</source>
-        <translation type="unfinished"></translation>
+        <translation>文本编码</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="550"/>
         <source>Preferred fallback encoding</source>
-        <translation type="unfinished"></translation>
+        <translation>首选默认编码</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="551"/>
         <source>Encoding preferred when the best automatic match is Latin-compatible single-byte text</source>
-        <translation type="unfinished"></translation>
+        <translation>当最佳的自动匹配为拉丁字符兼容的单字节文本时应采用编码</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="568"/>
         <source>Enabled all extensions supported by the FFmpeg input</source>
-        <translation type="unfinished"></translation>
+        <translation>启用 FFmpeg 输入支持的所有扩展</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="585"/>
         <source>Probe all readers for extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>检查所有读者的扩展功能</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="586"/>
         <source>Semicolon-separated extensions where all readers are tried and the reader with the most subsongs or chapters is used.</source>
-        <translation type="unfinished"></translation>
+        <translation>以分号分隔的扩展名，所有读者都会被尝试，然后使用拥有最多子歌曲或章节的读者。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="606"/>
         <source>ReplayGain value written to the Opus header when updating metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>新元数据时将 ReplayGain 值写入 Opus 文件头</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="659"/>
