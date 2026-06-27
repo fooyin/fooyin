@@ -7,6 +7,7 @@ export SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
 export CC=$(brew --prefix llvm)/bin/clang
 export CXX=$(brew --prefix llvm)/bin/clang++
 export CXXFLAGS="-fexperimental-library"
+export PATH="$(brew --prefix bison)/bin:$(brew --prefix flex)/bin:$PATH"
 export CMAKE_PREFIX_PATH="$(brew --prefix qt);$(brew --prefix icu4c@78)"
 export PKG_CONFIG_PATH="$(brew --prefix libarchive)/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
 BUILD_CCACHE="${BUILD_CCACHE:-ON}"
@@ -19,6 +20,7 @@ cmake -S "$FOOYIN_DIR" \
   -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 \
   -DCMAKE_OSX_SYSROOT="$SDKROOT" \
   -DICU_ROOT="$(brew --prefix icu4c@78)" \
+  -DFETCH_PROJECTM=ON \
   -DBUILD_CCACHE="$BUILD_CCACHE" \
   -DBUILD_PCH="$BUILD_PCH"
 

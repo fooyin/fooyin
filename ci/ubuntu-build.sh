@@ -8,6 +8,7 @@ cmake -S . \
   -B build \
   -DCMAKE_BUILD_TYPE=Release \
   -DBUILD_TESTING=ON \
+  -DFETCH_PROJECTM=ON \
   -DBUILD_CCACHE="$BUILD_CCACHE" \
   -DBUILD_PCH="$BUILD_PCH"
 

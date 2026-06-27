@@ -17,6 +17,7 @@ set(FOOYIN_KNOWN_PLUGINS
     pipewire
     pulseaudio
     quicktagger
+    projectm
     rawaudio
     radiobrowser
     rgscanner
@@ -44,6 +45,7 @@ set(FOOYIN_DEFAULT_PLUGINS
     openmpt
     pipewire
     quicktagger
+    projectm
     rawaudio
     radiobrowser
     rgscanner
@@ -64,7 +66,13 @@ if(BUILD_ALSA)
 endif()
 
 if(UNIX AND NOT APPLE)
-    list(APPEND FOOYIN_DEFAULT_PLUGINS mpris notify pulseaudio)
+    list(
+        APPEND
+        FOOYIN_DEFAULT_PLUGINS
+        mpris
+        notify
+        pulseaudio
+    )
 endif()
 
 if(WIN32)
@@ -115,6 +123,7 @@ fooyin_add_selected_plugin(openmpt)
 fooyin_add_selected_plugin(pipewire)
 fooyin_add_selected_plugin(pulseaudio)
 fooyin_add_selected_plugin(quicktagger)
+fooyin_add_selected_plugin(projectm)
 fooyin_add_selected_plugin(rawaudio)
 fooyin_add_selected_plugin(radiobrowser)
 fooyin_add_selected_plugin(rgscanner)

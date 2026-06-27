@@ -32,6 +32,7 @@ The following libraries are optional:
 * [libebur128](https://github.com/jiixyj/libebur128) - for the ReplayGain scanner plugin
 * [SoundTouch](https://www.surina.net/soundtouch/) - for the SoundTouch DSP plugin
 * [SoXR (libsoxr)](https://sourceforge.net/projects/soxr/) - for the SoX resampler DSP plugin
+* [projectM](https://github.com/projectM-visualizer/projectm) (4.x) - for the projectM visualisation plugin
 
 Platform-specific requirements are listed below.
 

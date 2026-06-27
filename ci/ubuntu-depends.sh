@@ -10,6 +10,8 @@ $SUDO apt-get install -y \
         git \
         ccache \
         zstd \
+        bison \
+        flex \
         cmake \
         pkg-config \
         ninja-build \
@@ -26,6 +28,7 @@ $SUDO apt-get install -y \
         libpulse-dev \
         libsdl2-dev \
         qt6-base-dev \
+        libqt6opengl6-dev \
         libqt6svg6-dev \
         qt6-tools-dev \
         qt6-tools-dev-tools \

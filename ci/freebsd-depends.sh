@@ -3,6 +3,9 @@
 sudo pkg update
 sudo pkg upgrade -y
 sudo pkg install -y \
+     git \
+     bison \
+     flex \
      ccache \
      cmake-core \
      pkgconf \

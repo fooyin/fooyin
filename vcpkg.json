@@ -12,7 +12,8 @@
     "libarchive",
     "libgme",
     "soundtouch",
-    "soxr"
+    "soxr",
+    "projectm"
   ],
   "features": {
     "fooyin-tests": {

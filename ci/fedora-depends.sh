@@ -10,6 +10,8 @@ dnf -y install --skip-broken \
      desktop-file-utils \
      ccache \
      zstd \
+     bison \
+     flex \
      cmake \
      ninja-build \
      glib2-devel \
