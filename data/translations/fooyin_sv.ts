@@ -15992,12 +15992,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="210"/>
         <source>Multi-line</source>
-        <translation type="unfinished"></translation>
+        <translation>Multi-rad</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="212"/>
         <source>Multi-value</source>
-        <translation type="unfinished"></translation>
+        <translation>Multivärde</translation>
     </message>
 </context>
 <context>
@@ -16089,7 +16089,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="89"/>
         <source>Whitespace-separated list of separators used when editing multivalue tag fields.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mellanslagsseparerad lista av separatorer som används när multivärdes-taggfält redigeras.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="100"/>
@@ -16099,12 +16099,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="101"/>
         <source>Split auto-filled multivalue tags on</source>
-        <translation type="unfinished"></translation>
+        <translation>Splitta autofyllda multivärdes-taggar vid</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="102"/>
         <source>Whitespace-separated list of separators used when auto-filling multivalue tag fields.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mellanslagsseparerad lista av separatorer som används när multivärdes-taggfält autofylls.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="119"/>
