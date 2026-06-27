@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
-  "builtin-baseline": "84bab45d415d22042bd0b9081aea57f362da3f35",
+  "builtin-baseline": "f3e10653cc27d62a37a3763cd84b38bca07c6075",
   "dependencies": [
     "ffmpeg",
     "icu",
