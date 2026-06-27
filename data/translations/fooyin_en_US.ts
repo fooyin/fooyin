@@ -3117,7 +3117,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="44"/>
         <source>Randomise</source>
-        <translation type="unfinished"></translation>
+        <translation>Randomize</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="45"/>
@@ -3161,7 +3161,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="98"/>
         <source>Sort by %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Sort by %1</translation>
     </message>
 </context>
 <context>
@@ -3867,7 +3867,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="48"/>
         <source>Are you sure you want to permanently delete &quot;%1&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Are you sure you want to permanently delete &quot;%1&quot;?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="49"/>
@@ -4034,7 +4034,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="446"/>
         <source>Source archive files will be permanently deleted after every file from each archive has been extracted. Continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>Source archive files will be permanently deleted after every file from each archive has been extracted. Continue?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="450"/>
@@ -4128,12 +4128,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="97"/>
         <source>Immediately delete tracks (bypass trash)</source>
-        <translation type="unfinished"></translation>
+        <translation>Immediately delete tracks (bypass trash)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="110"/>
         <source>Delete empty folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Delete empty folders</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="127"/>
@@ -4966,12 +4966,12 @@ Effects here process the final combined output.</translation>
         <location filename="../../src/gui/guiapplication.cpp" line="304"/>
         <location filename="../../src/gui/guiapplication.cpp" line="307"/>
         <source>New Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>New Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="307"/>
         <source>Layout Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Layout Name</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="990"/>
@@ -5021,12 +5021,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1594"/>
         <source>&amp;Add</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Add</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1598"/>
         <source>Enter a valid http:// or https:// URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>Enter a valid http:// or https:// URL.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1659"/>
@@ -5377,17 +5377,17 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="194"/>
         <source>Layout options</source>
-        <translation type="unfinished"></translation>
+        <translation>Layout options</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="195"/>
         <source>Restore theme when switching to this layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Restore theme when switching to this layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="196"/>
         <source>Restore window size when switching to this layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Restore window size when switching to this layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="215"/>
@@ -5473,7 +5473,7 @@ Effects here process the final combined output.</translation>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="581"/>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="583"/>
         <source>New Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>New Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="583"/>
@@ -10653,7 +10653,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1784"/>
         <source>Randomise the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Randomize the current playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1787"/>
@@ -10804,7 +10804,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="251"/>
         <source>Randomise</source>
-        <translation type="unfinished"></translation>
+        <translation>Randomize</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="254"/>
@@ -11116,7 +11116,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="100"/>
         <source>Randomise</source>
-        <translation type="unfinished"></translation>
+        <translation>Randomize</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="101"/>
@@ -11151,7 +11151,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="242"/>
         <source>Randomise the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Randomize the playback queue</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="243"/>
