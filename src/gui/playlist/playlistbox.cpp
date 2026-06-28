@@ -24,29 +24,63 @@
 
 #include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <gui/widgets/popuplineedit.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/actions/proxyaction.h>
 #include <utils/actions/widgetcontext.h>
 #include <utils/crypto.h>
+#include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
 #include <QAction>
+#include <QCheckBox>
 #include <QComboBox>
 #include <QKeySequence>
 #include <QMainWindow>
 #include <QMenu>
+#include <QMessageBox>
 #include <QSignalBlocker>
 #include <QVBoxLayout>
 
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
-PlaylistBox::PlaylistBox(ActionManager* actionManager, PlaylistController* playlistController, QWidget* parent)
+bool confirmPlaylistRemoval(SettingsManager* settings, QWidget* parent)
+{
+    if(!settings->value<Settings::Gui::PlaylistRemovalConfirm>()) {
+        return true;
+    }
+
+    QMessageBox message{parent};
+    message.setIcon(QMessageBox::Question);
+    message.setWindowTitle(PlaylistBox::tr("Remove Playlist"));
+    message.setText(PlaylistBox::tr("Remove the selected playlist?"));
+
+    auto* dontAskAgain = new QCheckBox(PlaylistBox::tr("Don't ask again"), &message);
+    message.setCheckBox(dontAskAgain);
+
+    message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    message.setDefaultButton(QMessageBox::No);
+
+    if(message.exec() != QMessageBox::Yes) {
+        return false;
+    }
+
+    if(dontAskAgain->isChecked()) {
+        settings->set<Settings::Gui::PlaylistRemovalConfirm>(false);
+    }
+
+    return true;
+}
+
+PlaylistBox::PlaylistBox(ActionManager* actionManager, PlaylistController* playlistController, SettingsManager* settings,
+                         QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
     , m_playlistController{playlistController}
+    , m_settings{settings}
     , m_playlistHandler{m_playlistController->playlistHandler()}
     , m_playlistBox{new QComboBox(this)}
     , m_context{new WidgetContext(this, Context{IdList{Id{"Fooyin.Context.PlaylistSwitcher."}.append(id())}}, this)}
@@ -366,8 +400,11 @@ void PlaylistBox::cancelRenameEditor()
 void PlaylistBox::removeCurrentPlaylist()
 {
     if(auto* playlist = currentPlaylist()) {
+        const auto playlistId = playlist->id();
         closeRenameEditor();
-        m_playlistHandler->removePlaylist(playlist->id());
+        if(confirmPlaylistRemoval(m_settings, this)) {
+            m_playlistHandler->removePlaylist(playlistId);
+        }
     }
 }
 
