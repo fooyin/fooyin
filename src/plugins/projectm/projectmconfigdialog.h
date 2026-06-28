@@ -30,7 +30,6 @@ class QComboBox;
 class QDoubleSpinBox;
 class QLabel;
 class QLineEdit;
-class QSpinBox;
 
 namespace Fooyin::ProjectM {
 class ProjectMConfigDialog : public WidgetConfigDialog<ProjectMWidget, ProjectMWidget::ConfigData>
@@ -52,7 +51,7 @@ private:
     QLabel* m_summary;
     QPushButton* m_browseDir;
     QCheckBox* m_scanRecursive;
-    QSpinBox* m_maxFps;
+    QComboBox* m_maxFps;
     QComboBox* m_meshSize;
     QCheckBox* m_aspectCorrection;
     QDoubleSpinBox* m_presetDuration;

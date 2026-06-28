@@ -21,6 +21,8 @@
 
 #include "projectminstance.h"
 
+#include <gui/framerate.h>
+
 #include <QDir>
 #include <QMouseEvent>
 #include <QOpenGLContext>
@@ -36,11 +38,6 @@ constexpr uint64_t PcmBacklogMs       = 5000;
 
 namespace Fooyin::ProjectM {
 namespace {
-int renderIntervalMs(int fps)
-{
-    return std::max(1, qRound(1000.0 / static_cast<double>(std::clamp(fps, 1, 240))));
-}
-
 QStringList normaliseDirs(const QStringList& dirs)
 {
     QStringList normalised;
@@ -696,7 +693,7 @@ void ProjectMView::emitAvailability()
 void ProjectMView::updateRenderTimer()
 {
     if(isReady() && isExposed()) {
-        m_renderTimer.start(renderIntervalMs(m_settings.maxFps), this);
+        m_renderTimer.start(Gui::FrameRate::intervalMsForFps(m_settings.maxFps), this);
         requestUpdate();
     }
     else {

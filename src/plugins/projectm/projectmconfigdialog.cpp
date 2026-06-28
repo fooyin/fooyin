@@ -19,6 +19,8 @@
 
 #include "projectmconfigdialog.h"
 
+#include <gui/framerate.h>
+
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDir>
@@ -26,11 +28,11 @@
 #include <QFileDialog>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QIntValidator>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QSize>
-#include <QSpinBox>
 
 using namespace Qt::StringLiterals;
 
@@ -44,6 +46,26 @@ QDoubleSpinBox* createDurationSpin(QWidget* parent, double minimum, double maxim
     spin->setDecimals(1);
     spin->setSuffix(ProjectMConfigDialog::tr(" s"));
     return spin;
+}
+
+int currentFrameRate(const QComboBox* combo)
+{
+    bool ok{false};
+    const int fps = combo->currentText().toInt(&ok);
+    return ok ? std::clamp(fps, 1, Gui::FrameRate::maxFps()) : Gui::FrameRate::toFps(Gui::FrameRate::Preset::Fps60);
+}
+
+void setFrameRate(QComboBox* combo, int fps)
+{
+    const int value = std::clamp(fps, 1, Gui::FrameRate::maxFps());
+    const int index = combo->findData(value);
+    if(index >= 0) {
+        combo->setCurrentIndex(index);
+    }
+    else {
+        combo->setCurrentIndex(-1);
+        combo->setEditText(QString::number(value));
+    }
 }
 
 void setMeshSize(QComboBox* combo, int width, int height)
@@ -77,7 +99,7 @@ ProjectMConfigDialog::ProjectMConfigDialog(ProjectMWidget* widget, QWidget* pare
     , m_summary{new QLabel(this)}
     , m_browseDir{new QPushButton(tr("Browse…"), this)}
     , m_scanRecursive{new QCheckBox(tr("Scan for presets recursively"), this)}
-    , m_maxFps{new QSpinBox(this)}
+    , m_maxFps{new QComboBox(this)}
     , m_meshSize{new QComboBox(this)}
     , m_aspectCorrection{new QCheckBox(tr("Correct aspect ratio"), this)}
     , m_presetDuration{createDurationSpin(this, 1.0, 300.0, 1.0)}
@@ -102,8 +124,14 @@ ProjectMConfigDialog::ProjectMConfigDialog(ProjectMWidget* widget, QWidget* pare
     m_summary->setWordWrap(true);
     m_scanRecursive->setChecked(true);
 
-    m_maxFps->setRange(1, 240);
-    m_maxFps->setSuffix(tr(" fps"));
+    m_maxFps->setEditable(true);
+    m_maxFps->setInsertPolicy(QComboBox::NoInsert);
+    m_maxFps->setValidator(new QIntValidator(1, Gui::FrameRate::maxFps(), m_maxFps));
+    m_maxFps->setToolTip(tr("Maximum rendering frame rate in frames per second"));
+    for(const auto preset : Gui::FrameRate::Presets) {
+        const int fps = Gui::FrameRate::toFps(preset);
+        m_maxFps->addItem(QString::number(fps), fps);
+    }
     m_meshSize->setToolTip(
         tr("Resolution used to evaluate preset equations; higher values improve detail but require more processing"));
     m_meshSize->addItem(tr("32 x 24"), u"32x24"_s);
@@ -172,7 +200,7 @@ ProjectMWidget::ConfigData ProjectMConfigDialog::config() const
     ProjectMWidget::ConfigData config;
     config.presetDir                   = m_presetDir->text();
     config.settings.scanRecursive      = m_scanRecursive->isChecked();
-    config.settings.maxFps             = m_maxFps->value();
+    config.settings.maxFps             = currentFrameRate(m_maxFps);
     config.settings.meshWidth          = currentMeshSize(m_meshSize).width();
     config.settings.meshHeight         = currentMeshSize(m_meshSize).height();
     config.settings.aspectCorrection   = m_aspectCorrection->isChecked();
@@ -189,7 +217,7 @@ void ProjectMConfigDialog::setConfig(const ProjectMWidget::ConfigData& config)
 {
     m_presetDir->setText(config.presetDir);
     m_scanRecursive->setChecked(config.settings.scanRecursive);
-    m_maxFps->setValue(config.settings.maxFps);
+    setFrameRate(m_maxFps, config.settings.maxFps);
     setMeshSize(m_meshSize, config.settings.meshWidth, config.settings.meshHeight);
     m_aspectCorrection->setChecked(config.settings.aspectCorrection);
     m_presetDuration->setValue(config.settings.presetDuration);
