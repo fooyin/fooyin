@@ -6,6 +6,8 @@ export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1
 brew update
 brew install \
     ccache \
+    bison \
+    flex \
     cmake \
     ninja \
     qt \
