@@ -14,6 +14,12 @@
     "soundtouch",
     "soxr"
   ],
+  "overrides": [
+    {
+      "name": "icu",
+      "version": "78.1"
+    }
+  ],
   "features": {
     "fooyin-tests": {
       "description": "Build tests",
