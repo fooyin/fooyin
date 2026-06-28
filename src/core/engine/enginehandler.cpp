@@ -161,6 +161,13 @@ EngineHandler::EngineHandler(std::shared_ptr<AudioLoader> audioLoader, PlayerCon
 
     m_settings->subscribe<Settings::Core::AudioOutput>(this, &EngineHandler::changeOutput);
     m_settings->subscribe<Settings::Core::OutputVolume>(this, &EngineHandler::updateVolume);
+    const auto updateAutomaticResampling = [this]() {
+        dispatchCommand(&AudioEngine::setAutomaticResampling,
+                        m_settings->value<Settings::Core::Internal::OutputAutoResample>(),
+                        m_settings->value<Settings::Core::Internal::OutputResamplerPreference>());
+    };
+    m_settings->subscribe<Settings::Core::Internal::OutputAutoResample>(this, updateAutomaticResampling);
+    m_settings->subscribe<Settings::Core::Internal::OutputResamplerPreference>(this, updateAutomaticResampling);
 
     m_settings->subscribe<Settings::Core::Shutdown>(this, &EngineHandler::savePlaybackState);
     m_pendingStartupRestore = readStartupRestoreState();

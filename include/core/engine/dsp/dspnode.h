@@ -129,6 +129,14 @@ public:
     virtual bool loadSettings(const QByteArray& preset);
 
     /*!
+     * Configure this node as a sample-rate converter.
+     *
+     * Resampler implementations override this and return true. The default
+     * rejects the request.
+     */
+    virtual bool setTargetSampleRate(int sampleRate);
+
+    /*!
      * Report latency introduced by this node in frames.
      *
      * Frame units are expressed in the node input sample-rate domain

@@ -392,6 +392,8 @@ AudioEngine::AudioEngine(std::shared_ptr<AudioLoader> audioLoader, SettingsManag
     m_analysisBus->setPcmReadyHandler(this, &AudioEngine::onPcmFrameReady);
 
     m_pipeline.start();
+    m_pipeline.setAutomaticResampling(m_settings->value<Settings::Core::Internal::OutputAutoResample>(),
+                                      m_settings->value<Settings::Core::Internal::OutputResamplerPreference>());
     m_pipeline.setFaderCurve(m_fadingValues.pause.curve);
     m_pipeline.setSignalWakeTarget(this, pipelineWakeEventType());
     m_pipeline.setAnalysisBus(m_analysisBus.get());
@@ -1431,6 +1433,15 @@ void AudioEngine::setOutputDevice(const QString& device)
     const bool initOk = m_outputController.initOutput(m_format, m_volume);
     if(initOk && wasPlaying) {
         play();
+    }
+}
+
+void AudioEngine::setAutomaticResampling(const bool enabled, const QStringList& preferredDspNames)
+{
+    m_pipeline.setAutomaticResampling(enabled, preferredDspNames);
+
+    if(m_format.isValid() && m_pipeline.hasOutput()) {
+        reinitOutputForCurrentFormat();
     }
 }
 

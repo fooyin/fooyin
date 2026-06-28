@@ -54,6 +54,11 @@ QStringList defaultReaderProbeAllExtensions()
 {
     return defaultFFmpegPriorityExtensions();
 }
+
+QStringList defaultOutputResamplerPreference()
+{
+    return {u"Resampler (SoX)"_s, u"Resampler (FFmpeg)"_s};
+}
 } // namespace Settings::Core::Internal
 
 CoreSettings::CoreSettings(SettingsManager* settingsManager)
@@ -149,6 +154,9 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
                                                            u"Engine/RemotePrebufferMs"_s);
     m_settings->createSetting<Internal::RemoteOpenTimeoutMs>(Internal::DefaultRemoteOpenTimeoutMs,
                                                              u"Engine/RemoteOpenTimeoutMs"_s);
+    m_settings->createSetting<Internal::OutputAutoResample>(true, u"Engine/OutputAutoResample"_s);
+    m_settings->createSetting<Internal::OutputResamplerPreference>(Internal::defaultOutputResamplerPreference(),
+                                                                   u"Engine/OutputResamplerPreference"_s);
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 

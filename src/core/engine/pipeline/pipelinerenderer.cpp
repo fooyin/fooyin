@@ -28,6 +28,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <cmath>
 #include <cstddef>
 #include <span>
 #include <utility>
@@ -120,10 +121,13 @@ AudioFormat PipelineRenderer::configureForInputFormat(const AudioFormat& inputFo
     m_inputFormat = inputFormat;
 
     m_dspChain.prepare(effectiveInput);
-    m_outputFormat = m_dspChain.outputFormat();
-    if(!m_outputFormat.isValid()) {
-        m_outputFormat = effectiveInput;
+    m_masterOutputFormat = m_dspChain.outputFormat();
+    if(!m_masterOutputFormat.isValid()) {
+        m_masterOutputFormat = effectiveInput;
     }
+
+    m_outputResampler.reset();
+    m_outputFormat = m_masterOutputFormat;
 
     if(outputBitdepth != SampleFormat::Unknown) {
         m_outputFormat.setSampleFormat(outputBitdepth);
@@ -212,6 +216,10 @@ PipelineRenderer::RenderResult PipelineRenderer::render(int framesToProcess, Out
     rebuildProcessChunksFromMixerRead(mixerRead, result.framesRead);
     m_dspChain.process(m_processChunks);
 
+    if(m_outputResampler) {
+        m_outputResampler->process(m_processChunks);
+    }
+
     outputFader.process(m_processChunks);
 
     if(!outputSupportsVolume) {
@@ -257,8 +265,10 @@ void PipelineRenderer::setWorkingFormats(const AudioFormat& input, const AudioFo
 
 void PipelineRenderer::clearFormats()
 {
-    m_inputFormat  = {};
-    m_outputFormat = {};
+    m_inputFormat        = {};
+    m_masterOutputFormat = {};
+    m_outputFormat       = {};
+    m_outputResampler.reset();
 }
 
 void PipelineRenderer::resetLiveSettings()
@@ -282,12 +292,27 @@ AudioFormat PipelineRenderer::predictMasterOutputFormat(const AudioFormat& input
 
 int PipelineRenderer::masterLatencyFrames() const
 {
-    return std::max(0, m_dspChain.totalLatencyFrames());
+    if(!m_outputFormat.isValid() || m_outputFormat.sampleRate() <= 0) {
+        return 0;
+    }
+
+    double latencySeconds = m_dspChain.totalLatencySeconds();
+    if(m_outputResampler && m_masterOutputFormat.sampleRate() > 0) {
+        latencySeconds += static_cast<double>(std::max(0, m_outputResampler->latencyFrames()))
+                        / static_cast<double>(m_masterOutputFormat.sampleRate());
+    }
+    return std::max(0, static_cast<int>(std::llround(latencySeconds * m_outputFormat.sampleRate())));
 }
 
 double PipelineRenderer::totalLatencySeconds() const
 {
-    return std::max(0.0, m_dspChain.totalLatencySeconds() + m_mixer.primaryStreamDspLatencySeconds());
+    double outputResamplerLatency{0.0};
+    if(m_outputResampler && m_masterOutputFormat.sampleRate() > 0) {
+        outputResamplerLatency = static_cast<double>(std::max(0, m_outputResampler->latencyFrames()))
+                               / static_cast<double>(m_masterOutputFormat.sampleRate());
+    }
+    return std::max(0.0, m_dspChain.totalLatencySeconds() + outputResamplerLatency
+                             + m_mixer.primaryStreamDspLatencySeconds());
 }
 
 AudioFormat PipelineRenderer::processFormat() const
@@ -308,6 +333,40 @@ const AudioFormat& PipelineRenderer::outputFormat() const
 void PipelineRenderer::setOutputFormat(const AudioFormat& outputFormat)
 {
     m_outputFormat = outputFormat;
+}
+
+bool PipelineRenderer::configureOutputResampler(DspNodePtr resampler, const AudioFormat& outputFormat)
+{
+    if(!resampler || !m_masterOutputFormat.isValid() || !outputFormat.isValid()
+       || outputFormat.channelCount() != m_masterOutputFormat.channelCount()
+       || !resampler->setTargetSampleRate(outputFormat.sampleRate())) {
+        return false;
+    }
+
+    AudioFormat processingFormat{m_masterOutputFormat};
+    processingFormat.setSampleFormat(SampleFormat::F64);
+    const AudioFormat convertedFormat = resampler->outputFormat(processingFormat);
+    if(!convertedFormat.isValid() || convertedFormat.sampleRate() != outputFormat.sampleRate()
+       || convertedFormat.channelCount() != processingFormat.channelCount()) {
+        return false;
+    }
+
+    resampler->prepare(processingFormat);
+    m_outputResampler = std::move(resampler);
+    m_outputFormat    = outputFormat;
+    return true;
+}
+
+void PipelineRenderer::clearOutputResampler()
+{
+    m_outputResampler = nullptr;
+    if(m_masterOutputFormat.isValid()) {
+        const SampleFormat outputSampleFormat = m_outputFormat.sampleFormat();
+        m_outputFormat                        = m_masterOutputFormat;
+        if(outputSampleFormat != SampleFormat::Unknown) {
+            m_outputFormat.setSampleFormat(outputSampleFormat);
+        }
+    }
 }
 
 const Engine::DspChain& PipelineRenderer::perTrackChainDefs() const
@@ -493,7 +552,9 @@ void PipelineRenderer::reconfigureForChainChange(const AudioFormat& effectiveInp
             m_dspChain.prepare(effectiveInput);
         }
 
-        m_outputFormat = m_dspChain.outputFormatFor(effectiveInput);
+        m_masterOutputFormat = m_dspChain.outputFormatFor(effectiveInput);
+        m_outputResampler    = nullptr;
+        m_outputFormat       = m_masterOutputFormat;
 
         if(outputBitdepth != SampleFormat::Unknown && m_outputFormat.isValid()) {
             m_outputFormat.setSampleFormat(outputBitdepth);
@@ -514,11 +575,18 @@ void PipelineRenderer::reconfigureForChainChange(const AudioFormat& effectiveInp
 void PipelineRenderer::resetMaster()
 {
     m_dspChain.reset();
+    if(m_outputResampler) {
+        (*m_outputResampler).reset();
+    }
 }
 
 void PipelineRenderer::flushMaster(ProcessingBufferList& chunks, const DspNode::FlushMode mode)
 {
     m_dspChain.flush(chunks, mode);
+    if(m_outputResampler) {
+        m_outputResampler->process(chunks);
+        m_outputResampler->flush(chunks, mode);
+    }
 }
 
 void PipelineRenderer::rebuildAllPerTrackDsps(DspRegistry* registry, const bool preserveBufferedOutput)

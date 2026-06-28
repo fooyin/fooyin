@@ -604,15 +604,16 @@ bool SoxResamplerDSP::loadSettings(const QByteArray& preset)
     return true;
 }
 
-void SoxResamplerDSP::setTargetSampleRate(int sampleRate)
+bool SoxResamplerDSP::setTargetSampleRate(int sampleRate)
 {
     sampleRate = std::clamp(sampleRate, MinTargetSampleRate, MaxSampleRate);
     if(m_targetRate == sampleRate) {
-        return;
+        return true;
     }
 
     m_targetRate = sampleRate;
     rebuildResampler();
+    return true;
 }
 
 int SoxResamplerDSP::targetSampleRate() const

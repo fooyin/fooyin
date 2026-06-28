@@ -68,7 +68,7 @@ public:
     [[nodiscard]] QByteArray saveSettings() const override;
     bool loadSettings(const QByteArray& preset) override;
 
-    void setTargetSampleRate(int sampleRate);
+    bool setTargetSampleRate(int sampleRate) override;
     [[nodiscard]] int targetSampleRate() const;
 
     void setQuality(Quality quality);

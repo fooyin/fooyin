@@ -173,6 +173,7 @@ public Q_SLOTS:
     void applyOutputProfile(const Fooyin::OutputCreator& output, const QString& device, Fooyin::SampleFormat bitdepth,
                             bool dither, const Fooyin::Engine::DspChains& chain);
     void setOutputDevice(const QString& device);
+    void setAutomaticResampling(bool enabled, const QStringList& preferredDspNames);
     void setAnalysisDataSubscriptions(Fooyin::Engine::AnalysisDataTypes subscriptions);
     void updateLiveDspSettings(const Fooyin::Engine::LiveDspSettingsUpdate& update);
 

@@ -552,6 +552,31 @@ void Widgets::registerAdvancedSettings()
                  return interval <= 0 ? 0 : std::max(interval, 1000);
              },
          .validate = {}});
+    advancedSettingsRegistry->add<Settings::Core::Internal::OutputAutoResample>(
+        {.category    = {tr("Playback"), tr("Output")},
+         .label       = tr("Automatically resample unsupported output rates"),
+         .description = tr("Resample audio when the selected output device uses a different sample rate"),
+         .editor      = AdvancedSettingCheckBox{},
+         .normalise   = {},
+         .validate    = {}});
+    advancedSettingsRegistry->add<Settings::Core::Internal::OutputResamplerPreference>(
+        {.category    = {tr("Playback"), tr("Output")},
+         .label       = tr("Automatic resampling preference"),
+         .description = tr("Preferred resampler DSP names, in order. Other registered resamplers are used as "
+                           "fallbacks."),
+         .editor      = AdvancedSettingStringListLineEdit{.separator = u';'},
+         .normalise =
+             [](const QVariant& value) {
+                 QStringList result;
+                 for(const QString& name : value.toStringList()) {
+                     const QString trimmed = name.trimmed();
+                     if(!trimmed.isEmpty() && !result.contains(trimmed, Qt::CaseInsensitive)) {
+                         result.push_back(trimmed);
+                     }
+                 }
+                 return QVariant::fromValue(result);
+             },
+         .validate = {}});
     advancedSettingsRegistry->add<Settings::Core::PreserveTimestamps>(
         {.category    = {tr("Tagging")},
          .label       = tr("Preserve timestamps"),

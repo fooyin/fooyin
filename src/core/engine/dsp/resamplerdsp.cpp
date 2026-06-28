@@ -533,12 +533,16 @@ bool ResamplerDsp::loadSettings(const QByteArray& preset)
     return true;
 }
 
-void ResamplerDsp::setTargetSampleRate(int sampleRate)
+bool ResamplerDsp::setTargetSampleRate(int sampleRate)
 {
+    if(sampleRate <= 0) {
+        return false;
+    }
     if(std::exchange(m_targetRate, sampleRate) != sampleRate) {
         m_outputFormat.setSampleRate(sampleRate);
         recreateContext();
     }
+    return true;
 }
 
 int ResamplerDsp::targetSampleRate() const

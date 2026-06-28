@@ -184,6 +184,7 @@ AudioPipeline::AudioPipeline()
     , m_renderPhase{RenderPhase::Stopped}
     , m_outputBitdepth{SampleFormat::Unknown}
     , m_ditherEnabled{false}
+    , m_autoResampleEnabled{true}
     , m_dataDemandNotified{false}
     , m_pendingWriteStallLogActive{false}
     , m_outputUnderrunLogActive{false}
@@ -547,11 +548,48 @@ bool AudioPipeline::init(const AudioFormat& format)
         if(pipeline.m_outputUnit.output()->init(pipeline.m_renderer.outputFormat())) {
             const AudioFormat actualFormat = pipeline.m_outputUnit.output()->format();
 
-            const bool incompatibleFormat
-                = actualFormat.sampleRate() != pipeline.m_renderer.outputFormat().sampleRate()
-               || actualFormat.channelCount() != pipeline.m_renderer.outputFormat().channelCount();
+            const bool sampleRateMismatch
+                = actualFormat.sampleRate() != pipeline.m_renderer.outputFormat().sampleRate();
+            const bool channelCountMismatch
+                = actualFormat.channelCount() != pipeline.m_renderer.outputFormat().channelCount();
 
-            if(incompatibleFormat) {
+            bool resamplerConfigured{false};
+            QString selectedResampler;
+            if(sampleRateMismatch && !channelCountMismatch && pipeline.m_autoResampleEnabled) {
+                if(auto* registry = pipeline.m_dspRegistry.load(std::memory_order_acquire)) {
+                    const auto entries = registry->entries();
+                    std::vector<QString> candidateIds;
+                    candidateIds.reserve(entries.size());
+
+                    for(const QString& preferredName : std::as_const(pipeline.m_preferredResamplerNames)) {
+                        const auto entry = std::ranges::find_if(entries, [&preferredName](const auto& candidate) {
+                            return candidate.name.compare(preferredName, Qt::CaseInsensitive) == 0;
+                        });
+                        if(entry != entries.cend()
+                           && std::ranges::find(candidateIds, entry->id) == candidateIds.cend()) {
+                            candidateIds.push_back(entry->id);
+                        }
+                    }
+
+                    for(const auto& entry : entries) {
+                        if(std::ranges::find(candidateIds, entry.id) == candidateIds.cend()) {
+                            candidateIds.push_back(entry.id);
+                        }
+                    }
+
+                    for(const QString& candidateId : candidateIds) {
+                        auto candidate = registry->create(candidateId);
+                        if(pipeline.m_renderer.configureOutputResampler(std::move(candidate), actualFormat)) {
+                            const auto entry    = std::ranges::find(entries, candidateId, &DspNode::Entry::id);
+                            selectedResampler   = entry != entries.cend() ? entry->name : candidateId;
+                            resamplerConfigured = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if(channelCountMismatch || (sampleRateMismatch && !resamplerConfigured)) {
                 const QString requestedDescription = describeFormat(pipeline.m_renderer.outputFormat());
                 const QString actualDescription    = describeFormat(actualFormat);
                 const QString error = u"Output format negotiation failed: requested %1, backend initialised %2"_s.arg(
@@ -569,6 +607,11 @@ bool AudioPipeline::init(const AudioFormat& format)
                 pipeline.clearPendingOutput();
 
                 return false;
+            }
+
+            if(resamplerConfigured) {
+                qCInfo(PIPELINE) << "Automatic output resampling enabled:" << requestedOutput.sampleRate() << "Hz ->"
+                                 << actualFormat.sampleRate() << "Hz using" << selectedResampler;
             }
 
             pipeline.setLastInitError({});
@@ -847,6 +890,15 @@ AudioFormat AudioPipeline::setOutputBitdepth(const SampleFormat bitdepth)
 void AudioPipeline::setDither(bool enabled)
 {
     onAudioThreadAsync([enabled](AudioPipeline& pipeline) { pipeline.m_ditherEnabled = enabled; });
+}
+
+void AudioPipeline::setAutomaticResampling(bool enabled, QStringList preferredDspNames)
+{
+    preferredDspNames.removeAll(QString{});
+    onAudioThreadAsync([enabled, preferredDspNames = std::move(preferredDspNames)](AudioPipeline& pipeline) mutable {
+        pipeline.m_autoResampleEnabled     = enabled;
+        pipeline.m_preferredResamplerNames = std::move(preferredDspNames);
+    });
 }
 
 AudioFormat AudioPipeline::setDspChain(std::vector<DspNodePtr> masterNodes, const Engine::DspChain& perTrackDefs,

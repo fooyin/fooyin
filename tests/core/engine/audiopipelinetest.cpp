@@ -53,7 +53,10 @@ public:
     bool init(const AudioFormat& format) override
     {
         const std::scoped_lock lock{m_mutex};
-        m_format      = format;
+        m_format = format;
+        if(m_forcedSampleRate > 0) {
+            m_format.setSampleRate(m_forcedSampleRate);
+        }
         m_initialised = format.isValid();
         return m_initialised;
     }
@@ -193,6 +196,12 @@ public:
         m_maxWriteFrames = maxWriteFrames;
     }
 
+    void setForcedSampleRate(int sampleRate)
+    {
+        const std::scoped_lock lock{m_mutex};
+        m_forcedSampleRate = sampleRate;
+    }
+
     [[nodiscard]] int writeCallCount() const
     {
         const std::scoped_lock lock{m_mutex};
@@ -244,6 +253,7 @@ private:
     int m_startCalls{0};
     int m_totalFramesWritten{0};
     int m_lastWriteFrames{0};
+    int m_forcedSampleRate{0};
     double m_delaySeconds{0.0};
     double m_volume{1.0};
     bool m_initialised{false};
@@ -388,6 +398,55 @@ bool waitUntil(const std::function<bool()>& predicate, std::chrono::milliseconds
     return predicate();
 }
 } // namespace
+
+TEST(AudioPipelineTest, AutomaticallyResamplesToBackendSampleRate)
+{
+    const AudioFormat inputFormat{SampleFormat::F64, 44100, Channels};
+    AudioPipeline pipeline;
+    DspRegistry registry;
+    auto output   = std::make_unique<FakeAudioOutput>(512);
+    auto* backend = output.get();
+    backend->setForcedSampleRate(48000);
+    backend->setFreeFrames(512);
+
+    pipeline.setDspRegistry(&registry);
+    pipeline.setOutput(std::move(output));
+    pipeline.start();
+    pipeline.setAutomaticResampling(true, {u"Resampler (FFmpeg)"_s});
+
+    ASSERT_TRUE(pipeline.init(inputFormat));
+    EXPECT_EQ(pipeline.outputFormat().sampleRate(), 48000);
+
+    auto stream = StreamFactory::createStream(inputFormat, 8192);
+    std::vector<double> samples(4096, 0.25);
+    ASSERT_EQ(stream->writer().write(samples.data(), samples.size()), samples.size());
+    stream->applyCommand(AudioStream::Command::Play);
+    stream->setEndOfInput();
+    const auto streamId = pipeline.registerStream(stream);
+    pipeline.addStream(streamId);
+    pipeline.play();
+    EXPECT_TRUE(backend->waitForWritesAtLeast(1, 1500ms));
+
+    pipeline.stop();
+}
+
+TEST(AudioPipelineTest, RejectsBackendSampleRateMismatchWhenAutomaticResamplingDisabled)
+{
+    AudioPipeline pipeline;
+    DspRegistry registry;
+    auto output = std::make_unique<FakeAudioOutput>(64);
+    output->setForcedSampleRate(SampleRate * 2);
+
+    pipeline.setDspRegistry(&registry);
+    pipeline.setOutput(std::move(output));
+    pipeline.start();
+    pipeline.setAutomaticResampling(false, {u"Resampler (FFmpeg)"_s});
+
+    EXPECT_FALSE(pipeline.init(testFormat()));
+    EXPECT_TRUE(pipeline.lastInitError().contains(u"format negotiation failed"_s, Qt::CaseInsensitive));
+
+    pipeline.stop();
+}
 
 TEST(AudioPipelineTest, RaisesNeedsDataSignalWhenMixerUnderruns)
 {

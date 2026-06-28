@@ -98,6 +98,8 @@ public:
 
     [[nodiscard]] const AudioFormat& outputFormat() const;
     void setOutputFormat(const AudioFormat& outputFormat);
+    [[nodiscard]] bool configureOutputResampler(DspNodePtr resampler, const AudioFormat& outputFormat);
+    void clearOutputResampler();
 
     [[nodiscard]] const Engine::DspChain& perTrackChainDefs() const;
     [[nodiscard]] PerTrackChainPatchPlan buildPerTrackChainPatchPlan(const Engine::DspChain& defs) const;
@@ -154,9 +156,11 @@ private:
     ProcessingBuffer m_processBuffer;
 
     DspChain m_dspChain;
+    DspNodePtr m_outputResampler;
     AudioMixer m_mixer;
 
     AudioFormat m_inputFormat;
+    AudioFormat m_masterOutputFormat;
     AudioFormat m_outputFormat;
 };
 } // namespace Fooyin

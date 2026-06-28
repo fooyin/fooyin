@@ -66,6 +66,7 @@ constexpr auto DefaultRemoteOpenTimeoutMs = 8000;
 
 [[nodiscard]] FYCORE_EXPORT QStringList defaultFFmpegPriorityExtensions();
 [[nodiscard]] FYCORE_EXPORT QStringList defaultReaderProbeAllExtensions();
+[[nodiscard]] FYCORE_EXPORT QStringList defaultOutputResamplerPreference();
 
 enum CoreInternalSettings : uint32_t
 {
@@ -94,6 +95,8 @@ enum CoreInternalSettings : uint32_t
     RemotePrebufferMs         = 22 | Type::Int,
     RemoteOpenTimeoutMs       = 23 | Type::Int,
     MonitorTrackFiles         = 24 | Type::Bool,
+    OutputAutoResample        = 25 | Type::Bool,
+    OutputResamplerPreference = 26 | Type::StringList,
 };
 Q_ENUM_NS(CoreInternalSettings)
 } // namespace Settings::Core::Internal

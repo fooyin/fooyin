@@ -49,6 +49,11 @@ bool DspNode::loadSettings(const QByteArray& /*preset*/)
     return false;
 }
 
+bool DspNode::setTargetSampleRate(int /*sampleRate*/)
+{
+    return false;
+}
+
 int DspNode::latencyFrames() const
 {
     return 0;

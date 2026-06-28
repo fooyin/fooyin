@@ -40,6 +40,7 @@
 #include <utils/lockfreeringbuffer.h>
 
 #include <QDebug>
+#include <QStringList>
 
 #include <atomic>
 #include <chrono>
@@ -217,6 +218,8 @@ public:
     AudioFormat setOutputBitdepth(SampleFormat bitdepth);
     //! Enable/disable TPDF dithering for float->S16 output conversion.
     void setDither(bool enabled);
+    //! Configure automatic terminal resampling used for output compatibility.
+    void setAutomaticResampling(bool enabled, QStringList preferredDspNames);
     //! Replace master/per-track DSP definitions and return predicted output format.
     AudioFormat setDspChain(std::vector<DspNodePtr> masterNodes, const Engine::DspChain& perTrackDefs,
                             const AudioFormat& inputFormat);
@@ -660,6 +663,8 @@ private:
 
     SampleFormat m_outputBitdepth;
     bool m_ditherEnabled;
+    bool m_autoResampleEnabled;
+    QStringList m_preferredResamplerNames;
 
     bool m_dataDemandNotified;
     bool m_pendingWriteStallLogActive;
