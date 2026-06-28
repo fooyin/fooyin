@@ -75,8 +75,8 @@ bool confirmPlaylistRemoval(SettingsManager* settings, QWidget* parent)
     return true;
 }
 
-PlaylistBox::PlaylistBox(ActionManager* actionManager, PlaylistController* playlistController, SettingsManager* settings,
-                         QWidget* parent)
+PlaylistBox::PlaylistBox(ActionManager* actionManager, PlaylistController* playlistController,
+                         SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
     , m_playlistController{playlistController}

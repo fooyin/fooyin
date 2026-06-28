@@ -44,8 +44,8 @@ class PlaylistBox : public FyWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistBox(ActionManager* actionManager, PlaylistController* playlistController, SettingsManager* settings,
-                         QWidget* parent = nullptr);
+    explicit PlaylistBox(ActionManager* actionManager, PlaylistController* playlistController,
+                         SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
