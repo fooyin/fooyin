@@ -39,11 +39,15 @@ enum class Preset : uint8_t
     Fps90  = 90,
     Fps100 = 100,
     Fps120 = 120,
+    Fps144 = 144,
+    Fps165 = 165,
+    Fps240 = 240,
 };
 
-constexpr std::array<Preset, 14> Presets = {
-    Preset::Fps15, Preset::Fps20, Preset::Fps24, Preset::Fps25, Preset::Fps30, Preset::Fps40,  Preset::Fps48,
-    Preset::Fps50, Preset::Fps60, Preset::Fps72, Preset::Fps75, Preset::Fps90, Preset::Fps100, Preset::Fps120,
+constexpr std::array Presets = {
+    Preset::Fps15,  Preset::Fps20,  Preset::Fps24,  Preset::Fps25,  Preset::Fps30,  Preset::Fps40,
+    Preset::Fps48,  Preset::Fps50,  Preset::Fps60,  Preset::Fps72,  Preset::Fps75,  Preset::Fps90,
+    Preset::Fps100, Preset::Fps120, Preset::Fps144, Preset::Fps165, Preset::Fps240,
 };
 
 constexpr int toFps(Preset preset)
@@ -86,7 +90,7 @@ constexpr int nearestPresetFps(int fps)
 
 constexpr int intervalMsForFps(int fps)
 {
-    const int clamped = clampFps(fps);
+    const int clamped = fps < 1 ? 1 : (fps > maxFps() ? maxFps() : fps);
     return (1000 + (clamped / 2)) / clamped;
 }
 } // namespace Fooyin::Gui::FrameRate
