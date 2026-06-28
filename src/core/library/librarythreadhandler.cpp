@@ -764,10 +764,25 @@ void LibraryThreadHandlerPrivate::flushPendingWritesForInactiveSources()
     struct PendingFlush
     {
         QString sourceKey;
-        Track track;
         std::optional<Track> metadataTrack;
+        std::optional<Track> statsTrack;
+        std::optional<Track> coverTrack;
         AudioReader::WriteOptions statsOptions{AudioReader::None};
         TrackCovers covers;
+
+        [[nodiscard]] Track primaryTrack() const
+        {
+            if(metadataTrack.has_value()) {
+                return *metadataTrack;
+            }
+            if(statsTrack.has_value()) {
+                return *statsTrack;
+            }
+            if(coverTrack.has_value()) {
+                return *coverTrack;
+            }
+            return {};
+        }
     };
 
     std::vector<PendingFlush> pendingFlushes;
@@ -799,26 +814,22 @@ void LibraryThreadHandlerPrivate::flushPendingWritesForInactiveSources()
 
             if(const auto it = m_deferredMetadataWrites.find(sourceKey); it != m_deferredMetadataWrites.end()) {
                 pendingFlush.metadataTrack = it->second;
-                pendingFlush.track         = it->second;
             }
             if(const auto it = m_deferredStatWrites.find(sourceKey); it != m_deferredStatWrites.end()) {
-                if(!pendingFlush.track.isValid()) {
-                    pendingFlush.track = it->second.first;
-                }
+                pendingFlush.statsTrack   = it->second.first;
                 pendingFlush.statsOptions = it->second.second;
             }
             if(const auto it = m_deferredCoverWrites.find(sourceKey); it != m_deferredCoverWrites.end()) {
-                if(!pendingFlush.track.isValid()) {
-                    pendingFlush.track = it->second.first;
-                }
-                pendingFlush.covers = it->second.second;
+                pendingFlush.coverTrack = it->second.first;
+                pendingFlush.covers     = it->second.second;
             }
 
             m_deferredMetadataWrites.erase(sourceKey);
             m_deferredStatWrites.erase(sourceKey);
 
             if(!pendingFlush.covers.empty()) {
-                m_flushingCoverWriteData[sourceKey] = {pendingFlush.track, pendingFlush.covers};
+                const Track coverWriteTrack         = pendingFlush.coverTrack.value_or(pendingFlush.primaryTrack());
+                m_flushingCoverWriteData[sourceKey] = {coverWriteTrack, pendingFlush.covers};
                 m_flushingCoverWrites.emplace(sourceKey);
                 m_deferredCoverWrites.erase(sourceKey);
             }
@@ -831,17 +842,22 @@ void LibraryThreadHandlerPrivate::flushPendingWritesForInactiveSources()
     }
 
     for(const PendingFlush& pendingFlush : pendingFlushes) {
-        if(pendingFlush.track.isValid()) {
+        const Track primaryTrack = pendingFlush.primaryTrack();
+        if(primaryTrack.isValid()) {
             QMetaObject::invokeMethod(&m_trackDatabaseManager, [this, pendingFlush]() {
+                const Track primaryWriteTrack = pendingFlush.primaryTrack();
+
                 if(pendingFlush.metadataTrack.has_value()) {
                     m_trackDatabaseManager.updateTracks({*pendingFlush.metadataTrack}, true);
                 }
                 if(pendingFlush.statsOptions != AudioReader::None) {
-                    m_trackDatabaseManager.updateTrackStats({pendingFlush.track}, pendingFlush.statsOptions);
+                    const Track statsWriteTrack = pendingFlush.statsTrack.value_or(primaryWriteTrack);
+                    m_trackDatabaseManager.updateTrackStats({statsWriteTrack}, pendingFlush.statsOptions);
                 }
                 if(!pendingFlush.covers.empty()) {
+                    const Track coverWriteTrack = pendingFlush.coverTrack.value_or(primaryWriteTrack);
                     m_trackDatabaseManager.writeCovers(
-                        TrackCoverData{.tracks = {pendingFlush.track}, .coverData = pendingFlush.covers});
+                        TrackCoverData{.tracks = {coverWriteTrack}, .coverData = pendingFlush.covers});
                     QMetaObject::invokeMethod(m_self, [this, sourceKey = pendingFlush.sourceKey]() {
                         {
                             const std::scoped_lock lock{m_deferredWritesMutex};
