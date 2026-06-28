@@ -139,6 +139,8 @@ public:
 
     void requestBacklog(uint64_t durationMs);
     void setChannelSelection(ChannelSelection selection);
+    //! Resample returned PCM windows to this rate; set to 0 to preserve the source rate.
+    void setPcmTargetSampleRate(int sampleRate);
 
     void setChannelMode(ChannelMode mode)
     {

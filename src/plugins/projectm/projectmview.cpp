@@ -113,6 +113,7 @@ void ProjectMView::setVisualisationSession(VisualisationSessionPtr session)
     m_visualisationSession = std::move(session);
     if(m_visualisationSession) {
         m_visualisationSession->requestBacklog(PcmBacklogMs);
+        m_visualisationSession->setPcmTargetSampleRate(44100);
     }
     resetPcmCursor();
 }
