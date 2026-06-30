@@ -25,8 +25,10 @@
 #include "tagpolicy.h"
 
 #include <core/constants.h>
+#include <core/coresettings.h>
 #include <core/track.h>
 #include <utils/helpers.h>
+#include <utils/stringutils.h>
 
 #include <taglib/aifffile.h>
 #include <taglib/apefile.h>
@@ -36,6 +38,7 @@
 #include <taglib/asfpicture.h>
 #include <taglib/asftag.h>
 #include <taglib/attachedpictureframe.h>
+#include <taglib/commentsframe.h>
 #if (TAGLIB_MAJOR_VERSION >= 2)
 #include <taglib/dsdifffile.h>
 #include <taglib/dsffile.h>
@@ -70,6 +73,7 @@
 #include <QLoggingCategory>
 #include <QMimeDatabase>
 #include <QPixmap>
+#include <QStringDecoder>
 
 #include <cmath>
 #include <cstring>
@@ -542,6 +546,135 @@ QStringList convertStringList(const TagLib::StringList& strList)
     }
 
     return list;
+}
+
+std::optional<TagLib::PropertyMap> latin1FrameProperties(const TagLib::ID3v2::Frame* frame)
+{
+    if(const auto* textFrame = dynamic_cast<const TagLib::ID3v2::TextIdentificationFrame*>(frame)) {
+        if(textFrame->textEncoding() == TagLib::String::Latin1) {
+            return textFrame->asProperties();
+        }
+    }
+    if(const auto* commentFrame = dynamic_cast<const TagLib::ID3v2::CommentsFrame*>(frame)) {
+        if(commentFrame->textEncoding() == TagLib::String::Latin1) {
+            return commentFrame->asProperties();
+        }
+    }
+    return {};
+}
+
+QByteArray detectLegacyEncoding(const QByteArray& data)
+{
+    if(!std::ranges::any_of(data, [](char byte) { return static_cast<unsigned char>(byte) >= 0x80; })) {
+        return {};
+    }
+
+    const FySettings settings;
+    const Utils::DetectEncodingOptions options{
+        .preferredFallbackEncoding
+        = settings.value(QString::fromLatin1(Utils::PreferredFallbackEncodingSetting)).toString().toLatin1()};
+    QByteArray encoding = Utils::detectEncoding(data, options);
+    if(encoding.isEmpty()) {
+        return {};
+    }
+
+    QStringDecoder decoder{encoding.constData()};
+    if(!decoder.isValid()) {
+        return {};
+    }
+
+    const QString decoded = decoder(data);
+    if(decoder.hasError() || decoded == QString::fromLatin1(data)) {
+        return {};
+    }
+
+    return encoding;
+}
+
+QString decodeLegacyId3Value(const TagLib::String& value, const QByteArray& encoding)
+{
+    QString text          = convertString(value);
+    const QByteArray data = text.toLatin1();
+    if(QString::fromLatin1(data) != text) {
+        return text;
+    }
+
+    QStringDecoder decoder{encoding.constData()};
+    if(!decoder.isValid()) {
+        return text;
+    }
+
+    const QString decoded = decoder(data);
+    return decoder.hasError() ? text : decoded;
+}
+
+TagLib::PropertyMap id3v1Properties(const TagLib::ID3v1::Tag* tag)
+{
+    TagLib::PropertyMap properties = tag->properties();
+    QByteArray latin1Data;
+
+    for(const auto& values : properties | std::views::values) {
+        for(const TagLib::String& value : values) {
+            const QString text    = convertString(value);
+            const QByteArray data = text.toLatin1();
+            if(QString::fromLatin1(data) == text) {
+                latin1Data.append(data);
+                latin1Data.append(u'\n');
+            }
+        }
+    }
+
+    const QByteArray encoding = detectLegacyEncoding(latin1Data);
+    if(!encoding.isEmpty()) {
+        for(auto& values : properties | std::views::values) {
+            for(TagLib::String& value : values) {
+                value = convertString(decodeLegacyId3Value(value, encoding));
+            }
+        }
+    }
+
+    return properties;
+}
+
+TagLib::PropertyMap id3Properties(const TagLib::ID3v2::Tag* tag)
+{
+    std::vector<TagLib::PropertyMap> latin1Properties;
+    QByteArray latin1Data;
+
+    for(const auto* frame : tag->frameList()) {
+        if(auto properties = latin1FrameProperties(frame)) {
+            for(const auto& values : *properties | std::views::values) {
+                for(const TagLib::String& value : values) {
+                    const QString text    = convertString(value);
+                    const QByteArray data = text.toLatin1();
+                    if(QString::fromLatin1(data) == text) {
+                        latin1Data.append(data);
+                        latin1Data.append(u'\n');
+                    }
+                }
+            }
+            latin1Properties.emplace_back(std::move(*properties));
+        }
+    }
+
+    const QByteArray encoding = detectLegacyEncoding(latin1Data);
+
+    TagLib::PropertyMap properties = tag->properties();
+    if(!encoding.isEmpty()) {
+        for(const auto& framePropertyMap : latin1Properties) {
+            for(const auto& [key, frameValues] : framePropertyMap) {
+                TagLib::StringList& values = properties[key];
+                for(const TagLib::String& frameValue : frameValues) {
+                    const auto value = std::ranges::find(values, frameValue);
+                    if(value != values.end()) {
+                        *value = convertString(decodeLegacyId3Value(*value, encoding));
+                    }
+                }
+            }
+        }
+    }
+
+    return properties;
 }
 
 TagLib::StringList convertStringList(const QStringList& strList)
@@ -2951,7 +3084,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
 
                 bool readTags{false};
                 if(file.hasID3v1Tag()) {
-                    readGeneralProperties(file.ID3v1Tag()->properties(), track, false, true, policy);
+                    readGeneralProperties(id3v1Properties(file.ID3v1Tag()), track, false, true, policy);
                     readTags = true;
                 }
                 if(file.hasAPETag()) {
@@ -2962,7 +3095,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
                 }
                 if(file.hasID3v2Tag()) {
                     const auto* id3Tag = file.ID3v2Tag();
-                    readGeneralProperties(id3Tag->properties(), track, readTags, !readTags, policy,
+                    readGeneralProperties(id3Properties(id3Tag), track, readTags, !readTags, policy,
                                           id3Tag->header()->majorVersion() == 3);
                     readId3Tags(id3Tag, track, policy, true);
                     readTags = true;
@@ -3002,7 +3135,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
                 }
                 if(file.hasID3v2Tag()) {
                     const auto* id3Tag = file.tag();
-                    readGeneralProperties(id3Tag->properties(), track, false, true, policy,
+                    readGeneralProperties(id3Properties(id3Tag), track, false, true, policy,
                                           id3Tag->header()->majorVersion() == 3);
                     readId3Tags(id3Tag, track, policy, false);
                     track.setTagTypes({u"ID3v2.%1"_s.arg(id3Tag->header()->majorVersion())});
@@ -3026,7 +3159,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
                 }
                 if(file.hasID3v2Tag()) {
                     const auto* id3Tag = file.ID3v2Tag();
-                    readGeneralProperties(id3Tag->properties(), track, false, true, policy,
+                    readGeneralProperties(id3Properties(id3Tag), track, false, true, policy,
                                           id3Tag->header()->majorVersion() == 3);
                     readId3Tags(id3Tag, track, policy, false);
                     track.setTagTypes({u"ID3v2.%1"_s.arg(id3Tag->header()->majorVersion())});
@@ -3249,7 +3382,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
 
                 if(file.tag()) {
                     const auto* id3Tag = file.tag();
-                    readGeneralProperties(id3Tag->properties(), track, false, true, policy,
+                    readGeneralProperties(id3Properties(id3Tag), track, false, true, policy,
                                           id3Tag->header()->majorVersion() == 3);
                     readId3Tags(id3Tag, track, policy, false);
                     track.setTagTypes({u"ID3v2.%1"_s.arg(id3Tag->header()->majorVersion())});
@@ -3273,7 +3406,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
                 }
                 if(file.hasID3v2Tag()) {
                     const auto* id3Tag = file.ID3v2Tag();
-                    readGeneralProperties(id3Tag->properties(), track, false, true, policy,
+                    readGeneralProperties(id3Properties(id3Tag), track, false, true, policy,
                                           id3Tag->header()->majorVersion() == 3);
                     readId3Tags(id3Tag, track, policy, false);
                     track.setTagTypes({u"ID3v2.%1"_s.arg(id3Tag->header()->majorVersion())});

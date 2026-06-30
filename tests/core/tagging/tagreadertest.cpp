@@ -24,12 +24,16 @@
 #include <core/engine/input/ratingtagpolicy.h>
 #include <core/engine/input/taglibparser.h>
 #include <core/track.h>
+#include <utils/stringutils.h>
 
+#include <taglib/commentsframe.h>
 #include <taglib/flacfile.h>
+#include <taglib/id3v1tag.h>
 #include <taglib/id3v2tag.h>
 #include <taglib/mp4file.h>
 #include <taglib/mpegfile.h>
 #include <taglib/popularimeterframe.h>
+#include <taglib/textidentificationframe.h>
 #include <taglib/vorbisfile.h>
 
 #include <QFile>
@@ -104,6 +108,14 @@ void setRatingReadPolicy(const QString& tag, const QString& scale)
 void resetTagReaderRatingSettings()
 {
     resetRatingSettings();
+}
+
+void setId3TextFrame(TagLib::ID3v2::Tag* tag, const char* id, const QByteArray& value, TagLib::String::Type encoding)
+{
+    tag->removeFrames(id);
+    auto* frame = new TagLib::ID3v2::TextIdentificationFrame(id, encoding);
+    frame->setText(TagLib::String{value.constData(), encoding});
+    tag->addFrame(frame);
 }
 
 quint32 readLe32(const QByteArray& data, qsizetype offset)
@@ -408,6 +420,116 @@ TEST_F(TagReaderTest, Mp3Read)
     const auto testTag = track.extraTag(u"TEST"_s);
     ASSERT_TRUE(!testTag.isEmpty());
     EXPECT_EQ(testTag.front(), u"A custom tag"_s);
+}
+
+TEST_F(TagReaderTest, Mp3ReadRepairsLegacyTextInLatin1Id3Frames)
+{
+    const QString filepath = u":/audio/audiotest.mp3"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    const QByteArray localPath = file.fileName().toLocal8Bit();
+    {
+        TagLib::MPEG::File mp3File(localPath.constData());
+        ASSERT_TRUE(mp3File.isValid());
+        auto* tag = mp3File.ID3v2Tag(true);
+        ASSERT_NE(tag, nullptr);
+
+        setId3TextFrame(tag, "TIT2", QByteArray::fromHex("cae0ea20eceeebeee4fb20ecfb20e1fbebe8"),
+                        TagLib::String::Latin1);
+        setId3TextFrame(tag, "TPE1", QByteArray::fromHex("c0ebe5eaf1e0ede4f020c3f0e0e4f1eae8e9"),
+                        TagLib::String::Latin1);
+        setId3TextFrame(tag, "TCOM", QByteArray::fromHex("c0ebe5eaf1e0ede4f0e020cfe0f5ecf3f2eee2e0"),
+                        TagLib::String::Latin1);
+        setId3TextFrame(tag, "TALB", QByteArray{"Caf\xC3\xA9"}, TagLib::String::UTF8);
+
+        tag->removeFrames("COMM");
+        auto* comment = new TagLib::ID3v2::CommentsFrame(TagLib::String::Latin1);
+        comment->setText(TagLib::String{QByteArray::fromHex("cfe5f1edff20ede0f0eee4ede0ff20e7e0efe8f1fc").constData(),
+                                        TagLib::String::Latin1});
+        tag->addFrame(comment);
+
+        ASSERT_TRUE(mp3File.save(TagLib::MPEG::File::ID3v2, TagLib::MPEG::File::StripOthers, TagLib::ID3v2::v3));
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+    EXPECT_EQ(track.title(), u"Как молоды мы были"_s);
+    EXPECT_EQ(track.artist(), u"Александр Градский"_s);
+    EXPECT_EQ(track.composer(), u"Александра Пахмутова"_s);
+    EXPECT_EQ(track.album(), u"Café"_s);
+    EXPECT_EQ(track.comment(), u"Песня народная запись"_s);
+}
+
+TEST_F(TagReaderTest, Mp3ReadPreservesValidLatin1Id3Frames)
+{
+    const QString filepath = u":/audio/audiotest.mp3"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    const QByteArray localPath = file.fileName().toLocal8Bit();
+    {
+        TagLib::MPEG::File mp3File(localPath.constData());
+        ASSERT_TRUE(mp3File.isValid());
+        auto* tag = mp3File.ID3v2Tag(true);
+        ASSERT_NE(tag, nullptr);
+
+        setId3TextFrame(tag, "TIT2", QByteArray::fromHex("c974e920e0205061726973"), TagLib::String::Latin1);
+        setId3TextFrame(tag, "TPE1", QByteArray::fromHex("4672616ee76f6973"), TagLib::String::Latin1);
+        setId3TextFrame(tag, "TALB", QByteArray::fromHex("436166e9"), TagLib::String::Latin1);
+
+        ASSERT_TRUE(mp3File.save(TagLib::MPEG::File::ID3v2, TagLib::MPEG::File::StripOthers, TagLib::ID3v2::v3));
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+    EXPECT_EQ(track.title(), u"Été à Paris"_s);
+    EXPECT_EQ(track.artist(), u"François"_s);
+    EXPECT_EQ(track.album(), u"Café"_s);
+}
+
+TEST_F(TagReaderTest, Mp3ReadRepairsLegacyTextInId3v1Tag)
+{
+    const QString filepath = u":/audio/audiotest.mp3"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    const QByteArray localPath = file.fileName().toLocal8Bit();
+    {
+        TagLib::MPEG::File mp3File(localPath.constData());
+        ASSERT_TRUE(mp3File.isValid());
+        auto* tag = mp3File.ID3v1Tag(true);
+        ASSERT_NE(tag, nullptr);
+
+        tag->setTitle(TagLib::String{QByteArray::fromHex("cae0ea20eceeebeee4fb20ecfb20e1fbebe8").constData(),
+                                     TagLib::String::Latin1});
+        tag->setArtist(TagLib::String{QByteArray::fromHex("c0ebe5eaf1e0ede4f020c3f0e0e4f1eae8e9").constData(),
+                                      TagLib::String::Latin1});
+        tag->setAlbum(TagLib::String{QByteArray::fromHex("cfe5f1ede820c0ebe5eaf1e0ede4f0fb").constData(),
+                                     TagLib::String::Latin1});
+
+        ASSERT_TRUE(mp3File.save(TagLib::MPEG::File::ID3v1, TagLib::MPEG::File::StripOthers, TagLib::ID3v2::v4,
+                                 TagLib::MPEG::File::DoNotDuplicate));
+    }
+
+    FySettings settings;
+    settings.setValue(Utils::PreferredFallbackEncodingSetting, u"windows-1251"_s);
+    settings.sync();
+
+    Track track{file.fileName()};
+    const bool success
+        = m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track);
+
+    settings.remove(Utils::PreferredFallbackEncodingSetting);
+    settings.sync();
+
+    ASSERT_TRUE(success);
+
+    EXPECT_EQ(track.title(), u"Как молоды мы были"_s);
+    EXPECT_EQ(track.artist(), u"Александр Градский"_s);
+    EXPECT_EQ(track.album(), u"Песни Александры"_s);
 }
 
 TEST_F(TagReaderTest, Mp3ReadHonoursPopmSettings)
