@@ -27,6 +27,7 @@
 
 #include <core/application.h>
 #include <core/coresettings.h>
+#include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
@@ -227,10 +228,14 @@ InfoPanel::InfoPanel(Application* app, ActionManager* actionManager, TrackSelect
     m_view->header()->setSectionResizeMode(0, QHeaderView::Interactive);
     m_view->header()->setSectionResizeMode(1, QHeaderView::Fixed);
 
-    QObject::connect(selectionController, &TrackSelectionController::displaySelectionChanged, this,
-                     [this]() { m_resetTimer.start(50, this); });
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
-                     [this]() { m_resetTimer.start(50, this); });
+    const auto startResetTimer = [this] {
+        m_resetTimer.start(50, this);
+    };
+
+    QObject::connect(app->library(), &MusicLibrary::tracksMetadataChanged, this, startResetTimer);
+    QObject::connect(app->library(), &MusicLibrary::tracksUpdated, this, startResetTimer);
+    QObject::connect(selectionController, &TrackSelectionController::displaySelectionChanged, this, startResetTimer);
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, startResetTimer);
     QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() { queueViewReset(); });
 
     setupActions();
