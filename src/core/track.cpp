@@ -739,6 +739,23 @@ QString Track::uniqueFilepath() const
     return path;
 }
 
+QString Track::identityKey() const
+{
+    if(id() >= 0) {
+        return u"id:%1"_s.arg(id());
+    }
+
+    static constexpr QLatin1StringView separator{Constants::UnitSeparator};
+    QString key = u"path:"_s + uniqueFilepath();
+    key += separator;
+    key += QString::number(subsong());
+    key += separator;
+    key += QString::number(offset());
+    key += separator;
+    key += QString::number(duration());
+    return key;
+}
+
 QString Track::prettyFilepath() const
 {
     if(isInArchive()) {

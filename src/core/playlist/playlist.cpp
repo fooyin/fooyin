@@ -268,11 +268,11 @@ TrackList PlaylistPrivate::updatedAutoTracks(const TrackList& tracks)
         return filteredTracks;
     }
 
-    std::unordered_map<QString, int> filteredIndexes;
+    std::unordered_map<QString, std::vector<int>> filteredIndexes;
     filteredIndexes.reserve(filteredTracks.size());
 
     for(int i{0}; std::cmp_less(i, filteredTracks.size()); ++i) {
-        filteredIndexes.emplace(filteredTracks[i].uniqueFilepath(), i);
+        filteredIndexes[filteredTracks[i].identityKey()].push_back(i);
     }
 
     std::vector<char> used(filteredTracks.size(), false);
@@ -281,9 +281,15 @@ TrackList PlaylistPrivate::updatedAutoTracks(const TrackList& tracks)
     updatedTracks.reserve(filteredTracks.size());
 
     for(const auto& track : m_tracks) {
-        if(const auto it = filteredIndexes.find(track.uniqueFilepath()); it != filteredIndexes.end()) {
-            updatedTracks.emplace_back(filteredTracks[it->second]);
-            used[it->second] = true;
+        const auto it = filteredIndexes.find(track.identityKey());
+        if(it == filteredIndexes.end()) {
+            continue;
+        }
+
+        const auto available = std::ranges::find_if(it->second, [&used](int index) { return !used[index]; });
+        if(available != it->second.cend()) {
+            updatedTracks.emplace_back(filteredTracks[*available]);
+            used[*available] = true;
         }
     }
 

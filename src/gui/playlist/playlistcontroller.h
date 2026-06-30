@@ -29,6 +29,7 @@
 #include <QObject>
 
 #include <memory>
+#include <set>
 
 class QUndoCommand;
 
@@ -132,6 +133,7 @@ private:
     void handleTracksDequeued(const QueueTracks& tracks);
     void handleTracksDequeued(const PlaylistIndexes& indexes);
     void handleQueueChanged(const QueueTracks& removed, const QueueTracks& added);
+    void flushPendingQueueChanges();
 
     void handlePlaylistUpdated(Playlist* playlist, const std::vector<int>& indexes, PlaylistTrackChangeSource source);
     void handleTracksUpdated(Playlist* playlist, const std::vector<int>& indexes);
@@ -145,5 +147,11 @@ private:
     PlaylistUiController* m_uiController;
 
     std::unique_ptr<PlaylistWorkspace> m_workspace;
+
+    std::set<int> m_pendingQueueIndexes;
+    UId m_pendingQueuePlaylistId;
+    uint64_t m_playlistPatchRevision{0};
+    uint64_t m_pendingQueuePatchRevision{0};
+    bool m_queueRefreshPending{false};
 };
 } // namespace Fooyin

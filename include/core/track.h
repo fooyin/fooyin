@@ -142,6 +142,8 @@ public:
     [[nodiscard]] QString filepath() const;
     //! Returns filepath plus logical segment identity, so multiple entries in one file can be distinguished.
     [[nodiscard]] QString uniqueFilepath() const;
+    //! Returns a stable key for matching this track across regenerated collections.
+    [[nodiscard]] QString identityKey() const;
     //! Returns a display path; archive entries are shown as "archive/path/entry" instead of their unpack URL.
     [[nodiscard]] QString prettyFilepath() const;
     [[nodiscard]] QString filename() const;

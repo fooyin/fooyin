@@ -37,6 +37,7 @@
 #include <QFileInfo>
 #include <QLoggingCategory>
 
+#include <deque>
 #include <ranges>
 #include <set>
 #include <unordered_map>
@@ -61,7 +62,7 @@ TrackKeySet playlistTrackKeySet(const TrackList& tracks)
     TrackKeySet result;
     result.reserve(tracks.size());
     for(const auto& track : tracks) {
-        result.emplace(track.uniqueFilepath());
+        result.emplace(track.identityKey());
     }
     return result;
 }
@@ -85,31 +86,26 @@ PlaylistTrackList rebuildPlaylistTracks(Playlist* playlist, const TrackList& tra
 
     const PlaylistTrackList oldTracks = playlist->playlistTracks();
 
-    std::unordered_map<QString, UId> preservedEntries;
+    std::unordered_map<QString, std::deque<UId>> preservedEntries;
     preservedEntries.reserve(oldTracks.size());
 
     for(const auto& oldTrack : oldTracks) {
-        const QString key = oldTrack.track.uniqueFilepath();
-        if(!preservedEntries.emplace(key, oldTrack.entryId).second) {
-            return PlaylistTrack::fromTracks(tracks, playlist->id());
-        }
+        preservedEntries[oldTrack.track.identityKey()].push_back(oldTrack.entryId);
     }
-
-    TrackKeySet seenNewKeys;
-    seenNewKeys.reserve(tracks.size());
 
     PlaylistTrackList result;
     result.reserve(tracks.size());
 
     for(int index{0}; const auto& track : tracks) {
-        const QString key = track.uniqueFilepath();
-        if(!seenNewKeys.emplace(key).second) {
-            return PlaylistTrack::fromTracks(tracks, playlist->id());
-        }
-
+        const QString key      = track.identityKey();
         const auto preservedIt = preservedEntries.find(key);
-        result.emplace_back(track, playlist->id(),
-                            preservedIt != preservedEntries.cend() ? preservedIt->second : UId::create(), index++);
+        const UId entryId      = preservedIt != preservedEntries.cend() && !preservedIt->second.empty()
+                                   ? preservedIt->second.front()
+                                   : UId::create();
+        if(preservedIt != preservedEntries.cend() && !preservedIt->second.empty()) {
+            preservedIt->second.pop_front();
+        }
+        result.emplace_back(track, playlist->id(), entryId, index++);
     }
 
     return result;
@@ -270,7 +266,7 @@ void PlaylistHandlerPrivate::regenerateAutoPlaylists(const TrackList& updatedTra
         updatedEntries.reserve(oldTracks.size());
 
         for(const auto& track : oldTracks) {
-            if(updatedTrackIds.contains(track.track.uniqueFilepath())) {
+            if(updatedTrackIds.contains(track.track.identityKey())) {
                 updatedEntries.emplace(track.entryId);
             }
         }

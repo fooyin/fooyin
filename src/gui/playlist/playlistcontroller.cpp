@@ -317,6 +317,10 @@ void PlaylistController::handlePlaylistTracksPatched(Playlist* playlist, const P
                                                      PlaylistTrackChangeSource source)
 {
     const bool isCurrentPlaylist = m_workspace->isCurrentPlaylist(playlist);
+    if(isCurrentPlaylist) {
+        ++m_playlistPatchRevision;
+    }
+
     if(changeSet.replacesAllEntries) {
         m_workspace->resetPlaylistViewState(playlist);
 
@@ -441,7 +445,40 @@ void PlaylistController::handleQueueChanged(const QueueTracks& removed, const Qu
     gatherIndexes(removed);
     gatherIndexes(added);
 
-    const std::vector<int> indexes{uniqueIndexes.cbegin(), uniqueIndexes.cend()};
+    if(uniqueIndexes.empty()) {
+        return;
+    }
+
+    if(m_pendingQueuePlaylistId != currentPlaylist->id()) {
+        m_pendingQueueIndexes.clear();
+        m_pendingQueuePlaylistId = currentPlaylist->id();
+    }
+
+    m_pendingQueueIndexes.insert(uniqueIndexes.cbegin(), uniqueIndexes.cend());
+    m_pendingQueuePatchRevision = m_playlistPatchRevision;
+
+    if(m_queueRefreshPending) {
+        return;
+    }
+    m_queueRefreshPending = true;
+
+    QMetaObject::invokeMethod(this, &PlaylistController::flushPendingQueueChanges, Qt::QueuedConnection);
+}
+
+void PlaylistController::flushPendingQueueChanges()
+{
+    m_queueRefreshPending = false;
+
+    const bool playlistChanged = currentPlaylistId() != m_pendingQueuePlaylistId;
+    // The patch updates the same rows and queue roles, so the preceding queue refresh is redundant
+    const bool supersededByPatch = m_pendingQueuePatchRevision != m_playlistPatchRevision;
+    if(playlistChanged || supersededByPatch) {
+        m_pendingQueueIndexes.clear();
+        return;
+    }
+
+    const std::vector<int> indexes{m_pendingQueueIndexes.cbegin(), m_pendingQueueIndexes.cend()};
+    m_pendingQueueIndexes.clear();
 
     if(!indexes.empty()) {
         Q_EMIT currentPlaylistQueueChanged(indexes);

@@ -1723,7 +1723,10 @@ void PlaylistModel::playingTrackChanged(const PlaylistTrack& track)
         indexesToRefresh.push_back(m_playingTrack.indexInPlaylist);
     }
 
-    if(!resolution.structuralRemapPending) {
+    const bool removedEntryPatchPending = m_currentPlaylist && previousTrack.playlistId == m_currentPlaylist->id()
+                                       && previousTrack.entryId.isValid()
+                                       && m_currentPlaylist->indexOfTrackEntry(previousTrack.entryId) < 0;
+    if(!resolution.structuralRemapPending && !removedEntryPatchPending) {
         refreshTracks(indexesToRefresh);
     }
 
@@ -1990,6 +1993,17 @@ void PlaylistModel::updateTracks(const ItemList& tracks, const std::set<int>& co
     for(const PlaylistItem& item : tracks) {
         if(m_nodes.contains(item.key())) {
             auto* node = &m_nodes.at(item.key());
+
+            if(node->type() == PlaylistItem::Track && item.type() == PlaylistItem::Track) {
+                const auto& currentTrack = std::get<PlaylistTrackItem>(node->data()).track();
+                const auto& updatedTrack = std::get<PlaylistTrackItem>(item.data()).track();
+                if(currentTrack.entryId.isValid() && updatedTrack.entryId.isValid()
+                   && currentTrack.entryId != updatedTrack.entryId) {
+                    // An asynchronous refresh completed after this model node changed identity.
+                    continue;
+                }
+            }
+
             node->setData(mergeUpdatedItemData(node->data(), item.data(), columnsUpdated));
             node->setState(PlaylistItem::State::None);
 
