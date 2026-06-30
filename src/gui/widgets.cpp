@@ -588,9 +588,10 @@ void Widgets::registerAdvancedSettings()
         Utils::PreferredFallbackEncodingSetting, QString{},
         {.category    = {tr("General"), tr("Text Encoding")},
          .label       = tr("Preferred fallback encoding"),
-         .description = tr("Encoding preferred when the best automatic match is Latin-compatible single-byte text"),
+         .description = tr("Encoding preferred when the best automatic match is low-confidence or Latin-compatible text"),
          .editor = AdvancedSettingRadioButtons{.options = {{.value = QString{}, .label = tr("Auto")},
-                                                           {.value = u"windows-1251"_s, .label = u"Windows-1251"_s}}},
+                                                           {.value = u"windows-1251"_s, .label = u"Windows-1251"_s},
+                                                           {.value = u"GB18030"_s, .label = u"GB18030"_s}}},
          .normalise = {},
          .validate  = {}});
     advancedSettingsRegistry->add(
