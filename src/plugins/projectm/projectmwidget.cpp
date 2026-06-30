@@ -784,8 +784,8 @@ void ProjectMWidget::installSplitterEventFilters()
 {
     // QOpenGLWindow is embedded as a native child window.
     // After it has grown, the window can overlap an ancestor splitter handle while the handle is dragged back across
-    // it, stealing mouse events and preventing the splitter from shrinking. Watch the splitters so we can replace the
-    // live window with a snapshot during a drag.
+    // it, stealing mouse events and preventing the splitter from shrinking. Watch the splitter handles so we can
+    // replace the live window with a snapshot during a drag.
 
     const auto addObject = [this](QObject* object) {
         if(!object || std::ranges::any_of(m_splitterEventObjects, [object](const auto& watched) {
@@ -804,7 +804,6 @@ void ProjectMWidget::installSplitterEventFilters()
             continue;
         }
 
-        addObject(splitter);
         for(int index{1}; index < splitter->count(); ++index) {
             addObject(splitter->handle(index));
         }
