@@ -23,8 +23,8 @@
 #include "spectrumcolours.h"
 #include "spectrumwidget.h"
 
+#include <core/engine/enginedefs.h>
 #include <core/engine/visualisationservice.h>
-#include <core/player/playerdefs.h>
 #include <gui/widgets/tooltip.h>
 
 #include <QBasicTimer>
@@ -44,7 +44,7 @@ class SpectrumView : public QWidget
     Q_OBJECT
 
 public:
-    explicit SpectrumView(EngineController* engine, PlayerController* playerController, QWidget* parent = nullptr);
+    explicit SpectrumView(EngineController* engine, QWidget* parent = nullptr);
 
     void setConfig(const SpectrumWidget::ConfigData& config);
     void refreshStyleColours();
@@ -68,8 +68,7 @@ private:
         size_t endBin{1};
     };
 
-    void playStateChanged(Player::PlayState state);
-    void currentTrackChanged();
+    void engineStateChanged(Engine::PlaybackState state);
 
     void startUpdateTimer();
 

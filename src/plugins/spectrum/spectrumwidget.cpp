@@ -95,11 +95,10 @@ int normaliseFftSize(int fftSize)
 }
 } // namespace
 
-SpectrumWidget::SpectrumWidget(EngineController* engine, PlayerController* playerController, SettingsManager* settings,
-                               QWidget* parent)
+SpectrumWidget::SpectrumWidget(EngineController* engine, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_settings{settings}
-    , m_view{new SpectrumView(engine, playerController, this)}
+    , m_view{new SpectrumView(engine, this)}
 {
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins({});

@@ -81,8 +81,7 @@ public:
         QVariant colours;
     };
 
-    explicit SpectrumWidget(EngineController* engine, PlayerController* playerController, SettingsManager* settings,
-                            QWidget* parent = nullptr);
+    explicit SpectrumWidget(EngineController* engine, SettingsManager* settings, QWidget* parent = nullptr);
     ~SpectrumWidget() override;
 
     [[nodiscard]] QString name() const override;

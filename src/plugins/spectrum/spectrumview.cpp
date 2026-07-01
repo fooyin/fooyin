@@ -154,7 +154,7 @@ void drawBarOutline(QPainter& painter, const QRectF& barRect, int barHeight, con
 }
 } // namespace
 
-SpectrumView::SpectrumView(EngineController* engine, PlayerController* playerController, QWidget* parent)
+SpectrumView::SpectrumView(EngineController* engine, QWidget* parent)
     : QWidget(parent)
     , m_session{engine->visualisationService()->createSession()}
     , m_geometryDpr{1.0}
@@ -172,16 +172,11 @@ SpectrumView::SpectrumView(EngineController* engine, PlayerController* playerCon
     setMouseTracking(true);
 
     m_axisRenderer.setConfig(m_config);
-
     m_session->requestBacklog(1000);
-
     m_elapsedTimer.start();
-    playStateChanged(playerController ? playerController->playState() : Player::PlayState::Stopped);
 
-    QObject::connect(playerController, &PlayerController::playStateChanged, this,
-                     [this](const Player::PlayState state) { playStateChanged(state); });
-    QObject::connect(playerController, &PlayerController::currentTrackChanged, this,
-                     &SpectrumView::currentTrackChanged);
+    engineStateChanged(engine->engineState());
+    QObject::connect(engine, &EngineController::engineStateChanged, this, &SpectrumView::engineStateChanged);
 }
 
 void SpectrumView::setConfig(const SpectrumWidget::ConfigData& config)
@@ -203,7 +198,7 @@ void SpectrumView::setConfig(const SpectrumWidget::ConfigData& config)
 
     m_session->requestBacklog(1000);
 
-    if(m_updateTimer.isActive() && !m_paused) {
+    if(m_updateTimer.isActive()) {
         startUpdateTimer();
     }
     if(!m_config.showTooltip) {
@@ -273,30 +268,16 @@ void SpectrumView::contextMenuEvent(QContextMenuEvent* event)
     Q_EMIT contextMenuRequested(event->globalPos());
 }
 
-void SpectrumView::playStateChanged(Player::PlayState state)
+void SpectrumView::engineStateChanged(Engine::PlaybackState state)
 {
-    m_paused  = state != Player::PlayState::Playing;
-    m_stopped = state == Player::PlayState::Stopped;
+    m_paused  = state != Engine::PlaybackState::Playing;
+    m_stopped = state == Engine::PlaybackState::Stopped || state == Engine::PlaybackState::Error;
 
-    if(state == Player::PlayState::Stopped) {
+    if(m_stopped) {
         hideToolTip();
-        clearLevels();
-        return;
     }
 
-    if(state == Player::PlayState::Playing) {
-        startUpdateTimer();
-    }
-    else {
-        m_updateTimer.stop();
-    }
-}
-
-void SpectrumView::currentTrackChanged()
-{
-    if(m_paused || m_stopped) {
-        clearLevels();
-    }
+    startUpdateTimer();
 }
 
 void SpectrumView::startUpdateTimer()
@@ -346,11 +327,6 @@ size_t SpectrumView::effectiveBandCount() const
 
 void SpectrumView::tick()
 {
-    if(m_paused) {
-        m_updateTimer.stop();
-        return;
-    }
-
     const int elapsedMs          = std::max(1, static_cast<int>(m_elapsedTimer.restart()));
     const float dbRange          = static_cast<float>(std::max(1, m_config.amplitudeMaxDb - m_config.amplitudeMinDb));
     const float barFalloffPerMs  = static_cast<float>(std::max(0, m_config.amplitudeGravity)) / dbRange / 1000.0F;
@@ -367,7 +343,7 @@ void SpectrumView::tick()
         if(m_config.amplitudesEnabled && barHoldMs > 0) {
             barHoldMs = std::max(0, barHoldMs - elapsedMs);
         }
-        else if(m_config.amplitudesEnabled) {
+        else if(m_config.amplitudesEnabled || m_paused) {
             next = std::max(0.0F, current - (barFalloffPerMs * static_cast<float>(elapsedMs)));
         }
         if(next != current) {
@@ -392,12 +368,26 @@ void SpectrumView::tick()
         }
     }
 
-    changed |= renderLatestSpectrum();
+    if(!m_paused) {
+        changed |= renderLatestSpectrum();
+    }
 
     if(changed) {
         updateDirtyRegion(dirtyRegion);
         repaintDirtyRegion(dirtyRegion);
         refreshToolTip();
+    }
+
+    if(m_paused) {
+        const bool barsActive  = std::ranges::any_of(m_levels, [](float level) { return level > 0.0F; });
+        const bool peaksActive = std::ranges::any_of(m_peakLevels, [](float level) { return level > 0.0F; });
+        const bool barHoldsActive
+            = std::ranges::any_of(m_barHoldRemainingMs, [](int remainingMs) { return remainingMs > 0; });
+        const bool peakHoldsActive
+            = std::ranges::any_of(m_peakHoldRemainingMs, [](int remainingMs) { return remainingMs > 0; });
+        if(!barsActive && !peaksActive && !barHoldsActive && !peakHoldsActive) {
+            m_updateTimer.stop();
+        }
     }
 }
 

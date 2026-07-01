@@ -23,7 +23,6 @@
 #include "spectrumwidget.h"
 
 #include <core/engine/enginecontroller.h>
-#include <core/player/playercontroller.h>
 #include <gui/theme/themeregistry.h>
 #include <gui/widgetprovider.h>
 
@@ -32,9 +31,8 @@ using namespace Qt::StringLiterals;
 namespace Fooyin::Spectrum {
 void SpectrumPlugin::initialise(const CorePluginContext& context)
 {
-    m_playerController = context.playerController;
-    m_engine           = context.engine;
-    m_settings         = context.settingsManager;
+    m_engine   = context.engine;
+    m_settings = context.settingsManager;
 }
 
 void SpectrumPlugin::initialise(const GuiPluginContext& context)
@@ -44,8 +42,7 @@ void SpectrumPlugin::initialise(const GuiPluginContext& context)
     qRegisterMetaType<Colours>("Fooyin::Spectrum::Colours");
 
     m_widgetProvider->registerWidget(
-        u"Spectrum"_s, [this]() { return new SpectrumWidget(m_engine, m_playerController, m_settings); },
-        tr("Spectrum"));
+        u"Spectrum"_s, [this]() { return new SpectrumWidget(m_engine, m_settings); }, tr("Spectrum"));
     m_widgetProvider->setSubMenus(u"Spectrum"_s, {tr("Visualisations")});
     context.themeRegistry->registerFontEntry(tr("Spectrum"), u"Fooyin::Spectrum::SpectrumWidget"_s);
 }
