@@ -235,7 +235,7 @@ void drawItemViewIcon(QPainter* painter, const QStyleOptionViewItem& option, con
     }
     const qreal dpr = option.widget ? option.widget->devicePixelRatioF() : qApp->devicePixelRatio();
 
-    QPixmap pixmap = icon.pixmap(rect.size() * dpr, dpr, mode);
+    QPixmap pixmap = icon.pixmap(rect.size(), dpr, mode);
     QPainter pixmapPainter{&pixmap};
     pixmapPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
     pixmapPainter.fillRect(pixmap.rect(), option.palette.color(group, role));
