@@ -36,6 +36,7 @@
 #include "menubar/playbackmenu.h"
 #include "menubar/viewmenu.h"
 #include "playlist/manager/playlistmanagerwidget.h"
+#include "playlist/playlistbox.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
 #include "playlist/playlistuicontroller.h"
@@ -991,7 +992,9 @@ void GuiApplication::registerActions()
     removeCmd->setDefaultShortcut(QKeySequence{Qt::CTRL | Qt::Key_W});
     QObject::connect(removePlaylist, &QAction::triggered, m_mainWindow.get(), [this]() {
         if(auto* currentPlaylist = m_playlistController->currentPlaylist()) {
-            m_core->playlistHandler()->removePlaylist(currentPlaylist->id());
+            if(confirmPlaylistRemoval(m_settings, m_mainWindow.get())) {
+                m_core->playlistHandler()->removePlaylist(currentPlaylist->id());
+            }
         }
     });
 

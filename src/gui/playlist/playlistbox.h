@@ -34,7 +34,10 @@ class Playlist;
 class PlaylistController;
 class PlaylistHandler;
 class PopupLineEdit;
+class SettingsManager;
 class WidgetContext;
+
+bool confirmPlaylistRemoval(SettingsManager* settings, QWidget* parent);
 
 class PlaylistBox : public FyWidget
 {
@@ -42,7 +45,7 @@ class PlaylistBox : public FyWidget
 
 public:
     explicit PlaylistBox(ActionManager* actionManager, PlaylistController* playlistController,
-                         QWidget* parent = nullptr);
+                         SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -70,6 +73,7 @@ private:
 
     ActionManager* m_actionManager;
     PlaylistController* m_playlistController;
+    SettingsManager* m_settings;
     PlaylistHandler* m_playlistHandler;
 
     QComboBox* m_playlistBox;
