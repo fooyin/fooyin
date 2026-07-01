@@ -4625,7 +4625,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="97"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
-        <translation>Fördröj att öppna fooyin tills alla spår har lästs in</translation>
+        <translation>Fördröj med att öppna fooyin tills alla spår har lästs in</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="99"/>
@@ -5917,7 +5917,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="216"/>
         <source>URL</source>
-        <translation type="unfinished">URL</translation>
+        <translation>URL</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="219"/>
@@ -5992,7 +5992,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="295"/>
         <source>Opus header gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Opus rubrikförstärkning</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="300"/>
@@ -6860,7 +6860,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="73"/>
         <source>Disabled</source>
-        <translation type="unfinished">Av</translation>
+        <translation>Av</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="83"/>
@@ -6912,12 +6912,12 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="119"/>
         <source>Searching</source>
-        <translation type="unfinished">Sökning</translation>
+        <translation>Sökning</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="123"/>
         <source>Auto-expand if matching track count is at most</source>
-        <translation type="unfinished"></translation>
+        <translation>Autoexpandera om antal matchande spår är som mest</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="131"/>
@@ -7029,7 +7029,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="224"/>
         <source>Use display grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd displaygruppering</translation>
     </message>
 </context>
 <context>
@@ -7445,17 +7445,17 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="227"/>
         <source>Synced lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Synkade rader</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="228"/>
         <source>Synced words</source>
-        <translation type="unfinished"></translation>
+        <translation>Synkade ord</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="229"/>
         <source>Synced lines and words</source>
-        <translation type="unfinished"></translation>
+        <translation>Synkade rader och ord</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="231"/>
@@ -7716,7 +7716,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="160"/>
         <source>Conflict policy</source>
-        <translation>Konfiltpolicy</translation>
+        <translation>Konfliktpolicy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="302"/>
@@ -8584,7 +8584,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="129"/>
         <source>Override the output sample format. Devices may choose a compatible format.</source>
-        <translation>Överskugga utgångs-samplingsfrekvensen. Enheter kan välja ett kompatibelt format.</translation>
+        <translation>Överskugga utgångs-samplingsformatet. Enheter kan välja ett kompatibelt format.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="143"/>
@@ -9771,7 +9771,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="74"/>
         <source>Open search bar instead of pop-up playlist search</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna sökruta istället för popup-spellistssökning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="78"/>
@@ -11550,7 +11550,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="123"/>
         <source>Edit Opus header gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Redigera Opus rubrikförstärkning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="124"/>
@@ -11575,7 +11575,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="130"/>
         <source>Manipulate the Opus header gain field</source>
-        <translation type="unfinished"></translation>
+        <translation>Manipulera Opus rubrikförstärknings-fält</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="131"/>
@@ -14328,7 +14328,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="459"/>
         <source>Special Keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Specialtangenter</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="459"/>
@@ -14343,17 +14343,17 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="460"/>
         <source>Force search in all playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Tvinga sökning i alla spellistor</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="461"/>
         <source>Force new results playlist using the current playlist as the source</source>
-        <translation type="unfinished"></translation>
+        <translation>Tvinga ny resultatspellista med den aktuella spellistan som källan</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="462"/>
         <source>Force new results playlist using all playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Tvinga ny resultatspellista med alla spellistor</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="462"/>
@@ -14512,7 +14512,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfosettingspage.cpp" line="76"/>
         <source>Enabled fields use the configured name and order. Other tags are shown as &lt;TAG&gt; when extended metadata is enabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Påsatta fält använder namnet och ordningen som konfigurerats. Övriga taggar visas som &lt;TAG&gt; när utökad metadata är på.</translation>
     </message>
 </context>
 <context>
@@ -14578,7 +14578,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="65"/>
         <source>Load files from the same folder when opening one file</source>
-        <translation>Ladda filer från samma mapp när en fil öppnas</translation>
+        <translation>Läs in filer från samma mapp när en fil öppnas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="68"/>
@@ -16193,7 +16193,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/settings/context/trackcontextmenupage.cpp" line="40"/>
         <source>Unchecked items will be hidden from track selection context menus.</source>
-        <translation>Obockade saker kommer vara dolda från spårselektioners snabbmemyer.</translation>
+        <translation>Obockade saker kommer vara dolda från spårselektioners snabbmenyer.</translation>
     </message>
 </context>
 <context>
@@ -17405,7 +17405,7 @@ Set to 0 to choose automatically from the remote buffer length.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="605"/>
         <source>Opus header gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Opus rubrikförstärkning</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="608"/>
@@ -17523,7 +17523,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="606"/>
         <source>ReplayGain value written to the Opus header when updating metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain-värde skrivet till Opus-rubriken när metadata uppdateras</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="659"/>
