@@ -650,9 +650,14 @@ void SpectrumView::drawPeak(QPainter& painter, const QRectF& barRect, int peakHe
         return;
     }
 
-    const double peakY = std::clamp(barRect.bottom() - static_cast<double>(peakHeight),
-                                    static_cast<double>(m_plotRect.top()), static_cast<double>(m_plotRect.bottom()));
-    painter.fillRect(QRectF{barRect.left(), peakY, barRect.width(), 1.0}, colour);
+    const auto dpr   = std::max<double>(m_geometryDpr, 1.0);
+    const auto peakY = std::clamp(barRect.bottom() - static_cast<double>(peakHeight), barRect.top(), barRect.bottom());
+    const auto deviceTop    = static_cast<int>(std::round(barRect.top() * dpr));
+    const auto deviceBottom = static_cast<int>(std::round(barRect.bottom() * dpr));
+    const auto deviceY
+        = std::clamp(static_cast<int>(std::round(peakY * dpr)), deviceTop, std::max(deviceTop, deviceBottom - 1));
+
+    painter.fillRect(QRectF{barRect.left(), static_cast<double>(deviceY) / dpr, barRect.width(), 1.0 / dpr}, colour);
 }
 
 void SpectrumView::drawCurveSpectrum(QPainter& painter, const QBrush& brush) const
