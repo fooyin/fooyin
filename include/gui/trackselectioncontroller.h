@@ -130,15 +130,17 @@ public:
     [[nodiscard]] bool hasDisplayTracks() const;
 
     void changeSelectedTracks(WidgetContext* context, const TrackSelection& selection);
-    void changeSelectedTracks(const TrackSelection& selection);
     void changePlaybackOnSend(WidgetContext* context, bool enabled);
 
     void addTrackContextMenu(QMenu* menu) const;
+    void addTrackContextMenu(QMenu* menu, WidgetContext* context) const;
     void addTrackContextMenu(QMenu* menu, const TrackSelection& selection) const;
     void addTrackQueueContextMenu(QMenu* menu) const;
     void addTrackPlaylistContextMenu(QMenu* menu) const;
     void addTrackAddToPlaylistContextMenu(QMenu* menu) const;
+    void addTrackAddToPlaylistContextMenu(QMenu* menu, WidgetContext* context) const;
     void addTrackAddToOtherPlaylistContextMenu(QMenu* menu) const;
+    void addTrackAddToOtherPlaylistContextMenu(QMenu* menu, WidgetContext* context) const;
 
     bool registerTrackContextSubmenu(QObject* owner, TrackContextMenuArea area, const Id& parentId, const Id& id,
                                      const QString& title, const Id& beforeId = {});

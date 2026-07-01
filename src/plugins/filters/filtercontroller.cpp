@@ -305,7 +305,7 @@ void FilterControllerPrivate::filterContextMenu(FilterWidget* widget, const QPoi
             if(id == QLatin1StringView{Constants::Actions::AddToPlaylist}) {
                 if(hasSelection && m_trackSelection && sectionEnabled(Constants::Actions::AddToPlaylist)) {
                     auto* playlistMenu = new QMenu(FilterWidget::tr("Add to playlist"), targetMenu);
-                    m_trackSelection->addTrackAddToPlaylistContextMenu(playlistMenu);
+                    m_trackSelection->addTrackAddToPlaylistContextMenu(playlistMenu, widget->widgetContext());
                     targetMenu->addMenu(playlistMenu);
                 }
                 return;
@@ -359,7 +359,7 @@ void FilterControllerPrivate::filterContextMenu(FilterWidget* widget, const QPoi
             }
             if(id == QLatin1StringView{FilterContextMenu::TrackActions}) {
                 if(hasSelection && m_trackSelection && sectionEnabled(FilterContextMenu::TrackActions)) {
-                    m_trackSelection->addTrackContextMenu(targetMenu);
+                    m_trackSelection->addTrackContextMenu(targetMenu, widget->widgetContext());
                 }
             }
         });

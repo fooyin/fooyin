@@ -201,7 +201,7 @@ void QueueViewer::contextMenuEvent(QContextMenuEvent* event)
     addConfigureAction(menu, false);
 
     menu->addSeparator();
-    m_selectionController->addTrackContextMenu(menu);
+    m_selectionController->addTrackContextMenu(menu, m_context);
 
     menu->popup(event->globalPos());
 }

@@ -806,7 +806,7 @@ void LibraryTreeWidget::populateContextMenu(QMenu* menu)
             if(id == QLatin1StringView{Constants::Actions::AddToPlaylist}) {
                 if(hasSelection && sectionEnabled(Constants::Actions::AddToPlaylist)) {
                     auto* playlistMenu = new QMenu(tr("Add to playlist"), targetMenu);
-                    m_trackSelection->addTrackAddToPlaylistContextMenu(playlistMenu);
+                    m_trackSelection->addTrackAddToPlaylistContextMenu(playlistMenu, m_widgetContext);
                     if(!playlistMenu->actions().empty()) {
                         targetMenu->addMenu(playlistMenu);
                     }
@@ -865,7 +865,7 @@ void LibraryTreeWidget::populateContextMenu(QMenu* menu)
             }
             if(id == QLatin1StringView{ContextMenuIds::LibraryTree::TrackActions}) {
                 if(hasSelection && sectionEnabled(ContextMenuIds::LibraryTree::TrackActions)) {
-                    m_trackSelection->addTrackContextMenu(targetMenu);
+                    m_trackSelection->addTrackContextMenu(targetMenu, m_widgetContext);
                 }
                 return;
             }

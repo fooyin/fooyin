@@ -1536,7 +1536,7 @@ void RadioBrowserWidget::showContextMenu(const QPoint& pos)
             if(id == QLatin1StringView{Constants::Actions::AddToPlaylist}) {
                 if(hasSelection && m_trackSelection && sectionEnabled(Constants::Actions::AddToPlaylist)) {
                     auto* playlistMenu = new QMenu(tr("Add to playlist"), targetMenu);
-                    m_trackSelection->addTrackAddToPlaylistContextMenu(playlistMenu);
+                    m_trackSelection->addTrackAddToPlaylistContextMenu(playlistMenu, m_context);
                     if(!playlistMenu->actions().empty()) {
                         auto* playlistAction = targetMenu->addMenu(playlistMenu);
                         playlistAction->setStatusTip(tr("Add the selected stations to another playlist"));

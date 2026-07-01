@@ -135,6 +135,7 @@ public:
     WidgetContext* contextObject(QWidget* widget) const;
     bool addContextObject(WidgetContext* context);
     void removeContextObject(WidgetContext* context);
+    [[nodiscard]] bool contextHasFocus(WidgetContext* context) const;
     void updateActiveContext(QWidget* widget);
 
     void handleActions(PlaylistAction::ActionOptions options, Playlist* playlist = nullptr) const;
@@ -163,6 +164,7 @@ public:
     [[nodiscard]] bool canWrite(const TrackSelection& selection) const;
 
     const TrackSelection* currentSelection() const;
+    const TrackSelection* selectionForContext(WidgetContext* context) const;
     bool setDisplaySelection(WidgetContext* context, const TrackSelection& selection);
 
     void updateActionState();
@@ -180,7 +182,6 @@ public:
     WidgetContext* m_activeContext{nullptr};
     WidgetContext* m_displayContext{nullptr};
     TrackSelection m_displaySelection;
-    TrackSelection m_tracks;
     std::optional<TrackSelection> m_menuSelection;
     QPointer<QMenu> m_menuSelectionMenu;
     Playlist* m_tempPlaylist{nullptr};
@@ -840,11 +841,8 @@ bool TrackSelectionControllerPrivate::hasVisibleActions(const QMenu* menu)
 
 bool TrackSelectionControllerPrivate::hasTracks() const
 {
-    if(!m_tracks.tracks.empty()) {
-        return true;
-    }
-
-    return hasContextTracks();
+    const auto* selection = currentSelection();
+    return selection && !selection->tracks.empty();
 }
 
 bool TrackSelectionControllerPrivate::hasContextTracks() const
@@ -904,6 +902,23 @@ void TrackSelectionControllerPrivate::removeContextObject(WidgetContext* context
     if(m_activeContext == context) {
         m_activeContext = nullptr;
     }
+}
+
+bool TrackSelectionControllerPrivate::contextHasFocus(WidgetContext* context) const
+{
+    if(!context) {
+        return false;
+    }
+
+    QWidget* focusedWidget = QApplication::focusWidget();
+    while(focusedWidget) {
+        if(contextObject(focusedWidget) == context) {
+            return true;
+        }
+        focusedWidget = focusedWidget->parentWidget();
+    }
+
+    return false;
 }
 
 void TrackSelectionControllerPrivate::updateActiveContext(QWidget* widget)
@@ -1344,15 +1359,17 @@ const TrackSelection* TrackSelectionControllerPrivate::currentSelection() const
         return &*m_menuSelection;
     }
 
-    if(!m_tracks.tracks.empty()) {
-        return &m_tracks;
-    }
-
     if(hasContextTracks()) {
         return &m_contextSelection.at(m_activeContext);
     }
 
     return nullptr;
+}
+
+const TrackSelection* TrackSelectionControllerPrivate::selectionForContext(WidgetContext* context) const
+{
+    const auto it = m_contextSelection.find(context);
+    return it != m_contextSelection.cend() ? &it->second : nullptr;
 }
 
 bool TrackSelectionControllerPrivate::setDisplaySelection(WidgetContext* context, const TrackSelection& selection)
@@ -1479,7 +1496,7 @@ void TrackSelectionController::changeSelectedTracks(WidgetContext* context, cons
     auto& existing                  = p->m_contextSelection[context];
     updatedSelection.playbackOnSend = existing.playbackOnSend;
 
-    if(!updatedSelection.tracks.empty()) {
+    if(p->contextHasFocus(context)) {
         p->m_activeContext = context;
     }
 
@@ -1500,16 +1517,6 @@ void TrackSelectionController::changeSelectedTracks(WidgetContext* context, cons
     }
 }
 
-void TrackSelectionController::changeSelectedTracks(const TrackSelection& selection)
-{
-    if(std::exchange(p->m_tracks, selection) == selection) {
-        return;
-    }
-
-    p->updateActionState();
-    Q_EMIT selectionChanged();
-}
-
 void TrackSelectionController::changePlaybackOnSend(WidgetContext* context, bool enabled)
 {
     if(p->addContextObject(context)) {
@@ -1526,6 +1533,12 @@ void TrackSelectionController::changePlaybackOnSend(WidgetContext* context, bool
 void TrackSelectionController::addTrackContextMenu(QMenu* menu) const
 {
     p->renderArea(menu, TrackContextMenuArea::Track, selectedSelection() ? *selectedSelection() : TrackSelection{});
+}
+
+void TrackSelectionController::addTrackContextMenu(QMenu* menu, WidgetContext* context) const
+{
+    const auto* selection = p->selectionForContext(context);
+    p->renderArea(menu, TrackContextMenuArea::Track, selection ? *selection : TrackSelection{});
 }
 
 void TrackSelectionController::addTrackContextMenu(QMenu* menu, const TrackSelection& selection) const
@@ -1573,9 +1586,25 @@ void TrackSelectionController::addTrackAddToPlaylistContextMenu(QMenu* menu) con
     p->addPlaylistTargets(menu, selectedSelection() ? *selectedSelection() : TrackSelection{});
 }
 
+void TrackSelectionController::addTrackAddToPlaylistContextMenu(QMenu* menu, WidgetContext* context) const
+{
+    const auto* selection = p->selectionForContext(context);
+    p->addPlaylistTargets(menu, selection ? *selection : TrackSelection{});
+}
+
 void TrackSelectionController::addTrackAddToOtherPlaylistContextMenu(QMenu* menu) const
 {
     const auto* selection = selectedSelection();
+    if(!selection || !selection->playlistId) {
+        return;
+    }
+
+    p->addPlaylistTargets(menu, *selection, selection->playlistId);
+}
+
+void TrackSelectionController::addTrackAddToOtherPlaylistContextMenu(QMenu* menu, WidgetContext* context) const
+{
+    const auto* selection = p->selectionForContext(context);
     if(!selection || !selection->playlistId) {
         return;
     }
@@ -1696,7 +1725,6 @@ void TrackSelectionController::executeAction(TrackAction action, PlaylistAction:
 void TrackSelectionController::tracksUpdated(const TrackList& tracks)
 {
     const TrackSelection previousDisplay{p->m_displaySelection};
-    Utils::updateCommonTracks(p->m_tracks.tracks, tracks, Utils::CommonOperation::Update);
     for(auto& selection : p->m_contextSelection | std::views::values) {
         Utils::updateCommonTracks(selection.tracks, tracks, Utils::CommonOperation::Update);
     }
@@ -1712,7 +1740,6 @@ void TrackSelectionController::tracksUpdated(const TrackList& tracks)
 void TrackSelectionController::tracksRemoved(const TrackList& tracks)
 {
     const TrackSelection previousDisplay{p->m_displaySelection};
-    Utils::updateCommonTracks(p->m_tracks.tracks, tracks, Utils::CommonOperation::Remove);
     for(auto& selection : p->m_contextSelection | std::views::values) {
         Utils::updateCommonTracks(selection.tracks, tracks, Utils::CommonOperation::Remove);
     }

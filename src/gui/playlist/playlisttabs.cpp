@@ -426,15 +426,10 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
                 selection.playlistEntryIds.emplace_back(track.entryId);
             }
 
-            m_selectionController->changeSelectedTracks(selection);
-
             //: %1 refers to the name of a playlist.
             auto* selectionMenu = new QMenu(tr("%1 contents").arg(playlist->name()), menu);
-            m_selectionController->addTrackContextMenu(selectionMenu);
+            m_selectionController->addTrackContextMenu(selectionMenu, selection);
             menu->addMenu(selectionMenu);
-
-            QObject::connect(menu, &QObject::destroyed, this,
-                             [this]() { m_selectionController->changeSelectedTracks(TrackSelection{}); });
         }
     }
 
