@@ -4085,12 +4085,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="181"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>削除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="183"/>
         <source>Extract</source>
-        <translation type="unfinished"></translation>
+        <translation>展開</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="187"/>
@@ -4105,28 +4105,28 @@ Effects here process the final combined output.</source>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="96"/>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="109"/>
         <source>File Operations</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル操作</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="84"/>
         <source>Confirm before deleting tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>トラックを削除する前に確認する</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="97"/>
         <source>Immediately delete tracks (bypass trash)</source>
-        <translation type="unfinished"></translation>
+        <translation>トラックをすぐ削除する(bypass trash)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="110"/>
         <source>Delete empty folders</source>
-        <translation type="unfinished"></translation>
+        <translation>空のフォルダを削除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="127"/>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="181"/>
         <source>File operations</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル操作</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="173"/>
@@ -4146,7 +4146,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="176"/>
         <source>&amp;Extract to…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;展開…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="178"/>
@@ -4181,7 +4181,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filtercolumneditordialog.cpp" line="139"/>
         <source>Restore Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>初期値に戻す</translation>
     </message>
 </context>
 <context>
@@ -4225,7 +4225,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="40"/>
         <source>Filter Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>フィルタの設定</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="44"/>
