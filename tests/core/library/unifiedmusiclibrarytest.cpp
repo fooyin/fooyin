@@ -230,19 +230,32 @@ public:
     {
         void setTitle(const QString& path, const QString& title)
         {
-            const std::lock_guard lock(m_mutex);
+            const std::scoped_lock lock(m_mutex);
             m_titles.insert(QFileInfo{path}.absoluteFilePath(), title);
         }
 
         [[nodiscard]] QString titleForPath(const QString& path) const
         {
-            const std::lock_guard lock(m_mutex);
+            const std::scoped_lock lock(m_mutex);
             return m_titles.value(QFileInfo{path}.absoluteFilePath(), QFileInfo{path}.completeBaseName());
+        }
+
+        void addWrite(const Fooyin::Track& track, WriteOptions options)
+        {
+            const std::scoped_lock lock(m_mutex);
+            m_writes.emplace_back(track, options);
+        }
+
+        [[nodiscard]] std::vector<std::pair<Fooyin::Track, WriteOptions>> writes() const
+        {
+            const std::scoped_lock lock(m_mutex);
+            return m_writes;
         }
 
     private:
         mutable std::mutex m_mutex;
         QHash<QString, QString> m_titles;
+        std::vector<std::pair<Fooyin::Track, WriteOptions>> m_writes;
     };
 
     explicit FakeLibraryReader(std::shared_ptr<State> state)
@@ -261,7 +274,7 @@ public:
 
     bool canWriteMetaData() const override
     {
-        return false;
+        return true;
     }
 
     bool readTrack(const Fooyin::AudioSource& source, Fooyin::Track& track) override
@@ -275,6 +288,12 @@ public:
         const auto match = QRegularExpression{u"(\\d+)"_s}.match(info.completeBaseName());
         track.setTrackNumber(match.hasMatch() ? match.captured(1) : u"1"_s);
         track.setDiscNumber(u"1"_s);
+        return true;
+    }
+
+    bool writeTrack(const Fooyin::AudioSource& /*source*/, const Fooyin::Track& track, WriteOptions options) override
+    {
+        m_state->addWrite(track, options);
         return true;
     }
 
@@ -465,6 +484,44 @@ TEST_F(UnifiedMusicLibraryTest, TrackRescanUpdatesMetadataBeforeScanFinished)
 
     EXPECT_EQ(titleAtFinish, u"After"_s);
     EXPECT_EQ(context().library.trackForId(existingTrack.id()).title(), u"After"_s);
+}
+
+TEST_F(UnifiedMusicLibraryTest, DeferredWritesMergeMetadataAndStatsSnapshots)
+{
+    ASSERT_TRUE(context().settings.set<Settings::Core::SaveRatingToMetadata>(true));
+
+    createTrackFile(u"deferred_write.mp3"_s, u"Before"_s);
+
+    const LibraryInfo libraryInfo = addLibrary(u"Deferred Writes"_s);
+    ASSERT_GE(libraryInfo.id, 0);
+
+    waitForSuccessfulScan([&]() { return context().library.rescan(libraryInfo); });
+    ASSERT_EQ(context().library.tracks().size(), 1U);
+
+    const Track originalTrack = context().library.tracks().front();
+    context().library.setActivePlaybackTrack(originalTrack);
+
+    Track statsTrack{originalTrack};
+    statsTrack.setRating(0.8F);
+    context().library.updateTrackStats(statsTrack);
+
+    ASSERT_TRUE(waitForCondition([&]() { return context().library.trackForId(originalTrack.id()).rating() == 0.8F; }));
+
+    Track metadataTrack{originalTrack};
+    metadataTrack.setTitle(u"After"_s);
+    context().library.writeTrackMetadata({metadataTrack});
+    context().library.flushPendingWrites();
+
+    ASSERT_TRUE(waitForCondition([&]() { return context().readerState->writes().size() == 2U; }));
+
+    const auto writes = context().readerState->writes();
+    ASSERT_EQ(writes.size(), 2U);
+    EXPECT_EQ(writes.at(0).first.title(), u"After"_s);
+    EXPECT_FLOAT_EQ(writes.at(0).first.rating(), 0.8F);
+    EXPECT_TRUE(writes.at(0).second.testFlag(AudioReader::Metadata));
+    EXPECT_EQ(writes.at(1).first.title(), u"After"_s);
+    EXPECT_FLOAT_EQ(writes.at(1).first.rating(), 0.8F);
+    EXPECT_EQ(writes.at(1).second, AudioReader::Rating);
 }
 
 TEST_F(UnifiedMusicLibraryTest, OverlappingSortAndScanDoNotLoseNewTracks)
