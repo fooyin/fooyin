@@ -189,7 +189,7 @@
 <context>
     <name>Fooyin::PropertiesDialogWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="626"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="656"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln track</numerusform>
