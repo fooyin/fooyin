@@ -394,6 +394,7 @@ private:
 
     void buildScopePanel();
     void refreshScopePanel();
+    void syncScopeSelection();
     void updateScopePanelButtons(bool hasMultipleTracks);
     void refreshScopeNavigation();
     void switchScope();
@@ -739,8 +740,7 @@ void PropertiesDialogWidget::buildScopePanel()
         m_scopeList->addItem(scopeLabel(static_cast<int>(i)));
     }
 
-    m_scopeList->item(0)->setSelected(true);
-    m_scopeList->setCurrentRow(0);
+    syncScopeSelection();
 
     setScopePanelVisible(m_scopePanelPreferredVisible, false);
     refreshScopeNavigation();
@@ -796,6 +796,31 @@ void PropertiesDialogWidget::updateScopePanelButtons(bool hasMultipleTracks)
     m_nextTrackButton->setVisible(hasMultipleTracks);
 }
 
+void PropertiesDialogWidget::syncScopeSelection()
+{
+    const QSignalBlocker blocker{m_scopeList};
+    m_scopeList->clearSelection();
+
+    if(m_session.isAllTracksScope()) {
+        if(auto* item = m_scopeList->item(0)) {
+            item->setSelected(true);
+        }
+        m_scopeList->setCurrentRow(0);
+        return;
+    }
+
+    bool currentSet{false};
+    for(const int index : m_session.activeTrackIndexes()) {
+        if(auto* item = m_scopeList->item(index + 1)) {
+            item->setSelected(true);
+            if(!currentSet) {
+                m_scopeList->setCurrentRow(index + 1);
+                currentSet = true;
+            }
+        }
+    }
+}
+
 void PropertiesDialogWidget::setScopePanelVisible(bool visible, bool updatePreference)
 {
     if(updatePreference) {
@@ -846,6 +871,7 @@ void PropertiesDialogWidget::refreshScopeNavigation()
 void PropertiesDialogWidget::switchScope()
 {
     if(!commitCurrentTabPendingChanges()) {
+        syncScopeSelection();
         refreshScopePanel();
         return;
     }
