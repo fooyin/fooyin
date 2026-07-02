@@ -45,6 +45,7 @@ TEST_F(ScriptFormatterTest, Bold)
     const auto result = m_formattter.evaluate(u"<b>I</b> am a test."_s);
     ASSERT_EQ(2, result.size());
     EXPECT_TRUE(result.blocks.front().format.font.bold());
+    EXPECT_FALSE(result.blocks.back().format.font.bold());
 }
 
 TEST_F(ScriptFormatterTest, Italic)
@@ -125,6 +126,52 @@ TEST_F(ScriptFormatterTest, AlphaBeforeColour)
     EXPECT_EQ(180, result.blocks.front().format.colour.alpha);
 
     EXPECT_EQ(QColor(u"#b4123456"_s), resolvedRichTextColour(result.blocks.front().format, Qt::black));
+}
+
+TEST_F(ScriptFormatterTest, UnclosedOuterTagsRemainActiveAfterNestedTagCloses)
+{
+    QFont baseFont;
+    baseFont.setPointSize(10);
+    m_formattter.setBaseFont(baseFont);
+
+    const auto result = m_formattter.evaluate(u"<b><color=red><sized=4>test</sized>   abc"_s);
+
+    ASSERT_EQ(2, result.size());
+    EXPECT_EQ(u"test"_s, result.blocks.at(0).text);
+    EXPECT_TRUE(result.blocks.at(0).format.font.bold());
+    EXPECT_EQ(QColor(u"red"_s), result.blocks.at(0).format.colour.colour);
+    EXPECT_EQ(14, result.blocks.at(0).format.font.pointSize());
+
+    EXPECT_EQ(u"   abc"_s, result.blocks.at(1).text);
+    EXPECT_TRUE(result.blocks.at(1).format.font.bold());
+    EXPECT_EQ(QColor(u"red"_s), result.blocks.at(1).format.colour.colour);
+    EXPECT_EQ(10, result.blocks.at(1).format.font.pointSize());
+}
+
+TEST_F(ScriptFormatterTest, NestedTagRestoresOuterFormatting)
+{
+    const auto result = m_formattter.evaluate(u"<b>before <i>inner</i> after</b> plain"_s);
+
+    ASSERT_EQ(4, result.size());
+    EXPECT_TRUE(result.blocks.at(0).format.font.bold());
+    EXPECT_FALSE(result.blocks.at(0).format.font.italic());
+    EXPECT_TRUE(result.blocks.at(1).format.font.bold());
+    EXPECT_TRUE(result.blocks.at(1).format.font.italic());
+    EXPECT_TRUE(result.blocks.at(2).format.font.bold());
+    EXPECT_FALSE(result.blocks.at(2).format.font.italic());
+    EXPECT_FALSE(result.blocks.at(3).format.font.bold());
+    EXPECT_FALSE(result.blocks.at(3).format.font.italic());
+}
+
+TEST_F(ScriptFormatterTest, NestedOverrideRestoresOuterValue)
+{
+    const auto result = m_formattter.evaluate(u"<color=red>red <color=blue>blue</color> red</color> base"_s);
+
+    ASSERT_EQ(4, result.size());
+    EXPECT_EQ(QColor(u"red"_s), result.blocks.at(0).format.colour.colour);
+    EXPECT_EQ(QColor(u"blue"_s), result.blocks.at(1).format.colour.colour);
+    EXPECT_EQ(QColor(u"red"_s), result.blocks.at(2).format.colour.colour);
+    EXPECT_FALSE(result.blocks.at(3).format.colour.isExplicit());
 }
 
 TEST_F(ScriptFormatterTest, EscapedLeftAngle)

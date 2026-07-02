@@ -25,8 +25,6 @@
 
 #include <QRegularExpression>
 
-#include <stack>
-
 using namespace Qt::StringLiterals;
 
 namespace {
@@ -100,8 +98,7 @@ public:
     void expression();
     void formatBlock();
     void processFormat(const FormatTag& tag);
-    void addBlock();
-    void closeBlock();
+    void flushCurrentBlock();
     void resetFormat();
 
     [[nodiscard]] QString readTagContent();
@@ -116,8 +113,6 @@ public:
     ScriptScanner::Token m_previous;
 
     RichTextBlock m_currentBlock;
-    std::stack<RichTextBlock> m_blockStack;
-    std::vector<RichTextBlock> m_blockGroup;
 
     ErrorList m_errors;
     RichText m_formatResult;
@@ -206,7 +201,6 @@ void ScriptFormatterPrivate::formatBlock()
     }
 
     processFormat(tag);
-    closeBlock();
 }
 
 QString ScriptFormatterPrivate::readTagContent()
@@ -242,10 +236,13 @@ QString ScriptFormatterPrivate::peekClosingTagName()
 
 void ScriptFormatterPrivate::processFormat(const FormatTag& tag)
 {
+    const RichFormatting previousFormatting{m_currentBlock.format};
     RichFormatting nextFormatting{m_currentBlock.format};
 
-    if(ScriptFormatterRegistry::format(nextFormatting, tag.name, tag.option)) {
-        addBlock();
+    const bool formatApplied = ScriptFormatterRegistry::format(nextFormatting, tag.name, tag.option);
+
+    if(formatApplied) {
+        flushCurrentBlock();
         m_currentBlock.format = std::move(nextFormatting);
     }
     else {
@@ -271,41 +268,18 @@ void ScriptFormatterPrivate::processFormat(const FormatTag& tag)
     }
 
     consume(ScriptScanner::TokRightAngle);
+
+    if(formatApplied) {
+        flushCurrentBlock();
+        m_currentBlock.format = previousFormatting;
+    }
 }
 
-void ScriptFormatterPrivate::addBlock()
+void ScriptFormatterPrivate::flushCurrentBlock()
 {
     if(!m_currentBlock.text.isEmpty()) {
-        if(m_blockGroup.empty()) {
-            m_formatResult.blocks.emplace_back(m_currentBlock);
-        }
-        else {
-            m_blockStack.emplace(m_currentBlock);
-        }
+        m_formatResult.blocks.emplace_back(m_currentBlock);
         m_currentBlock.text.clear();
-    }
-}
-
-void ScriptFormatterPrivate::closeBlock()
-{
-    if(!m_currentBlock.text.isEmpty()) {
-        if(m_blockStack.empty()) {
-            m_formatResult.blocks.emplace_back(m_currentBlock);
-        }
-        else {
-            m_blockGroup.emplace_back(m_currentBlock);
-        }
-    }
-
-    if(!m_blockStack.empty()) {
-        m_currentBlock = m_blockStack.top();
-        m_blockStack.pop();
-    }
-    else {
-        std::ranges::reverse(m_blockGroup);
-        m_formatResult.blocks.insert(m_formatResult.blocks.end(), m_blockGroup.cbegin(), m_blockGroup.cend());
-        m_blockGroup.clear();
-        resetFormat();
     }
 }
 
@@ -348,9 +322,7 @@ RichText ScriptFormatter::evaluate(const QString& input)
 
     p->consume(ScriptScanner::TokEos, u"Expected end of expression"_s);
 
-    if(!p->m_currentBlock.text.isEmpty()) {
-        p->m_formatResult.blocks.emplace_back(p->m_currentBlock);
-    }
+    p->flushCurrentBlock();
 
     return p->m_formatResult;
 }
