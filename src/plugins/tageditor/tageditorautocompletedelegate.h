@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "tageditorpopulator.h"
+
 #include <core/stringpool.h>
 #include <core/track.h>
 
@@ -34,7 +36,7 @@ class TagEditorAutocompleteDelegate : public QStyledItemDelegate
 public:
     explicit TagEditorAutocompleteDelegate(QObject* parent = nullptr);
 
-    void setTracks(const TrackList& tracks);
+    void setCompletionValues(const TagEditorCompletionValues& completionValues);
 
     [[nodiscard]] QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
                                         const QModelIndex& index) const override;
@@ -51,7 +53,6 @@ private:
     [[nodiscard]] static CompletionConfig completionConfig(const QModelIndex& index);
     [[nodiscard]] QStringListModel* modelForDomain(StringPool::Domain domain) const;
 
-    static constexpr auto DomainCount = static_cast<size_t>(StringPool::Domain::ExtraTagKey) + 1;
-    std::array<QStringListModel*, DomainCount> m_models{};
+    std::array<QStringListModel*, TagEditorCompletionDomainCount> m_models{};
 };
 } // namespace Fooyin::TagEditor

@@ -20,6 +20,7 @@
 #include "tageditormodel.h"
 
 #include "tageditoritem.h"
+#include "tageditorpopulator.h"
 #include "tageditorsettings.h"
 
 #include <core/constants.h>
@@ -37,8 +38,6 @@ using namespace Qt::StringLiterals;
 constexpr auto MultipleValuesPrefix = "<<multiple values>>";
 
 namespace Fooyin::TagEditor {
-using TagFieldMap = std::unordered_map<QString, TagEditorItem>;
-
 namespace {
 QStringList splitEditorValues(const QString& value, const QStringList& separators)
 {
@@ -127,12 +126,10 @@ public:
     { }
 
     bool hasTagConflict(TagEditorItem* item, const QString& title) const;
-    bool hasDefaultField(const QString& field) const;
     bool isDefaultField(const QString& name) const;
 
     void reset();
 
-    void updateFields();
     bool updateTrackMetadata(const TagEditorField& field, const QVariant& value, bool split = false);
     [[nodiscard]] QStringList multiValueSeparators() const;
 
@@ -147,7 +144,7 @@ public:
     int m_ratingRow{-1};
 
     TagEditorItem m_root;
-    TagFieldMap m_tags;
+    TagEditorTagMap m_tags;
 };
 
 bool TagEditorModelPrivate::hasTagConflict(TagEditorItem* item, const QString& title) const
@@ -158,14 +155,6 @@ bool TagEditorModelPrivate::hasTagConflict(TagEditorItem* item, const QString& t
         }
     }
     return false;
-}
-
-bool TagEditorModelPrivate::hasDefaultField(const QString& field) const
-{
-    const QString fieldToFind = field.toUpper();
-    return std::ranges::any_of(std::as_const(m_fields), [fieldToFind](const auto& editorField) {
-        return editorField.scriptField.compare(fieldToFind, Qt::CaseInsensitive) == 0;
-    });
 }
 
 bool TagEditorModelPrivate::isDefaultField(const QString& name) const
@@ -182,43 +171,6 @@ void TagEditorModelPrivate::reset()
 {
     m_root = {};
     m_tags.clear();
-}
-
-void TagEditorModelPrivate::updateFields()
-{
-    const auto iterateTags = [this](const auto& tags, const bool isDefault = false) {
-        for(const auto& [field, value] : tags) {
-            if(value.isEmpty() || hasDefaultField(field)) {
-                continue;
-            }
-
-            if(!m_tags.contains(field)) {
-                TagEditorField editorField;
-                editorField.name        = field;
-                editorField.scriptField = field;
-                editorField.isDefault   = isDefault;
-                editorField.multivalue  = Track::isMultiValueTag(field) || value.size() > 1;
-                auto* item              = &m_tags.emplace(field, TagEditorItem{editorField, &m_root}).first->second;
-                item->setMultiValueSeparators(multiValueSeparators());
-                m_root.appendChild(item);
-            }
-
-            auto& node = m_tags.at(field);
-            if(value.size() > 1) {
-                node.setFieldMultiValue(true);
-            }
-            node.addTrackValue(value);
-        }
-    };
-
-    for(const Track& track : m_tracks) {
-        for(auto& [field, node] : m_tags) {
-            const auto result = track.metaValue(node.field().scriptField);
-            node.addTrackValue(result.split(QLatin1String{Constants::UnitSeparator}, Qt::SkipEmptyParts));
-        }
-
-        iterateTags(track.extraTags());
-    }
 }
 
 bool TagEditorModelPrivate::updateTrackMetadata(const TagEditorField& field, const QVariant& value, bool split)
@@ -292,23 +244,28 @@ TrackList TagEditorModel::tracks() const
     return p->m_tracks;
 }
 
-void TagEditorModel::reset(const TrackList& tracks, const std::vector<TagEditorField>& fields)
+void TagEditorModel::populate(TagEditorDataPtr data)
 {
     beginResetModel();
     p->reset();
-    p->m_tracks = tracks;
-    p->m_fields = fields;
 
-    for(const auto& field : fields) {
-        if(field.enabled) {
-            auto* item
-                = &p->m_tags.emplace(field.scriptField.toUpper(), TagEditorItem{field, &p->m_root}).first->second;
-            item->setMultiValueSeparators(p->multiValueSeparators());
-            p->m_root.appendChild(item);
+    if(!data) {
+        p->m_tracks.clear();
+        p->m_fields.clear();
+        endResetModel();
+        return;
+    }
+
+    p->m_tracks = std::move(data->tracks);
+    p->m_fields = std::move(data->fields);
+    p->m_tags   = std::move(data->tags);
+
+    for(const auto& key : data->tagOrder) {
+        if(const auto it = p->m_tags.find(key); it != p->m_tags.end()) {
+            p->m_root.appendChild(&it->second);
         }
     }
 
-    p->updateFields();
     p->m_root.sortCustomTags();
 
     endResetModel();

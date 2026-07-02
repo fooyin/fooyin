@@ -17,6 +17,8 @@ create_fooyin_plugin_internal(
             tageditoritem.h
             tageditormodel.cpp
             tageditormodel.h
+            tageditorpopulator.cpp
+            tageditorpopulator.h
             tagfillpattern.cpp
             tagfillpattern.h
             tagfilloperation.cpp

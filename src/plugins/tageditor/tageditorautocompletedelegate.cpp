@@ -21,63 +21,24 @@
 
 #include "tageditoritem.h"
 
-#include <core/trackmetadatastore.h>
 #include <gui/widgets/metadatacompleter.h>
 
 #include <QLineEdit>
 #include <QStringListModel>
 
-#include <set>
-
-namespace {
-using Domain = Fooyin::StringPool::Domain;
-
-size_t domainIndex(Domain domain)
-{
-    return static_cast<size_t>(domain);
-}
-} // namespace
-
 namespace Fooyin::TagEditor {
 TagEditorAutocompleteDelegate::TagEditorAutocompleteDelegate(QObject* parent)
     : QStyledItemDelegate{parent}
 {
-    for(size_t index{0}; index < DomainCount; ++index) {
+    for(size_t index{0}; index < TagEditorCompletionDomainCount; ++index) {
         m_models.at(index) = new QStringListModel(this);
     }
 }
 
-void TagEditorAutocompleteDelegate::setTracks(const TrackList& tracks)
+void TagEditorAutocompleteDelegate::setCompletionValues(const TagEditorCompletionValues& completionValues)
 {
-    std::array<std::set<QString>, DomainCount> valuesByDomain;
-    std::set<const TrackMetadataStore*> seenStores;
-
-    for(const auto& track : tracks) {
-        const auto store = track.metadataStore();
-        if(!store || !seenStores.emplace(store.get()).second) {
-            continue;
-        }
-
-        for(size_t index{0}; index < DomainCount; ++index) {
-            const auto domain = static_cast<StringPool::Domain>(index);
-            const auto values = store->values(domain);
-
-            for(const auto& value : values) {
-                valuesByDomain.at(index).emplace(value);
-            }
-        }
-    }
-
-    for(size_t index{0}; index < DomainCount; ++index) {
-        QStringList values;
-        values.reserve(static_cast<qsizetype>(valuesByDomain.at(index).size()));
-
-        for(const auto& value : valuesByDomain.at(index)) {
-            values.append(value);
-        }
-
-        values.sort(Qt::CaseInsensitive);
-        modelForDomain(static_cast<StringPool::Domain>(index))->setStringList(values);
+    for(size_t index{0}; index < TagEditorCompletionDomainCount; ++index) {
+        modelForDomain(static_cast<StringPool::Domain>(index))->setStringList(completionValues.at(index));
     }
 }
 
@@ -134,6 +95,6 @@ TagEditorAutocompleteDelegate::completionConfig(const QModelIndex& index)
 
 QStringListModel* TagEditorAutocompleteDelegate::modelForDomain(StringPool::Domain domain) const
 {
-    return m_models.at(domainIndex(domain));
+    return m_models.at(static_cast<size_t>(domain));
 }
 } // namespace Fooyin::TagEditor

@@ -20,6 +20,7 @@
 #pragma once
 
 #include "tageditorfield.h"
+#include "tageditorpopulator.h"
 
 #include <core/track.h>
 #include <gui/widgets/extendabletableview.h>
@@ -40,7 +41,7 @@ public:
     ~TagEditorModel() override;
 
     [[nodiscard]] TrackList tracks() const;
-    void reset(const TrackList& tracks, const std::vector<TagEditorField>& fields);
+    void populate(TagEditorDataPtr data);
     void setRatingRow(int row);
     void updateTracks(const TrackList& tracks);
 
