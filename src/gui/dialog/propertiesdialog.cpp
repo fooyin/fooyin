@@ -175,7 +175,7 @@ void PropertiesDialogSession::updateTracks(const TrackList& tracks)
             }
             m_pendingRevisions[index]++;
         }
-        else {
+        else if(m_pendingRevisions[index] > 0) {
             m_pendingRevisions[index] = 0;
             m_pendingCount            = std::max(qsizetype{0}, m_pendingCount - 1);
         }
