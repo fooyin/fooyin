@@ -120,19 +120,22 @@ void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& pal
                        Qt::Alignment alignment, bool selected) const
 {
     const auto brushes     = getStarBrushes(palette, mode, selected);
+    const qreal dpr        = painter->device()->devicePixelRatioF();
     const QString cacheKey = u"StarRating:%1|%2|%3|%4|%5|%6"_s.arg(m_rating)
                                  .arg(m_scale)
                                  .arg(m_maxCount)
                                  .arg(mode == EditMode::Editable ? 1 : 0)
                                  .arg(rect.width())
                                  .arg(rect.height())
-                           + u"|%1|%2|%3"_s.arg(alignment.toInt())
+                           + u"|%1|%2|%3|%4"_s.arg(alignment.toInt())
                                  .arg(brushes.filled.color().name(QColor::HexArgb))
-                                 .arg(brushes.faded.color().name(QColor::HexArgb));
+                                 .arg(brushes.faded.color().name(QColor::HexArgb))
+                                 .arg(dpr);
 
     QPixmap pixmap;
     if(!QPixmapCache::find(cacheKey, &pixmap)) {
-        pixmap = QPixmap{rect.size()};
+        pixmap = QPixmap{rect.size() * dpr};
+        pixmap.setDevicePixelRatio(dpr);
         pixmap.fill(Qt::transparent);
 
         QPainter pixmapPainter(&pixmap);
@@ -182,7 +185,7 @@ void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& pal
         QPixmapCache::insert(cacheKey, pixmap);
     }
 
-    painter->drawPixmap(rect, pixmap);
+    painter->drawPixmap(rect.topLeft(), pixmap);
 }
 
 QSize StarRating::sizeHint() const
