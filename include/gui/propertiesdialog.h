@@ -51,12 +51,14 @@ public:
 
     [[nodiscard]] bool hasChanges() const;
     [[nodiscard]] bool hasOnlyStatChanges() const;
-    [[nodiscard]] bool isTrackDirty(int index) const;
+    [[nodiscard]] int trackRevision(int index) const;
 
 private:
     TrackList m_originalTracks;
     TrackList m_workingTracks;
     std::set<int> m_activeTrackIndexes;
+    std::vector<int> m_pendingRevisions;
+    qsizetype m_pendingCount{0};
 };
 
 class FYGUI_EXPORT PropertiesTabWidget : public QWidget
