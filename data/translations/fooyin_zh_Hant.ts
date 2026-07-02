@@ -1310,7 +1310,7 @@
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="211"/>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="212"/>
         <source>Advanced</source>
-        <translation>連階</translation>
+        <translation>進階</translation>
     </message>
 </context>
 <context>
@@ -1837,7 +1837,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="146"/>
         <source>Artwork will be searched for in the above order.</source>
-        <translation>圖面將會進行搜尋，按以上的順序。</translation>
+        <translation>圖面將會進行搜尋，依照以上的順序。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="228"/>
@@ -4429,17 +4429,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="894"/>
         <source>Artwork (bottom labels)</source>
-        <translation>專輯圖面 (底部標)</translation>
+        <translation>專輯圖面 (底部標籤)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="895"/>
         <source>Artwork (right labels)</source>
-        <translation>專輯圖面 (右側標)</translation>
+        <translation>專輯圖面 (右側標籤)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="896"/>
         <source>Artwork (no labels)</source>
-        <translation>專輯圖面 (無側標)</translation>
+        <translation>專輯圖面 (無標籤)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="900"/>
@@ -5010,12 +5010,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1594"/>
         <source>&amp;Add</source>
-        <translation type="unfinished"></translation>
+        <translation>添加(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1598"/>
         <source>Enter a valid http:// or https:// URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>輸入有效的 http:// 或 https:// URL 。</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1659"/>
@@ -5211,7 +5211,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="318"/>
         <source>General</source>
-        <translation type="unfinished">通則</translation>
+        <translation>通則</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="319"/>
@@ -5234,22 +5234,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="107"/>
         <source>Auto-detect theme</source>
-        <translation type="unfinished">自動偵測主題</translation>
+        <translation>自動偵測主題</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="108"/>
         <source>Light</source>
-        <translation type="unfinished">亮色</translation>
+        <translation>亮色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="109"/>
         <source>Dark</source>
-        <translation type="unfinished">暗色</translation>
+        <translation>暗色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="110"/>
         <source>Use system icons</source>
-        <translation type="unfinished">使用系統圖示</translation>
+        <translation>使用系統圖示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="111"/>
@@ -5299,17 +5299,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="131"/>
         <source>Appearance</source>
-        <translation type="unfinished">外觀</translation>
+        <translation>外觀</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="134"/>
         <source>Icons</source>
-        <translation type="unfinished">圖示</translation>
+        <translation>圖示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="145"/>
         <source>Style</source>
-        <translation type="unfinished">樣式</translation>
+        <translation>樣式</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="150"/>
@@ -5324,7 +5324,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="196"/>
         <source>System default</source>
-        <translation type="unfinished">系統預設</translation>
+        <translation>系統預設</translation>
     </message>
 </context>
 <context>
@@ -5704,77 +5704,77 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="46"/>
         <source>Import colours</source>
-        <translation type="unfinished"></translation>
+        <translation>匯入顏色</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="47"/>
         <source>Import fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>匯入字型</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="48"/>
         <source>Import window size</source>
-        <translation type="unfinished"></translation>
+        <translation>匯入視窗大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="49"/>
         <source>Switch to imported layout</source>
-        <translation type="unfinished"></translation>
+        <translation>切換至已經匯入的配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="53"/>
         <source>Import Layout</source>
-        <translation type="unfinished">匯入配置</translation>
+        <translation>匯入配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="72"/>
         <source>&amp;Import</source>
-        <translation type="unfinished"></translation>
+        <translation>匯入(&amp;I)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="77"/>
         <source>&amp;Browse…</source>
-        <translation type="unfinished">瀏覽(&amp;B)…</translation>
+        <translation>瀏覽(&amp;B)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="91"/>
         <source>Name</source>
-        <translation type="unfinished">名稱</translation>
+        <translation>名稱</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="93"/>
         <source>Path</source>
-        <translation type="unfinished">路徑</translation>
+        <translation>路徑</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="149"/>
         <source>Enter a layout name.</source>
-        <translation type="unfinished"></translation>
+        <translation>輸入配置名稱。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="153"/>
         <source>A layout with this name already exists.</source>
-        <translation type="unfinished"></translation>
+        <translation>已有該名稱的配置存在。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="167"/>
         <source>Layout file could not be opened.</source>
-        <translation type="unfinished"></translation>
+        <translation>配置檔案無法開啟。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="175"/>
         <source>Layout file is invalid.</source>
-        <translation type="unfinished"></translation>
+        <translation>配置檔案無效。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="200"/>
         <source>Open Layout</source>
-        <translation type="unfinished">開啟配置</translation>
+        <translation>開啟配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="200"/>
         <source>fooyin Layout (*.fyl)</source>
-        <translation type="unfinished">fooyin 配置 (*.fyl)</translation>
+        <translation>fooyin 配置 (*.fyl)</translation>
     </message>
 </context>
 <context>
@@ -11617,7 +11617,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="50"/>
         <source>Apply icon gaps with right captions</source>
-        <translation type="unfinished"></translation>
+        <translation>使用右側文字說明套用圖示間隙</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="52"/>
@@ -11700,7 +11700,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="97"/>
         <source>Apply the configured horizontal and vertical gaps when captions appear to the right of station icons</source>
-        <translation type="unfinished"></translation>
+        <translation>套用所設定的水平與垂直間隙，當站台圖示右側出現文字說明時</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="99"/>
@@ -17479,27 +17479,27 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="551"/>
         <source>Encoding preferred when the best automatic match is Latin-compatible single-byte text</source>
-        <translation type="unfinished"></translation>
+        <translation>當最佳自動符合時，編碼偏好於與拉丁文相容的單位元文字</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="568"/>
         <source>Enabled all extensions supported by the FFmpeg input</source>
-        <translation type="unfinished"></translation>
+        <translation>已經啟用全部由 FFmpeg 輸入所支援的擴充功能</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="585"/>
         <source>Probe all readers for extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>探測全部讀取者用於擴充功能</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="586"/>
         <source>Semicolon-separated extensions where all readers are tried and the reader with the most subsongs or chapters is used.</source>
-        <translation type="unfinished"></translation>
+        <translation>以分號分隔的擴充功能，全部讀取者在此試用，以及最多副歌或章節使用的讀取者。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="606"/>
         <source>ReplayGain value written to the Opus header when updating metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain 值寫入 Opus 標頭，當更新詮譯資料據時</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="659"/>

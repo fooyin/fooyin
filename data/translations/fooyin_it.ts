@@ -6,7 +6,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="228"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Riproduci</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="232"/>
@@ -16,27 +16,27 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="235"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi alla playlist attiva</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="238"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimpiazza playlist attuale</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="241"/>
         <source>Create new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea nuova playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="244"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi a playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="248"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi alla playlist di coda</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="251"/>
@@ -46,7 +46,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="254"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimpiazza playlist di coda</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="258"/>
@@ -61,7 +61,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="264"/>
         <source>Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>Configura</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="381"/>
@@ -84,17 +84,17 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="58"/>
         <source>Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimpiazza</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="61"/>
         <source>Split</source>
-        <translation type="unfinished"></translation>
+        <translation>Dividi</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="64"/>
         <source>Remove split</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuovi divisione</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="68"/>
@@ -104,17 +104,17 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="71"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Incolla</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="75"/>
         <source>Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserici</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="78"/>
         <source>Move</source>
-        <translation type="unfinished"></translation>
+        <translation>Sposta</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="82"/>
@@ -124,7 +124,7 @@
     <message>
         <location filename="../../src/gui/widgets.cpp" line="392"/>
         <source>Layout Editing</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifica Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="394"/>
@@ -142,47 +142,47 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="51"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi alla playlist attiva</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="54"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimpiazza playlist attuale</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="57"/>
         <source>Create new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea nuova playlist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="60"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi a playlist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="64"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi alla playlist di coda</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="67"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>Accoda alla prossima riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="71"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuovi dalla coda di riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="75"/>
         <source>Filter options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opzioni filtro</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="78"/>
         <source>Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>Configura</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="82"/>
@@ -192,7 +192,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="55"/>
         <source>Library Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtro Libreria</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="57"/>
@@ -259,17 +259,17 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="208"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="210"/>
         <source>Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadati</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="104"/>
         <source>Track title</source>
-        <translation type="unfinished"></translation>
+        <translation>Titolo traccia</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="106"/>
         <source>Primary artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Artista principale</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="108"/>
@@ -279,122 +279,122 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="110"/>
         <source>Album title</source>
-        <translation type="unfinished"></translation>
+        <translation>Titolo album</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="112"/>
         <source>Album artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Artista album</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="114"/>
         <source>Track number</source>
-        <translation type="unfinished"></translation>
+        <translation>Numero traccia</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="116"/>
         <source>Total tracks on the release</source>
-        <translation type="unfinished"></translation>
+        <translation>Tracce totali nella pubblicazione</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="118"/>
         <source>Disc number</source>
-        <translation type="unfinished"></translation>
+        <translation>Numero disco</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="120"/>
         <source>Total discs on the release</source>
-        <translation type="unfinished"></translation>
+        <translation>Dischi totali nella pubblicazione</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="121"/>
         <source>Genres</source>
-        <translation type="unfinished"></translation>
+        <translation>Generi</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="123"/>
         <source>Composers</source>
-        <translation type="unfinished"></translation>
+        <translation>Compositori</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="125"/>
         <source>Performers</source>
-        <translation type="unfinished"></translation>
+        <translation>Esecutori</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="127"/>
         <source>Track duration formatted as time</source>
-        <translation type="unfinished"></translation>
+        <translation>Durata traccia in formato tempo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="129"/>
         <source>Track duration in seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Durata traccia in secondi</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="131"/>
         <source>Track duration in milliseconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Durata traccia in millisecondi</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="133"/>
         <source>Comment tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Commento</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="135"/>
         <source>Release date</source>
-        <translation type="unfinished"></translation>
+        <translation>Data di uscita</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="137"/>
         <source>Release year</source>
-        <translation type="unfinished"></translation>
+        <translation>Anno di uscita</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="139"/>
         <source>File size in bytes</source>
-        <translation type="unfinished"></translation>
+        <translation>Peso file in bytes</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="141"/>
         <source>Human readable file size</source>
-        <translation type="unfinished"></translation>
+        <translation>Peso file leggibile dall&apos;uomo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="143"/>
         <source>Track bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitrate traccia</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="145"/>
         <source>Sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Frequenza di campionamento</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="147"/>
         <source>Bit depth</source>
-        <translation type="unfinished"></translation>
+        <translation>Profondità di bit</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="149"/>
         <source>First played timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Data e ora della prima riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="151"/>
         <source>Last played timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Data e ora della ultima riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="153"/>
         <source>Play count</source>
-        <translation type="unfinished"></translation>
+        <translation>Conteggio riproduzioni</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="161"/>
         <source>Rating shown as stars</source>
-        <translation type="unfinished"></translation>
+        <translation>Valutazione a stelle</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="165"/>
@@ -404,47 +404,47 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="167"/>
         <source>Codec name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome codec</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="169"/>
         <source>Codec profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Profilo codec</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="171"/>
         <source>Encoding tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Strumento di codificazione</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="173"/>
         <source>Tag type list</source>
-        <translation type="unfinished"></translation>
+        <translation>Lista dei tipi di tag</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="175"/>
         <source>Encoding description</source>
-        <translation type="unfinished"></translation>
+        <translation>Descrizione codificatore</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="177"/>
         <source>Channel layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Disposizione canali</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="181"/>
         <source>Library added timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Data e ora di aggiunta alla libreria</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="183"/>
         <source>Last modified timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Data e ora di ultima modifica</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="185"/>
         <source>Full file path</source>
-        <translation type="unfinished"></translation>
+        <translation>Percorso file completo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="187"/>
@@ -454,17 +454,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="189"/>
         <source>Filename without extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome file senza estensione</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="191"/>
         <source>File extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Estensione file</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="193"/>
         <source>Filename including extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome file incluso di estensione</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="195"/>
@@ -518,7 +518,7 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="218"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="222"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="213"/>
@@ -608,7 +608,7 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="226"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="228"/>
         <source>Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Coda</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="227"/>
@@ -663,7 +663,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
         <source>Current date and time formatted as YYYY-MM-DD HH:MM:SS</source>
-        <translation type="unfinished"></translation>
+        <translation>Data e ora sono attualmente disposti in YYYY-MM-DD HH:MM:SS</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="246"/>
@@ -674,12 +674,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="247"/>
         <source>Current library name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome libreria attuale</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="249"/>
         <source>Current library path</source>
-        <translation type="unfinished"></translation>
+        <translation>Posizione libreria attuale</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="250"/>
@@ -688,7 +688,7 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="256"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="258"/>
         <source>Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Stile</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="251"/>
