@@ -122,6 +122,12 @@ TrackList ReplayGainModel::applyChanges()
     return tracks;
 }
 
+bool ReplayGainModel::hasChanges() const
+{
+    return std::ranges::any_of(m_nodes,
+                               [](const auto& node) { return node.second.status() == ReplayGainItem::Changed; });
+}
+
 Qt::ItemFlags ReplayGainModel::flags(const QModelIndex& index) const
 {
     if(!index.isValid()) {
@@ -154,15 +160,15 @@ QVariant ReplayGainModel::headerData(int section, Qt::Orientation orientation, i
     }
 
     switch(section) {
-        case(0):
+        case 0:
             return tr("Name");
-        case(1):
+        case 1:
             return m_tracks.size() == 1 ? tr("Value") : tr("Track Gain");
-        case(2):
+        case 2:
             return tr("Track Peak");
-        case(3):
+        case 3:
             return tr("Album Gain");
-        case(4):
+        case 4:
             return tr("Album Peak");
         default:
             break;
@@ -369,7 +375,7 @@ bool ReplayGainModel::setData(const QModelIndex& index, const QVariant& value, i
     };
 
     switch(column) {
-        case(1):
+        case 1:
             switch(type) {
                 case ReplayGainItem::TrackPeak: {
                     const float validValue = ok ? setValue : Constants::InvalidPeak;
@@ -390,15 +396,15 @@ bool ReplayGainModel::setData(const QModelIndex& index, const QVariant& value, i
                 }
             }
             break;
-        case(2): {
+        case 2: {
             const float validValue = ok ? setValue : Constants::InvalidPeak;
             return setGainOrPeak(&ReplayGainItem::setTrackPeak, validValue);
         }
-        case(3): {
+        case 3: {
             const float validValue = ok ? setValue : Constants::InvalidGain;
             return setGainOrPeak(&ReplayGainItem::setAlbumGain, validValue);
         }
-        case(4): {
+        case 4: {
             const float validValue = ok ? setValue : Constants::InvalidPeak;
             return setGainOrPeak(&ReplayGainItem::setAlbumPeak, validValue);
         }

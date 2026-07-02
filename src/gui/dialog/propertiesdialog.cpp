@@ -79,7 +79,9 @@ Fooyin::TrackList filterDuplicateTracks(const Fooyin::TrackList& tracks)
 bool metadataEqual(const Fooyin::Track& lhs, const Fooyin::Track& rhs)
 {
     return lhs.metadata() == rhs.metadata() && lhs.serialiseExtraTags() == rhs.serialiseExtraTags()
-        && lhs.removedTags() == rhs.removedTags();
+        && lhs.removedTags() == rhs.removedTags() && lhs.rgTrackGain() == rhs.rgTrackGain()
+        && lhs.rgTrackPeak() == rhs.rgTrackPeak() && lhs.rgAlbumGain() == rhs.rgAlbumGain()
+        && lhs.rgAlbumPeak() == rhs.rgAlbumPeak();
 }
 
 bool statEqual(const Fooyin::Track& lhs, const Fooyin::Track& rhs)

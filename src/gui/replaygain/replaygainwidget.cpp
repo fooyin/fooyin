@@ -87,6 +87,9 @@ ReplayGainWidget::ReplayGainWidget(MusicLibrary* library, const TrackList& track
     m_view->setItemDelegate(new ReplayGainDelegate(this));
     m_view->setModel(m_model);
 
+    QObject::connect(m_model, &QAbstractItemModel::dataChanged, this, &PropertiesTabWidget::pendingChangesStateChanged);
+    QObject::connect(m_model, &QAbstractItemModel::modelReset, this, &PropertiesTabWidget::pendingChangesStateChanged);
+
     QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() {
         QMetaObject::invokeMethod(
             this,
@@ -136,6 +139,11 @@ void ReplayGainWidget::setTrackScope(const TrackList& tracks)
     m_model->resetModel(tracks);
     updateHeaderModes();
     finalise();
+}
+
+bool ReplayGainWidget::hasPendingScopeChanges() const
+{
+    return m_model->hasChanges();
 }
 
 bool ReplayGainWidget::commitPendingChanges()

@@ -47,6 +47,7 @@ public:
     void resetModel(const TrackList& tracks);
     void updateTracks(const TrackList& tracks);
     TrackList applyChanges();
+    [[nodiscard]] bool hasChanges() const;
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;

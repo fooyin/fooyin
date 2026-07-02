@@ -42,6 +42,7 @@ public:
     void apply() override;
     void updateTracks(const TrackList& tracks) override;
     void setTrackScope(const TrackList& tracks) override;
+    [[nodiscard]] bool hasPendingScopeChanges() const override;
     bool commitPendingChanges() override;
 
 protected:
