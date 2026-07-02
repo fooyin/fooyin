@@ -68,7 +68,7 @@ Fooyin::TrackList filterDuplicateTracks(const Fooyin::TrackList& tracks)
     filteredTracks.reserve(tracks.size());
 
     for(const auto& track : tracks) {
-        if(seenTracks.emplace(track.uniqueFilepath()).second) {
+        if(seenTracks.emplace(track.identityKey()).second) {
             filteredTracks.push_back(track);
         }
     }
@@ -100,7 +100,7 @@ void PropertiesDialogSession::reset(const TrackList& tracks)
     m_originalTracks         = workingTracks;
     m_workingTracks          = workingTracks;
     m_activeTrackIndexes.clear();
-    m_pendingRevisions.resize(static_cast<qsizetype>(workingTracks.size()));
+    m_pendingRevisions.assign(static_cast<qsizetype>(workingTracks.size()), 0);
     m_pendingCount = 0;
 }
 
