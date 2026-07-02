@@ -1,5 +1,69 @@
 # Changelog
 
+# Unreleased
+
+### New Features
+
+* Audio Output
+  - Add PulseAudio output support ([#1331](https://github.com/fooyin/fooyin/pull/1331))
+* Visualisations
+  - Add a projectM visualisation plugin ([#1339](https://github.com/fooyin/fooyin/pull/1339))
+
+### Improvements
+
+* Audio/Playback
+  - Add optional automatic resampling for unsupported device rates
+* Directory Browser
+  - Improve folder loading performance by deferring recursive playlist discovery
+* Properties
+  - Improve properties dialog performance ([#1333](https://github.com/fooyin/fooyin/pull/1333))
+* Radio Browser
+  - Hide countries in the Radio Guide by default
+  - Show Radio Guide errors in a closeable banner
+* Spectrum
+  - Decay bands and peaks when playback is paused or stopped
+* Tag Editor
+  - Populate the editor asynchronously
+* Visualisations
+  - Add additional frame-rate presets
+
+### Fixes
+
+* Autoplaylists
+  - Preserve distinct entries and stable identities when regenerating autoplaylists ([#1334](https://github.com/fooyin/fooyin/issues/1334))
+* Interface
+  - Bind context actions to their originating track selection ([#1237](https://github.com/fooyin/fooyin/issues/1237))
+  - Fix icon and star rating rendering at fractional display scales ([#1347](https://github.com/fooyin/fooyin/pull/1347))
+  - Keep track actions in sync when focus changes between widgets
+  - Refresh Selection Info after metadata updates ([#1342](https://github.com/fooyin/fooyin/pull/1342))
+* Library/Metadata
+  - Detect mislabelled legacy encodings in ID3 tags ([#1288](https://github.com/fooyin/fooyin/issues/1288), [#1344](https://github.com/fooyin/fooyin/issues/1344))
+  - Flush deferred playback statistics from the queued snapshot ([#1329](https://github.com/fooyin/fooyin/issues/1329), [#1341](https://github.com/fooyin/fooyin/pull/1341))
+* Lyrics
+  - Fix edge fade rendering at fractional display scales
+  - Expand the properties editor to fill the tab
+* Playlist
+  - Fix a crash when removing the last empty default playlist
+  - Fix playing icon scaling ([#1327](https://github.com/fooyin/fooyin/issues/1327))
+* Properties
+  - Preserve the active scope when rejecting pending artwork or ReplayGain changes
+* Scrobbling
+  - Update the ListenBrainz token URL
+* Scripting
+  - Fix nested formatting scopes ([#1348](https://github.com/fooyin/fooyin/issues/1348))
+* Spectrum
+  - Fix peak height at fractional display scales
+
+### Build/System
+
+* Build
+  - Fix Radio Browser builds on 32-bit platforms ([#1326](https://github.com/fooyin/fooyin/pull/1326))
+  - Improve precompiled header handling for internal plugins
+* Dependencies
+  - Add projectM as an optional dependency for the projectM visualisation plugin
+  - Update the vcpkg baseline and ICU version handling
+
+
 ## [0.11.1](https://github.com/fooyin/fooyin/releases/tag/v0.11.1) (2026-06-22)
 
 ### New Features
