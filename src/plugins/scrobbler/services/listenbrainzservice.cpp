@@ -280,7 +280,7 @@ QString ListenBrainzService::tokenSetting() const
 
 QUrl ListenBrainzService::tokenUrl() const
 {
-    return u"https://listenbrainz.org/profile/"_s;
+    return u"https://listenbrainz.org/settings/"_s;
 }
 
 QNetworkReply* ListenBrainzService::createRequest(RequestType type, const QUrl& url, const QJsonDocument& json)
