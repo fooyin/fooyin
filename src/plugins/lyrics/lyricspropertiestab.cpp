@@ -26,6 +26,8 @@
 #include <core/player/playercontroller.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QVBoxLayout>
+
 #include <ranges>
 
 using namespace Qt::StringLiterals;
@@ -56,6 +58,10 @@ LyricsPropertiesTab::LyricsPropertiesTab(const Track& track, std::shared_ptr<Net
     , m_editor{new LyricsEditor(playerController, this)}
     , m_hasPendingScopeChanges{false}
 {
+    auto* layout = new QVBoxLayout(this);
+    layout->setContentsMargins({});
+    layout->addWidget(m_editor);
+
     setupConnections();
     updateTrack(m_track);
 }
