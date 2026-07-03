@@ -428,11 +428,37 @@ bool VisualisationBackend::getPcmWindowEndingAt(VisualisationSession::PcmWindow&
 
     WindowRange window;
     const int requestedFrames = std::max(1, m_format.framesForDuration(std::max<uint64_t>(1, durationMs)));
-    if(!resolveWindow(window, endTimeMs, requestedFrames, 1, WindowAnchor::End)) {
+    if(!resolvePcmWindowEndingAt(window, endTimeMs, requestedFrames, 1)) {
         return false;
     }
 
     return fillWindow(out, window.startFrame, window.frameCount, selection);
+}
+
+bool VisualisationBackend::resolvePcmWindowEndingAt(WindowRange& out, uint64_t endTimeMs, int requestedFrameCount,
+                                                    int minimumFrameCount) const
+{
+    if(std::cmp_less(m_frameCount, minimumFrameCount) || !m_format.isValid() || m_format.sampleRate() <= 0
+       || m_format.channelCount() <= 0 || requestedFrameCount < minimumFrameCount) {
+        return false;
+    }
+
+    const uint64_t timeFrame       = msToFrames(endTimeMs, m_format.sampleRate());
+    const uint64_t clampedEndFrame = std::min(timeFrame, m_nextStreamFrame);
+    if(clampedEndFrame <= m_startStreamFrame) {
+        return false;
+    }
+
+    const uint64_t availableFrames = clampedEndFrame - m_startStreamFrame;
+    const int frameCount
+        = static_cast<int>(std::min<uint64_t>(static_cast<uint64_t>(requestedFrameCount), availableFrames));
+    if(frameCount < minimumFrameCount) {
+        return false;
+    }
+
+    out.startFrame = clampedEndFrame - static_cast<uint64_t>(frameCount);
+    out.frameCount = frameCount;
+    return true;
 }
 
 bool VisualisationBackend::getSpectrumWindow(VisualisationSession::SpectrumWindow& out, uint64_t centerTimeMs,

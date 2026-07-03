@@ -98,6 +98,8 @@ private:
     [[nodiscard]] static uint64_t msToFrames(uint64_t ms, int sampleRate);
     [[nodiscard]] bool resolveWindow(WindowRange& out, uint64_t timeMs, int requestedFrameCount, int minimumFrameCount,
                                      WindowAnchor anchor) const;
+    [[nodiscard]] bool resolvePcmWindowEndingAt(WindowRange& out, uint64_t endTimeMs, int requestedFrameCount,
+                                                int minimumFrameCount) const;
     [[nodiscard]] bool resolveSpectrumWindowEndingAt(WindowRange& out, uint64_t endTimeMs, int requestedFrameCount,
                                                      int minimumFrameCount) const;
     [[nodiscard]] uint64_t mapSourceTimeToVisualTime(uint32_t streamId, uint64_t sourceTimeMs) const;

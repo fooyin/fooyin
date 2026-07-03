@@ -12,6 +12,7 @@ set(FOOYIN_KNOWN_PLUGINS
     mediacontrol
     mpris
     notify
+    oscilloscope
     nowplaying
     openmpt
     pipewire
@@ -43,6 +44,7 @@ set(FOOYIN_DEFAULT_PLUGINS
     gme
     libarchive
     lyrics
+    oscilloscope
     openmpt
     pipewire
     quicktagger
@@ -121,6 +123,7 @@ fooyin_add_selected_plugin(filters)
 fooyin_add_selected_plugin(gme)
 fooyin_add_selected_plugin(libarchive)
 fooyin_add_selected_plugin(lyrics)
+fooyin_add_selected_plugin(oscilloscope)
 fooyin_add_selected_plugin(openmpt)
 fooyin_add_selected_plugin(pipewire)
 fooyin_add_selected_plugin(pulseaudio)
