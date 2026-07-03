@@ -182,6 +182,7 @@ void PipelineRenderer::applyLiveSettingsUpdate(const Engine::LiveDspSettingsUpda
 
 PipelineRenderer::RenderResult PipelineRenderer::render(int framesToProcess, OutputFader& outputFader,
                                                         bool outputSupportsVolume, double masterVolume,
+                                                        AudioAnalysisBus* visualisationBus,
                                                         AudioAnalysisBus* analysisBus, uint64_t playbackDelayMs)
 {
     RenderResult result;
@@ -219,6 +220,8 @@ PipelineRenderer::RenderResult PipelineRenderer::render(int framesToProcess, Out
     if(m_outputResampler) {
         m_outputResampler->process(m_processChunks);
     }
+
+    tapAnalysis(visualisationBus, playbackDelayMs, mixerRead.primaryStreamId);
 
     outputFader.process(m_processChunks);
 

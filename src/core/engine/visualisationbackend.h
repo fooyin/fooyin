@@ -133,6 +133,18 @@ private:
     };
     std::unordered_map<uint32_t, SourceTimeline> m_sourceTimelines;
 
+    struct CurrentTimeSnapshot
+    {
+        uint64_t timeMs{0};
+        int64_t referenceClockMs{0};
+        bool published{false};
+        bool hasPresentationClock{false};
+    };
+
+    void publishCurrentTime(uint64_t timeMs, int64_t referenceClockMs, bool published, bool hasPresentationClock);
+    [[nodiscard]] CurrentTimeSnapshot currentTimeSnapshot() const;
+
+    std::atomic<uint64_t> m_currentTimeSequence;
     std::atomic<uint64_t> m_currentTimeMs;
     std::atomic<int64_t> m_currentTimeReferenceClockMs;
     std::atomic_bool m_currentTimePublished;

@@ -60,7 +60,8 @@ public:
     //! Apply a combined output/device/DSP/bitdepth profile.
     virtual void applyOutputProfile(const Engine::OutputProfileRequest& request) = 0;
     /*!
-     * Pull-based visualisation API backed by shared post-master PCM history.
+     * Pull-based visualisation API backed by shared post-master-DSP,
+     * pre-output-fader PCM history.
      *
      * This is intended for in-app visual widgets that query PCM or spectrum
      * windows on their own repaint schedule.
@@ -85,6 +86,10 @@ Q_SIGNALS:
     void engineError(const QString& error);
     //! Playback state transitions.
     void engineStateChanged(Fooyin::Engine::PlaybackState state);
+    //! Emitted while a faded pause drains already-queued audio to the output.
+    void audiblePauseDrainStarted();
+    //! Emitted once the faded-pause output drain is no longer audible.
+    void audiblePauseDrainCompleted();
     //! Track-status transitions with stable generation identifier.
     void trackStatusContextChanged(const Fooyin::Engine::TrackStatusContext& context);
 

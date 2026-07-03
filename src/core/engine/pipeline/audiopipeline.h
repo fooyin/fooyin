@@ -290,6 +290,8 @@ public:
     void setSignalWakeTarget(QObject* target, int wakeEventType = 0);
     //! Set optional analysis bus tap for post-master processed PCM.
     void setAnalysisBus(AudioAnalysisBus* analysisBus);
+    //! Set pull-visualisation PCM tap before output volume and transport fades.
+    void setVisualisationAnalysisBus(AudioAnalysisBus* analysisBus);
     //! Drain and clear pending level-triggered signals on engine thread.
     [[nodiscard]] PendingSignals drainPendingSignals();
 
@@ -646,6 +648,7 @@ private:
     AtomicSharedPtr<const FormatSnapshot> m_outputSnapshot;
     AtomicSharedPtr<const QString> m_lastInitError;
     std::atomic<AudioAnalysisBus*> m_analysisBus;
+    std::atomic<AudioAnalysisBus*> m_visualisationAnalysisBus;
 
     PipelineSignalMailbox m_signalMailbox;
     OrphanStreamTracker m_orphanTracker;

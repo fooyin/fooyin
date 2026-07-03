@@ -111,6 +111,10 @@ EngineHandler::EngineHandler(std::shared_ptr<AudioLoader> audioLoader, PlayerCon
     QObject::connect(m_engine, &AudioEngine::seekPositionApplied, this, &EngineHandler::handleSeekApplied);
     QObject::connect(m_engine, &AudioEngine::bitrateChanged, m_playerController, &PlayerController::setBitrate);
     QObject::connect(m_engine, &AudioEngine::stateChanged, this, &EngineHandler::handleStateChange);
+    QObject::connect(m_engine, &AudioEngine::audiblePauseDrainStarted, this,
+                     &EngineController::audiblePauseDrainStarted);
+    QObject::connect(m_engine, &AudioEngine::audiblePauseDrainCompleted, this,
+                     &EngineController::audiblePauseDrainCompleted);
     QObject::connect(m_engine, &AudioEngine::deviceError, this, &EngineController::engineError);
     QObject::connect(m_engine, &AudioEngine::trackChanged, this, &EngineHandler::handleEngineTrackChanged);
     QObject::connect(m_engine, &AudioEngine::trackCommitted, this, &EngineHandler::handleTrackCommitted);
@@ -710,7 +714,7 @@ void EngineHandler::updateAnalysisRelays()
     if(hasLevelSubscribers) {
         subscriptions.setFlag(Engine::AnalysisDataType::LevelFrameData);
     }
-    if(hasPcmSubscribers || hasVisualisationSessions) {
+    if(hasPcmSubscribers) {
         subscriptions.setFlag(Engine::AnalysisDataType::PcmFrameData);
     }
 
@@ -737,6 +741,7 @@ void EngineHandler::updateAnalysisRelays()
     }
 
     dispatchCommand(&AudioEngine::setAnalysisDataSubscriptions, subscriptions);
+    dispatchCommand(&AudioEngine::setVisualisationAnalysisEnabled, hasVisualisationSessions);
 }
 
 VisualisationService* EngineHandler::visualisationService() const

@@ -39,7 +39,8 @@ class VisualisationService;
 class VisualisationServicePrivate;
 
 /*!
- * Pull-based visualisation session backed by shared post-master PCM history.
+ * Pull-based visualisation session backed by shared post-master-DSP,
+ * pre-output-fader PCM history.
  *
  * Sessions are intended for in-app visual widgets that query PCM or spectrum
  * data on demand. This keeps widget repaint timing separate from engine audio

@@ -27,6 +27,7 @@ set(FOOYIN_KNOWN_PLUGINS
     sndfile
     spectrum
     soundtouch
+    spectrogram
     soxresampler
     tageditor
     thumbnailtoolbar
@@ -53,6 +54,7 @@ set(FOOYIN_DEFAULT_PLUGINS
     sdl
     sleepinhibitor
     sndfile
+    spectrogram
     spectrum
     soundtouch
     soxresampler
@@ -132,6 +134,7 @@ fooyin_add_selected_plugin(sdl)
 fooyin_add_selected_plugin(sleepinhibitor)
 fooyin_add_selected_plugin(sndfile)
 fooyin_add_selected_plugin(spectrum)
+fooyin_add_selected_plugin(spectrogram)
 fooyin_add_selected_plugin(soundtouch)
 fooyin_add_selected_plugin(soxresampler)
 fooyin_add_selected_plugin(tageditor)
