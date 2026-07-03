@@ -60,7 +60,7 @@ public:
 
     void setLoadingText(const QString& text);
     void setEmptyText(const QString& text);
-    void setupRatingDelegate();
+    void setRatingColumn(int column);
     void setBackgroundOptions(const BackgroundOptions& options);
     void setBackgroundPixmap(const QPixmap& pixmap);
 

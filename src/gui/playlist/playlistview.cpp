@@ -78,7 +78,7 @@ namespace Fooyin {
 PlaylistView::PlaylistView(QWidget* parent)
     : ExpandedTreeView{parent}
     , m_playlistLoaded{false}
-    , m_starDelegate{nullptr}
+    , m_starDelegate{new StarDelegate(this)}
     , m_ratingColumn{-1}
     , m_bgFadeController{new PixmapFadeController(this)}
     , m_bulkEditor{nullptr}
@@ -118,21 +118,27 @@ void PlaylistView::setLoadingText(const QString& text)
     viewport()->update();
 }
 
-void PlaylistView::setupRatingDelegate()
+void PlaylistView::setRatingColumn(int column)
 {
-    const int columnCount = header()->count();
-    for(int column{0}; column < columnCount; ++column) {
-        if(auto* starDelegate = qobject_cast<StarDelegate*>(itemDelegateForColumn(column))) {
-            m_starDelegate = starDelegate;
-            m_ratingColumn = column;
-            setMouseTracking(true);
-            return;
-        }
+    if(m_ratingColumn == column) {
+        return;
     }
 
-    m_starDelegate = nullptr;
-    m_ratingColumn = -1;
-    setMouseTracking(false);
+    m_starDelegate->setHoverIndex({});
+    unsetCursor();
+    viewport()->update();
+
+    if(m_ratingColumn >= 0) {
+        setItemDelegateForColumn(m_ratingColumn, nullptr);
+    }
+
+    m_ratingColumn = column;
+
+    if(m_ratingColumn >= 0) {
+        setItemDelegateForColumn(m_ratingColumn, m_starDelegate);
+    }
+
+    setMouseTracking(m_ratingColumn >= 0);
 }
 
 void PlaylistView::setBackgroundOptions(const BackgroundOptions& options)

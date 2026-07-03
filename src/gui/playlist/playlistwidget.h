@@ -59,7 +59,6 @@ class SettingsManager;
 class SettingsDialogController;
 class SignalThrottler;
 class SortingRegistry;
-class StarDelegate;
 class WidgetContext;
 class PlaylistWidgetSession;
 
@@ -239,7 +238,6 @@ private:
     QVBoxLayout* m_layout;
     PlaylistModel* m_model;
     PlaylistDelegate* m_delgate;
-    StarDelegate* m_starDelegate;
     PlaylistView* m_playlistView;
     AutoHeaderView* m_header;
     PlaylistWidgetLayoutState m_layoutState;

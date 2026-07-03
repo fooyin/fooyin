@@ -57,7 +57,6 @@
 #include <utils/modelutils.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/signalthrottler.h>
-#include <utils/stardelegate.h>
 #include <utils/tooltipfilter.h>
 #include <utils/utils.h>
 
@@ -940,7 +939,6 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     , m_model{new PlaylistModel(m_playlistInteractor, core->audioLoader().get(), coverProvider, m_settings,
                                 styleProvider, this)}
     , m_delgate{new PlaylistDelegate(this)}
-    , m_starDelegate{nullptr}
     , m_playlistView{new PlaylistView(this)}
     , m_header{new AutoHeaderView(Qt::Horizontal, this)}
     , m_playlistContext{new WidgetContext(
@@ -1506,27 +1504,23 @@ void PlaylistWidget::updateSpans()
 
     m_playlistView->setExtendSpansIntoParents(m_layoutState.currentPreset.insetSubheadersToImageColumns);
 
-    bool hasRating{false};
+    const auto layoutColumnCount = static_cast<int>(m_layoutState.columns.size());
+    const int spanColumnCount    = std::max(m_header->count(), layoutColumnCount);
+    for(int column{0}; column < spanColumnCount; ++column) {
+        m_playlistView->setSpan(column, false);
+    }
+
+    int ratingColumn{-1};
     for(int i{0}; const auto& column : m_layoutState.columns) {
         m_playlistView->setSpan(i, isPixmap(column.field));
 
-        if(column.field == QLatin1String{Constants::RatingEditor}) {
-            hasRating = true;
-            if(!m_starDelegate) {
-                m_starDelegate = new StarDelegate(this);
-            }
-            m_playlistView->setItemDelegateForColumn(i, m_starDelegate);
-        }
-        else {
-            m_playlistView->setItemDelegateForColumn(i, m_delgate);
+        if(column.field == QLatin1StringView{Constants::RatingEditor}) {
+            ratingColumn = i;
         }
         ++i;
     }
 
-    if(!hasRating && m_starDelegate) {
-        m_starDelegate->deleteLater();
-        m_starDelegate = nullptr;
-    }
+    m_playlistView->setRatingColumn(ratingColumn);
 }
 
 void PlaylistWidget::applyBackgroundSettings()
@@ -1694,7 +1688,6 @@ void PlaylistWidget::handleBulkWriteRequested(const TrackList& tracks)
 void PlaylistWidget::setupConnections()
 {
     // clang-format off
-    QObject::connect(m_header, &QHeaderView::sectionCountChanged, m_playlistView, &PlaylistView::setupRatingDelegate);
     QObject::connect(m_header, &QHeaderView::sectionResized, this, [this](int column, int /*oldSize*/, int newSize) { m_model->setPixmapColumnSize(column, newSize); });
     QObject::connect(m_header, &QHeaderView::sortIndicatorChanged, this, [this](int column, Qt::SortOrder order) { m_session->sortColumn(sessionHost(), column, order); });
     QObject::connect(m_header, &QHeaderView::customContextMenuRequested, this, &PlaylistWidget::showHeaderMenu);
