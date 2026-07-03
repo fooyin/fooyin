@@ -980,10 +980,10 @@ void LibraryThreadHandlerPrivate::flushTrackStatsUpdates()
 
         if(isActiveSource(track)) {
             AudioReader::WriteOptions deferredOptions{AudioReader::None};
-            if(pendingUpdate.writeRating && m_settings->value<Settings::Core::SaveRatingToMetadata>()) {
+            if(pendingUpdate.writeRating) {
                 deferredOptions |= AudioReader::Rating;
             }
-            if(pendingUpdate.writePlaycount && m_settings->value<Settings::Core::SavePlaycountToMetadata>()) {
+            if(pendingUpdate.writePlaycount) {
                 deferredOptions |= AudioReader::Playcount;
             }
             queuePendingStatWrite(track, deferredOptions);
