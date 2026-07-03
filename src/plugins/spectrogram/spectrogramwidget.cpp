@@ -35,6 +35,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QResizeEvent>
+#include <QShowEvent>
 #include <QTimerEvent>
 
 #include <array>
@@ -263,6 +264,7 @@ SpectrogramWidget::SpectrogramWidget(PlayerController* playerController, EngineC
     , m_resizeSourceHistoryPixelCount{0}
     , m_resizeSettleTimer{}
     , m_imageDpr{1.0}
+    , m_renderSizeReady{false}
     , m_pixelAdvanceRemainder{0.0}
     , m_writePixel{0}
     , m_historyPixelCount{0}
@@ -439,9 +441,28 @@ QSize SpectrogramWidget::sizeHint() const
     return {320, 120};
 }
 
+void SpectrogramWidget::showEvent(QShowEvent* event)
+{
+    FyWidget::showEvent(event);
+
+    QMetaObject::invokeMethod(
+        this,
+        [this]() {
+            if(isVisible()) {
+                m_renderSizeReady = true;
+                renderFrame();
+            }
+        },
+        Qt::QueuedConnection);
+}
+
 void SpectrogramWidget::resizeEvent(QResizeEvent* event)
 {
     FyWidget::resizeEvent(event);
+
+    if(!isVisible()) {
+        return;
+    }
 
     if(m_resizeSource.isNull()) {
         if(m_config.presentationMode == PresentationMode::Stationary) {
@@ -902,7 +923,14 @@ void SpectrogramWidget::handlePositionChanged(uint64_t positionMs)
 
 void SpectrogramWidget::renderFrame()
 {
-    resizeBuffers();
+    // Wait until the containing layout knows the first visible size
+    if(!m_renderSizeReady) {
+        return;
+    }
+
+    if(isVisible()) {
+        resizeBuffers();
+    }
 
     if(m_image.isNull() || !m_track.isValid()) {
         update();

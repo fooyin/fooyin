@@ -38,6 +38,7 @@ class QContextMenuEvent;
 class QJsonObject;
 class QPaintEvent;
 class QResizeEvent;
+class QShowEvent;
 class QTimerEvent;
 
 namespace Fooyin {
@@ -101,6 +102,7 @@ public:
     [[nodiscard]] QSize sizeHint() const override;
 
 protected:
+    void showEvent(QShowEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     void timerEvent(QTimerEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
@@ -145,6 +147,7 @@ private:
     int m_resizeSourceHistoryPixelCount;
     QTimer m_resizeSettleTimer;
     qreal m_imageDpr;
+    bool m_renderSizeReady;
 
     double m_pixelAdvanceRemainder;
     int m_writePixel;
