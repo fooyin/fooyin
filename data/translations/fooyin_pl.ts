@@ -2873,22 +2873,22 @@ Kiedy wyłączone, bieżąca kolejność utworów jest zachowana i tylko nowe ut
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="49"/>
         <source>DSP</source>
-        <translation type="unfinished">Procesor sygnałowy</translation>
+        <translation>Procesor sygnałowy</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="98"/>
         <source>DSP Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>Selektor procesorów sygnałowych</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="140"/>
         <source>Configure…</source>
-        <translation type="unfinished">Konfiguruj…</translation>
+        <translation>Konfiguruj…</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="158"/>
         <source>Show label</source>
-        <translation type="unfinished">Pokaż etykietę</translation>
+        <translation>Pokaż etykietę</translation>
     </message>
 </context>
 <context>
@@ -8075,7 +8075,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/widgets/messagebanner.cpp" line="63"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>Odrzuć</translation>
     </message>
 </context>
 <context>
@@ -11088,12 +11088,12 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/plugins/projectm/projectmpresetdialog.cpp" line="39"/>
         <source>Select projectM Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz motyw projectM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmpresetdialog.cpp" line="45"/>
         <source>Filter presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtruj motywy</translation>
     </message>
 </context>
 <context>
@@ -11101,182 +11101,182 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="47"/>
         <source> s</source>
-        <translation type="unfinished"></translation>
+        <translation> s</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="97"/>
         <source>projectM Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustawienia projectM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="100"/>
         <source>Browse…</source>
-        <translation type="unfinished"></translation>
+        <translation>Przeglądaj…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="101"/>
         <source>Scan for presets recursively</source>
-        <translation type="unfinished"></translation>
+        <translation>Rekursywnie szukaj motywów</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="104"/>
         <source>Correct aspect ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>Poprawny współczynnik proporcji</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="107"/>
         <source>Enable hard cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Włącz ostre cięcia</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="113"/>
         <source>Preset library</source>
-        <translation type="unfinished"></translation>
+        <translation>Biblioteka motywów</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="115"/>
         <source>Soft cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Płynne przejścia</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="117"/>
         <source>Hard cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Ostre cięcia</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="119"/>
         <source>Rendering</source>
-        <translation type="unfinished">Renderowanie</translation>
+        <translation>Renderowanie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="123"/>
         <source>Folder containing .milk presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Folder z motywami .milk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="130"/>
         <source>Maximum rendering frame rate in frames per second</source>
-        <translation type="unfinished"></translation>
+        <translation>Maksymalna liczba renderowanych ramek na sekundę</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="136"/>
         <source>Resolution used to evaluate preset equations; higher values improve detail but require more processing</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozdzielczość używana do obliczania równań motywu; wyższe wartości zwiększają szczegółowość, ale wymagają większej mocy obliczeniowej</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="137"/>
         <source>32 x 24</source>
-        <translation type="unfinished"></translation>
+        <translation>32 x 24</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="138"/>
         <source>48 x 36 (default)</source>
-        <translation type="unfinished"></translation>
+        <translation>48 x 36 (domyślne)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="139"/>
         <source>64 x 48</source>
-        <translation type="unfinished"></translation>
+        <translation>64 x 48</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="140"/>
         <source>96 x 72</source>
-        <translation type="unfinished"></translation>
+        <translation>96 x 72</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="141"/>
         <source>128 x 96</source>
-        <translation type="unfinished"></translation>
+        <translation>128 x 96</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="144"/>
         <source>Allow supporting presets to correct shapes when the visualisation is not square</source>
-        <translation type="unfinished"></translation>
+        <translation>Zezwalaj na korygowanie kształtów przez motywy, gdy wizualizacja nie jest kwadratowa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="146"/>
         <source>Maximum time a preset is shown before projectM starts a smooth transition to the next preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Maksymalny czas wyświetlania motywu, zanim projectM rozpocznie płynne przejście do kolejnego</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="147"/>
         <source>Time taken to blend smoothly from one preset to the next</source>
-        <translation type="unfinished"></translation>
+        <translation>Czas trwania płynnego przejścia z jednego motywu do kolejnego</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="149"/>
         <source>Allow strong beats to switch presets immediately instead of using a smooth transition</source>
-        <translation type="unfinished"></translation>
+        <translation>Zezwalaj silnym uderzeniom rytmu na natychmiastową zmianę motywu zamiast płynnego przejścia</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="150"/>
         <source>Minimum time a preset must be shown before a beat can trigger a hard cut</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimalny czas wyświetlania motywu, zanim uderzenie rytmu będzie mogło wywołać ostre cięcie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="152"/>
         <source>Volume-change threshold for hard cuts; higher values require a stronger beat</source>
-        <translation type="unfinished"></translation>
+        <translation>Próg zmiany głośności dla ostrych cięć; wyższe wartości wymagają silniejszego uderzenia rytmu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="153"/>
         <source>Sensitivity of projectM&apos;s beat detection</source>
-        <translation type="unfinished"></translation>
+        <translation>Czułość wykrywania rytmu przez projectM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="167"/>
         <source>Time between auto preset changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Czas pomiędzy automatycznymi zmianami motywów</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="168"/>
         <source>Auto preset blend time</source>
-        <translation type="unfinished"></translation>
+        <translation>Czas automatycznego przenikania motywów</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="172"/>
         <source>Average time between hard cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Średni czas między ostrymi cięciami</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="173"/>
         <source>Hard cut sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Czułość ostrych cięć</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="174"/>
         <source>Beat sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Czułość wykrywania rytmu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="177"/>
         <source>Max. frame rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Maks. liczba ramek na sekundę</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="178"/>
         <source>Mesh size</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozmiar siatki</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="238"/>
         <source>Select Preset Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz folder z motywami</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="251"/>
         <source>No user preset library is configured.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie skonfigurowano biblioteki motywów użytkownika.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="255"/>
         <source>Folder does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Folder nie istnieje.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="263"/>
         <source>%1 presets found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Znaleziono motywów: %1.</translation>
     </message>
 </context>
 <context>
@@ -11284,34 +11284,34 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="50"/>
         <source>&amp;Visualisations</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Wizualizacje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="53"/>
         <source>project&amp;M</source>
-        <translation type="unfinished"></translation>
+        <translation>project&amp;M</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="54"/>
         <source>Open projectM in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Otwórz projectM w osobnym oknie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="56"/>
         <source>View</source>
-        <translation type="unfinished">Widok</translation>
+        <translation>Widok</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="56"/>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="62"/>
         <source>Visualisations</source>
-        <translation type="unfinished">Wizualizacje</translation>
+        <translation>Wizualizacje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="61"/>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="69"/>
         <source>projectM</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM</translation>
     </message>
 </context>
 <context>
@@ -11320,42 +11320,42 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="89"/>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="670"/>
         <source>Initialising projectM…</source>
-        <translation type="unfinished"></translation>
+        <translation>Inicjalizowanie projectM…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="368"/>
         <source>Preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Motyw „%1”</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="508"/>
         <source>No projectM preset folders are configured.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie skonfigurowano folderów z motywami projectM.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="516"/>
         <source>Preset failed to load.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wczytywanie motywu się nie powiodło.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="530"/>
         <source>projectM initialisation failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inicjalizacja projectM się nie powiodła.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="531"/>
         <source>projectM initialisation failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Inicjalizacja projectM się nie powiodła: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="543"/>
         <source>Using presets from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Używanie motywów z %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="544"/>
         <source>Using presets from %1 folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Używanie motywów z %1 folderów</translation>
     </message>
 </context>
 <context>
@@ -11364,103 +11364,103 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="153"/>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="553"/>
         <source>&amp;Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Pełny &amp;ekran</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="154"/>
         <source>&amp;Select Preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz &amp;motyw…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="155"/>
         <source>&amp;Previous Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Poprzedn&amp;i motyw</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="156"/>
         <source>&amp;Next Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Następny motyw</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="157"/>
         <source>&amp;Random Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Losowy motyw</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="158"/>
         <source>&amp;Lock Current Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Za&amp;blokuj bieżący motyw</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="159"/>
         <source>&amp;Shuffle Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Losuj motywy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="160"/>
         <source>Remember &amp;Current Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zapamiętaj bieżący motyw</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="238"/>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="663"/>
         <source>projectM</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="508"/>
         <source>Toggle projectM full screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Przełącz widok pełnoekranowy projectM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="512"/>
         <source>Select a projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz motyw projectM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="516"/>
         <source>Switch to the previous projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw poprzedni motyw projectM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="522"/>
         <source>Switch to the next projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw następny motyw projectM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="529"/>
         <source>Switch to a random projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw losowy motyw projectM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="533"/>
         <source>Lock the current projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Zablokuj bieżący motyw projectM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="537"/>
         <source>Shuffle projectM presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Losuj motywy projectM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="541"/>
         <source>Remember the current projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapamiętaj bieżący motyw projectM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="553"/>
         <source>E&amp;xit Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Op&amp;uść pełny ekran</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="584"/>
         <source>Preset &amp;Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Czas wyświet&amp;lania motywu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="588"/>
         <source>%1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 sek.</translation>
     </message>
 </context>
 <context>
@@ -17668,7 +17668,7 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/gui/widgets.cpp" line="289"/>
         <source>DSP Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>Selektor procesorów sygnałowych</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="325"/>
@@ -17832,22 +17832,22 @@ Ustaw wartość 0, aby wybrać automatycznie na podstawie rozmiaru bufora.</tran
     <message>
         <location filename="../../src/gui/widgets.cpp" line="557"/>
         <source>Automatically resample unsupported output rates</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatycznie zmieniaj próbkowanie nieobsługiwanych częstotliwości wyjściowych</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="558"/>
         <source>Resample audio when the selected output device uses a different sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmieniaj próbkowanie dźwięku, gdy wybrane urządzenie wyjściowe używa innej częstotliwości próbkowania</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="564"/>
         <source>Automatic resampling preference</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustawienia automatycznej zmiany próbkowania</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="565"/>
         <source>Preferred resampler DSP names, in order. Other registered resamplers are used as fallbacks.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nazwy preferowanych procesorów sygnałowych do zmiany próbkowania, według kolejności. Pozostałe zarejestrowane procesory będą używane jako rezerwowe.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="581"/>
