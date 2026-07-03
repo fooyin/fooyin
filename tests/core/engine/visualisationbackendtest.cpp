@@ -160,6 +160,22 @@ TEST(VisualisationBackendTest, DropsOldBacklogWhenScopedStreamGapExceedsToleranc
     EXPECT_EQ(window.frameCount, frameCount);
 }
 
+TEST(VisualisationBackendTest, EndAnchoredPcmWindowDoesNotReadAheadOfRequestedTime)
+{
+    static constexpr auto frameCount = 128;
+    static constexpr auto sampleRate = 1000;
+
+    Fooyin::VisualisationBackend backend;
+    const auto token = backend.registerSession();
+    backend.requestBacklog(token, 1000);
+    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, 0));
+
+    Fooyin::VisualisationSession::PcmWindow window;
+    ASSERT_TRUE(backend.getPcmWindowEndingAt(window, 10, 100, {}));
+    EXPECT_EQ(window.startTimeMs, 0);
+    EXPECT_EQ(window.frameCount, 10);
+}
+
 TEST(VisualisationBackendTest, PreservesTimelineWhenPcmStreamChanges)
 {
     static constexpr auto frameCount = 100;
