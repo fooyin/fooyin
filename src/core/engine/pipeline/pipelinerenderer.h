@@ -79,7 +79,8 @@ public:
 
     //! Render one cycle worth of frames through mixer + master chain + fader.
     [[nodiscard]] RenderResult render(int framesToProcess, OutputFader& outputFader, bool outputSupportsVolume,
-                                      double masterVolume, AudioAnalysisBus* analysisBus, uint64_t playbackDelayMs);
+                                      double masterVolume, AudioAnalysisBus* visualisationBus,
+                                      AudioAnalysisBus* analysisBus, uint64_t playbackDelayMs);
 
     //! Clear runtime-only processing state (buffers, temporary chunks).
     void clearRuntimeState();

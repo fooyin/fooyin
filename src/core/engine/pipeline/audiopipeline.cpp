@@ -177,6 +177,7 @@ AudioPipeline::AudioPipeline()
     , m_dspRegistry{nullptr}
     , m_fadeEventDropCount{0}
     , m_analysisBus{nullptr}
+    , m_visualisationAnalysisBus{nullptr}
     , m_playbackState{PipelinePlaybackState::Stopped}
     , m_playing{false}
     , m_pauseDrainActive{false}
@@ -1091,6 +1092,11 @@ void AudioPipeline::setAnalysisBus(AudioAnalysisBus* analysisBus)
     m_analysisBus.store(analysisBus, std::memory_order_release);
 }
 
+void AudioPipeline::setVisualisationAnalysisBus(AudioAnalysisBus* analysisBus)
+{
+    m_visualisationAnalysisBus.store(analysisBus, std::memory_order_release);
+}
+
 AudioPipeline::PendingSignals AudioPipeline::drainPendingSignals()
 {
     PendingSignals pendingSignals;
@@ -1622,6 +1628,7 @@ void AudioPipeline::processAudio()
 
         const auto pullResult
             = m_renderer.render(framesToProcess, m_outputFader, m_outputUnit.outputSupportsVolume(), m_masterVolume,
+                                m_visualisationAnalysisBus.load(std::memory_order_acquire),
                                 m_analysisBus.load(std::memory_order_acquire), m_timelineUnit.playbackDelayMs());
         const int framesRead = pullResult.framesRead;
 

@@ -390,6 +390,8 @@ AudioEngine::AudioEngine(std::shared_ptr<AudioLoader> audioLoader, SettingsManag
     m_analysisBus = std::make_unique<AudioAnalysisBus>();
     m_analysisBus->setLevelReadyHandler(this, &AudioEngine::onLevelFrameReady);
     m_analysisBus->setPcmReadyHandler(this, &AudioEngine::onPcmFrameReady);
+    m_visualisationAnalysisBus = std::make_unique<AudioAnalysisBus>();
+    m_visualisationAnalysisBus->setPcmReadyHandler(this, &AudioEngine::onVisualisationPcmFrameReady);
 
     m_pipeline.start();
     m_pipeline.setAutomaticResampling(m_settings->value<Settings::Core::Internal::OutputAutoResample>(),
@@ -397,6 +399,7 @@ AudioEngine::AudioEngine(std::shared_ptr<AudioLoader> audioLoader, SettingsManag
     m_pipeline.setFaderCurve(m_fadingValues.pause.curve);
     m_pipeline.setSignalWakeTarget(this, pipelineWakeEventType());
     m_pipeline.setAnalysisBus(m_analysisBus.get());
+    m_pipeline.setVisualisationAnalysisBus(m_visualisationAnalysisBus.get());
 
     m_nextTrackPrepareWorker.start([this](uint64_t jobToken, uint64_t requestId,
                                           NextTrackPrepareWorker::Purpose purpose, const Engine::PlaybackItem& item,
@@ -427,10 +430,16 @@ AudioEngine::~AudioEngine()
         m_analysisBus->setLevelReadyHandler({});
         m_analysisBus->setPcmReadyHandler({});
     }
+    if(m_visualisationAnalysisBus) {
+        m_visualisationAnalysisBus->setSubscriptions(Engine::AnalysisDataTypes{});
+        m_visualisationAnalysisBus->setPcmReadyHandler({});
+    }
 
     m_pipeline.setAnalysisBus(nullptr);
+    m_pipeline.setVisualisationAnalysisBus(nullptr);
     m_pipeline.setSignalWakeTarget(nullptr);
     m_analysisBus.reset();
+    m_visualisationAnalysisBus.reset();
     m_nextTrackPrepareWorker.stop();
     m_engineTaskQueue.clear();
 }
@@ -1454,6 +1463,17 @@ void AudioEngine::setAnalysisDataSubscriptions(const Engine::AnalysisDataTypes s
     m_analysisBus->setSubscriptions(subscriptions);
 }
 
+void AudioEngine::setVisualisationAnalysisEnabled(bool enabled)
+{
+    if(!m_visualisationAnalysisBus) {
+        return;
+    }
+
+    Engine::AnalysisDataTypes subscriptions;
+    subscriptions.setFlag(Engine::AnalysisDataType::PcmFrameData, enabled);
+    m_visualisationAnalysisBus->setSubscriptions(subscriptions);
+}
+
 void AudioEngine::updateLiveDspSettings(const Engine::LiveDspSettingsUpdate& update)
 {
     m_pipeline.updateLiveDspSettings(update);
@@ -1819,6 +1839,9 @@ void AudioEngine::performSeek(uint64_t positionMs, uint64_t requestId)
 
     if(m_analysisBus) {
         m_analysisBus->flush();
+    }
+    if(m_visualisationAnalysisBus) {
+        m_visualisationAnalysisBus->flush();
     }
 
     m_transitions.cancelPendingSeek();
@@ -2295,7 +2318,8 @@ void AudioEngine::beginAudiblePauseCompletion(const uint64_t transportTransition
 
     m_decoder.stopDecodeTimer();
     m_pipeline.beginPauseDrain();
-    clearPendingAnalysisData();
+    clearPendingAnalysisData(true);
+    Q_EMIT audiblePauseDrainStarted();
     updatePlaybackState(Engine::PlaybackState::Paused);
 
     m_pendingAudiblePause.active       = true;
@@ -2366,6 +2390,7 @@ void AudioEngine::finalisePausedState()
     m_audioClock.stop();
     updatePlaybackState(Engine::PlaybackState::Paused);
     setPhase(Playback::Phase::Paused, PhaseChangeReason::PlaybackStatePaused);
+    Q_EMIT audiblePauseDrainCompleted();
 }
 
 bool AudioEngine::shouldSuspendPausedStream() const
@@ -2406,6 +2431,7 @@ void AudioEngine::suspendPausedStream()
     m_audioClock.setPaused();
     m_audioClock.stop();
     updatePlaybackState(Engine::PlaybackState::Paused);
+    Q_EMIT audiblePauseDrainCompleted();
 }
 
 void AudioEngine::clearPendingAudiblePause()
@@ -3553,12 +3579,15 @@ void AudioEngine::handleTimerTick(int timerId)
     }
 }
 
-void AudioEngine::clearPendingAnalysisData()
+void AudioEngine::clearPendingAnalysisData(bool preserveVisualisationHistory)
 {
     if(m_analysisBus) {
         m_analysisBus->flush();
     }
-    if(m_visualisationBackend) {
+    if(m_visualisationAnalysisBus) {
+        m_visualisationAnalysisBus->flush();
+    }
+    if(m_visualisationBackend && !preserveVisualisationHistory) {
         m_visualisationBackend->reset();
     }
 
@@ -3589,13 +3618,6 @@ void AudioEngine::onLevelFrameReady(const LevelFrame& frame)
 
 void AudioEngine::onPcmFrameReady(const PcmFrame& frame)
 {
-    m_visualisationBackend->appendFrame(frame);
-    if(frame.streamId != InvalidStreamId && frame.format.sampleRate() > 0 && frame.frameCount > 0) {
-        const auto frameDurationMs = frame.format.durationForFrames(frame.frameCount);
-        m_visualisationBackend->setCurrentTimeMs(frame.streamId, frame.streamTimeMs + frameDurationMs,
-                                                 frame.presentationTime + std::chrono::milliseconds{frameDurationMs});
-    }
-
     auto writer              = m_pcmFrameMailbox.writer();
     const size_t framesWrote = writer.write(&frame, 1, RingBufferOverflowPolicy::OverwriteOldest);
 
@@ -3605,6 +3627,16 @@ void AudioEngine::onPcmFrameReady(const PcmFrame& frame)
 
     if(!m_pcmFrameDispatchQueued.exchange(true, std::memory_order_relaxed)) {
         QMetaObject::invokeMethod(this, &AudioEngine::dispatchPendingPcmFrames, Qt::QueuedConnection);
+    }
+}
+
+void AudioEngine::onVisualisationPcmFrameReady(const PcmFrame& frame)
+{
+    m_visualisationBackend->appendFrame(frame);
+    if(frame.streamId != InvalidStreamId && frame.format.sampleRate() > 0 && frame.frameCount > 0) {
+        const auto frameDurationMs = frame.format.durationForFrames(frame.frameCount);
+        m_visualisationBackend->setCurrentTimeMs(frame.streamId, frame.streamTimeMs + frameDurationMs,
+                                                 frame.presentationTime + std::chrono::milliseconds{frameDurationMs});
     }
 }
 

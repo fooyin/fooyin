@@ -116,6 +116,7 @@ VisualisationBackend::VisualisationBackend()
     , m_startStreamFrame{0}
     , m_nextStreamFrame{0}
     , m_currentStreamId{0}
+    , m_currentTimeSequence{0}
     , m_currentTimeMs{0}
     , m_currentTimeReferenceClockMs{0}
     , m_currentTimePublished{false}
@@ -156,28 +157,31 @@ void VisualisationBackend::setCurrentTimeMs(uint32_t streamId, uint64_t currentT
         visualTimeMs = mapSourceTimeToVisualTime(streamId, currentTimeMs);
     }
 
-    m_currentTimeMs.store(visualTimeMs, std::memory_order_relaxed);
-    m_currentTimeReferenceClockMs.store(0, std::memory_order_relaxed);
-    m_currentTimePublished.store(true, std::memory_order_relaxed);
-    m_currentTimeHasPresentationClock.store(false, std::memory_order_relaxed);
+    publishCurrentTime(visualTimeMs, 0, true, false);
 }
 
 void VisualisationBackend::setCurrentTimeMs(uint32_t streamId, uint64_t currentTimeMs,
                                             std::chrono::steady_clock::time_point presentationTime)
 {
-    setCurrentTimeMs(streamId, currentTimeMs);
-    m_currentTimeReferenceClockMs.store(steadyClockMs(presentationTime), std::memory_order_relaxed);
-    m_currentTimeHasPresentationClock.store(true, std::memory_order_relaxed);
+    uint64_t visualTimeMs{currentTimeMs};
+
+    {
+        const std::shared_lock lock{m_mutex};
+        visualTimeMs = mapSourceTimeToVisualTime(streamId, currentTimeMs);
+    }
+
+    publishCurrentTime(visualTimeMs, steadyClockMs(presentationTime), true, true);
 }
 
 uint64_t VisualisationBackend::currentTimeMs() const
 {
-    const uint64_t currentTimeMs = m_currentTimeMs.load(std::memory_order_relaxed);
-    if(currentTimeMs == 0 || !m_currentTimeHasPresentationClock.load(std::memory_order_relaxed)) {
+    const CurrentTimeSnapshot snapshot = currentTimeSnapshot();
+    const uint64_t currentTimeMs       = snapshot.timeMs;
+    if(currentTimeMs == 0 || !snapshot.hasPresentationClock) {
         return currentTimeMs;
     }
 
-    const int64_t referenceClockMs = m_currentTimeReferenceClockMs.load(std::memory_order_relaxed);
+    const int64_t referenceClockMs = snapshot.referenceClockMs;
     if(referenceClockMs <= 0) {
         return currentTimeMs;
     }
@@ -191,12 +195,53 @@ uint64_t VisualisationBackend::currentTimeMs() const
     return currentTimeMs > earlyMs ? currentTimeMs - earlyMs : 0;
 }
 
+void VisualisationBackend::publishCurrentTime(uint64_t timeMs, int64_t referenceClockMs, bool published,
+                                              bool hasPresentationClock)
+{
+    uint64_t sequence = m_currentTimeSequence.load(std::memory_order_acquire);
+    while(true) {
+        if((sequence & 1U) != 0U) {
+            sequence = m_currentTimeSequence.load(std::memory_order_acquire);
+            continue;
+        }
+
+        if(m_currentTimeSequence.compare_exchange_weak(sequence, sequence + 1, std::memory_order_acq_rel,
+                                                       std::memory_order_acquire)) {
+            break;
+        }
+    }
+
+    m_currentTimeMs.store(timeMs, std::memory_order_relaxed);
+    m_currentTimeReferenceClockMs.store(referenceClockMs, std::memory_order_relaxed);
+    m_currentTimePublished.store(published, std::memory_order_relaxed);
+    m_currentTimeHasPresentationClock.store(hasPresentationClock, std::memory_order_relaxed);
+    m_currentTimeSequence.store(sequence + 2, std::memory_order_release);
+}
+
+VisualisationBackend::CurrentTimeSnapshot VisualisationBackend::currentTimeSnapshot() const
+{
+    while(true) {
+        const uint64_t sequenceBefore = m_currentTimeSequence.load(std::memory_order_acquire);
+        if((sequenceBefore & 1U) != 0U) {
+            continue;
+        }
+
+        CurrentTimeSnapshot snapshot;
+        snapshot.timeMs                   = m_currentTimeMs.load(std::memory_order_relaxed);
+        snapshot.referenceClockMs         = m_currentTimeReferenceClockMs.load(std::memory_order_relaxed);
+        snapshot.published                = m_currentTimePublished.load(std::memory_order_relaxed);
+        snapshot.hasPresentationClock     = m_currentTimeHasPresentationClock.load(std::memory_order_relaxed);
+        const uint64_t sequenceAfter      = m_currentTimeSequence.load(std::memory_order_acquire);
+        const bool consistentSnapshotRead = sequenceBefore == sequenceAfter && (sequenceAfter & 1U) == 0U;
+        if(consistentSnapshotRead) {
+            return snapshot;
+        }
+    }
+}
+
 void VisualisationBackend::setStopped()
 {
-    m_currentTimeMs.store(0, std::memory_order_relaxed);
-    m_currentTimeReferenceClockMs.store(0, std::memory_order_relaxed);
-    m_currentTimePublished.store(false, std::memory_order_relaxed);
-    m_currentTimeHasPresentationClock.store(false, std::memory_order_relaxed);
+    publishCurrentTime(0, 0, false, false);
     const std::unique_lock lock{m_mutex};
     m_currentStreamId = 0;
 }
@@ -246,10 +291,7 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
 
     if(resetBacklog) {
         resetLocked();
-        m_currentTimeMs.store(0, std::memory_order_relaxed);
-        m_currentTimeReferenceClockMs.store(0, std::memory_order_relaxed);
-        m_currentTimePublished.store(false, std::memory_order_relaxed);
-        m_currentTimeHasPresentationClock.store(false, std::memory_order_relaxed);
+        publishCurrentTime(0, 0, false, false);
     }
 
     if(!m_format.isValid()) {
@@ -278,13 +320,10 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
     appendFrames(std::span<const float>{frame.samples.data(), sampleCount}, static_cast<size_t>(frameCount),
                  channelCount, visualStartFrame);
 
-    const uint64_t availableEndMs = (m_nextStreamFrame * 1000ULL) / static_cast<uint64_t>(sampleRate);
-    if(availableEndMs > 0
-       && (!m_currentTimePublished.load(std::memory_order_relaxed)
-           || m_currentTimeMs.load(std::memory_order_relaxed) == 0)) {
-        m_currentTimeMs.store(availableEndMs, std::memory_order_relaxed);
-        m_currentTimePublished.store(true, std::memory_order_relaxed);
-        m_currentTimeHasPresentationClock.store(false, std::memory_order_relaxed);
+    const uint64_t availableEndMs      = (m_nextStreamFrame * 1000ULL) / static_cast<uint64_t>(sampleRate);
+    const CurrentTimeSnapshot snapshot = currentTimeSnapshot();
+    if(availableEndMs > 0 && (!snapshot.published || snapshot.timeMs == 0)) {
+        publishCurrentTime(availableEndMs, 0, true, false);
     }
 }
 

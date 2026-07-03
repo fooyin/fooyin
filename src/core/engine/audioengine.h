@@ -175,12 +175,15 @@ public Q_SLOTS:
     void setOutputDevice(const QString& device);
     void setAutomaticResampling(bool enabled, const QStringList& preferredDspNames);
     void setAnalysisDataSubscriptions(Fooyin::Engine::AnalysisDataTypes subscriptions);
+    void setVisualisationAnalysisEnabled(bool enabled);
     void updateLiveDspSettings(const Fooyin::Engine::LiveDspSettingsUpdate& update);
 
     bool event(QEvent* event) override;
 
 Q_SIGNALS:
     void stateChanged(Fooyin::Engine::PlaybackState state);
+    void audiblePauseDrainStarted();
+    void audiblePauseDrainCompleted();
     void trackStatusContextChanged(Fooyin::Engine::TrackStatus status, const Fooyin::Track& track, uint64_t generation,
                                    bool seekable);
     void positionChanged(uint64_t positionMs);
@@ -286,9 +289,10 @@ private:
 
     void updatePosition();
     void handleTimerTick(int timerId);
-    void clearPendingAnalysisData();
+    void clearPendingAnalysisData(bool preserveVisualisationHistory = false);
     void onLevelFrameReady(const LevelFrame& frame);
     void onPcmFrameReady(const PcmFrame& frame);
+    void onVisualisationPcmFrameReady(const PcmFrame& frame);
     void dispatchPendingLevelFrames();
     void scheduleLevelFramePresentationTimer();
     void dispatchPendingPcmFrames();
@@ -435,6 +439,7 @@ private:
     std::atomic<bool> m_outputReconnectQueued;
 
     std::unique_ptr<AudioAnalysisBus> m_analysisBus;
+    std::unique_ptr<AudioAnalysisBus> m_visualisationAnalysisBus;
     AudioPipeline m_pipeline;
     FadeController m_fadeController;
     OutputController m_outputController;
