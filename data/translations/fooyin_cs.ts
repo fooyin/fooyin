@@ -11226,12 +11226,12 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="167"/>
         <source>Time between auto preset changes</source>
-        <translation>Čas mezi automatickými změnami předvoleb</translation>
+        <translation>Doba mezi změnami předvoleb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="168"/>
         <source>Auto preset blend time</source>
-        <translation>Čas prolnutí automatické změny předvoleb</translation>
+        <translation>Délka prolnutí pro změny předvoleb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="172"/>
