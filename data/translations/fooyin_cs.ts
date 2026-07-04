@@ -11161,7 +11161,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="136"/>
         <source>Resolution used to evaluate preset equations; higher values improve detail but require more processing</source>
-        <translation>Rozlišení použité pro výpočty předvolby; vyšší hodnoty zvýší přesnost zobrazení, ale vyžadují více výpočetního výkonu</translation>
+        <translation>Rozlišení použité pro výpočty předvolby; vyšší hodnoty zlepší detailnost zobrazení, ale vyžadují více výpočetního výkonu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="137"/>
