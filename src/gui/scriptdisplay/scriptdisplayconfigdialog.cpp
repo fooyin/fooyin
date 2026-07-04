@@ -63,14 +63,10 @@ ScriptDisplayConfigDialog::ScriptDisplayConfigDialog(ScriptDisplay* widget, QWid
     , m_styleTab{new QWidget(this)}
     , m_horizontalAlignment{new QComboBox(this)}
     , m_verticalAlignment{new QComboBox(this)}
-    , m_customFont{new QCheckBox(tr("Default") + u":"_s, this)}
-    , m_font{new FontButton(this)}
-    , m_customTextColour{new QCheckBox(tr("Text"), this)}
-    , m_textColour{new ColourButton(this)}
-    , m_customBackgroundColour{new QCheckBox(tr("Background"), this)}
-    , m_backgroundColour{new ColourButton(this)}
-    , m_customLinkColour{new QCheckBox(tr("Links"), this)}
-    , m_linkColour{new ColourButton(this)}
+    , m_font{new FontButton(tr("Default") + u":"_s, true, this)}
+    , m_textColour{new ColourButton(tr("Text"), true, this)}
+    , m_backgroundColour{new ColourButton(tr("Background"), true, this)}
+    , m_linkColour{new ColourButton(tr("Links"), true, this)}
 {
     auto* layout{contentLayout()};
     layout->addWidget(m_tabs, 0, 0);
@@ -100,19 +96,17 @@ ScriptDisplayConfigDialog::ScriptDisplayConfigDialog(ScriptDisplay* widget, QWid
     auto* fontGroup  = new QGroupBox(tr("Font"), m_styleTab);
     auto* fontLayout = new QGridLayout(fontGroup);
 
-    fontLayout->addWidget(m_customFont, 0, 0);
-    fontLayout->addWidget(m_font, 0, 1);
+    fontLayout->addWidget(m_font, 0, 0, 1, 2);
     fontLayout->setColumnStretch(2, 1);
 
     auto* colourGroup  = new QGroupBox(tr("Colours"), m_styleTab);
     auto* colourLayout = new QGridLayout(colourGroup);
 
-    colourLayout->addWidget(m_customTextColour, 0, 0);
-    colourLayout->addWidget(m_textColour, 0, 1);
-    colourLayout->addWidget(m_customBackgroundColour, 1, 0);
-    colourLayout->addWidget(m_backgroundColour, 1, 1);
-    colourLayout->addWidget(m_customLinkColour, 2, 0);
-    colourLayout->addWidget(m_linkColour, 2, 1);
+    ColourButton::alignLabels({m_textColour, m_backgroundColour, m_linkColour});
+
+    colourLayout->addWidget(m_textColour, 0, 0, 1, 2);
+    colourLayout->addWidget(m_backgroundColour, 1, 0, 1, 2);
+    colourLayout->addWidget(m_linkColour, 2, 0, 1, 2);
     colourLayout->setColumnStretch(1, 1);
 
     auto* styleLayout = new QGridLayout(m_styleTab);
@@ -127,11 +121,6 @@ ScriptDisplayConfigDialog::ScriptDisplayConfigDialog(ScriptDisplay* widget, QWid
 
     formatLayout->addWidget(m_script, 1, 0);
 
-    QObject::connect(m_customFont, &QCheckBox::clicked, m_font, &QWidget::setEnabled);
-    QObject::connect(m_customTextColour, &QCheckBox::clicked, m_textColour, &QWidget::setEnabled);
-    QObject::connect(m_customBackgroundColour, &QCheckBox::clicked, m_backgroundColour, &QWidget::setEnabled);
-    QObject::connect(m_customLinkColour, &QCheckBox::clicked, m_linkColour, &QWidget::setEnabled);
-
     loadCurrentConfig();
 }
 
@@ -140,15 +129,15 @@ ScriptDisplay::ConfigData ScriptDisplayConfigDialog::config() const
     return {
         .script = m_script->text(),
 
-        .font = m_customFont->isChecked() ? m_font->buttonFont().toString() : QString{},
+        .font = m_font->isChecked() ? m_font->buttonFont().toString() : QString{},
 
-        .bgColour = m_customBackgroundColour->isChecked()
+        .bgColour = m_backgroundColour->isChecked()
                       ? normaliseColour(m_backgroundColour->colour().name(QColor::HexArgb))
                       : QString{},
         .fgColour
-        = m_customTextColour->isChecked() ? normaliseColour(m_textColour->colour().name(QColor::HexArgb)) : QString{},
+        = m_textColour->isChecked() ? normaliseColour(m_textColour->colour().name(QColor::HexArgb)) : QString{},
         .linkColour
-        = m_customLinkColour->isChecked() ? normaliseColour(m_linkColour->colour().name(QColor::HexArgb)) : QString{},
+        = m_linkColour->isChecked() ? normaliseColour(m_linkColour->colour().name(QColor::HexArgb)) : QString{},
 
         .horizontalAlignment = m_horizontalAlignment->currentData().toInt(),
         .verticalAlignment   = m_verticalAlignment->currentData().toInt(),
@@ -160,21 +149,17 @@ void ScriptDisplayConfigDialog::setConfig(const ScriptDisplay::ConfigData& confi
     m_script->setText(config.script);
 
     const QFont defaultFont = config.font.isEmpty() ? widget()->font() : fontFromString(config.font);
-    m_customFont->setChecked(!config.font.isEmpty());
+    m_font->setChecked(!config.font.isEmpty());
     m_font->setButtonFont(defaultFont);
-    m_font->setEnabled(m_customFont->isChecked());
 
-    m_customTextColour->setChecked(!config.fgColour.isEmpty());
+    m_textColour->setChecked(!config.fgColour.isEmpty());
     m_textColour->setColour(colourOrDefault(config.fgColour, widget()->palette().color(QPalette::WindowText)));
-    m_textColour->setEnabled(m_customTextColour->isChecked());
 
-    m_customBackgroundColour->setChecked(!config.bgColour.isEmpty());
+    m_backgroundColour->setChecked(!config.bgColour.isEmpty());
     m_backgroundColour->setColour(colourOrDefault(config.bgColour, widget()->palette().color(QPalette::Window)));
-    m_backgroundColour->setEnabled(m_customBackgroundColour->isChecked());
 
-    m_customLinkColour->setChecked(!config.linkColour.isEmpty());
+    m_linkColour->setChecked(!config.linkColour.isEmpty());
     m_linkColour->setColour(colourOrDefault(config.linkColour, widget()->palette().color(QPalette::Link)));
-    m_linkColour->setEnabled(m_customLinkColour->isChecked());
 
     if(const int index = m_horizontalAlignment->findData(config.horizontalAlignment); index >= 0) {
         m_horizontalAlignment->setCurrentIndex(index);

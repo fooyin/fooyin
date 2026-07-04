@@ -78,28 +78,17 @@ private:
     QSpinBox* m_bottomMargin;
 
     QGroupBox* m_coloursGroup;
-    QCheckBox* m_bgColour;
     ColourButton* m_bgColourBtn;
-    QCheckBox* m_lineColour;
     ColourButton* m_lineColourBtn;
-    QCheckBox* m_unplayedColour;
     ColourButton* m_unplayedColourBtn;
-    QCheckBox* m_playedColour;
     ColourButton* m_playedColourBtn;
-    QCheckBox* m_syncedLineColour;
     ColourButton* m_syncedLineColourBtn;
-    QCheckBox* m_wordLineColour;
     ColourButton* m_wordLineColourBtn;
-    QCheckBox* m_wordColour;
     ColourButton* m_wordColourBtn;
 
-    QCheckBox* m_baseFont;
     FontButton* m_baseFontBtn;
-    QCheckBox* m_lineFont;
     FontButton* m_lineFontBtn;
-    QCheckBox* m_wordLineFont;
     FontButton* m_wordLineFontBtn;
-    QCheckBox* m_wordFont;
     FontButton* m_wordFontBtn;
 };
 } // namespace Lyrics

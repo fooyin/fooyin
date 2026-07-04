@@ -122,24 +122,15 @@ protected:
     }
 };
 
-void addGridRow(QGridLayout* layout, int& row, const QString& label, QWidget* widget, QWidget* parent,
-                Qt::Alignment align = {})
+QLabel* addGridRow(QGridLayout* layout, int& row, const QString& label, QWidget* widget, QWidget* parent,
+                   Qt::Alignment align = {})
 {
     auto* labelWidget = new QLabel(label, parent);
     labelWidget->setToolTip(widget->toolTip());
     layout->addWidget(labelWidget, row, 0, align);
     layout->addWidget(widget, row++, 1);
     layout->setColumnStretch(1, 1);
-}
-
-void addGridRow(QGridLayout* layout, int row, int column, const QString& label, QWidget* widget, QWidget* parent,
-                Qt::Alignment align = {})
-{
-    auto* labelWidget = new QLabel(label, parent);
-    labelWidget->setToolTip(widget->toolTip());
-    layout->addWidget(labelWidget, row, column, align);
-    layout->addWidget(widget, row, column + 1);
-    layout->setColumnStretch(column + 1, 1);
+    return labelWidget;
 }
 
 void addGridSection(QGridLayout* layout, int row, int column, const QString& text, QWidget* parent)
@@ -184,17 +175,18 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     , m_showTooltip{new QCheckBox(tr("Tooltip"), this)}
     , m_fillSpectrum{new QCheckBox(tr("Fill spectrum"), this)}
     , m_interpolate{new QCheckBox(tr("Interpolate"), this)}
-    , m_axisFont{new FontButton(this)}
-    , m_colourGroup{new QGroupBox(tr("Custom colours"), this)}
-    , m_textColour{new ColourButton(this)}
-    , m_backgroundColour{new ColourButton(this)}
+    , m_axisFont{new FontButton(tr("Axis font") + ":"_L1, true, this)}
+    , m_colourGroup{new QGroupBox(tr("Colours"), this)}
+    , m_barGradientEnabled{new QCheckBox(tr("Bar gradient") + ":"_L1, this)}
+    , m_textColour{new ColourButton(tr("Text colour") + ":"_L1, true, this)}
+    , m_backgroundColour{new ColourButton(tr("Background colour") + ":"_L1, true, this)}
     , m_barGradient{new GradientEditor(this)}
-    , m_peaksColour{new ColourButton(this)}
-    , m_horizontalGridColour{new ColourButton(this)}
-    , m_verticalGridColour{new ColourButton(this)}
-    , m_octaveGridColour{new ColourButton(this)}
-    , m_whiteKeyColour{new ColourButton(this)}
-    , m_blackKeyColour{new ColourButton(this)}
+    , m_peaksColour{new ColourButton(tr("Peaks colour") + ":"_L1, true, this)}
+    , m_horizontalGridColour{new ColourButton(tr("Horizontal gridlines") + ":"_L1, true, this)}
+    , m_verticalGridColour{new ColourButton(tr("Vertical gridlines") + ":"_L1, true, this)}
+    , m_octaveGridColour{new ColourButton(tr("Octave gridlines") + ":"_L1, true, this)}
+    , m_whiteKeyColour{new ColourButton(tr("White keys") + ":"_L1, true, this)}
+    , m_blackKeyColour{new ColourButton(tr("Black keys") + ":"_L1, true, this)}
 {
     auto* spectrumGroup    = new QGroupBox(tr("Scale"), this);
     auto* spectrumLayout   = new QGridLayout(spectrumGroup);
@@ -390,17 +382,22 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     displayLayout->addWidget(m_interpolate);
 
     auto* barLayout = new QGridLayout();
-    row             = 0;
-    addGridRow(barLayout, row, tr("Update FPS") + ":"_L1, m_updateFps, this);
-    addGridRow(barLayout, row, tr("Bar spacing") + ":"_L1, m_barSpacing, this);
-    addGridRow(barLayout, row, tr("Sections") + ":"_L1, m_barSections, this);
-    addGridRow(barLayout, row, tr("Section spacing") + ":"_L1, m_sectionSpacing, this);
-    addGridRow(barLayout, row, tr("Style") + ":"_L1, m_drawStyle, this);
-    addGridRow(barLayout, row, tr("Axis font") + ":"_L1, m_axisFont, this);
-    displayLayout->addLayout(barLayout);
 
-    m_colourGroup->setTitle(tr("Colours"));
-    m_colourGroup->setCheckable(true);
+    row = 0;
+    int barLabelWidth{0};
+    const auto addBarRow = [&](const QString& label, QWidget* widget) {
+        const auto* labelWidget = addGridRow(barLayout, row, label, widget, this);
+        barLabelWidth           = std::max(barLabelWidth, labelWidget->sizeHint().width());
+    };
+    addBarRow(tr("Update FPS") + ":"_L1, m_updateFps);
+    addBarRow(tr("Bar spacing") + ":"_L1, m_barSpacing);
+    addBarRow(tr("Sections") + ":"_L1, m_barSections);
+    addBarRow(tr("Section spacing") + ":"_L1, m_sectionSpacing);
+    addBarRow(tr("Style") + ":"_L1, m_drawStyle);
+    FontButton::alignLabels({m_axisFont}, barLabelWidth);
+
+    barLayout->addWidget(m_axisFont, row++, 0, 1, 2);
+    displayLayout->addLayout(barLayout);
 
     auto* coloursLayout      = new QGridLayout(m_colourGroup);
     auto* leftColoursColumn  = new QWidget(m_colourGroup);
@@ -410,20 +407,27 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     leftColoursLayout->setContentsMargins({});
     rightColoursLayout->setContentsMargins({});
 
+    ColourButton::alignLabels({m_textColour, m_backgroundColour, m_horizontalGridColour, m_verticalGridColour,
+                               m_octaveGridColour, m_whiteKeyColour, m_blackKeyColour});
+    const int barsLabelWidth = ColourButton::alignLabels({m_peaksColour}, m_barGradientEnabled->sizeHint().width());
+    m_barGradientEnabled->setMinimumWidth(barsLabelWidth);
+
     addGridSection(leftColoursLayout, 0, 0, tr("General"), this);
-    addGridRow(leftColoursLayout, 1, 0, tr("Text colour") + ":"_L1, m_textColour, this);
-    addGridRow(leftColoursLayout, 2, 0, tr("Background colour") + ":"_L1, m_backgroundColour, this);
+    leftColoursLayout->addWidget(m_textColour, 1, 0, 1, 2);
+    leftColoursLayout->addWidget(m_backgroundColour, 2, 0, 1, 2);
     addGridSection(leftColoursLayout, 3, 0, tr("Grid"), this);
-    addGridRow(leftColoursLayout, 4, 0, tr("Horizontal gridlines") + ":"_L1, m_horizontalGridColour, this);
-    addGridRow(leftColoursLayout, 5, 0, tr("Vertical gridlines") + ":"_L1, m_verticalGridColour, this);
-    addGridRow(leftColoursLayout, 6, 0, tr("Octave gridlines") + ":"_L1, m_octaveGridColour, this);
+    leftColoursLayout->addWidget(m_horizontalGridColour, 4, 0, 1, 2);
+    leftColoursLayout->addWidget(m_verticalGridColour, 5, 0, 1, 2);
+    leftColoursLayout->addWidget(m_octaveGridColour, 6, 0, 1, 2);
     addGridSection(leftColoursLayout, 7, 0, tr("Keys"), this);
-    addGridRow(leftColoursLayout, 8, 0, tr("White keys") + ":"_L1, m_whiteKeyColour, this);
-    addGridRow(leftColoursLayout, 9, 0, tr("Black keys") + ":"_L1, m_blackKeyColour, this);
+    leftColoursLayout->addWidget(m_whiteKeyColour, 8, 0, 1, 2);
+    leftColoursLayout->addWidget(m_blackKeyColour, 9, 0, 1, 2);
 
     addGridSection(rightColoursLayout, 0, 0, tr("Bars"), this);
-    addGridRow(rightColoursLayout, 1, 0, tr("Bar gradient") + ":"_L1, m_barGradient, this, Qt::AlignTop);
-    addGridRow(rightColoursLayout, 2, 0, tr("Peaks colour") + ":"_L1, m_peaksColour, this);
+    rightColoursLayout->addWidget(m_barGradientEnabled, 1, 0, Qt::AlignTop);
+    rightColoursLayout->addWidget(m_barGradient, 1, 1);
+    rightColoursLayout->addWidget(m_peaksColour, 2, 0, 1, 2);
+    QObject::connect(m_barGradientEnabled, &QCheckBox::toggled, m_barGradient, &QWidget::setEnabled);
     rightColoursLayout->setRowStretch(1, 1);
 
     const int coloursColumnWidth
@@ -481,9 +485,6 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
 
 SpectrumWidget::ConfigData SpectrumConfigDialog::config() const
 {
-    const QFont axisFont        = m_axisFont->buttonFont();
-    const QFont defaultAxisFont = SpectrumAxisRenderer::defaultAxisFont(widget()->font());
-
     SpectrumWidget::ConfigData config{
         .bandCount           = m_bandCount->value(),
         .barSpacing          = m_barSpacing->value(),
@@ -521,21 +522,30 @@ SpectrumWidget::ConfigData SpectrumConfigDialog::config() const
         .showTooltip         = m_showTooltip->isChecked(),
         .fillSpectrum        = m_fillSpectrum->isChecked(),
         .interpolate         = m_interpolate->isChecked(),
-        .axisFont            = axisFont == defaultAxisFont ? QString{} : axisFont.toString(),
+        .axisFont            = m_axisFont->isChecked() ? m_axisFont->buttonFont().toString() : QString{},
         .colours             = QVariant{},
     };
 
-    if(m_colourGroup->isChecked()) {
-        Colours colours;
-        colours.setColour(Colours::Type::Text, m_textColour->colour());
-        colours.setColour(Colours::Type::Background, m_backgroundColour->colour());
+    Colours colours;
+    const auto applyColour = [&colours](ColourButton* button, Colours::Type type) {
+        if(button->isChecked()) {
+            colours.setColour(type, button->colour());
+        }
+    };
+
+    applyColour(m_textColour, Colours::Type::Text);
+    applyColour(m_backgroundColour, Colours::Type::Background);
+    if(m_barGradientEnabled->isChecked()) {
         colours.setGradient(m_barGradient->colours());
-        colours.setColour(Colours::Type::Peaks, m_peaksColour->colour());
-        colours.setColour(Colours::Type::HorizontalGrid, m_horizontalGridColour->colour());
-        colours.setColour(Colours::Type::VerticalGrid, m_verticalGridColour->colour());
-        colours.setColour(Colours::Type::OctaveGrid, m_octaveGridColour->colour());
-        colours.setColour(Colours::Type::WhiteKey, m_whiteKeyColour->colour());
-        colours.setColour(Colours::Type::BlackKey, m_blackKeyColour->colour());
+    }
+    applyColour(m_peaksColour, Colours::Type::Peaks);
+    applyColour(m_horizontalGridColour, Colours::Type::HorizontalGrid);
+    applyColour(m_verticalGridColour, Colours::Type::VerticalGrid);
+    applyColour(m_octaveGridColour, Colours::Type::OctaveGrid);
+    applyColour(m_whiteKeyColour, Colours::Type::WhiteKey);
+    applyColour(m_blackKeyColour, Colours::Type::BlackKey);
+
+    if(!colours.isEmpty()) {
         config.colours = QVariant::fromValue(colours);
     }
 
@@ -613,6 +623,7 @@ void SpectrumConfigDialog::setConfig(const SpectrumWidget::ConfigData& config)
     m_showTooltip->setChecked(config.showTooltip);
     m_fillSpectrum->setChecked(config.fillSpectrum);
     m_interpolate->setChecked(config.interpolate);
+    m_axisFont->setChecked(!config.axisFont.isEmpty());
     m_axisFont->setButtonFont(config.axisFont.isEmpty() ? SpectrumAxisRenderer::defaultAxisFont(widget()->font())
                                                         : fontFromString(config.axisFont));
 
@@ -620,18 +631,24 @@ void SpectrumConfigDialog::setConfig(const SpectrumWidget::ConfigData& config)
                             && !config.colours.value<Colours>().isEmpty();
     const Colours colours    = customColours ? config.colours.value<Colours>() : Colours{};
 
-    m_colourGroup->setChecked(customColours);
-    m_textColour->setColour(colours.colour(Colours::Type::Text, widget()->palette()));
-    m_backgroundColour->setColour(colours.colour(Colours::Type::Background, widget()->palette()));
+    const auto loadColour = [this, &colours](ColourButton* button, Colours::Type type) {
+        button->setChecked(colours.customColour(type).isValid());
+        button->setColour(colours.colour(type, widget()->palette()));
+    };
+
+    loadColour(m_textColour, Colours::Type::Text);
+    loadColour(m_backgroundColour, Colours::Type::Background);
+    m_barGradientEnabled->setChecked(!colours.customGradient().empty());
     m_barGradient->setColours(colours.gradient(widget()->palette()));
+    m_barGradient->setEnabled(m_barGradientEnabled->isChecked());
     m_barGradient->setOrientation(config.gradientOrientation == GradientOrientation::Vertical ? Qt::Vertical
                                                                                               : Qt::Horizontal);
-    m_peaksColour->setColour(colours.colour(Colours::Type::Peaks, widget()->palette()));
-    m_horizontalGridColour->setColour(colours.colour(Colours::Type::HorizontalGrid, widget()->palette()));
-    m_verticalGridColour->setColour(colours.colour(Colours::Type::VerticalGrid, widget()->palette()));
-    m_octaveGridColour->setColour(colours.colour(Colours::Type::OctaveGrid, widget()->palette()));
-    m_whiteKeyColour->setColour(colours.colour(Colours::Type::WhiteKey, widget()->palette()));
-    m_blackKeyColour->setColour(colours.colour(Colours::Type::BlackKey, widget()->palette()));
+    loadColour(m_peaksColour, Colours::Type::Peaks);
+    loadColour(m_horizontalGridColour, Colours::Type::HorizontalGrid);
+    loadColour(m_verticalGridColour, Colours::Type::VerticalGrid);
+    loadColour(m_octaveGridColour, Colours::Type::OctaveGrid);
+    loadColour(m_whiteKeyColour, Colours::Type::WhiteKey);
+    loadColour(m_blackKeyColour, Colours::Type::BlackKey);
 }
 } // namespace Fooyin::Spectrum
 

@@ -53,14 +53,10 @@ private:
     QComboBox* m_horizontalAlignment;
     QComboBox* m_verticalAlignment;
 
-    QCheckBox* m_customFont;
     FontButton* m_font;
 
-    QCheckBox* m_customTextColour;
     ColourButton* m_textColour;
-    QCheckBox* m_customBackgroundColour;
     ColourButton* m_backgroundColour;
-    QCheckBox* m_customLinkColour;
     ColourButton* m_linkColour;
 };
 } // namespace Fooyin

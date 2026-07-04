@@ -43,9 +43,9 @@ OscilloscopeConfigDialog::OscilloscopeConfigDialog(OscilloscopeWidget* oscillosc
     , m_downmixMode{new QComboBox(this)}
     , m_showZeroLine{new QCheckBox(tr("Show zero line"), this)}
     , m_colourGroup{new QGroupBox(tr("Custom colours"), this)}
-    , m_backgroundColour{new ColourButton(this)}
-    , m_waveformColour{new ColourButton(this)}
-    , m_zeroLineColour{new ColourButton(this)}
+    , m_backgroundColour{new ColourButton(tr("Background colour") + ":"_L1, true, this)}
+    , m_waveformColour{new ColourButton(tr("Waveform colour") + ":"_L1, true, this)}
+    , m_zeroLineColour{new ColourButton(tr("Zero line colour") + ":"_L1, true, this)}
 {
     auto* generalGroup  = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(generalGroup);
@@ -90,16 +90,14 @@ OscilloscopeConfigDialog::OscilloscopeConfigDialog(OscilloscopeWidget* oscillosc
     generalLayout->addWidget(m_showZeroLine, row++, 0, 1, 2);
     generalLayout->setColumnStretch(2, 1);
 
-    m_colourGroup->setCheckable(true);
     auto* coloursLayout = new QGridLayout(m_colourGroup);
 
+    ColourButton::alignLabels({m_backgroundColour, m_waveformColour, m_zeroLineColour});
+
     row = 0;
-    coloursLayout->addWidget(new QLabel(tr("Background colour") + ":"_L1, this), row, 0);
-    coloursLayout->addWidget(m_backgroundColour, row++, 1);
-    coloursLayout->addWidget(new QLabel(tr("Waveform colour") + ":"_L1, this), row, 0);
-    coloursLayout->addWidget(m_waveformColour, row++, 1);
-    coloursLayout->addWidget(new QLabel(tr("Zero line colour") + ":"_L1, this), row, 0);
-    coloursLayout->addWidget(m_zeroLineColour, row++, 1);
+    coloursLayout->addWidget(m_backgroundColour, row++, 0, 1, 2);
+    coloursLayout->addWidget(m_waveformColour, row++, 0, 1, 2);
+    coloursLayout->addWidget(m_zeroLineColour, row++, 0, 1, 2);
     coloursLayout->setColumnStretch(1, 1);
 
     auto* layout{contentLayout()};
@@ -121,11 +119,17 @@ OscilloscopeWidget::ConfigData OscilloscopeConfigDialog::config() const
         .colours         = QVariant{},
     };
 
-    if(m_colourGroup->isChecked()) {
-        Colours colours;
+    Colours colours;
+    if(m_backgroundColour->isChecked()) {
         colours.setColour(Colours::Type::Background, m_backgroundColour->colour());
+    }
+    if(m_waveformColour->isChecked()) {
         colours.setColour(Colours::Type::Waveform, m_waveformColour->colour());
+    }
+    if(m_zeroLineColour->isChecked()) {
         colours.setColour(Colours::Type::ZeroLine, m_zeroLineColour->colour());
+    }
+    if(!colours.isEmpty()) {
         config.colours = QVariant::fromValue(colours);
     }
 
@@ -168,9 +172,11 @@ void OscilloscopeConfigDialog::setConfig(const OscilloscopeWidget::ConfigData& c
                             && !config.colours.value<Colours>().isEmpty();
     const Colours colours    = customColours ? config.colours.value<Colours>() : Colours{};
 
-    m_colourGroup->setChecked(customColours);
+    m_backgroundColour->setChecked(colours.hasOverride(Colours::Type::Background));
     m_backgroundColour->setColour(colours.colour(Colours::Type::Background, widget()->palette()));
+    m_waveformColour->setChecked(colours.hasOverride(Colours::Type::Waveform));
     m_waveformColour->setColour(colours.colour(Colours::Type::Waveform, widget()->palette()));
+    m_zeroLineColour->setChecked(colours.hasOverride(Colours::Type::ZeroLine));
     m_zeroLineColour->setColour(colours.colour(Colours::Type::ZeroLine, widget()->palette()));
 }
 } // namespace Fooyin::Oscilloscope

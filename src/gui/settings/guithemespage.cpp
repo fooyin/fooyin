@@ -41,6 +41,7 @@
 #include <QTabWidget>
 
 #include <optional>
+#include <ranges>
 
 constexpr auto ThemeIdRole = Qt::UserRole;
 
@@ -82,8 +83,8 @@ private:
     QPushButton* m_deleteButton;
 
     QString m_defaultTheme;
-    std::map<PaletteKey, std::pair<ColourButton*, QCheckBox*>> m_colourMapping;
-    std::map<QString, std::pair<FontButton*, QCheckBox*>> m_fontMapping;
+    std::map<PaletteKey, ColourButton*> m_colourMapping;
+    std::map<QString, FontButton*> m_fontMapping;
     std::optional<FyTheme> m_loadedTheme;
 };
 
@@ -125,7 +126,6 @@ GuiColoursPageWidget::GuiColoursPageWidget(ThemeRegistry* themeRegistry, Setting
     addColourOption(baseLayout, tr("Button (Background)"), QPalette::Button);
     addColourOption(baseLayout, tr("Button (Foreground)"), QPalette::ButtonText);
 
-    baseLayout->setColumnStretch(1, 1);
     baseLayout->setRowStretch(baseLayout->rowCount(), 1);
 
     auto* advancedColours = new QWidget(this);
@@ -146,7 +146,8 @@ GuiColoursPageWidget::GuiColoursPageWidget(ThemeRegistry* themeRegistry, Setting
     addColourOption(advancedLayout, tr("Mid"), QPalette::Mid);
     addColourOption(advancedLayout, tr("Shadow"), QPalette::Shadow);
 
-    advancedLayout->setColumnStretch(1, 1);
+    ColourButton::alignLabels(m_colourMapping | std::views::values);
+
     advancedLayout->setRowStretch(advancedLayout->rowCount(), 1);
 
     auto* fonts       = new QWidget(this);
@@ -161,6 +162,7 @@ GuiColoursPageWidget::GuiColoursPageWidget(ThemeRegistry* themeRegistry, Setting
     for(const auto& [title, className] : sortedEntries) {
         addFontOption(fontsLayout, title, className);
     }
+    FontButton::alignLabels(m_fontMapping | std::views::values);
 
     fontsLayout->setColumnStretch(1, 1);
     fontsLayout->setRowStretch(baseLayout->rowCount(), 1);
@@ -230,30 +232,22 @@ void GuiColoursPageWidget::reset()
 void GuiColoursPageWidget::addColourOption(QGridLayout* layout, const QString& title, QPalette::ColorRole role,
                                            QPalette::ColorGroup group)
 {
-    auto* option = new QCheckBox(title, this);
-    auto* colour = new ColourButton(this);
-    colour->setDisabled(true);
+    auto* colour = new ColourButton(title, true, this);
 
     const int row = layout->rowCount();
-    layout->addWidget(option, row, 0);
-    layout->addWidget(colour, row, 1);
+    layout->addWidget(colour, row, 0);
 
-    QObject::connect(option, &QCheckBox::toggled, colour, &QWidget::setEnabled);
-    m_colourMapping[PaletteKey{role, group}] = std::make_pair(colour, option);
+    m_colourMapping[PaletteKey{.role = role, .group = group}] = colour;
 }
 
 void GuiColoursPageWidget::addFontOption(QGridLayout* layout, const QString& title, const QString& className)
 {
-    auto* option = new QCheckBox(title, this);
-    auto* font   = new FontButton(this);
-    font->setDisabled(true);
+    auto* font = new FontButton(title, true, this);
 
     const int row = layout->rowCount();
-    layout->addWidget(option, row, 0);
-    layout->addWidget(font, row, 1);
+    layout->addWidget(font, row, 0, 1, 2);
 
-    QObject::connect(option, &QCheckBox::toggled, font, &QWidget::setEnabled);
-    m_fontMapping[className] = std::make_pair(font, option);
+    m_fontMapping[className] = font;
 }
 
 void GuiColoursPageWidget::updateButtonState() const
@@ -289,15 +283,13 @@ FyTheme GuiColoursPageWidget::currentTheme() const
         theme.fonts.clear();
     }
 
-    for(const auto& [key, pair] : m_colourMapping) {
-        const auto& [button, option] = pair;
-        if(option->isChecked()) {
+    for(const auto& [key, button] : m_colourMapping) {
+        if(button->isChecked()) {
             theme.colours[key] = button->colour();
         }
     }
-    for(const auto& [key, pair] : m_fontMapping) {
-        const auto& [button, option] = pair;
-        if(option->isChecked()) {
+    for(const auto& [key, button] : m_fontMapping) {
+        if(button->isChecked()) {
             theme.fonts[key] = button->buttonFont();
         }
     }
@@ -311,17 +303,16 @@ void GuiColoursPageWidget::loadDefaults()
     const auto currentColours = Gui::coloursFromPalette(systemPalette);
     for(const auto& [key, colour] : Utils::asRange(currentColours)) {
         if(m_colourMapping.contains(key)) {
-            const auto& [button, option] = m_colourMapping.at(key);
+            auto* button = m_colourMapping.at(key);
             button->setColour(colour);
-            option->setChecked(false);
+            button->setChecked(false);
         }
     }
 
     const auto systemFont = m_settings->value<Settings::Gui::Internal::SystemFont>().value<QFont>();
-    for(const auto& [className, font] : m_fontMapping) {
-        const auto& [button, option] = font;
+    for(const auto& button : m_fontMapping | std::views::values) {
         button->setButtonFont(systemFont);
-        option->setChecked(false);
+        button->setChecked(false);
     }
 }
 
@@ -332,16 +323,16 @@ void GuiColoursPageWidget::loadCurrentTheme()
     if(currentTheme.isValid()) {
         for(const auto& [key, colour] : Utils::asRange(currentTheme.colours)) {
             if(m_colourMapping.contains(key)) {
-                const auto& [button, option] = m_colourMapping.at(key);
+                auto* button = m_colourMapping.at(key);
                 button->setColour(colour);
-                option->setChecked(true);
+                button->setChecked(true);
             }
         }
         for(const auto& [key, font] : Utils::asRange(currentTheme.fonts)) {
             if(m_fontMapping.contains(key)) {
-                const auto& [button, option] = m_fontMapping.at(key);
+                auto* button = m_fontMapping.at(key);
                 button->setButtonFont(font);
-                option->setChecked(true);
+                button->setChecked(true);
             }
         }
     }
@@ -427,18 +418,16 @@ void GuiColoursPageWidget::loadTheme()
     loadDefaults();
     m_loadedTheme = theme;
 
-    for(const auto& [key, pair] : m_colourMapping) {
+    for(const auto& [key, button] : m_colourMapping) {
         if(theme && theme->colours.contains(key)) {
-            const auto& [button, option] = pair;
             button->setColour(theme->colours.value(key));
-            option->setChecked(true);
+            button->setChecked(true);
         }
     }
-    for(const auto& [key, pair] : m_fontMapping) {
+    for(const auto& [key, button] : m_fontMapping) {
         if(theme && theme->fonts.contains(key)) {
-            const auto& [button, option] = pair;
             button->setButtonFont(theme->fonts.value(key));
-            option->setChecked(true);
+            button->setChecked(true);
         }
     }
 

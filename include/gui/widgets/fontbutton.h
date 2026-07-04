@@ -22,28 +22,74 @@
 #include "fygui_export.h"
 
 #include <QFont>
-#include <QPushButton>
+#include <QWidget>
+
+#include <concepts>
+#include <initializer_list>
+#include <ranges>
+
+class QCheckBox;
+class QIcon;
+class QPushButton;
 
 namespace Fooyin {
-class FYGUI_EXPORT FontButton : public QPushButton
+class FYGUI_EXPORT FontButton : public QWidget
 {
     Q_OBJECT
 
 public:
     explicit FontButton(QWidget* parent = nullptr);
     explicit FontButton(const QString& text, QWidget* parent = nullptr);
+    explicit FontButton(const QString& text, bool checkable, QWidget* parent = nullptr);
     explicit FontButton(const QIcon& icon, const QString& text, QWidget* parent = nullptr);
+    explicit FontButton(const QIcon& icon, const QString& text, bool checkable, QWidget* parent = nullptr);
 
     [[nodiscard]] QFont buttonFont() const;
     [[nodiscard]] bool fontChanged() const;
+
+    [[nodiscard]] bool isCheckable() const;
+    [[nodiscard]] bool isChecked() const;
+
+    [[nodiscard]] int labelWidthHint() const;
+    [[nodiscard]] QString labelText() const;
+
     void setButtonFont(const QFont& font);
     void setButtonFont(const QString& font);
+    void setCheckable(bool checkable);
+    void setChecked(bool checked);
+    void setLabelText(const QString& text);
+    void setLabelWidth(int width);
+    void setToolTip(const QString& text);
+
+    static int alignLabels(std::initializer_list<FontButton*> buttons, int minimumWidth = 0)
+    {
+        return alignLabels<std::initializer_list<FontButton*>>(std::move(buttons), minimumWidth);
+    }
+    template <std::ranges::forward_range R>
+        requires std::convertible_to<std::ranges::range_reference_t<R>, FontButton*>
+    static int alignLabels(R&& buttons, int minimumWidth = 0)
+    {
+        int width{minimumWidth};
+        for(const FontButton* button : buttons) {
+            width = std::max(width, button->labelWidthHint());
+        }
+        for(FontButton* button : buttons) {
+            button->setLabelWidth(width);
+        }
+        return width;
+    }
+
+Q_SIGNALS:
+    void toggled(bool checked);
 
 private:
     void pickFont();
     void updateText();
+    void updateButtonState();
 
     QFont m_font;
     bool m_changed;
+    QCheckBox* m_checkBox;
+    QPushButton* m_button;
 };
 } // namespace Fooyin

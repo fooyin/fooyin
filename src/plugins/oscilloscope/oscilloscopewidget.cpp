@@ -544,14 +544,20 @@ void OscilloscopeWidget::saveConfigToLayout(const ConfigData& config, QJsonObjec
                                  && !config.colours.value<Colours>().isEmpty();
     layout["UseCustomColours"_L1] = customColours;
 
-    if(!customColours) {
-        return;
-    }
+    const Colours colours = customColours ? config.colours.value<Colours>() : Colours{};
+    const auto saveColour = [&layout, &colours](const QString& key, Colours::Type type) {
+        const QColor colour = colours.customColour(type);
+        if(colour.isValid()) {
+            layout[key] = colour.name(QColor::HexArgb);
+        }
+        else {
+            layout.remove(key);
+        }
+    };
 
-    const auto colours            = config.colours.value<Colours>();
-    layout["BackgroundColour"_L1] = colours.colour(Colours::Type::Background, palette()).name(QColor::HexArgb);
-    layout["WaveformColour"_L1]   = colours.colour(Colours::Type::Waveform, palette()).name(QColor::HexArgb);
-    layout["ZeroLineColour"_L1]   = colours.colour(Colours::Type::ZeroLine, palette()).name(QColor::HexArgb);
+    saveColour(u"BackgroundColour"_s, Colours::Type::Background);
+    saveColour(u"WaveformColour"_s, Colours::Type::Waveform);
+    saveColour(u"ZeroLineColour"_s, Colours::Type::ZeroLine);
 }
 } // namespace Fooyin::Oscilloscope
 

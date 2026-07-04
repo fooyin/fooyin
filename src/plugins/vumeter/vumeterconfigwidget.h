@@ -58,6 +58,7 @@ private:
     QSpinBox* m_sectionSpacing;
 
     QGroupBox* m_colourGroup;
+    QCheckBox* m_barGradientEnabled;
     ColourButton* m_bgColour;
     ColourButton* m_peakColour;
     ColourButton* m_legendColour;

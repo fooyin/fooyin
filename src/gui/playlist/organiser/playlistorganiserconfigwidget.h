@@ -43,9 +43,7 @@ protected:
 private:
     ScriptLineEdit* m_leftScript;
     ScriptLineEdit* m_rightScript;
-    QCheckBox* m_customPlayingTextColour;
     ColourButton* m_playingTextColour;
-    QCheckBox* m_customPlayingBackgroundColour;
     ColourButton* m_playingBackgroundColour;
 };
 } // namespace Fooyin

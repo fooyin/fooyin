@@ -64,9 +64,7 @@ private:
     QComboBox* m_searchMode;
     ScriptLineEdit* m_searchScript;
 
-    QCheckBox* m_failBg;
     ColourButton* m_failBgColour;
-    QCheckBox* m_failFg;
     ColourButton* m_failFgColour;
 };
 
@@ -80,10 +78,8 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     , m_closeOnSuccess{new QCheckBox(tr("Close quick search when successful"), this)}
     , m_searchMode{new QComboBox(this)}
     , m_searchScript{new ScriptLineEdit(this)}
-    , m_failBg{new QCheckBox(tr("Error background") + ":"_L1, this)}
-    , m_failBgColour{new ColourButton(this)}
-    , m_failFg{new QCheckBox(tr("Error foreground") + ":"_L1, this)}
-    , m_failFgColour{new ColourButton(this)}
+    , m_failBgColour{new ColourButton(tr("Error background") + ":"_L1, true, this)}
+    , m_failFgColour{new ColourButton(tr("Error foreground") + ":"_L1, true, this)}
 {
     auto* matchingGroup       = new QGroupBox(tr("Search Matching"), this);
     auto* matchingGroupLayout = new QGridLayout(matchingGroup);
@@ -116,10 +112,9 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     searchGroupLayout->addWidget(new QLabel(u"🛈 "_s + tr("Only applies when autosearch is disabled."), this), row++, 0,
                                  1, 2);
     searchGroupLayout->addWidget(m_autosearchDelay, row++, 0, 1, 2);
-    searchGroupLayout->addWidget(m_failBg, row, 0);
-    searchGroupLayout->addWidget(m_failBgColour, row++, 1);
-    searchGroupLayout->addWidget(m_failFg, row, 0);
-    searchGroupLayout->addWidget(m_failFgColour, row++, 1);
+    ColourButton::alignLabels({m_failBgColour, m_failFgColour});
+    searchGroupLayout->addWidget(m_failBgColour, row++, 0, 1, 2);
+    searchGroupLayout->addWidget(m_failFgColour, row++, 0, 1, 2);
     searchGroupLayout->setColumnStretch(1, 1);
 
     auto* resultsGroup       = new QGroupBox(tr("Results Playlist"), this);
@@ -138,9 +133,6 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     layout->addWidget(searchGroup, row++, 0);
     layout->addWidget(resultsGroup, row++, 0);
     layout->setRowStretch(layout->rowCount(), 1);
-
-    QObject::connect(m_failBg, &QCheckBox::toggled, m_failBgColour, &QWidget::setEnabled);
-    QObject::connect(m_failFg, &QCheckBox::toggled, m_failFgColour, &QWidget::setEnabled);
 }
 
 void SearchPageWidget::load()
@@ -173,13 +165,13 @@ void SearchPageWidget::apply()
     m_settings->set<Settings::Gui::SearchPlaylistAppendSearch>(m_appendSearchString->isChecked());
     m_settings->set<Settings::Gui::SearchSuccessFocus>(m_focusOnSuccess->isChecked());
 
-    if(m_failBg->isChecked()) {
+    if(m_failBgColour->isChecked()) {
         m_settings->set<Settings::Gui::SearchErrorBg>(m_failBgColour->colour());
     }
     else {
         m_settings->reset<Settings::Gui::SearchErrorBg>();
     }
-    if(m_failFg->isChecked()) {
+    if(m_failFgColour->isChecked()) {
         m_settings->set<Settings::Gui::SearchErrorFg>(m_failFgColour->colour());
     }
     else {
@@ -207,8 +199,7 @@ void SearchPageWidget::reset()
 void SearchPageWidget::loadColours()
 {
     const auto failBg = m_settings->value<Settings::Gui::SearchErrorBg>();
-    m_failBg->setChecked(!failBg.isNull());
-    m_failBgColour->setEnabled(m_failBg->isChecked());
+    m_failBgColour->setChecked(!failBg.isNull());
 
     if(!failBg.isNull()) {
         m_failBgColour->setColour(failBg.value<QColor>());
@@ -218,8 +209,7 @@ void SearchPageWidget::loadColours()
     }
 
     const auto failFg = m_settings->value<Settings::Gui::SearchErrorFg>();
-    m_failFg->setChecked(!failFg.isNull());
-    m_failFgColour->setEnabled(m_failFg->isChecked());
+    m_failFgColour->setChecked(!failFg.isNull());
 
     if(!failFg.isNull()) {
         m_failFgColour->setColour(failFg.value<QColor>());

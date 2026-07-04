@@ -48,6 +48,25 @@ public:
         }
     }
 
+    [[nodiscard]] QColor customColour(Type type) const
+    {
+        switch(type) {
+            case Type::Background:
+                return m_background;
+            case Type::Waveform:
+                return m_waveform;
+            case Type::ZeroLine:
+                return m_zeroLine;
+        }
+
+        return {};
+    }
+
+    [[nodiscard]] bool hasOverride(Type type) const
+    {
+        return customColour(type).isValid();
+    }
+
     [[nodiscard]] QColor colour(Type type, const QPalette& palette) const
     {
         switch(type) {

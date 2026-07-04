@@ -24,6 +24,10 @@
 #include <QString>
 #include <QWidget>
 
+#include <concepts>
+#include <initializer_list>
+#include <ranges>
+
 class QLabel;
 class QLineEdit;
 
@@ -44,7 +48,26 @@ public:
     void setPlaceholderText(const QString& text);
 
     [[nodiscard]] int labelWidth() const;
+    [[nodiscard]] int labelWidthHint() const;
     void setLabelWidth(int width);
+
+    static int alignLabels(std::initializer_list<LineEditEditor*> editors, int minimumWidth = 0)
+    {
+        return alignLabels<std::initializer_list<LineEditEditor*>>(std::move(editors), minimumWidth);
+    }
+    template <std::ranges::forward_range R>
+        requires std::convertible_to<std::ranges::range_reference_t<R>, LineEditEditor*>
+    static int alignLabels(R&& editors, int minimumWidth = 0)
+    {
+        int width{minimumWidth};
+        for(const LineEditEditor* editor : editors) {
+            width = std::max(width, editor->labelWidthHint());
+        }
+        for(LineEditEditor* editor : editors) {
+            editor->setLabelWidth(width);
+        }
+        return width;
+    }
 
     [[nodiscard]] QLabel* label() const;
     [[nodiscard]] QLineEdit* lineEdit() const;

@@ -81,6 +81,7 @@ private:
     QCheckBox* m_interpolate;
     FontButton* m_axisFont;
     QGroupBox* m_colourGroup;
+    QCheckBox* m_barGradientEnabled;
     ColourButton* m_textColour;
     ColourButton* m_backgroundColour;
     GradientEditor* m_barGradient;

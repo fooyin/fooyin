@@ -93,11 +93,7 @@ LyricsSearchDialog::LyricsSearchDialog(const Track& track, std::shared_ptr<Netwo
     m_albumEdit->setText(track.album());
     m_artistEdit->setText(track.artist());
 
-    const int labelWidth = std::max({m_titleEdit->label()->sizeHint().width(), m_albumEdit->label()->sizeHint().width(),
-                                     m_artistEdit->label()->sizeHint().width()});
-    m_titleEdit->setLabelWidth(labelWidth);
-    m_albumEdit->setLabelWidth(labelWidth);
-    m_artistEdit->setLabelWidth(labelWidth);
+    LineEditEditor::alignLabels({m_titleEdit, m_albumEdit, m_artistEdit});
 
     auto* layout = new QVBoxLayout(this);
 
