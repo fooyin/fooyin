@@ -11276,7 +11276,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="263"/>
         <source>%1 presets found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nalezené předvolby: %1.</translation>
     </message>
 </context>
 <context>
@@ -11364,7 +11364,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="153"/>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="553"/>
         <source>&amp;Full Screen</source>
-        <translation>&amp;Na celou obrazovku</translation>
+        <translation>N&amp;a celou obrazovku</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="154"/>
@@ -11394,7 +11394,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="159"/>
         <source>&amp;Shuffle Presets</source>
-        <translation>&amp;Promíchat předvolby</translation>
+        <translation>P&amp;romíchat předvolby</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="160"/>
@@ -11455,7 +11455,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="584"/>
         <source>Preset &amp;Duration</source>
-        <translation>&amp;Délka předvolby</translation>
+        <translation>&amp;Trvání předvolby</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="588"/>
