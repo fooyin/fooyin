@@ -260,7 +260,7 @@ void ProjectMConfigDialog::updateSummary()
     library.setRootDir(path);
     library.setRecursive(m_scanRecursive->isChecked());
     library.scan();
-    m_summary->setText(tr("%1 presets found.").arg(library.presetCount()));
+    m_summary->setText(tr("%Ln preset(s) found.", nullptr, library.presetCount()));
 }
 } // namespace Fooyin::ProjectM
 

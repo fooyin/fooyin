@@ -540,8 +540,9 @@ void ProjectMView::createProjectM()
     }
     resizeRenderer(width(), height(), true);
     m_ready      = true;
-    m_statusText = m_presetDirs.size() == 1 ? tr("Using presets from %1").arg(m_presetDirs.front())
-                                            : tr("Using presets from %1 folders").arg(m_presetDirs.size());
+    m_statusText = m_presetDirs.size() == 1
+                     ? tr("Using presets from %1").arg(m_presetDirs.front())
+                     : tr("Using presets from %Ln folder(s)", nullptr, static_cast<int>(m_presetDirs.size()));
     emitAvailability();
     updateRenderTimer();
 }
