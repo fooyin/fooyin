@@ -62,6 +62,7 @@ FileOpsDeleteDialog::FileOpsDeleteDialog(const TrackList& tracks, SettingsManage
     auto* deleteButton = buttons->addButton(tr("Delete"), QDialogButtonBox::DestructiveRole);
     auto* cancelButton = buttons->addButton(QDialogButtonBox::Cancel);
     cancelButton->setDefault(true);
+    cancelButton->setFocus(Qt::ActiveWindowFocusReason);
     layout->addWidget(buttons);
 
     QObject::connect(deleteButton, &QPushButton::clicked, this, [this, dontAsk, settings]() {
