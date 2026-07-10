@@ -2323,7 +2323,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="513"/>
         <source>Extract this embedded artwork to a file in the track directory without prompting</source>
-        <translation>將此嵌入的圖面提取到曲目檔案目錄中 無須提示</translation>
+        <translation>將此嵌入的圖面提取至曲目檔案目錄中 無須提示</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="514"/>
@@ -2577,12 +2577,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="274"/>
         <source>Append selected tracks to the current playlist</source>
-        <translation>追加選中的曲目到目前播放清單</translation>
+        <translation>追加選中的曲目至目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="281"/>
         <source>Append selected tracks to the active playlist</source>
-        <translation>追加選中的曲目到現行播放清單</translation>
+        <translation>追加選中的曲目至現行播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="288"/>
@@ -3860,7 +3860,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="91"/>
         <source>Save the current playlist to the specified file</source>
-        <translation>儲存目前播放清單到指定檔案</translation>
+        <translation>儲存目前播放清單至指定檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="97"/>
@@ -3870,7 +3870,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="98"/>
         <source>Save all playlists to the specified location</source>
-        <translation>儲存全部播放清單到指定位置</translation>
+        <translation>儲存全部播放清單至指定位置</translation>
     </message>
 </context>
 <context>
@@ -4157,12 +4157,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="173"/>
         <source>&amp;Copy to…</source>
-        <translation>複製到(&amp;C)…</translation>
+        <translation>複製至(&amp;C)…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="174"/>
         <source>&amp;Move to…</source>
-        <translation>移動到(&amp;M)…</translation>
+        <translation>移動至(&amp;M)…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="175"/>
@@ -4632,12 +4632,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="94"/>
         <source>Minimise to tray on close</source>
-        <translation>關閉時最小化到系統匣</translation>
+        <translation>關閉時最小化至系統匣</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="97"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
-        <translation>延後開啟 fooyin，直到全部曲目載入完成</translation>
+        <translation>延後開啟 fooyin，直到全部曲目已經載入完成</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="99"/>
@@ -4682,7 +4682,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="137"/>
         <source>Start hidden to tray</source>
-        <translation>啟動後隱藏到系統匣</translation>
+        <translation>啟動後隱藏至系統匣</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="138"/>
@@ -5394,7 +5394,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="195"/>
         <source>Restore theme when switching to this layout</source>
-        <translation>還原主題 當切換到此配置時</translation>
+        <translation>還原主題 當切換至此配置時</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="196"/>
@@ -6129,7 +6129,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="94"/>
         <source>Save the current layout to the specified file</source>
-        <translation>儲存目前配置到指定檔案</translation>
+        <translation>儲存目前配置至指定檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="98"/>
@@ -6650,7 +6650,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="175"/>
         <source>Additionally save ratings to ID3 POPM frames when writing MP3 files. Other formats are unaffected.</source>
-        <translation>此外，在寫入 MP3 檔案時，將評分儲存到 ID3 POPM 框架。其他格式則不受影響。</translation>
+        <translation>此外，在寫入 MP3 檔案時，將評分儲存至 ID3 POPM 框架。其他格式則不受影響。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="177"/>
@@ -7849,7 +7849,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="65"/>
         <source>Skip remaining sources when lyrics are found</source>
-        <translation>當歌詞已找到時忽略保留來源</translation>
+        <translation>當歌詞找到時忽略其餘來源</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="66"/>
@@ -8565,7 +8565,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="118"/>
         <source>Decode pauses when buffered audio reaches this watermark</source>
-        <translation>解碼暫停，當緩衝的音訊到達此水位印記之時</translation>
+        <translation>解碼暫停，當緩衝的音訊到達此水印標記之時</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="122"/>
@@ -13574,7 +13574,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="459"/>
         <source>Station validated. Details found.</source>
-        <translation>站台已經驗證。找到站台詳細資料。</translation>
+        <translation>站台已經驗證，找到詳細資料。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="500"/>
@@ -14973,7 +14973,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="72"/>
         <source>Restrict to</source>
-        <translation>限制到</translation>
+        <translation>限制至</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="74"/>
@@ -15656,7 +15656,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="333"/>
         <source>Decibel range mapped to the spectrum height</source>
-        <translation>映射到波譜高度的分貝範圍</translation>
+        <translation>映射至波譜高度的分貝範圍</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="341"/>
@@ -16698,12 +16698,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="286"/>
         <source>Append selected tracks to the current playlist</source>
-        <translation>追加所選曲目到目前播放清單</translation>
+        <translation>追加所選曲目至目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="293"/>
         <source>Append selected tracks to the active playlist</source>
-        <translation>追加所選曲目到現行播放清單</translation>
+        <translation>追加所選曲目至現行播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="300"/>
@@ -16857,7 +16857,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="93"/>
         <source>Focus the first Search Bar found in the current layout</source>
-        <translation>焦點第一個搜尋列所找到的 於目前配置</translation>
+        <translation>焦點第一個搜尋列所找到的，於目前配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="99"/>
