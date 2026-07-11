@@ -5049,7 +5049,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1598"/>
         <source>Enter a valid http:// or https:// URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in en giltig http://- eller https://-URL.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1659"/>
@@ -11082,17 +11082,17 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="47"/>
         <source> s</source>
-        <translation type="unfinished"></translation>
+        <translation> s</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="97"/>
         <source>projectM Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM-inställningar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="100"/>
         <source>Browse…</source>
-        <translation type="unfinished"></translation>
+        <translation>Bläddra…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="101"/>
@@ -11112,7 +11112,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="113"/>
         <source>Preset library</source>
-        <translation type="unfinished"></translation>
+        <translation>Förinställningsbibliotek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="115"/>
@@ -11142,32 +11142,32 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="136"/>
         <source>Resolution used to evaluate preset equations; higher values improve detail but require more processing</source>
-        <translation type="unfinished"></translation>
+        <translation>Upplösning använt för att utvärdera förinställda ekvationer. Högre värden förbättrar detalj men kräver mer processande</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="137"/>
         <source>32 x 24</source>
-        <translation type="unfinished"></translation>
+        <translation>32 × 24</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="138"/>
         <source>48 x 36 (default)</source>
-        <translation type="unfinished"></translation>
+        <translation>48 × 36 (default)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="139"/>
         <source>64 x 48</source>
-        <translation type="unfinished"></translation>
+        <translation>64 × 48</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="140"/>
         <source>96 x 72</source>
-        <translation type="unfinished"></translation>
+        <translation>96 × 72</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="141"/>
         <source>128 x 96</source>
-        <translation type="unfinished"></translation>
+        <translation>128 × 96</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="144"/>
@@ -11252,12 +11252,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="255"/>
         <source>Folder does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mapp existerar inte.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="263"/>
         <source>%1 presets found.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 förinställningar hittade.</translation>
     </message>
 </context>
 <context>
@@ -11265,17 +11265,17 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="50"/>
         <source>&amp;Visualisations</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Visualiseringar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="53"/>
         <source>project&amp;M</source>
-        <translation type="unfinished"></translation>
+        <translation>project&amp;M</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="54"/>
         <source>Open projectM in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna projectM i ett separat fönster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="56"/>
@@ -11292,7 +11292,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="61"/>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="69"/>
         <source>projectM</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM</translation>
     </message>
 </context>
 <context>
@@ -11301,12 +11301,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="89"/>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="670"/>
         <source>Initialising projectM…</source>
-        <translation type="unfinished"></translation>
+        <translation>Initierar projectM…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="368"/>
         <source>Preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Förinställning %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="508"/>
@@ -11316,27 +11316,27 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="516"/>
         <source>Preset failed to load.</source>
-        <translation type="unfinished"></translation>
+        <translation>Förinställning misslyckades att läsas in.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="530"/>
         <source>projectM initialisation failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM-initiering misslyckades.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="531"/>
         <source>projectM initialisation failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM-initiering misslyckades: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="543"/>
         <source>Using presets from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Använder förinställningar från %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="544"/>
         <source>Using presets from %1 folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Använder förinställningar från %1 mappar</translation>
     </message>
 </context>
 <context>
@@ -11350,7 +11350,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="154"/>
         <source>&amp;Select Preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj förin&amp;ställning…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="155"/>
@@ -11360,7 +11360,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="156"/>
         <source>&amp;Next Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nästa förinställning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="157"/>
@@ -11370,7 +11370,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="158"/>
         <source>&amp;Lock Current Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Lås aktuell förinställning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="159"/>
@@ -11386,7 +11386,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="238"/>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="663"/>
         <source>projectM</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="508"/>
@@ -11396,7 +11396,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="512"/>
         <source>Select a projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj en projectM-förinställning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="516"/>
