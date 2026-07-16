@@ -15935,12 +15935,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/splitters/splitterwidget.cpp" line="406"/>
         <source>Splitter (Left/Right)</source>
-        <translation type="unfinished"></translation>
+        <translation>Separador (Izquierda/Derecha)</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/splitterwidget.cpp" line="416"/>
         <source>Switch orientation</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar orientación</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/splitterwidget.cpp" line="419"/>
@@ -15967,7 +15967,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/context/staticcontextmenupage.cpp" line="46"/>
         <source>Context Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Menú contextual</translation>
     </message>
 </context>
 <context>
@@ -15975,27 +15975,27 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="534"/>
         <source>Status Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra de estado</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="613"/>
         <source>Show icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar ícono</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="619"/>
         <source>Show selection info</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar información de selección</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="626"/>
         <source>Show current playlist info</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar información de la lista de reproducción actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="645"/>
         <source>Status bar settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración de la barra de estado…</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="633"/>
@@ -16013,7 +16013,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="140"/>
         <source>Status Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra de estado</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="140"/>
@@ -16026,7 +16026,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="63"/>
         <source>Show icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar ícono</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="66"/>
@@ -16036,7 +16036,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="83"/>
         <source>Shown in the status bar when no tracks are selected, or when selection info is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrado en la barra de estado cuando no hay pistas seleccionadas, o cuando la información de selección está deshabilitada.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="86"/>
