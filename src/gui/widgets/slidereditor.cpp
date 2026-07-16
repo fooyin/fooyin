@@ -33,8 +33,6 @@ SliderEditor::SliderEditor(const QString& name, QWidget* parent)
     : QWidget{parent}
     , m_slider{new QSlider(Qt::Horizontal, this)}
     , m_spinBox{new SpecialValueSpinBox(this)}
-    , m_updatingSlider{false}
-    , m_updatingSpinBox{false}
 {
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins({});
@@ -63,9 +61,11 @@ int SliderEditor::value() const
 void SliderEditor::setValue(int value)
 {
     if(value != m_spinBox->value()) {
-        m_updatingSpinBox = true;
+        const QSignalBlocker blocker{m_spinBox};
         m_spinBox->setValue(value);
-        m_updatingSpinBox = false;
+    }
+    if(value != m_slider->value()) {
+        const QSignalBlocker blocker{m_slider};
         m_slider->setValue(value);
     }
 }
@@ -100,6 +100,13 @@ int SliderEditor::singleStep() const
 void SliderEditor::setSingleStep(int step)
 {
     m_spinBox->setSingleStep(step);
+    m_slider->setSingleStep(step);
+    m_slider->setTickInterval(step);
+}
+
+void SliderEditor::setTicksVisible(bool visible)
+{
+    m_slider->setTickPosition(visible ? QSlider::TicksBelow : QSlider::NoTicks);
 }
 
 void SliderEditor::setRange(int min, int max)
@@ -135,18 +142,14 @@ void SliderEditor::addSpecialValue(int val, const QString& text)
 
 void SliderEditor::sliderValueChanged(int value)
 {
-    if(!m_updatingSlider) {
-        setValue(value);
-        Q_EMIT valueChanged(value);
-    }
+    setValue(value);
+    Q_EMIT valueChanged(value);
 }
 
 void SliderEditor::spinBoxValueChanged(int value)
 {
-    if(!m_updatingSpinBox) {
-        m_slider->setValue(value);
-        Q_EMIT valueChanged(value);
-    }
+    setValue(value);
+    Q_EMIT valueChanged(value);
 }
 } // namespace Fooyin
 

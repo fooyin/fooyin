@@ -49,6 +49,8 @@ public:
     [[nodiscard]] int singleStep() const;
     void setSingleStep(int step);
 
+    void setTicksVisible(bool visible);
+
     void setRange(int min, int max);
 
     [[nodiscard]] QString prefix() const;
@@ -69,7 +71,5 @@ private Q_SLOTS:
 private:
     QSlider* m_slider;
     SpecialValueSpinBox* m_spinBox;
-    bool m_updatingSlider;
-    bool m_updatingSpinBox;
 };
 } // namespace Fooyin

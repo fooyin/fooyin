@@ -33,7 +33,6 @@ DoubleSliderEditor::DoubleSliderEditor(const QString& name, QWidget* parent)
     : QWidget{parent}
     , m_slider{new QSlider(Qt::Horizontal, this)}
     , m_spinBox{new SpecialValueDoubleSpinBox(this)}
-    , m_updatingSpinBox{false}
 {
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins({});
@@ -93,6 +92,12 @@ double DoubleSliderEditor::singleStep() const
 void DoubleSliderEditor::setSingleStep(double step)
 {
     m_spinBox->setSingleStep(step);
+    updateSlider();
+}
+
+void DoubleSliderEditor::setTicksVisible(bool visible)
+{
+    m_slider->setTickPosition(visible ? QSlider::TicksBelow : QSlider::NoTicks);
 }
 
 void DoubleSliderEditor::setRange(double min, double max)
@@ -144,16 +149,15 @@ void DoubleSliderEditor::sliderValueChanged(int value)
     double spinVal     = min + (max - min) * ratio;
     spinVal            = std::round(spinVal / step) * step;
 
-    if(!m_updatingSpinBox && spinVal != m_spinBox->value()) {
+    if(spinVal != m_spinBox->value()) {
         m_spinBox->setValue(spinVal);
     }
 }
 
 void DoubleSliderEditor::spinBoxValueChanged(double value)
 {
-    m_updatingSpinBox = true;
+    const QSignalBlocker blocker{m_spinBox};
     updateSlider();
-    m_updatingSpinBox = false;
 
     Q_EMIT valueChanged(value);
 }
@@ -163,6 +167,13 @@ void DoubleSliderEditor::updateSlider()
     const double min  = m_spinBox->minimum();
     const double max  = m_spinBox->maximum();
     const double step = m_spinBox->singleStep();
+
+    const double range = max - min;
+    if(range > 0.0 && step > 0.0) {
+        const int tickInterval
+            = std::max(1, static_cast<int>(std::round(m_slider->maximum() * std::min(step, range) / range)));
+        m_slider->setTickInterval(tickInterval);
+    }
 
     double value = m_spinBox->value();
     value        = std::round(value / step) * step;
