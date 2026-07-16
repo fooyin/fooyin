@@ -19,13 +19,15 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include <core/engine/enginedefs.h>
 #include <utils/id.h>
 
 #include <QAbstractTableModel>
 
 namespace Fooyin {
-class DspModel : public QAbstractTableModel
+class FYGUI_EXPORT DspModel : public QAbstractTableModel
 {
     Q_OBJECT
 
