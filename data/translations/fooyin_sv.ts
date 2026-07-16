@@ -11127,7 +11127,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="119"/>
         <source>Rendering</source>
-        <translation type="unfinished">Rendering</translation>
+        <translation>Rendering</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="123"/>
@@ -11441,7 +11441,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="588"/>
         <source>%1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 sekunder</translation>
     </message>
 </context>
 <context>
