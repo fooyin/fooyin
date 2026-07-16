@@ -31,6 +31,13 @@ namespace Fooyin {
 class FYGUI_EXPORT DspSettingsRegistry
 {
 public:
+    DspSettingsRegistry() = default;
+
+    DspSettingsRegistry(const DspSettingsRegistry&)            = delete;
+    DspSettingsRegistry& operator=(const DspSettingsRegistry&) = delete;
+    DspSettingsRegistry(DspSettingsRegistry&&)                 = delete;
+    DspSettingsRegistry& operator=(DspSettingsRegistry&&)      = delete;
+
     void registerProvider(std::unique_ptr<DspSettingsProvider> provider);
 
     [[nodiscard]] DspSettingsProvider* providerFor(const QString& id) const;
