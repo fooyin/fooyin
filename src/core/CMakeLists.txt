@@ -3,10 +3,15 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/coresettings.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audiobuffer.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audioconverter.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/audioencoder.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/audioencoderregistry.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audioformat.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audioinput.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audioloader.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audiooutput.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/conversion/conversiondefs.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/conversion/conversionpathresolver.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/conversion/conversionrunner.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/dsp/dspnode.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/dsp/dspplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/dsp/processingbuffer.h
@@ -79,6 +84,7 @@ set(SOURCES
     engine/audioanalysisbus.h
     engine/audiobuffer.cpp
     engine/audioconverter.cpp
+    engine/audioencoderregistry.cpp
     engine/audioengine.cpp
     engine/audioengine.h
     engine/audioformat.cpp
@@ -86,6 +92,10 @@ set(SOURCES
     engine/audioloader.cpp
     engine/audioutils.cpp
     engine/audioutils.h
+    engine/conversion/conversionpathresolver.cpp
+    engine/conversion/conversionrunner.cpp
+    engine/conversion/outputtransaction.cpp
+    engine/conversion/outputtransaction.h
     engine/control/enginetaskqueue.cpp
     engine/control/enginetaskqueue.h
     engine/control/playbackintentreducer.cpp
@@ -143,6 +153,8 @@ set(SOURCES
     engine/input/archiveinput.h
     engine/input/ffmpeg/ffmpegcodec.cpp
     engine/input/ffmpeg/ffmpegcodec.h
+    engine/input/ffmpeg/ffmpegencoder.cpp
+    engine/input/ffmpeg/ffmpegencoder.h
     engine/input/ffmpeg/ffmpegframe.cpp
     engine/input/ffmpeg/ffmpegframe.h
     engine/input/ffmpeg/ffmpeginput.cpp

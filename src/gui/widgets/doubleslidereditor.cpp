@@ -48,9 +48,7 @@ DoubleSliderEditor::DoubleSliderEditor(const QString& name, QWidget* parent)
     QObject::connect(m_slider, &QSlider::valueChanged, this, &DoubleSliderEditor::sliderValueChanged);
     QObject::connect(m_spinBox, &QDoubleSpinBox::valueChanged, this, &DoubleSliderEditor::spinBoxValueChanged);
 
-    m_slider->setMinimum(0);
-    m_slider->setMaximum(1000000);
-    m_slider->setSingleStep(0);
+    m_slider->setSingleStep(1);
 }
 
 DoubleSliderEditor::DoubleSliderEditor(QWidget* parent)
@@ -145,9 +143,7 @@ void DoubleSliderEditor::sliderValueChanged(int value)
     const double max  = m_spinBox->maximum();
     const double step = m_spinBox->singleStep();
 
-    const double ratio = static_cast<double>(value) / m_slider->maximum();
-    double spinVal     = min + (max - min) * ratio;
-    spinVal            = std::round(spinVal / step) * step;
+    const double spinVal = std::min(max, min + (static_cast<double>(value) * step));
 
     if(spinVal != m_spinBox->value()) {
         m_spinBox->setValue(spinVal);
@@ -164,22 +160,24 @@ void DoubleSliderEditor::spinBoxValueChanged(double value)
 
 void DoubleSliderEditor::updateSlider()
 {
+    const QSignalBlocker blocker{m_slider};
+
     const double min  = m_spinBox->minimum();
     const double max  = m_spinBox->maximum();
     const double step = m_spinBox->singleStep();
 
     const double range = max - min;
-    if(range > 0.0 && step > 0.0) {
-        const int tickInterval
-            = std::max(1, static_cast<int>(std::round(m_slider->maximum() * std::min(step, range) / range)));
-        m_slider->setTickInterval(tickInterval);
+    if(range <= 0.0 || step <= 0.0) {
+        m_slider->setRange(0, 0);
+        return;
     }
 
-    double value = m_spinBox->value();
-    value        = std::round(value / step) * step;
+    const int stepCount = std::max(1, static_cast<int>(std::round(range / step)));
+    m_slider->setRange(0, stepCount);
+    m_slider->setPageStep(std::max(1, stepCount / 10));
+    m_slider->setTickInterval(1);
 
-    const double ratio  = (value - min) / (max - min);
-    const int sliderVal = static_cast<int>(std::round(m_slider->maximum() * ratio));
+    const int sliderVal = std::clamp(static_cast<int>(std::round((m_spinBox->value() - min) / step)), 0, stepCount);
 
     if(sliderVal != m_slider->value()) {
         m_slider->setValue(sliderVal);

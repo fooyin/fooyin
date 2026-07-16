@@ -152,6 +152,12 @@ public:
     [[nodiscard]] std::vector<std::unique_ptr<AudioDecoder>> decodersForTrack(const Track& track) const;
     //! Create metadata reader candidates for `file`, ordered by configured priority.
     [[nodiscard]] std::vector<std::unique_ptr<AudioReader>> readersForFile(const QString& file) const;
+    /*!
+     * Create metadata reader candidates for `file`, ordered by configured priority.
+     * When @p includeDisabled is @c true, candidates disabled for metadata reading are also returned.
+     */
+    [[nodiscard]] std::vector<std::unique_ptr<AudioReader>> readersForFile(const QString& file,
+                                                                           bool includeDisabled) const;
     //! Create metadata reader candidates for `track`, ordered by configured priority.
     [[nodiscard]] std::vector<std::unique_ptr<AudioReader>> readersForTrack(const Track& track) const;
     //! Create the highest-priority archive reader backend for `file`, if any.

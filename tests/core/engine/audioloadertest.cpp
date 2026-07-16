@@ -1053,6 +1053,31 @@ TEST_F(AudioLoaderTest, ReadsWritesMetadataAndCoversForRegularTracks)
     EXPECT_TRUE(secondReader->lastWriteOptions.testFlag(AudioReader::PreserveTimestamps));
 }
 
+TEST_F(AudioLoaderTest, DisabledReadersRemainAvailableForMetadataWrites)
+{
+    AudioLoader loader;
+    const QString filePath = createFile(u"metadata.mp3"_s, "metadata-track");
+
+    const auto reader        = addReader(loader, u"metadata-writer"_s, {u"mp3"_s});
+    reader->canWriteMetadata = true;
+    reader->canWriteCover    = true;
+
+    loader.setReaderEnabled(u"metadata-writer"_s, false);
+
+    Track track{filePath};
+    EXPECT_TRUE(loader.readersForTrack(track).empty());
+    EXPECT_FALSE(loader.readTrackMetadata(track));
+    EXPECT_EQ(0, reader->readCalls);
+    EXPECT_TRUE(loader.canWriteMetadata(track));
+    EXPECT_TRUE(loader.writeTrackMetadata(track, AudioReader::Metadata));
+    EXPECT_EQ(1, reader->writeTrackCalls);
+
+    TrackCovers covers;
+    covers.emplace(Track::Cover::Front, CoverImage{u"image/png"_s, QByteArray{"cover"}});
+    EXPECT_TRUE(loader.writeTrackCover(track, covers, AudioReader::None));
+    EXPECT_EQ(1, reader->writeCoverCalls);
+}
+
 TEST_F(AudioLoaderTest, LoadsDecoderAndReaderForArchiveTracks)
 {
     AudioLoader loader;

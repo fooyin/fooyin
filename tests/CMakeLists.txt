@@ -6,6 +6,7 @@ function(fooyin_add_test name)
     add_executable(${name} ${ARGN} testutils.cpp)
     fooyin_set_rpath(${name} ${LIB_INSTALL_DIR})
     target_include_directories(${name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    target_include_directories(${name} SYSTEM PRIVATE ${FFMPEG_INCLUDE_DIRS})
     target_compile_definitions(${name} PRIVATE FOOYIN_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
     target_link_libraries(
         ${name}
@@ -15,6 +16,7 @@ function(fooyin_add_test name)
                 Fooyin::GuiPrivate
                 Fooyin::Utils
                 Qt6::Test
+                ${FFMPEG_LIBRARIES}
                 GTest::gtest_main
     )
     gtest_discover_tests(${name})
@@ -22,6 +24,9 @@ endfunction()
 
 fooyin_add_test(test_audioconverter core/engine/audioconvertertest.cpp)
 fooyin_add_test(test_audioclock core/engine/audioclocktest.cpp)
+fooyin_add_test(test_conversionpathresolver core/engine/conversion/conversionpathresolvertest.cpp)
+fooyin_add_test(test_conversionrunner core/engine/conversion/conversionrunnertest.cpp)
+fooyin_add_test(test_ffmpegencoder core/engine/ffmpegencodertest.cpp)
 fooyin_add_test(test_audioloader core/engine/audioloadertest.cpp)
 fooyin_add_test(test_audioengine core/engine/audioenginetest.cpp)
 fooyin_add_test(test_visualisationbackend core/engine/visualisationbackendtest.cpp)

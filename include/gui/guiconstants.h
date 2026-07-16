@@ -111,6 +111,7 @@ constexpr auto ArtworkAttach       = "Fooyin.Menu.Artwork.Attach";
 constexpr auto Tagging             = "Fooyin.Menu.Tagging";
 constexpr auto TrackFinalSeparator = "Fooyin.Menu.Track.FinalSeparator";
 constexpr auto Utilities           = "Fooyin.Menu.Utilities";
+constexpr auto Convert             = "Fooyin.Menu.Convert";
 } // namespace Context
 } // namespace Menus
 
@@ -219,6 +220,9 @@ constexpr auto SearchArtwork             = "Tracks.SearchArtwork";
 constexpr auto SearchArtworkQuick        = "Tracks.SearchArtworkQuick";
 constexpr auto ExportArtwork             = "Tracks.ExportArtwork";
 constexpr auto RemoveArtwork             = "Tracks.RemoveArtwork";
+constexpr auto Convert                   = "Tracks.Convert";
+constexpr auto ConvertDefault            = "Tracks.Convert.Default";
+constexpr auto ConvertLastUsed           = "Tracks.Convert.LastUsed";
 constexpr auto OpenProperties            = "Tracks.OpenProperties";
 constexpr auto TogglePropertiesTrackList = "Tracks.Properties.ToggleTrackList";
 constexpr auto PropertiesPreviousTrack   = "Tracks.Properties.PreviousTrack";

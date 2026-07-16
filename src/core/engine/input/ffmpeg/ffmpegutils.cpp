@@ -19,21 +19,17 @@
 
 #include "ffmpegutils.h"
 
-#if defined(__GNUG__)
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#elif defined(__clang__)
-#pragma clang diagnostic ignored "-Wold-style-cast"
-#endif
+#include <QDebug>
 
 extern "C"
 {
 #include <libavformat/avformat.h>
 #include <libavformat/avio.h>
+#include <libavutil/audio_fifo.h>
 #include <libavutil/channel_layout.h>
 #include <libavutil/frame.h>
+#include <libswresample/swresample.h>
 }
-
-#include <QDebug>
 
 Q_LOGGING_CATEGORY(FFMPEG, "fy.ffmpeg")
 
@@ -211,6 +207,23 @@ void FormatContextDeleter::operator()(AVFormatContext* context) const
     }
 }
 
+void OutputFormatContextDeleter::operator()(AVFormatContext* context) const
+{
+    if(context) {
+        if(context->oformat && (context->oformat->flags & AVFMT_NOFILE) == 0 && context->pb) {
+            avio_closep(&context->pb);
+        }
+        avformat_free_context(context);
+    }
+}
+
+void CodecContextDeleter::operator()(AVCodecContext* context) const
+{
+    if(context) {
+        avcodec_free_context(&context);
+    }
+}
+
 void FrameDeleter::operator()(AVFrame* frame) const
 {
     if(frame != nullptr) {
@@ -225,12 +238,31 @@ void PacketDeleter::operator()(AVPacket* packet) const
     }
 }
 
+void SwrContextDeleter::operator()(SwrContext* context) const
+{
+    if(context) {
+        swr_free(&context);
+    }
+}
+
+void AudioFifoDeleter::operator()(AVAudioFifo* fifo) const
+{
+    if(fifo) {
+        av_audio_fifo_free(fifo);
+    }
+}
+
 namespace Fooyin::Utils {
+QString ffmpegErrorString(int error)
+{
+    char errStr[AV_ERROR_MAX_STRING_SIZE]{};
+    av_strerror(error, errStr, AV_ERROR_MAX_STRING_SIZE);
+    return QString::fromLocal8Bit(errStr);
+}
+
 void printError(int error)
 {
-    char errStr[1024];
-    av_strerror(error, errStr, 1024);
-    qCWarning(FFMPEG) << errStr;
+    qCWarning(FFMPEG) << ffmpegErrorString(error);
 }
 
 void printError(const QString& error)
@@ -255,7 +287,7 @@ AudioFormat audioFormatFromCodec(AVCodecParameters* codec, AVSampleFormat ctxFor
     format.setChannelCount(codec->ch_layout.nb_channels);
     AudioFormat::ChannelLayout layout;
     const auto channelCount = static_cast<unsigned>(codec->ch_layout.nb_channels);
-    layout.reserve(static_cast<size_t>(channelCount));
+    layout.reserve(channelCount);
     for(unsigned i = 0; i < channelCount; ++i) {
         const auto channel = av_channel_layout_channel_from_index(&codec->ch_layout, i);
         layout.push_back(channelPositionFromAvChannel(channel));
@@ -271,21 +303,21 @@ AudioFormat audioFormatFromCodec(AVCodecParameters* codec, AVSampleFormat ctxFor
 SampleFormat sampleFormat(AVSampleFormat format, int bps)
 {
     switch(format) {
-        case(AV_SAMPLE_FMT_NONE):
-        case(AV_SAMPLE_FMT_U8):
-        case(AV_SAMPLE_FMT_U8P):
+        case AV_SAMPLE_FMT_NONE:
+        case AV_SAMPLE_FMT_U8:
+        case AV_SAMPLE_FMT_U8P:
             return SampleFormat::U8;
-        case(AV_SAMPLE_FMT_S16):
-        case(AV_SAMPLE_FMT_S16P):
+        case AV_SAMPLE_FMT_S16:
+        case AV_SAMPLE_FMT_S16P:
             return SampleFormat::S16;
-        case(AV_SAMPLE_FMT_S32):
-        case(AV_SAMPLE_FMT_S32P):
+        case AV_SAMPLE_FMT_S32:
+        case AV_SAMPLE_FMT_S32P:
             return bps == 24 ? SampleFormat::S24In32 : SampleFormat::S32;
-        case(AV_SAMPLE_FMT_FLT):
-        case(AV_SAMPLE_FMT_FLTP):
+        case AV_SAMPLE_FMT_FLT:
+        case AV_SAMPLE_FMT_FLTP:
             return SampleFormat::F32;
-        case(AV_SAMPLE_FMT_DBL):
-        case(AV_SAMPLE_FMT_DBLP):
+        case AV_SAMPLE_FMT_DBL:
+        case AV_SAMPLE_FMT_DBLP:
             return SampleFormat::F64;
         default:
             return SampleFormat::Unknown;
@@ -313,18 +345,18 @@ AVSampleFormat sampleFormat(SampleFormat format, bool planar)
     }
     else {
         switch(format) {
-            case(SampleFormat::U8):
+            case SampleFormat::U8:
                 return AV_SAMPLE_FMT_U8;
-            case(SampleFormat::S16):
+            case SampleFormat::S16:
                 return AV_SAMPLE_FMT_S16;
-            case(SampleFormat::S24In32):
-            case(SampleFormat::S32):
+            case SampleFormat::S24In32:
+            case SampleFormat::S32:
                 return AV_SAMPLE_FMT_S32;
-            case(SampleFormat::F32):
+            case SampleFormat::F32:
                 return AV_SAMPLE_FMT_FLT;
-            case(SampleFormat::F64):
+            case SampleFormat::F64:
                 return AV_SAMPLE_FMT_DBL;
-            case(SampleFormat::Unknown):
+            case SampleFormat::Unknown:
                 break;
         }
     }

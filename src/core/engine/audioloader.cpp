@@ -95,11 +95,12 @@ void sortLoaderEntries(std::vector<T>& entries)
 }
 
 template <typename EntryT, typename CreatorT>
-CreatorT selectTrackIoCreator(const std::vector<EntryT>& loaders, const QString& ext, bool isInArchive)
+CreatorT selectTrackIoCreator(const std::vector<EntryT>& loaders, const QString& ext, bool isInArchive,
+                              bool includeDisabled = false)
 {
     CreatorT ret;
     for(const auto& loader : loaders) {
-        if(!loader.enabled) {
+        if(!includeDisabled && !loader.enabled) {
             continue;
         }
         if(isInArchive) {
@@ -118,12 +119,13 @@ CreatorT selectTrackIoCreator(const std::vector<EntryT>& loaders, const QString&
 }
 
 template <typename EntryT, typename CreatorT, typename CapabilityFn>
-CreatorT selectRemoteTrackIoCreator(const std::vector<EntryT>& loaders, CapabilityFn&& capabilityFn)
+CreatorT selectRemoteTrackIoCreator(const std::vector<EntryT>& loaders, CapabilityFn&& capabilityFn,
+                                    bool includeDisabled = false)
 {
     CreatorT ret;
 
     for(const auto& loader : loaders) {
-        if(!loader.enabled || loader.isArchiveWrapper) {
+        if((!includeDisabled && !loader.enabled) || loader.isArchiveWrapper) {
             continue;
         }
 
@@ -388,7 +390,7 @@ bool AudioLoader::canWriteMetadata(const Track& track) const
         return false;
     }
 
-    for(auto& reader : readersForTrack(track)) {
+    for(auto& reader : readersForFile(track.filepath(), true)) {
         bool initSuccess{true};
         if(track.isInArchive()) {
             initSuccess = reader->init({.filepath = track.filepath(), .device = nullptr, .archiveReader = nullptr});
@@ -605,6 +607,11 @@ std::vector<std::unique_ptr<AudioDecoder>> AudioLoader::decodersForTrack(const T
 
 std::vector<std::unique_ptr<AudioReader>> AudioLoader::readersForFile(const QString& file) const
 {
+    return readersForFile(file, false);
+}
+
+std::vector<std::unique_ptr<AudioReader>> AudioLoader::readersForFile(const QString& file, bool includeDisabled) const
+{
     const QString ext      = QFileInfo{file}.suffix().toLower();
     const bool isInArchive = Track::isArchivePath(file);
 
@@ -613,11 +620,12 @@ std::vector<std::unique_ptr<AudioReader>> AudioLoader::readersForFile(const QStr
         const std::shared_lock lock{p->m_mutex};
         if(Track::isRemotePath(file)) {
             creators = selectRemoteTrackIoCreator<LoaderEntry<ReaderCreator>, std::vector<ReaderCreator>>(
-                p->m_readers, [](const AudioReader& reader) { return reader.supportsRemoteSources(); });
+                p->m_readers, [](const AudioReader& reader) { return reader.supportsRemoteSources(); },
+                includeDisabled);
         }
         else {
-            creators = selectTrackIoCreator<LoaderEntry<ReaderCreator>, std::vector<ReaderCreator>>(p->m_readers, ext,
-                                                                                                    isInArchive);
+            creators = selectTrackIoCreator<LoaderEntry<ReaderCreator>, std::vector<ReaderCreator>>(
+                p->m_readers, ext, isInArchive, includeDisabled);
         }
     }
 
@@ -759,7 +767,7 @@ bool AudioLoader::writeTrackMetadata(const Track& track, AudioReader::WriteOptio
         return false;
     }
 
-    const auto readers = readersForTrack(track);
+    const auto readers = readersForFile(track.filepath(), true);
     for(const auto& reader : readers) {
         if(!reader->canWriteMetaData()) {
             continue;
@@ -795,7 +803,7 @@ bool AudioLoader::writeTrackCover(const Track& track, const TrackCovers& coverDa
         return false;
     }
 
-    const auto readers = readersForTrack(track);
+    const auto readers = readersForFile(track.filepath(), true);
     for(const auto& reader : readers) {
         if(!reader->canWriteCover()) {
             continue;

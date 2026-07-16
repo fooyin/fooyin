@@ -22,6 +22,8 @@
 #include "artwork/artworkdialog.h"
 #include "artwork/artworkfinder.h"
 #include "artwork/artworksaveutils.h"
+#include "conversion/conversioncontroller.h"
+#include "conversion/convertersettingsstore.h"
 #include "dialog/autoplaylistdialog.h"
 #include "dialog/saveplaylistsdialog.h"
 #include "dialog/searchdialog.h"
@@ -54,6 +56,7 @@
 #include <core/corepaths.h>
 #include <core/coresettings.h>
 #include <core/database/database.h>
+#include <core/engine/audioencoderregistry.h>
 #include <core/engine/enginehandler.h>
 #include <core/engine/enginehelpers.h>
 #include <core/internalcoresettings.h>
@@ -118,6 +121,7 @@
 #include <QStyle>
 #include <QStyleFactory>
 #include <QTimer>
+#include <QUrl>
 
 Q_LOGGING_CATEGORY(GUI_APP, "fy.gui")
 
@@ -186,6 +190,11 @@ Application* prepareCoreForGuiApplication(Application* core)
     applyInitialIconThemes(core ? core->settingsManager() : nullptr);
     return core;
 }
+
+Id conversionPresetActionId(const QString& presetId)
+{
+    return Id{u"Tracks.Convert.Preset.%1"_s.arg(presetId)};
+}
 } // namespace
 
 GuiApplication::GuiApplication(Application* core)
@@ -239,6 +248,13 @@ GuiApplication::GuiApplication(Application* core)
                          m_coverRepository}
     , m_logWidget{std::make_unique<LogWidget>(m_settings)}
     , m_widgets{new Widgets(m_core, this, m_guiPluginContext, m_mainWindow.get(), &m_playlistInteractor, this)}
+    , m_conversionController{new ConversionController(
+          m_core->audioLoader(), m_core->audioEncoderRegistry(), m_core->dspRegistry(), m_core->dspChainStore(),
+          m_widgets->dspSettingsRegistry(), m_settings, m_mainWindow.get(), this)}
+    , m_defaultConversionAction{nullptr}
+    , m_defaultConversionCommand{nullptr}
+    , m_lastUsedConversionAction{nullptr}
+    , m_lastUsedConversionCommand{nullptr}
     , m_coverProvider{m_coverRepository}
     , m_themeUpdatePending{false}
     , m_refreshSystemBaseline{false}
@@ -563,6 +579,7 @@ void GuiApplication::initialise()
     registerActions();
     setupScanMenu();
     setupRatingMenu();
+    setupConvertMenu();
     setupUtilitiesMenu();
     setStyle();
     setIconTheme();
@@ -1087,6 +1104,184 @@ void GuiApplication::setupRatingMenu()
     m_selectionController->registerTrackContextSubmenu(
         this, TrackContextMenuArea::Track, Constants::Menus::Context::TrackSelection,
         Constants::Menus::Context::Tagging, tr("Tagging"), Constants::Menus::Context::TrackFinalSeparator);
+}
+
+void GuiApplication::startConversionPreset(const StoredConversionPreset& stored, const TrackList& tracks)
+{
+    if(tracks.empty()) {
+        return;
+    }
+
+    QString askFolder;
+    if(stored.preset.destination.mode == DestinationMode::Ask) {
+        askFolder = QFileDialog::getExistingDirectory(m_mainWindow.get(), tr("Choose destination"), QDir::homePath());
+        if(askFolder.isEmpty()) {
+            return;
+        }
+    }
+
+    StoredConversionPreset lastUsed{stored};
+    lastUsed.name        = u"[last used]"_s;
+    lastUsed.preset.name = lastUsed.name;
+    ConverterSettings::setLastUsedConversionPreset(lastUsed);
+    if(m_lastUsedConversionAction) {
+        m_lastUsedConversionAction->setEnabled(true);
+    }
+
+    ConversionJob job{.tracks = tracks, .preset = stored.preset};
+    m_conversionController->start(std::move(job), std::move(askFolder), stored.showReport);
+}
+
+void GuiApplication::startDefaultConversion(const TrackList& tracks)
+{
+    const auto encoders = m_core->audioEncoderRegistry()->availableEncoders();
+    const auto encoder  = std::ranges::find_if(encoders, [](const AudioEncoderInfo& info) {
+        return info.id == QLatin1StringView{ConverterSettings::DefaultEncoderProfileId};
+    });
+    if(encoder == encoders.cend()) {
+        return;
+    }
+
+    StoredConversionPreset preset;
+    preset.name                   = u"[default]"_s;
+    preset.preset.name            = preset.name;
+    preset.preset.encoder.profile = encoder->profile;
+
+    const auto storedProfiles  = ConverterSettings::encoderProfiles();
+    const auto profileOverride = std::ranges::find_if(storedProfiles, [&encoder](const StoredEncoderProfile& stored) {
+        return stored.overridesBuiltIn && stored.baseEncoderId == encoder->id;
+    });
+    if(profileOverride != storedProfiles.cend()) {
+        preset.preset.encoder.profile
+            = ConverterSettings::applyStoredEncoderProfile(std::move(preset.preset.encoder.profile), *profileOverride);
+    }
+
+    startConversionPreset(preset, tracks);
+}
+
+void GuiApplication::startLastUsedConversion(const TrackList& tracks)
+{
+    if(const auto preset = ConverterSettings::lastUsedConversionPreset()) {
+        startConversionPreset(*preset, tracks);
+    }
+}
+
+void GuiApplication::refreshConversionPresetActions()
+{
+    const auto presets = ConverterSettings::conversionPresets();
+
+    std::erase_if(m_conversionPresetActions, [this, &presets](const ConversionPresetAction& presetAction) {
+        const bool removed = std::ranges::none_of(presets, [&presetAction](const StoredConversionPreset& preset) {
+            return preset.preset.id == presetAction.presetId;
+        });
+        if(removed && presetAction.action) {
+            m_actionManager->unregisterAction(presetAction.action, conversionPresetActionId(presetAction.presetId));
+            presetAction.action->deleteLater();
+        }
+        return removed;
+    });
+
+    for(const StoredConversionPreset& preset : presets) {
+        if(preset.preset.id.isEmpty()) {
+            continue;
+        }
+
+        const auto existing
+            = std::ranges::find(m_conversionPresetActions, preset.preset.id, &ConversionPresetAction::presetId);
+        if(existing != m_conversionPresetActions.end()) {
+            existing->action->setText(preset.name);
+            existing->command->setDescription(tr("Convert using preset %1").arg(preset.name));
+            continue;
+        }
+
+        auto* action  = new QAction(preset.name, m_mainWindow.get());
+        const Id id   = conversionPresetActionId(preset.preset.id);
+        auto* command = m_actionManager->registerAction(action, id);
+        command->setCategories({tr("Tracks"), tr("Convert")});
+        command->setDescription(tr("Convert using preset %1").arg(preset.name));
+        command->setAttribute(ProxyAction::UpdateText);
+        command->action()->setShortcutVisibleInContextMenu(true);
+
+        QObject::connect(action, &QAction::triggered, this, [this, presetId = preset.preset.id]() {
+            const auto currentPresets = ConverterSettings::conversionPresets();
+            const auto current        = std::ranges::find(
+                currentPresets, presetId, [](const StoredConversionPreset& stored) { return stored.preset.id; });
+            if(current != currentPresets.cend()) {
+                startConversionPreset(*current, m_selectionController->selectedTracks());
+            }
+        });
+
+        m_conversionPresetActions.push_back({preset.preset.id, action, command});
+    }
+
+    if(m_defaultConversionAction) {
+        const auto encoders = m_core->audioEncoderRegistry()->availableEncoders();
+        m_defaultConversionAction->setEnabled(std::ranges::any_of(encoders, [](const AudioEncoderInfo& encoder) {
+            return encoder.id == QLatin1StringView{ConverterSettings::DefaultEncoderProfileId};
+        }));
+    }
+    if(m_lastUsedConversionAction) {
+        m_lastUsedConversionAction->setEnabled(ConverterSettings::lastUsedConversionPreset().has_value());
+    }
+}
+
+void GuiApplication::setupConvertMenu()
+{
+    auto* convertAction  = new QAction(tr("Converter setup…"), m_mainWindow.get());
+    auto* convertCommand = m_actionManager->registerAction(convertAction, Constants::Actions::Convert);
+    convertCommand->setCategories({tr("Tracks"), tr("Convert")});
+    QObject::connect(convertAction, &QAction::triggered, m_mainWindow.get(), [this]() {
+        if(m_selectionController->hasTracks()) {
+            m_conversionController->showSetup(m_selectionController->selectedTracks());
+        }
+    });
+
+    m_defaultConversionAction = new QAction(tr("Using default settings"), m_mainWindow.get());
+    m_defaultConversionCommand
+        = m_actionManager->registerAction(m_defaultConversionAction, Constants::Actions::ConvertDefault);
+    m_defaultConversionCommand->setCategories({tr("Tracks"), tr("Convert")});
+    m_defaultConversionCommand->setDescription(tr("Convert using default settings"));
+    m_defaultConversionCommand->action()->setShortcutVisibleInContextMenu(true);
+    QObject::connect(m_defaultConversionAction, &QAction::triggered, this,
+                     [this]() { startDefaultConversion(m_selectionController->selectedTracks()); });
+
+    m_lastUsedConversionAction = new QAction(tr("Repeat last conversion"), m_mainWindow.get());
+    m_lastUsedConversionCommand
+        = m_actionManager->registerAction(m_lastUsedConversionAction, Constants::Actions::ConvertLastUsed);
+    m_lastUsedConversionCommand->setCategories({tr("Tracks"), tr("Convert")});
+    m_lastUsedConversionCommand->action()->setShortcutVisibleInContextMenu(true);
+    QObject::connect(m_lastUsedConversionAction, &QAction::triggered, this,
+                     [this]() { startLastUsedConversion(m_selectionController->selectedTracks()); });
+
+    refreshConversionPresetActions();
+    QObject::connect(m_conversionController, &ConversionController::conversionPresetsChanged, this,
+                     &GuiApplication::refreshConversionPresetActions);
+
+    m_selectionController->registerTrackContextDynamicSubmenu(
+        this, TrackContextMenuArea::Track, Constants::Menus::Context::TrackSelection,
+        Constants::Menus::Context::Convert, tr("Convert"),
+        [this](QMenu* menu, const TrackSelection& selection) {
+            const TrackList tracks = selection.tracks;
+            refreshConversionPresetActions();
+
+            menu->addAction(m_defaultConversionCommand->action());
+            menu->addAction(m_lastUsedConversionCommand->action());
+
+            if(!m_conversionPresetActions.empty()) {
+                menu->addSeparator();
+            }
+
+            for(const ConversionPresetAction& presetAction : m_conversionPresetActions) {
+                menu->addAction(presetAction.command->action());
+            }
+
+            menu->addSeparator();
+            QAction* setupAction = menu->addAction(tr("Custom conversion…"));
+            setupAction->setEnabled(!tracks.empty());
+            QObject::connect(setupAction, &QAction::triggered, this,
+                             [this, tracks] { m_conversionController->showSetup(tracks); });
+        },
+        Constants::Menus::Context::TrackFinalSeparator);
 }
 
 void GuiApplication::setupUtilitiesMenu()

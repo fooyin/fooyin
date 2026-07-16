@@ -25,36 +25,26 @@
 
 #include <core/engine/audioformat.h>
 
-#if defined(__GNUG__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#elif defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wold-style-cast"
-#endif
+#include <QLoggingCategory>
 
 extern "C"
 {
 #include <libavcodec/avcodec.h>
 }
 
-#if defined(__GNUG__)
-#pragma GCC diagnostic pop
-#elif defined(__clang__)
-#pragma clang diagnostic pop
-#endif
-
-#include <QLoggingCategory>
-
 #include <memory>
 
 class QString;
 struct AVCodecParameters;
+struct AVCodecContext;
+struct AVAudioFifo;
 struct AVFormatContext;
 struct AVIOContext;
 struct AVPacket;
+struct SwrContext;
 
 #define OLD_CHANNEL_LAYOUT (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(59, 24, 100))
+#define OLD_CODEC_SUPPORTED_CONFIG (LIBAVCODEC_VERSION_MAJOR < 61)
 #define OLD_FRAME (LIBAVUTIL_VERSION_MAJOR < 58)
 
 FYCORE_EXPORT Q_DECLARE_LOGGING_CATEGORY(FFMPEG)
@@ -70,6 +60,18 @@ struct FormatContextDeleter
     void operator()(AVFormatContext* context) const;
 };
 using FormatContextPtr = std::unique_ptr<AVFormatContext, FormatContextDeleter>;
+
+struct OutputFormatContextDeleter
+{
+    void operator()(AVFormatContext* context) const;
+};
+using OutputFormatContextPtr = std::unique_ptr<AVFormatContext, OutputFormatContextDeleter>;
+
+struct CodecContextDeleter
+{
+    void operator()(AVCodecContext* context) const;
+};
+using CodecContextPtr = std::unique_ptr<AVCodecContext, CodecContextDeleter>;
 
 struct FrameDeleter
 {
@@ -90,7 +92,20 @@ struct PacketDeleter
 };
 using PacketPtr = std::unique_ptr<AVPacket, PacketDeleter>;
 
+struct SwrContextDeleter
+{
+    void operator()(SwrContext* context) const;
+};
+using SwrContextPtr = std::unique_ptr<SwrContext, SwrContextDeleter>;
+
+struct AudioFifoDeleter
+{
+    void operator()(AVAudioFifo* fifo) const;
+};
+using AudioFifoPtr = std::unique_ptr<AVAudioFifo, AudioFifoDeleter>;
+
 namespace Fooyin::Utils {
+FYCORE_EXPORT QString ffmpegErrorString(int error);
 FYCORE_EXPORT void printError(int error);
 FYCORE_EXPORT void printError(const QString& error);
 
