@@ -19,10 +19,12 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include <gui/widgets/actiondelegate.h>
 
 namespace Fooyin {
-class DspDelegate : public ActionDelegate
+class FYGUI_EXPORT DspDelegate : public ActionDelegate
 {
     Q_OBJECT
 
@@ -30,19 +32,29 @@ public:
     enum Button
     {
         Remove = Qt::UserRole + 100,
-        Configure
+        Configure,
+        Add,
     };
 
-    explicit DspDelegate(QAbstractItemView* view, QObject* parent = nullptr);
+    enum class Mode : uint8_t
+    {
+        Active,
+        Available,
+    };
+
+    explicit DspDelegate(QAbstractItemView* view, QObject* parent = nullptr, Mode mode = Mode::Active);
 
 Q_SIGNALS:
     void removeClicked(const QModelIndex& index);
     void configureClicked(const QModelIndex& index);
+    void addClicked(const QModelIndex& index);
 
 protected:
     [[nodiscard]] std::vector<ActionButton> buttons(const QModelIndex& index) const override;
 
 private:
     void buttonWasClicked(const QModelIndex& index, int buttonId);
+
+    Mode m_mode;
 };
 } // namespace Fooyin

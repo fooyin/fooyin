@@ -21,9 +21,12 @@
 
 #include "dspmodel.h"
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
-DspDelegate::DspDelegate(QAbstractItemView* view, QObject* parent)
+DspDelegate::DspDelegate(QAbstractItemView* view, QObject* parent, Mode mode)
     : ActionDelegate{view, parent}
+    , m_mode{mode}
 {
     QObject::connect(this, &ActionDelegate::buttonClicked, this, &DspDelegate::buttonWasClicked);
 }
@@ -32,10 +35,15 @@ std::vector<ActionButton> DspDelegate::buttons(const QModelIndex& index) const
 {
     std::vector<ActionButton> btns;
 
-    btns.push_back({Button::Remove, QStringLiteral("X"), tr("Remove")});
+    if(m_mode == Mode::Available) {
+        btns.push_back({.id = Add, .text = u"+"_s, .tooltip = tr("Add")});
+        return btns;
+    }
+
+    btns.push_back({.id = Remove, .text = u"X"_s, .tooltip = tr("Remove")});
 
     if(index.data(DspModel::HasSettings).toBool()) {
-        btns.push_back({Button::Configure, QStringLiteral("…"), tr("Configure")});
+        btns.push_back({.id = Configure, .text = u"…"_s, .tooltip = tr("Configure")});
     }
 
     return btns;
@@ -44,11 +52,14 @@ std::vector<ActionButton> DspDelegate::buttons(const QModelIndex& index) const
 void DspDelegate::buttonWasClicked(const QModelIndex& index, int buttonId)
 {
     switch(buttonId) {
-        case(Button::Remove):
+        case Remove:
             Q_EMIT removeClicked(index);
             break;
-        case(Button::Configure):
+        case Configure:
             Q_EMIT configureClicked(index);
+            break;
+        case Add:
+            Q_EMIT addClicked(index);
             break;
     }
 }
