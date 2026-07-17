@@ -94,6 +94,11 @@ public:
         Q_EMIT readyRead();
     }
 
+    void setResponseHeader(const QByteArray& name, const QByteArray& value)
+    {
+        setRawHeader(name, value);
+    }
+
     void emitFinished()
     {
         Q_EMIT finished();
@@ -140,6 +145,19 @@ std::shared_ptr<FakeNetworkAccessManager> makeFakeNetworkAccessManager()
 {
     return {new FakeNetworkAccessManager{}, [](FakeNetworkAccessManager* manager) { manager->deleteLater(); }};
 }
+
+QByteArray icyStreamData(QByteArrayView audio, QByteArray metadata)
+{
+    static constexpr int IcyMetadataBlockSize = 16;
+
+    const qsizetype blockCount = (metadata.size() + IcyMetadataBlockSize - 1) / IcyMetadataBlockSize;
+    metadata.append(QByteArray((blockCount * IcyMetadataBlockSize) - metadata.size(), '\0'));
+
+    QByteArray data{audio.data(), audio.size()};
+    data.append(static_cast<char>(blockCount));
+    data.append(metadata);
+    return data;
+}
 } // namespace
 
 namespace Fooyin::Testing {
@@ -166,6 +184,69 @@ TEST_F(NetworkStreamDeviceTest, SendsStreamRequestHeaders)
     EXPECT_EQ(QByteArray{"*/*"}, network->lastRequest.rawHeader("Accept"));
     EXPECT_EQ(networkUserAgent(), network->lastRequest.rawHeader("User-Agent"));
     EXPECT_EQ(QByteArray{"1"}, network->lastRequest.rawHeader("Icy-MetaData"));
+}
+
+TEST_F(NetworkStreamDeviceTest, PreservesApostrophesInIcyMetadataFields)
+{
+    auto network = makeFakeNetworkAccessManager();
+    NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
+
+    ASSERT_TRUE(device.open(QIODevice::ReadOnly));
+    ASSERT_FALSE(network->lastReply.isNull());
+
+    network->lastReply->setResponseHeader("icy-metaint", "4");
+    network->lastReply->appendData(icyStreamData("data", "StreamTitle='Kenny G - Don't Make Me Wait for Love';"
+                                                         "StreamUrl='https://radio.example.com/art';"));
+    network->lastReply->emitReadyRead();
+
+    const auto metadata = device.metadata();
+    EXPECT_EQ(u"Kenny G - Don't Make Me Wait for Love"_s, metadata.streamTitle);
+    EXPECT_EQ(u"https://radio.example.com/art"_s, metadata.streamUrl);
+}
+
+TEST_F(NetworkStreamDeviceTest, UnescapesApostrophesInIcyMetadataFields)
+{
+    auto network = makeFakeNetworkAccessManager();
+    NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
+
+    ASSERT_TRUE(device.open(QIODevice::ReadOnly));
+    ASSERT_FALSE(network->lastReply.isNull());
+
+    network->lastReply->setResponseHeader("icy-metaint", "4");
+    network->lastReply->appendData(icyStreamData("data", "StreamTitle='Guns N\\' Roses - Patience';"));
+    network->lastReply->emitReadyRead();
+
+    EXPECT_EQ(u"Guns N' Roses - Patience"_s, device.metadata().streamTitle);
+}
+
+TEST_F(NetworkStreamDeviceTest, MatchesIcyMetadataKeysOnlyAtFieldBoundaries)
+{
+    auto network = makeFakeNetworkAccessManager();
+    NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
+
+    ASSERT_TRUE(device.open(QIODevice::ReadOnly));
+    ASSERT_FALSE(network->lastReply.isNull());
+
+    network->lastReply->setResponseHeader("icy-metaint", "4");
+    network->lastReply->appendData(icyStreamData("data", "NotStreamTitle='wrong'; StreamTitle='Artist - Correct';"));
+    network->lastReply->emitReadyRead();
+
+    EXPECT_EQ(u"Artist - Correct"_s, device.metadata().streamTitle);
+}
+
+TEST_F(NetworkStreamDeviceTest, RejectsUnterminatedIcyMetadataFields)
+{
+    auto network = makeFakeNetworkAccessManager();
+    NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
+
+    ASSERT_TRUE(device.open(QIODevice::ReadOnly));
+    ASSERT_FALSE(network->lastReply.isNull());
+
+    network->lastReply->setResponseHeader("icy-metaint", "4");
+    network->lastReply->appendData(icyStreamData("data", "StreamTitle='unfinished"));
+    network->lastReply->emitReadyRead();
+
+    EXPECT_TRUE(device.metadata().streamTitle.isEmpty());
 }
 
 TEST_F(NetworkStreamDeviceTest, FailsReadsOnNetworkThread)

@@ -111,19 +111,62 @@ QString decodeIcyText(QByteArray value)
 
 QString icyFieldValue(const QString& metadata, const QString& key)
 {
-    const QString prefix  = key + u"='"_s;
-    const qsizetype start = metadata.indexOf(prefix, 0, Qt::CaseInsensitive);
+    const QString prefix = key + u"='"_s;
+
+    qsizetype start{-1};
+    qsizetype searchFrom{0};
+
+    while(true) {
+        const qsizetype candidate = metadata.indexOf(prefix, searchFrom, Qt::CaseInsensitive);
+        if(candidate < 0) {
+            break;
+        }
+
+        qsizetype boundary{candidate};
+        while(boundary > 0 && metadata.at(boundary - 1).isSpace()) {
+            --boundary;
+        }
+
+        if(boundary == 0 || metadata.at(boundary - 1) == ';'_L1) {
+            start = candidate;
+            break;
+        }
+
+        searchFrom = candidate + prefix.size();
+    }
+
     if(start < 0) {
         return {};
     }
 
     const qsizetype valueStart = start + prefix.size();
-    qsizetype valueEnd         = valueStart;
+    qsizetype valueEnd{valueStart};
+    bool foundTerminator{false};
+
     while(valueEnd < metadata.size()) {
-        if(metadata.at(valueEnd) == '\''_L1 && (valueEnd == valueStart || metadata.at(valueEnd - 1) != '\\'_L1)) {
-            break;
+        if(metadata.at(valueEnd) == '\''_L1) {
+            qsizetype precedingBackslashes{0};
+            for(qsizetype index = valueEnd; index > valueStart && metadata.at(index - 1) == '\\'_L1; --index) {
+                ++precedingBackslashes;
+            }
+
+            qsizetype next = valueEnd + 1;
+            while(next < metadata.size() && metadata.at(next).isSpace()) {
+                ++next;
+            }
+
+            const bool escaped        = precedingBackslashes % 2 != 0;
+            const bool endsFieldValue = next == metadata.size() || metadata.at(next) == ';'_L1;
+            if(!escaped && endsFieldValue) {
+                foundTerminator = true;
+                break;
+            }
         }
         ++valueEnd;
+    }
+
+    if(!foundTerminator) {
+        return {};
     }
 
     QString value = metadata.mid(valueStart, valueEnd - valueStart);
@@ -183,9 +226,8 @@ void parseIcyMetadataBlock(NetworkStreamDeviceState& state)
     }
 
     NetworkStreamMetadata metadata{state.icy.metadata};
-    const QString previousTitle = metadata.streamTitle;
-    const QString title         = icyFieldValue(metadataText, u"StreamTitle"_s);
-    const QString url           = icyFieldValue(metadataText, u"StreamUrl"_s);
+    const QString title = icyFieldValue(metadataText, u"StreamTitle"_s);
+    const QString url   = icyFieldValue(metadataText, u"StreamUrl"_s);
 
     if(!title.isEmpty()) {
         metadata.streamTitle = title;
