@@ -354,7 +354,9 @@ void TagEditorItem::applyChanges(const TagEditorField& field)
     m_field = field;
 
     if(m_titleChanged) {
-        m_field.name     = m_changedTitle;
+        m_field.name = m_changedTitle;
+    }
+    if(m_valueChanged) {
         m_values         = m_changedValues;
         m_valueCharCount = std::accumulate(m_values.cbegin(), m_values.cend(), 0,
                                            [](int sum, const QString& str) { return sum + str.length(); });
