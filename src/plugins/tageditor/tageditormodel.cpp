@@ -511,17 +511,18 @@ void TagEditorModel::applyChanges()
                         return tag.second.title() == node.title();
                     });
                     if(fieldIt != p->m_tags.end()) {
-                        auto tagItem      = p->m_tags.extract(fieldIt);
-                        field.scriptField = tagItem.key();
+                        const QString changedTitle = node.changedTitle();
+                        auto tagItem               = p->m_tags.extract(fieldIt);
+                        field.scriptField          = tagItem.key();
                         if(p->updateTrackMetadata(field, {})) {
-                            const QString key = node.changedTitle();
-                            tagItem.key()     = key;
+                            tagItem.key() = changedTitle;
                             p->m_tags.insert(std::move(tagItem));
                         }
+                        field.scriptField = changedTitle;
                     }
                 }
 
-                if(p->updateTrackMetadata(node.field(), node.valueChanged() ? node.changedValue() : node.value(),
+                if(p->updateTrackMetadata(field, node.valueChanged() ? node.changedValue() : node.value(),
                                           node.splitTrackValues())) {
                     node.applyChanges(field);
                     node.setSplitTrackValues(false);
