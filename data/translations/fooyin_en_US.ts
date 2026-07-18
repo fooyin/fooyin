@@ -2869,22 +2869,22 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="49"/>
         <source>DSP</source>
-        <translation type="unfinished">DSP</translation>
+        <translation>DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="98"/>
         <source>DSP Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP Selector</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="140"/>
         <source>Configure…</source>
-        <translation type="unfinished">Configure…</translation>
+        <translation>Configure…</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="158"/>
         <source>Show label</source>
-        <translation type="unfinished">Show label</translation>
+        <translation>Show label</translation>
     </message>
 </context>
 <context>
@@ -3145,7 +3145,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="45"/>
         <source>Reverse</source>
-        <translation type="unfinished">Reverse</translation>
+        <translation>Reverse</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="49"/>
@@ -3159,7 +3159,7 @@ Effects here process the final combined output.</translation>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="53"/>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="102"/>
         <source>Sort</source>
-        <translation type="unfinished">Sort</translation>
+        <translation>Sort</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="73"/>
@@ -4577,17 +4577,17 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterscolumnmodel.cpp" line="161"/>
         <source>Display Script</source>
-        <translation type="unfinished">Display Script</translation>
+        <translation>Display Script</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterscolumnmodel.cpp" line="163"/>
         <source>Sort Script</source>
-        <translation type="unfinished">Sort Script</translation>
+        <translation>Sort Script</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterscolumnmodel.cpp" line="224"/>
         <source>Use display script</source>
-        <translation type="unfinished">Use display script</translation>
+        <translation>Use display script</translation>
     </message>
 </context>
 <context>
@@ -5245,7 +5245,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="318"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="319"/>
@@ -5268,22 +5268,22 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="107"/>
         <source>Auto-detect theme</source>
-        <translation type="unfinished">Auto-detect theme</translation>
+        <translation>Auto-detect theme</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="108"/>
         <source>Light</source>
-        <translation type="unfinished">Light</translation>
+        <translation>Light</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="109"/>
         <source>Dark</source>
-        <translation type="unfinished">Dark</translation>
+        <translation>Dark</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="110"/>
         <source>Use system icons</source>
-        <translation type="unfinished">Use system icons</translation>
+        <translation>Use system icons</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="111"/>
@@ -5333,17 +5333,17 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="131"/>
         <source>Appearance</source>
-        <translation type="unfinished">Appearance</translation>
+        <translation>Appearance</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="134"/>
         <source>Icons</source>
-        <translation type="unfinished">Icons</translation>
+        <translation>Icons</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="145"/>
         <source>Style</source>
-        <translation type="unfinished">Style</translation>
+        <translation>Style</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="150"/>
@@ -5358,7 +5358,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="196"/>
         <source>System default</source>
-        <translation type="unfinished">System default</translation>
+        <translation>System default</translation>
     </message>
 </context>
 <context>
@@ -5490,7 +5490,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="534"/>
         <source>Delete</source>
-        <translation type="unfinished">Delete</translation>
+        <translation>Delete</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="581"/>
@@ -5503,32 +5503,32 @@ Effects here process the final combined output.</translation>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="639"/>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="658"/>
         <source>Layout Name</source>
-        <translation type="unfinished">Layout Name</translation>
+        <translation>Layout Name</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="615"/>
         <source>Delete Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Delete Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="615"/>
         <source>Delete layout &quot;%1&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Delete layout &quot;%1&quot;?</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="639"/>
         <source>Rename Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Rename Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="656"/>
         <source>%1 Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Copy</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="658"/>
         <source>Duplicate Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplicate Layout</translation>
     </message>
 </context>
 <context>
@@ -5725,12 +5725,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/core/network/hlsstreamdevice.cpp" line="490"/>
         <source>Invalid HLS stream.</source>
-        <translation type="unfinished"></translation>
+        <translation>Invalid HLS stream.</translation>
     </message>
     <message>
         <location filename="../../src/core/network/hlsstreamdevice.cpp" line="541"/>
         <source>HLS stream cannot be read from the network thread.</source>
-        <translation type="unfinished"></translation>
+        <translation>HLS stream cannot be read from the network thread.</translation>
     </message>
 </context>
 <context>
@@ -5753,22 +5753,22 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="49"/>
         <source>Switch to imported layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Switch to imported layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="53"/>
         <source>Import Layout</source>
-        <translation type="unfinished">Import Layout</translation>
+        <translation>Import Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="72"/>
         <source>&amp;Import</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Import</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="77"/>
         <source>&amp;Browse…</source>
-        <translation type="unfinished">&amp;Browse…</translation>
+        <translation>&amp;Browse…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="91"/>
@@ -6155,22 +6155,22 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="104"/>
         <source>&amp;Clear layout</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Clear layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="105"/>
         <source>Clear the current layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Clear the current layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="110"/>
         <source>&amp;Reset layout</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Reset layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="111"/>
         <source>Reset the current layout to the built-in default</source>
-        <translation type="unfinished"></translation>
+        <translation>Reset the current layout to the built-in default</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="164"/>
@@ -8060,7 +8060,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/gui/widgets/messagebanner.cpp" line="63"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>Dismiss</translation>
     </message>
 </context>
 <context>
@@ -8134,12 +8134,12 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/core/network/networkstreamdevice.cpp" line="459"/>
         <source>Invalid network stream.</source>
-        <translation type="unfinished"></translation>
+        <translation>Invalid network stream.</translation>
     </message>
     <message>
         <location filename="../../src/core/network/networkstreamdevice.cpp" line="512"/>
         <source>Network stream cannot be read from the network thread.</source>
-        <translation type="unfinished"></translation>
+        <translation>Network stream cannot be read from the network thread.</translation>
     </message>
 </context>
 <context>
@@ -10163,7 +10163,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="469"/>
         <source>Restore deleted playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Restore deleted playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="449"/>
@@ -11069,7 +11069,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/projectm/projectmpresetdialog.cpp" line="39"/>
         <source>Select projectM Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Select projectM Preset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmpresetdialog.cpp" line="45"/>
@@ -11147,32 +11147,32 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="137"/>
         <source>32 x 24</source>
-        <translation type="unfinished"></translation>
+        <translation>32 × 24</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="138"/>
         <source>48 x 36 (default)</source>
-        <translation type="unfinished"></translation>
+        <translation>48 × 36 (default)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="139"/>
         <source>64 x 48</source>
-        <translation type="unfinished"></translation>
+        <translation>64 × 48</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="140"/>
         <source>96 x 72</source>
-        <translation type="unfinished"></translation>
+        <translation>96 × 72</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="141"/>
         <source>128 x 96</source>
-        <translation type="unfinished"></translation>
+        <translation>128 × 96</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="144"/>
         <source>Allow supporting presets to correct shapes when the visualisation is not square</source>
-        <translation type="unfinished"></translation>
+        <translation>Allow supporting presets to correct shapes when the visualization is not square</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="146"/>
@@ -11232,7 +11232,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="177"/>
         <source>Max. frame rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Max frame rate</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="178"/>
@@ -11265,7 +11265,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="50"/>
         <source>&amp;Visualisations</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Visualizations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="53"/>
@@ -11286,7 +11286,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="56"/>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="62"/>
         <source>Visualisations</source>
-        <translation type="unfinished">Visualizations</translation>
+        <translation>Visualizations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="61"/>
@@ -11301,7 +11301,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="89"/>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="670"/>
         <source>Initialising projectM…</source>
-        <translation type="unfinished"></translation>
+        <translation>Initializing projectM…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="368"/>
@@ -11316,17 +11316,17 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="516"/>
         <source>Preset failed to load.</source>
-        <translation type="unfinished"></translation>
+        <translation>Preset failed to load.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="530"/>
         <source>projectM initialisation failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM initialization failed.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="531"/>
         <source>projectM initialisation failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM initialization failed: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="543"/>
@@ -12009,7 +12009,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="36"/>
         <source>Radio Browser Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio Browser Settings</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="39"/>
@@ -12019,12 +12019,12 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="40"/>
         <source>Hide broken stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Hide broken stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="41"/>
         <source>Send clicks to radio-browser.info</source>
-        <translation type="unfinished"></translation>
+        <translation>Send clicks to radio-browser.info</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="42"/>
@@ -12054,7 +12054,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="52"/>
         <source>Use uniform station icon frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Use uniform station icon frames</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="54"/>
@@ -12112,7 +12112,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="81"/>
         <source>Size of the border around each station icon in icon display mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Size of the border around each station icon in icon display mode.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="88"/>
@@ -12122,12 +12122,12 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="91"/>
         <source>Horizontal spacing between stations in icon display mode. Auto uses the view&apos;s default spacing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontal spacing between stations in icon display mode. Auto uses the view&apos;s default spacing.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="95"/>
         <source>Vertical spacing between stations in icon display mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertical spacing between stations in icon display mode.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="97"/>
@@ -12137,7 +12137,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="99"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">Click Behavior</translation>
+        <translation>Click Behavior</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="103"/>
@@ -12162,7 +12162,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="130"/>
         <source>Icon Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Icon Mode</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="135"/>
@@ -12177,12 +12177,12 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="142"/>
         <source>Item border</source>
-        <translation type="unfinished"></translation>
+        <translation>Item border</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="144"/>
         <source>Icon size</source>
-        <translation type="unfinished"></translation>
+        <translation>Icon size</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="146"/>
@@ -12192,7 +12192,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="148"/>
         <source>Gap</source>
-        <translation type="unfinished"></translation>
+        <translation>Gap</translation>
     </message>
 </context>
 <context>
@@ -12200,38 +12200,38 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="70"/>
         <source>countries</source>
-        <translation type="unfinished"></translation>
+        <translation>countries</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="72"/>
         <source>languages</source>
-        <translation type="unfinished"></translation>
+        <translation>languages</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="74"/>
         <source>tags</source>
-        <translation type="unfinished"></translation>
+        <translation>tags</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="76"/>
         <source>codecs</source>
-        <translation type="unfinished"></translation>
+        <translation>codecs</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="79"/>
         <source>categories</source>
-        <translation type="unfinished"></translation>
+        <translation>categories</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="491"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="625"/>
         <source>Station has no stream URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>Station has no stream URL.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="561"/>
         <source>A radio station import is already in progress.</source>
-        <translation type="unfinished"></translation>
+        <translation>A radio station import is already in progress.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="738"/>
@@ -12241,18 +12241,18 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="762"/>
         <source>Failed to load radio browser %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to load radio browser %1: %2</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="827"/>
         <source>Failed to refresh imported station metadata: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to refresh imported station metadata: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="846"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="859"/>
         <source>Station did not resolve to a playable stream.</source>
-        <translation type="unfinished"></translation>
+        <translation>Station did not resolve to a playable stream.</translation>
     </message>
 </context>
 <context>
@@ -12260,12 +12260,12 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserdialog.cpp" line="58"/>
         <source>Radio Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio Browser</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserdialog.cpp" line="76"/>
         <source>My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>My Stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserdialog.cpp" line="77"/>

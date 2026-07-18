@@ -2865,22 +2865,22 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="49"/>
         <source>DSP</source>
-        <translation type="unfinished">数字信号处理</translation>
+        <translation>数字信号处理</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="98"/>
         <source>DSP Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP 选择器</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="140"/>
         <source>Configure…</source>
-        <translation type="unfinished">配置…</translation>
+        <translation>配置…</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="158"/>
         <source>Show label</source>
-        <translation type="unfinished">显示标签</translation>
+        <translation>显示标签</translation>
     </message>
 </context>
 <context>
@@ -8045,7 +8045,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/widgets/messagebanner.cpp" line="63"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>关闭</translation>
     </message>
 </context>
 <context>
@@ -11050,12 +11050,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmpresetdialog.cpp" line="39"/>
         <source>Select projectM Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>选择 projectM 预设</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmpresetdialog.cpp" line="45"/>
         <source>Filter presets</source>
-        <translation type="unfinished"></translation>
+        <translation>筛选预设</translation>
     </message>
 </context>
 <context>
@@ -11063,182 +11063,182 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="47"/>
         <source> s</source>
-        <translation type="unfinished"></translation>
+        <translation> s</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="97"/>
         <source>projectM Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM 设置</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="100"/>
         <source>Browse…</source>
-        <translation type="unfinished"></translation>
+        <translation>浏览…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="101"/>
         <source>Scan for presets recursively</source>
-        <translation type="unfinished"></translation>
+        <translation>递归扫描预设</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="104"/>
         <source>Correct aspect ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>正确的宽高比</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="107"/>
         <source>Enable hard cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>启用硬剪切</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="113"/>
         <source>Preset library</source>
-        <translation type="unfinished"></translation>
+        <translation>预设库</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="115"/>
         <source>Soft cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>软剪切</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="117"/>
         <source>Hard cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>硬剪切</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="119"/>
         <source>Rendering</source>
-        <translation type="unfinished">渲染</translation>
+        <translation>正在渲染</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="123"/>
         <source>Folder containing .milk presets</source>
-        <translation type="unfinished"></translation>
+        <translation>包含 .milk 预设的文件夹</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="130"/>
         <source>Maximum rendering frame rate in frames per second</source>
-        <translation type="unfinished"></translation>
+        <translation>每秒帧数中的最大渲染帧率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="136"/>
         <source>Resolution used to evaluate preset equations; higher values improve detail but require more processing</source>
-        <translation type="unfinished"></translation>
+        <translation>用于评估预设方程的分辨率；较高的值可以改善细节，但需要更多的处理</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="137"/>
         <source>32 x 24</source>
-        <translation type="unfinished"></translation>
+        <translation>32 x 24</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="138"/>
         <source>48 x 36 (default)</source>
-        <translation type="unfinished"></translation>
+        <translation>48 x 36 (默认)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="139"/>
         <source>64 x 48</source>
-        <translation type="unfinished"></translation>
+        <translation>64 x 48</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="140"/>
         <source>96 x 72</source>
-        <translation type="unfinished"></translation>
+        <translation>96 x 72</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="141"/>
         <source>128 x 96</source>
-        <translation type="unfinished"></translation>
+        <translation>128 x 96</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="144"/>
         <source>Allow supporting presets to correct shapes when the visualisation is not square</source>
-        <translation type="unfinished"></translation>
+        <translation>允许支持的预设在可视化不为正方形时修正形状</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="146"/>
         <source>Maximum time a preset is shown before projectM starts a smooth transition to the next preset</source>
-        <translation type="unfinished"></translation>
+        <translation>在 projectM 开始平滑切换到下一个预设之前，预设显示的最大时间</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="147"/>
         <source>Time taken to blend smoothly from one preset to the next</source>
-        <translation type="unfinished"></translation>
+        <translation>从一个预设状态平滑过渡到下一个预设状态所需的时间</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="149"/>
         <source>Allow strong beats to switch presets immediately instead of using a smooth transition</source>
-        <translation type="unfinished"></translation>
+        <translation>允许强节拍立即切换预设，而不是使用平滑过渡</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="150"/>
         <source>Minimum time a preset must be shown before a beat can trigger a hard cut</source>
-        <translation type="unfinished"></translation>
+        <translation>在触发硬切时，必须先显示预设的最短时间</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="152"/>
         <source>Volume-change threshold for hard cuts; higher values require a stronger beat</source>
-        <translation type="unfinished"></translation>
+        <translation>硬剪切的音量变化阈值；数值越高，需要更强的节奏感</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="153"/>
         <source>Sensitivity of projectM&apos;s beat detection</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM 的节拍检测灵敏度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="167"/>
         <source>Time between auto preset changes</source>
-        <translation type="unfinished"></translation>
+        <translation>自动预设更改之间的间隔时间</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="168"/>
         <source>Auto preset blend time</source>
-        <translation type="unfinished"></translation>
+        <translation>自动预设混合时间</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="172"/>
         <source>Average time between hard cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>硬剪之间的平均时间</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="173"/>
         <source>Hard cut sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>硬剪切敏感度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="174"/>
         <source>Beat sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>节拍灵敏度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="177"/>
         <source>Max. frame rate</source>
-        <translation type="unfinished"></translation>
+        <translation>最大帧速率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="178"/>
         <source>Mesh size</source>
-        <translation type="unfinished"></translation>
+        <translation>网格大小</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="238"/>
         <source>Select Preset Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>选择预设文件夹</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="251"/>
         <source>No user preset library is configured.</source>
-        <translation type="unfinished"></translation>
+        <translation>未配置用户预设库。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="255"/>
         <source>Folder does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>文件夹不存在。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="263"/>
         <source>%1 presets found.</source>
-        <translation type="unfinished"></translation>
+        <translation>找到 %1 个预设。</translation>
     </message>
 </context>
 <context>
@@ -11246,34 +11246,34 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="50"/>
         <source>&amp;Visualisations</source>
-        <translation type="unfinished"></translation>
+        <translation>可视化(&amp;V)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="53"/>
         <source>project&amp;M</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM(&amp;M)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="54"/>
         <source>Open projectM in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>在新窗口中打开 projectM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="56"/>
         <source>View</source>
-        <translation type="unfinished">视图</translation>
+        <translation>视图</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="56"/>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="62"/>
         <source>Visualisations</source>
-        <translation type="unfinished">可视化</translation>
+        <translation>可视化</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="61"/>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="69"/>
         <source>projectM</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM</translation>
     </message>
 </context>
 <context>
@@ -11282,42 +11282,42 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="89"/>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="670"/>
         <source>Initialising projectM…</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化 projectM…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="368"/>
         <source>Preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>预设 %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="508"/>
         <source>No projectM preset folders are configured.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有配置 projectM 预设文件夹。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="516"/>
         <source>Preset failed to load.</source>
-        <translation type="unfinished"></translation>
+        <translation>预设加载失败。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="530"/>
         <source>projectM initialisation failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM 初始化失败。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="531"/>
         <source>projectM initialisation failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM 初始化失败：%1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="543"/>
         <source>Using presets from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 %1 中的预设</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="544"/>
         <source>Using presets from %1 folders</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 %1 文件夹中的预设</translation>
     </message>
 </context>
 <context>
@@ -11326,103 +11326,103 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="153"/>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="553"/>
         <source>&amp;Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>全屏(&amp;F)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="154"/>
         <source>&amp;Select Preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>选择预设(&amp;S)…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="155"/>
         <source>&amp;Previous Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>上一个预设(&amp;P)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="156"/>
         <source>&amp;Next Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>下一个预设(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="157"/>
         <source>&amp;Random Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>随机预设(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="158"/>
         <source>&amp;Lock Current Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定当前预设(&amp;L)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="159"/>
         <source>&amp;Shuffle Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>打乱预设(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="160"/>
         <source>Remember &amp;Current Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>记住当前预设(&amp;C)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="238"/>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="663"/>
         <source>projectM</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="508"/>
         <source>Toggle projectM full screen</source>
-        <translation type="unfinished"></translation>
+        <translation>切换 projectM 全屏</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="512"/>
         <source>Select a projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>选择一个 projectM 预设</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="516"/>
         <source>Switch to the previous projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>切换到上一个 projectM 预设</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="522"/>
         <source>Switch to the next projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>切换到下一个 projectM 预设</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="529"/>
         <source>Switch to a random projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>切换到随机 projectM 预设</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="533"/>
         <source>Lock the current projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定当前 projectM 预设</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="537"/>
         <source>Shuffle projectM presets</source>
-        <translation type="unfinished"></translation>
+        <translation>打乱 projectM 预设</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="541"/>
         <source>Remember the current projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>记住当前 projectM 预设</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="553"/>
         <source>E&amp;xit Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>退出全屏(&amp;X)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="584"/>
         <source>Preset &amp;Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>预设时长(&amp;D)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="588"/>
         <source>%1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 秒</translation>
     </message>
 </context>
 <context>
@@ -17616,7 +17616,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="289"/>
         <source>DSP Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP 选择器</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="325"/>
@@ -17780,22 +17780,22 @@ Set to 0 to choose automatically from the remote buffer length.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="557"/>
         <source>Automatically resample unsupported output rates</source>
-        <translation type="unfinished"></translation>
+        <translation>自动重采样不支持的输出速率</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="558"/>
         <source>Resample audio when the selected output device uses a different sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>重新取样音频时所选的输出设备使用不同的采样率</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="564"/>
         <source>Automatic resampling preference</source>
-        <translation type="unfinished"></translation>
+        <translation>自动重采样首选项</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="565"/>
         <source>Preferred resampler DSP names, in order. Other registered resamplers are used as fallbacks.</source>
-        <translation type="unfinished"></translation>
+        <translation>首选的重采样 DSP 名称，按顺序排列。其他已注册的重采样器作为备用选项使用。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="581"/>

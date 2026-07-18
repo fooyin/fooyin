@@ -2869,22 +2869,22 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="49"/>
         <source>DSP</source>
-        <translation type="unfinished">DSP</translation>
+        <translation>DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="98"/>
         <source>DSP Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP-Auswahl</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="140"/>
         <source>Configure…</source>
-        <translation type="unfinished">Konfigurieren…</translation>
+        <translation>Konfigurieren…</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="158"/>
         <source>Show label</source>
-        <translation type="unfinished">Zeige Beschriftung</translation>
+        <translation>Zeige Beschriftung</translation>
     </message>
 </context>
 <context>
@@ -8060,7 +8060,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/widgets/messagebanner.cpp" line="63"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwerfen</translation>
     </message>
 </context>
 <context>
@@ -9546,7 +9546,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="198"/>
         <source>Display Script</source>
-        <translation>Wiedergabeskript</translation>
+        <translation>Anzeigeskript</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="200"/>
@@ -9598,7 +9598,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="44"/>
         <source>Track</source>
-        <translation>Titel</translation>
+        <translation>Titelnummer</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="45"/>
@@ -10329,7 +10329,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="268"/>
         <source>Side</source>
-        <translation>Seite</translation>
+        <translation>Seitlich</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="281"/>
@@ -11069,12 +11069,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/projectm/projectmpresetdialog.cpp" line="39"/>
         <source>Select projectM Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle projectM-Voreinstellung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmpresetdialog.cpp" line="45"/>
         <source>Filter presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtere Voreinstellungen</translation>
     </message>
 </context>
 <context>
@@ -11082,182 +11082,182 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="47"/>
         <source> s</source>
-        <translation type="unfinished"></translation>
+        <translation> s</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="97"/>
         <source>projectM Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen: projectM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="100"/>
         <source>Browse…</source>
-        <translation type="unfinished"></translation>
+        <translation>Durchsuchen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="101"/>
         <source>Scan for presets recursively</source>
-        <translation type="unfinished"></translation>
+        <translation>Scanne rekursiv nach Voreinstellungen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="104"/>
         <source>Correct aspect ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>Korrigiere Seitenverhältnis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="107"/>
         <source>Enable hard cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktiviere harte Übergänge</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="113"/>
         <source>Preset library</source>
-        <translation type="unfinished"></translation>
+        <translation>Voreinstellungs-Bibliothek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="115"/>
         <source>Soft cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Weiche Übergänge</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="117"/>
         <source>Hard cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Harte Übergänge</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="119"/>
         <source>Rendering</source>
-        <translation type="unfinished">Rendering</translation>
+        <translation>Rendering</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="123"/>
         <source>Folder containing .milk presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordner, der .milk-Voreinstellungen enthält</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="130"/>
         <source>Maximum rendering frame rate in frames per second</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Render-Bildrate in Bildern pro Sekunde</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="136"/>
         <source>Resolution used to evaluate preset equations; higher values improve detail but require more processing</source>
-        <translation type="unfinished"></translation>
+        <translation>Auflösung, mit der Voreinstellungs-Gleichungen gelöst werden; höhere Werte verbessern die Detailtreue, benötigen aber mehr Leistung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="137"/>
         <source>32 x 24</source>
-        <translation type="unfinished"></translation>
+        <translation>32 x 24</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="138"/>
         <source>48 x 36 (default)</source>
-        <translation type="unfinished"></translation>
+        <translation>48 x 36 (Standard)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="139"/>
         <source>64 x 48</source>
-        <translation type="unfinished"></translation>
+        <translation>64 x 48</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="140"/>
         <source>96 x 72</source>
-        <translation type="unfinished"></translation>
+        <translation>96 x 72</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="141"/>
         <source>128 x 96</source>
-        <translation type="unfinished"></translation>
+        <translation>128 x 96</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="144"/>
         <source>Allow supporting presets to correct shapes when the visualisation is not square</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugins dürfen Formen korrigieren, wenn die Visualisierung nicht quadratisch ist, sofern sie es unterstützen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="146"/>
         <source>Maximum time a preset is shown before projectM starts a smooth transition to the next preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Zeit, die eine Voreinstellung gezeigt wird, bevor projectM einen weichen Übergang zur nächsten Voreinstellung startet</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="147"/>
         <source>Time taken to blend smoothly from one preset to the next</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeit die es dauert, weich von einer Voreinstellung zur nächsten überzublenden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="149"/>
         <source>Allow strong beats to switch presets immediately instead of using a smooth transition</source>
-        <translation type="unfinished"></translation>
+        <translation>Erlaube es starken Beats, Voreinstellungen sofort zu wechseln, anstatt einen weichen Übergang zu verwenden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="150"/>
         <source>Minimum time a preset must be shown before a beat can trigger a hard cut</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimale Zeit, die eine Voreinstellunge gezeigt werden muss, bevor ein Beat einen harten Übergang auslösen darf</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="152"/>
         <source>Volume-change threshold for hard cuts; higher values require a stronger beat</source>
-        <translation type="unfinished"></translation>
+        <translation>Lautstärken-Änderungs-Schwelle für harte Übergänge; höhere Werte erfordern einen stärkeren Beat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="153"/>
         <source>Sensitivity of projectM&apos;s beat detection</source>
-        <translation type="unfinished"></translation>
+        <translation>Empfindlichkeit von projectM&apos;s Beat-Erkennung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="167"/>
         <source>Time between auto preset changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeit zwischen automatischen Voreinstellungs-Wechseln</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="168"/>
         <source>Auto preset blend time</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatische Voreinstellungs-Überblendzeit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="172"/>
         <source>Average time between hard cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Durchschnittliche Zeit zwischen harten Übergängen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="173"/>
         <source>Hard cut sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Harter-Übergang-Empfindlichkeit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="174"/>
         <source>Beat sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Beat-Empfindlichkeit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="177"/>
         <source>Max. frame rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Max. Bildrate</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="178"/>
         <source>Mesh size</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesh-Größe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="238"/>
         <source>Select Preset Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle Voreinstellungs-Ordner</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="251"/>
         <source>No user preset library is configured.</source>
-        <translation type="unfinished"></translation>
+        <translation>Es ist keine Bibliothek für Benutzer-Voreinstellungen konfiguriert.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="255"/>
         <source>Folder does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordner existiert nicht.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="263"/>
         <source>%1 presets found.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Voreinstellungen gefunden.</translation>
     </message>
 </context>
 <context>
@@ -11265,34 +11265,34 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="50"/>
         <source>&amp;Visualisations</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Visualisierungen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="53"/>
         <source>project&amp;M</source>
-        <translation type="unfinished"></translation>
+        <translation>project&amp;M</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="54"/>
         <source>Open projectM in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne projectM in einem eigenen Fenster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="56"/>
         <source>View</source>
-        <translation type="unfinished">Ansicht</translation>
+        <translation>Ansicht</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="56"/>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="62"/>
         <source>Visualisations</source>
-        <translation type="unfinished">Visualisierungen</translation>
+        <translation>Visualisierungen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="61"/>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="69"/>
         <source>projectM</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM</translation>
     </message>
 </context>
 <context>
@@ -11301,42 +11301,42 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="89"/>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="670"/>
         <source>Initialising projectM…</source>
-        <translation type="unfinished"></translation>
+        <translation>Initialisiere projectM…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="368"/>
         <source>Preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Voreinstellung %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="508"/>
         <source>No projectM preset folders are configured.</source>
-        <translation type="unfinished"></translation>
+        <translation>Es sind keine projectM-Voreinstellungs-Ordner konfiguriert.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="516"/>
         <source>Preset failed to load.</source>
-        <translation type="unfinished"></translation>
+        <translation>Voreinstellung konnte nicht geladen werden.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="530"/>
         <source>projectM initialisation failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM-Initialisierung fehlgeschlagen.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="531"/>
         <source>projectM initialisation failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM-Initialisierung fehlgeschlagen: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="543"/>
         <source>Using presets from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende Voreinstellungen aus %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="544"/>
         <source>Using presets from %1 folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende Voreinstellungen aus %1 Ordnern</translation>
     </message>
 </context>
 <context>
@@ -11345,103 +11345,103 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="153"/>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="553"/>
         <source>&amp;Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Voll&amp;bild</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="154"/>
         <source>&amp;Select Preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Wähle Voreinstellung…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="155"/>
         <source>&amp;Previous Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>V&amp;orherige Voreinstellung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="156"/>
         <source>&amp;Next Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nächste Voreinstellung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="157"/>
         <source>&amp;Random Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zufällige Voreinstellung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="158"/>
         <source>&amp;Lock Current Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sperre aktuelle Voreinstellung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="159"/>
         <source>&amp;Shuffle Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Mische Voreinstellungen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="160"/>
         <source>Remember &amp;Current Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Merke &amp;aktuelle Voreinstellung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="238"/>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="663"/>
         <source>projectM</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="508"/>
         <source>Toggle projectM full screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Schalte Vollbild für projectM um</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="512"/>
         <source>Select a projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle eine projectM-Voreinstellung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="516"/>
         <source>Switch to the previous projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Wechsle zur vorherigen projectM-Voreinstellung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="522"/>
         <source>Switch to the next projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Wechsle zur nächsten projectM-Voreinstellung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="529"/>
         <source>Switch to a random projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Wechsle zu einer zufälligen projectM-Voreinstellung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="533"/>
         <source>Lock the current projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Sperre die aktuelle projectM-Voreinstellung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="537"/>
         <source>Shuffle projectM presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Mische projectM-Voreinstellungen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="541"/>
         <source>Remember the current projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Merke die aktuelle projectM-Voreinstellung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="553"/>
         <source>E&amp;xit Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Vollbild verlassen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="584"/>
         <source>Preset &amp;Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Voreinstellungs-&amp;Dauer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="588"/>
         <source>%1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Sekunden</translation>
     </message>
 </context>
 <context>
@@ -13932,7 +13932,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="83"/>
         <source>Resample only these sample rates</source>
-        <translation>Nur diese Abtastraten neu abtasten</translation>
+        <translation>Nur diese Abtastraten resamplen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="85"/>
@@ -15340,7 +15340,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="106"/>
         <source>Resample only these sample rates</source>
-        <translation>Nur diese Abtastraten neu abtasten</translation>
+        <translation>Nur diese Abtastraten resamplen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="108"/>
@@ -17642,7 +17642,7 @@ Höhere Supersampling-Werte funktionieren am besten mit höherer Sampleanzahl.</
     <message>
         <location filename="../../src/gui/widgets.cpp" line="289"/>
         <source>DSP Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP-Auswahl</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="325"/>
@@ -17806,22 +17806,22 @@ Setze auf 0 damit es automatisch anhand der entfernten Puffergröße eingestellt
     <message>
         <location filename="../../src/gui/widgets.cpp" line="557"/>
         <source>Automatically resample unsupported output rates</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht unterstützte Abtastraten automatisch resamplen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="558"/>
         <source>Resample audio when the selected output device uses a different sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio resamplen, wenn das gewählte Ausgabegerät eine andere Abtastrate verwendet</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="564"/>
         <source>Automatic resampling preference</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellung für automatisches Resampling</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="565"/>
         <source>Preferred resampler DSP names, in order. Other registered resamplers are used as fallbacks.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bezeichnungen der bevorzugten Resampler-DSPs, in Reihenfolge ihrer Priorität. Andere registrierte Resampler werden als Ausweichmöglichkeiten verwendet.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="581"/>
