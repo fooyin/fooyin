@@ -97,10 +97,13 @@ ProjectMView::ProjectMView()
 {
     QSurfaceFormat format;
     format.setRenderableType(QSurfaceFormat::OpenGL);
-    format.setProfile(QSurfaceFormat::CompatibilityProfile);
-    format.setVersion(2, 1);
+    format.setVersion(3, 3);
+    format.setProfile(QSurfaceFormat::CoreProfile);
+    format.setDepthBufferSize(24);
+    format.setStencilBufferSize(8);
+    format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
     format.setSwapInterval(1);
-    setFormat(format);
+    QSurfaceFormat::setDefaultFormat(format);
 }
 
 ProjectMView::~ProjectMView()
@@ -379,22 +382,13 @@ void ProjectMView::initializeGL()
     m_initialised = true;
     initializeOpenGLFunctions();
 
-    glShadeModel(GL_SMOOTH);
     glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
     const QSize viewportSize = framebufferSize(width(), height());
     glViewport(0, 0, viewportSize.width(), viewportSize.height());
-    glMatrixMode(GL_TEXTURE);
-    glLoadIdentity();
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
     glDrawBuffer(GL_BACK);
     glReadBuffer(GL_BACK);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_LINE_SMOOTH);
-    glEnable(GL_POINT_SMOOTH);
 
     createProjectM();
 }
@@ -412,7 +406,7 @@ void ProjectMView::paintGL()
     }
     processQueuedGLOperations();
     feedPendingPcm();
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if(m_projectM) {
         m_projectM->renderFrame();

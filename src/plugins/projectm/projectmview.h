@@ -25,7 +25,7 @@
 #include <core/engine/visualisationservice.h>
 
 #include <QBasicTimer>
-#include <QOpenGLFunctions_2_1>
+#include <QOpenGLFunctions>
 #include <QOpenGLWindow>
 #include <QSize>
 #include <QStringList>
@@ -39,7 +39,7 @@ namespace Fooyin::ProjectM {
 class ProjectMInstance;
 
 class ProjectMView : public QOpenGLWindow,
-                     protected QOpenGLFunctions_2_1
+                     protected QOpenGLFunctions
 {
     Q_OBJECT
 
