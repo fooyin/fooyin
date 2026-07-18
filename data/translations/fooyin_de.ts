@@ -2013,7 +2013,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
 <context>
     <name>Fooyin::ColourButton</name>
     <message>
-        <location filename="../../src/gui/widgets/colourbutton.cpp" line="75"/>
+        <location filename="../../src/gui/widgets/colourbutton.cpp" line="204"/>
         <source>Select Colour</source>
         <translation>Farbe auswählen</translation>
     </message>
@@ -2903,12 +2903,17 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
 <context>
     <name>Fooyin::DspDelegate</name>
     <message>
-        <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="35"/>
+        <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="39"/>
+        <source>Add</source>
+        <translation type="unfinished">Hinzufügen</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="43"/>
         <source>Remove</source>
         <translation>Entfernen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="38"/>
+        <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="46"/>
         <source>Configure</source>
         <translation>Konfigurieren</translation>
     </message>
@@ -4606,7 +4611,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
 <context>
     <name>Fooyin::FontButton</name>
     <message>
-        <location filename="../../src/gui/widgets/fontbutton.cpp" line="71"/>
+        <location filename="../../src/gui/widgets/fontbutton.cpp" line="149"/>
         <source>Select Font</source>
         <translation>Schriftart auswählen</translation>
     </message>
@@ -5075,77 +5080,77 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
 <context>
     <name>Fooyin::GuiColoursPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="95"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="96"/>
         <source>&amp;Save</source>
         <translation>&amp;Speichern</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="96"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="97"/>
         <source>&amp;Delete</source>
         <translation>&amp;Löschen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="97"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="98"/>
         <source>System default</source>
         <translation>System-Voreinstellung</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="94"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="95"/>
         <source>&amp;New</source>
         <translation>&amp;Neu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="116"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="117"/>
         <source>Background</source>
         <translation>Hintergrund</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="117"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="118"/>
         <source>Foreground</source>
         <translation>Vordergrund</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="118"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="119"/>
         <source>Foreground (Bright)</source>
         <translation>Vordergrund (Hell)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="119"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="120"/>
         <source>Text</source>
         <translation>Text</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="120"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="121"/>
         <source>Placeholder text</source>
         <translation>Platzhaltertext</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="121"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="122"/>
         <source>Base</source>
         <translation>Basis</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="122"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="123"/>
         <source>Base (Alternate)</source>
         <translation>Basis (Alternative)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="123"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="124"/>
         <source>Highlight</source>
         <translation>Hervorhebung</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="124"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="125"/>
         <source>Highlighted text</source>
         <translation>Hervorgehobener Text</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="125"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="126"/>
         <source>Button (Background)</source>
         <translation>Schaltfläche (Hintergrund)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="126"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="127"/>
         <source>Button (Foreground)</source>
         <translation>Schaltfläche (Vordergrund)</translation>
     </message>
@@ -5220,22 +5225,22 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <translation>Schatten</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="169"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="171"/>
         <source>Basic Colours</source>
         <translation>Grundfarben</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="170"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="172"/>
         <source>Advanced Colours</source>
         <translation>Erweiterte Farben</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="171"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="173"/>
         <source>Fonts</source>
         <translation>Schriftarten</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="371"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="362"/>
         <source>New Theme</source>
         <translation>Neues Thema</translation>
     </message>
@@ -5534,17 +5539,17 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
 <context>
     <name>Fooyin::GuiThemesPage</name>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="468"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="457"/>
         <source>Themes</source>
         <translation>Themen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="469"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="458"/>
         <source>Interface</source>
         <translation>Benutzeroberfläche</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guithemespage.cpp" line="469"/>
+        <location filename="../../src/gui/settings/guithemespage.cpp" line="458"/>
         <source>Colours &amp; Fonts</source>
         <translation>Farben &amp; Schriftarten</translation>
     </message>
@@ -7230,9 +7235,9 @@ Diese Einstellung verbessert die Kompatibilität mit anderen Abspielprogrammen, 
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="53"/>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="151"/>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="202"/>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="246"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="140"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="192"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="234"/>
         <source>Synced</source>
         <translation>Synchronisiert</translation>
     </message>
@@ -7267,231 +7272,231 @@ Diese Einstellung verbessert die Kompatibilität mit anderen Abspielprogrammen, 
         <translation>Hintergrundfarbe</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="68"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="67"/>
         <source>Line colour</source>
         <translation>Farbe der Zeilen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="70"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="68"/>
         <source>Unplayed line colour</source>
         <translation>Farbe der ungespielten Zeilen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="72"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="69"/>
         <source>Played line colour</source>
         <translation>Farbe der gespielten Zeilen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="74"/>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="76"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="70"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="71"/>
         <source>Current line colour</source>
         <translation>Farbe der aktuellen Zeile</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="78"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="72"/>
         <source>Current word colour</source>
         <translation>Farbe des aktuellen Worts</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="80"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="73"/>
         <source>Line font</source>
         <translation>Schriftart der Zeile</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="82"/>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="84"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="74"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="75"/>
         <source>Current line font</source>
         <translation>Schriftart der aktuellen Zeile</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="86"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="76"/>
         <source>Current word font</source>
         <translation>Schriftart des aktuellen Worts</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="90"/>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="131"/>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="199"/>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="241"/>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="271"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="79"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="120"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="190"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="231"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="254"/>
         <source>General</source>
         <translation>Allgemein</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="93"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="82"/>
         <source>This will only function with synced lyrics.</source>
         <translation>Das funktioniert nur mit synchronisiertem Songtext.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="95"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="84"/>
         <source>This will be displayed if lyrics for the current track can&apos;t be found.</source>
         <translation>Dies wird angezeigt, wenn der Songtext des aktuellen Titels nicht gefunden werden kann.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="100"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="89"/>
         <source>No lyrics script</source>
         <translation>Beschreibung ohne Liedtext</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="105"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="94"/>
         <source>Scrolling</source>
         <translation>Bildlauf</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="111"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="100"/>
         <source>Scroll Mode</source>
         <translation>Bildlauf-Modus</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="113"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="102"/>
         <source>No automatic scrolling will take place</source>
         <translation>Es erfolgt kein automatischer Bildlauf</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="114"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="103"/>
         <source>Synced lyrics will be scrolled</source>
         <translation>Synchronisierte Songtexte werden gescrollt</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="115"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="104"/>
         <source>All lyrics will be scrolled</source>
         <translation>Alle Songtexte werden gescrollt</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="134"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="123"/>
         <source>Align to centre</source>
         <translation>Mittig ausrichten</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="135"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="124"/>
         <source>Align to left</source>
         <translation>Linksbündig ausrichten</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="136"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="125"/>
         <source>Align to right</source>
         <translation>Rechtsbündig ausrichten</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="143"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="132"/>
         <source>Line spacing</source>
         <translation>Zeilenabstand</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="145"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="134"/>
         <source>Alignment</source>
         <translation>Ausrichtung</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="193"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="182"/>
         <source>Fade</source>
         <translation>Ein- und Ausblenden</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="195"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="184"/>
         <source>Progress</source>
         <translation>Fortschritt</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="212"/>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="226"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="199"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="213"/>
         <source>Off</source>
         <translation>Aus</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="213"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="200"/>
         <source>Synced only</source>
         <translation>Nur Synchronisierte</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="214"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="201"/>
         <source>Scrolling lyrics</source>
         <translation>Scrollende Songtexte</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="215"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="202"/>
         <source>All lyrics</source>
         <translation>Alle Songtexte</translation>
     </message>
     <message>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="208"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="221"/>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="234"/>
         <source>Apply to</source>
         <translation>Anwenden auf</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="149"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="138"/>
         <source>Margins</source>
         <translation>Ränder</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="160"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="149"/>
         <source>Left</source>
         <translation>Links</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="162"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="151"/>
         <source>Right</source>
         <translation>Rechts</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="164"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="153"/>
         <source>Top</source>
         <translation>Oben</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="166"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="155"/>
         <source>Bottom</source>
         <translation>Unten</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="169"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="158"/>
         <source>Top and bottom margins apply to unsynced lyrics, and to synced lyrics when centring is disabled for that edge.</source>
         <translation>Der obere und untere Rand gelten für alle unsynchronisierten Songtexte und die synchronisierten Songtexte, die Zentrierung für den entsprechenden Rand deaktiviert haben.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="179"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="168"/>
         <source>These options control whether the first and last synced lines are centred in view.</source>
         <translation>Diese Einstellungen bestimmen, ob die erste und letzte synchronisierte Zeile in der Ansicht zentriert werden.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="191"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="180"/>
         <source>Fonts</source>
         <translation>Schriftarten</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="205"/>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="253"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="194"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="238"/>
         <source>Synced Words</source>
         <translation>Synchronisierte Wörter</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="227"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="214"/>
         <source>Synced lines</source>
         <translation>Synchronisierte Zeilen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="228"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="215"/>
         <source>Synced words</source>
         <translation>Synchronisierte Wörter</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="229"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="216"/>
         <source>Synced lines and words</source>
         <translation>Synchronisierte Zeilen und Wörter</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="231"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="218"/>
         <source>Controls whether playback progress is shown for line-synced lyrics, word-synced lyrics, or both.</source>
         <translation>Bestimmt, ob der Wiedergabe-Fortschritt für Zeilen-synchronisierte Songtexte, Wort-synchronisierte Songtexte oder beide angezeigt wird.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="269"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="252"/>
         <source>Layout</source>
         <translation>Layout</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="270"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="253"/>
         <source>Style</source>
         <translation>Stil</translation>
     </message>
@@ -7775,12 +7780,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         <translation>Suche nach Songtext</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="209"/>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="205"/>
         <source>Searching…</source>
         <translation>Suche…</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="242"/>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="238"/>
         <source>%Ln result(s)</source>
         <translation>
             <numerusform>%Ln Ergebnis</numerusform>
@@ -7788,12 +7793,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="245"/>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="241"/>
         <source>No lyrics found</source>
         <translation>Keine Songtexte gefunden</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="313"/>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="309"/>
         <source>Saved lyrics from %1</source>
         <translation>Songtexte von %1 gespeichert</translation>
     </message>
@@ -8132,12 +8137,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
 <context>
     <name>Fooyin::NetworkStreamDevice</name>
     <message>
-        <location filename="../../src/core/network/networkstreamdevice.cpp" line="459"/>
+        <location filename="../../src/core/network/networkstreamdevice.cpp" line="501"/>
         <source>Invalid network stream.</source>
         <translation>Ungültiger Netzwerk-Stream.</translation>
     </message>
     <message>
-        <location filename="../../src/core/network/networkstreamdevice.cpp" line="512"/>
+        <location filename="../../src/core/network/networkstreamdevice.cpp" line="554"/>
         <source>Network stream cannot be read from the network thread.</source>
         <translation>Netzwerk-Stream konnte nicht vom Netzwerk-Thread gelesen werden.</translation>
     </message>
@@ -8451,6 +8456,160 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="83"/>
         <source>Sinc</source>
         <translation>Sinc</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Oscilloscope::OscilloscopeConfigDialog</name>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="39"/>
+        <source>Oscilloscope Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="44"/>
+        <source>Show zero line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="45"/>
+        <source>Custom colours</source>
+        <translation type="unfinished">Benutzerdefinierte Farben</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="46"/>
+        <source>Background colour</source>
+        <translation type="unfinished">Hintergrundfarbe</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="47"/>
+        <source>Waveform colour</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="48"/>
+        <source>Zero line colour</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="50"/>
+        <source>General</source>
+        <translation type="unfinished">Allgemein</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="60"/>
+        <source>Time span of audio displayed across the oscilloscope</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="69"/>
+        <source>Vertical amplitude scale; high values may overlap stereo channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="73"/>
+        <source>%1 fps</source>
+        <translation type="unfinished">%1 FPS</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="75"/>
+        <source>Maximum waveform refresh rate; lower values can reduce motion blending</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="77"/>
+        <source>Stereo</source>
+        <translation type="unfinished">Stereo</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="78"/>
+        <source>Mono</source>
+        <translation type="unfinished">Mono</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="79"/>
+        <source>Display separate stereo channels or combine them into mono</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="82"/>
+        <source>Curve duration (ms)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="84"/>
+        <source>Zoom (%)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="86"/>
+        <source>Update FPS</source>
+        <translation type="unfinished">Aktualisierungs-FPS</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="88"/>
+        <source>Downmix mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Oscilloscope::OscilloscopePlugin</name>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="45"/>
+        <source>Oscilloscope</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="46"/>
+        <source>Visualisations</source>
+        <translation type="unfinished">Visualisierungen</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Oscilloscope::OscilloscopeWidget</name>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="85"/>
+        <source>Oscilloscope</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="202"/>
+        <source>Show zero line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="211"/>
+        <source>Downmix mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="227"/>
+        <source>Stereo</source>
+        <translation type="unfinished">Stereo</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="228"/>
+        <source>Mono</source>
+        <translation type="unfinished">Mono</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="230"/>
+        <source>Curve duration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="235"/>
+        <source>%1 ms</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="246"/>
+        <source>Zoom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="251"/>
+        <source>%1%</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10195,34 +10354,34 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         <translation>Text (abspielend)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="61"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="60"/>
         <source>Playing background</source>
         <translation>Hintergrund (abspielend)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="64"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="62"/>
         <source>Scripts</source>
         <translation>Skripte</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="68"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="66"/>
         <source>Available variables: &lt;code&gt;%node_name%&lt;/code&gt;, &lt;code&gt;%is_group%&lt;/code&gt;, &lt;code&gt;%count%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;</source>
         <translation>Verfügbare Variablen: &lt;code&gt;%node_name%&lt;/code&gt;, &lt;code&gt;%is_group%&lt;/code&gt;, &lt;code&gt;%count%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="75"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="73"/>
         <source>Left</source>
         <extracomment>Refers to the left script field.</extracomment>
         <translation>Links</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="78"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="76"/>
         <source>Right</source>
         <extracomment>Refers to the right script field.</extracomment>
         <translation>Rechts</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="83"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="81"/>
         <source>Colours</source>
         <translation>Farben</translation>
     </message>
@@ -10629,42 +10788,42 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="950"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="948"/>
         <source>&amp;Play</source>
         <translation>&amp;Abspielen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1061"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1059"/>
         <source>Add to another playlist</source>
         <translation>Zu einer anderen Wiedergabeliste hinzufügen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1212"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1210"/>
         <source>Use custom layout for this playlist</source>
         <translation>Verwende benutzerdefiniertes Layout für diese Wiedergabeliste</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1213"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1211"/>
         <source>Use a separate view layout instead of the default</source>
         <translation>Verwende ein gesondertes Anzeige-Layout anstelle des Standards</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1669"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1663"/>
         <source>Writing metadata…</source>
         <translation>Schreibe Metadaten…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1669"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1663"/>
         <source>Abort</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1675"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1669"/>
         <source>Writing Metadata</source>
         <translation>Metadaten werden geschrieben</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1676"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1670"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Schreibe Metadaten in %Ln Titel…</numerusform>
@@ -10672,73 +10831,73 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1771"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1764"/>
         <source>Start playback of the selected track</source>
         <translation>Starte Wiedergabe des ausgewählten Titels</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1780"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1773"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1784"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1777"/>
         <source>Randomise the current playlist</source>
         <translation>Die aktuelle Wiedergabeliste randomisieren</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1787"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1780"/>
         <source>Reverse the current playlist</source>
         <translation>Kehre die Reihenfolge der aktuellen Wiedergabeliste um</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1805"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1798"/>
         <source>Select &amp;all</source>
         <translation>Wähle &amp;alle aus</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1806"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1799"/>
         <source>Select all tracks in the current playlist</source>
         <translation>Wähle alle Titel in der aktuellen Wiedergabeliste aus</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1135"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1133"/>
         <source>Reset columns to default</source>
         <translation>Setze Spalten auf Standard zurück</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1161"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1159"/>
         <source>Sort the current playlist using this preset</source>
         <translation>Sortiere die aktuelle Wiedergabeliste unter Verwendung dieser Voreinstellung</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1200"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1198"/>
         <source>Single-column mode</source>
         <translation>Ein-Spalten-Modus</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1313"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1311"/>
         <source>Playlist settings…</source>
         <translation>Einstellungen: Wiedergabeliste</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1241"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1239"/>
         <source>Presets</source>
         <translation>Voreinstellungen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1272"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1270"/>
         <source>Columns</source>
         <translation>Spalten</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1260"/>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1298"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1258"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1296"/>
         <source>More…</source>
         <translation>Mehr…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="319"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="318"/>
         <source>Playlist</source>
         <translation>Wiedergabeliste</translation>
     </message>
@@ -11254,10 +11413,13 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         <source>Folder does not exist.</source>
         <translation>Ordner existiert nicht.</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="263"/>
-        <source>%1 presets found.</source>
-        <translation>%1 Voreinstellungen gefunden.</translation>
+        <source>%Ln preset(s) found.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -11299,7 +11461,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <name>Fooyin::ProjectM::ProjectMView</name>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="89"/>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="670"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="671"/>
         <source>Initialising projectM…</source>
         <translation>Initialisiere projectM…</translation>
     </message>
@@ -11329,14 +11491,17 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         <translation>projectM-Initialisierung fehlgeschlagen: %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="543"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="544"/>
         <source>Using presets from %1</source>
         <translation>Verwende Voreinstellungen aus %1</translation>
     </message>
-    <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="544"/>
-        <source>Using presets from %1 folders</source>
-        <translation>Verwende Voreinstellungen aus %1 Ordnern</translation>
+    <message numerus="yes">
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="545"/>
+        <source>Using presets from %Ln folder(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -14041,78 +14206,78 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         <translation>Standard</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="68"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="67"/>
         <source>Text</source>
         <translation>Text</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="70"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="68"/>
         <source>Background</source>
         <translation>Hintergrund</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="72"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="69"/>
         <source>Links</source>
         <translation>Hyperlinks</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="80"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="76"/>
         <source>Format</source>
         <translation>Format</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="81"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="77"/>
         <source>Appearance</source>
         <translation>Aussehen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="83"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="79"/>
         <source>Left</source>
         <translation>Links</translation>
     </message>
     <message>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="80"/>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="84"/>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="88"/>
         <source>Centre</source>
         <translation>Zentriert</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="85"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="81"/>
         <source>Right</source>
         <translation>Rechts</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="87"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="83"/>
         <source>Top</source>
         <translation>Oben</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="89"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="85"/>
         <source>Bottom</source>
         <translation>Unten</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="91"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="87"/>
         <source>Alignment</source>
         <translation>Ausrichtung</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="94"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="90"/>
         <source>Horizontal</source>
         <translation>Horizontal</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="96"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="92"/>
         <source>Vertical</source>
         <translation>Vertikal</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="100"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="96"/>
         <source>Font</source>
         <translation>Schriftart</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="107"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="102"/>
         <source>Colours</source>
         <translation>Farben</translation>
     </message>
@@ -14584,17 +14749,17 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
 <context>
     <name>Fooyin::SearchPage</name>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="236"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="226"/>
         <source>General</source>
         <translation>Allgemein</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="237"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="227"/>
         <source>Library</source>
         <translation>Bibliothek</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="237"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="227"/>
         <source>Searching</source>
         <translation>Suchen</translation>
     </message>
@@ -14602,107 +14767,107 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
 <context>
     <name>Fooyin::SearchPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="75"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="73"/>
         <source>Clear search string when successful</source>
         <translation>Lösche Suchtext bei Erfolg</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="76"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="74"/>
         <source>Autosearch delay</source>
         <translation>Verzögerung der automatischen Suche</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="78"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="76"/>
         <source>Append search string to the playlist name</source>
         <translation>Hänge Suchtext an den Namen der Wiedergabeliste an</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="79"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="77"/>
         <source>Switch focus to playlist on successful search</source>
         <translation>Ändere bei erfolgreicher Suche den Fokus auf die Wiedergabeliste</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="80"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="78"/>
         <source>Close quick search when successful</source>
         <translation>Schließe Schnellsuche bei Erfolg</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="83"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="81"/>
         <source>Error background</source>
         <translation>Fehler-Hintergrund</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="85"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="82"/>
         <source>Error foreground</source>
         <translation>Fehler-Vordergrund</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="88"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="84"/>
         <source>Search Matching</source>
         <translation>Suchmuster</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="91"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="87"/>
         <source>Search</source>
         <translation>Suche</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="95"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="91"/>
         <source>Very fast</source>
         <translation>Sehr schnell</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="96"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="92"/>
         <source>Fast</source>
         <translation>Schnell</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="97"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="93"/>
         <source>Medium</source>
         <translation>Mittelschnell</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="98"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="94"/>
         <source>Slow</source>
         <translation>Langsam</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="100"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="96"/>
         <source>Match beginnings of words</source>
         <translation>Nur Wortanfänge suchen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="101"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="97"/>
         <source>Match anywhere</source>
         <translation>Überall suchen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="104"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="100"/>
         <source>Search mode</source>
         <translation>Suchmodus</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="106"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="102"/>
         <source>Search script</source>
         <translation>Such-Skript</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="109"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="105"/>
         <source>These settings are used for plain text searches, not query expressions.</source>
         <translation>Diese Einstellungen werden für die Klartextsuche verwendet, nicht für Suchausdrücke.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="116"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="112"/>
         <source>Only applies when autosearch is disabled.</source>
         <translation>Wird nur angewandt, wenn die automatische Suche deaktiviert ist.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="125"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="120"/>
         <source>Results Playlist</source>
         <translation>Ergebnis-Wiedergabeliste</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="129"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="124"/>
         <source>Playlist name</source>
         <translation>Wiedergabelistenname</translation>
     </message>
@@ -15372,444 +15537,634 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     </message>
 </context>
 <context>
+    <name>Fooyin::Spectrogram::SpectrogramConfigDialog</name>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="36"/>
+        <source>Spectrogram Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="37"/>
+        <source>Use logarithmic frequency scale</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="38"/>
+        <source>Clear on track change</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="48"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="121"/>
+        <source>General</source>
+        <translation type="unfinished">Allgemein</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="55"/>
+        <source>Unchanged</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="56"/>
+        <source>Mono</source>
+        <translation type="unfinished">Mono</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="57"/>
+        <source>Front Only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="58"/>
+        <source>Back Only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="60"/>
+        <source>Scrolling</source>
+        <translation type="unfinished">Bildlauf</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="61"/>
+        <source>Stationary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="63"/>
+        <source>Hann</source>
+        <translation type="unfinished">Hann</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="64"/>
+        <source>Blackman-Harris</source>
+        <translation type="unfinished">Blackman-Harris</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="66"/>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="70"/>
+        <source>Vertical space between the left and right channel spectrograms.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="75"/>
+        <source>Channels</source>
+        <translation type="unfinished">Kanäle</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="77"/>
+        <source>Style</source>
+        <translation type="unfinished">Stil</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="81"/>
+        <source>Analysis</source>
+        <translation type="unfinished">Analyse</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="83"/>
+        <source>FFT size</source>
+        <translation type="unfinished">FFT-Größe</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="85"/>
+        <source>Window function</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="89"/>
+        <source>Scale</source>
+        <translation type="unfinished">Skalierung</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="96"/>
+        <source>Minimum level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="98"/>
+        <source>Maximum level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="100"/>
+        <source>Channel spacing</source>
+        <translation type="unfinished">Kanalabstand</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="122"/>
+        <source>Colours</source>
+        <translation type="unfinished">Farben</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Spectrogram::SpectrogramPlugin</name>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="42"/>
+        <source>Spectrogram</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="43"/>
+        <source>Visualisations</source>
+        <translation type="unfinished">Visualisierungen</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Spectrogram::SpectrogramWidget</name>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="550"/>
+        <source>Use logarithmic frequency scale</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="551"/>
+        <source>Clear on track change</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="555"/>
+        <source>Channels</source>
+        <translation type="unfinished">Kanäle</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="569"/>
+        <source>Unchanged</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="570"/>
+        <source>Mono</source>
+        <translation type="unfinished">Mono</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="571"/>
+        <source>Front Only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="572"/>
+        <source>Back Only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="574"/>
+        <source>Style</source>
+        <translation type="unfinished">Stil</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="588"/>
+        <source>Scrolling</source>
+        <translation type="unfinished">Bildlauf</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="589"/>
+        <source>Stationary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="591"/>
+        <source>FFT size</source>
+        <translation type="unfinished">FFT-Größe</translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::Spectrum::SpectrumConfigDialog</name>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="152"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="143"/>
         <source>Spectrum Settings</source>
         <translation>Einstellungen: Spektrum</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="164"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="155"/>
         <source>Amplitudes</source>
         <translation>Ausschlag</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="169"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="160"/>
         <source>Peaks</source>
         <translation>Spitzenwerte</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="176"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="167"/>
         <source>Top labels</source>
         <translation>Beschriftungen oben</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="177"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="168"/>
         <source>Bottom labels</source>
         <translation>Beschriftungen unten</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="178"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="169"/>
         <source>Left labels</source>
         <translation>Beschriftungen links</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="179"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="170"/>
         <source>Right labels</source>
         <translation>Beschriftungen rechts</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="180"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="417"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="171"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="185"/>
         <source>Horizontal gridlines</source>
         <translation>Horizontale Gitterlinien</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="181"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="418"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="172"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="186"/>
         <source>Vertical gridlines</source>
         <translation>Vertikale Gitterlinien</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="182"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="421"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="173"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="188"/>
         <source>White keys</source>
         <translation>Weiße Tasten</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="183"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="422"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="174"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="189"/>
         <source>Black keys</source>
         <translation>Schwarze Tasten</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="184"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="175"/>
         <source>Tooltip</source>
         <translation>Tooltip</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="185"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="176"/>
         <source>Fill spectrum</source>
         <translation>Spektrum füllen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="186"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="177"/>
         <source>Interpolate</source>
         <translation>Interpolieren</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="188"/>
-        <source>Custom colours</source>
-        <translation>Benutzerdefinierte Farben</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="199"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="191"/>
         <source>Scale</source>
         <translation>Skalierung</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="201"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="193"/>
         <source>Analysis</source>
         <translation>Analyse</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="205"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="197"/>
         <source>Axes</source>
         <translation>Achsen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="207"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="472"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="199"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="476"/>
         <source>Display</source>
         <translation>Anzeige</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="248"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="240"/>
         <source>%1 fps</source>
         <translation>%1 FPS</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="255"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="247"/>
         <source>Blackman-Harris</source>
         <translation>Blackman-Harris</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="256"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="248"/>
         <source>Hann</source>
         <translation>Hann</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="257"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="249"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="259"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="251"/>
         <source>Frequencies</source>
         <translation>Frequenzen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="260"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="252"/>
         <source>Notes</source>
         <translation>Noten</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="261"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="424"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="253"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="426"/>
         <source>Bars</source>
         <translation>Balken</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="262"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="254"/>
         <source>Curve</source>
         <translation>Kurve</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="264"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="256"/>
         <source>Choose whether bands are spaced by frequency or by musical note</source>
         <translation>Wähle ob Bänder durch Frequenzen oder Musiknoten getrennt werden</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="265"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="257"/>
         <source>Lowest frequency shown</source>
         <translation>Niedrigste anzuzeigende Frequenz</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="266"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="258"/>
         <source>Highest frequency</source>
         <translation>Höchste Frequenz</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="267"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="259"/>
         <source>Lowest note shown</source>
         <translation>Niedrigste anzuzeigende Note</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="268"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="260"/>
         <source>Highest note shown</source>
         <translation>Höchste anzuzeigende Note</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="269"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="261"/>
         <source>Signal level mapped to the bottom of the spectrum</source>
         <translation>Signallevel, unten am Spektrum abgebildet</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="270"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="262"/>
         <source>Signal level mapped to the top of the spectrum</source>
         <translation>Signallevel, oben im Spektrum abgebildet</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="271"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="263"/>
         <source>Number of frequency bands to draw</source>
         <translation>Anzahl an anzuzeigenden Frequenzbändern</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="272"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="264"/>
         <source>Number of samples analysed per spectrum frame; higher values improve frequency detail but respond more slowly</source>
         <translation>Wie viele Samples pro Spektrum-Bild analysiert werden; höhere Werte erhöhen den Detailgrad, könnten aber langsamer reagieren</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="274"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="266"/>
         <source>Window applied before FFT analysis</source>
         <translation>Fenster vor der FFT-Analyse anwenden</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="275"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="267"/>
         <source>Reference frequency for A4</source>
         <translation>Referenzfrequenz für a¹</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="276"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="268"/>
         <source>Shift note labels and note-based bands by semitones</source>
         <translation>Verschiebe Notenbeschriftungen und notenbasierte Bänder um Halbtöne</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="277"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="269"/>
         <source>Enable smoothing for falling bar levels</source>
         <translation>Aktiviere Glättung für fallende Balkenpegel</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="278"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="270"/>
         <source>How long a raised bar level is held before it starts falling</source>
         <translation>Wie lange ein gehobener Balkenpegel gehalten wird, bevor er zu fallen beginnt</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="279"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="271"/>
         <source>How quickly bar levels fall after the hold time</source>
         <translation>Wie schnell Balkenpegel nach der Haltezeit fallen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="280"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="272"/>
         <source>Show peak markers above the current bar levels</source>
         <translation>Zeige Spitzenwert-Markierungen über den aktuellen Balkenpegeln</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="281"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="273"/>
         <source>How long each peak marker is held before it starts falling</source>
         <translation>Wie lange jeder Spitzenwert-Markierungen gehalten wird, bis er zu fallen anfängt</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="282"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="274"/>
         <source>How quickly peak markers fall after the hold time</source>
         <translation>Wie schnell Spitzenwert-Markierungen nach der Haltezeit fallen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="283"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="275"/>
         <source>Maximum spectrum refresh rate</source>
         <translation>Maximale Aktualisierungsrate des Spektrums</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="284"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="276"/>
         <source>Highlight white piano-key note ranges behind the spectrum</source>
         <translation>Hebe Notenbereich der weißen Klaviertasten hinter dem Spektrum hervor</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="285"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="277"/>
         <source>Highlight black piano-key note ranges behind the spectrum</source>
         <translation>Hebe Notenbereich der schwarzen Klaviertasten hinter dem Spektrum hervor</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="286"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="278"/>
         <source>Show frequency or note and level when hovering over the spectrum</source>
         <translation>Zeige die Frequenzen oder Noten und den Pegel beim Zeigen auf das Spektrum</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="287"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="279"/>
         <source>Fill the spectrum area instead of drawing only the outline</source>
         <translation>Fülle den Spektrum-Bereich, anstatt nur die Umrandungen zu zeigen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="288"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="280"/>
         <source>Smooth low-frequency bands when several bands map to the same FFT bin</source>
         <translation>Glätte Bänder im Niederfrequenzbereich, wenn mehrere Bänder durch die FFT demselben Frequenzanteil zugeordnet werden</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="289"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="281"/>
         <source>Horizontal gap between adjacent bars</source>
         <translation>Horizontale Lücke zwischen angrenzenden Balken</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="290"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="282"/>
         <source>Split each bar into this many vertical segments</source>
         <translation>Teile jeden Balken in so viele vertikale Abschnitte</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="291"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="283"/>
         <source>Vertical gap between bar segments</source>
         <translation>Vertikaler Abstand zwischen Balkenabschnitten</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="292"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="284"/>
         <source>Choose whether to draw separate bars or a continuous curve</source>
         <translation>Wähle, ob einzelne Balken oder eine durchgehende Kurve gezeichnet werden soll</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="293"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="285"/>
         <source>Font used for spectrum axis labels</source>
         <translation>Schriftart für die Achsenbeschriftung</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="294"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="286"/>
         <source>Colour gradient used for bars and filled curves</source>
         <translation>Farbverlauf für Balken und gefüllten Kurven</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="295"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="287"/>
         <source>Colour used for peak markers</source>
         <translation>Farbe für Spitzenwert-Markierungen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="296"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="288"/>
         <source>Colour used for octave gridlines in note mode</source>
         <translation>Farbe für Oktav-Gitterlinien im Notenmodus</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="328"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="320"/>
         <source>Frequency or note range covered by the spectrum</source>
         <translation>Frequenz oder Notenbereich, der vom Spektrum abgedeckt wird</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="333"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="325"/>
         <source>Decibel range mapped to the spectrum height</source>
         <translation>Dezibel-Bereich, der in der Höhe des Spektrums abgebildet wird</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="341"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="333"/>
         <source>Axis</source>
         <translation>Achse</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="342"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="334"/>
         <source>Range</source>
         <translation>Bereich</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="343"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="335"/>
         <source>Amplitude</source>
         <translation>Amplitude</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="344"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="336"/>
         <source>Bands</source>
         <translation>Bänder</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="347"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="339"/>
         <source>FFT size</source>
         <translation>FFT-Größe</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="348"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="340"/>
         <source>Window</source>
         <translation>Fenster</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="349"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="341"/>
         <source>Pitch (A4)</source>
         <translation>Tonhöhe (a¹)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="350"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="342"/>
         <source>Transpose</source>
         <translation>Transponieren</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="371"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="376"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="363"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="368"/>
         <source>Hold time</source>
         <translation>Haltezeit</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="372"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="377"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="364"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="369"/>
         <source>Falloff</source>
         <translation>Abfall</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="394"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="392"/>
         <source>Update FPS</source>
         <translation>Aktualisierungs-FPS</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="395"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="393"/>
         <source>Bar spacing</source>
         <translation>Balkenabstand</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="396"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="394"/>
         <source>Sections</source>
         <translation>Abschnitte</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="397"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="395"/>
         <source>Section spacing</source>
         <translation>Abschnittsabstand</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="398"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="396"/>
         <source>Style</source>
         <translation>Stil</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="399"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="178"/>
         <source>Axis font</source>
         <translation>Achsen-Schriftart</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="402"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="473"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="179"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="477"/>
         <source>Colours</source>
         <translation>Farben</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="413"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="471"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="415"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="475"/>
         <source>General</source>
         <translation>Allgemein</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="414"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="181"/>
         <source>Text colour</source>
         <translation>Textfarbe</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="415"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="182"/>
         <source>Background colour</source>
         <translation>Hintergrundfarbe</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="416"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="418"/>
         <source>Grid</source>
         <translation>Gitter</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="419"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="187"/>
         <source>Octave gridlines</source>
         <translation>Oktav-Gitterlinien</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="420"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="422"/>
         <source>Keys</source>
         <translation>Noten</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="425"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="180"/>
         <source>Bar gradient</source>
         <translation>Balken-Farbverlauf</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="426"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="184"/>
         <source>Peaks colour</source>
         <translation>Spitzenwert-Farbe</translation>
     </message>
@@ -16441,7 +16796,7 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
 <context>
     <name>Fooyin::TagEditor::TagEditorModel</name>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditormodel.cpp" line="644"/>
+        <location filename="../../src/plugins/tageditor/tageditormodel.cpp" line="645"/>
         <source>Multiple values. Choose a rating to apply it to all selected tracks.</source>
         <translation>Mehrere Werte. Eine Bewertung auswählen, um sie auf alle ausgewählten Titel anzuwenden.</translation>
     </message>
@@ -16932,23 +17287,23 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
         <translation>Benutzerdefinierte Farben</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="78"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="79"/>
         <source>Display</source>
         <translation>Anzeige</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="83"/>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="96"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="84"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="97"/>
         <source>Falloff</source>
         <translation>Abfall</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="137"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="57"/>
         <source>Bar gradient</source>
         <translation>Balken-Farbverlauf</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="158"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="161"/>
         <source>General</source>
         <translation>Allgemein</translation>
     </message>
@@ -16968,67 +17323,67 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
         <translation>Spitzenwerte</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="76"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="77"/>
         <source>%1 fps</source>
         <translation>%1 FPS</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="85"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="86"/>
         <source>Refresh rate</source>
         <translation>Aktualisierungsrate</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="94"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="95"/>
         <source>Hold time</source>
         <translation>Haltezeit</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="100"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="101"/>
         <source>Dimension</source>
         <translation>Abmessungen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="114"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="115"/>
         <source>Channel spacing</source>
         <translation>Kanalabstand</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="116"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="117"/>
         <source>Bar size</source>
         <translation>Balkengröße</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="118"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="119"/>
         <source>Bar spacing</source>
         <translation>Balkenabstand</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="121"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="122"/>
         <source>Sections</source>
         <translation>Abschnitte</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="123"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="124"/>
         <source>Section spacing</source>
         <translation>Abschnittsabstand</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="131"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="58"/>
         <source>Background colour</source>
         <translation>Hintergrundfarbe</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="133"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="59"/>
         <source>Peak colour</source>
         <translation>Spitzenwertfarbe</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="135"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="60"/>
         <source>Legend colour</source>
         <translation>Legendenfarbe</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="159"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="162"/>
         <source>Colours</source>
         <translation>Farben</translation>
     </message>
@@ -17186,7 +17541,7 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="118"/>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="222"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="221"/>
         <source>Cursor</source>
         <translation>Fortschrittsmarker</translation>
     </message>
@@ -17297,62 +17652,62 @@ Supersampling ist auf Balkendicke 1 px und Balkenlücke 0 px ausgelegt; andere E
         <translation>Mittellücke</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="198"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="197"/>
         <source>Unplayed</source>
         <translation>Ungespielt</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="199"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="198"/>
         <source>Played</source>
         <translation>Gespielt</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="200"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="199"/>
         <source>Border</source>
         <translation>Umrandung</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="201"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="200"/>
         <source>Background</source>
         <translation>Hintergrund</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="204"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="203"/>
         <source>Max</source>
         <translation>Max.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="208"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="207"/>
         <source>Min</source>
         <translation>Min.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="212"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="211"/>
         <source>RMS Max</source>
         <translation>QMW Max.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="216"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="215"/>
         <source>RMS Min</source>
         <translation>QMW Min.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="220"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="219"/>
         <source>Playing</source>
         <translation>Wiedergabe</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="221"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="220"/>
         <source>Seeking</source>
         <translation>Spulen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="229"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="228"/>
         <source>Cache</source>
         <translation>Cache</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="231"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="230"/>
         <source>Number of samples (per channel) to use for waveform data.
 Higher values produce a more accurate and detailed waveform, but use more disk space in the cache.
 Higher supersampling values work best with higher sample counts.</source>
@@ -17361,7 +17716,7 @@ Höhere Werte erzeugen genauere und detailliertere Wellenformen, belegen aber me
 Höhere Supersampling-Werte funktionieren am besten mit höherer Sampleanzahl.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="235"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="234"/>
         <source>Number of samples</source>
         <translation>Sampleanzahl</translation>
     </message>
@@ -18471,7 +18826,7 @@ Zwischenwert-Bewertungen werden auf eins, zwei, drei, vier oder fünf Sterne ger
         <translation>Tagging</translation>
     </message>
     <message>
-        <location filename="../../src/core/network/networkstreamdevice.cpp" line="380"/>
+        <location filename="../../src/core/network/networkstreamdevice.cpp" line="422"/>
         <source>Failed to queue network request.</source>
         <translation>Konnte Netzwerkanfrage nicht einreihen.</translation>
     </message>

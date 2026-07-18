@@ -137,7 +137,7 @@
 <context>
     <name>Fooyin::Lyrics::LyricsSearchDialog</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="242"/>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="238"/>
         <source>%Ln result(s)</source>
         <translation>
             <numerusform>%Ln result</numerusform>
@@ -178,11 +178,33 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1676"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1670"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
             <numerusform>Writing metadata to %Ln tracks…</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::ProjectM::ProjectMConfigDialog</name>
+    <message numerus="yes">
+        <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="263"/>
+        <source>%Ln preset(s) found.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::ProjectM::ProjectMView</name>
+    <message numerus="yes">
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="545"/>
+        <source>Using presets from %Ln folder(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
 </context>
