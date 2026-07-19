@@ -2905,7 +2905,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="39"/>
         <source>Add</source>
-        <translation type="unfinished">Hinzufügen</translation>
+        <translation>Hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="43"/>
@@ -8463,92 +8463,92 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="39"/>
         <source>Oscilloscope Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen: Oszilloskop</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="44"/>
         <source>Show zero line</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Nulllinie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="45"/>
         <source>Custom colours</source>
-        <translation type="unfinished">Benutzerdefinierte Farben</translation>
+        <translation>Benutzerdefinierte Farben</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="46"/>
         <source>Background colour</source>
-        <translation type="unfinished">Hintergrundfarbe</translation>
+        <translation>Hintergrundfarbe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="47"/>
         <source>Waveform colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Wellenform-Farbe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="48"/>
         <source>Zero line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Nulllinien-Farbe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="50"/>
         <source>General</source>
-        <translation type="unfinished">Allgemein</translation>
+        <translation>Allgemein</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="60"/>
         <source>Time span of audio displayed across the oscilloscope</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitspanne, für die Audio im Oszilloskop angezeigt wird</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="69"/>
         <source>Vertical amplitude scale; high values may overlap stereo channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikale Amplitudenskalierung; hohe Werte könnten zu überlappenden Stereokanälen führen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="73"/>
         <source>%1 fps</source>
-        <translation type="unfinished">%1 FPS</translation>
+        <translation>%1 FPS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="75"/>
         <source>Maximum waveform refresh rate; lower values can reduce motion blending</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Wellenform-Aktualisierungsrate; niedrige Werte können Bewegungsüberblendung verringern</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="77"/>
         <source>Stereo</source>
-        <translation type="unfinished">Stereo</translation>
+        <translation>Stereo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="78"/>
         <source>Mono</source>
-        <translation type="unfinished">Mono</translation>
+        <translation>Mono</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="79"/>
         <source>Display separate stereo channels or combine them into mono</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige separate Stereokanäle an oder kombiniere sie in einen Monokanal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="82"/>
         <source>Curve duration (ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kurvendauer (ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="84"/>
         <source>Zoom (%)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vergrößerung (%)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="86"/>
         <source>Update FPS</source>
-        <translation type="unfinished">Aktualisierungs-FPS</translation>
+        <translation>Aktualisierungs-FPS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="88"/>
         <source>Downmix mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Downmix-Modus</translation>
     </message>
 </context>
 <context>
@@ -8556,12 +8556,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="45"/>
         <source>Oscilloscope</source>
-        <translation type="unfinished"></translation>
+        <translation>Oszilloskop</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="46"/>
         <source>Visualisations</source>
-        <translation type="unfinished">Visualisierungen</translation>
+        <translation>Visualisierungen</translation>
     </message>
 </context>
 <context>
@@ -8569,47 +8569,47 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="85"/>
         <source>Oscilloscope</source>
-        <translation type="unfinished"></translation>
+        <translation>Oszilloskop</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="202"/>
         <source>Show zero line</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Nulllinie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="211"/>
         <source>Downmix mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Downmix-Modus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="227"/>
         <source>Stereo</source>
-        <translation type="unfinished">Stereo</translation>
+        <translation>Stereo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="228"/>
         <source>Mono</source>
-        <translation type="unfinished">Mono</translation>
+        <translation>Mono</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="230"/>
         <source>Curve duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Kurvendauer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="235"/>
         <source>%1 ms</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ms</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="246"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Vergrößerung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="251"/>
         <source>%1%</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 %</translation>
     </message>
 </context>
 <context>
@@ -11416,9 +11416,9 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message numerus="yes">
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="263"/>
         <source>%Ln preset(s) found.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln Voreinstellung gefunden.</numerusform>
+            <numerusform>%Ln Voreinstellungen gefunden.</numerusform>
         </translation>
     </message>
 </context>
@@ -11498,9 +11498,9 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message numerus="yes">
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="545"/>
         <source>Using presets from %Ln folder(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Verwende Voreinstellungen aus %Ln Ordner</numerusform>
+            <numerusform>Verwende Voreinstellungen aus %Ln Ordnern</numerusform>
         </translation>
     </message>
 </context>
@@ -15541,33 +15541,33 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="36"/>
         <source>Spectrogram Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen: Spektrogramm</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="37"/>
         <source>Use logarithmic frequency scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende logarithmische Frequenzskala</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="38"/>
         <source>Clear on track change</source>
-        <translation type="unfinished"></translation>
+        <translation>Leere bei Titelwechsel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="48"/>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="121"/>
         <source>General</source>
-        <translation type="unfinished">Allgemein</translation>
+        <translation>Allgemein</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="55"/>
         <source>Unchanged</source>
-        <translation type="unfinished"></translation>
+        <translation>Unverändert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="56"/>
         <source>Mono</source>
-        <translation type="unfinished">Mono</translation>
+        <translation>Mono</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="57"/>
@@ -15582,7 +15582,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="60"/>
         <source>Scrolling</source>
-        <translation type="unfinished">Bildlauf</translation>
+        <translation>Bildlauf</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="61"/>
@@ -15592,12 +15592,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="63"/>
         <source>Hann</source>
-        <translation type="unfinished">Hann</translation>
+        <translation>Hann</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="64"/>
         <source>Blackman-Harris</source>
-        <translation type="unfinished">Blackman-Harris</translation>
+        <translation>Blackman-Harris</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="66"/>
@@ -15607,37 +15607,37 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="70"/>
         <source>Vertical space between the left and right channel spectrograms.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikaler Abstand zwischen den Spektrogrammen für den linken und rechten Kanal.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="75"/>
         <source>Channels</source>
-        <translation type="unfinished">Kanäle</translation>
+        <translation>Kanäle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="77"/>
         <source>Style</source>
-        <translation type="unfinished">Stil</translation>
+        <translation>Stil</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="81"/>
         <source>Analysis</source>
-        <translation type="unfinished">Analyse</translation>
+        <translation>Analyse</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="83"/>
         <source>FFT size</source>
-        <translation type="unfinished">FFT-Größe</translation>
+        <translation>FFT-Größe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="85"/>
         <source>Window function</source>
-        <translation type="unfinished"></translation>
+        <translation>Fensterfunktion</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="89"/>
         <source>Scale</source>
-        <translation type="unfinished">Skalierung</translation>
+        <translation>Skalierung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="96"/>
@@ -15652,12 +15652,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="100"/>
         <source>Channel spacing</source>
-        <translation type="unfinished">Kanalabstand</translation>
+        <translation>Kanalabstand</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="122"/>
         <source>Colours</source>
-        <translation type="unfinished">Farben</translation>
+        <translation>Farben</translation>
     </message>
 </context>
 <context>
@@ -15665,12 +15665,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="42"/>
         <source>Spectrogram</source>
-        <translation type="unfinished"></translation>
+        <translation>Spektrogramm</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="43"/>
         <source>Visualisations</source>
-        <translation type="unfinished">Visualisierungen</translation>
+        <translation>Visualisierungen</translation>
     </message>
 </context>
 <context>
@@ -15678,27 +15678,27 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="550"/>
         <source>Use logarithmic frequency scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende logarithmische Frequenzskala</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="551"/>
         <source>Clear on track change</source>
-        <translation type="unfinished"></translation>
+        <translation>Leere bei Titelwechsel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="555"/>
         <source>Channels</source>
-        <translation type="unfinished">Kanäle</translation>
+        <translation>Kanäle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="569"/>
         <source>Unchanged</source>
-        <translation type="unfinished"></translation>
+        <translation>Unverändert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="570"/>
         <source>Mono</source>
-        <translation type="unfinished">Mono</translation>
+        <translation>Mono</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="571"/>
@@ -15713,12 +15713,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="574"/>
         <source>Style</source>
-        <translation type="unfinished">Stil</translation>
+        <translation>Stil</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="588"/>
         <source>Scrolling</source>
-        <translation type="unfinished">Bildlauf</translation>
+        <translation>Bildlauf</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="589"/>
@@ -15728,7 +15728,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="591"/>
         <source>FFT size</source>
-        <translation type="unfinished">FFT-Größe</translation>
+        <translation>FFT-Größe</translation>
     </message>
 </context>
 <context>
