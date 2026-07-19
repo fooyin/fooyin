@@ -513,7 +513,6 @@ void TagEditorModel::applyChanges()
                     if(fieldIt != p->m_tags.end()) {
                         const QString changedTitle = node.changedTitle();
                         auto tagItem               = p->m_tags.extract(fieldIt);
-                        field.scriptField          = tagItem.key();
                         if(p->updateTrackMetadata(field, {})) {
                             tagItem.key() = changedTitle;
                             p->m_tags.insert(std::move(tagItem));
