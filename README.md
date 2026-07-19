@@ -78,3 +78,5 @@ See [BUILD.md](BUILD.md) for dependency lists, build steps, and installation.
 ## Translations
 
 Translations are managed on [Hosted Weblate](https://hosted.weblate.org/projects/fooyin/). Contributions are very welcome.
+
+In case you want to test your translation in the application, follow the steps outlined in [issue#679](https://github.com/fooyin/fooyin/issues/679)
