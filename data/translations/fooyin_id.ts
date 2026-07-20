@@ -66,7 +66,7 @@
     <message>
         <location filename="../../src/gui/widgets.cpp" line="396"/>
         <source>Directory Browser</source>
-        <translation type="unfinished">Peramban Direktori</translation>
+        <translation>Penjelajah Direktori</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="398"/>
@@ -114,7 +114,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="78"/>
         <source>Move</source>
-        <translation type="unfinished">Pindah</translation>
+        <translation>Pindahkan</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="82"/>
