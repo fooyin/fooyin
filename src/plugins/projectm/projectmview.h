@@ -35,6 +35,8 @@
 #include <map>
 #include <unordered_map>
 
+class QOpenGLDebugLogger;
+
 namespace Fooyin::ProjectM {
 class ProjectMInstance;
 
@@ -119,12 +121,17 @@ private:
     void queueGLOperation(std::function<void()> operation);
     void processQueuedGLOperations();
     void scheduleProjectMRecreation();
+    void initialiseOpenGLDebugLogger();
+    void logOpenGLContext();
+    void logOpenGLState(const QString& stage);
+    void logOpenGLErrors(const QString& stage);
 
     void setUnavailable(const QString& statusText);
     void emitAvailability();
     void updateRenderTimer();
 
     std::unique_ptr<ProjectMInstance> m_projectM;
+    std::unique_ptr<QOpenGLDebugLogger> m_debugLogger;
     VisualisationSessionPtr m_visualisationSession;
     ProjectMPaths m_paths;
     VisualisationSession::PcmWindow m_pcmWindow;
@@ -138,6 +145,8 @@ private:
     QString m_pendingPresetPath;
     QStringList m_presetDirs;
     uint64_t m_lastPcmTimeMs;
+    uint32_t m_debugRenderFrames;
+    uint32_t m_debugPcmWindows;
     bool m_ready;
     bool m_initialised;
     bool m_recreateProjectM;

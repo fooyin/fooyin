@@ -24,17 +24,24 @@
 #include <gui/framerate.h>
 
 #include <QDir>
+#include <QGuiApplication>
+#include <QLoggingCategory>
 #include <QMouseEvent>
 #include <QOpenGLContext>
+#include <QOpenGLDebugLogger>
 #include <QtGlobal>
 
 #include <algorithm>
+
+Q_LOGGING_CATEGORY(PROJECTM_GL, "fooyin.projectm")
 
 using namespace Qt::StringLiterals;
 
 constexpr uint64_t InitialPcmWindowMs = 50;
 constexpr uint64_t MaxPcmCatchupMs    = 1000;
 constexpr uint64_t PcmBacklogMs       = 5000;
+constexpr uint32_t DebugRenderFrames  = 5;
+constexpr uint32_t DebugPcmWindows    = 5;
 
 namespace Fooyin::ProjectM {
 namespace {
@@ -88,6 +95,8 @@ ProjectMView::ProjectMView()
     : QOpenGLWindow{NoPartialUpdate}
     , m_statusText{tr("Initialising projectM…")}
     , m_lastPcmTimeMs{0}
+    , m_debugRenderFrames{0}
+    , m_debugPcmWindows{0}
     , m_ready{false}
     , m_initialised{false}
     , m_recreateProjectM{false}
@@ -178,17 +187,22 @@ void ProjectMView::shutdown()
     m_ready = false;
     resetPcmCursor();
 
-    if(!m_projectM) {
+    if(!m_projectM && !m_debugLogger) {
         return;
     }
 
     if(context()) {
         makeCurrent();
         m_projectM.reset();
+        if(m_debugLogger) {
+            m_debugLogger->stopLogging();
+            m_debugLogger.reset();
+        }
         doneCurrent();
     }
     else {
         m_projectM.reset();
+        m_debugLogger.reset();
     }
 }
 
@@ -381,6 +395,11 @@ void ProjectMView::initializeGL()
 {
     m_initialised = true;
     initializeOpenGLFunctions();
+    initialiseOpenGLDebugLogger();
+
+    logOpenGLContext();
+    logOpenGLState(u"before fooyin OpenGL setup"_s);
+    logOpenGLErrors(u"before fooyin OpenGL setup"_s);
 
     glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
     const QSize viewportSize = framebufferSize(width(), height());
@@ -389,6 +408,9 @@ void ProjectMView::initializeGL()
     glReadBuffer(GL_BACK);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    logOpenGLState(u"after fooyin OpenGL setup"_s);
+    logOpenGLErrors(u"after fooyin OpenGL setup"_s);
 
     createProjectM();
 }
@@ -409,7 +431,21 @@ void ProjectMView::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if(m_projectM) {
+        const bool logFrame = m_debugRenderFrames < DebugRenderFrames;
+        if(logFrame) {
+            qCDebug(PROJECTM_GL) << "Rendering projectM frame" << m_debugRenderFrames + 1 << "preset"
+                                 << m_projectM->selectedPresetPath();
+            logOpenGLState(u"before projectM frame %1"_s.arg(m_debugRenderFrames + 1));
+            logOpenGLErrors(u"before projectM frame %1"_s.arg(m_debugRenderFrames + 1));
+        }
+
         m_projectM->renderFrame();
+
+        if(logFrame) {
+            logOpenGLState(u"after projectM frame %1"_s.arg(m_debugRenderFrames + 1));
+            logOpenGLErrors(u"after projectM frame %1"_s.arg(m_debugRenderFrames + 1));
+            ++m_debugRenderFrames;
+        }
     }
 }
 
@@ -497,13 +533,32 @@ void ProjectMView::createProjectM()
     m_failedPresetPaths.clear();
     m_ready = false;
     resetPcmCursor();
+    m_debugRenderFrames = 0;
+    m_debugPcmWindows   = 0;
 
     if(m_presetDirs.empty()) {
         setUnavailable(tr("No projectM preset folders are configured."));
         return;
     }
 
-    m_paths       = resolveProjectMPaths();
+    m_paths = resolveProjectMPaths();
+
+    const char* version  = projectm_get_version_string();
+    const char* revision = projectm_get_vcs_version_string();
+    qCInfo(PROJECTM_GL) << "Creating projectM; runtime version=" << QString::fromUtf8(version ? version : "unknown")
+                        << "revision=" << QString::fromUtf8(revision ? revision : "unknown")
+                        << "dataDir=" << m_paths.dataDir << "presetDirs=" << m_presetDirs
+                        << "recursive=" << m_settings.scanRecursive
+                        << "mesh=" << QSize{m_settings.meshWidth, m_settings.meshHeight}
+                        << "maxFps=" << m_settings.maxFps;
+    if(version) {
+        projectm_free_string(version);
+    }
+    if(revision) {
+        projectm_free_string(revision);
+    }
+    logOpenGLErrors(u"before projectM creation"_s);
+
     auto projectM = std::make_unique<ProjectMInstance>(m_paths.dataDir, m_presetDirs, m_settings);
     QObject::connect(projectM.get(), &ProjectMInstance::presetLoadFailed, this,
                      [this](int index, const QString& path, const QString& message) {
@@ -512,12 +567,18 @@ void ProjectMView::createProjectM()
                          if(!path.isEmpty()) {
                              m_failedPresetPaths.insert_or_assign(QDir::cleanPath(path), failureMessage);
                          }
+                         qCWarning(PROJECTM_GL) << "projectM failed to load preset" << index << path << message;
                          Q_EMIT presetLoadFailed(index, path, failureMessage);
                      });
     QObject::connect(projectM.get(), &ProjectMInstance::presetChanged, this, [this](const QString& path) {
         m_pendingPresetPath = path;
         Q_EMIT presetChanged(path);
     });
+
+    qCInfo(PROJECTM_GL) << "projectM instance created; ready=" << projectM->isReady()
+                        << "error=" << projectM->errorMessage() << "presets=" << projectM->playlistSize();
+    logOpenGLState(u"after projectM creation"_s);
+    logOpenGLErrors(u"after projectM creation"_s);
 
     if(!projectM->isReady()) {
         const QString message
@@ -617,6 +678,7 @@ void ProjectMView::feedPcmWindow(const VisualisationSession::PcmWindow& window)
     }
 
     m_stereoBuffer.resize(static_cast<size_t>(frameCount) * 2U);
+    float peak{0.0F};
 
     for(int frameIndex{0}; frameIndex < frameCount; ++frameIndex) {
         const size_t baseIndex = static_cast<size_t>(frameIndex) * static_cast<size_t>(channelCount);
@@ -626,9 +688,134 @@ void ProjectMView::feedPcmWindow(const VisualisationSession::PcmWindow& window)
         const size_t stereoIndex        = static_cast<size_t>(frameIndex) * 2U;
         m_stereoBuffer[stereoIndex]     = left;
         m_stereoBuffer[stereoIndex + 1] = right;
+
+        if(m_debugPcmWindows < DebugPcmWindows) {
+            peak = std::max({peak, std::abs(left), std::abs(right)});
+        }
+    }
+
+    if(m_debugPcmWindows < DebugPcmWindows) {
+        qCInfo(PROJECTM_GL) << "Feeding projectM PCM window" << m_debugPcmWindows + 1 << "frames=" << frameCount
+                            << "sampleRate=" << window.format.sampleRate() << "channels=" << channelCount
+                            << "peak=" << peak;
+        ++m_debugPcmWindows;
     }
 
     m_projectM->addPcm(m_stereoBuffer.data(), static_cast<unsigned int>(frameCount));
+}
+
+void ProjectMView::initialiseOpenGLDebugLogger()
+{
+    m_debugLogger = std::make_unique<QOpenGLDebugLogger>();
+    if(!m_debugLogger->initialize()) {
+        qCWarning(PROJECTM_GL) << "OpenGL debug logging is unavailable for this context";
+        m_debugLogger.reset();
+        return;
+    }
+
+    QObject::connect(m_debugLogger.get(), &QOpenGLDebugLogger::messageLogged, this,
+                     [](const QOpenGLDebugMessage& message) { qCWarning(PROJECTM_GL) << message; });
+    m_debugLogger->disableMessages(QOpenGLDebugMessage::AnySource, QOpenGLDebugMessage::AnyType,
+                                   QOpenGLDebugMessage::NotificationSeverity);
+    m_debugLogger->startLogging(QOpenGLDebugLogger::SynchronousLogging);
+}
+
+void ProjectMView::logOpenGLContext()
+{
+    const auto* currentContext = QOpenGLContext::currentContext();
+    if(!currentContext) {
+        qCWarning(PROJECTM_GL) << "No current OpenGL context";
+        return;
+    }
+
+    const QSurfaceFormat actualFormat    = currentContext->format();
+    const QSurfaceFormat requestedFormat = format();
+    const auto stringValue               = [this](GLenum name) {
+        const auto* value = glGetString(name);
+        return value ? QString::fromLatin1(value) : u"unavailable"_s;
+    };
+
+    qCInfo(PROJECTM_GL) << "Qt version=" << qVersion() << "platform=" << QGuiApplication::platformName();
+    qCInfo(PROJECTM_GL) << "Requested OpenGL format:" << requestedFormat.majorVersion() << '.'
+                        << requestedFormat.minorVersion() << "profile=" << requestedFormat.profile()
+                        << "renderableType=" << requestedFormat.renderableType()
+                        << "depth=" << requestedFormat.depthBufferSize()
+                        << "stencil=" << requestedFormat.stencilBufferSize() << "samples=" << requestedFormat.samples()
+                        << "swapBehavior=" << requestedFormat.swapBehavior()
+                        << "swapInterval=" << requestedFormat.swapInterval() << "options=" << requestedFormat.options();
+    qCInfo(PROJECTM_GL) << "Actual OpenGL context:" << actualFormat.majorVersion() << '.' << actualFormat.minorVersion()
+                        << "profile=" << actualFormat.profile() << "GLES=" << currentContext->isOpenGLES()
+                        << "depth=" << actualFormat.depthBufferSize() << "stencil=" << actualFormat.stencilBufferSize()
+                        << "samples=" << actualFormat.samples() << "options=" << actualFormat.options();
+    qCInfo(PROJECTM_GL) << "GL_VERSION:" << stringValue(GL_VERSION);
+    qCInfo(PROJECTM_GL) << "GLSL_VERSION:" << stringValue(GL_SHADING_LANGUAGE_VERSION);
+    qCInfo(PROJECTM_GL) << "GL_VENDOR:" << stringValue(GL_VENDOR);
+    qCInfo(PROJECTM_GL) << "GL_RENDERER:" << stringValue(GL_RENDERER);
+    qCInfo(PROJECTM_GL) << "Window logical size=" << size() << "framebuffer size=" << framebufferSize(width(), height())
+                        << "devicePixelRatio=" << devicePixelRatio()
+                        << "defaultFramebufferObject=" << defaultFramebufferObject();
+}
+
+void ProjectMView::logOpenGLState(const QString& stage)
+{
+    GLint viewport[4]{};
+    GLint drawFramebuffer{0};
+    GLint readFramebuffer{0};
+    GLint drawBuffer{0};
+    GLint readBuffer{0};
+    GLint currentProgram{0};
+    GLint vertexArray{0};
+    GLint activeTexture{0};
+    GLint texture2d{0};
+    GLint blendSrcRgb{0};
+    GLint blendDstRgb{0};
+    GLint blendEquationRgb{0};
+
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &drawFramebuffer);
+    glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &readFramebuffer);
+    glGetIntegerv(GL_DRAW_BUFFER, &drawBuffer);
+    glGetIntegerv(GL_READ_BUFFER, &readBuffer);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &vertexArray);
+    glGetIntegerv(GL_ACTIVE_TEXTURE, &activeTexture);
+    glGetIntegerv(GL_TEXTURE_BINDING_2D, &texture2d);
+    glGetIntegerv(GL_BLEND_SRC_RGB, &blendSrcRgb);
+    glGetIntegerv(GL_BLEND_DST_RGB, &blendDstRgb);
+    glGetIntegerv(GL_BLEND_EQUATION_RGB, &blendEquationRgb);
+    const GLenum framebufferStatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
+
+    qCInfo(PROJECTM_GL) << "OpenGL state" << stage
+                        << "viewport=" << QRect{viewport[0], viewport[1], viewport[2], viewport[3]}
+                        << "drawFbo=" << drawFramebuffer << "readFbo=" << readFramebuffer
+                        << "defaultFbo=" << defaultFramebufferObject()
+                        << "framebufferStatus=" << u"0x%1"_s.arg(framebufferStatus, 0, 16)
+                        << "drawBuffer=" << u"0x%1"_s.arg(drawBuffer, 0, 16)
+                        << "readBuffer=" << u"0x%1"_s.arg(readBuffer, 0, 16) << "program=" << currentProgram
+                        << "vao=" << vertexArray << "activeTexture=" << u"0x%1"_s.arg(activeTexture, 0, 16)
+                        << "texture2D=" << texture2d << "blend=" << static_cast<bool>(glIsEnabled(GL_BLEND))
+                        << "blendFunc=" << blendSrcRgb << blendDstRgb << "blendEquation=" << blendEquationRgb
+                        << "depthTest=" << static_cast<bool>(glIsEnabled(GL_DEPTH_TEST))
+                        << "scissorTest=" << static_cast<bool>(glIsEnabled(GL_SCISSOR_TEST))
+                        << "cullFace=" << static_cast<bool>(glIsEnabled(GL_CULL_FACE));
+}
+
+void ProjectMView::logOpenGLErrors(const QString& stage)
+{
+    bool foundError{false};
+    for(int count{0}; count < 32; ++count) {
+        const GLenum error = glGetError();
+        if(error == GL_NO_ERROR) {
+            break;
+        }
+
+        foundError = true;
+        qCWarning(PROJECTM_GL) << "OpenGL error" << u"0x%1"_s.arg(error, 0, 16) << stage;
+    }
+
+    if(!foundError && (stage.startsWith(u"after projectM creation") || stage.startsWith(u"after projectM frame"))) {
+        qCInfo(PROJECTM_GL) << "No OpenGL errors" << stage;
+    }
 }
 
 void ProjectMView::resetPcmCursor()
