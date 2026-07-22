@@ -2768,7 +2768,8 @@ void AudioEngine::clearAutoBoundaryFadeState(bool restoreOutput)
 void AudioEngine::clearAutoAdvanceState()
 {
     m_autoAdvanceState = AutoAdvanceState{
-        .generation = m_trackGeneration,
+        .generation                  = m_trackGeneration,
+        .boundedSegmentDrainDeadline = std::nullopt,
     };
     m_drainFillPrepareDiagnostic = {};
 }
@@ -2987,6 +2988,20 @@ void AudioEngine::maybePrepareUpcomingTrackForDrainFill(const AudioStreamPtr& st
         return;
     }
 
+    const auto configuredMode = configuredTrackEndAutoTransitionMode();
+    if(configuredMode == AutoTransitionMode::None) {
+        logDrainFillPrepareDiagnostic(DrainFillPrepareDiagnosticReason::AutoTransitionDisabled, stream);
+        return;
+    }
+
+    if(m_autoAdvanceState.generation != m_trackGeneration) {
+        clearAutoAdvanceState();
+    }
+
+    if(m_autoAdvanceState.mode == AutoTransitionMode::None) {
+        rememberAutoTransitionMode(configuredMode);
+    }
+
     if(isMultiTrackFileTransition(m_currentTrack, m_upcomingTrackCandidate)) {
         logDrainFillPrepareDiagnostic(DrainFillPrepareDiagnosticReason::MultiTrackFileTransition, stream);
         return;
@@ -3002,19 +3017,6 @@ void AudioEngine::maybePrepareUpcomingTrackForDrainFill(const AudioStreamPtr& st
        && samePlaybackItem(preparedGaplessTargetItem(), upcomingTrackCandidateItem())) {
         logDrainFillPrepareDiagnostic(DrainFillPrepareDiagnosticReason::PreparedGaplessAlreadyActive, stream);
         return;
-    }
-
-    if(configuredTrackEndAutoTransitionMode() == AutoTransitionMode::None) {
-        logDrainFillPrepareDiagnostic(DrainFillPrepareDiagnosticReason::AutoTransitionDisabled, stream);
-        return;
-    }
-
-    if(m_autoAdvanceState.generation != m_trackGeneration) {
-        clearAutoAdvanceState();
-    }
-
-    if(m_autoAdvanceState.mode == AutoTransitionMode::None) {
-        rememberAutoTransitionMode(configuredTrackEndAutoTransitionMode());
     }
 
     const uint64_t aggressivePrefillMs = aggressivePreparedPrefillMs();
@@ -3304,9 +3306,44 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
     const bool hasDistinctUpcomingCandidate
         = m_upcomingTrackCandidate.isValid() && !samePlaybackItem(upcomingTrackCandidateItem(), currentPlaybackItem());
     const bool boundedSegmentHandoffPending = cueBoundaryMode && hasDistinctUpcomingCandidate;
-    const bool audibleBoundaryReached       = m_currentTrack.duration() == 0
-                                           || boundaryAudiblePosMs >= m_currentTrack.duration()
-                                           || pendingBoundaryRenderedGaplessReached;
+    bool boundedSegmentDrainDeadlineReached{false};
+
+    if(boundedSegmentHandoffPending && currentStreamFullyDrained && m_currentTrack.duration() > boundaryAudiblePosMs) {
+        if(!m_autoAdvanceState.boundedSegmentDrainDeadline) {
+            const auto outputSnapshot          = m_pipeline.outputQueueSnapshot();
+            const uint64_t boundaryRemainderMs = m_currentTrack.duration() - boundaryAudiblePosMs;
+            const uint64_t drainDelayMs        = std::min<uint64_t>(
+                std::max(boundaryRemainderMs, m_pipeline.playbackDelayMs()), GaplessBoundaryWatchdogMaxMs);
+            m_autoAdvanceState.boundedSegmentDrainDeadline
+                = std::chrono::steady_clock::now() + std::chrono::milliseconds{drainDelayMs};
+
+            qCDebug(ENGINE) << "Waiting for drained bounded-segment output latency:"
+                            << "trackId=" << m_currentTrack.id() << "generation=" << m_trackGeneration
+                            << "boundaryAudiblePosMs=" << boundaryAudiblePosMs
+                            << "trackDurationMs=" << m_currentTrack.duration() << "drainDelayMs=" << drainDelayMs
+                            << "backendQueuedFrames="
+                            << (outputSnapshot.valid ? std::max(0, outputSnapshot.state.queuedFrames) : -1)
+                            << "backendDelayMs="
+                            << (outputSnapshot.valid ? static_cast<int64_t>(std::llround(
+                                                           std::max(0.0, outputSnapshot.state.delay) * 1000.0))
+                                                     : int64_t{-1});
+        }
+
+        boundedSegmentDrainDeadlineReached
+            = m_autoAdvanceState.boundedSegmentDrainDeadline
+           && std::chrono::steady_clock::now() >= *m_autoAdvanceState.boundedSegmentDrainDeadline;
+    }
+
+    const bool audibleBoundaryReached = m_currentTrack.duration() == 0
+                                     || boundaryAudiblePosMs >= m_currentTrack.duration()
+                                     || boundedSegmentDrainDeadlineReached || pendingBoundaryRenderedGaplessReached;
+
+    if(boundedSegmentDrainDeadlineReached) {
+        qCDebug(ENGINE) << "Treating fully drained bounded-segment output as audible boundary:"
+                        << "trackId=" << m_currentTrack.id() << "generation=" << m_trackGeneration
+                        << "boundaryAudiblePosMs=" << boundaryAudiblePosMs
+                        << "trackDurationMs=" << m_currentTrack.duration();
+    }
 
     const bool deferBoundaryUntilAudible = preparedGaplessActive || boundedSegmentHandoffPending;
     const bool boundaryWasPending        = m_autoAdvanceState.boundaryPendingUntilAudible;
@@ -3432,7 +3469,15 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
                             << "cueBoundaryMode=" << cueBoundaryMode
                             << "boundaryAnchorSeen=" << m_autoAdvanceState.boundaryAnchorSeen
                             << "boundaryPendingUntilAudible=" << m_autoAdvanceState.boundaryPendingUntilAudible
-                            << "preparedGaplessRendered=" << preparedGaplessRendered;
+                            << "preparedGaplessRendered=" << preparedGaplessRendered
+                            << "boundaryAudiblePosMs=" << boundaryAudiblePosMs
+                            << "trackDurationMs=" << m_currentTrack.duration()
+                            << "streamEndOfInput=" << (stream ? stream->endOfInput() : false)
+                            << "streamBufferEmpty=" << (stream ? stream->bufferEmpty() : true)
+                            << "streamBufferedMs=" << (stream ? stream->bufferedDurationMs() : 0)
+                            << "pipelineDelayMs=" << m_pipeline.playbackDelayMs()
+                            << "audibleOutputStreamId=" << audibleOutputStreamId
+                            << "pipelineUnderrun=" << m_pipeline.currentStatus().bufferUnderrun;
             return;
         }
 

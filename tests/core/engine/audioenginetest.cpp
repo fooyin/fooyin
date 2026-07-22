@@ -62,6 +62,7 @@ struct DecoderStats
     std::atomic<int> stopCalls{0};
     std::atomic<int> seekCalls{0};
     std::atomic<int> bitrate{320};
+    std::atomic<uint64_t> sourceEndMs{0};
 };
 
 struct OutputStats
@@ -276,6 +277,7 @@ public:
         m_track = track;
         m_format.setSampleRate(track.filenameExt().contains(u"sr2000"_s) ? 2000 : 1000);
         m_position  = track.offset();
+        m_sourceEnd = m_stats->sourceEndMs.load(std::memory_order_relaxed);
         m_started   = false;
         m_initValid = true;
         return m_format;
@@ -310,7 +312,14 @@ public:
             return {};
         }
 
-        const size_t frameCount = bytes / static_cast<size_t>(bytesPerFrame);
+        size_t frameCount = bytes / static_cast<size_t>(bytesPerFrame);
+        if(m_sourceEnd > 0) {
+            if(m_position >= m_sourceEnd) {
+                return {};
+            }
+            frameCount = std::min<size_t>(frameCount,
+                                          static_cast<size_t>(m_format.framesForDuration(m_sourceEnd - m_position)));
+        }
         if(frameCount == 0) {
             return {};
         }
@@ -333,6 +342,7 @@ private:
     Track m_track;
     AudioFormat m_format{SampleFormat::F64, 1000, 2};
     uint64_t m_position{0};
+    uint64_t m_sourceEnd{0};
     bool m_started{false};
     bool m_initValid{false};
 };
@@ -1875,6 +1885,44 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, NonCueTracksDoNotForceEndAtMe
 
     ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.position() > trackDurationMs + 600; }, 3000ms));
     EXPECT_NE(harness.engine.trackStatus(), Engine::TrackStatus::End);
+}
+
+FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, CuePlaylistRepeatRestartsSameFileAtFirstSegment)
+{
+    ensureCoreApplication();
+    EngineHarness harness{false};
+    Engine::CrossfadingValues crossfadingValues;
+    crossfadingValues.autoChange.in  = 50;
+    crossfadingValues.autoChange.out = 50;
+    AudioEngineTestAccessor::setCrossfadeConfig(harness.engine, true, crossfadingValues,
+                                                Engine::CrossfadeSwitchPolicy::Boundary);
+    AudioEngineTestAccessor::setPlaybackBufferLengthMs(harness.engine, 1000);
+
+    harness.decoderStats->sourceEndMs.store(599, std::memory_order_relaxed);
+    harness.outputStats->setOutputState(236, 20, 20);
+
+    Track lastSegment = harness.createTrack(u"repeated-cue.fyt"_s, 400, 200);
+    lastSegment.setCuePath(u"Embedded"_s);
+    Track firstSegment = lastSegment;
+    firstSegment.setOffset(0);
+    firstSegment.setDuration(200);
+
+    const auto lastItem  = makePlaybackItem(lastSegment, 5);
+    const auto firstItem = makePlaybackItem(firstSegment, 6);
+
+    harness.engine.loadTrack(lastItem, false);
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.trackStatus() == Engine::TrackStatus::Loaded; }));
+
+    harness.engine.setUpcomingTrackCandidate(firstItem);
+    harness.engine.play();
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.playbackState() == Engine::PlaybackState::Playing; }));
+
+    ASSERT_TRUE(pumpUntil(
+        [&harness, &firstItem]() {
+            return AudioEngineTestAccessor::currentTrackItemId(harness.engine) == firstItem.itemId;
+        },
+        3000ms));
+    EXPECT_LT(harness.engine.position(), firstSegment.duration());
 }
 
 FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, TimelineTransitionHintsAreDisabledForRepeatTrackPlayback)

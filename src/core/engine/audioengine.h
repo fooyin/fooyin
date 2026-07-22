@@ -492,6 +492,7 @@ private:
         bool overlapMidpointAnchorSeen{false};
         bool boundaryAnchorSeen{false};
         bool boundaryPendingUntilAudible{false};
+        std::optional<std::chrono::steady_clock::time_point> boundedSegmentDrainDeadline;
         bool drainPrepareRequested{false};
     };
     AutoAdvanceState m_autoAdvanceState;
