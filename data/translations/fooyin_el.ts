@@ -329,27 +329,27 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="129"/>
         <source>Track duration in seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Διάρκεια κομματιού σε δετερόλεπτα</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="131"/>
         <source>Track duration in milliseconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Διάρκεια κομματιού σε μιλιδευτερόλεπτα</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="133"/>
         <source>Comment tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Ετικέτα σχολίου</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="135"/>
         <source>Release date</source>
-        <translation type="unfinished"></translation>
+        <translation>Ημερομηνία κυκλοφορίας</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="137"/>
         <source>Release year</source>
-        <translation type="unfinished"></translation>
+        <translation>Έτος κυκλοφορίας</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="139"/>
