@@ -48,12 +48,6 @@
 #define strncasecmp _strnicmp
 #endif
 
-#ifdef __GNUG__
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#elifdef __clang__
-#pragma clang diagnostic ignored "-Wold-style-cast"
-#endif
-
 using namespace Qt::StringLiterals;
 
 constexpr AVRational TimeBaseAv           = {.num = 1, .den = AV_TIME_BASE};
@@ -79,13 +73,6 @@ enum class TagType : uint8_t
 bool isRecoverableDecodeError(int error)
 {
     return error == AVERROR_INVALIDDATA;
-}
-
-QString ffmpegErrorString(int error)
-{
-    char errStr[AV_ERROR_MAX_STRING_SIZE]{};
-    av_strerror(error, errStr, AV_ERROR_MAX_STRING_SIZE);
-    return QString::fromLocal8Bit(errStr);
 }
 
 QStringList fileExtensions(bool allSupported)
@@ -941,13 +928,11 @@ FormatContext createAVFormatContext(const AudioSource& source)
     const int ret = avformat_open_input(&avContext, filepath, nullptr, nullptr);
     if(ret < 0) {
         // Format context is freed on failure
-        char err[AV_ERROR_MAX_STRING_SIZE];
-        av_strerror(ret, err, AV_ERROR_MAX_STRING_SIZE);
         if(deadline && deadline->expired()) {
             qCWarning(FFMPEG) << "Timed out opening input:" << source.filepath;
         }
         else {
-            qCWarning(FFMPEG) << "Error opening input:" << err;
+            qCWarning(FFMPEG) << "Error opening input:" << Utils::ffmpegErrorString(ret);
         }
         return {};
     }
@@ -1256,7 +1241,7 @@ int FFmpegInputPrivate::receiveAVFrames()
     }
 
     if(result < 0) {
-        const QString error = ffmpegErrorString(result);
+        const QString error = Utils::ffmpegErrorString(result);
         qCWarning(FFMPEG) << "FFmpeg receive frame failed:"
                           << "error=" << error << "code=" << result << "remote=" << isRemoteStream()
                           << "consecutiveDecodeErrors=" << m_consecutiveDecodeErrors << "currentPosMs=" << m_currentPos
@@ -1433,7 +1418,7 @@ void FFmpegInputPrivate::readNext()
             m_eof = true;
         }
         else {
-            const QString error = ffmpegErrorString(readResult);
+            const QString error = Utils::ffmpegErrorString(readResult);
             if(isRemoteStream()) {
                 qCWarning(FFMPEG) << "Treating remote FFmpeg read error as temporary:"
                                   << "error=" << error << "code=" << readResult << "currentPosMs=" << m_currentPos

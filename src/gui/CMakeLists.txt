@@ -120,6 +120,16 @@ set(SOURCES
     controls/seekbar.h
     controls/volumecontrol.cpp
     controls/volumecontrol.h
+    conversion/conversioncontroller.cpp
+    conversion/conversioncontroller.h
+    conversion/convertersetupdialog.cpp
+    conversion/convertersetupdialog.h
+    conversion/convertersettingsstore.cpp
+    conversion/convertersettingsstore.h
+    conversion/encoderprofiledialog.cpp
+    conversion/encoderprofiledialog.h
+    conversion/encoderprofiletablemodel.cpp
+    conversion/encoderprofiletablemodel.h
     coverprovider.cpp
     coverrepository.cpp
     dialog/aboutdialog.cpp
@@ -550,6 +560,7 @@ create_fooyin_library(
     EXPORT_NAME Gui
     SOURCES ${SOURCES}
 )
+
 target_link_libraries(
     fooyin_gui
     PRIVATE Fooyin::CorePrivate

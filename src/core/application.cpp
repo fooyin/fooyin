@@ -27,6 +27,7 @@
 #include "engine/enginehandler.h"
 #include "engine/enginehelpers.h"
 #include "engine/input/archiveinput.h"
+#include "engine/input/ffmpeg/ffmpegencoder.h"
 #include "engine/input/ffmpeg/ffmpeginput.h"
 #include "engine/input/taglibparser.h"
 #include "internalcoresettings.h"
@@ -41,6 +42,7 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audiobuffer.h>
+#include <core/engine/audioencoderregistry.h>
 #include <core/engine/audioloader.h>
 #include <core/engine/dsp/dspplugin.h>
 #include <core/engine/outputplugin.h>
@@ -95,6 +97,7 @@ Application::Application(QObject* parent)
     , m_coreSettings{m_settings}
     , m_database{new Database(this)}
     , m_audioLoader{std::make_shared<AudioLoader>()}
+    , m_audioEncoderRegistry{std::make_unique<AudioEncoderRegistry>()}
     , m_dspRegistry{std::make_unique<DspRegistry>()}
     , m_dspChainStore{std::make_unique<DspChainStore>(m_settings, m_dspRegistry.get())}
     , m_networkManager{std::make_shared<NetworkAccessManager>(m_settings)}
@@ -273,6 +276,11 @@ std::shared_ptr<AudioLoader> Application::audioLoader() const
     return m_audioLoader;
 }
 
+AudioEncoderRegistry* Application::audioEncoderRegistry() const
+{
+    return m_audioEncoderRegistry.get();
+}
+
 std::shared_ptr<NetworkAccessManager> Application::networkManager() const
 {
     return m_networkManager;
@@ -341,6 +349,8 @@ void Application::registerPlaylistParsers()
 
 void Application::registerInputs()
 {
+    m_audioEncoderRegistry->addEncoderBackend(u"ffmpeg"_s, u"FFmpeg"_s,
+                                              []() { return std::make_unique<FFmpegEncoder>(); });
     m_audioLoader->addDecoder(
         u"Archive"_s, [this]() { return std::make_unique<ArchiveDecoder>(m_audioLoader); }, -1, true);
     m_audioLoader->addReader(

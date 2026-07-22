@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <luket@pm.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,36 +19,21 @@
 
 #pragma once
 
-#include "ffmpegutils.h"
-
-extern "C"
-{
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-}
+#include <QTemporaryFile>
 
 namespace Fooyin {
-class Codec
+class OutputTransaction
 {
 public:
-    Codec() = default;
-    Codec(CodecContextPtr context, AVStream* stream);
+    explicit OutputTransaction(QString destination);
 
-    Codec(Codec&& other) noexcept;
-    Codec& operator=(Codec&& other) noexcept;
+    [[nodiscard]] QString path() const;
 
-    Codec(const Codec& other)            = delete;
-    Codec& operator=(const Codec& other) = delete;
-
-    [[nodiscard]] bool isValid() const;
-
-    [[nodiscard]] AVCodecContext* context() const;
-    [[nodiscard]] AVStream* stream() const;
-    [[nodiscard]] int streamIndex() const;
-    [[nodiscard]] bool isPlanar() const;
+    bool prepare(QString& error);
+    bool commit(QString& error);
 
 private:
-    CodecContextPtr m_context;
-    AVStream* m_stream;
+    QString m_destination;
+    QTemporaryFile m_temporary;
 };
 } // namespace Fooyin

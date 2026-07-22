@@ -36,6 +36,7 @@
 
 namespace Fooyin {
 class AudioLoader;
+class AudioEncoderRegistry;
 class Database;
 class DspChainStore;
 class DspRegistry;
@@ -79,6 +80,7 @@ public:
     [[nodiscard]] EngineController* engine() const;
     [[nodiscard]] std::shared_ptr<PlaylistLoader> playlistLoader() const;
     [[nodiscard]] std::shared_ptr<AudioLoader> audioLoader() const;
+    [[nodiscard]] AudioEncoderRegistry* audioEncoderRegistry() const;
     [[nodiscard]] std::shared_ptr<NetworkAccessManager> networkManager() const;
     [[nodiscard]] std::shared_ptr<RemoteIoService> remoteIoService() const;
     [[nodiscard]] SortingRegistry* sortingRegistry() const;
@@ -109,6 +111,7 @@ private:
     TranslationLoader m_translations;
     Database* m_database;
     std::shared_ptr<AudioLoader> m_audioLoader;
+    std::unique_ptr<AudioEncoderRegistry> m_audioEncoderRegistry;
     std::unique_ptr<DspRegistry> m_dspRegistry;
     std::unique_ptr<DspChainStore> m_dspChainStore;
     std::shared_ptr<NetworkAccessManager> m_networkManager;

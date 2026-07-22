@@ -40,14 +40,18 @@
 
 #include <memory>
 #include <set>
+#include <vector>
 
 class QTimerEvent;
+class QAction;
 
 namespace Fooyin {
 class ActionManager;
 class AdvancedSettingsRegistry;
 class Application;
 class CoverRepository;
+class ConversionController;
+class Command;
 class EditableLayout;
 class GuiStyleProvider;
 class EditMenu;
@@ -76,6 +80,7 @@ class SettingsManager;
 class MusicLibrary;
 class PlayerController;
 class PlaylistHandler;
+struct StoredConversionPreset;
 
 class FYGUI_EXPORT GuiApplication : public QObject
 {
@@ -138,7 +143,13 @@ private:
 
     void setupScanMenu();
     void setupRatingMenu();
+    void setupConvertMenu();
+    void refreshConversionPresetActions();
     void setupUtilitiesMenu();
+
+    void startConversionPreset(const StoredConversionPreset& preset, const TrackList& tracks);
+    void startDefaultConversion(const TrackList& tracks);
+    void startLastUsedConversion(const TrackList& tracks);
 
     void close();
     void changeVolume(double delta) const;
@@ -225,6 +236,20 @@ private:
     QPointer<QueueViewer> m_playbackQueueWidget;
     QPointer<PlaylistManagerWidget> m_playlistManagerWidget;
     Widgets* m_widgets;
+    ConversionController* m_conversionController;
+
+    struct ConversionPresetAction
+    {
+        QString presetId;
+        QAction* action;
+        Command* command;
+    };
+    QAction* m_defaultConversionAction;
+    Command* m_defaultConversionCommand;
+    QAction* m_lastUsedConversionAction;
+    Command* m_lastUsedConversionCommand;
+    std::vector<ConversionPresetAction> m_conversionPresetActions;
+
     ScriptParser m_scriptParser;
     CoverProvider m_coverProvider;
 

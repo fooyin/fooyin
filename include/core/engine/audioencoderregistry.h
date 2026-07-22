@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <luket@pm.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,36 +19,31 @@
 
 #pragma once
 
-#include "ffmpegutils.h"
+#include "fycore_export.h"
 
-extern "C"
-{
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-}
+#include <core/engine/audioencoder.h>
+
+#include <vector>
 
 namespace Fooyin {
-class Codec
+class FYCORE_EXPORT AudioEncoderRegistry
 {
 public:
-    Codec() = default;
-    Codec(CodecContextPtr context, AVStream* stream);
+    void addEncoderBackend(const QString& id, const QString& name, EncoderCreator creator);
 
-    Codec(Codec&& other) noexcept;
-    Codec& operator=(Codec&& other) noexcept;
+    [[nodiscard]] std::vector<AudioEncoderInfo> availableEncoders() const;
+    [[nodiscard]] std::unique_ptr<AudioEncoder> createEncoder(const QString& encoderId) const;
 
-    Codec(const Codec& other)            = delete;
-    Codec& operator=(const Codec& other) = delete;
-
-    [[nodiscard]] bool isValid() const;
-
-    [[nodiscard]] AVCodecContext* context() const;
-    [[nodiscard]] AVStream* stream() const;
-    [[nodiscard]] int streamIndex() const;
-    [[nodiscard]] bool isPlanar() const;
+    void reset();
 
 private:
-    CodecContextPtr m_context;
-    AVStream* m_stream;
+    struct Backend
+    {
+        QString id;
+        QString name;
+        EncoderCreator creator;
+    };
+
+    std::vector<Backend> m_backends;
 };
 } // namespace Fooyin

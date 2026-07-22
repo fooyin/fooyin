@@ -3627,8 +3627,8 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
             TagLib::RIFF::WAV::File file(&stream, false);
             if(file.isValid()) {
                 writeProperties(file, false, true);
-                if(file.hasID3v2Tag()) {
-                    writeID3v2Tags(file.ID3v2Tag(), track, options, policy, false);
+                if(auto* tag = file.ID3v2Tag()) {
+                    writeID3v2Tags(tag, track, options, policy, false);
                 }
                 else {
                     logWriteFailure(u"write metadata"_s, source.filepath, mimeType, u"file has no ID3v2 tag block"_s);
@@ -3872,13 +3872,11 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
         }
         case AudioFileFormat::Wav: {
             TagLib::RIFF::WAV::File file(&stream, false);
-            if(file.isValid() && file.hasID3v2Tag()) {
-                success = saveModifiedFile(file, writeId3Cover(file.ID3v2Tag(), covers), u"write cover artwork"_s,
-                                           source.filepath, mimeType, failureLogged);
-            }
-            else if(file.isValid()) {
-                logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType, u"file has no ID3v2 tag block"_s);
-                failureLogged = true;
+            if(file.isValid()) {
+                if(auto* tag = file.ID3v2Tag()) {
+                    success = saveModifiedFile(file, writeId3Cover(tag, covers), u"write cover artwork"_s,
+                                               source.filepath, mimeType, failureLogged);
+                }
             }
             break;
         }
