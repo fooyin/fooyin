@@ -6,72 +6,72 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="228"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Αναπαραγωγή</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="232"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Προσθήκη στην τρέχουσα λίστα αναπαραγωγής</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="235"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Προσθήκη στην ενεργή λίστα αναπαραγωγής</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="238"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Αντικατάσταση τρέχουσας λίστας αναπαραγωγής</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="241"/>
         <source>Create new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Δημιουργία νέας λίστας αναπαραγωγής</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="244"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Προσθήκη σε λίστα αναπαραγωγής</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="248"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Προσθήκη στην ουρά αναπαραγωγής</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="251"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προσθήκη για αναπαραγωγή στη συνέχεια</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="254"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Αντικατάσταση ουράς αναπαραγωγής</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="258"/>
         <source>Set as root</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ορισμός ως &quot;ρίζα&quot;</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="261"/>
         <source>View mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Λειτουργία προβολής</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="264"/>
         <source>Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>Παραμετροποίηση</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="396"/>
         <source>Directory Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Εξερευνητής Φακέλων</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="398"/>
         <source>Unchecked items will be hidden from the directory browser context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Τα μη επιλεγμένα στοιχεία θα μείνουν κρυμμένα από το μενού πλαισίου του εξερευνητή φακέλων.</translation>
     </message>
 </context>
 <context>
@@ -79,57 +79,57 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="54"/>
         <source>Widget actions</source>
-        <translation type="unfinished"></translation>
+        <translation>Ενέργειες γραφικού στοιχείου</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="58"/>
         <source>Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Αντικατάσταση</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="61"/>
         <source>Split</source>
-        <translation type="unfinished"></translation>
+        <translation>Διαίρεση</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="64"/>
         <source>Remove split</source>
-        <translation type="unfinished"></translation>
+        <translation>Αφαίρεση διαίρεσης</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="68"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Αντιγραφή</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="71"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Επικόλληση</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="75"/>
         <source>Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>Εισαγωγή</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="78"/>
         <source>Move</source>
-        <translation type="unfinished"></translation>
+        <translation>Μεταφορά</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="82"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Αφαίρεση</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="407"/>
         <source>Layout Editing</source>
-        <translation type="unfinished"></translation>
+        <translation>Επεξεργασία διαρρύθμισης</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="409"/>
         <source>Unchecked items will be hidden from the layout editing context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Τα μη επιλεγμένα στοιχεία θα μείνουν κρυμμένα από το μενού πλαισίου της επεξεργασία διαρρύθμισης.</translation>
     </message>
 </context>
 <context>
@@ -137,67 +137,67 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="48"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Προσθήκη στην τρέχουσα λίστα αναπραγωγής</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="51"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Προσθήκη στην ενεργή λίστα αναπαραγωγής</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="54"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Αντικατάσταση τρέχουσας λίστας αναπαραγωγής</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="57"/>
         <source>Create new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Δημιουργία νέας λίστας αναπαραγωγής</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="60"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Προσθήκη σε λίστα αναπαραγωγής</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="64"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Προσθήκη στην ουρά αναπαραγωγής</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="67"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προσθήκη για αναπαραγωγή στη συνέχεια</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="71"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Αφαίρεση από την ουρά αναπαραγωγής</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="75"/>
         <source>Filter options</source>
-        <translation type="unfinished"></translation>
+        <translation>Επιλογές φίλτρων</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="78"/>
         <source>Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>Διαρρύθμιση</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="82"/>
         <source>Track menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Μενού κομματιού</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="55"/>
         <source>Library Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Φίλτρο Βιβλιοθήκης</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="57"/>
         <source>Unchecked items will be hidden from the library filter context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Τα μη επιλεγμένα στοιχεία θα μείνουν κρυμμένα από το μενού πλαισίου του φίλτρου βιβλιοθήκης.</translation>
     </message>
 </context>
 <context>
@@ -259,62 +259,62 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="208"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="210"/>
         <source>Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Μεταδεδομένα</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="104"/>
         <source>Track title</source>
-        <translation type="unfinished"></translation>
+        <translation>Τίτλος κομματιού</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="106"/>
         <source>Primary artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Κύριος καλλιτέχνης</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="108"/>
         <source>Unique artists combined into one value</source>
-        <translation type="unfinished"></translation>
+        <translation>Ξεχωριστοί καλλιτέχνες που συνδυάζονται σε μία τιμή</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="110"/>
         <source>Album title</source>
-        <translation type="unfinished"></translation>
+        <translation>Άλμπουμ</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="112"/>
         <source>Album artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Καλλιτέχνης άλμπουμ</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="114"/>
         <source>Track number</source>
-        <translation type="unfinished"></translation>
+        <translation>Αριθμός κομματιού</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="116"/>
         <source>Total tracks on the release</source>
-        <translation type="unfinished"></translation>
+        <translation>Συνολικά κομμάτια στην κυκλοφορία</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="118"/>
         <source>Disc number</source>
-        <translation type="unfinished"></translation>
+        <translation>Αριθμός δίσκου</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="120"/>
         <source>Total discs on the release</source>
-        <translation type="unfinished"></translation>
+        <translation>Αριθμός δίσκων στην κυκλοφορία</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="121"/>
         <source>Genres</source>
-        <translation type="unfinished"></translation>
+        <translation>Είδη</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="123"/>
         <source>Composers</source>
-        <translation type="unfinished"></translation>
+        <translation>Συνθέτες</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="125"/>
