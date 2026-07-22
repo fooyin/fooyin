@@ -10,8 +10,8 @@
   - Add PulseAudio output support ([#1331](https://github.com/fooyin/fooyin/pull/1331))
 * Visualisations
   - Add spectrogram plugin ([#1354](https://github.com/fooyin/fooyin/pull/1354))
-  - Add oscilloscope plugin ([#1357](https://gitUpdate hub.com/fooyin/fooyin/pull/1357))
-  - Add a projectM plugin ([#1339](https://github.com/fooyin/fooyin/pull/1339))
+  - Add oscilloscope plugin ([#1357](https://gitUpdatehub.com/fooyin/fooyin/pull/1357))
+  - Add projectM plugin ([#1339](https://github.com/fooyin/fooyin/pull/1339))
 
 ### Improvements
 
