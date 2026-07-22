@@ -194,19 +194,29 @@ SpectrumPlotGeometry SpectrumAxisRenderer::layout(const QRect& widgetRect, const
     geometry.drawAmplitudeLabels         = requestedAmplitudeLabels;
     bool drawHorizontalLabels            = requestedHorizontalLabels;
 
+    const auto fitRectForLabels = [&](bool amplitudeLabels, bool horizontalLabels) {
+        QRect rect{widgetRect};
+        rect.adjust(m_config.showLeftLabels && amplitudeLabels ? dbWidth : 0,
+                    m_config.showTopLabels && horizontalLabels ? labelHeight : 0,
+                    m_config.showRightLabels && amplitudeLabels ? -dbWidth : 0,
+                    m_config.showBottomLabels && horizontalLabels ? -labelHeight : 0);
+        return rect;
+    };
+
     for(int pass{0}; pass < 3; ++pass) {
-        QRect fitRect = widgetRect;
-        fitRect.adjust(m_config.showLeftLabels && geometry.drawAmplitudeLabels ? dbWidth : 0,
-                       m_config.showTopLabels && drawHorizontalLabels ? labelHeight : 0,
-                       m_config.showRightLabels && geometry.drawAmplitudeLabels ? -dbWidth : 0,
-                       m_config.showBottomLabels && drawHorizontalLabels ? -labelHeight : 0);
-        const QRect fitPlotRect = plotRectForSpectrumRect(fitRect);
+        const QRect amplitudeFitRect     = fitRectForLabels(geometry.drawAmplitudeLabels, drawHorizontalLabels);
+        const QRect amplitudeFitPlotRect = plotRectForSpectrumRect(amplitudeFitRect);
 
         const bool drawAmplitudeLabels
-            = requestedAmplitudeLabels && !amplitudeLabels(metrics, widgetRect.height(), fitPlotRect).empty();
-        const bool nextDrawHorizontalLabels
-            = requestedHorizontalLabels
-           && !horizontalLabels(metrics, fitRect, fitPlotRect, bandCount, HighestHorizontalLabelPriority, dpr).empty();
+            = requestedAmplitudeLabels && !amplitudeLabels(metrics, widgetRect.height(), amplitudeFitPlotRect).empty();
+
+        const QRect horizontalFitRect       = fitRectForLabels(geometry.drawAmplitudeLabels, requestedHorizontalLabels);
+        const QRect horizontalFitPlotRect   = plotRectForSpectrumRect(horizontalFitRect);
+        const bool nextDrawHorizontalLabels = requestedHorizontalLabels
+                                           && horizontalFitPlotRect.height() >= (2 * labelHeight)
+                                           && !horizontalLabels(metrics, horizontalFitRect, horizontalFitPlotRect,
+                                                                bandCount, HighestHorizontalLabelPriority, dpr)
+                                                   .empty();
 
         if(drawAmplitudeLabels == geometry.drawAmplitudeLabels && nextDrawHorizontalLabels == drawHorizontalLabels) {
             break;
@@ -456,7 +466,8 @@ std::vector<float> SpectrumAxisRenderer::verticalGridFrequencies() const
 
 QRect SpectrumAxisRenderer::plotRectForSpectrumRect(const QRect& spectrumRect) const
 {
-    QRect plotRect = spectrumRect.adjusted(0, PlotHeadroomPx, 0, 0);
+    const int headroom = std::clamp(spectrumRect.height() / 10, 0, PlotHeadroomPx);
+    QRect plotRect     = spectrumRect.adjusted(0, headroom, 0, 0);
     if(plotRect.width() <= 0 || plotRect.height() <= 0) {
         return plotRect;
     }
