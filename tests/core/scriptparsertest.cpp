@@ -1153,6 +1153,28 @@ TEST_F(ScriptParserTest, QueryLiteralSearchOptions)
     EXPECT_EQ(1, anywhereFilter.filter(u"light"_s, tracks).size());
 }
 
+TEST_F(ScriptParserTest, QueryWordBeginningSearchIgnoresAccents)
+{
+    Track composedTrack;
+    composedTrack.setId(0);
+    composedTrack.setArtists({u"Ásgeir"_s});
+
+    Track decomposedTrack;
+    decomposedTrack.setId(1);
+    decomposedTrack.setArtists({u"A\u0301sgeir"_s});
+
+    ScriptSearchOptions artistOnly;
+    artistOnly.script = u"%artist%"_s;
+    artistOnly.mode   = ScriptSearchMode::MatchWordBeginnings;
+
+    TrackQueryFilter filter{artistOnly};
+    const TrackList tracks{composedTrack, decomposedTrack};
+
+    EXPECT_EQ(2, filter.filter(u"Asgeir"_s, tracks).size());
+    EXPECT_EQ(2, filter.filter(u"Ásgeir"_s, tracks).size());
+    EXPECT_EQ(0, filter.filter(u"sgeir"_s, tracks).size());
+}
+
 TEST_F(ScriptParserTest, QueryClassification)
 {
     ScriptParser parser;

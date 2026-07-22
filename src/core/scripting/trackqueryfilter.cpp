@@ -52,18 +52,17 @@ QStringList searchWords(const QString& text)
     return words;
 }
 
-bool matchesWordBeginnings(const QString& text, const QString& query)
+bool matchesWordBeginnings(const QString& foldedText, const QString& foldedQuery)
 {
-    const QStringList queryWords = searchWords(query);
+    const QStringList queryWords = searchWords(foldedQuery);
     if(queryWords.empty()) {
         return false;
     }
 
-    const QStringList textWords = searchWords(text);
+    const QStringList textWords = searchWords(foldedText);
     for(const QString& queryWord : queryWords) {
-        const auto match = std::ranges::find_if(textWords, [&queryWord](const QString& textWord) {
-            return textWord.startsWith(queryWord, Qt::CaseInsensitive);
-        });
+        const auto match = std::ranges::find_if(
+            textWords, [&queryWord](const QString& textWord) { return textWord.startsWith(queryWord); });
         if(match == textWords.cend()) {
             return false;
         }
@@ -152,18 +151,18 @@ bool TrackQueryFilter::matchesSearch(const QString& text, const QString& search,
         return true;
     }
 
-    const QString foldedText = Utils::foldForSearch(text);
+    const QString foldedText   = Utils::foldForSearch(text);
+    const QString foldedSearch = Utils::foldForSearch(search);
     if(phraseMatch) {
-        return foldedText.contains(Utils::foldForSearch(search));
+        return foldedText.contains(foldedSearch);
     }
 
     if(mode == ScriptSearchMode::MatchWordBeginnings) {
-        return matchesWordBeginnings(text, search);
+        return matchesWordBeginnings(foldedText, foldedSearch);
     }
 
-    const QStringList terms = search.split(u' ', Qt::SkipEmptyParts);
-    return std::ranges::all_of(
-        terms, [&foldedText](const QString& term) { return foldedText.contains(Utils::foldForSearch(term)); });
+    const QStringList terms = foldedSearch.split(u' ', Qt::SkipEmptyParts);
+    return std::ranges::all_of(terms, [&foldedText](const QString& term) { return foldedText.contains(term); });
 }
 
 TrackList TrackQueryFilter::filter(const QString& search, const TrackList& tracks)
