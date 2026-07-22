@@ -2237,6 +2237,619 @@ When disabled, existing track order is preserved and only newly added matching t
     </message>
 </context>
 <context>
+    <name>Fooyin::ConversionPathResolver</name>
+    <message>
+        <location filename="../../src/core/engine/conversion/conversionpathresolver.cpp" line="161"/>
+        <source>Duplicate output path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/engine/conversion/conversionpathresolver.cpp" line="176"/>
+        <source>Could not resolve output path</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::ConversionSession</name>
+    <message>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="60"/>
+        <source>Preparing conversion…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="60"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="64"/>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="190"/>
+        <source>Audio Conversion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="99"/>
+        <source>Current file</source>
+        <translation type="unfinished">Fichier en cours</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="121"/>
+        <source>File already exists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="122"/>
+        <source>The file already exists:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="125"/>
+        <source>Overwrite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="126"/>
+        <source>Skip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="185"/>
+        <source>Converted: %Ln track(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="186"/>
+        <source>Skipped: %Ln track(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="187"/>
+        <source>Failed: %Ln track(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="188"/>
+        <source>Cancelled: %Ln track(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::ConverterSetupDialog</name>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="82"/>
+        <source>Load</source>
+        <translation type="unfinished">Charger</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="83"/>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="84"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1100"/>
+        <source>Remove</source>
+        <translation type="unfinished">Supprimer</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="85"/>
+        <source>Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="86"/>
+        <source>Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="89"/>
+        <source>Edit</source>
+        <translation type="unfinished">Éditer</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="94"/>
+        <source>Browse…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="99"/>
+        <source>Transfer metadata (tags)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="100"/>
+        <source>Transfer rating</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="101"/>
+        <source>Transfer play count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="102"/>
+        <source>Transfer attached pictures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="104"/>
+        <source>Prevent clipping</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="107"/>
+        <source>Don&apos;t reset DSP between tracks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="114"/>
+        <source>Generate short previews instead of converting entire tracks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="116"/>
+        <source>Show full status report</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="118"/>
+        <source>Verify converted output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="125"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="204"/>
+        <source>Converter Setup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="129"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="268"/>
+        <source>Output</source>
+        <translation type="unfinished">Sortie</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="130"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="269"/>
+        <source>Destination</source>
+        <translation type="unfinished">Destination</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="131"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="270"/>
+        <source>Processing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="132"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="271"/>
+        <source>Other</source>
+        <translation type="unfinished">Autre</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="141"/>
+        <source>Convert</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="204"/>
+        <source>No output encoder is available.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="209"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1064"/>
+        <source>Choose destination</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="234"/>
+        <source>Saved presets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="255"/>
+        <source>Current settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="292"/>
+        <source>Auto</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="293"/>
+        <source>8-bit integer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="294"/>
+        <source>16-bit integer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="295"/>
+        <source>24-bit integer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="296"/>
+        <source>32-bit integer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="297"/>
+        <source>32-bit floating point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="299"/>
+        <source>Never</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="300"/>
+        <source>Lossy sources only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="301"/>
+        <source>Always</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="307"/>
+        <source>Output sample format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="309"/>
+        <source>Dither</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="335"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1150"/>
+        <source>Ask when conversion starts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="336"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1153"/>
+        <source>Source track folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="337"/>
+        <source>Specified folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="338"/>
+        <source>Ask</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="339"/>
+        <source>Skip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="340"/>
+        <source>Overwrite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="341"/>
+        <source>Convert each track to an individual file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="343"/>
+        <source>Generate one multi-track file per name group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="345"/>
+        <source>Merge all tracks into one output file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="355"/>
+        <source>Output path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="357"/>
+        <source>Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="359"/>
+        <source>Output style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="361"/>
+        <source>Name format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="363"/>
+        <source>If file already exists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="369"/>
+        <source>Preview</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="387"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1209"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1226"/>
+        <source>None</source>
+        <translation type="unfinished">Non Assigné</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="388"/>
+        <source>Track gain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="389"/>
+        <source>Album gain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="396"/>
+        <source> dB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="399"/>
+        <source>ReplayGain processing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="402"/>
+        <source>Mode</source>
+        <translation type="unfinished">Mode</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="405"/>
+        <source>Preamp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="407"/>
+        <source>Without ReplayGain info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="410"/>
+        <source>ReplayGain is applied permanently to the converted audio.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="441"/>
+        <source>DSP chain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="443"/>
+        <source>Active DSPs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="446"/>
+        <source>Available DSPs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="455"/>
+        <source>Metadata</source>
+        <translation type="unfinished">Métadonnées</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="508"/>
+        <source>Preview generation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="513"/>
+        <source>Length</source>
+        <translation type="unfinished">Durée</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="517"/>
+        <source>When done</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="522"/>
+        <source>Copy other files to the destination folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="711"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="717"/>
+        <source>DSP Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="711"/>
+        <source>This DSP has no configurable settings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="718"/>
+        <source>Unable to open settings for DSP &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="771"/>
+        <source>Default settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="800"/>
+        <source>Save Converter Preset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="800"/>
+        <source>Name</source>
+        <translation type="unfinished">Nom</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="857"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="866"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="872"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="881"/>
+        <source>Import Converter Presets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="858"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="929"/>
+        <source>fooyin Converter Presets (*.fycp)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="866"/>
+        <source>The preset file could not be opened.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="872"/>
+        <source>The preset file is invalid or empty.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="882"/>
+        <source>Encoder is unavailable for preset: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="928"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="938"/>
+        <source>Export Converter Preset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="938"/>
+        <source>The preset file could not be written.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1100"/>
+        <source>Reset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1144"/>
+        <source>No encoder available</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1157"/>
+        <source>No folder specified</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1165"/>
+        <source>group tracks by output name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1168"/>
+        <source>merge tracks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1172"/>
+        <source>No name format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1179"/>
+        <source>metadata</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1182"/>
+        <source>rating</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1185"/>
+        <source>play count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1188"/>
+        <source>attached pictures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1193"/>
+        <source>ReplayGain (track)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1196"/>
+        <source>ReplayGain (album)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1203"/>
+        <source>%Ln DSP(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1205"/>
+        <source>continuous DSP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1214"/>
+        <source>%1% previews</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1217"/>
+        <source>Show status report</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1220"/>
+        <source>Copy matching files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1223"/>
+        <source>Verify output</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::CoverWidget</name>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="342"/>
@@ -3372,6 +3985,162 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="191"/>
         <source>Estimated: %1</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::EncoderProfileDialog</name>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="42"/>
+        <source>Default</source>
+        <translation type="unfinished">Par Défaut</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="44"/>
+        <source>Variable bitrate (VBR)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="46"/>
+        <source>Constrained variable bitrate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="48"/>
+        <source>Constant quality (VBR)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="50"/>
+        <source>Average bitrate (ABR)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="52"/>
+        <source>Constant bitrate (CBR)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="54"/>
+        <source>Lossless compression</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="66"/>
+        <source>Options</source>
+        <translation type="unfinished">Options</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="68"/>
+        <source>Mode</source>
+        <translation type="unfinished">Mode</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="69"/>
+        <source>Quality</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="70"/>
+        <source>Estimated bitrate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="72"/>
+        <source>Bitrate</source>
+        <translation type="unfinished">Débit</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="73"/>
+        <source>Level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="80"/>
+        <source>Encoder Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="107"/>
+        <source>Encoder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="111"/>
+        <source>Format</source>
+        <translation type="unfinished">Format</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="113"/>
+        <source>Name</source>
+        <translation type="unfinished">Nom</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="226"/>
+        <source>Compression level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="227"/>
+        <source>Encoding effort</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::EncoderProfileTableModel</name>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="42"/>
+        <source>VBR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="44"/>
+        <source>CVBR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="46"/>
+        <source>VBR quality %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="48"/>
+        <source>ABR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="50"/>
+        <source>CBR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="52"/>
+        <source>level %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="87"/>
+        <source>%1 kbps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="90"/>
+        <source>~%1 kbps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="113"/>
+        <source>Name</source>
+        <translation type="unfinished">Nom</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="115"/>
+        <source>Bitrate</source>
+        <translation type="unfinished">Débit</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="117"/>
+        <source>Settings</source>
+        <translation type="unfinished">Paramètres</translation>
     </message>
 </context>
 <context>
@@ -4777,17 +5546,17 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::GuiApplication</name>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="765"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="782"/>
         <source>Plugins not found</source>
         <translation>Plugins introuvables</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="766"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="783"/>
         <source>Some plugins are required for full functionality.</source>
         <translation>Des plugins sont nécessaires pour bien fonctionner.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="767"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="784"/>
         <source>Plugin search locations:
 
 </source>
@@ -4796,275 +5565,328 @@ Effects here process the final combined output.</source>
 </translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="770"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="787"/>
         <source>Quit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="886"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="903"/>
         <source>Volume</source>
         <translation>Volume</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="888"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="905"/>
         <source>Volume up</source>
         <translation>Augmenter le volume</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="895"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="912"/>
         <source>Volume down</source>
         <translation>Baisser le volume</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="902"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="919"/>
         <source>Mute</source>
         <translation>Désactiver le son</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="912"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="929"/>
         <source>Clear Current Playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="913"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="930"/>
         <source>Remove all tracks from the current playlist</source>
         <translation type="unfinished">Supprimer toutes les pistes de la liste de lecture sélectionnée</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="938"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="955"/>
         <source>Playback</source>
         <translation>Lecture en cours</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="938"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="955"/>
         <source>Seek</source>
         <translation type="unfinished">Balayage temporel</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="940"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="957"/>
         <source>Seek forward (small step)</source>
         <translation>Balayer de l&apos;avant (saut court)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="947"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="964"/>
         <source>Seek forward (large step)</source>
         <translation>Balayer de l&apos;avant (saut long)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="954"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="971"/>
         <source>Seek backward (small step)</source>
         <translation>Balayer de l&apos;arrière (saut court)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="962"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="979"/>
         <source>Seek backward (large step)</source>
         <translation>Balayer de l&apos;arrière (saut long)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="987"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1004"/>
         <source>Remove Playlist</source>
         <translation>Supprimer une Liste de Lecture</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="998"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1015"/>
         <source>Toggle Menubar</source>
         <translation>Activer/désactiver la barre de menus</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1002"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1019"/>
         <source>View</source>
         <translation>Vue</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1012"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1029"/>
         <source>Reading tracks…</source>
         <translation>Lecture des pistes…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1012"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1029"/>
         <source>Abort</source>
         <translation>Arrêter</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1040"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1057"/>
         <source>Current file</source>
         <translation>Fichier en cours</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1053"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1089"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1070"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1106"/>
         <source>Tagging</source>
         <translation>Étiquetage</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1055"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1072"/>
         <source>Reload tags from files</source>
         <translation>Recharger les étiquettes à partir des fichiers</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1056"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1073"/>
         <source>Reload tags from modified files</source>
         <translation>Recharger les étiquettes des fichiers modifiés</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1058"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1075"/>
         <source>Replace tags in selected tracks with tags from the files</source>
         <translation>Remplacer les étiquettes des pistes sélectionnées par celles des fichiers</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1059"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1076"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
         <translation>Remplacer les étiquettes des pistes sélectionnées par celles des fichiers si elles sont différentes</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1319"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1117"/>
+        <source>Choose destination</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1193"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1201"/>
+        <source>Convert using preset %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1200"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1232"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1242"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1251"/>
+        <source>Tracks</source>
+        <translation type="unfinished">Pistes</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1200"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1232"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1242"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1251"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1262"/>
+        <source>Convert</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1230"/>
+        <source>Converter setup…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1239"/>
+        <source>Using default settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1243"/>
+        <source>Convert using default settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1248"/>
+        <source>Repeat last conversion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1279"/>
+        <source>Custom conversion…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1514"/>
         <source>Reload Required</source>
         <translation>Rechargement nécessaire</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1321"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1516"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
         <translation>En raison d&apos;une modification de la base de données, les pistes doivent être rechargées à partir du disque pour mettre à jour les métadonnées enregistrées.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1325"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1520"/>
         <source>Reload Now</source>
         <translation>Recharger maintenant</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1328"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1523"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1466"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1661"/>
         <source>Playback Error</source>
         <translation>Erreur de lecture</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1519"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1714"/>
         <source>Track Not Found</source>
         <translation>Piste Introuvable</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1592"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1787"/>
         <source>Add Stream URL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1592"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1787"/>
         <source>Stream URL:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="334"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="350"/>
         <source>Searching for artwork…</source>
         <translation>Recherche d&apos;illustrations…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="348"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="364"/>
         <source>Artwork search finished</source>
         <translation>Recherche d&apos;illustrations terminée</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="402"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="418"/>
         <source>Failed to open artwork file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="408"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="424"/>
         <source>Artwork file is empty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1491"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1686"/>
         <source>Continue</source>
         <translation>Poursuivre</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="916"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="989"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="933"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1006"/>
         <source>Playlist</source>
         <translation type="unfinished">Liste de Lecture</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="304"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="307"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="320"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="323"/>
         <source>New Layout</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="307"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="323"/>
         <source>Layout Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="990"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1007"/>
         <source>Remove Current Playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1096"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1291"/>
         <source>Utilities</source>
         <translation>Utilitaires</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1493"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1688"/>
         <source>Stop</source>
         <translation>Stop</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1497"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1692"/>
         <source>Always continue playing if a track is unavailable</source>
         <translation>Poursuivre la lecture si une piste n&apos;est pas disponible</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1524"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1719"/>
         <source>No Decoder Available</source>
         <translation>Aucun décodeur disponible</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1554"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1749"/>
         <source>All Supported Media Files (%1)</source>
         <translation>Fichiers multimédias pris en charge (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1555"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1750"/>
         <source>Audio Files (%1)</source>
         <translation>Fichiers audio (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1566"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1761"/>
         <source>Add Files</source>
         <translation>Ajouter des Fichiers</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1580"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1775"/>
         <source>Add Folders</source>
         <translation>Ajouter des Dossiers</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1594"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1789"/>
         <source>&amp;Add</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1598"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1793"/>
         <source>Enter a valid http:// or https:// URL.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1659"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1854"/>
         <source>All Supported Playlists (%1)</source>
         <translation>Toutes les listes de lecture supportées (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1669"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1864"/>
         <source>Load Playlist</source>
         <translation>Sauvegarder une Liste de Lecture</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1709"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1904"/>
         <source>Save Playlist</source>
         <translation>Enregistrer la Liste de Lecture</translation>
     </message>
@@ -11449,43 +12271,43 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::ProjectM::ProjectMView</name>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="89"/>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="671"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="96"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="859"/>
         <source>Initialising projectM…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="368"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="375"/>
         <source>Preset %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="508"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="530"/>
         <source>No projectM preset folders are configured.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="516"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="555"/>
         <source>Preset failed to load.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="530"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="575"/>
         <source>projectM initialisation failed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="531"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="576"/>
         <source>projectM initialisation failed: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="544"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="589"/>
         <source>Using presets from %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="545"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="590"/>
         <source>Using presets from %Ln folder(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -14966,7 +15788,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1447"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1642"/>
         <source>Quick Search</source>
         <translation>Recherche Rapide</translation>
     </message>
@@ -16784,7 +17606,7 @@ This does not support full scripting.</source>
 <context>
     <name>Fooyin::TagEditor::TagEditorModel</name>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditormodel.cpp" line="645"/>
+        <location filename="../../src/plugins/tageditor/tageditormodel.cpp" line="644"/>
         <source>Multiple values. Choose a rating to apply it to all selected tracks.</source>
         <translation type="unfinished"></translation>
     </message>
