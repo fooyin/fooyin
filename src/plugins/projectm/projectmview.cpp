@@ -103,17 +103,7 @@ ProjectMView::ProjectMView()
     , m_hasPcmCursor{false}
     , m_presetLocked{false}
     , m_shuffle{false}
-{
-    QSurfaceFormat format;
-    format.setRenderableType(QSurfaceFormat::OpenGL);
-    format.setVersion(3, 3);
-    format.setProfile(QSurfaceFormat::CoreProfile);
-    format.setDepthBufferSize(24);
-    format.setStencilBufferSize(8);
-    format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
-    format.setSwapInterval(1);
-    QSurfaceFormat::setDefaultFormat(format);
-}
+{ }
 
 ProjectMView::~ProjectMView()
 {
@@ -747,6 +737,23 @@ void ProjectMView::logOpenGLContext()
                         << "profile=" << actualFormat.profile() << "GLES=" << currentContext->isOpenGLES()
                         << "depth=" << actualFormat.depthBufferSize() << "stencil=" << actualFormat.stencilBufferSize()
                         << "samples=" << actualFormat.samples() << "options=" << actualFormat.options();
+
+    const bool versionTooOld
+        = actualFormat.majorVersion() < 3 || (actualFormat.majorVersion() == 3 && actualFormat.minorVersion() < 3);
+    if(currentContext->isOpenGLES()) {
+        qCWarning(PROJECTM_GL) << "projectM requested desktop OpenGL 3.3 core, but Qt created an OpenGL ES context";
+    }
+    else if(versionTooOld) {
+        qCWarning(PROJECTM_GL) << "projectM requires desktop OpenGL 3.3 or newer, but Qt created"
+                               << actualFormat.majorVersion() << '.' << actualFormat.minorVersion();
+    }
+    else if(actualFormat.profile() != QSurfaceFormat::CoreProfile) {
+        qCWarning(PROJECTM_GL) << "projectM requested an OpenGL core profile, but Qt created" << actualFormat.profile();
+    }
+    else {
+        qCInfo(PROJECTM_GL) << "projectM OpenGL requirements satisfied: desktop OpenGL 3.3+ core profile";
+    }
+
     qCInfo(PROJECTM_GL) << "GL_VERSION:" << stringValue(GL_VERSION);
     qCInfo(PROJECTM_GL) << "GLSL_VERSION:" << stringValue(GL_SHADING_LANGUAGE_VERSION);
     qCInfo(PROJECTM_GL) << "GL_VENDOR:" << stringValue(GL_VENDOR);

@@ -32,6 +32,8 @@
 #include <QDir>
 #include <QLoggingCategory>
 
+#include <QSurfaceFormat>
+
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif
@@ -39,6 +41,19 @@
 using namespace Qt::StringLiterals;
 
 namespace {
+void configureOpenGLSurfaceFormat()
+{
+    QSurfaceFormat format;
+    format.setRenderableType(QSurfaceFormat::OpenGL);
+    format.setVersion(3, 3);
+    format.setProfile(QSurfaceFormat::CoreProfile);
+    format.setDepthBufferSize(24);
+    format.setStencilBufferSize(8);
+    format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
+    format.setSwapInterval(1);
+    QSurfaceFormat::setDefaultFormat(format);
+}
+
 #ifdef Q_OS_WIN
 void configurePluginSearchPaths()
 {
@@ -94,6 +109,8 @@ void parseCmdOptions(Fooyin::Application& app, Fooyin::GuiApplication& guiApp, C
 
 int main(int argc, char** argv)
 {
+    configureOpenGLSurfaceFormat();
+
     Q_INIT_RESOURCE(data);
     Q_INIT_RESOURCE(icons);
 
