@@ -4,17 +4,24 @@
 
 ### New Features
 
+* Audio Conversion
+  - Add audio conversion support ([#1396](https://github.com/fooyin/fooyin/pull/1396))
 * Audio Output
   - Add PulseAudio output support ([#1331](https://github.com/fooyin/fooyin/pull/1331))
 * Visualisations
-  - Add a projectM visualisation plugin ([#1339](https://github.com/fooyin/fooyin/pull/1339))
+  - Add spectrogram plugin ([#1354](https://github.com/fooyin/fooyin/pull/1354))
+  - Add oscilloscope plugin ([#1357](https://gitUpdate hub.com/fooyin/fooyin/pull/1357))
+  - Add a projectM plugin ([#1339](https://github.com/fooyin/fooyin/pull/1339))
 
 ### Improvements
 
 * Audio/Playback
   - Add optional automatic resampling for unsupported device rates
+  - Defer playcount and rating updates on the current track ([#1351](https://github.com/fooyin/fooyin/pull/1351))
 * Directory Browser
   - Improve folder loading performance by deferring recursive playlist discovery
+* Interface
+  - Support individual override states for configurable colours and fonts
 * Properties
   - Improve properties dialog performance ([#1333](https://github.com/fooyin/fooyin/pull/1333))
 * Radio Browser
@@ -31,6 +38,8 @@
 
 * Autoplaylists
   - Preserve distinct entries and stable identities when regenerating autoplaylists ([#1334](https://github.com/fooyin/fooyin/issues/1334))
+* FileOps
+  - Fix delete dialogue keyboard behaviour ([#1367](https://github.com/fooyin/fooyin/pull/1367))
 * Interface
   - Bind context actions to their originating track selection ([#1237](https://github.com/fooyin/fooyin/issues/1237))
   - Fix icon and star rating rendering at fractional display scales ([#1347](https://github.com/fooyin/fooyin/pull/1347))
@@ -45,14 +54,20 @@
 * Playlist
   - Fix a crash when removing the last empty default playlist
   - Fix playing icon scaling ([#1327](https://github.com/fooyin/fooyin/issues/1327))
+  - Fix rating delegate handling when changing playlist layouts ([#1352](https://github.com/fooyin/fooyin/issues/1352))
 * Properties
   - Preserve the active scope when rejecting pending artwork or ReplayGain changes
+* Remote Streams
+  - Fix apostrophes in ICY stream metadata ([#1383](https://github.com/fooyin/fooyin/issues/1383))
 * Scrobbling
   - Update the ListenBrainz token URL
 * Scripting
   - Fix nested formatting scopes ([#1348](https://github.com/fooyin/fooyin/issues/1348))
 * Spectrum
   - Fix peak height at fractional display scales
+* Tag Editor
+  - Fix renaming extended tags ([#1356](https://github.com/fooyin/fooyin/pull/1356))
+  - Fix new extended tags being duplicated by a rename ([#1387](https://github.com/fooyin/fooyin/pull/1387))
 
 ### Build/System
 
@@ -62,6 +77,8 @@
 * Dependencies
   - Add projectM as an optional dependency for the projectM visualisation plugin
   - Update the vcpkg baseline and ICU version handling
+* Translations
+  - Update translations and translation sources ([#1349](https://github.com/fooyin/fooyin/pull/1349), [#1350](https://github.com/fooyin/fooyin/pull/1350), [#1384](https://github.com/fooyin/fooyin/pull/1384), [#1385](https://github.com/fooyin/fooyin/pull/1385))
 
 
 ## [0.11.1](https://github.com/fooyin/fooyin/releases/tag/v0.11.1) (2026-06-22)
