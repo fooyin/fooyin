@@ -2909,7 +2909,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="39"/>
         <source>Add</source>
-        <translation type="unfinished">Добавить</translation>
+        <translation>Добавить</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="43"/>
@@ -8478,92 +8478,92 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="39"/>
         <source>Oscilloscope Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки осциллографа</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="44"/>
         <source>Show zero line</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать нулевую линию</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="45"/>
         <source>Custom colours</source>
-        <translation type="unfinished">Пользовательские цвета</translation>
+        <translation>Пользовательские цвета</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="46"/>
         <source>Background colour</source>
-        <translation type="unfinished">Цвет фона</translation>
+        <translation>Цвет фона</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="47"/>
         <source>Waveform colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Цвет волноформы</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="48"/>
         <source>Zero line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Цвет нулевой линии</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="50"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Основное</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="60"/>
         <source>Time span of audio displayed across the oscilloscope</source>
-        <translation type="unfinished"></translation>
+        <translation>Временная длительность звука, отображаемого через осциллограф</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="69"/>
         <source>Vertical amplitude scale; high values may overlap stereo channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Вертикальная шкала амплитуды; высокие значения могут перекрывать стереоканалы</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="73"/>
         <source>%1 fps</source>
-        <translation type="unfinished">%1 кадр/с</translation>
+        <translation>%1 кадр/с</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="75"/>
         <source>Maximum waveform refresh rate; lower values can reduce motion blending</source>
-        <translation type="unfinished"></translation>
+        <translation>Максимальная частота обновления формы волны; меньшие значения могут уменьшить смазывание движения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="77"/>
         <source>Stereo</source>
-        <translation type="unfinished">Стерео</translation>
+        <translation>Стерео</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="78"/>
         <source>Mono</source>
-        <translation type="unfinished">Моно</translation>
+        <translation>Моно</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="79"/>
         <source>Display separate stereo channels or combine them into mono</source>
-        <translation type="unfinished"></translation>
+        <translation>Отображать раздельные стереоканалы или объединять их в моно</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="82"/>
         <source>Curve duration (ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Длительность кривой (мс)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="84"/>
         <source>Zoom (%)</source>
-        <translation type="unfinished"></translation>
+        <translation>Масштаб (%)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="86"/>
         <source>Update FPS</source>
-        <translation type="unfinished">Обновление счётчика кадров</translation>
+        <translation>Обновление счётчика кадров</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="88"/>
         <source>Downmix mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим сведения в моно</translation>
     </message>
 </context>
 <context>
@@ -8571,12 +8571,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="45"/>
         <source>Oscilloscope</source>
-        <translation type="unfinished"></translation>
+        <translation>Осциллограф</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="46"/>
         <source>Visualisations</source>
-        <translation type="unfinished">Визуализации</translation>
+        <translation>Визуализации</translation>
     </message>
 </context>
 <context>
@@ -8584,47 +8584,47 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="85"/>
         <source>Oscilloscope</source>
-        <translation type="unfinished"></translation>
+        <translation>Осциллограф</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="202"/>
         <source>Show zero line</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать нулевую линию</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="211"/>
         <source>Downmix mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим сведения в моно</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="227"/>
         <source>Stereo</source>
-        <translation type="unfinished">Стерео</translation>
+        <translation>Стерео</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="228"/>
         <source>Mono</source>
-        <translation type="unfinished">Моно</translation>
+        <translation>Моно</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="230"/>
         <source>Curve duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Длительность кривой</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="235"/>
         <source>%1 ms</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 мс</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="246"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Масштаб</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="251"/>
         <source>%1%</source>
-        <translation type="unfinished"></translation>
+        <translation>%1%</translation>
     </message>
 </context>
 <context>
@@ -11435,10 +11435,10 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="263"/>
         <source>%Ln preset(s) found.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Найдена %Ln предустановка.</numerusform>
+            <numerusform>Найдено %Ln предустановки.</numerusform>
+            <numerusform>Найдено %Ln предустановок.</numerusform>
         </translation>
     </message>
 </context>
@@ -11518,10 +11518,10 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="545"/>
         <source>Using presets from %Ln folder(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Использование предустановок из %Ln папки</numerusform>
+            <numerusform>Использование предустановок из %Ln папок</numerusform>
+            <numerusform>Использование предустановок из %Ln папок</numerusform>
         </translation>
     </message>
 </context>
@@ -15569,123 +15569,123 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="36"/>
         <source>Spectrogram Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки спектрограммы</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="37"/>
         <source>Use logarithmic frequency scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать логарифмическую шкалу частот</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="38"/>
         <source>Clear on track change</source>
-        <translation type="unfinished"></translation>
+        <translation>Очищать при смене трека</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="48"/>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="121"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Основные</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="55"/>
         <source>Unchanged</source>
-        <translation type="unfinished"></translation>
+        <translation>Без изменений</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="56"/>
         <source>Mono</source>
-        <translation type="unfinished">Моно</translation>
+        <translation>Моно</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="57"/>
         <source>Front Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Только передний</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="58"/>
         <source>Back Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Только задний</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="60"/>
         <source>Scrolling</source>
-        <translation type="unfinished">Прокрутка</translation>
+        <translation>Прокрутка</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="61"/>
         <source>Stationary</source>
-        <translation type="unfinished"></translation>
+        <translation>Стационарный</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="63"/>
         <source>Hann</source>
-        <translation type="unfinished">Ханна</translation>
+        <translation>Ханна</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="64"/>
         <source>Blackman-Harris</source>
-        <translation type="unfinished">Блэкман-Харрис</translation>
+        <translation>Блэкман-Харрис</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="66"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="70"/>
         <source>Vertical space between the left and right channel spectrograms.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вертикальный отступ между спектрограммами левого и правого каналов.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="75"/>
         <source>Channels</source>
-        <translation type="unfinished">Каналы</translation>
+        <translation>Каналы</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="77"/>
         <source>Style</source>
-        <translation type="unfinished">Стиль</translation>
+        <translation>Стиль</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="81"/>
         <source>Analysis</source>
-        <translation type="unfinished">Анализ</translation>
+        <translation>Анализ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="83"/>
         <source>FFT size</source>
-        <translation type="unfinished">Размер БПФ</translation>
+        <translation>Размер БПФ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="85"/>
         <source>Window function</source>
-        <translation type="unfinished"></translation>
+        <translation>Оконная функция</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="89"/>
         <source>Scale</source>
-        <translation type="unfinished">Шкала</translation>
+        <translation>Шкала</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="96"/>
         <source>Minimum level</source>
-        <translation type="unfinished"></translation>
+        <translation>Минимальный уровень</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="98"/>
         <source>Maximum level</source>
-        <translation type="unfinished"></translation>
+        <translation>Максимальный уровень</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="100"/>
         <source>Channel spacing</source>
-        <translation type="unfinished">Зазор между каналами</translation>
+        <translation>Зазор между каналами</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="122"/>
         <source>Colours</source>
-        <translation type="unfinished">Цвета</translation>
+        <translation>Цвета</translation>
     </message>
 </context>
 <context>
@@ -15693,12 +15693,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="42"/>
         <source>Spectrogram</source>
-        <translation type="unfinished"></translation>
+        <translation>Спектрограмма</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="43"/>
         <source>Visualisations</source>
-        <translation type="unfinished">Визуализации</translation>
+        <translation>Визуализации</translation>
     </message>
 </context>
 <context>
@@ -15706,57 +15706,57 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="550"/>
         <source>Use logarithmic frequency scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать логарифмическую шкалу частот</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="551"/>
         <source>Clear on track change</source>
-        <translation type="unfinished"></translation>
+        <translation>Очищать при смене трека</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="555"/>
         <source>Channels</source>
-        <translation type="unfinished">Каналы</translation>
+        <translation>Каналы</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="569"/>
         <source>Unchanged</source>
-        <translation type="unfinished"></translation>
+        <translation>Без изменений</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="570"/>
         <source>Mono</source>
-        <translation type="unfinished">Моно</translation>
+        <translation>Моно</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="571"/>
         <source>Front Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Только передний</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="572"/>
         <source>Back Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Только задний</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="574"/>
         <source>Style</source>
-        <translation type="unfinished">Стиль</translation>
+        <translation>Стиль</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="588"/>
         <source>Scrolling</source>
-        <translation type="unfinished">Прокрутка</translation>
+        <translation>Прокрутка</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="589"/>
         <source>Stationary</source>
-        <translation type="unfinished"></translation>
+        <translation>Стационарный</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="591"/>
         <source>FFT size</source>
-        <translation type="unfinished">Размер БПФ</translation>
+        <translation>Размер БПФ</translation>
     </message>
 </context>
 <context>

@@ -2901,7 +2901,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="39"/>
         <source>Add</source>
-        <translation type="unfinished">添加</translation>
+        <translation>添加</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="43"/>
@@ -8448,92 +8448,92 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="39"/>
         <source>Oscilloscope Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>示波器設定</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="44"/>
         <source>Show zero line</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示零線</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="45"/>
         <source>Custom colours</source>
-        <translation type="unfinished">自訂顏色</translation>
+        <translation>自訂顏色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="46"/>
         <source>Background colour</source>
-        <translation type="unfinished">背景顏色</translation>
+        <translation>背景顏色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="47"/>
         <source>Waveform colour</source>
-        <translation type="unfinished"></translation>
+        <translation>波形顏色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="48"/>
         <source>Zero line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>零線顏色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="50"/>
         <source>General</source>
-        <translation type="unfinished">通則</translation>
+        <translation>通則</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="60"/>
         <source>Time span of audio displayed across the oscilloscope</source>
-        <translation type="unfinished"></translation>
+        <translation>橫跨示波器上所顯示的音訊的時間跨度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="69"/>
         <source>Vertical amplitude scale; high values may overlap stereo channels</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直振幅幅度； 高數值可能與立體聲道有所重疊</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="73"/>
         <source>%1 fps</source>
-        <translation type="unfinished">%1 fps</translation>
+        <translation>%1 fps</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="75"/>
         <source>Maximum waveform refresh rate; lower values can reduce motion blending</source>
-        <translation type="unfinished"></translation>
+        <translation>最大波形更新率；較低數值會減少動作混合</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="77"/>
         <source>Stereo</source>
-        <translation type="unfinished">立體聲</translation>
+        <translation>立體聲</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="78"/>
         <source>Mono</source>
-        <translation type="unfinished">單聲道</translation>
+        <translation>單聲道</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="79"/>
         <source>Display separate stereo channels or combine them into mono</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示各別的立體聲道或合併成為單聲道</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="82"/>
         <source>Curve duration (ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>曲線持續時間(ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="84"/>
         <source>Zoom (%)</source>
-        <translation type="unfinished"></translation>
+        <translation>縮放(%)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="86"/>
         <source>Update FPS</source>
-        <translation type="unfinished">更新 FPS</translation>
+        <translation>更新 FPS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="88"/>
         <source>Downmix mode</source>
-        <translation type="unfinished"></translation>
+        <translation>降混模式</translation>
     </message>
 </context>
 <context>
@@ -8541,12 +8541,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="45"/>
         <source>Oscilloscope</source>
-        <translation type="unfinished"></translation>
+        <translation>示波器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="46"/>
         <source>Visualisations</source>
-        <translation type="unfinished">視覺化</translation>
+        <translation>視覺化</translation>
     </message>
 </context>
 <context>
@@ -8554,47 +8554,47 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="85"/>
         <source>Oscilloscope</source>
-        <translation type="unfinished"></translation>
+        <translation>示波器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="202"/>
         <source>Show zero line</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示零線</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="211"/>
         <source>Downmix mode</source>
-        <translation type="unfinished"></translation>
+        <translation>降混模式</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="227"/>
         <source>Stereo</source>
-        <translation type="unfinished">立體聲</translation>
+        <translation>立體聲</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="228"/>
         <source>Mono</source>
-        <translation type="unfinished">單聲道</translation>
+        <translation>單聲道</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="230"/>
         <source>Curve duration</source>
-        <translation type="unfinished"></translation>
+        <translation>曲線持續時間</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="235"/>
         <source>%1 ms</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ms</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="246"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>縮放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="251"/>
         <source>%1%</source>
-        <translation type="unfinished"></translation>
+        <translation>%1%</translation>
     </message>
 </context>
 <context>
@@ -11397,8 +11397,8 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="263"/>
         <source>%Ln preset(s) found.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 預設集找到。</numerusform>
         </translation>
     </message>
 </context>
@@ -11478,8 +11478,8 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="545"/>
         <source>Using presets from %Ln folder(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>使用預設集來自 %Ln 資料夾</numerusform>
         </translation>
     </message>
 </context>
@@ -15513,123 +15513,123 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="36"/>
         <source>Spectrogram Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>頻譜圖設定</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="37"/>
         <source>Use logarithmic frequency scale</source>
-        <translation type="unfinished"></translation>
+        <translation>使用對數頻率幅度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="38"/>
         <source>Clear on track change</source>
-        <translation type="unfinished"></translation>
+        <translation>在曲目變更時進行清除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="48"/>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="121"/>
         <source>General</source>
-        <translation type="unfinished">通則</translation>
+        <translation>通則</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="55"/>
         <source>Unchanged</source>
-        <translation type="unfinished"></translation>
+        <translation>尚無變更</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="56"/>
         <source>Mono</source>
-        <translation type="unfinished">單聲道</translation>
+        <translation>單聲道</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="57"/>
         <source>Front Only</source>
-        <translation type="unfinished"></translation>
+        <translation>僅正面</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="58"/>
         <source>Back Only</source>
-        <translation type="unfinished"></translation>
+        <translation>僅背面</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="60"/>
         <source>Scrolling</source>
-        <translation type="unfinished">滾動</translation>
+        <translation>滾動</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="61"/>
         <source>Stationary</source>
-        <translation type="unfinished"></translation>
+        <translation>固定的</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="63"/>
         <source>Hann</source>
-        <translation type="unfinished">Hann</translation>
+        <translation>Hann</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="64"/>
         <source>Blackman-Harris</source>
-        <translation type="unfinished">Blackman-Harris</translation>
+        <translation>Blackman-Harris</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="66"/>
         <source>None</source>
-        <translation type="unfinished">無</translation>
+        <translation>無</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="70"/>
         <source>Vertical space between the left and right channel spectrograms.</source>
-        <translation type="unfinished"></translation>
+        <translation>頻譜圖左右聲道之間的垂直空間。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="75"/>
         <source>Channels</source>
-        <translation type="unfinished">聲道</translation>
+        <translation>聲道</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="77"/>
         <source>Style</source>
-        <translation type="unfinished">樣式</translation>
+        <translation>樣式</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="81"/>
         <source>Analysis</source>
-        <translation type="unfinished">分析</translation>
+        <translation>分析</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="83"/>
         <source>FFT size</source>
-        <translation type="unfinished">FFT 大小</translation>
+        <translation>FFT 大小</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="85"/>
         <source>Window function</source>
-        <translation type="unfinished"></translation>
+        <translation>視窗功能</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="89"/>
         <source>Scale</source>
-        <translation type="unfinished">大小比例</translation>
+        <translation>大小比例</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="96"/>
         <source>Minimum level</source>
-        <translation type="unfinished"></translation>
+        <translation>最小層級</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="98"/>
         <source>Maximum level</source>
-        <translation type="unfinished"></translation>
+        <translation>最大層級</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="100"/>
         <source>Channel spacing</source>
-        <translation type="unfinished">聲道間距</translation>
+        <translation>聲道間距</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="122"/>
         <source>Colours</source>
-        <translation type="unfinished">顏色</translation>
+        <translation>顏色</translation>
     </message>
 </context>
 <context>
@@ -15637,12 +15637,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="42"/>
         <source>Spectrogram</source>
-        <translation type="unfinished"></translation>
+        <translation>頻譜圖</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="43"/>
         <source>Visualisations</source>
-        <translation type="unfinished">視覺化</translation>
+        <translation>視覺化</translation>
     </message>
 </context>
 <context>
@@ -15650,57 +15650,57 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="550"/>
         <source>Use logarithmic frequency scale</source>
-        <translation type="unfinished"></translation>
+        <translation>使用對數頻率幅度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="551"/>
         <source>Clear on track change</source>
-        <translation type="unfinished"></translation>
+        <translation>在曲目變更時進行清除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="555"/>
         <source>Channels</source>
-        <translation type="unfinished">聲道</translation>
+        <translation>聲道</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="569"/>
         <source>Unchanged</source>
-        <translation type="unfinished"></translation>
+        <translation>尚無變更</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="570"/>
         <source>Mono</source>
-        <translation type="unfinished">單聲道</translation>
+        <translation>單聲道</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="571"/>
         <source>Front Only</source>
-        <translation type="unfinished"></translation>
+        <translation>僅正面</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="572"/>
         <source>Back Only</source>
-        <translation type="unfinished"></translation>
+        <translation>僅背面</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="574"/>
         <source>Style</source>
-        <translation type="unfinished">樣式</translation>
+        <translation>樣式</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="588"/>
         <source>Scrolling</source>
-        <translation type="unfinished">滾動</translation>
+        <translation>滾動</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="589"/>
         <source>Stationary</source>
-        <translation type="unfinished"></translation>
+        <translation>固定的</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="591"/>
         <source>FFT size</source>
-        <translation type="unfinished">FFT 大小</translation>
+        <translation>FFT 大小</translation>
     </message>
 </context>
 <context>
