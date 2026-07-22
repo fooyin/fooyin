@@ -40,6 +40,52 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::ConversionSession</name>
+    <message numerus="yes">
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="185"/>
+        <source>Converted: %Ln track(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="186"/>
+        <source>Skipped: %Ln track(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="187"/>
+        <source>Failed: %Ln track(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="188"/>
+        <source>Cancelled: %Ln track(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::ConverterSetupDialog</name>
+    <message numerus="yes">
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1203"/>
+        <source>%Ln DSP(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::Equaliser::EqualiserSettingsWidget</name>
     <message numerus="yes">
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="682"/>
@@ -200,7 +246,7 @@
 <context>
     <name>Fooyin::ProjectM::ProjectMView</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="545"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="590"/>
         <source>Using presets from %Ln folder(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
