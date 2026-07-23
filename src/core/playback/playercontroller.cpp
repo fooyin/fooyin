@@ -737,7 +737,10 @@ bool PlayerControllerPrivate::applyTransportAction(const TransportAction& action
             m_self->stop();
             return false;
         case TransportAction::Type::AdvancePlaybackPositionAndStop:
-            m_navigator.selectPlaybackOrderTrack(1);
+            if(const auto selection = m_navigator.selectPlaybackOrderTrack(1);
+               selection.has_value() && selection->track.isValid()) {
+                m_session.scheduleTrack(selection->track);
+            }
             m_self->reset();
             m_self->stop();
             return false;
