@@ -189,4 +189,77 @@ TEST_F(ScriptFormatterTest, Link)
     EXPECT_EQ(u"https://example.com"_s, result.blocks.front().format.link);
     EXPECT_TRUE(result.blocks.front().format.font.underline());
 }
+
+namespace {
+QString blockText(const RichText& result)
+{
+    QString text;
+    for(const auto& block : result.blocks) {
+        text += block.text;
+    }
+    return text;
+}
+} // namespace
+
+TEST_F(ScriptFormatterTest, LiteralAngleBracketsWithSpaces)
+{
+    const auto result = m_formattter.evaluate(u"a < b > c"_s);
+    EXPECT_EQ(u"a < b > c"_s, blockText(result));
+}
+
+TEST_F(ScriptFormatterTest, LiteralLessThanNumber)
+{
+    const auto result = m_formattter.evaluate(u"I <3 this"_s);
+    EXPECT_EQ(u"I <3 this"_s, blockText(result));
+}
+
+TEST_F(ScriptFormatterTest, UnknownTagKeptLiteral)
+{
+    const auto result = m_formattter.evaluate(u"<notatag>rest"_s);
+    EXPECT_EQ(u"<notatag>rest"_s, blockText(result));
+}
+
+TEST_F(ScriptFormatterTest, BoldStillFormatsWithLiteralPreserved)
+{
+    const auto result = m_formattter.evaluate(u"<b>bold</b>"_s);
+    ASSERT_EQ(1, result.size());
+    EXPECT_TRUE(result.blocks.front().format.font.bold());
+    EXPECT_EQ(u"bold"_s, result.blocks.front().text);
+}
+
+TEST_F(ScriptFormatterTest, LiteralBeforeFormattingTag)
+{
+    const auto result = m_formattter.evaluate(u"I <3 <b>this</b>"_s);
+    EXPECT_EQ(u"I <3 this"_s, blockText(result));
+
+    bool foundBold{false};
+    for(const auto& block : result.blocks) {
+        if(block.text == u"this"_s) {
+            foundBold = block.format.font.bold();
+        }
+    }
+    EXPECT_TRUE(foundBold);
+}
+
+TEST_F(ScriptFormatterTest, LiteralInsideFormattingTag)
+{
+    const auto result = m_formattter.evaluate(u"<b>I <3 this</b>"_s);
+    ASSERT_EQ(1, result.size());
+    EXPECT_TRUE(result.blocks.front().format.font.bold());
+    EXPECT_EQ(u"I <3 this"_s, result.blocks.front().text);
+}
+
+TEST_F(ScriptFormatterTest, LiteralUppercaseKeywordTag)
+{
+    // "LESS"/"GREATER" are scanner keywords that share the angle token types; they must
+    // still round-trip as literal text rather than be mistaken for bracket delimiters.
+    const auto result = m_formattter.evaluate(u"<LESS>"_s);
+    EXPECT_EQ(u"<LESS>"_s, blockText(result));
+}
+
+TEST_F(ScriptFormatterTest, LiteralKeywordWordPreserved)
+{
+    const auto result = m_formattter.evaluate(u"5 LESS than 6"_s);
+    EXPECT_EQ(u"5 LESS than 6"_s, blockText(result));
+}
 } // namespace Fooyin::Testing
