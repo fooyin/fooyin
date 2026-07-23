@@ -21,6 +21,7 @@
 
 #include "dialog/autoplaylistdialog.h"
 #include "internalguisettings.h"
+#include "playlistbox.h"
 #include "playlistcontroller.h"
 
 #include <core/player/playercontroller.h>
@@ -404,8 +405,11 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
         if(playlist) {
             auto* removeAction
                 = new QAction(playlist->isAutoPlaylist() ? tr("Remove autoplaylist") : tr("Remove playlist"), menu);
-            QObject::connect(removeAction, &QAction::triggered, this,
-                             [this, id]() { m_playlistHandler->removePlaylist(id); });
+            QObject::connect(removeAction, &QAction::triggered, this, [this, id]() {
+                if(confirmPlaylistRemoval(m_settings, this)) {
+                    m_playlistHandler->removePlaylist(id);
+                }
+            });
 
             menu->addAction(removeAction);
         }
@@ -537,13 +541,17 @@ void PlaylistTabs::setupConnections()
         }
         else if(m_settings->value<Settings::Gui::Internal::PlaylistTabsMiddleClose>()) {
             const auto id = m_tabs->tabBar()->tabData(index).value<UId>();
-            m_playlistHandler->removePlaylist(id);
+            if(confirmPlaylistRemoval(m_settings, this)) {
+                m_playlistHandler->removePlaylist(id);
+            }
         }
     });
     QObject::connect(m_tabs, &SingleTabbedWidget::tabCloseRequested, this, [this](const int index) {
         if(index >= 0) {
             const auto id = m_tabs->tabBar()->tabData(index).value<UId>();
-            m_playlistHandler->removePlaylist(id);
+            if(confirmPlaylistRemoval(m_settings, this)) {
+                m_playlistHandler->removePlaylist(id);
+            }
         }
     });
     QObject::connect(m_tabs, &SingleTabbedWidget::tabBarDoubleClicked, this, [this](const int index) {
