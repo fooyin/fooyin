@@ -2246,12 +2246,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/core/engine/conversion/conversionpathresolver.cpp" line="161"/>
         <source>Duplicate output path</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplicitní výstupní cesta</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/conversion/conversionpathresolver.cpp" line="176"/>
         <source>Could not resolve output path</source>
-        <translation type="unfinished"></translation>
+        <translation>Výstupní cestu se nepodařilo rozpoznat</translation>
     </message>
 </context>
 <context>
@@ -2259,79 +2259,80 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="60"/>
         <source>Preparing conversion…</source>
-        <translation type="unfinished"></translation>
+        <translation>Příprava převodu…</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="60"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="64"/>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="190"/>
         <source>Audio Conversion</source>
-        <translation type="unfinished"></translation>
+        <translation>Převod hudby</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="99"/>
         <source>Current file</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuální soubor</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="121"/>
         <source>File already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Soubor již existuje</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="122"/>
         <source>The file already exists:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Soubor již existuje:
+%1</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="125"/>
         <source>Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Přepsat</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="126"/>
         <source>Skip</source>
-        <translation type="unfinished"></translation>
+        <translation>Přeskočit</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="185"/>
         <source>Converted: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Převedeno: %Ln skladba</numerusform>
+            <numerusform>Převedeno: %Ln skladby</numerusform>
+            <numerusform>Převedeno: %Ln skladeb</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="186"/>
         <source>Skipped: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Přeskočeno: %Ln skladba</numerusform>
+            <numerusform>Přeskočeno: %Ln skladby</numerusform>
+            <numerusform>Přeskočeno: %Ln skladeb</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="187"/>
         <source>Failed: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Selhalo: %Ln skladba</numerusform>
+            <numerusform>Selhalo: %Ln skladby</numerusform>
+            <numerusform>Selhalo: %Ln skladeb</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="188"/>
         <source>Cancelled: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Zrušeno: %Ln skladba</numerusform>
+            <numerusform>Zrušeno: %Ln skladby</numerusform>
+            <numerusform>Zrušeno: %Ln skladeb</numerusform>
         </translation>
     </message>
 </context>
@@ -2340,389 +2341,389 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="82"/>
         <source>Load</source>
-        <translation type="unfinished"></translation>
+        <translation>Načíst</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="83"/>
         <source>Save</source>
-        <translation type="unfinished">Uložit</translation>
+        <translation>Uložit</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="84"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1100"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="85"/>
         <source>Import</source>
-        <translation type="unfinished">Importovat</translation>
+        <translation>Importovat</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="86"/>
         <source>Export</source>
-        <translation type="unfinished">Exportovat</translation>
+        <translation>Exportovat</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="89"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="94"/>
         <source>Browse…</source>
-        <translation type="unfinished">Procházet…</translation>
+        <translation>Procházet…</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="99"/>
         <source>Transfer metadata (tags)</source>
-        <translation type="unfinished"></translation>
+        <translation>Převzít metadata (tagy)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="100"/>
         <source>Transfer rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Převzít hodnocení</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="101"/>
         <source>Transfer play count</source>
-        <translation type="unfinished"></translation>
+        <translation>Převzít počet přehrání</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="102"/>
         <source>Transfer attached pictures</source>
-        <translation type="unfinished"></translation>
+        <translation>Převzít vložené obrázky</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="104"/>
         <source>Prevent clipping</source>
-        <translation type="unfinished"></translation>
+        <translation>Zabránit přebuzení</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="107"/>
         <source>Don&apos;t reset DSP between tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Neresetovat DSP při přechodu mezi skladbami</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="114"/>
         <source>Generate short previews instead of converting entire tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit krátké náhledy místo převodu celých skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="116"/>
         <source>Show full status report</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit celkovou zprávu o stavu</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="118"/>
         <source>Verify converted output</source>
-        <translation type="unfinished"></translation>
+        <translation>Ověřit výstup převodu</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="125"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="204"/>
         <source>Converter Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení převodu</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="129"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="268"/>
         <source>Output</source>
-        <translation type="unfinished">Výstup</translation>
+        <translation>Výstup</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="130"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="269"/>
         <source>Destination</source>
-        <translation type="unfinished">Cíl</translation>
+        <translation>Cíl</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="131"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="270"/>
         <source>Processing</source>
-        <translation type="unfinished"></translation>
+        <translation>Zpracování</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="132"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="271"/>
         <source>Other</source>
-        <translation type="unfinished">Ostatní</translation>
+        <translation>Ostatní</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="141"/>
         <source>Convert</source>
-        <translation type="unfinished"></translation>
+        <translation>Převést</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="204"/>
         <source>No output encoder is available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Není k dispozici žádný kodér.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="209"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1064"/>
         <source>Choose destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Výběr cílové složky</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="234"/>
         <source>Saved presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložené předvolby</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="255"/>
         <source>Current settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuální nastavení</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="292"/>
         <source>Auto</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="293"/>
         <source>8-bit integer</source>
-        <translation type="unfinished"></translation>
+        <translation>8bitová celá čísla</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="294"/>
         <source>16-bit integer</source>
-        <translation type="unfinished"></translation>
+        <translation>16bitová celá čísla</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="295"/>
         <source>24-bit integer</source>
-        <translation type="unfinished"></translation>
+        <translation>24bitová celá čísla</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="296"/>
         <source>32-bit integer</source>
-        <translation type="unfinished"></translation>
+        <translation>32bitová celá čísla</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="297"/>
         <source>32-bit floating point</source>
-        <translation type="unfinished"></translation>
+        <translation>32bitová čísla s plovoucí čárkou</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="299"/>
         <source>Never</source>
-        <translation type="unfinished"></translation>
+        <translation>Nikdy</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="300"/>
         <source>Lossy sources only</source>
-        <translation type="unfinished"></translation>
+        <translation>Pouze ztrátové zdroje</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="301"/>
         <source>Always</source>
-        <translation type="unfinished"></translation>
+        <translation>Vždy</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="307"/>
         <source>Output sample format</source>
-        <translation type="unfinished"></translation>
+        <translation>Výstupní formát vzorkování</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="309"/>
         <source>Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>Dither</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="335"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1150"/>
         <source>Ask when conversion starts</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeptat se na začátku převodu</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="336"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1153"/>
         <source>Source track folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Složka zdrojových skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="337"/>
         <source>Specified folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadaná složka</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="338"/>
         <source>Ask</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeptat se</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="339"/>
         <source>Skip</source>
-        <translation type="unfinished"></translation>
+        <translation>Přeskočit</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="340"/>
         <source>Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Přepsat</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="341"/>
         <source>Convert each track to an individual file</source>
-        <translation type="unfinished"></translation>
+        <translation>Převést každou skladbu do samostatného souboru</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="343"/>
         <source>Generate one multi-track file per name group</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit jeden vícestopý soubor pro každou skupinu</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="345"/>
         <source>Merge all tracks into one output file</source>
-        <translation type="unfinished"></translation>
+        <translation>Spojit všechny skladby do jednoho souboru</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="355"/>
         <source>Output path</source>
-        <translation type="unfinished"></translation>
+        <translation>Cíl převodu</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="357"/>
         <source>Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Složka</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="359"/>
         <source>Output style</source>
-        <translation type="unfinished"></translation>
+        <translation>Typ výstupu</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="361"/>
         <source>Name format</source>
-        <translation type="unfinished"></translation>
+        <translation>Šablona názvu</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="363"/>
         <source>If file already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokud již soubor existuje</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="369"/>
         <source>Preview</source>
-        <translation type="unfinished">Náhled</translation>
+        <translation>Náhled</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="387"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1209"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1226"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádný</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="388"/>
         <source>Track gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Zisk skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="389"/>
         <source>Album gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Zisk alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="396"/>
         <source> dB</source>
-        <translation type="unfinished"> dB</translation>
+        <translation> dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="399"/>
         <source>ReplayGain processing</source>
-        <translation type="unfinished"></translation>
+        <translation>Zpracování ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="402"/>
         <source>Mode</source>
-        <translation type="unfinished">Režim</translation>
+        <translation>Režim</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="405"/>
         <source>Preamp</source>
-        <translation type="unfinished">Předzesílení</translation>
+        <translation>Předzesílení</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="407"/>
         <source>Without ReplayGain info</source>
-        <translation type="unfinished"></translation>
+        <translation>Bez ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="410"/>
         <source>ReplayGain is applied permanently to the converted audio.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokud použijete při převodu ReplayGain, budou převedené soubory trvale změněny.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="441"/>
         <source>DSP chain</source>
-        <translation type="unfinished"></translation>
+        <translation>Řetězec DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="443"/>
         <source>Active DSPs</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktivní DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="446"/>
         <source>Available DSPs</source>
-        <translation type="unfinished">Dostupné DSP</translation>
+        <translation>Dostupné DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="455"/>
         <source>Metadata</source>
-        <translation type="unfinished">Metadata</translation>
+        <translation>Metadata</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="508"/>
         <source>Preview generation</source>
-        <translation type="unfinished"></translation>
+        <translation>Tvorba náhledů</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="513"/>
         <source>Length</source>
-        <translation type="unfinished">Délka</translation>
+        <translation>Délka</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="517"/>
         <source>When done</source>
-        <translation type="unfinished"></translation>
+        <translation>Po dokončení</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="522"/>
         <source>Copy other files to the destination folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Zkopírovat do cílové složky další soubory</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="711"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="717"/>
         <source>DSP Settings</source>
-        <translation type="unfinished">Nastavení DSP</translation>
+        <translation>Nastavení DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="711"/>
         <source>This DSP has no configurable settings.</source>
-        <translation type="unfinished">Tento DSP nepodporuje úpravy nastavení.</translation>
+        <translation>Tento DSP nepodporuje nastavení.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="718"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
-        <translation type="unfinished">Nepodařilo se otevřít nastavení pro DSP „%1“.</translation>
+        <translation>Nepodařilo se otevřít nastavení pro DSP „%1“.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="771"/>
         <source>Default settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Výchozí nastavení</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="800"/>
         <source>Save Converter Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit předvolbu převodu</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="800"/>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation>Název</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="857"/>
@@ -2730,133 +2731,133 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="872"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="881"/>
         <source>Import Converter Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Importovat předvolbu převodu</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="858"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="929"/>
         <source>fooyin Converter Presets (*.fycp)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin předvolby převodu (*.fycp)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="866"/>
         <source>The preset file could not be opened.</source>
-        <translation type="unfinished"></translation>
+        <translation>Soubor předvolby převodu se nepodařilo otevřít.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="872"/>
         <source>The preset file is invalid or empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Soubor předvolby převodu není platný nebo je prázdný.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="882"/>
         <source>Encoder is unavailable for preset: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Předvolba %1: Kodér není dostupný</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="928"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="938"/>
         <source>Export Converter Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportovat předvolbu převodu</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="938"/>
         <source>The preset file could not be written.</source>
-        <translation type="unfinished"></translation>
+        <translation>Soubor předvolby převodu se nepodařilo uložit.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1100"/>
         <source>Reset</source>
-        <translation type="unfinished">Obnovit</translation>
+        <translation>Obnovit</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1144"/>
         <source>No encoder available</source>
-        <translation type="unfinished"></translation>
+        <translation>K dispozici není žádný kodér</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1157"/>
         <source>No folder specified</source>
-        <translation type="unfinished"></translation>
+        <translation>Nebyla zadána žádná složka</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1165"/>
         <source>group tracks by output name</source>
-        <translation type="unfinished"></translation>
+        <translation>seskupit skladby podle výstupního názvu</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1168"/>
         <source>merge tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>spojit skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1172"/>
         <source>No name format</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádná šablona názvu</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1179"/>
         <source>metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>metadata</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1182"/>
         <source>rating</source>
-        <translation type="unfinished"></translation>
+        <translation>hodnocení</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1185"/>
         <source>play count</source>
-        <translation type="unfinished"></translation>
+        <translation>počet přehrání</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1188"/>
         <source>attached pictures</source>
-        <translation type="unfinished"></translation>
+        <translation>vložené obrázky</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1193"/>
         <source>ReplayGain (track)</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain (skladba)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1196"/>
         <source>ReplayGain (album)</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain (album)</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1203"/>
         <source>%Ln DSP(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln DSP</numerusform>
+            <numerusform>%Ln DSP</numerusform>
+            <numerusform>%Ln DSP</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1205"/>
         <source>continuous DSP</source>
-        <translation type="unfinished"></translation>
+        <translation>kontinuální DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1214"/>
         <source>%1% previews</source>
-        <translation type="unfinished"></translation>
+        <translation>%1% náhledy</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1217"/>
         <source>Show status report</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit zprávu o stavu</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1220"/>
         <source>Copy matching files</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopírovat odpovídající soubory</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1223"/>
         <source>Verify output</source>
-        <translation type="unfinished"></translation>
+        <translation>Ověřit výstup</translation>
     </message>
 </context>
 <context>
@@ -4004,97 +4005,97 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="42"/>
         <source>Default</source>
-        <translation type="unfinished">Výchozí</translation>
+        <translation>Výchozí</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="44"/>
         <source>Variable bitrate (VBR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Variabilní bitrate (VBR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="46"/>
         <source>Constrained variable bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Omezený variabilní bitrate</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="48"/>
         <source>Constant quality (VBR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Konstantní kvalita (VBR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="50"/>
         <source>Average bitrate (ABR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Průměrný bitrate (ABR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="52"/>
         <source>Constant bitrate (CBR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Konstantní bitrate (CBR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="54"/>
         <source>Lossless compression</source>
-        <translation type="unfinished"></translation>
+        <translation>Bezeztrátová komprese</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="66"/>
         <source>Options</source>
-        <translation type="unfinished">Možnosti</translation>
+        <translation>Možnosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="68"/>
         <source>Mode</source>
-        <translation type="unfinished">Režim</translation>
+        <translation>Režim</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="69"/>
         <source>Quality</source>
-        <translation type="unfinished">Kvalita</translation>
+        <translation>Kvalita</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="70"/>
         <source>Estimated bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Odhadovaný bitrate</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="72"/>
         <source>Bitrate</source>
-        <translation type="unfinished">Bitrate</translation>
+        <translation>Bitrate</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="73"/>
         <source>Level</source>
-        <translation type="unfinished"></translation>
+        <translation>Úroveň</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="80"/>
         <source>Encoder Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil kodéru</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="107"/>
         <source>Encoder</source>
-        <translation type="unfinished"></translation>
+        <translation>Kodér</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="111"/>
         <source>Format</source>
-        <translation type="unfinished">Formát</translation>
+        <translation>Formát</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="113"/>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation>Název</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="226"/>
         <source>Compression level</source>
-        <translation type="unfinished"></translation>
+        <translation>Úroveň komprese</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="227"/>
         <source>Encoding effort</source>
-        <translation type="unfinished"></translation>
+        <translation>Komplexita převodu</translation>
     </message>
 </context>
 <context>
@@ -4102,57 +4103,57 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="42"/>
         <source>VBR</source>
-        <translation type="unfinished"></translation>
+        <translation>VBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="44"/>
         <source>CVBR</source>
-        <translation type="unfinished"></translation>
+        <translation>CVBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="46"/>
         <source>VBR quality %1</source>
-        <translation type="unfinished"></translation>
+        <translation>VBR kvalita %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="48"/>
         <source>ABR</source>
-        <translation type="unfinished"></translation>
+        <translation>ABR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="50"/>
         <source>CBR</source>
-        <translation type="unfinished"></translation>
+        <translation>CBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="52"/>
         <source>level %1</source>
-        <translation type="unfinished"></translation>
+        <translation>úroveň %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="87"/>
         <source>%1 kbps</source>
-        <translation type="unfinished">%1 kbps</translation>
+        <translation>%1 kbps</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="90"/>
         <source>~%1 kbps</source>
-        <translation type="unfinished"></translation>
+        <translation>~%1 kbps</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="113"/>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation>Název</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="115"/>
         <source>Bitrate</source>
-        <translation type="unfinished">Bitrate</translation>
+        <translation>Bitrate</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="117"/>
         <source>Settings</source>
-        <translation type="unfinished">Nastavení</translation>
+        <translation>Nastavení</translation>
     </message>
 </context>
 <context>
@@ -5707,13 +5708,13 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1117"/>
         <source>Choose destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat cílovou složku</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1193"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1201"/>
         <source>Convert using preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Převést pomocí předvolby %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1200"/>
@@ -5721,7 +5722,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         <location filename="../../src/gui/guiapplication.cpp" line="1242"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1251"/>
         <source>Tracks</source>
-        <translation type="unfinished">Skladby</translation>
+        <translation>Skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1200"/>
@@ -5730,32 +5731,32 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         <location filename="../../src/gui/guiapplication.cpp" line="1251"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1262"/>
         <source>Convert</source>
-        <translation type="unfinished"></translation>
+        <translation>Převést</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1230"/>
         <source>Converter setup…</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení převodu…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1239"/>
         <source>Using default settings</source>
-        <translation type="unfinished"></translation>
+        <translation>S pomocí výchozího nastavení</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1243"/>
         <source>Convert using default settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Převést s pomocí výchozího nastavení</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1248"/>
         <source>Repeat last conversion</source>
-        <translation type="unfinished"></translation>
+        <translation>Opakovat poslední převod</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1279"/>
         <source>Custom conversion…</source>
-        <translation type="unfinished"></translation>
+        <translation>Vlastní převod…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1514"/>
