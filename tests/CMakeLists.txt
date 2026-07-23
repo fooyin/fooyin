@@ -78,6 +78,7 @@ fooyin_add_test(test_guiutils gui/guiutilstest.cpp)
 fooyin_add_test(test_scriptformatter gui/scriptformattertest.cpp)
 
 fooyin_add_test(test_helpers utils/helperstest.cpp)
+fooyin_add_test(test_stringutils utils/stringutilstest.cpp)
 
 set(FILTERS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/plugins/filters)
 set(FILTER_PIPELINE_TEST_SOURCES ${FILTERS_SOURCE_DIR}/filterpipeline.cpp ${FILTERS_SOURCE_DIR}/filterrows.cpp)
