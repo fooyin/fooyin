@@ -28,7 +28,7 @@ function(setup_projectm)
     FetchContent_Declare(
         projectm
         GIT_REPOSITORY https://github.com/projectM-visualizer/projectm.git
-        GIT_TAG v4.1.6
+        GIT_TAG v4.1.7
         GIT_SHALLOW TRUE
         GIT_SUBMODULES_RECURSE TRUE
         EXCLUDE_FROM_ALL
