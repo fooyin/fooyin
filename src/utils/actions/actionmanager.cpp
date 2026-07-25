@@ -26,6 +26,7 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QContextMenuEvent>
 #include <QIODevice>
 #include <QMainWindow>
 #include <QMenuBar>
@@ -219,12 +220,14 @@ ActionManager::ActionManager(SettingsManager* settingsManager, QObject* parent)
     : QObject{parent}
     , p{std::make_unique<ActionManagerPrivate>(this, settingsManager)}
 {
+    qApp->installEventFilter(this);
     QObject::connect(qApp, &QApplication::focusChanged, this,
                      [this](QWidget* /*old*/, QWidget* now) { p->updateFocusWidget(now); });
 }
 
 ActionManager::~ActionManager()
 {
+    qApp->removeEventFilter(this);
     QObject::disconnect(qApp, &QApplication::focusChanged, this, nullptr);
     p->clear();
 }
@@ -286,7 +289,6 @@ void ActionManager::addContextObject(WidgetContext* context)
     }
 
     p->m_contextWidgets.emplace(widget, context);
-    widget->installEventFilter(this);
     QObject::connect(context, &WidgetContext::isEnabledChanged, this,
                      [this] { p->updateFocusWidget(QApplication::focusWidget()); });
     QObject::connect(context, &QObject::destroyed, this, [this, context] { removeContextObject(context); });
@@ -324,9 +326,6 @@ void ActionManager::removeContextObject(WidgetContext* context)
     }
 
     QObject::disconnect(context, &QObject::destroyed, this, nullptr);
-    if(QWidget* widget = context->widget()) {
-        widget->removeEventFilter(this);
-    }
 
     if(!std::erase_if(p->m_contextWidgets, [context](const auto& v) { return v.second == context; })) {
         return;
@@ -455,11 +454,23 @@ bool ActionManager::eventFilter(QObject* watched, QEvent* event)
     if(widget) {
         switch(event->type()) {
             case QEvent::FocusIn:
-            case QEvent::MouseButtonPress:
-            case QEvent::MouseButtonDblClick:
-            case QEvent::ContextMenu:
-            case QEvent::WindowActivate:
                 p->updateFocusWidget(widget);
+                break;
+            case QEvent::MouseButtonPress:
+            case QEvent::MouseButtonDblClick: {
+                const auto* mouseEvent = static_cast<QMouseEvent*>(event);
+                QWidget* target        = QApplication::widgetAt(mouseEvent->globalPosition().toPoint());
+                p->updateFocusWidget(target ? target : widget);
+                break;
+            }
+            case QEvent::ContextMenu: {
+                const auto* contextEvent = static_cast<QContextMenuEvent*>(event);
+                QWidget* target          = QApplication::widgetAt(contextEvent->globalPos());
+                p->updateFocusWidget(target ? target : QApplication::focusWidget());
+                break;
+            }
+            case QEvent::WindowActivate:
+                p->updateFocusWidget(QApplication::focusWidget());
                 break;
             default:
                 break;
