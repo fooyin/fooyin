@@ -1856,9 +1856,9 @@ void GuiApplication::loadPlaylist()
     const QStringList filters{allFilter, playlistFilter};
 
     QUrl dir = QUrl::fromLocalFile(QDir::homePath());
-    if(const auto lastPath = m_settings->fileValue(Settings::Gui::Internal::LastFilePath).toString();
+    if(const auto lastPath = m_settings->fileValue(Settings::Gui::Internal::LastPlaylistPath).toString();
        !lastPath.isEmpty()) {
-        dir = lastPath;
+        dir = QUrl::fromLocalFile(lastPath);
     }
 
     const auto files = QFileDialog::getOpenFileUrls(m_mainWindow.get(), tr("Load Playlist"), dir, filters.join(";;"_L1),
@@ -1868,8 +1868,9 @@ void GuiApplication::loadPlaylist()
         return;
     }
 
-    m_settings->fileSet(Settings::Gui::Internal::LastFilePath, files.front());
-    const QList<QPair<QString, QUrl>> info{[&files]() {
+    m_settings->fileSet(Settings::Gui::Internal::LastPlaylistPath,
+                        QFileInfo(files.front().toLocalFile()).absolutePath());
+    const QList info{[&files]() {
         QList<QPair<QString, QUrl>> list;
         for(const QUrl& url : files) {
             list.append(qMakePair(QFileInfo(url.toLocalFile()).completeBaseName(), url));
@@ -1895,13 +1896,9 @@ void GuiApplication::savePlaylistToFile(const Playlist* playlist) const
     const QString playlistFilter
         = Utils::extensionsToFilterList(m_core->playlistLoader()->supportedSaveExtensions(), u"files"_s);
 
-    QDir dir{QDir::homePath()};
-    if(const auto lastPath = m_settings->fileValue(Settings::Gui::Internal::LastFilePath).toString();
-       !lastPath.isEmpty()) {
-        dir = lastPath;
-    }
+    const QString dir = m_settings->fileValue(Settings::Gui::Internal::LastPlaylistPath, QDir::homePath()).toString();
 
-    QFileDialog saveDialog{m_mainWindow.get(), tr("Save Playlist"), dir.absolutePath(), playlistFilter};
+    QFileDialog saveDialog{m_mainWindow.get(), tr("Save Playlist"), dir, playlistFilter};
     saveDialog.setAcceptMode(QFileDialog::AcceptSave);
     saveDialog.setFileMode(QFileDialog::AnyFile);
     saveDialog.setOption(QFileDialog::DontResolveSymlinks);
@@ -1937,15 +1934,14 @@ void GuiApplication::savePlaylistToFile(const Playlist* playlist) const
         return;
     }
 
-    FyStateSettings stateSettings;
-    stateSettings.setValue(Settings::Gui::Internal::LastFilePath, file);
-
     const QString extension = Utils::extensionFromFilter(saveDialog.selectedNameFilter());
     if(extension.isEmpty()) {
         return;
     }
 
     const QFileInfo info{file};
+    m_settings->fileSet(Settings::Gui::Internal::LastPlaylistPath, info.absolutePath());
+
     if(auto* parser = m_core->playlistLoader()->parserForExtension(extension)) {
         QFile playlistFile{file};
         if(!playlistFile.open(QIODevice::WriteOnly)) {

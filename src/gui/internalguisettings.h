@@ -181,6 +181,7 @@ Q_NAMESPACE_EXPORT(FYGUI_EXPORT)
 
 constexpr auto PlaylistCurrentPreset = "PlaylistWidget/CurrentPreset";
 constexpr auto LastFilePath          = "Interface/LastFilePath";
+constexpr auto LastPlaylistPath      = "Playlist/LastPlaylistPath";
 
 enum GuiInternalSettings : uint32_t
 {
