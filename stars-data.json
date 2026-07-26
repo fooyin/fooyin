@@ -1,0 +1,17 @@
+{
+  "snapshots": [
+    {
+      "timestamp": "2026-07-26T13:21:06.244Z",
+      "totalStars": 2088,
+      "repos": [
+        {
+          "fullName": "fooyin/fooyin",
+          "name": "fooyin",
+          "owner": "fooyin",
+          "stars": 2088
+        }
+      ]
+    }
+  ],
+  "starsAtLastNotification": 2088
+}
