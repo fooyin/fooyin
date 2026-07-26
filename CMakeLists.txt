@@ -65,6 +65,7 @@ or comma-separated list to build only those plugins, or prefix names with '-' to
 )
 fooyin_option(BUILD_ALSA "Build ALSA plugin" ON)
 fooyin_option(FETCH_PROJECTM "Fetch projectM when a system package is unavailable" OFF)
+fooyin_option(ENABLE_SYSTEM_GLM "Use system GLM package for fetched projectM" OFF)
 fooyin_option(BUILD_TRANSLATIONS "Build translation files" ON)
 fooyin_option(BUILD_CCACHE "Build using CCache if found" ON)
 fooyin_option(BUILD_PCH "Build with precompiled header support" OFF)
