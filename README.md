@@ -19,9 +19,10 @@ fooyin is a customisable desktop music player. It combines flexible playback, li
 
 The player is built around extensibility. fooyin supports plugins for widgets, decoders, tag readers, DSPs, and integrations, and includes FooScript for advanced display formatting, queries, autoplaylists, and widget behaviour.
 
-| ![Simple layout](https://github.com/user-attachments/assets/8e8732a7-a7e5-4542-87b4-7d0a7b5e8fa0) | ![Directory browser layout](https://github.com/user-attachments/assets/d9f4ed62-e50a-419c-aa26-8801a76a6597) |
-| --- | --- |
-| ![Obsidian layout](https://github.com/user-attachments/assets/7dcc92be-04ea-402f-9cbb-a92ee855b893) | ![Custom layout](https://github.com/user-attachments/assets/de5b4b3a-cd9d-4520-a975-e268e472e0f9) |
+| ![Simple layout](https://fooyin.org/assets/images/simple.webp)     | ![Directory browser layout](https://fooyin.org/assets/images/browser.webp) |
+|--------------------------------------------------------------------|----------------------------------------------------------------------------|
+| ![Obsidian layout](https://fooyin.org/assets/images/obsidian.webp) | ![Viewer layout](https://fooyin.org/assets/images/viewer.webp)             |
+| ![Radio layout](https://fooyin.org/assets/images/radio.webp)       | ![Custom layout](https://fooyin.org/assets/images/custom.webp)             |
 
 ## Features
 
