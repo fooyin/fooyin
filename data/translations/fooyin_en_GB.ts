@@ -44,33 +44,33 @@
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="185"/>
         <source>Converted: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Converted: %Ln track</numerusform>
+            <numerusform>Converted: %Ln tracks</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="186"/>
         <source>Skipped: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Skipped: %Ln track</numerusform>
+            <numerusform>Skipped: %Ln tracks</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="187"/>
         <source>Failed: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Failed: %Ln track</numerusform>
+            <numerusform>Failed: %Ln tracks</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="188"/>
         <source>Cancelled: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Cancelled: %Ln track</numerusform>
+            <numerusform>Cancelled: %Ln tracks</numerusform>
         </translation>
     </message>
 </context>
@@ -79,9 +79,9 @@
     <message numerus="yes">
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1203"/>
         <source>%Ln DSP(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln DSP</numerusform>
+            <numerusform>%Ln DSPs</numerusform>
         </translation>
     </message>
 </context>
@@ -237,9 +237,9 @@
     <message numerus="yes">
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="263"/>
         <source>%Ln preset(s) found.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln preset found.</numerusform>
+            <numerusform>%Ln presets found.</numerusform>
         </translation>
     </message>
 </context>
@@ -248,9 +248,9 @@
     <message numerus="yes">
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="590"/>
         <source>Using presets from %Ln folder(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Using presets from %Ln folder</numerusform>
+            <numerusform>Using presets from %Ln folders</numerusform>
         </translation>
     </message>
 </context>
