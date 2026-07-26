@@ -14,6 +14,10 @@ $BUILD_CCACHE = if ($env:BUILD_CCACHE) { $env:BUILD_CCACHE } else { "OFF" }
 $BUILD_PCH = if ($env:BUILD_PCH) { $env:BUILD_PCH } else { "ON" }
 $cmakeArgs = @("--preset", $CMAKE_PRESET, "-DBUILD_TESTING=OFF", "-DFETCH_PROJECTM=ON", "-DENABLE_SYSTEM_GLM=ON", "-DBUILD_CCACHE=$BUILD_CCACHE", "-DBUILD_PCH=$BUILD_PCH")
 
+if ($env:VCPKG_INSTALLED_DIR) {
+    $cmakeArgs += "-DVCPKG_INSTALLED_DIR=$env:VCPKG_INSTALLED_DIR"
+}
+
 if ($env:QT_HOST_PATH) {
     $cmakeArgs += "-DQT_HOST_PATH=$env:QT_HOST_PATH"
     $cmakeArgs += "-DQt6LinguistTools_DIR=$env:QT_HOST_PATH/lib/cmake/Qt6LinguistTools"
