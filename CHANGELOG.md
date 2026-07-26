@@ -10,7 +10,7 @@
   - Add PulseAudio output support ([#1331](https://github.com/fooyin/fooyin/pull/1331))
 * Visualisations
   - Add spectrogram plugin ([#1354](https://github.com/fooyin/fooyin/pull/1354))
-  - Add oscilloscope plugin ([#1357](https://gitUpdatehub.com/fooyin/fooyin/pull/1357))
+  - Add oscilloscope plugin ([#1357](https://github.com/fooyin/fooyin/pull/1357))
   - Add projectM plugin ([#1339](https://github.com/fooyin/fooyin/pull/1339))
 
 ### Improvements
@@ -21,6 +21,7 @@
 * Directory Browser
   - Improve folder loading performance by deferring recursive playlist discovery
 * Interface
+  - Remember the last used playlist file path ([#1355](https://github.com/fooyin/fooyin/issues/1355))
   - Support individual override states for configurable colours and fonts
 * Properties
   - Improve properties dialog performance ([#1333](https://github.com/fooyin/fooyin/pull/1333))
@@ -44,10 +45,12 @@
   - Bind context actions to their originating track selection ([#1237](https://github.com/fooyin/fooyin/issues/1237))
   - Fix icon and star rating rendering at fractional display scales ([#1347](https://github.com/fooyin/fooyin/pull/1347))
   - Keep track actions in sync when focus changes between widgets
+  - Track action contexts from descendant widgets ([#1391](https://github.com/fooyin/fooyin/issues/1391))
   - Refresh Selection Info after metadata updates ([#1342](https://github.com/fooyin/fooyin/pull/1342))
 * Library/Metadata
   - Detect mislabelled legacy encodings in ID3 tags ([#1288](https://github.com/fooyin/fooyin/issues/1288), [#1344](https://github.com/fooyin/fooyin/issues/1344))
   - Flush deferred playback statistics from the queued snapshot ([#1329](https://github.com/fooyin/fooyin/issues/1329), [#1341](https://github.com/fooyin/fooyin/pull/1341))
+  - Fix accent-insensitive searches matching word beginnings ([#1392](https://github.com/fooyin/fooyin/issues/1392))
 * Lyrics
   - Fix edge fade rendering at fractional display scales
   - Expand the properties editor to fill the tab
@@ -55,16 +58,19 @@
   - Fix a crash when removing the last empty default playlist
   - Fix playing icon scaling ([#1327](https://github.com/fooyin/fooyin/issues/1327))
   - Fix rating delegate handling when changing playlist layouts ([#1352](https://github.com/fooyin/fooyin/issues/1352))
+  - Fix Stop After Current when using deferred metadata flushing ([#1369](https://github.com/fooyin/fooyin/pull/1369))
 * Properties
   - Preserve the active scope when rejecting pending artwork or ReplayGain changes
 * Remote Streams
   - Fix apostrophes in ICY stream metadata ([#1383](https://github.com/fooyin/fooyin/issues/1383))
+  - Fix stalled playback between repeated CUE files
 * Scrobbling
   - Update the ListenBrainz token URL
 * Scripting
   - Fix nested formatting scopes ([#1348](https://github.com/fooyin/fooyin/issues/1348))
 * Spectrum
   - Fix peak height at fractional display scales
+  - Improve layout at compact sizes ([#1395](https://github.com/fooyin/fooyin/issues/1395))
 * Tag Editor
   - Fix renaming extended tags ([#1356](https://github.com/fooyin/fooyin/pull/1356))
   - Fix new extended tags being duplicated by a rename ([#1387](https://github.com/fooyin/fooyin/pull/1387))
@@ -78,7 +84,7 @@
   - Add projectM as an optional dependency for the projectM visualisation plugin
   - Update the vcpkg baseline and ICU version handling
 * Translations
-  - Update translations and translation sources ([#1349](https://github.com/fooyin/fooyin/pull/1349), [#1350](https://github.com/fooyin/fooyin/pull/1350), [#1384](https://github.com/fooyin/fooyin/pull/1384), [#1385](https://github.com/fooyin/fooyin/pull/1385))
+  - Update translations and translation sources ([#1349](https://github.com/fooyin/fooyin/pull/1349), [#1350](https://github.com/fooyin/fooyin/pull/1350), [#1384](https://github.com/fooyin/fooyin/pull/1384), [#1385](https://github.com/fooyin/fooyin/pull/1385), [#1397](https://github.com/fooyin/fooyin/pull/1397), [#1398](https://github.com/fooyin/fooyin/pull/1398))
 
 
 ## [0.11.1](https://github.com/fooyin/fooyin/releases/tag/v0.11.1) (2026-06-22)
