@@ -68,6 +68,10 @@ fooyin is developed primarily on Linux, with build support for Linux, macOS, Win
 
 Official support for Windows and macOS is coming soon.
 
+## Donate
+
+If you would like to support fooyin development, see the [donate page](https://fooyin.org/donate).
+
 ## Roadmap
 
 See [ROADMAP.md](ROADMAP.md) for upcoming releases and long-term plans.
