@@ -59,7 +59,7 @@ public:
     [[nodiscard]] PlaylistTrack previewPlaybackRelativeTrack(int delta) const;
     std::optional<RequestedTrack> selectScheduledTrack();
     std::optional<RequestedTrack> selectPlaybackOrderTrack(int delta);
-    std::optional<RequestedTrack> selectPlayFromIdleState();
+    std::optional<RequestedTrack> selectPlayFromIdleState(bool preferScheduledTrack);
     PlaylistTrack restartPlaylist(RestartTarget target);
 
 private:

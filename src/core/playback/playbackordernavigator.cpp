@@ -270,10 +270,13 @@ std::optional<PlaybackOrderNavigator::RequestedTrack> PlaybackOrderNavigator::se
     return {};
 }
 
-std::optional<PlaybackOrderNavigator::RequestedTrack> PlaybackOrderNavigator::selectPlayFromIdleState()
+std::optional<PlaybackOrderNavigator::RequestedTrack>
+PlaybackOrderNavigator::selectPlayFromIdleState(bool preferScheduledTrack)
 {
-    if(auto scheduledTrack = selectScheduledTrack()) {
-        return scheduledTrack;
+    if(preferScheduledTrack) {
+        if(auto scheduledTrack = selectScheduledTrack()) {
+            return scheduledTrack;
+        }
     }
 
     if(!m_queue->empty()) {
@@ -281,6 +284,12 @@ std::optional<PlaybackOrderNavigator::RequestedTrack> PlaybackOrderNavigator::se
             .track        = m_queue->nextTrack(),
             .isQueueTrack = true,
         };
+    }
+
+    if(!preferScheduledTrack) {
+        if(auto scheduledTrack = selectScheduledTrack()) {
+            return scheduledTrack;
+        }
     }
 
     if(m_playlistHandler) {

@@ -23,7 +23,8 @@
 
 namespace Fooyin {
 PlaybackSession::PlaybackSession()
-    : m_isQueueTrack{false}
+    : m_scheduledTrackKind{ScheduledTrackKind::Normal}
+    , m_isQueueTrack{false}
     , m_currentItemId{0}
 { }
 
@@ -55,6 +56,11 @@ PlaylistTrack& PlaybackSession::currentTrack()
 const PlaylistTrack& PlaybackSession::scheduledTrack() const
 {
     return m_scheduledTrack;
+}
+
+PlaybackSession::ScheduledTrackKind PlaybackSession::scheduledTrackKind() const
+{
+    return m_scheduledTrackKind;
 }
 
 const std::optional<PlaylistTrack>& PlaybackSession::detachedCurrentPlaylistTrack() const
@@ -154,6 +160,7 @@ PlaybackSession::CommitResult PlaybackSession::commitRequest(const Player::Track
     m_isQueueTrack         = result.isQueueTrack;
     m_currentItemId        = itemId;
     m_scheduledTrack       = {};
+    m_scheduledTrackKind   = ScheduledTrackKind::Normal;
     m_pendingRequest.reset();
     m_detachedCurrentPlaylistTrack.reset();
 
@@ -179,9 +186,16 @@ void PlaybackSession::resetCurrentTrackState()
     m_detachedCurrentPlaylistTrack.reset();
 }
 
-void PlaybackSession::scheduleTrack(const PlaylistTrack& track)
+void PlaybackSession::scheduleTrack(const PlaylistTrack& track, ScheduledTrackKind kind)
 {
-    m_scheduledTrack = track;
+    m_scheduledTrack     = track;
+    m_scheduledTrackKind = track.isValid() ? kind : ScheduledTrackKind::Normal;
+}
+
+void PlaybackSession::clearScheduledTrack()
+{
+    m_scheduledTrack     = {};
+    m_scheduledTrackKind = ScheduledTrackKind::Normal;
 }
 
 void PlaybackSession::setDetachedCurrentPlaylistTrack(const PlaylistTrack& track)
