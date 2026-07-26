@@ -29,6 +29,12 @@ namespace Fooyin {
 class FYCORE_EXPORT PlaybackSession
 {
 public:
+    enum class ScheduledTrackKind
+    {
+        Normal = 0,
+        StopAfterCurrentResume,
+    };
+
     PlaybackSession();
 
     [[nodiscard]] PlaylistTrack* currentTrackPtr();
@@ -38,6 +44,7 @@ public:
     [[nodiscard]] const PlaylistTrack& currentTrack() const;
     [[nodiscard]] PlaylistTrack& currentTrack();
     [[nodiscard]] const PlaylistTrack& scheduledTrack() const;
+    [[nodiscard]] ScheduledTrackKind scheduledTrackKind() const;
     [[nodiscard]] const std::optional<PlaylistTrack>& detachedCurrentPlaylistTrack() const;
     [[nodiscard]] bool hasCurrentTrack() const;
     [[nodiscard]] bool isQueueTrack() const;
@@ -65,7 +72,8 @@ public:
     void clearPendingRequest();
     void clearCurrentTrack();
     void resetCurrentTrackState();
-    void scheduleTrack(const PlaylistTrack& track);
+    void scheduleTrack(const PlaylistTrack& track, ScheduledTrackKind kind = ScheduledTrackKind::Normal);
+    void clearScheduledTrack();
     void setDetachedCurrentPlaylistTrack(const PlaylistTrack& track);
     void clearDetachedCurrentPlaylistTrack();
 
@@ -77,6 +85,7 @@ public:
 private:
     PlaylistTrack m_currentTrack;
     PlaylistTrack m_scheduledTrack;
+    ScheduledTrackKind m_scheduledTrackKind;
     bool m_isQueueTrack;
     uint64_t m_currentItemId;
     Player::TrackChangeContext m_pendingChangeContext;

@@ -297,7 +297,8 @@ Player::UpcomingTrack PlayerControllerPrivate::resolveUpcomingTrack() const
         return {};
     }
 
-    if(m_session.scheduledTrack().isValid()) {
+    if(m_session.scheduledTrack().isValid()
+       && m_session.scheduledTrackKind() == PlaybackSession::ScheduledTrackKind::Normal) {
         return {
             .track        = m_session.scheduledTrack(),
             .isQueueTrack = false,
@@ -308,6 +309,13 @@ Player::UpcomingTrack PlayerControllerPrivate::resolveUpcomingTrack() const
         return {
             .track        = m_queue.nextTrack(),
             .isQueueTrack = true,
+        };
+    }
+
+    if(m_session.scheduledTrack().isValid()) {
+        return {
+            .track        = m_session.scheduledTrack(),
+            .isQueueTrack = false,
         };
     }
 
@@ -637,6 +645,10 @@ void PlayerControllerPrivate::remapPlaylistReferences(const UId& fromPlaylistId,
         updateCurrentTrackPlaylist(toPlaylistId);
     }
 
+    if(auto* scheduledTrack = m_session.scheduledTrackPtr(); scheduledTrack->playlistId == fromPlaylistId) {
+        scheduledTrack->playlistId = toPlaylistId;
+    }
+
     emitUpcomingTrackChangedIfNeeded();
 }
 
@@ -737,7 +749,10 @@ bool PlayerControllerPrivate::applyTransportAction(const TransportAction& action
             m_self->stop();
             return false;
         case TransportAction::Type::AdvancePlaybackPositionAndStop:
-            m_navigator.selectPlaybackOrderTrack(1);
+            if(const auto selection = m_navigator.selectPlaybackOrderTrack(1);
+               selection.has_value() && selection->track.isValid()) {
+                m_session.scheduleTrack(selection->track, PlaybackSession::ScheduledTrackKind::StopAfterCurrentResume);
+            }
             m_self->reset();
             m_self->stop();
             return false;
@@ -882,10 +897,15 @@ PlayerControllerPrivate::TransportAction PlayerControllerPrivate::selectAdvanceA
 
     if(reason == Player::AdvanceReason::ManualNext && m_session.canAcceptRequest()) {
         if(m_session.scheduledTrack().isValid()) {
-            return {
-                .type      = TransportAction::Type::RequestSelection,
-                .selection = m_navigator.selectScheduledTrack(),
-            };
+            if(m_session.scheduledTrackKind() == PlaybackSession::ScheduledTrackKind::Normal) {
+                return {
+                    .type      = TransportAction::Type::RequestSelection,
+                    .selection = m_navigator.selectScheduledTrack(),
+                };
+            }
+
+            m_navigator.selectScheduledTrack();
+            m_session.clearScheduledTrack();
         }
 
         if(const auto selection = m_navigator.selectPlaybackOrderTrack(1); selection && selection->track.isValid()) {
@@ -993,7 +1013,8 @@ PlayerControllerPrivate::TransportAction PlayerControllerPrivate::selectPlayActi
     if(m_session.isIdle()) {
         return {
             .type      = TransportAction::Type::RequestSelection,
-            .selection = m_navigator.selectPlayFromIdleState(),
+            .selection = m_navigator.selectPlayFromIdleState(m_session.scheduledTrackKind()
+                                                             == PlaybackSession::ScheduledTrackKind::Normal),
         };
     }
 
