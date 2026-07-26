@@ -22,6 +22,8 @@
 
 #include "inhibitor.h"
 
+#include <optional>
+
 #include <IOKit/pwr_mgt/IOPMLib.h>
 
 namespace Fooyin::SleepInhibitor {
@@ -37,5 +39,7 @@ public:
 
 private:
     IOPMAssertionID m_assertionId{};
+    std::optional<State> m_desiredState;
+    InhibitionType m_desiredType;
 };
 } // namespace Fooyin::SleepInhibitor

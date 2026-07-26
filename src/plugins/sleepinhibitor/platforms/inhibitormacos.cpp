@@ -18,6 +18,8 @@
  *
  */
 
+#include <QtConcurrent>
+
 #include "inhibitormacos.h"
 
 namespace Fooyin::SleepInhibitor {
@@ -27,42 +29,62 @@ InhibitorMacOs::InhibitorMacOs(QObject* parent)
 
 void InhibitorMacOs::inhibitSleep(InhibitionType type)
 {
+    m_desiredState = State::Inhibited;
+    m_desiredType  = type;
+
     if(state() == State::Error || state() == State::Inhibited) {
         return;
     }
 
-    qCDebug(SLEEPINHIBITOR) << "Inhibiting sleep";
+    QtConcurrent::run([this, type] -> IOReturn {
+        qCDebug(SLEEPINHIBITOR) << "Inhibiting sleep";
 
-    const auto assertionName = tr("fooyin is running").toCFString();
-    const auto assertionType = type == InhibitionType::DisplayAndSystem ? kIOPMAssertionTypePreventUserIdleDisplaySleep
-                                                                        : kIOPMAssertionTypePreventUserIdleSystemSleep;
-    const auto status
-        = IOPMAssertionCreateWithName(assertionType, kIOPMAssertionLevelOn, assertionName, &m_assertionId);
-    CFRelease(assertionName);
-    if(status == kIOReturnSuccess) {
-        setState(State::Inhibited);
-    }
-    else {
-        qCWarning(SLEEPINHIBITOR) << "Inhibit call error, status:" << status;
-        setState(State::Error);
-    }
+        const auto assertionName = tr("fooyin is running").toCFString();
+        const auto assertionType = type == InhibitionType::DisplayAndSystem
+                                     ? kIOPMAssertionTypePreventUserIdleDisplaySleep
+                                     : kIOPMAssertionTypePreventUserIdleSystemSleep;
+        const auto status
+            = IOPMAssertionCreateWithName(assertionType, kIOPMAssertionLevelOn, assertionName, &m_assertionId);
+        CFRelease(assertionName);
+        return status;
+    }).then([this](IOReturn status) {
+        if(status == kIOReturnSuccess) {
+            setState(State::Inhibited);
+        }
+        else {
+            qCWarning(SLEEPINHIBITOR) << "Inhibit call error, status:" << status;
+            setState(State::Error);
+        }
+        if(m_desiredState == State::Uninhibited) {
+            uninhibitSleep();
+            m_desiredState = {};
+        }
+    });
 }
 
 void InhibitorMacOs::uninhibitSleep()
 {
+    m_desiredState = State::Uninhibited;
+
     if(state() != State::Inhibited) {
         return;
     }
 
-    qCDebug(SLEEPINHIBITOR) << "Uninhibiting sleep";
-
-    const auto status = IOPMAssertionRelease(m_assertionId);
-    if(status == kIOReturnSuccess) {
-        setState(State::Uninhibited);
-    }
-    else {
-        qCWarning(SLEEPINHIBITOR) << "Uninhibit call error, status:" << status;
-        setState(State::Error);
-    }
+    QtConcurrent::run([this] -> IOReturn {
+        qCDebug(SLEEPINHIBITOR) << "Uninhibiting sleep";
+        return IOPMAssertionRelease(m_assertionId);
+    }).then([this](IOReturn status) {
+        if(status == kIOReturnSuccess) {
+            setState(State::Uninhibited);
+        }
+        else {
+            qCWarning(SLEEPINHIBITOR) << "Uninhibit call error, status:" << status;
+            setState(State::Error);
+        }
+        if(m_desiredState == State::Inhibited) {
+            inhibitSleep(m_desiredType);
+            m_desiredState = {};
+        }
+    });
 }
 } // namespace Fooyin::SleepInhibitor
