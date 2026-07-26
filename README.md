@@ -70,7 +70,7 @@ Official support for Windows and macOS is coming soon.
 
 ## Roadmap
 
-See [ROADMAP.md](ROADMAP.md) for upcoming releases and longer-term plans.
+See [ROADMAP.md](ROADMAP.md) for upcoming releases and long-term plans.
 
 ## Building from source
 
@@ -80,4 +80,4 @@ See [BUILD.md](BUILD.md) for dependency lists, build steps, and installation.
 
 Translations are managed on [Hosted Weblate](https://hosted.weblate.org/projects/fooyin/). Contributions are very welcome.
 
-In case you want to test your translation in the application, follow the steps outlined in [issue#679](https://github.com/fooyin/fooyin/issues/679)
+To test your translation in the application, follow the steps outlined in [issue #679](https://github.com/fooyin/fooyin/issues/679).
