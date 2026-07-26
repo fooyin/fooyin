@@ -26,6 +26,8 @@
 
 using namespace Qt::StringLiterals;
 
+constexpr auto IdlePreset = "idle://Geiss & Sperl - Feedback (projectM idle HDR mix).milk";
+
 namespace Fooyin::ProjectM {
 namespace {
 void appendExistingDir(QStringList& dirs, const QString& dir)
@@ -180,6 +182,37 @@ void ProjectMInstance::selectPreset(const QString& path, bool hardCut)
     if(index >= 0) {
         selectPreset(index, hardCut);
     }
+}
+
+void ProjectMInstance::showIdlePreset()
+{
+    if(!isReady()) {
+        return;
+    }
+
+    projectm_set_preset_locked(m_projectM, true);
+    projectm_load_preset_file(m_projectM, IdlePreset, false);
+}
+
+void ProjectMInstance::resumeIdlePreset()
+{
+    if(!isReady()) {
+        return;
+    }
+
+    projectm_set_preset_locked(m_projectM, false);
+    projectm_load_preset_file(m_projectM, IdlePreset, false);
+}
+
+void ProjectMInstance::restoreSelectedPreset(bool locked)
+{
+    if(!isReady()) {
+        return;
+    }
+
+    projectm_set_preset_locked(m_projectM, false);
+    projectm_playlist_set_position(m_playlist, projectm_playlist_get_position(m_playlist), false);
+    projectm_set_preset_locked(m_projectM, locked);
 }
 
 void ProjectMInstance::setPresetLocked(bool locked)

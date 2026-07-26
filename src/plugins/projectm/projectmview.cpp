@@ -101,6 +101,8 @@ ProjectMView::ProjectMView()
     , m_initialised{false}
     , m_recreateProjectM{false}
     , m_hasPcmCursor{false}
+    , m_playbackIdle{false}
+    , m_idlePresetActive{false}
     , m_presetLocked{false}
     , m_shuffle{false}
 { }
@@ -201,6 +203,7 @@ void ProjectMView::selectNextPreset()
     if(isReady()) {
         queueGLOperation([this]() {
             if(isReady()) {
+                leaveIdleForUserSelection();
                 m_projectM->selectNext(true);
                 m_projectM->setShuffle(m_shuffle);
             }
@@ -213,6 +216,7 @@ void ProjectMView::selectPreviousPreset()
     if(isReady()) {
         queueGLOperation([this]() {
             if(isReady()) {
+                leaveIdleForUserSelection();
                 m_projectM->selectPrevious(true);
                 m_projectM->setShuffle(m_shuffle);
             }
@@ -225,6 +229,7 @@ void ProjectMView::selectRandomPreset()
     if(isReady()) {
         queueGLOperation([this]() {
             if(isReady()) {
+                leaveIdleForUserSelection();
                 m_projectM->selectRandom(true);
             }
         });
@@ -236,6 +241,7 @@ void ProjectMView::selectPreset(int index)
     if(isReady() && index >= 0) {
         queueGLOperation([this, index]() {
             if(isReady() && index >= 0 && index < m_projectM->playlistSize()) {
+                leaveIdleForUserSelection();
                 m_projectM->selectPreset(index, true);
             }
         });
@@ -248,9 +254,21 @@ void ProjectMView::selectPreset(const QString& path)
     if(isReady()) {
         queueGLOperation([this, path]() {
             if(isReady()) {
+                leaveIdleForUserSelection();
                 m_projectM->selectPreset(path, true);
             }
         });
+    }
+}
+
+void ProjectMView::setPlaybackIdle(bool idle)
+{
+    if(std::exchange(m_playbackIdle, idle) == idle) {
+        return;
+    }
+
+    if(isReady()) {
+        queueGLOperation([this]() { applyIdleState(); });
     }
 }
 
@@ -258,11 +276,7 @@ void ProjectMView::setPresetLocked(bool locked)
 {
     m_presetLocked = locked;
     if(isReady()) {
-        queueGLOperation([this, locked]() {
-            if(isReady()) {
-                m_projectM->setPresetLocked(locked);
-            }
-        });
+        queueGLOperation([this]() { applyIdleState(); });
     }
 }
 
@@ -519,6 +533,7 @@ void ProjectMView::createProjectM()
     m_renderTimer.stop();
     m_pendingGLOperations.clear();
     m_projectM.reset();
+    m_idlePresetActive = false;
     m_failedPresets.clear();
     m_failedPresetPaths.clear();
     m_ready = false;
@@ -580,14 +595,20 @@ void ProjectMView::createProjectM()
     m_projectM = std::move(projectM);
     m_projectM->setPresetLocked(m_presetLocked);
     m_projectM->setShuffle(m_shuffle);
+
     if(!m_pendingPresetPath.isEmpty()) {
         m_projectM->selectPreset(m_pendingPresetPath, true);
     }
+
     resizeRenderer(width(), height(), true);
-    m_ready      = true;
+
+    m_ready = true;
+    applyIdleState();
+
     m_statusText = m_presetDirs.size() == 1
                      ? tr("Using presets from %1").arg(m_presetDirs.front())
                      : tr("Using presets from %Ln folder(s)", nullptr, static_cast<int>(m_presetDirs.size()));
+
     emitAvailability();
     updateRenderTimer();
 }
@@ -850,6 +871,41 @@ void ProjectMView::processQueuedGLOperations()
         m_pendingGLOperations.pop_front();
         operation();
     }
+}
+
+void ProjectMView::applyIdleState()
+{
+    if(!isReady()) {
+        return;
+    }
+
+    const bool shouldShowIdle = m_playbackIdle && !m_presetLocked;
+    if(shouldShowIdle == m_idlePresetActive) {
+        m_projectM->setPresetLocked(shouldShowIdle || m_presetLocked);
+        return;
+    }
+
+    if(shouldShowIdle) {
+        m_projectM->showIdlePreset();
+    }
+    else if(m_presetLocked) {
+        m_projectM->restoreSelectedPreset(true);
+    }
+    else {
+        m_projectM->resumeIdlePreset();
+    }
+
+    m_idlePresetActive = shouldShowIdle;
+}
+
+void ProjectMView::leaveIdleForUserSelection()
+{
+    if(!m_idlePresetActive) {
+        return;
+    }
+
+    m_projectM->setPresetLocked(m_presetLocked);
+    m_idlePresetActive = false;
 }
 
 void ProjectMView::scheduleProjectMRecreation()

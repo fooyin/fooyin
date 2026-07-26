@@ -216,6 +216,11 @@ ProjectMWidget::ProjectMWidget(ActionManager* actionManager, EngineController* e
         }
     });
 
+    const auto updateIdleState = [this](Engine::PlaybackState state) {
+        m_view->setPlaybackIdle(state == Engine::PlaybackState::Stopped || state == Engine::PlaybackState::Error);
+    };
+    QObject::connect(engine, &EngineController::engineStateChanged, this, updateIdleState);
+    updateIdleState(engine->engineState());
     m_view->setVisualisationSession(engine->visualisationService()->createSession());
 }
 
