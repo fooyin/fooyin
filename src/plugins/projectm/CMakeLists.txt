@@ -1,11 +1,11 @@
 find_package(
     Qt6
-    COMPONENTS OpenGL OpenGLWidgets
+    COMPONENTS OpenGL
     QUIET
 )
 
-if(NOT Qt6OpenGL_FOUND OR NOT Qt6OpenGLWidgets_FOUND)
-    message(STATUS "Qt6::OpenGL or Qt6::OpenGLWidgets not found; skipping projectm plugin.")
+if(NOT Qt6OpenGL_FOUND)
+    message(STATUS "Qt6::OpenGL not found; skipping projectm plugin.")
     return()
 endif()
 
@@ -25,7 +25,6 @@ create_fooyin_plugin_internal(
     DEPENDS Fooyin::Core
             Fooyin::Gui
             Qt6::OpenGL
-            Qt6::OpenGLWidgets
             ${PROJECTM_TARGET}
     SOURCES projectminstance.cpp
             projectminstance.h
