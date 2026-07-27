@@ -43,7 +43,7 @@ jobs:
 
       - name: Cache ccache
         if: env.BUILD_CCACHE == 'ON'
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ${{ env.CCACHE_DIR }}
           key: linux-fedora-${{ matrix.fedora_version }}-${{ matrix.runner.arch }}-ccache-${{ github.sha }}
@@ -104,7 +104,7 @@ jobs:
 
       - name: Cache ccache
         if: env.BUILD_CCACHE == 'ON'
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ${{ env.CCACHE_DIR }}
           key: linux-debian-${{ matrix.debian_version }}-${{ matrix.runner.arch }}-ccache-${{ github.sha }}
@@ -165,7 +165,7 @@ jobs:
 
       - name: Cache ccache
         if: ${{ !(matrix.ubuntu_version == 'noble' && matrix.runner.arch == 'amd64') && env.BUILD_CCACHE == 'ON' }}
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ${{ env.CCACHE_DIR }}
           key: linux-ubuntu-${{ matrix.ubuntu_version }}-${{ matrix.runner.arch }}-ccache-${{ github.sha }}
