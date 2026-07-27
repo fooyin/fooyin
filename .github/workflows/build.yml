@@ -53,28 +53,28 @@ jobs:
           fetch-depth: 0
 
       - name: Download Fedora artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           pattern: fedora-*
           path: ./artifacts
           merge-multiple: true
 
       - name: Download Debian artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           pattern: debian-*
           path: ./artifacts
           merge-multiple: true
 
       - name: Download Ubuntu artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           pattern: ubuntu-*
           path: ./artifacts
           merge-multiple: true
 
       - name: Download FreeBSD artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           pattern: freebsd-*
           path: ./artifacts
