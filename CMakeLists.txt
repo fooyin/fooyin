@@ -144,6 +144,7 @@ if(APPLE)
     fooyin_prepare_macos_icu()
 endif()
 find_package(Taglib REQUIRED taglib>=1.12)
+find_package(ZLIB REQUIRED)
 find_package(
     FFmpeg REQUIRED
     COMPONENTS AVCODEC

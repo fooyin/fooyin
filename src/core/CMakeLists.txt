@@ -335,6 +335,7 @@ target_link_libraries(
             QCoro6::Core
             ${FFMPEG_LIBRARIES}
             PFFFT::PFFFT
+            ZLIB::ZLIB
     PUBLIC Qt6::Core
            Qt6::Widgets
            Qt6::Sql

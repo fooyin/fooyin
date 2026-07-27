@@ -455,6 +455,8 @@ TEST_F(ScriptParserTest, StringTest)
     EXPECT_EQ(u"", m_parser.evaluate(u"$ascii(©)"_s));
     EXPECT_EQ(u"Hello", m_parser.evaluate(u"$ascii(Hello)"_s));
     EXPECT_EQ(u"", m_parser.evaluate(u"$ascii()"_s));
+    EXPECT_EQ(u"3421780262", m_parser.evaluate(u"$crc32(123456789)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$crc32(a,b)"_s));
 }
 
 TEST_F(ScriptParserTest, MathTest)

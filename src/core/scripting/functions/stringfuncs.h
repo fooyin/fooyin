@@ -64,6 +64,7 @@ QString progress2(const QStringList& vec);
 QString doclink(const QStringList& vec);
 QString cmdlink(const QStringList& vec);
 QString urlencode(const QStringList& vec);
+QString crc32(const QStringList& vec);
 
 QString sep();
 

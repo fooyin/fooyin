@@ -26,6 +26,8 @@
 #include <QRegularExpression>
 #include <QUrl>
 
+#include <zlib.h>
+
 using namespace Qt::StringLiterals;
 
 namespace {
@@ -780,6 +782,19 @@ QString urlencode(const QStringList& vec)
     }
 
     return QString::fromUtf8(QUrl::toPercentEncoding(vec.front()));
+}
+
+QString crc32(const QStringList& values)
+{
+    if(values.size() != 1) {
+        return {};
+    }
+
+    const QByteArray bytes = values.constFirst().toUtf8();
+    const auto crc         = static_cast<quint32>(
+        ::crc32(0L, reinterpret_cast<const Bytef*>(bytes.constData()), static_cast<uInt>(bytes.size())));
+
+    return QString::number(crc);
 }
 
 QString sep()

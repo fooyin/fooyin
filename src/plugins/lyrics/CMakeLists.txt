@@ -1,5 +1,3 @@
-find_package(ZLIB REQUIRED)
-
 create_fooyin_plugin_internal(
     lyrics
     DEPENDS Fooyin::Gui
