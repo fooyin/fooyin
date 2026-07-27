@@ -126,8 +126,6 @@ private:
     void scheduleProjectMRecreation();
     void initialiseOpenGLDebugLogger();
     void logOpenGLContext();
-    void logOpenGLState(const QString& stage);
-    void logOpenGLErrors(const QString& stage);
 
     void setUnavailable(const QString& statusText);
     void emitAvailability();
@@ -148,8 +146,6 @@ private:
     QString m_pendingPresetPath;
     QStringList m_presetDirs;
     uint64_t m_lastPcmTimeMs;
-    uint32_t m_debugRenderFrames;
-    uint32_t m_debugPcmWindows;
     bool m_ready;
     bool m_initialised;
     bool m_recreateProjectM;
