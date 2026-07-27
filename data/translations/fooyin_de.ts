@@ -5889,7 +5889,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <translation>Lade Wiedergabeliste</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1904"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1901"/>
         <source>Save Playlist</source>
         <translation>Speichere Wiedergabeliste</translation>
     </message>
@@ -12283,42 +12283,42 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <name>Fooyin::ProjectM::ProjectMView</name>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="96"/>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="859"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="915"/>
         <source>Initialising projectM…</source>
         <translation>Initialisiere projectM…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="375"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="389"/>
         <source>Preset %1</source>
         <translation>Voreinstellung %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="530"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="545"/>
         <source>No projectM preset folders are configured.</source>
         <translation>Es sind keine projectM-Voreinstellungs-Ordner konfiguriert.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="555"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="570"/>
         <source>Preset failed to load.</source>
         <translation>Voreinstellung konnte nicht geladen werden.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="575"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="590"/>
         <source>projectM initialisation failed.</source>
         <translation>projectM-Initialisierung fehlgeschlagen.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="576"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="591"/>
         <source>projectM initialisation failed: %1</source>
         <translation>projectM-Initialisierung fehlgeschlagen: %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="589"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="609"/>
         <source>Using presets from %1</source>
         <translation>Verwende Voreinstellungen aus %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="590"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="610"/>
         <source>Using presets from %Ln folder(s)</source>
         <translation>
             <numerusform>Verwende Voreinstellungen aus %Ln Ordner</numerusform>
@@ -12330,7 +12330,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <name>Fooyin::ProjectM::ProjectMWidget</name>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="153"/>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="553"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="558"/>
         <source>&amp;Full Screen</source>
         <translation>Voll&amp;bild</translation>
     </message>
@@ -12370,63 +12370,63 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         <translation>Merke &amp;aktuelle Voreinstellung</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="238"/>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="663"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="243"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="668"/>
         <source>projectM</source>
         <translation>projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="508"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="513"/>
         <source>Toggle projectM full screen</source>
         <translation>Schalte Vollbild für projectM um</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="512"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="517"/>
         <source>Select a projectM preset</source>
         <translation>Wähle eine projectM-Voreinstellung</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="516"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="521"/>
         <source>Switch to the previous projectM preset</source>
         <translation>Wechsle zur vorherigen projectM-Voreinstellung</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="522"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="527"/>
         <source>Switch to the next projectM preset</source>
         <translation>Wechsle zur nächsten projectM-Voreinstellung</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="529"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="534"/>
         <source>Switch to a random projectM preset</source>
         <translation>Wechsle zu einer zufälligen projectM-Voreinstellung</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="533"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="538"/>
         <source>Lock the current projectM preset</source>
         <translation>Sperre die aktuelle projectM-Voreinstellung</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="537"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="542"/>
         <source>Shuffle projectM presets</source>
         <translation>Mische projectM-Voreinstellungen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="541"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="546"/>
         <source>Remember the current projectM preset</source>
         <translation>Merke die aktuelle projectM-Voreinstellung</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="553"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="558"/>
         <source>E&amp;xit Full Screen</source>
         <translation>&amp;Vollbild verlassen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="584"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="589"/>
         <source>Preset &amp;Duration</source>
         <translation>Voreinstellungs-&amp;Dauer</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="588"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="593"/>
         <source>%1 seconds</source>
         <translation>%1 Sekunden</translation>
     </message>
@@ -14945,7 +14945,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         <translation>Wiedergabelisten-Dateiformat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="80"/>
+        <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="76"/>
         <source>Select Directory</source>
         <translation>Verzeichnis auswählen</translation>
     </message>

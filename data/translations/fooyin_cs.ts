@@ -5906,7 +5906,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         <translation>Načíst seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1904"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1901"/>
         <source>Save Playlist</source>
         <translation>Uložit seznam skladeb</translation>
     </message>
@@ -12309,42 +12309,42 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <name>Fooyin::ProjectM::ProjectMView</name>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="96"/>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="859"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="915"/>
         <source>Initialising projectM…</source>
         <translation>Inicializace projectM…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="375"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="389"/>
         <source>Preset %1</source>
         <translation>Předvolba %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="530"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="545"/>
         <source>No projectM preset folders are configured.</source>
         <translation>Nejsou nastaveny žádné složky předvoleb pro projectM.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="555"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="570"/>
         <source>Preset failed to load.</source>
         <translation>Předvolbu se nepodařilo načíst.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="575"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="590"/>
         <source>projectM initialisation failed.</source>
         <translation>Inicializace projectM se nezdařila.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="576"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="591"/>
         <source>projectM initialisation failed: %1</source>
         <translation>Inicializace projectM se nezdařila: %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="589"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="609"/>
         <source>Using presets from %1</source>
         <translation>Používají se předvolby z %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="590"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="610"/>
         <source>Using presets from %Ln folder(s)</source>
         <translation>
             <numerusform>Používány předvolby z %Ln složky</numerusform>
@@ -12357,7 +12357,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <name>Fooyin::ProjectM::ProjectMWidget</name>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="153"/>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="553"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="558"/>
         <source>&amp;Full Screen</source>
         <translation>N&amp;a celou obrazovku</translation>
     </message>
@@ -12397,63 +12397,63 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         <translation>&amp;Zapamatovat aktuální předvolbu</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="238"/>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="663"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="243"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="668"/>
         <source>projectM</source>
         <translation>projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="508"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="513"/>
         <source>Toggle projectM full screen</source>
         <translation>Přepnout zobrazení na celou obrazovku pro projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="512"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="517"/>
         <source>Select a projectM preset</source>
         <translation>Vybrat předvolbu pro projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="516"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="521"/>
         <source>Switch to the previous projectM preset</source>
         <translation>Přepnout na předchozí předvolbu pro projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="522"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="527"/>
         <source>Switch to the next projectM preset</source>
         <translation>Přepnout na další předvolbu pro projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="529"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="534"/>
         <source>Switch to a random projectM preset</source>
         <translation>Přepnout na náhodnou předvolbu pro projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="533"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="538"/>
         <source>Lock the current projectM preset</source>
         <translation>Uzamknout aktuální předvolbu pro projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="537"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="542"/>
         <source>Shuffle projectM presets</source>
         <translation>Promíchat předvolby pro projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="541"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="546"/>
         <source>Remember the current projectM preset</source>
         <translation>Zapamatovat si aktuální předvolbu pro projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="553"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="558"/>
         <source>E&amp;xit Full Screen</source>
         <translation>&amp;Ukončit režim na celou obrazovku</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="584"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="589"/>
         <source>Preset &amp;Duration</source>
         <translation>&amp;Trvání předvolby</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="588"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="593"/>
         <source>%1 seconds</source>
         <translation>%1 s</translation>
     </message>
@@ -14978,7 +14978,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         <translation>Formát seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="80"/>
+        <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="76"/>
         <source>Select Directory</source>
         <translation>Vybrat složku</translation>
     </message>

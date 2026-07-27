@@ -5905,7 +5905,7 @@ Effects here process the final combined output.</source>
         <translation>Загрузить плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1904"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1901"/>
         <source>Save Playlist</source>
         <translation>Сохранить плейлист</translation>
     </message>
@@ -12308,42 +12308,42 @@ Remove original: deletes the previous file or tag after saving.</source>
     <name>Fooyin::ProjectM::ProjectMView</name>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="96"/>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="859"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="915"/>
         <source>Initialising projectM…</source>
         <translation>Инициализация projectM…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="375"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="389"/>
         <source>Preset %1</source>
         <translation>Предустановка %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="530"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="545"/>
         <source>No projectM preset folders are configured.</source>
         <translation>Папки с предустановками projectM не настроены.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="555"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="570"/>
         <source>Preset failed to load.</source>
         <translation>Не удалось загрузить предустановку.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="575"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="590"/>
         <source>projectM initialisation failed.</source>
         <translation>Не удалось инициализировать projectM.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="576"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="591"/>
         <source>projectM initialisation failed: %1</source>
         <translation>Не удалось инициализировать projectM: %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="589"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="609"/>
         <source>Using presets from %1</source>
         <translation>Использование предустановок из %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="590"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="610"/>
         <source>Using presets from %Ln folder(s)</source>
         <translation>
             <numerusform>Использование предустановок из %Ln папки</numerusform>
@@ -12356,7 +12356,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <name>Fooyin::ProjectM::ProjectMWidget</name>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="153"/>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="553"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="558"/>
         <source>&amp;Full Screen</source>
         <translation>&amp;Полный экран</translation>
     </message>
@@ -12396,63 +12396,63 @@ Remove original: deletes the previous file or tag after saving.</source>
         <translation>Запоминать &amp;текущую предустановку</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="238"/>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="663"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="243"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="668"/>
         <source>projectM</source>
         <translation>projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="508"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="513"/>
         <source>Toggle projectM full screen</source>
         <translation>Переключить полноэкранный режим projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="512"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="517"/>
         <source>Select a projectM preset</source>
         <translation>Выбрать предустановку projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="516"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="521"/>
         <source>Switch to the previous projectM preset</source>
         <translation>Переключиться на предыдущую предустановку projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="522"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="527"/>
         <source>Switch to the next projectM preset</source>
         <translation>Переключиться на следующую предустановку projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="529"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="534"/>
         <source>Switch to a random projectM preset</source>
         <translation>Переключиться на случайную предустановку projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="533"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="538"/>
         <source>Lock the current projectM preset</source>
         <translation>Закрепить текущую предустановку projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="537"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="542"/>
         <source>Shuffle projectM presets</source>
         <translation>Перемешивать предустановки projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="541"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="546"/>
         <source>Remember the current projectM preset</source>
         <translation>Запомнить текущую предустановку projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="553"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="558"/>
         <source>E&amp;xit Full Screen</source>
         <translation>В&amp;ыйти из полноэкранного режима</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="584"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="589"/>
         <source>Preset &amp;Duration</source>
         <translation>&amp;Длительность предустановки</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="588"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="593"/>
         <source>%1 seconds</source>
         <translation>%1 секунд</translation>
     </message>
@@ -14977,7 +14977,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <translation>Формат файла плейлиста</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="80"/>
+        <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="76"/>
         <source>Select Directory</source>
         <translation>Выбор каталога</translation>
     </message>
