@@ -11,7 +11,19 @@
           "stars": 2088
         }
       ]
+    },
+    {
+      "timestamp": "2026-07-27T02:49:01.322Z",
+      "totalStars": 2090,
+      "repos": [
+        {
+          "fullName": "fooyin/fooyin",
+          "name": "fooyin",
+          "owner": "fooyin",
+          "stars": 2090
+        }
+      ]
     }
   ],
-  "starsAtLastNotification": 2088
+  "starsAtLastNotification": 2090
 }
