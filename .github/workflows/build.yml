@@ -29,10 +29,10 @@ jobs:
     uses: ./.github/workflows/build-freebsd.yml
     secrets: inherit
 
-  windows:
-    name: Build Windows
-    uses: ./.github/workflows/build-windows.yml
-    secrets: inherit
+#  windows:
+#    name: Build Windows
+#    uses: ./.github/workflows/build-windows.yml
+#    secrets: inherit
 
   macos:
     name: Build macOS
