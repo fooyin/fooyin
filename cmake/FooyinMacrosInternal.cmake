@@ -131,7 +131,13 @@ endfunction()
 
 function(create_fooyin_plugin_internal plugin_name)
     set(plugin_args ${ARGN})
-    cmake_parse_arguments(INTERNAL "NO_PCH" "" "" ${plugin_args})
+    cmake_parse_arguments(
+        INTERNAL
+        "NO_PCH"
+        ""
+        ""
+        ${plugin_args}
+    )
     list(REMOVE_ITEM plugin_args NO_PCH)
 
     create_fooyin_plugin(${plugin_name} ${plugin_args} NO_INSTALL)
