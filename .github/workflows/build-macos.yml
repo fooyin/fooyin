@@ -46,7 +46,7 @@ jobs:
           ./ci/macos-build.sh
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: macos-${{ matrix.arch }}
           path: dmg

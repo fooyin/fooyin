@@ -84,13 +84,13 @@ jobs:
         shell: pwsh
 
       - name: Upload installer artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: windows-setup-${{ matrix.arch }}
           path: artifacts/*.exe
 
       - name: Upload portable artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: windows-portable-${{ matrix.arch }}
           path: artifacts/*.zip
