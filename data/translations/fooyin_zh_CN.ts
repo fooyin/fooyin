@@ -2238,12 +2238,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/core/engine/conversion/conversionpathresolver.cpp" line="161"/>
         <source>Duplicate output path</source>
-        <translation type="unfinished"></translation>
+        <translation>重复输出路径</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/conversion/conversionpathresolver.cpp" line="176"/>
         <source>Could not resolve output path</source>
-        <translation type="unfinished"></translation>
+        <translation>无法解析输出路径</translation>
     </message>
 </context>
 <context>
@@ -2251,71 +2251,72 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="60"/>
         <source>Preparing conversion…</source>
-        <translation type="unfinished"></translation>
+        <translation>准备转换…</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="60"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>取消</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="64"/>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="190"/>
         <source>Audio Conversion</source>
-        <translation type="unfinished"></translation>
+        <translation>音频转换</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="99"/>
         <source>Current file</source>
-        <translation type="unfinished">当前文件</translation>
+        <translation>当前文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="121"/>
         <source>File already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>文件已存在</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="122"/>
         <source>The file already exists:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>文件已存在：
+%1</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="125"/>
         <source>Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>覆盖</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="126"/>
         <source>Skip</source>
-        <translation type="unfinished"></translation>
+        <translation>跳过</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="185"/>
         <source>Converted: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已转换：%Ln 条曲目</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="186"/>
         <source>Skipped: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已跳过：%Ln 条曲目</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="187"/>
         <source>Failed: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已失败：%Ln 条曲目</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="188"/>
         <source>Cancelled: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已取消：%Ln 条曲目</numerusform>
         </translation>
     </message>
 </context>
@@ -2324,389 +2325,389 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="82"/>
         <source>Load</source>
-        <translation type="unfinished">加载</translation>
+        <translation>加载</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="83"/>
         <source>Save</source>
-        <translation type="unfinished">保存</translation>
+        <translation>保存</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="84"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1100"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>移除</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="85"/>
         <source>Import</source>
-        <translation type="unfinished">导入</translation>
+        <translation>导入</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="86"/>
         <source>Export</source>
-        <translation type="unfinished">导出</translation>
+        <translation>导出</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="89"/>
         <source>Edit</source>
-        <translation type="unfinished">编辑</translation>
+        <translation>编辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="94"/>
         <source>Browse…</source>
-        <translation type="unfinished">浏览…</translation>
+        <translation>浏览…</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="99"/>
         <source>Transfer metadata (tags)</source>
-        <translation type="unfinished"></translation>
+        <translation>传输元数据（标签）</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="100"/>
         <source>Transfer rating</source>
-        <translation type="unfinished"></translation>
+        <translation>传输评级</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="101"/>
         <source>Transfer play count</source>
-        <translation type="unfinished"></translation>
+        <translation>传输播放次数</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="102"/>
         <source>Transfer attached pictures</source>
-        <translation type="unfinished"></translation>
+        <translation>传输附件图片</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="104"/>
         <source>Prevent clipping</source>
-        <translation type="unfinished"></translation>
+        <translation>防止剪断</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="107"/>
         <source>Don&apos;t reset DSP between tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目之间不要重置 DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="114"/>
         <source>Generate short previews instead of converting entire tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>生成简短预览，而不是转换整个曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="116"/>
         <source>Show full status report</source>
-        <translation type="unfinished"></translation>
+        <translation>显示完整状态报告</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="118"/>
         <source>Verify converted output</source>
-        <translation type="unfinished"></translation>
+        <translation>验证转换后的输出</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="125"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="204"/>
         <source>Converter Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>转换器设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="129"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="268"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>输出</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="130"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="269"/>
         <source>Destination</source>
-        <translation type="unfinished">目标</translation>
+        <translation>目标</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="131"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="270"/>
         <source>Processing</source>
-        <translation type="unfinished"></translation>
+        <translation>正在处理</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="132"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="271"/>
         <source>Other</source>
-        <translation type="unfinished">其他</translation>
+        <translation>其他</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="141"/>
         <source>Convert</source>
-        <translation type="unfinished"></translation>
+        <translation>转换</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="204"/>
         <source>No output encoder is available.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有可用的输出编码器。</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="209"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1064"/>
         <source>Choose destination</source>
-        <translation type="unfinished"></translation>
+        <translation>选择目标</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="234"/>
         <source>Saved presets</source>
-        <translation type="unfinished"></translation>
+        <translation>已保存的预设</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="255"/>
         <source>Current settings</source>
-        <translation type="unfinished"></translation>
+        <translation>当前设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="292"/>
         <source>Auto</source>
-        <translation type="unfinished">自动</translation>
+        <translation>自动</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="293"/>
         <source>8-bit integer</source>
-        <translation type="unfinished"></translation>
+        <translation>8 位整数</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="294"/>
         <source>16-bit integer</source>
-        <translation type="unfinished"></translation>
+        <translation>16 位整数</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="295"/>
         <source>24-bit integer</source>
-        <translation type="unfinished"></translation>
+        <translation>24 位整数</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="296"/>
         <source>32-bit integer</source>
-        <translation type="unfinished"></translation>
+        <translation>32 位整数</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="297"/>
         <source>32-bit floating point</source>
-        <translation type="unfinished"></translation>
+        <translation>32 位浮点</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="299"/>
         <source>Never</source>
-        <translation type="unfinished"></translation>
+        <translation>从不</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="300"/>
         <source>Lossy sources only</source>
-        <translation type="unfinished"></translation>
+        <translation>仅限有损源</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="301"/>
         <source>Always</source>
-        <translation type="unfinished"></translation>
+        <translation>总是</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="307"/>
         <source>Output sample format</source>
-        <translation type="unfinished"></translation>
+        <translation>输出采样格式</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="309"/>
         <source>Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>抖动</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="335"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1150"/>
         <source>Ask when conversion starts</source>
-        <translation type="unfinished"></translation>
+        <translation>询问转换何时开始</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="336"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1153"/>
         <source>Source track folder</source>
-        <translation type="unfinished"></translation>
+        <translation>源曲目文件夹</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="337"/>
         <source>Specified folder</source>
-        <translation type="unfinished"></translation>
+        <translation>指定文件夹</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="338"/>
         <source>Ask</source>
-        <translation type="unfinished"></translation>
+        <translation>询问</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="339"/>
         <source>Skip</source>
-        <translation type="unfinished"></translation>
+        <translation>跳过</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="340"/>
         <source>Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>覆盖</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="341"/>
         <source>Convert each track to an individual file</source>
-        <translation type="unfinished"></translation>
+        <translation>将每首曲目转换为单独的文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="343"/>
         <source>Generate one multi-track file per name group</source>
-        <translation type="unfinished"></translation>
+        <translation>每个名称组生成一个多轨文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="345"/>
         <source>Merge all tracks into one output file</source>
-        <translation type="unfinished"></translation>
+        <translation>将所有音轨合并到一个输出文件中</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="355"/>
         <source>Output path</source>
-        <translation type="unfinished"></translation>
+        <translation>输出路径</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="357"/>
         <source>Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>文件夹</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="359"/>
         <source>Output style</source>
-        <translation type="unfinished"></translation>
+        <translation>输出样式</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="361"/>
         <source>Name format</source>
-        <translation type="unfinished"></translation>
+        <translation>名称格式</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="363"/>
         <source>If file already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>如果文件已存在</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="369"/>
         <source>Preview</source>
-        <translation type="unfinished">预览</translation>
+        <translation>预览</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="387"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1209"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1226"/>
         <source>None</source>
-        <translation type="unfinished">无</translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="388"/>
         <source>Track gain</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="389"/>
         <source>Album gain</source>
-        <translation type="unfinished"></translation>
+        <translation>专辑增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="396"/>
         <source> dB</source>
-        <translation type="unfinished"> 分贝</translation>
+        <translation> 分贝</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="399"/>
         <source>ReplayGain processing</source>
-        <translation type="unfinished"></translation>
+        <translation>重放增益处理</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="402"/>
         <source>Mode</source>
-        <translation type="unfinished">模式</translation>
+        <translation>模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="405"/>
         <source>Preamp</source>
-        <translation type="unfinished">前置放大器</translation>
+        <translation>前置放大器</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="407"/>
         <source>Without ReplayGain info</source>
-        <translation type="unfinished"></translation>
+        <translation>无需重放即可获取信息</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="410"/>
         <source>ReplayGain is applied permanently to the converted audio.</source>
-        <translation type="unfinished"></translation>
+        <translation>重放增益会永久应用于转换后的音频。</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="441"/>
         <source>DSP chain</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP 链</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="443"/>
         <source>Active DSPs</source>
-        <translation type="unfinished"></translation>
+        <translation>激活的 DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="446"/>
         <source>Available DSPs</source>
-        <translation type="unfinished">可用的数字信号处理</translation>
+        <translation>可用的 DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="455"/>
         <source>Metadata</source>
-        <translation type="unfinished">元数据</translation>
+        <translation>元数据</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="508"/>
         <source>Preview generation</source>
-        <translation type="unfinished"></translation>
+        <translation>预览生成</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="513"/>
         <source>Length</source>
-        <translation type="unfinished">长度</translation>
+        <translation>长度</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="517"/>
         <source>When done</source>
-        <translation type="unfinished"></translation>
+        <translation>完成后</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="522"/>
         <source>Copy other files to the destination folder</source>
-        <translation type="unfinished"></translation>
+        <translation>把其他文件复制到目标文件夹</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="711"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="717"/>
         <source>DSP Settings</source>
-        <translation type="unfinished">DSP 设置</translation>
+        <translation>DSP 设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="711"/>
         <source>This DSP has no configurable settings.</source>
-        <translation type="unfinished">该 DSP 没有可配置设置。</translation>
+        <translation>该 DSP 没有可配置设置。</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="718"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
-        <translation type="unfinished">无法打开 DSP“%1”的设置。</translation>
+        <translation>无法打开 DSP“%1”的设置。</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="771"/>
         <source>Default settings</source>
-        <translation type="unfinished"></translation>
+        <translation>默认设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="800"/>
         <source>Save Converter Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>保存转换器预设</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="800"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="857"/>
@@ -2714,131 +2715,131 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="872"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="881"/>
         <source>Import Converter Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>导入转换器预设</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="858"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="929"/>
         <source>fooyin Converter Presets (*.fycp)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin 转换器预设 (*.fycp)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="866"/>
         <source>The preset file could not be opened.</source>
-        <translation type="unfinished"></translation>
+        <translation>预设文件无法打开。</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="872"/>
         <source>The preset file is invalid or empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>预设文件无效或为空。</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="882"/>
         <source>Encoder is unavailable for preset: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>预设 %1 的编码器不可用</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="928"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="938"/>
         <source>Export Converter Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>导出转换器预设</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="938"/>
         <source>The preset file could not be written.</source>
-        <translation type="unfinished"></translation>
+        <translation>预设文件无法写入。</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1100"/>
         <source>Reset</source>
-        <translation type="unfinished">重置</translation>
+        <translation>重置</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1144"/>
         <source>No encoder available</source>
-        <translation type="unfinished"></translation>
+        <translation>没有可用的编码器</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1157"/>
         <source>No folder specified</source>
-        <translation type="unfinished"></translation>
+        <translation>未指定文件夹</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1165"/>
         <source>group tracks by output name</source>
-        <translation type="unfinished"></translation>
+        <translation>按输出名称分组曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1168"/>
         <source>merge tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>合并曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1172"/>
         <source>No name format</source>
-        <translation type="unfinished"></translation>
+        <translation>无名称格式</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1179"/>
         <source>metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>元数据</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1182"/>
         <source>rating</source>
-        <translation type="unfinished"></translation>
+        <translation>评分</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1185"/>
         <source>play count</source>
-        <translation type="unfinished"></translation>
+        <translation>播放次数</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1188"/>
         <source>attached pictures</source>
-        <translation type="unfinished"></translation>
+        <translation>附图</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1193"/>
         <source>ReplayGain (track)</source>
-        <translation type="unfinished"></translation>
+        <translation>重放增益（曲目）</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1196"/>
         <source>ReplayGain (album)</source>
-        <translation type="unfinished"></translation>
+        <translation>重放增益（专辑）</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1203"/>
         <source>%Ln DSP(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln DSPs</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1205"/>
         <source>continuous DSP</source>
-        <translation type="unfinished"></translation>
+        <translation>连续 DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1214"/>
         <source>%1% previews</source>
-        <translation type="unfinished"></translation>
+        <translation>%1% 预览</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1217"/>
         <source>Show status report</source>
-        <translation type="unfinished"></translation>
+        <translation>显示状态报告</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1220"/>
         <source>Copy matching files</source>
-        <translation type="unfinished"></translation>
+        <translation>复制匹配文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1223"/>
         <source>Verify output</source>
-        <translation type="unfinished"></translation>
+        <translation>验证输出</translation>
     </message>
 </context>
 <context>
@@ -3986,97 +3987,97 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="42"/>
         <source>Default</source>
-        <translation type="unfinished">默认</translation>
+        <translation>默认</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="44"/>
         <source>Variable bitrate (VBR)</source>
-        <translation type="unfinished"></translation>
+        <translation>可变比特率（VBR）</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="46"/>
         <source>Constrained variable bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>受限可变比特率</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="48"/>
         <source>Constant quality (VBR)</source>
-        <translation type="unfinished"></translation>
+        <translation>恒定质量（VBR）</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="50"/>
         <source>Average bitrate (ABR)</source>
-        <translation type="unfinished"></translation>
+        <translation>平均比特率（ABR）</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="52"/>
         <source>Constant bitrate (CBR)</source>
-        <translation type="unfinished"></translation>
+        <translation>恒定比特率 (CBR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="54"/>
         <source>Lossless compression</source>
-        <translation type="unfinished"></translation>
+        <translation>无损压缩</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="66"/>
         <source>Options</source>
-        <translation type="unfinished">选项</translation>
+        <translation>选项</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="68"/>
         <source>Mode</source>
-        <translation type="unfinished">模式</translation>
+        <translation>模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="69"/>
         <source>Quality</source>
-        <translation type="unfinished">质量</translation>
+        <translation>质量</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="70"/>
         <source>Estimated bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>估计比特率</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="72"/>
         <source>Bitrate</source>
-        <translation type="unfinished">比特率</translation>
+        <translation>比特率</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="73"/>
         <source>Level</source>
-        <translation type="unfinished"></translation>
+        <translation>级别</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="80"/>
         <source>Encoder Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>编码器配置文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="107"/>
         <source>Encoder</source>
-        <translation type="unfinished"></translation>
+        <translation>编码器</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="111"/>
         <source>Format</source>
-        <translation type="unfinished">格式</translation>
+        <translation>格式</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="113"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="226"/>
         <source>Compression level</source>
-        <translation type="unfinished"></translation>
+        <translation>压缩级别</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="227"/>
         <source>Encoding effort</source>
-        <translation type="unfinished"></translation>
+        <translation>编码运算量</translation>
     </message>
 </context>
 <context>
@@ -4084,57 +4085,57 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="42"/>
         <source>VBR</source>
-        <translation type="unfinished"></translation>
+        <translation>VBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="44"/>
         <source>CVBR</source>
-        <translation type="unfinished"></translation>
+        <translation>CVBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="46"/>
         <source>VBR quality %1</source>
-        <translation type="unfinished"></translation>
+        <translation>VBR 质量 %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="48"/>
         <source>ABR</source>
-        <translation type="unfinished"></translation>
+        <translation>ABR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="50"/>
         <source>CBR</source>
-        <translation type="unfinished"></translation>
+        <translation>CBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="52"/>
         <source>level %1</source>
-        <translation type="unfinished"></translation>
+        <translation>级别 %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="87"/>
         <source>%1 kbps</source>
-        <translation type="unfinished">%1 kbps</translation>
+        <translation>%1 kbps</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="90"/>
         <source>~%1 kbps</source>
-        <translation type="unfinished"></translation>
+        <translation>~%1 kbps</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="113"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="115"/>
         <source>Bitrate</source>
-        <translation type="unfinished">比特率</translation>
+        <translation>比特率</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="117"/>
         <source>Settings</source>
-        <translation type="unfinished">设置</translation>
+        <translation>设置</translation>
     </message>
 </context>
 <context>
@@ -5675,13 +5676,13 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1117"/>
         <source>Choose destination</source>
-        <translation type="unfinished"></translation>
+        <translation>选择目标</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1193"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1201"/>
         <source>Convert using preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>使用预设值 %1 进行转换</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1200"/>
@@ -5689,7 +5690,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1242"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1251"/>
         <source>Tracks</source>
-        <translation type="unfinished">音轨</translation>
+        <translation>音轨</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1200"/>
@@ -5698,32 +5699,32 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1251"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1262"/>
         <source>Convert</source>
-        <translation type="unfinished"></translation>
+        <translation>转换</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1230"/>
         <source>Converter setup…</source>
-        <translation type="unfinished"></translation>
+        <translation>转换器设置…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1239"/>
         <source>Using default settings</source>
-        <translation type="unfinished"></translation>
+        <translation>使用默认设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1243"/>
         <source>Convert using default settings</source>
-        <translation type="unfinished"></translation>
+        <translation>使用默认设置进行转换</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1248"/>
         <source>Repeat last conversion</source>
-        <translation type="unfinished"></translation>
+        <translation>重复上次转换</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1279"/>
         <source>Custom conversion…</source>
-        <translation type="unfinished"></translation>
+        <translation>自定义转换…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1514"/>
