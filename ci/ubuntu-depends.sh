@@ -18,6 +18,7 @@ $SUDO apt-get install -y \
         debhelper \
         lsb-release \
         libicu-dev \
+        libglm-dev \
         libglu1-mesa-dev \
         libxkbcommon-dev \
         dpkg-dev \

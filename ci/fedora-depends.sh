@@ -15,6 +15,7 @@ dnf -y install --skip-broken \
      cmake \
      ninja-build \
      glib2-devel \
+     glm-devel \
      libicu-devel \
      libxkbcommon-x11-devel \
      libxkbcommon-devel \

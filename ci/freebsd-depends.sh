@@ -10,6 +10,7 @@ sudo pkg install -y \
      cmake-core \
      pkgconf \
      ninja \
+     glm \
      libgme \
      libvgm \
      vulkan-headers \

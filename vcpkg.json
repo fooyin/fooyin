@@ -5,6 +5,7 @@
     "ffmpeg",
     "icu",
     "taglib",
+    "glm",
     "sdl2",
     "getopt",
     "libopenmpt",

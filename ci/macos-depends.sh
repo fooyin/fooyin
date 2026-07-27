@@ -10,6 +10,7 @@ brew install \
     flex \
     cmake \
     ninja \
+    glm \
     qt \
     taglib \
     ffmpeg \
