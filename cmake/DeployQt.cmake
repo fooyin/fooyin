@@ -23,6 +23,7 @@ function(windeployqt target)
         --verbose
         1
         --concurrent
+        --opengl
         --no-translations
         --include-plugins
         qsqlite
@@ -49,6 +50,7 @@ function(windeployqt target)
                     --release
                     --verbose 1
                     --concurrent
+                    --opengl
                     --no-translations
                     --include-plugins qsqlite${WINDEPLOYQT_INSTALL_QTPATHS_ARG}
                     --dir \"\${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\"
