@@ -246,7 +246,7 @@
 <context>
     <name>Fooyin::ProjectM::ProjectMView</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="590"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="610"/>
         <source>Using presets from %Ln folder(s)</source>
         <translation>
             <numerusform>Using presets from %Ln folder</numerusform>

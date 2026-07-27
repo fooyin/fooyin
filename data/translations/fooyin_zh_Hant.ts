@@ -5874,7 +5874,7 @@ Effects here process the final combined output.</source>
         <translation>載入播放清單</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1904"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1901"/>
         <source>Save Playlist</source>
         <translation>儲存播放清單</translation>
     </message>
@@ -12259,42 +12259,42 @@ Remove original: deletes the previous file or tag after saving.</source>
     <name>Fooyin::ProjectM::ProjectMView</name>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="96"/>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="859"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="915"/>
         <source>Initialising projectM…</source>
         <translation>正在初始化 projectM…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="375"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="389"/>
         <source>Preset %1</source>
         <translation>預設集 %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="530"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="545"/>
         <source>No projectM preset folders are configured.</source>
         <translation>尚無 projectM 預設集資料夾進行調整設定。</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="555"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="570"/>
         <source>Preset failed to load.</source>
         <translation>預設集載入失敗。</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="575"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="590"/>
         <source>projectM initialisation failed.</source>
         <translation>projectM 初始化失敗。</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="576"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="591"/>
         <source>projectM initialisation failed: %1</source>
         <translation>projectM 初始化失敗： %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="589"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="609"/>
         <source>Using presets from %1</source>
         <translation>使用預設集來自 %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="590"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="610"/>
         <source>Using presets from %Ln folder(s)</source>
         <translation>
             <numerusform>使用預設集來自 %Ln 資料夾</numerusform>
@@ -12305,7 +12305,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <name>Fooyin::ProjectM::ProjectMWidget</name>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="153"/>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="553"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="558"/>
         <source>&amp;Full Screen</source>
         <translation>全螢幕(&amp;F)</translation>
     </message>
@@ -12345,63 +12345,63 @@ Remove original: deletes the previous file or tag after saving.</source>
         <translation>記住目前預設集(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="238"/>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="663"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="243"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="668"/>
         <source>projectM</source>
         <translation>projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="508"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="513"/>
         <source>Toggle projectM full screen</source>
         <translation>切換 projectM 全螢幕</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="512"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="517"/>
         <source>Select a projectM preset</source>
         <translation>選擇 projectM 預設集</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="516"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="521"/>
         <source>Switch to the previous projectM preset</source>
         <translation>切換至前一個 projectM 預設集</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="522"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="527"/>
         <source>Switch to the next projectM preset</source>
         <translation>切換至下一個 projectM 預設集</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="529"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="534"/>
         <source>Switch to a random projectM preset</source>
         <translation>切換至隨機 projectM 預設集</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="533"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="538"/>
         <source>Lock the current projectM preset</source>
         <translation>鎖定目前 projectM 預設集</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="537"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="542"/>
         <source>Shuffle projectM presets</source>
         <translation>亂序 projectM 預設集</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="541"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="546"/>
         <source>Remember the current projectM preset</source>
         <translation>記住目前 projectM 預設集</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="553"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="558"/>
         <source>E&amp;xit Full Screen</source>
         <translation>退出全螢幕(&amp;X)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="584"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="589"/>
         <source>Preset &amp;Duration</source>
         <translation>預設集持續時間(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="588"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="593"/>
         <source>%1 seconds</source>
         <translation>%1 秒</translation>
     </message>
@@ -14914,7 +14914,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <translation>播放清單檔案格式</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="80"/>
+        <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="76"/>
         <source>Select Directory</source>
         <translation>選擇目錄</translation>
     </message>

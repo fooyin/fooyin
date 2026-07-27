@@ -5906,7 +5906,7 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
         <translation>Załaduj listę odtwarzania</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1904"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1901"/>
         <source>Save Playlist</source>
         <translation>Zapisz listę odtwarzania</translation>
     </message>
@@ -12309,42 +12309,42 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <name>Fooyin::ProjectM::ProjectMView</name>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="96"/>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="859"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="915"/>
         <source>Initialising projectM…</source>
         <translation>Inicjalizowanie projectM…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="375"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="389"/>
         <source>Preset %1</source>
         <translation>Motyw „%1”</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="530"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="545"/>
         <source>No projectM preset folders are configured.</source>
         <translation>Nie skonfigurowano folderów z motywami projectM.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="555"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="570"/>
         <source>Preset failed to load.</source>
         <translation>Wczytywanie motywu się nie powiodło.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="575"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="590"/>
         <source>projectM initialisation failed.</source>
         <translation>Inicjalizacja projectM się nie powiodła.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="576"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="591"/>
         <source>projectM initialisation failed: %1</source>
         <translation>Inicjalizacja projectM się nie powiodła: %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="589"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="609"/>
         <source>Using presets from %1</source>
         <translation>Używanie motywów z %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="590"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="610"/>
         <source>Using presets from %Ln folder(s)</source>
         <translation>
             <numerusform>Używanie motywów z %1 folderu</numerusform>
@@ -12357,7 +12357,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <name>Fooyin::ProjectM::ProjectMWidget</name>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="153"/>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="553"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="558"/>
         <source>&amp;Full Screen</source>
         <translation>Pełny &amp;ekran</translation>
     </message>
@@ -12397,63 +12397,63 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
         <translation>&amp;Zapamiętaj bieżący motyw</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="238"/>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="663"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="243"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="668"/>
         <source>projectM</source>
         <translation>projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="508"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="513"/>
         <source>Toggle projectM full screen</source>
         <translation>Przełącz widok pełnoekranowy projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="512"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="517"/>
         <source>Select a projectM preset</source>
         <translation>Wybierz motyw projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="516"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="521"/>
         <source>Switch to the previous projectM preset</source>
         <translation>Ustaw poprzedni motyw projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="522"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="527"/>
         <source>Switch to the next projectM preset</source>
         <translation>Ustaw następny motyw projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="529"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="534"/>
         <source>Switch to a random projectM preset</source>
         <translation>Ustaw losowy motyw projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="533"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="538"/>
         <source>Lock the current projectM preset</source>
         <translation>Zablokuj bieżący motyw projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="537"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="542"/>
         <source>Shuffle projectM presets</source>
         <translation>Losuj motywy projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="541"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="546"/>
         <source>Remember the current projectM preset</source>
         <translation>Zapamiętaj bieżący motyw projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="553"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="558"/>
         <source>E&amp;xit Full Screen</source>
         <translation>Op&amp;uść pełny ekran</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="584"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="589"/>
         <source>Preset &amp;Duration</source>
         <translation>Czas wyświet&amp;lania motywu</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="588"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="593"/>
         <source>%1 seconds</source>
         <translation>%1 sek.</translation>
     </message>
@@ -14978,7 +14978,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
         <translation>Format pliku listy odtwarzania</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="80"/>
+        <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="76"/>
         <source>Select Directory</source>
         <translation>Wybierz folder</translation>
     </message>
