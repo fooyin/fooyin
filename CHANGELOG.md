@@ -28,6 +28,8 @@
 * Radio Browser
   - Hide countries in the Radio Guide by default
   - Show Radio Guide errors in a closeable banner
+* Scripting
+  - Add `$crc32`
 * Spectrum
   - Decay bands and peaks when playback is paused or stopped
 * Tag Editor
@@ -78,13 +80,14 @@
 ### Build/System
 
 * Build
+  - Add a build option to use the system GLM package ([#1404](https://github.com/fooyin/fooyin/pull/1404))
   - Fix Radio Browser builds on 32-bit platforms ([#1326](https://github.com/fooyin/fooyin/pull/1326))
   - Improve precompiled header handling for internal plugins
 * Dependencies
   - Add projectM as an optional dependency for the projectM visualisation plugin
   - Update the vcpkg baseline and ICU version handling
 * Translations
-  - Update translations and translation sources ([#1349](https://github.com/fooyin/fooyin/pull/1349), [#1350](https://github.com/fooyin/fooyin/pull/1350), [#1384](https://github.com/fooyin/fooyin/pull/1384), [#1385](https://github.com/fooyin/fooyin/pull/1385), [#1397](https://github.com/fooyin/fooyin/pull/1397), [#1398](https://github.com/fooyin/fooyin/pull/1398))
+  - Update translations and translation sources ([#1349](https://github.com/fooyin/fooyin/pull/1349), [#1350](https://github.com/fooyin/fooyin/pull/1350), [#1384](https://github.com/fooyin/fooyin/pull/1384), [#1385](https://github.com/fooyin/fooyin/pull/1385), [#1397](https://github.com/fooyin/fooyin/pull/1397), [#1398](https://github.com/fooyin/fooyin/pull/1398), [#1413](https://github.com/fooyin/fooyin/pull/1413), [#1414](https://github.com/fooyin/fooyin/pull/1414))
 
 
 ## [0.11.1](https://github.com/fooyin/fooyin/releases/tag/v0.11.1) (2026-06-22)
