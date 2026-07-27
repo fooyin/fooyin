@@ -60,7 +60,7 @@ jobs:
           ./ci/tests.sh
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: fedora-${{matrix.fedora_version}}-${{ matrix.runner.arch }}
           path: rpm
@@ -121,7 +121,7 @@ jobs:
           ./ci/tests.sh
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: debian-${{matrix.debian_version}}-${{ matrix.runner.arch }}
           path: deb
@@ -185,7 +185,7 @@ jobs:
           ./ci/tests.sh
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ubuntu-${{matrix.ubuntu_version}}-${{ matrix.runner.arch }}
           path: deb
