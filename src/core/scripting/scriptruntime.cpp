@@ -1081,7 +1081,7 @@ ScriptResult ScriptRuntime::evalFunction(const BoundExpression& exp, const auto&
                 return {};
             }
 
-            if(first.value.size() >= length) {
+            if(first.value.length() > length) {
                 return evalExpression(func.args.at(2), tracks);
             }
             return evalExpression(func.args.at(3), tracks);
