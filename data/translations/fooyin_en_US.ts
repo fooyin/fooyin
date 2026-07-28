@@ -10040,7 +10040,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="125"/>
         <source>Track is counted as &apos;played&apos; once either threshold is reached</source>
-        <translation>Track is counted as “played” once either threshold is reached</translation>
+        <translation>Track is counted as &quot;played&quot; once either threshold is reached</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="154"/>
@@ -12428,7 +12428,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="593"/>
         <source>%1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>%1&#xa0;seconds</translation>
     </message>
 </context>
 <context>
