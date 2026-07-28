@@ -470,4 +470,28 @@ TEST(PlaylistHandlerTest, TracksMetadataChangedUpdatesAutoPlaylistTrackCustomTag
     EXPECT_EQ(playlistTrack->track.metaValue(u"custom"_s), u"After"_s);
     EXPECT_EQ(changeSet.updatedEntries.front(), playlistTrack->entryId);
 }
+
+TEST(PlaylistHandlerTest, DeletedTracksAreRemovedFromAllPlaylists)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_track_delete_test.ini"_s};
+    registerCoreSettings(settings);
+    PlaylistHandlerHarness harness{settings};
+    ASSERT_TRUE(harness.dbInitialised);
+
+    const Track deletedTrack  = makeTrack(u"/tmp/deleted.flac"_s, 1);
+    const Track retainedTrack = makeTrack(u"/tmp/retained.flac"_s, 2);
+
+    auto* firstPlaylist  = harness.handler.createPlaylist(u"First"_s, {deletedTrack, retainedTrack, deletedTrack});
+    auto* secondPlaylist = harness.handler.createPlaylist(u"Second"_s, {retainedTrack, deletedTrack});
+    ASSERT_NE(firstPlaylist, nullptr);
+    ASSERT_NE(secondPlaylist, nullptr);
+
+    harness.handler.handleTracksDeleted({deletedTrack});
+
+    ASSERT_EQ(firstPlaylist->trackCount(), 1);
+    EXPECT_EQ(firstPlaylist->tracks().front().identityKey(), retainedTrack.identityKey());
+    ASSERT_EQ(secondPlaylist->trackCount(), 1);
+    EXPECT_EQ(secondPlaylist->tracks().front().identityKey(), retainedTrack.identityKey());
+}
 } // namespace Fooyin::Testing

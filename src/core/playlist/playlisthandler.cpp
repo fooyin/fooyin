@@ -330,7 +330,7 @@ void PlaylistHandlerPrivate::handleTracksDeleted(const TrackList& tracks)
 
         const TrackList playlistTracks = playlist->tracks();
         for(int i{0}; const auto& track : playlistTracks) {
-            if(deletedTrackKeys.contains(track.uniqueFilepath())) {
+            if(deletedTrackKeys.contains(track.identityKey())) {
                 indexesToRemove.emplace_back(i);
             }
             ++i;
