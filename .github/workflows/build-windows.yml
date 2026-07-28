@@ -6,6 +6,9 @@ on:
 env:
   QT_VERSION: '6.8.3'
   VCPKG_DISABLE_METRICS: true
+  VCPKG_ROOT_DIR: 'C:/vcpkg'
+  VCPKG_INSTALLED_DIR: 'C:/v'
+  VCPKG_DOWNLOADS: 'C:/v/dl'
   BUILD_CCACHE: OFF
   BUILD_PCH: ON
 
@@ -13,6 +16,7 @@ jobs:
   windows:
     name: Windows
     strategy:
+      fail-fast: false
       matrix:
         include:
           - arch: amd64
@@ -35,6 +39,20 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
+
+      - name: Set up build paths
+        shell: pwsh
+        run: |
+          subst S: "$env:GITHUB_WORKSPACE"
+          $vcpkgCommit = (Get-Content "$env:GITHUB_WORKSPACE/vcpkg.json" | ConvertFrom-Json).'builtin-baseline'
+          git init $env:VCPKG_ROOT_DIR
+          git -C $env:VCPKG_ROOT_DIR remote add origin https://github.com/microsoft/vcpkg.git
+          git -C $env:VCPKG_ROOT_DIR fetch --depth 1 origin $vcpkgCommit
+          git -C $env:VCPKG_ROOT_DIR checkout --detach FETCH_HEAD
+          & "$env:VCPKG_ROOT_DIR/bootstrap-vcpkg.bat" -disableMetrics
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
 
       - name: Install CMake
         uses: lukka/get-cmake@latest
@@ -59,7 +77,7 @@ jobs:
       - name: Setup vcpkg cache
         shell: pwsh
         run: |
-          $cacheDir = "${{ github.workspace }}/vcpkg-binary-cache"
+          $cacheDir = "S:/vcpkg-binary-cache"
           New-Item -ItemType Directory -Force -Path $cacheDir
           echo "VCPKG_BINARY_SOURCES=clear;files,$cacheDir,readwrite" >> $env:GITHUB_ENV
           echo "VCPKG_TARGET_TRIPLET=${{ matrix.triplet }}" >> $env:GITHUB_ENV
@@ -69,7 +87,7 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/vcpkg-binary-cache
-            build-${{ matrix.cmake-preset }}_installed
+            ${{ env.VCPKG_INSTALLED_DIR }}
           key: ${{ runner.os }}-vcpkg-${{ matrix.cmake-preset }}-${{ hashFiles('**/vcpkg.json', '**/vcpkg-configuration.json') }}
           restore-keys: |
             ${{ runner.os }}-vcpkg-${{ matrix.cmake-preset }}-
@@ -80,8 +98,12 @@ jobs:
         run: echo "CMAKE_PRESET=${{ matrix.cmake-preset }}" >> $env:GITHUB_ENV
 
       - name: Build & Package
-        run: .\ci\windows-build.ps1
         shell: pwsh
+        env:
+          VCPKG_ROOT: ${{ env.VCPKG_ROOT_DIR }}
+        run: |
+          Set-Location S:/
+          .\ci\windows-build.ps1
 
       - name: Upload installer artifact
         uses: actions/upload-artifact@v7
