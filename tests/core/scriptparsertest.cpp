@@ -506,6 +506,7 @@ TEST_F(ScriptParserTest, ConditionalTest)
     EXPECT_EQ(u"true", m_parser.evaluate(u"[$ifequal(1,1,true,false)]"_s));
     EXPECT_EQ(u"true", m_parser.evaluate(u"[$ifgreater(5,3,true,false)]"_s));
     EXPECT_EQ(u"true", m_parser.evaluate(u"[$iflonger(aaa,2,true,false)]"_s));
+    EXPECT_EQ(u"false", m_parser.evaluate(u"[$iflonger(aaa,3,true,false)]"_s));
     EXPECT_EQ(u"<A", m_parser.evaluate(u"$if(1,<A,X)"_s));
     EXPECT_EQ(u"<rgb=255,0,0>A", m_parser.evaluate(u"$if(1,<rgb=255,0,0>A,X)"_s));
     EXPECT_EQ(u"\\<A", m_parser.evaluate(u"$if(1,\\<A,X)"_s));
@@ -580,9 +581,9 @@ TEST_F(ScriptParserTest, ReplaceCanSanitiseUserFilenameExpression)
     track.setTitle(u"What? A \"Title\": Part | Two"_s);
 
     static auto nestedReplaceScript
-        = uR"($trim($replace($replace($replace($replace($iflonger(%disc%,1,%disc%.,)$iflonger(%track%,1,%track%.,) %title%,?, ),\",),:, ),|,)))"_s;
+        = uR"($trim($replace($replace($replace($replace($iflonger(%disc%,0,%disc%.,)$iflonger(%track%,0,%track%.,) %title%,?, ),\",),:, ),|,)))"_s;
     static auto variadicReplaceScript
-        = uR"($trim($replace($iflonger(%disc%,1,%disc%.,)$iflonger(%track%,1,%track%.,) %title%,?, ,\",,:, ,|,)))"_s;
+        = uR"($trim($replace($iflonger(%disc%,0,%disc%.,)$iflonger(%track%,0,%track%.,) %title%,?, ,\",,:, ,|,)))"_s;
 
     EXPECT_EQ(u"2.13. What  A Title  Part  Two", m_parser.evaluate(nestedReplaceScript, track));
     EXPECT_EQ(u"2.13. What  A Title  Part  Two", m_parser.evaluate(variadicReplaceScript, track));
