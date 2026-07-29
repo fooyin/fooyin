@@ -2247,7 +2247,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/core/engine/conversion/conversionpathresolver.cpp" line="176"/>
         <source>Could not resolve output path</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte Ausgabepfad nicht auflösen</translation>
     </message>
 </context>
 <context>
@@ -2255,51 +2255,52 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="60"/>
         <source>Preparing conversion…</source>
-        <translation type="unfinished"></translation>
+        <translation>Konvertierung vorbereiten…</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="60"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="64"/>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="190"/>
         <source>Audio Conversion</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio-Konvertierung</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="99"/>
         <source>Current file</source>
-        <translation type="unfinished">Aktuelle Datei</translation>
+        <translation>Aktuelle Datei</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="121"/>
         <source>File already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei existiert bereits</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="122"/>
         <source>The file already exists:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Datei existiert bereits:
+%1</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="125"/>
         <source>Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Überschreiben</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="126"/>
         <source>Skip</source>
-        <translation type="unfinished"></translation>
+        <translation>Überspringen</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="185"/>
         <source>Converted: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Konvertiert: %Ln Titel</numerusform>
+            <numerusform>Konvertiert: %Ln Titel</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -14185,7 +14186,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="233"/>
         <source>Radio Guide</source>
-        <translation>Radio-Anleitung</translation>
+        <translation>Radio-Katalog</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="572"/>
