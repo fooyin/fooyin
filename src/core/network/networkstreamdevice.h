@@ -49,6 +49,7 @@ public:
     [[nodiscard]] std::optional<NetworkStreamMetadata> remoteStreamMetadata() const override;
     void setNonBlockingReadsEnabled(bool enabled) override;
     void setReconnectOnFinishedEnabled(bool enabled) override;
+    void setReadCancellationToken(std::stop_token token) override;
 
     bool open(OpenMode mode) override;
     void close() override;

@@ -179,6 +179,7 @@ EngineHandler::EngineHandler(std::shared_ptr<AudioLoader> audioLoader, PlayerCon
 
 EngineHandler::~EngineHandler()
 {
+    m_engine->requestBlockingDecoderAbort();
     m_engine->deleteLater();
     m_engineThread.quit();
     m_engineThread.wait();

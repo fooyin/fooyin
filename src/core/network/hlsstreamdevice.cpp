@@ -82,10 +82,11 @@ public:
     QNetworkReply* reply{nullptr};
     ReplyKind replyKind{ReplyKind::None};
     std::mutex mutex;
-    std::condition_variable ready;
+    std::condition_variable_any ready;
     QString error;
     bool finished{false};
     bool aborted{false};
+    std::stop_token readCancellationToken;
     StreamUtils::BufferState streamBuffer;
     HlsPlaylistState playlist;
     StreamUtils::ReadModeState readMode;
@@ -93,10 +94,11 @@ public:
     void resetForOpen(const QUrl& playlistUrl)
     {
         error.clear();
-        finished  = false;
-        aborted   = false;
-        reply     = nullptr;
-        replyKind = ReplyKind::None;
+        finished              = false;
+        aborted               = false;
+        readCancellationToken = {};
+        reply                 = nullptr;
+        replyKind             = ReplyKind::None;
         streamBuffer.reset();
         playlist.reset(playlistUrl);
         readMode.reset();
@@ -480,6 +482,15 @@ void HlsStreamDevice::setNonBlockingReadsEnabled(bool enabled)
     m_state->ready.notify_all();
 }
 
+void HlsStreamDevice::setReadCancellationToken(std::stop_token token)
+{
+    {
+        const std::scoped_lock lock{m_state->mutex};
+        m_state->readCancellationToken = std::move(token);
+    }
+    m_state->ready.notify_all();
+}
+
 bool HlsStreamDevice::open(OpenMode mode)
 {
     if(isOpen()) {
@@ -544,16 +555,22 @@ qint64 HlsStreamDevice::readData(char* data, qint64 maxSize)
 
     std::unique_lock lock{m_state->mutex};
 
-    const auto hasReadableState = [state = m_state]() {
-        return !state->streamBuffer.data.isEmpty() || state->finished || state->aborted || !state->error.isEmpty();
+    const std::stop_token cancellationToken = m_state->readCancellationToken;
+    const auto hasReadableState             = [state = m_state, cancellationToken]() {
+        return cancellationToken.stop_requested() || !state->streamBuffer.data.isEmpty() || state->finished
+            || state->aborted || !state->error.isEmpty();
     };
 
     bool hasData{true};
     if(m_state->readMode.nonBlockingReadsEnabled) {
-        hasData = m_state->ready.wait_for(lock, ReadWaitTimeout, hasReadableState);
+        hasData = m_state->ready.wait_for(lock, cancellationToken, ReadWaitTimeout, hasReadableState);
     }
     else {
-        m_state->ready.wait(lock, hasReadableState);
+        hasData = m_state->ready.wait(lock, cancellationToken, hasReadableState);
+    }
+
+    if(cancellationToken.stop_requested()) {
+        return -1;
     }
 
     if(!hasData && m_state->streamBuffer.data.isEmpty() && !m_state->finished && !m_state->aborted

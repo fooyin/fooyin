@@ -139,6 +139,8 @@ public:
 
     //! Replace active DSP chain configuration.
     void setDspChain(const Engine::DspChains& chain);
+    //! Thread-safe shutdown hook for decoder operations blocked outside the engine event loop.
+    void requestBlockingDecoderAbort();
 
 public Q_SLOTS:
     void loadTrack(const Fooyin::Engine::PlaybackItem& item, bool manualChange = false);

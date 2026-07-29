@@ -444,6 +444,12 @@ AudioEngine::~AudioEngine()
     m_engineTaskQueue.clear();
 }
 
+void AudioEngine::requestBlockingDecoderAbort()
+{
+    m_decoder.requestAbort();
+    m_nextTrackPrepareWorker.requestActiveJobAbort();
+}
+
 Engine::PlaybackState AudioEngine::playbackState() const
 {
     return m_playbackState.load(std::memory_order_relaxed);
@@ -1128,6 +1134,14 @@ void AudioEngine::stop()
 {
     clearPendingAudiblePause();
     m_transitions.cancelPendingSeek();
+
+    // A transport fade advances only while the pipeline is rendering audio.
+    // Remote rebuffering pauses that pipeline, so waiting for a fade callback
+    // here would leave the decoder blocked indefinitely on the stalled input.
+    if(m_remoteBuffering.active) {
+        stopImmediate();
+        return;
+    }
 
     if(auto stream = m_decoder.activeStream()) {
         if(stream->endOfInput() && stream->bufferEmpty()) {

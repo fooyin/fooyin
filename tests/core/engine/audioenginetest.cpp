@@ -612,6 +612,23 @@ public:
         return engine.m_currentTrack.isRemote();
     }
 
+    static void enterRemoteBufferingWithLongStopFade(AudioEngine& engine)
+    {
+        const auto stream = engine.m_decoder.activeStream();
+        ASSERT_TRUE(stream);
+        if(!stream) {
+            return;
+        }
+
+        engine.m_fadingEnabled         = true;
+        engine.m_fadingValues.stop.out = 1000;
+        engine.m_decoder.stopDecodeTimer();
+        engine.m_remoteBuffering.active     = true;
+        engine.m_remoteBuffering.generation = engine.m_trackGeneration;
+        engine.m_remoteBuffering.streamId   = stream->id();
+        engine.m_pipeline.setBufferingPaused(true);
+    }
+
     static int streamBufferLengthMs(const AudioEngine& engine, const Track& track)
     {
         return engine.streamBufferLengthMs(track);
@@ -844,6 +861,28 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, PlayPauseStopWithFadeComplete
     EXPECT_EQ(harness.engine.trackStatus(), Engine::TrackStatus::NoTrack);
     EXPECT_TRUE(pumpUntil([&harness]() { return harness.engine.position() == 0; }, 1000ms));
     EXPECT_EQ(harness.engine.position(), 0U);
+}
+
+FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, StopWhileRemoteBufferingStopsDecoderWithoutWaitingForFade)
+{
+    ensureCoreApplication();
+    EngineHarness harness{/*enablePauseStopFade=*/true};
+
+    const Track track = makeRemoteTrack(u"https://example.test/stalled-stream.fyt"_s, 0);
+    harness.engine.loadTrack(makePlaybackItem(track, 1), false);
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.trackStatus() == Engine::TrackStatus::Loaded; }));
+
+    harness.engine.play();
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.playbackState() == Engine::PlaybackState::Playing; }));
+
+    AudioEngineTestAccessor::enterRemoteBufferingWithLongStopFade(harness.engine);
+    const int stopCallsBeforeStop = harness.decoderStats->stopCalls.load();
+    harness.engine.stop();
+
+    EXPECT_TRUE(pumpUntil(
+        [&harness, stopCallsBeforeStop]() { return harness.decoderStats->stopCalls.load() > stopCallsBeforeStop; },
+        500ms));
+    EXPECT_EQ(harness.engine.playbackState(), Engine::PlaybackState::Stopped);
 }
 
 FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, PauseDoesNotResetOutputQueue)

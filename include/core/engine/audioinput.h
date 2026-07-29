@@ -29,6 +29,7 @@
 
 #include <chrono>
 #include <memory>
+#include <stop_token>
 #include <utility>
 
 namespace Fooyin {
@@ -235,6 +236,14 @@ public:
      */
     virtual void start();
     /*!
+     * Request cancellation of an in-progress blocking decoder operation.
+     *
+     * This may be called from a control thread while `init()`, `readAudio()`,
+     * or `seek()` is running on a worker. It is thread-safe, returns promptly,
+     * and does not tear down decoder state.
+     */
+    void requestAbort();
+    /*!
      * Stop and deinitialise decoder state.
      * Should reset to pre-`init()` state.
      * Called on playback stop and track changes.
@@ -264,6 +273,10 @@ public:
      * identify whether that was EOF, would-block, or an error.
      */
     virtual AudioBuffer readBuffer(size_t bytes) = 0;
+
+protected:
+    //! Shared cancellation token for decoder backends and blocking input devices.
+    [[nodiscard]] std::stop_token abortToken() const noexcept;
 
 private:
     std::unique_ptr<AudioDecoderPrivate> p;

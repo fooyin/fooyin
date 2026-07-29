@@ -20,6 +20,7 @@
 #include <core/engine/audioinput.h>
 
 #include <array>
+#include <stop_token>
 #include <utility>
 
 namespace Fooyin {
@@ -27,6 +28,7 @@ class AudioDecoderPrivate
 {
 public:
     AudioDecoder::PlaybackHints playbackHints{AudioDecoder::NoHints};
+    std::stop_source abortSource;
 };
 
 AudioDecoder::AudioDecoder()
@@ -81,6 +83,16 @@ int AudioDecoder::bitrate() const
 }
 
 void AudioDecoder::start() { }
+
+void AudioDecoder::requestAbort()
+{
+    p->abortSource.request_stop();
+}
+
+std::stop_token AudioDecoder::abortToken() const noexcept
+{
+    return p->abortSource.get_token();
+}
 
 AudioDecoder::ReadResult AudioDecoder::readAudio(size_t bytes)
 {

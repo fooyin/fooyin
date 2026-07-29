@@ -77,10 +77,11 @@ struct NetworkStreamDeviceState
 {
     QPointer<QNetworkReply> reply;
     std::mutex mutex;
-    std::condition_variable ready;
+    std::condition_variable_any ready;
     QString error;
     bool finished{false};
     bool aborted{false};
+    std::stop_token readCancellationToken;
     StreamUtils::BufferState streamBuffer;
     StreamUtils::ReadModeState readMode;
     NetworkStreamReconnectState reconnect;
@@ -89,8 +90,9 @@ struct NetworkStreamDeviceState
     void resetForOpen()
     {
         error.clear();
-        finished = false;
-        aborted  = false;
+        finished              = false;
+        aborted               = false;
+        readCancellationToken = {};
         streamBuffer.reset();
         readMode.reset();
         reconnect.reset();
@@ -491,6 +493,15 @@ void NetworkStreamDevice::setReconnectOnFinishedEnabled(bool enabled)
     m_state->ready.notify_all();
 }
 
+void NetworkStreamDevice::setReadCancellationToken(std::stop_token token)
+{
+    {
+        const std::scoped_lock lock{m_state->mutex};
+        m_state->readCancellationToken = std::move(token);
+    }
+    m_state->ready.notify_all();
+}
+
 bool NetworkStreamDevice::open(OpenMode mode)
 {
     if(isOpen()) {
@@ -557,16 +568,22 @@ qint64 NetworkStreamDevice::readData(char* data, qint64 maxSize)
 
     std::unique_lock lock{m_state->mutex};
 
-    const auto hasReadableState = [state = m_state]() {
-        return !state->streamBuffer.data.isEmpty() || state->finished || state->aborted || !state->error.isEmpty();
+    const std::stop_token cancellationToken = m_state->readCancellationToken;
+    const auto hasReadableState             = [state = m_state, cancellationToken]() {
+        return cancellationToken.stop_requested() || !state->streamBuffer.data.isEmpty() || state->finished
+            || state->aborted || !state->error.isEmpty();
     };
 
     bool hasData{true};
     if(m_state->readMode.nonBlockingReadsEnabled) {
-        hasData = m_state->ready.wait_for(lock, ReadWaitTimeout, hasReadableState);
+        hasData = m_state->ready.wait_for(lock, cancellationToken, ReadWaitTimeout, hasReadableState);
     }
     else {
-        m_state->ready.wait(lock, hasReadableState);
+        hasData = m_state->ready.wait(lock, cancellationToken, hasReadableState);
+    }
+
+    if(cancellationToken.stop_requested()) {
+        return -1;
     }
 
     if(!hasData && m_state->streamBuffer.data.isEmpty() && !m_state->finished && !m_state->aborted

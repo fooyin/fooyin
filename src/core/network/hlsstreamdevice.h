@@ -47,6 +47,7 @@ public:
     [[nodiscard]] qsizetype bufferedByteCount() const override;
     [[nodiscard]] bool shouldExposePathToDecoder() const override;
     void setNonBlockingReadsEnabled(bool enabled) override;
+    void setReadCancellationToken(std::stop_token token) override;
 
     bool open(OpenMode mode) override;
     void close() override;

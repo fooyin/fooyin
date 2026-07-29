@@ -35,6 +35,7 @@
 #include <chrono>
 #include <map>
 #include <memory>
+#include <stop_token>
 #include <utility>
 #include <vector>
 
@@ -60,7 +61,13 @@ public:
         nonBlockingReadsEnabled = enabled;
     }
 
+    void setReadCancellationToken(std::stop_token token) override
+    {
+        readCancellationToken = std::move(token);
+    }
+
     bool nonBlockingReadsEnabled{false};
+    std::stop_token readCancellationToken;
 };
 
 class FakeRemoteSourceProvider : public Fooyin::RemoteSourceProvider

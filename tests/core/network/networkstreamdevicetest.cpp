@@ -28,7 +28,10 @@
 #include <QStandardPaths>
 
 #include <algorithm>
+#include <chrono>
 #include <cstring>
+#include <future>
+#include <stop_token>
 #include <utility>
 
 using namespace Qt::StringLiterals;
@@ -259,6 +262,31 @@ TEST_F(NetworkStreamDeviceTest, FailsReadsOnNetworkThread)
     char data{0};
     EXPECT_LT(device.read(&data, 1), 0);
     EXPECT_FALSE(device.errorString().isEmpty());
+}
+
+TEST_F(NetworkStreamDeviceTest, CancellationTokenWakesBlockingRead)
+{
+    using namespace std::chrono_literals;
+
+    auto network = makeFakeNetworkAccessManager();
+    NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
+    std::stop_source abortSource;
+
+    ASSERT_TRUE(device.open(QIODevice::ReadOnly));
+    device.setReadCancellationToken(abortSource.get_token());
+    device.setNonBlockingReadsEnabled(false);
+
+    auto read = std::async(std::launch::async, [&device]() {
+        char data{0};
+        return device.read(&data, 1);
+    });
+
+    EXPECT_EQ(read.wait_for(50ms), std::future_status::timeout);
+
+    abortSource.request_stop();
+
+    ASSERT_EQ(read.wait_for(500ms), std::future_status::ready);
+    EXPECT_LT(read.get(), 0);
 }
 
 TEST_F(NetworkStreamDeviceTest, LateReplySignalsAfterDeviceDestructionDoNotUseDestroyedDevice)

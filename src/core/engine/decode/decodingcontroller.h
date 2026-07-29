@@ -23,23 +23,28 @@
 
 #include "decodercontext.h"
 
+#include <core/engine/audioinput.h>
+#include <core/engine/audioloader.h>
 #include <core/engine/enginedefs.h>
+#include <core/engine/pipeline/audiostream.h>
+#include <core/track.h>
 
-#include <atomic>
-#include <chrono>
 #include <optional>
 
 class QObject;
 
 namespace Fooyin {
+class AudioFormat;
+class DecodingControllerPrivate;
+
 /*!
- * Timer-driven decode loop wrapper around DecoderContext.
+ * Worker-thread decode controller.
  *
- * DecodingController owns the periodic decode timer used by AudioEngine and
- * exposes structured decode-loop results used to trigger follow-up actions
- * (pending seek checks, orphan stream cleanup).
+ * Decoder/source state and calls into AudioDecoder are owned by a dedicated
+ * worker. AudioEngine interacts through commands and thread-safe snapshots;
+ * decoded PCM is written directly to AudioStream's ring buffer.
  */
-class FYCORE_EXPORT DecodingController : public DecoderContext
+class FYCORE_EXPORT DecodingController
 {
 public:
     struct DecodeResult
@@ -49,7 +54,7 @@ public:
     };
 
     explicit DecodingController(QObject* timerHost);
-    ~DecodingController() = default;
+    ~DecodingController();
 
     DecodingController(const DecodingController&)            = delete;
     DecodingController& operator=(const DecodingController&) = delete;
@@ -60,6 +65,8 @@ public:
     void startDecoding();
     //! Stop decode timer and stop decode state.
     void stopDecoding();
+    //! Thread-safe cancellation of a blocking decoder operation.
+    void requestAbort();
     //! Stop decode timer only (keep decoder context intact).
     void stopDecodeTimer();
     //! Ensure decode timer is active.
@@ -73,6 +80,43 @@ public:
     void clearDecodeReserve();
     [[nodiscard]] int lowWatermarkMs() const;
     [[nodiscard]] int highWatermarkMs() const;
+
+    [[nodiscard]] bool isValid() const;
+    [[nodiscard]] bool isDecoding() const;
+    [[nodiscard]] bool isSeekable() const;
+
+    [[nodiscard]] AudioStreamPtr activeStream() const;
+    [[nodiscard]] StreamId activeStreamId() const;
+    [[nodiscard]] Track track() const;
+    [[nodiscard]] AudioFormat format() const;
+    [[nodiscard]] uint64_t currentPosition() const;
+    [[nodiscard]] uint64_t startPosition() const;
+    [[nodiscard]] bool lastDecodeNeededMoreInput() const;
+
+    [[nodiscard]] AudioDecoder::PlaybackHints playbackHints() const;
+    void setPlaybackHints(AudioDecoder::PlaybackHints hints);
+
+    bool init(LoadedDecoder decoder, const Track& track);
+    bool adoptPreparedDecoder(LoadedDecoder decoder, const Track& track);
+    void setPreparedDecodePosition(uint64_t positionMs);
+    [[nodiscard]] AudioStreamPtr createStream(size_t bufferSamples,
+                                              Engine::FadeCurve fadeCurve = Engine::FadeCurve::Linear);
+    void setActiveStream(AudioStreamPtr stream);
+    [[nodiscard]] AudioStreamPtr detachStream();
+    void start();
+    void stop();
+    bool seek(uint64_t positionMs);
+
+    [[nodiscard]] bool switchContiguousTrack(const Track& track);
+    void setEndPolicy(DecoderContext::EndPolicy policy, std::optional<uint64_t> windowEndMs = {});
+    [[nodiscard]] DecoderContext::EndPolicy endPolicy() const;
+    void syncStreamPosition();
+    [[nodiscard]] int prefillActiveStream(size_t targetSamples, int maxChunks = 0, size_t maxFramesPerChunk = 4096);
+    [[nodiscard]] int prefillActiveStreamMs(uint64_t targetMs, int maxChunks = 0, size_t maxFramesPerChunk = 4096);
+    [[nodiscard]] bool refreshTrackMetadata();
+    [[nodiscard]] int bitrate() const;
+    [[nodiscard]] LoadedDecoder takeLoadedDecoder();
+    void reset();
 
     //! Prepare a stream for an incoming crossfade track using current decoder context.
     //! Assumes decoder is already initialised for the new track.
@@ -88,23 +132,6 @@ public:
     [[nodiscard]] bool inputNeedsMoreData() const;
 
 private:
-    QObject* m_timerHost;
-
-    int m_decodeTimerId;
-
-    int m_lowWatermarkMs;
-    int m_highWatermarkMs;
-    int m_reserveTargetMs;
-
-    bool m_fillUntilTarget;
-    bool m_inputNeedsMoreData;
-
-    std::atomic<uint64_t> m_decodeReserveClampEvents;
-    std::atomic<uint64_t> m_decodeBurstCapShortfallEvents;
-
-    std::chrono::steady_clock::time_point m_lastDecodeTimerTick;
-    bool m_hasLastDecodeTimerTick;
-
-    bool m_decodeTimerGapLogActive;
+    std::unique_ptr<DecodingControllerPrivate> p;
 };
 } // namespace Fooyin
