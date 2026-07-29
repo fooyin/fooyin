@@ -50,10 +50,14 @@ public:
     void setActiveChain(const Engine::DspChains& chain);
     void syncActiveChain(const Engine::DspChains& chain);
     bool updateLiveDspSettings(Engine::DspChainScope scope, uint64_t instanceId, const QByteArray& settings,
-                               bool persist);
+                               bool persist, QObject* source = nullptr);
+    bool setDspEnabled(Engine::DspChainScope scope, uint64_t instanceId, bool enabled, QObject* source = nullptr);
 
 Q_SIGNALS:
     void activeChainChanged(const Fooyin::Engine::DspChains& chain);
+    void liveDspSettingsChanged(Fooyin::Engine::DspChainScope scope, uint64_t instanceId, const QByteArray& settings,
+                                bool persisted, QObject* source);
+    void dspEnabledChanged(Fooyin::Engine::DspChainScope scope, uint64_t instanceId, bool enabled, QObject* source);
 
 private:
     [[nodiscard]] uint64_t nextInstanceId();

@@ -36,6 +36,7 @@
 #include <QListWidget>
 #include <QMenu>
 #include <QMessageBox>
+#include <QPointer>
 #include <QPushButton>
 #include <QSortFilterProxyModel>
 #include <QTableView>
@@ -44,7 +45,10 @@
 
 #include <algorithm>
 #include <limits>
-#include <memory>
+#include <optional>
+#include <ranges>
+#include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -114,6 +118,157 @@ void removeEntriesFromChain(Engine::DspChain& chain, const Engine::DspChain& ent
         }
     }
 }
+
+bool equalIgnoringEnabled(Engine::DspChains lhs, Engine::DspChains rhs)
+{
+    const auto clearEnabled = [](Engine::DspChain& chain) {
+        for(auto& dsp : chain) {
+            dsp.enabled = false;
+        }
+    };
+
+    clearEnabled(lhs.perTrackChain);
+    clearEnabled(lhs.masterChain);
+    clearEnabled(rhs.perTrackChain);
+    clearEnabled(rhs.masterChain);
+    return lhs == rhs;
+}
+
+struct LocatedDsp
+{
+    Engine::DspDefinition dsp;
+    Engine::DspChainScope scope;
+
+    bool operator==(const LocatedDsp&) const = default;
+};
+using LocatedDsps = std::unordered_map<uint64_t, LocatedDsp>;
+
+LocatedDsps locateDsps(const Engine::DspChains& chains)
+{
+    LocatedDsps located;
+    located.reserve(chains.perTrackChain.size() + chains.masterChain.size());
+
+    const auto addChain = [&located](const Engine::DspChain& chain, Engine::DspChainScope scope) {
+        for(const auto& dsp : chain) {
+            located.insert_or_assign(dsp.instanceId, LocatedDsp{dsp, scope});
+        }
+    };
+
+    addChain(chains.perTrackChain, Engine::DspChainScope::PerTrack);
+    addChain(chains.masterChain, Engine::DspChainScope::Master);
+    return located;
+}
+
+std::optional<LocatedDsp> findDsp(const LocatedDsps& dsps, uint64_t instanceId)
+{
+    if(const auto it = dsps.find(instanceId); it != dsps.end()) {
+        return it->second;
+    }
+    return {};
+}
+
+void avoidAdditionIdCollisions(const LocatedDsps& baseline, const LocatedDsps& external, Engine::DspChains& draft)
+{
+    std::unordered_set<uint64_t> usedIds;
+    uint64_t maxId{0};
+
+    const auto noteIds = [&usedIds, &maxId](const LocatedDsps& dsps) {
+        for(const auto instanceId : dsps | std::views::keys) {
+            usedIds.emplace(instanceId);
+            maxId = std::max(maxId, instanceId);
+        }
+    };
+    noteIds(baseline);
+    noteIds(external);
+
+    const auto nextId = [&usedIds, &maxId]() {
+        while(true) {
+            maxId = maxId == std::numeric_limits<uint64_t>::max() ? 1 : maxId + 1;
+            if(!usedIds.contains(maxId)) {
+                usedIds.emplace(maxId);
+                return maxId;
+            }
+        }
+    };
+
+    const auto updateChain = [&baseline, &external, &usedIds, &nextId](Engine::DspChain& chain) {
+        for(auto& dsp : chain) {
+            const bool isLocalAddition = !baseline.contains(dsp.instanceId);
+            if(isLocalAddition && external.contains(dsp.instanceId)) {
+                dsp.instanceId = nextId();
+            }
+            else {
+                usedIds.emplace(dsp.instanceId);
+            }
+        }
+    };
+
+    updateChain(draft.perTrackChain);
+    updateChain(draft.masterChain);
+}
+
+Engine::DspChains mergeDspChainsThreeWay(const Engine::DspChains& baseline, const Engine::DspChains& external,
+                                         Engine::DspChains draft)
+{
+    if(draft == baseline) {
+        return external;
+    }
+
+    const auto baselineDsps = locateDsps(baseline);
+    const auto externalDsps = locateDsps(external);
+
+    avoidAdditionIdCollisions(baselineDsps, externalDsps, draft);
+
+    const auto draftDsps = locateDsps(draft);
+
+    std::unordered_map<uint64_t, std::optional<LocatedDsp>> mergedDsps;
+    mergedDsps.reserve(baselineDsps.size() + externalDsps.size() + draftDsps.size());
+
+    const auto mergeId = [&](uint64_t instanceId) {
+        const auto baselineDsp = findDsp(baselineDsps, instanceId);
+        const auto draftDsp    = findDsp(draftDsps, instanceId);
+        mergedDsps.insert_or_assign(instanceId, draftDsp == baselineDsp ? findDsp(externalDsps, instanceId) : draftDsp);
+    };
+
+    for(const auto instanceId : baselineDsps | std::views::keys) {
+        mergeId(instanceId);
+    }
+    for(const auto instanceId : externalDsps | std::views::keys) {
+        if(!mergedDsps.contains(instanceId)) {
+            mergeId(instanceId);
+        }
+    }
+    for(const auto instanceId : draftDsps | std::views::keys) {
+        if(!mergedDsps.contains(instanceId)) {
+            mergeId(instanceId);
+        }
+    }
+
+    Engine::DspChains merged;
+    std::unordered_set<uint64_t> appended;
+    appended.reserve(mergedDsps.size());
+
+    const auto appendChain = [&mergedDsps, &appended](const Engine::DspChain& order, Engine::DspChainScope scope,
+                                                      Engine::DspChain& target) {
+        for(const auto& orderedDsp : order) {
+            const auto mergedIt = mergedDsps.find(orderedDsp.instanceId);
+            if(mergedIt == mergedDsps.end() || !mergedIt->second || mergedIt->second->scope != scope
+               || appended.contains(orderedDsp.instanceId)) {
+                continue;
+            }
+
+            target.push_back(mergedIt->second->dsp);
+            appended.emplace(orderedDsp.instanceId);
+        }
+    };
+
+    appendChain(draft.perTrackChain, Engine::DspChainScope::PerTrack, merged.perTrackChain);
+    appendChain(external.perTrackChain, Engine::DspChainScope::PerTrack, merged.perTrackChain);
+    appendChain(draft.masterChain, Engine::DspChainScope::Master, merged.masterChain);
+    appendChain(external.masterChain, Engine::DspChainScope::Master, merged.masterChain);
+
+    return merged;
+}
 } // namespace
 
 class DspManagerPageWidget : public SettingsPageWidget
@@ -126,9 +281,18 @@ public:
 
     void load() override;
     void apply() override;
+    void finish() override;
     void reset() override;
 
 private:
+    struct DspDialogSession
+    {
+        QPointer<DspSettingsDialog> dialog;
+        QByteArray originalSettings;
+        QByteArray lastPreviewSettings;
+        bool supportsLive{false};
+    };
+
     [[nodiscard]] Engine::DspDefinition resolveDisplayName(Engine::DspDefinition dsp) const;
     void resolveDisplayNames(Engine::DspChain& dsps) const;
 
@@ -142,8 +306,18 @@ private:
     [[nodiscard]] Engine::DspChain& pendingRemovedForModel(DspModel* model);
     [[nodiscard]] const Engine::DspChain& pendingRemovedForModel(const DspModel* model) const;
     [[nodiscard]] uint64_t nextDialogInstanceId() const;
+    [[nodiscard]] std::optional<std::pair<DspModel*, Engine::DspChainScope>>
+    modelForInstance(uint64_t instanceId) const;
+    [[nodiscard]] std::optional<Engine::DspChainScope> liveScopeForInstance(uint64_t instanceId) const;
 
     void configureActiveDsp(DspModel* model, const QModelIndex& index);
+    void finishDspDialog(uint64_t instanceId, int result);
+    void closeDspDialog(uint64_t instanceId);
+    void closeDspDialogs(bool rollback = true);
+    void updateLiveDspSettings(uint64_t instanceId, const QByteArray& settings, QObject* source);
+    void syncActiveChain(const Engine::DspChains& chain);
+    void syncLiveDspSettings(uint64_t instanceId, const QByteArray& settings, bool persisted, QObject* source);
+    void syncDspEnabled(uint64_t instanceId, bool enabled);
     void moveActiveDsp(DspModel* model, const QModelIndex& index, int offset);
     void removeActiveDsp(DspModel* model, const QModelIndex& index);
     void addAvailableDsp(const QModelIndex& index, DspModel* targetModel);
@@ -179,8 +353,11 @@ private:
 
     Engine::DspChain m_pendingRemovedPerTrack;
     Engine::DspChain m_pendingRemovedMaster;
+    Engine::DspChains m_chainBaseline;
     Engine::DspChains m_chain;
+    std::unordered_map<uint64_t, DspDialogSession> m_dspDialogs;
     bool m_updating{false};
+    bool m_applyingChain{false};
     bool m_changed{false};
 };
 
@@ -320,15 +497,28 @@ DspManagerPageWidget::DspManagerPageWidget(DspChainStore* chainStore, DspPresetR
                      [this](const QPoint& pos) { showActiveContextMenu(m_masterModel, m_masterList, pos); });
     QObject::connect(m_availableList, &QWidget::customContextMenuRequested, this,
                      [this](const QPoint& pos) { showAvailableContextMenu(pos); });
+    QObject::connect(m_chainStore, &DspChainStore::liveDspSettingsChanged, this,
+                     [this](Engine::DspChainScope /*scope*/, uint64_t instanceId, const QByteArray& settings,
+                            bool persisted,
+                            QObject* source) { syncLiveDspSettings(instanceId, settings, persisted, source); });
+    QObject::connect(m_chainStore, &DspChainStore::activeChainChanged, this, &DspManagerPageWidget::syncActiveChain);
+    QObject::connect(m_chainStore, &DspChainStore::dspEnabledChanged, this,
+                     [this](Engine::DspChainScope /*scope*/, uint64_t instanceId, bool enabled, QObject* /*source*/) {
+                         syncDspEnabled(instanceId, enabled);
+                     });
 
     updatePresetButtons();
 }
 
 void DspManagerPageWidget::load()
 {
+    closeDspDialogs();
+
     m_pendingRemovedPerTrack.clear();
     m_pendingRemovedMaster.clear();
-    m_chain = m_chainStore->activeChain();
+    m_chainBaseline = m_chainStore->activeChain();
+    m_chain         = m_chainBaseline;
+    m_changed       = false;
 
     refreshAvailable();
     refreshActive();
@@ -344,10 +534,13 @@ void DspManagerPageWidget::apply()
     bool applied{false};
 
     if(m_changed) {
+        m_applyingChain = true;
         m_chainStore->setActiveChain(m_chain);
+        m_applyingChain = false;
         // Retrieve the normalised chain so live-setting updates can target newly added DSP instances
-        m_chain = m_chainStore->activeChain();
-        applied = true;
+        m_chain         = m_chainStore->activeChain();
+        m_chainBaseline = m_chain;
+        applied         = true;
     }
 
     if(hasPendingRemoved) {
@@ -359,8 +552,11 @@ void DspManagerPageWidget::apply()
         m_pendingRemovedMaster.clear();
 
         if(finalChain != m_chain || !applied) {
+            m_applyingChain = true;
             m_chainStore->setActiveChain(finalChain);
-            m_chain = m_chainStore->activeChain();
+            m_applyingChain = false;
+            m_chain         = m_chainStore->activeChain();
+            m_chainBaseline = m_chain;
         }
 
         m_changed = false;
@@ -372,8 +568,15 @@ void DspManagerPageWidget::apply()
     }
 }
 
+void DspManagerPageWidget::finish()
+{
+    closeDspDialogs();
+}
+
 void DspManagerPageWidget::reset()
 {
+    closeDspDialogs();
+
     m_pendingRemovedPerTrack.clear();
     m_pendingRemovedMaster.clear();
     m_chain.clear();
@@ -477,13 +680,25 @@ void DspManagerPageWidget::configureActiveDsp(DspModel* model, const QModelIndex
         return;
     }
 
-    const QString dspId = index.data(DspModel::Id).toString();
+    const auto dsps = model->dsps();
+    const int row   = index.row();
+    if(row < 0 || std::cmp_greater_equal(row, dsps.size())) {
+        return;
+    }
 
-    auto dsps                         = model->dsps();
-    const int row                     = index.row();
-    auto& dspEntry                    = dsps.at(row);
-    const QString dspName             = dspEntry.name;
-    const QByteArray originalSettings = dspEntry.settings;
+    const auto& dspEntry      = dsps.at(row);
+    const QString dspId       = dspEntry.id;
+    const uint64_t instanceId = dspEntry.instanceId;
+    if(instanceId == 0) {
+        return;
+    }
+
+    if(const auto session = m_dspDialogs.find(instanceId); session != m_dspDialogs.end() && session->second.dialog) {
+        session->second.dialog->show();
+        session->second.dialog->raise();
+        session->second.dialog->activateWindow();
+        return;
+    }
 
     auto* provider = m_settingsRegistry ? m_settingsRegistry->providerFor(dspId) : nullptr;
     if(!provider) {
@@ -491,44 +706,228 @@ void DspManagerPageWidget::configureActiveDsp(DspModel* model, const QModelIndex
         return;
     }
 
-    auto settingsDialog = std::unique_ptr<DspSettingsDialog>{provider->createSettingsWidget(this)};
+    auto* settingsDialog = provider->createSettingsWidget(this);
     if(!settingsDialog) {
-        QMessageBox::warning(this, tr("DSP Settings"), tr("Unable to open settings for DSP \"%1\".").arg(dspName));
+        QMessageBox::warning(this, tr("DSP Settings"),
+                             tr("Unable to open settings for DSP \"%1\".").arg(dspEntry.name));
         return;
     }
-    settingsDialog->setWindowTitle(dspName);
+    settingsDialog->setWindowTitle(dspEntry.name);
     settingsDialog->loadSettings(dspEntry.settings);
-
-    const auto scope = (model == m_masterModel) ? Engine::DspChainScope::Master : Engine::DspChainScope::PerTrack;
-    const uint64_t instanceId = dspEntry.instanceId;
 
     bool supportsLive{false};
     if(auto node = m_chainStore->createDsp(dspId)) {
         supportsLive = node->supportsLiveSettings();
     }
 
-    QByteArray lastPreviewSettings{originalSettings};
-    if(supportsLive && instanceId != 0) {
-        QObject::connect(settingsDialog.get(), &DspSettingsDialog::previewSettingsChanged, this,
-                         [this, scope, instanceId, &lastPreviewSettings](const QByteArray& settings) {
-                             lastPreviewSettings = settings;
-                             m_chainStore->updateLiveDspSettings(scope, instanceId, settings, false);
-                         });
-    }
+    m_dspDialogs.insert_or_assign(instanceId, DspDialogSession{
+                                                  .dialog              = settingsDialog,
+                                                  .originalSettings    = dspEntry.settings,
+                                                  .lastPreviewSettings = dspEntry.settings,
+                                                  .supportsLive        = supportsLive,
+                                              });
 
-    if(settingsDialog->exec() != QDialog::Accepted) {
-        if(supportsLive && instanceId != 0 && lastPreviewSettings != originalSettings) {
-            m_chainStore->updateLiveDspSettings(scope, instanceId, originalSettings, false);
-        }
+    QObject::connect(settingsDialog, &DspSettingsDialog::previewSettingsChanged, this,
+                     [this, instanceId, settingsDialog](const QByteArray& settings) {
+                         const auto session = m_dspDialogs.find(instanceId);
+                         if(session == m_dspDialogs.end()) {
+                             return;
+                         }
+
+                         session->second.lastPreviewSettings = settings;
+                         if(session->second.supportsLive) {
+                             updateLiveDspSettings(instanceId, settings, settingsDialog);
+                         }
+                     });
+    QObject::connect(settingsDialog, &QDialog::finished, this,
+                     [this, instanceId](int result) { finishDspDialog(instanceId, result); });
+    QObject::connect(settingsDialog, &QObject::destroyed, this,
+                     [this, instanceId]() { m_dspDialogs.erase(instanceId); });
+
+    settingsDialog->setWindowModality(Qt::NonModal);
+    settingsDialog->show();
+}
+
+void DspManagerPageWidget::finishDspDialog(uint64_t instanceId, int result)
+{
+    const auto sessionIt = m_dspDialogs.find(instanceId);
+    if(sessionIt == m_dspDialogs.end()) {
         return;
     }
 
-    dsps[row].settings = settingsDialog->saveSettings();
-    dsps[row]          = resolveDisplayName(std::move(dsps[row]));
-    model->setup(dsps);
+    const DspDialogSession session = sessionIt->second;
 
-    if(supportsLive && instanceId != 0 && dsps[row].settings != lastPreviewSettings) {
-        m_chainStore->updateLiveDspSettings(scope, instanceId, dsps[row].settings, false);
+    if(result == QDialog::Accepted && session.dialog) {
+        if(const auto target = modelForInstance(instanceId)) {
+            auto* model      = target->first;
+            auto dsps        = model->dsps();
+            const auto dspIt = std::ranges::find(dsps, instanceId, &Engine::DspDefinition::instanceId);
+
+            if(dspIt != dsps.end()) {
+                dspIt->settings = session.dialog->saveSettings();
+                *dspIt          = resolveDisplayName(std::move(*dspIt));
+                model->setup(dsps);
+                syncChainFromActiveList();
+                refreshAvailable();
+
+                if(session.supportsLive && dspIt->settings != session.lastPreviewSettings) {
+                    updateLiveDspSettings(instanceId, dspIt->settings, session.dialog);
+                }
+            }
+        }
+    }
+    else if(session.supportsLive && session.lastPreviewSettings != session.originalSettings) {
+        updateLiveDspSettings(instanceId, session.originalSettings, session.dialog);
+    }
+
+    m_dspDialogs.erase(sessionIt);
+    if(session.dialog) {
+        session.dialog->deleteLater();
+    }
+}
+
+void DspManagerPageWidget::closeDspDialog(uint64_t instanceId)
+{
+    if(const auto session = m_dspDialogs.find(instanceId); session != m_dspDialogs.end() && session->second.dialog) {
+        session->second.dialog->reject();
+    }
+}
+
+void DspManagerPageWidget::closeDspDialogs(bool rollback)
+{
+    std::vector<QPointer<DspSettingsDialog>> dialogs;
+    dialogs.reserve(m_dspDialogs.size());
+
+    for(auto& session : m_dspDialogs | std::views::values) {
+        if(!rollback) {
+            session.originalSettings = session.lastPreviewSettings;
+        }
+        dialogs.push_back(session.dialog);
+    }
+
+    for(const auto& dialog : dialogs) {
+        if(dialog) {
+            dialog->reject();
+        }
+    }
+}
+
+void DspManagerPageWidget::updateLiveDspSettings(uint64_t instanceId, const QByteArray& settings, QObject* source)
+{
+    if(const auto scope = liveScopeForInstance(instanceId)) {
+        m_chainStore->updateLiveDspSettings(*scope, instanceId, settings, false, source);
+    }
+}
+
+void DspManagerPageWidget::syncActiveChain(const Engine::DspChains& chain)
+{
+    if(m_applyingChain) {
+        return;
+    }
+
+    syncChainFromActiveList();
+
+    auto draft{m_chain};
+    removeEntriesFromChain(draft.perTrackChain, m_pendingRemovedPerTrack);
+    removeEntriesFromChain(draft.masterChain, m_pendingRemovedMaster);
+
+    if(!equalIgnoringEnabled(m_chainBaseline, chain)) {
+        closeDspDialogs(false);
+    }
+
+    const auto baseline = std::exchange(m_chainBaseline, chain);
+    m_chain             = mergeDspChainsThreeWay(baseline, chain, std::move(draft));
+    m_pendingRemovedPerTrack.clear();
+    m_pendingRemovedMaster.clear();
+    m_changed = m_chain != chain;
+
+    refreshActive();
+    refreshAvailable();
+}
+
+void DspManagerPageWidget::syncLiveDspSettings(uint64_t instanceId, const QByteArray& settings, bool persisted,
+                                               QObject* source)
+{
+    if(persisted) {
+        const auto updateChain = [instanceId, &settings](Engine::DspChains& chains) {
+            for(auto* chain : {&chains.perTrackChain, &chains.masterChain}) {
+                if(const auto it = std::ranges::find(*chain, instanceId, &Engine::DspDefinition::instanceId);
+                   it != chain->end()) {
+                    it->settings = settings;
+                    break;
+                }
+            }
+        };
+        updateChain(m_chainBaseline);
+        updateChain(m_chain);
+    }
+
+    const auto target = modelForInstance(instanceId);
+    if(!target) {
+        return;
+    }
+
+    auto* model      = target->first;
+    auto dsps        = model->dsps();
+    const auto dspIt = std::ranges::find(dsps, instanceId, &Engine::DspDefinition::instanceId);
+    if(dspIt != dsps.end()) {
+        auto displayDsp     = *dspIt;
+        displayDsp.settings = settings;
+        displayDsp          = resolveDisplayName(std::move(displayDsp));
+        dspIt->name         = displayDsp.name;
+
+        if(persisted) {
+            dspIt->settings = settings;
+        }
+
+        m_updating = true;
+        model->setup(dsps);
+        m_updating = false;
+
+        if(persisted) {
+            auto& chain = target->second == Engine::DspChainScope::Master ? m_chain.masterChain : m_chain.perTrackChain;
+            if(const auto chainIt = std::ranges::find(chain, instanceId, &Engine::DspDefinition::instanceId);
+               chainIt != chain.end()) {
+                chainIt->settings = settings;
+                chainIt->name     = displayDsp.name;
+            }
+        }
+    }
+
+    const auto session = m_dspDialogs.find(instanceId);
+    if(session == m_dspDialogs.end() || !session->second.dialog || source == session->second.dialog) {
+        return;
+    }
+
+    session->second.lastPreviewSettings = settings;
+    if(persisted) {
+        session->second.originalSettings = settings;
+    }
+    session->second.dialog->loadSettings(settings);
+}
+
+void DspManagerPageWidget::syncDspEnabled(uint64_t instanceId, bool enabled)
+{
+    const auto target = modelForInstance(instanceId);
+    if(!target) {
+        return;
+    }
+
+    auto* model      = target->first;
+    auto dsps        = model->dsps();
+    const auto dspIt = std::ranges::find(dsps, instanceId, &Engine::DspDefinition::instanceId);
+    if(dspIt != dsps.end()) {
+        dspIt->enabled = enabled;
+
+        m_updating = true;
+        model->setup(dsps);
+        m_updating = false;
+    }
+
+    auto& chain = target->second == Engine::DspChainScope::Master ? m_chain.masterChain : m_chain.perTrackChain;
+    if(const auto chainIt = std::ranges::find(chain, instanceId, &Engine::DspDefinition::instanceId);
+       chainIt != chain.end()) {
+        chainIt->enabled = enabled;
     }
 }
 
@@ -568,6 +967,8 @@ void DspManagerPageWidget::removeActiveDsp(DspModel* model, const QModelIndex& i
 
     auto entry    = dsps[static_cast<size_t>(row)];
     entry.enabled = false;
+
+    closeDspDialog(entry.instanceId);
 
     auto& pendingRemoved = pendingRemovedForModel(model);
     if(std::ranges::find(pendingRemoved, entry) == pendingRemoved.end()) {
@@ -727,6 +1128,39 @@ uint64_t DspManagerPageWidget::nextDialogInstanceId() const
     return maxId + 1;
 }
 
+std::optional<std::pair<DspModel*, Engine::DspChainScope>>
+DspManagerPageWidget::modelForInstance(uint64_t instanceId) const
+{
+    const auto containsInstance = [instanceId](const DspModel* model) {
+        const auto dsps = model->dsps();
+        return std::ranges::find(dsps, instanceId, &Engine::DspDefinition::instanceId) != dsps.end();
+    };
+
+    if(containsInstance(m_masterModel)) {
+        return std::pair{m_masterModel, Engine::DspChainScope::Master};
+    }
+    if(containsInstance(m_perTrackModel)) {
+        return std::pair{m_perTrackModel, Engine::DspChainScope::PerTrack};
+    }
+    return {};
+}
+
+std::optional<Engine::DspChainScope> DspManagerPageWidget::liveScopeForInstance(uint64_t instanceId) const
+{
+    const auto chain            = m_chainStore->activeChain();
+    const auto containsInstance = [instanceId](const Engine::DspChain& dsps) {
+        return std::ranges::find(dsps, instanceId, &Engine::DspDefinition::instanceId) != dsps.end();
+    };
+
+    if(containsInstance(chain.masterChain)) {
+        return Engine::DspChainScope::Master;
+    }
+    if(containsInstance(chain.perTrackChain)) {
+        return Engine::DspChainScope::PerTrack;
+    }
+    return {};
+}
+
 Engine::DspDefinition DspManagerPageWidget::resolveDisplayName(Engine::DspDefinition dsp) const
 {
     dsp.hasSettings = m_settingsRegistry && m_settingsRegistry->hasProvider(dsp.id);
@@ -766,6 +1200,8 @@ void DspManagerPageWidget::loadPreset()
     if(!presetOpt) {
         return;
     }
+
+    closeDspDialogs();
 
     if(std::exchange(m_chain, presetOpt->chain) != m_chain) {
         m_changed = true;

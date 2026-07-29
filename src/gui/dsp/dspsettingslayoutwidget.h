@@ -64,6 +64,7 @@ protected:
     virtual void addEditorActions(QMenu* menu);
     virtual void connectEditor(const DspSettingsController::Target& target) = 0;
     virtual void disconnectEditor();
+    [[nodiscard]] virtual QObject* editorObject() const         = 0;
     virtual void loadEditorSettings(const QByteArray& settings) = 0;
     virtual void setEditorControlsEnabled(bool enabled)         = 0;
 
@@ -93,6 +94,7 @@ protected:
     void updateEnabledState(bool enabled) override;
     void connectEditor(const DspSettingsController::Target& target) override;
     void disconnectEditor() override;
+    [[nodiscard]] QObject* editorObject() const override;
     void loadEditorSettings(const QByteArray& settings) override;
     void setEditorControlsEnabled(bool enabled) override;
 
@@ -118,6 +120,7 @@ protected:
     void addEditorActions(QMenu* menu) override;
     void connectEditor(const DspSettingsController::Target& target) override;
     void disconnectEditor() override;
+    [[nodiscard]] QObject* editorObject() const override;
     void loadEditorSettings(const QByteArray& settings) override;
     void setEditorControlsEnabled(bool enabled) override;
 

@@ -189,8 +189,8 @@ void DspChainStore::syncActiveChain(const DspChains& chain)
     Q_EMIT activeChainChanged(m_activeChain);
 }
 
-bool DspChainStore::updateLiveDspSettings(const DspChainScope scope, uint64_t instanceId, const QByteArray& settings,
-                                          bool persist)
+bool DspChainStore::updateLiveDspSettings(DspChainScope scope, uint64_t instanceId, const QByteArray& settings,
+                                          bool persist, QObject* source)
 {
     if(instanceId == 0) {
         return false;
@@ -230,6 +230,30 @@ bool DspChainStore::updateLiveDspSettings(const DspChainScope scope, uint64_t in
         });
     }
 
+    Q_EMIT liveDspSettingsChanged(scope, instanceId, settings, persist, source);
+    return true;
+}
+
+bool DspChainStore::setDspEnabled(DspChainScope scope, uint64_t instanceId, bool enabled, QObject* source)
+{
+    if(instanceId == 0) {
+        return false;
+    }
+
+    auto chain        = m_activeChain;
+    auto& targetChain = scope == DspChainScope::Master ? chain.masterChain : chain.perTrackChain;
+
+    const auto entry = std::ranges::find(targetChain, instanceId, &DspDefinition::instanceId);
+    if(entry == targetChain.end()) {
+        return false;
+    }
+    if(entry->enabled == enabled) {
+        return true;
+    }
+
+    entry->enabled = enabled;
+    setActiveChain(chain);
+    Q_EMIT dspEnabledChanged(scope, instanceId, enabled, source);
     return true;
 }
 

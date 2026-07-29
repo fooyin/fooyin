@@ -149,6 +149,11 @@ ScrobblerPageWidget::ScrobblerPageWidget(SettingsManager* settings)
     QObject::connect(m_scrobblingEnabled, &QCheckBox::toggled, this, &ScrobblerPageWidget::updateWidgetState);
     QObject::connect(m_filterScrobbles, &QCheckBox::toggled, this, &ScrobblerPageWidget::updateWidgetState);
     QObject::connect(m_sendAlbumArtist, &QCheckBox::toggled, this, &ScrobblerPageWidget::updateWidgetState);
+
+    m_settings->subscribe<Settings::Scrobbler::ScrobblingEnabled>(this, [this](const bool enabled) {
+        m_scrobblingEnabled->setChecked(enabled);
+        updateWidgetState();
+    });
 }
 
 void ScrobblerPageWidget::load()

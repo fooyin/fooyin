@@ -1668,7 +1668,7 @@ void GuiApplication::showEngineError(const QString& error) const
 
 void GuiApplication::showMessage(const QString& title, const Track& track) const
 {
-    if(m_settings->fileValue(Settings::Core::Internal::PlaylistSkipUnavailable).toBool()) {
+    if(m_settings->value<Settings::Core::Internal::PlaylistSkipUnavailable>()) {
         m_playerController->next();
         if(m_playerController->playState() == Player::PlayState::Playing) {
             m_playerController->play();
@@ -1695,7 +1695,7 @@ void GuiApplication::showMessage(const QString& title, const Track& track) const
     message.exec();
 
     if(alwaysSkip->isChecked()) {
-        m_settings->fileSet(Settings::Core::Internal::PlaylistSkipUnavailable, true);
+        m_settings->set<Settings::Core::Internal::PlaylistSkipUnavailable>(true);
     }
 
     if(message.clickedButton() == stopButton) {
