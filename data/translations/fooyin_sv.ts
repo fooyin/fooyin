@@ -1046,7 +1046,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="378"/>
         <source>Builds a text progress bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Bygger en textförloppsindikator</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="379"/>
@@ -1059,7 +1059,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="381"/>
         <source>Builds an alternate text progress bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Bygger en alternativ textförloppsindikator</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="384"/>
@@ -1811,7 +1811,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="120"/>
         <source>Path to an image file to use when artwork of this type is missing; leave empty to use the default icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Sökväg till en bildfil att använda när konstverk av denna typ saknas; lämna tomt för att använda default-ikonen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="124"/>
@@ -2322,9 +2322,9 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="188"/>
         <source>Cancelled: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Avbröt: %Ln spår</numerusform>
+            <numerusform>Avbröt: %Ln spår</numerusform>
         </translation>
     </message>
 </context>
@@ -2409,7 +2409,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="118"/>
         <source>Verify converted output</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifiera konverterad utmatning</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="125"/>
@@ -2465,7 +2465,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="255"/>
         <source>Current settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuella inställningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="292"/>
@@ -2537,7 +2537,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="337"/>
         <source>Specified folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Specifierad mapp</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="338"/>
@@ -2562,7 +2562,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="343"/>
         <source>Generate one multi-track file per name group</source>
-        <translation type="unfinished"></translation>
+        <translation>Generera en multispårfil per namngrupp</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="345"/>
@@ -2604,7 +2604,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1209"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1226"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Inget</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="388"/>
@@ -2684,7 +2684,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="522"/>
         <source>Copy other files to the destination folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiera andra filer till destinationsmappen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="711"/>
@@ -2775,7 +2775,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1165"/>
         <source>group tracks by output name</source>
-        <translation type="unfinished"></translation>
+        <translation>Gruppera spår efter utmatningsnamn</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1168"/>
@@ -2828,7 +2828,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1205"/>
         <source>continuous DSP</source>
-        <translation type="unfinished"></translation>
+        <translation>kontinuerlig DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1214"/>
@@ -2848,7 +2848,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1223"/>
         <source>Verify output</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifiera utmatning</translation>
     </message>
 </context>
 <context>
@@ -5725,7 +5725,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1239"/>
         <source>Using default settings</source>
-        <translation>Använder default-inställningar</translation>
+        <translation>Med default-inställningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1243"/>
@@ -6530,7 +6530,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="69"/>
         <source>&amp;Frequently asked questions</source>
-        <translation>&amp;Frekventa frågade frågor</translation>
+        <translation>Vanliga &amp;frågor</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="70"/>
@@ -6948,7 +6948,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="80"/>
         <source>Prevent manual resizing of splitters when not in layout editing mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Förhindra manuell ändring av storlek på splittrare utanför layoutredigeringsläge</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="90"/>
@@ -6983,7 +6983,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="104"/>
         <source>&amp;Clear layout</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Rensa layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="105"/>
@@ -7204,7 +7204,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="91"/>
         <source>Search all libraries</source>
-        <translation>Sök alla bilbiotek</translation>
+        <translation>Sök i alla bilbiotek</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="96"/>
@@ -7447,7 +7447,7 @@ och senast spelad använder det senare värdet.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="150"/>
         <source>Read ID3 POPM</source>
-        <translation>Läs ID3-POPM</translation>
+        <translation>Läs ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="151"/>
@@ -7559,7 +7559,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="208"/>
         <source>Mapping</source>
-        <translation type="unfinished"></translation>
+        <translation>Mappning</translation>
     </message>
 </context>
 <context>
@@ -9291,7 +9291,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="44"/>
         <source>Show zero line</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa nollinje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="45"/>
@@ -9311,7 +9311,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="48"/>
         <source>Zero line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Nollinjesfärg</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="50"/>
@@ -9326,7 +9326,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="69"/>
         <source>Vertical amplitude scale; high values may overlap stereo channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikal amplitudskala; höga värden kan överlappa stereokanaler</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="73"/>
@@ -9351,7 +9351,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="79"/>
         <source>Display separate stereo channels or combine them into mono</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa separata stereokanaler eller slå ihop dem till mono</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="82"/>
@@ -9397,7 +9397,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="202"/>
         <source>Show zero line</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa nollinje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="211"/>
@@ -9715,7 +9715,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="57"/>
         <source>Shu&amp;ffle albums</source>
-        <translation>S&amp;lumpa album</translation>
+        <translation>B&amp;landa album</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="58"/>
@@ -9765,7 +9765,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="108"/>
         <source>Ra&amp;ndom</source>
-        <translation>Sl&amp;umpmässig</translation>
+        <translation>Sl&amp;umpmässigt</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="111"/>
@@ -9780,7 +9780,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="117"/>
         <source>Start playing the first track of a random album in the current playlist</source>
-        <translation>Börja spela första spåret av ett slumpmässigt album i aktuell spellista</translation>
+        <translation>Börja spela första spåret på ett slumpmässigt album i aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="120"/>
@@ -9875,7 +9875,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="225"/>
         <source>Playback follows &amp;cursor</source>
-        <translation>Uppspelning följer &amp;musen</translation>
+        <translation>Uppspelning följer &amp;mus</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="233"/>
@@ -11441,7 +11441,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="118"/>
         <source>Search playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök i spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="122"/>
@@ -12079,17 +12079,17 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="101"/>
         <source>Scan for presets recursively</source>
-        <translation type="unfinished"></translation>
+        <translation>Skanna efter förinställningar rekursivt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="104"/>
         <source>Correct aspect ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>Korrekta proportioner</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="107"/>
         <source>Enable hard cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Sätt på hårda övergångar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="113"/>
@@ -12099,12 +12099,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="115"/>
         <source>Soft cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Mjuka övergångar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="117"/>
         <source>Hard cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Hårda övergångar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="119"/>
@@ -12114,7 +12114,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="123"/>
         <source>Folder containing .milk presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Mapp som innehåller .milk-förinställningar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="130"/>
@@ -12154,27 +12154,27 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="144"/>
         <source>Allow supporting presets to correct shapes when the visualisation is not square</source>
-        <translation type="unfinished"></translation>
+        <translation>Tillåt förinställningar att rätta till former när visualiseringen inte är en kvadrat, om de stödjer det</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="146"/>
         <source>Maximum time a preset is shown before projectM starts a smooth transition to the next preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximal tid en förinställning visas innan projectM påbörjar en mjuk övergång till nästa förinställning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="147"/>
         <source>Time taken to blend smoothly from one preset to the next</source>
-        <translation type="unfinished"></translation>
+        <translation>Hur lång tid det tar att mjukt övergå från en förinställning till nästa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="149"/>
         <source>Allow strong beats to switch presets immediately instead of using a smooth transition</source>
-        <translation type="unfinished"></translation>
+        <translation>Tillåt starka taktslag att byta förinställningar omedelbart istället för att använda en mjuk övergång</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="150"/>
         <source>Minimum time a preset must be shown before a beat can trigger a hard cut</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimala tiden en förinställning måste visas innan ett taktslag kan orsaka en hård övergång</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="152"/>
@@ -12184,12 +12184,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="153"/>
         <source>Sensitivity of projectM&apos;s beat detection</source>
-        <translation type="unfinished"></translation>
+        <translation>Känslighet för projectMs taktslagsdetektion</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="167"/>
         <source>Time between auto preset changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Tid mellan automatiska förinställningsbyten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="168"/>
@@ -12199,17 +12199,17 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="172"/>
         <source>Average time between hard cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Genomsnittlig tid mellan hårda övergångar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="173"/>
         <source>Hard cut sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Hård-övergångs-känslighet</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="174"/>
         <source>Beat sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Taktslagskänslighet</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="177"/>
@@ -12219,12 +12219,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="178"/>
         <source>Mesh size</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesh-storlek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="238"/>
         <source>Select Preset Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj förinställningsmapp</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="251"/>
@@ -12333,7 +12333,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="153"/>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="558"/>
         <source>&amp;Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Helskärm</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="154"/>
@@ -12343,7 +12343,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="155"/>
         <source>&amp;Previous Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Föregående förinställning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="156"/>
@@ -12363,12 +12363,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="159"/>
         <source>&amp;Shuffle Presets</source>
-        <translation>Blandning&amp;sförinställningar</translation>
+        <translation>Blanda förin&amp;ställningar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="160"/>
         <source>Remember &amp;Current Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kom ihåg aktuell förinställning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="243"/>
@@ -12379,7 +12379,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="513"/>
         <source>Toggle projectM full screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Växla projectM-helskärm</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="517"/>
@@ -12404,7 +12404,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="538"/>
         <source>Lock the current projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Lås den aktuella projectM-förinställningen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="542"/>
@@ -12419,7 +12419,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="558"/>
         <source>E&amp;xit Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Gå ut ur helskärm</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="589"/>
@@ -12429,7 +12429,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="593"/>
         <source>%1 seconds</source>
-        <translation>%1 sekunder</translation>
+        <translation>%1&#xa0;sekunder</translation>
     </message>
 </context>
 <context>
@@ -13774,7 +13774,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="253"/>
         <source>Random</source>
-        <translation>Slumpmässig</translation>
+        <translation>Slumpmässigt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="254"/>
@@ -14114,7 +14114,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="175"/>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="203"/>
         <source>Random</source>
-        <translation>Slumpmässig</translation>
+        <translation>Slumpmässigt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="177"/>
@@ -15528,12 +15528,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="142"/>
         <source>Search Playlist</source>
-        <translation>Sök spellista</translation>
+        <translation>Sök i spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="142"/>
         <source>Search Library</source>
-        <translation>Sök bibliotek</translation>
+        <translation>Sök i bibliotek</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="145"/>
@@ -17255,7 +17255,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="65"/>
         <source>Show current playlist info</source>
-        <translation>Visa aktuell spellistas info</translation>
+        <translation>Visa aktuell spellistsinfo</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="79"/>
@@ -18000,7 +18000,7 @@ This does not support full scripting.</source>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="48"/>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="118"/>
         <source>View</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="50"/>
@@ -18010,7 +18010,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="52"/>
         <source>Open the quick setup dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Öpnna snabb-setup-dialogen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="58"/>
@@ -18055,17 +18055,17 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="92"/>
         <source>Focus Search &amp;Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>F&amp;okusera på sökruta</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="93"/>
         <source>Focus the first Search Bar found in the current layout</source>
-        <translation>Fokusera det första sökfältet hittat i den aktuella layouten</translation>
+        <translation>Fokusera på det första sökfältet hittat i den aktuella layouten</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="99"/>
         <source>Show playing &amp;track</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Visa spelande spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="100"/>
@@ -18933,18 +18933,19 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/widgets.cpp" line="508"/>
         <source>Buffer length for remote streams</source>
-        <translation type="unfinished"></translation>
+        <translation>Buffertlängd för fjärrströmmar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="519"/>
         <source>Prebuffer for remote streams</source>
-        <translation type="unfinished"></translation>
+        <translation>Förbuffert för fjärrströmmar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="520"/>
         <source>Decoded audio buffered before starting or resuming remote playback.
 Set to 0 to choose automatically from the remote buffer length.</source>
-        <translation type="unfinished"></translation>
+        <translation>Avkodat ljud buffrat innan påbörjande eller fortsättning av fjärruppspelning.
+Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="526"/>
@@ -18992,7 +18993,7 @@ Set to 0 to choose automatically from the remote buffer length.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="564"/>
         <source>Automatic resampling preference</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisk omsamplings-preferens</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="565"/>
@@ -19101,7 +19102,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="532"/>
         <source>Maximum time spent opening and probing remote streams</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximal tid som spenderas på att öppna och probera fjärrströmmar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="583"/>
@@ -19136,7 +19137,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="625"/>
         <source>Probe all readers for extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>Probera alla läsare efter tillägg</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="626"/>
