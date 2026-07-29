@@ -21,12 +21,16 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
+
+constexpr auto NoReadLimit = std::numeric_limits<uint64_t>::max();
 
 namespace Fooyin {
 AudioStream::AudioStream(StreamId id, const AudioFormat& format, size_t bufferSamples)
     : m_buffer{bufferSamples}
     , m_trackRevision{0}
     , m_position{0}
+    , m_readLimitSamples{NoReadLimit}
     , m_fadeGain{1.0}
     , m_fadeTotalFrames{0}
     , m_fadeProcessedFrames{0}
@@ -124,6 +128,21 @@ bool AudioStream::endOfInput() const
     return m_endOfInput.load(std::memory_order_relaxed);
 }
 
+std::optional<uint64_t> AudioStream::readLimitSamples() const
+{
+    const uint64_t limit = m_readLimitSamples.load(std::memory_order_acquire);
+    if(limit == NoReadLimit) {
+        return {};
+    }
+    return limit;
+}
+
+bool AudioStream::readLimitReached() const
+{
+    const auto limit = readLimitSamples();
+    return limit.has_value() && position() >= *limit;
+}
+
 double AudioStream::fadeGain() const
 {
     return m_fadeGain.load(std::memory_order_acquire);
@@ -156,14 +175,40 @@ void AudioStream::setPosition(uint64_t pos)
     clearBitrateSpans();
 }
 
+void AudioStream::setReadLimitSamples(uint64_t samplePosition)
+{
+    const auto channels = static_cast<uint64_t>(std::max(1, channelCount()));
+    samplePosition -= samplePosition % channels;
+    m_readLimitSamples.store(samplePosition, std::memory_order_release);
+}
+
+void AudioStream::clearReadLimit()
+{
+    m_readLimitSamples.store(NoReadLimit, std::memory_order_release);
+}
+
 int AudioStream::read(double* output, int frames)
 {
     const int channels = channelCount();
-    if(channels <= 0) {
+    if(channels <= 0 || frames <= 0) {
         return 0;
     }
 
-    const auto samples       = static_cast<size_t>(frames) * channels;
+    auto samples = static_cast<size_t>(frames) * static_cast<size_t>(channels);
+    if(const auto limit = readLimitSamples()) {
+        const uint64_t currentPosition = position();
+        if(currentPosition >= *limit) {
+            return 0;
+        }
+
+        const uint64_t remainingSamples = *limit - currentPosition;
+        samples                         = static_cast<size_t>(std::min<uint64_t>(samples, remainingSamples));
+        samples -= samples % static_cast<size_t>(channels);
+        if(samples == 0) {
+            return 0;
+        }
+    }
+
     auto reader              = m_buffer.reader();
     const size_t readSamples = reader.read(output, samples);
     const int readFrames     = static_cast<int>(readSamples) / channels;
@@ -178,7 +223,7 @@ int AudioStream::read(double* output, int frames)
 AudioStream::FadeRamp AudioStream::calculateFadeGainRamp(int frames, int outputSampleRate)
 {
     const auto currentState = state();
-    if(currentState != AudioStream::State::FadingIn && currentState != AudioStream::State::FadingOut) {
+    if(currentState != State::FadingIn && currentState != AudioStream::State::FadingOut) {
         const double gain = m_fadeGain.load(std::memory_order_acquire);
         return {.startGain = gain, .endGain = gain, .active = false};
     }
@@ -202,7 +247,7 @@ AudioStream::FadeRamp AudioStream::calculateFadeGainRamp(int frames, int outputS
 
     const Engine::FadeCurve curve = m_fadeCurve.load(std::memory_order_acquire);
     const Engine::FadeDirection direction
-        = currentState == AudioStream::State::FadingOut ? Engine::FadeDirection::Out : Engine::FadeDirection::In;
+        = currentState == State::FadingOut ? Engine::FadeDirection::Out : Engine::FadeDirection::In;
     const double gainStart01 = Engine::gain01(progressStart, curve, direction);
     const double gainEnd01   = Engine::gain01(progressEnd, curve, direction);
 
@@ -220,8 +265,8 @@ AudioStream::FadeRamp AudioStream::calculateFadeGainRamp(int frames, int outputS
     if(endFrame >= m_fadeTotalFrames) {
         m_fadeGain.store(m_fadeEndGain, std::memory_order_release);
 
-        if(currentState == AudioStream::State::FadingOut) {
-            m_state.store(AudioStream::State::Stopped, std::memory_order_relaxed);
+        if(currentState == State::FadingOut) {
+            m_state.store(State::Stopped, std::memory_order_relaxed);
         }
         else {
             m_state.store(AudioStream::State::Playing, std::memory_order_relaxed);
@@ -242,7 +287,7 @@ bool AudioStream::isBufferLow() const
 
 bool AudioStream::isEndOfStream() const
 {
-    return m_endOfInput.load(std::memory_order_relaxed) && m_buffer.empty();
+    return readLimitReached() || (m_endOfInput.load(std::memory_order_relaxed) && m_buffer.empty());
 }
 
 size_t AudioStream::bufferedSamples() const
@@ -352,32 +397,32 @@ void AudioStream::trimConsumedBitrateSpans(uint64_t currentSample) const
 void AudioStream::handleCommand(Command cmd, int param)
 {
     switch(cmd) {
-        case(Command::Play):
-            m_state.store(AudioStream::State::Playing, std::memory_order_relaxed);
+        case Command::Play:
+            m_state.store(State::Playing, std::memory_order_relaxed);
             break;
-        case(Command::Pause):
-            m_state.store(AudioStream::State::Paused, std::memory_order_relaxed);
+        case Command::Pause:
+            m_state.store(State::Paused, std::memory_order_relaxed);
             break;
-        case(Command::Stop):
-            m_state.store(AudioStream::State::Stopped, std::memory_order_relaxed);
+        case Command::Stop:
+            m_state.store(State::Stopped, std::memory_order_relaxed);
             break;
-        case(Command::StartFadeIn):
+        case Command::StartFadeIn:
             startFadeInternal(param, true);
             break;
-        case(Command::StartFadeOut):
+        case Command::StartFadeOut:
             startFadeInternal(param, false);
             break;
-        case(Command::StopFade): {
+        case Command::StopFade: {
             m_fadeTotalFrames     = 0;
             m_fadeProcessedFrames = 0;
             const auto fadeState  = m_state.load(std::memory_order_acquire);
 
-            if(fadeState == AudioStream::State::FadingIn || fadeState == AudioStream::State::FadingOut) {
-                m_state.store(AudioStream::State::Playing, std::memory_order_relaxed);
+            if(fadeState == State::FadingIn || fadeState == State::FadingOut) {
+                m_state.store(State::Playing, std::memory_order_relaxed);
             }
             break;
         }
-        case(Command::ResetForSeek):
+        case Command::ResetForSeek:
             // Safe buffer reset - called from audio thread
             resetBufferForSeek();
             break;
@@ -390,7 +435,7 @@ void AudioStream::startFadeInternal(int durationMs, bool fadeIn)
     double startGain        = std::clamp(m_fadeGain.load(std::memory_order_acquire), 0.0, 1.0);
     const double targetGain = fadeIn ? 1.0 : 0.0;
 
-    if(fadeIn && (currentState == AudioStream::State::Pending || currentState == AudioStream::State::Stopped)) {
+    if(fadeIn && (currentState == State::Pending || currentState == State::Stopped)) {
         startGain = 0.0;
     }
 
@@ -402,7 +447,7 @@ void AudioStream::startFadeInternal(int durationMs, bool fadeIn)
         m_fadeTotalFrames     = 0;
         m_fadeProcessedFrames = 0;
         m_fadeGain.store(targetGain, std::memory_order_release);
-        m_state.store(fadeIn ? AudioStream::State::Playing : AudioStream::State::Stopped, std::memory_order_release);
+        m_state.store(fadeIn ? State::Playing : State::Stopped, std::memory_order_release);
         return;
     }
 
@@ -410,7 +455,7 @@ void AudioStream::startFadeInternal(int durationMs, bool fadeIn)
     m_fadeTotalFrames     = 0;
     m_fadeProcessedFrames = 0;
     m_fadeGain.store(startGain, std::memory_order_release);
-    m_state.store(fadeIn ? AudioStream::State::FadingIn : AudioStream::State::FadingOut, std::memory_order_release);
+    m_state.store(fadeIn ? State::FadingIn : State::FadingOut, std::memory_order_release);
 }
 
 void AudioStream::resetBufferForSeek()

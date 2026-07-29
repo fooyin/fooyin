@@ -333,6 +333,7 @@ private:
     void setCurrentTrackContext(const Engine::PlaybackItem& item);
     void setStreamToTrackOriginForTrack(const Track& track);
     [[nodiscard]] bool setStreamToTrackOriginForSegmentSwitch(const Track& track, uint64_t streamPosMs);
+    void updateCurrentStreamReadLimit();
     [[nodiscard]] AudioStreamPtr currentTrackTimingStream() const;
     void scheduleGaplessBoundaryStallDiagnostic(uint64_t generation, StreamId currentStreamId,
                                                 StreamId preparedStreamId);

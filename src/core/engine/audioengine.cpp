@@ -550,6 +550,8 @@ void AudioEngine::setTrackEndAutoTransitionEnabled(bool enabled)
     if(!enabled) {
         clearTrackEndAutoTransitions();
     }
+
+    updateCurrentStreamReadLimit();
 }
 
 void AudioEngine::setUpcomingTrackCandidate(const Engine::PlaybackItem& item)
@@ -850,6 +852,7 @@ bool AudioEngine::commitPreparedCrossfadeTransition(const Engine::PlaybackItem& 
 
     setCurrentTrackContext(item);
     setStreamToTrackOriginForTrack(track);
+    updateCurrentStreamReadLimit();
     clearTrackEndLatch();
     m_transitions.clearTrackEnding();
 
@@ -964,6 +967,7 @@ bool AudioEngine::commitPreparedGaplessTransition(const Engine::PlaybackItem& it
 
     setCurrentTrackContext(item);
     setStreamToTrackOriginForTrack(track);
+    updateCurrentStreamReadLimit();
     clearTrackEndLatch();
     m_transitions.clearTrackEnding();
 
@@ -1144,7 +1148,7 @@ void AudioEngine::stop()
     }
 
     if(auto stream = m_decoder.activeStream()) {
-        if(stream->endOfInput() && stream->bufferEmpty()) {
+        if((stream->endOfInput() && stream->bufferEmpty()) || stream->readLimitReached()) {
             const bool naturalEndStop = m_trackStatus.load(std::memory_order_relaxed) == Engine::TrackStatus::End;
             const uint64_t remainingOutputMs = m_pipeline.playbackDelayMs();
 
@@ -1739,6 +1743,8 @@ bool AudioEngine::startTrackCrossfade(const Engine::PlaybackItem& item, bool isM
         return true;
     }
 
+    updateCurrentStreamReadLimit();
+
     const int basePrefillMs = std::min(m_playbackBufferLengthMs / 4, MaxCrossfadePrefillMs);
     const int requestedPrefillMs
         = gaplessHandoff ? std::min(basePrefillMs, GaplessHandoffPrefillMs)
@@ -1953,6 +1959,7 @@ void AudioEngine::startSeekCrossfade(uint64_t positionMs, int fadeOutDurationMs,
     }
 
     setStreamToTrackOriginForTrack(m_currentTrack);
+    updateCurrentStreamReadLimit();
 
     const int requestedPrefillMs = std::max(fadeInDurationMs, m_playbackBufferLengthMs / 4);
     const int prefillTargetMs    = adjustedCrossfadePrefillMs(requestedPrefillMs);
@@ -2073,6 +2080,7 @@ void AudioEngine::performSimpleSeek(uint64_t positionMs, uint64_t requestId, int
     m_decoder.seek(seekPosMs);
     m_decoder.syncStreamPosition();
     setStreamToTrackOriginForTrack(m_currentTrack);
+    updateCurrentStreamReadLimit();
 
     if(!m_decoder.isDecoding()) {
         m_decoder.start();
@@ -2493,6 +2501,7 @@ void AudioEngine::syncDecoderTrackMetadata()
 
     m_currentTrack = changedTrack;
     setStreamToTrackOriginForTrack(changedTrack);
+    updateCurrentStreamReadLimit();
     if(changedTrack.bitrate() >= MinLiveBitrateKbps) {
         publishBitrate(changedTrack.bitrate());
     }
@@ -3387,7 +3396,7 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
         if(stream) {
             const uint64_t playbackDelayMs = m_pipeline.playbackDelayMs();
 
-            boundaryRemainingOutputMs = stream->bufferedDurationMs();
+            boundaryRemainingOutputMs = stream->readLimitReached() ? 0 : stream->bufferedDurationMs();
             if(boundaryRemainingOutputMs > std::numeric_limits<uint64_t>::max() - playbackDelayMs) {
                 boundaryRemainingOutputMs = std::numeric_limits<uint64_t>::max();
             }
@@ -3525,7 +3534,7 @@ void AudioEngine::updatePosition()
     input.decoderLowWatermarkMs               = m_decoder.lowWatermarkMs();
     input.streamId                            = stream->id();
     input.streamState                         = stream->state();
-    input.streamEndOfInput                    = stream->endOfInput();
+    input.streamEndOfInput                    = stream->endOfInput() || stream->readLimitReached();
     input.streamBufferedDurationMs            = stream->bufferedDurationMs();
     input.streamPositionMs                    = stream->positionMs();
     input.streamToTrackOriginMs               = m_streamToTrackOriginMs;
@@ -4302,8 +4311,8 @@ AudioEngine::TrackEndingResult AudioEngine::checkTrackEnding(const AudioStreamPt
     input.predictiveTimelineHintsEnabled = shouldEnableTimelineTransitionHints(m_currentTrack, m_decoderPlaybackHints);
     input.timelineDelayMs                = crossfadeUsesAudibleBoundary ? 0 : timelineDelayMs;
     input.remainingOutputMs              = remainingOutputMs;
-    input.endOfInput                     = stream->endOfInput();
-    input.bufferEmpty                    = stream->bufferEmpty();
+    input.endOfInput                     = stream->endOfInput() || stream->readLimitReached();
+    input.bufferEmpty                    = stream->bufferEmpty() || stream->readLimitReached();
     input.autoCrossfadeEnabled           = configuredMode == AutoTransitionMode::Crossfade;
     input.gaplessEnabled                 = configuredMode == AutoTransitionMode::Gapless;
     input.autoFadeOutMs          = input.autoCrossfadeEnabled ? m_crossfadingValues.autoChange.effectiveOutMs() : 0;
@@ -4526,6 +4535,27 @@ bool AudioEngine::setStreamToTrackOriginForSegmentSwitch(const Track& track, uin
     return true;
 }
 
+void AudioEngine::updateCurrentStreamReadLimit()
+{
+    const auto stream = m_decoder.activeStream();
+    if(!stream) {
+        return;
+    }
+
+    if(m_trackEndAutoTransitionEnabled || !isBoundedSegmentTrack(m_currentTrack) || m_currentTrack.duration() == 0) {
+        stream->clearReadLimit();
+        return;
+    }
+
+    const uint64_t absoluteEndMs = saturatingAdd(m_currentTrack.offset(), m_currentTrack.duration());
+    const uint64_t streamEndMs = absoluteEndMs > m_streamToTrackOriginMs ? absoluteEndMs - m_streamToTrackOriginMs : 0;
+    const AudioFormat format   = stream->format();
+    const int frames           = std::max(0, format.framesForDuration(streamEndMs));
+    const auto samples = static_cast<uint64_t>(frames) * static_cast<uint64_t>(std::max(1, format.channelCount()));
+
+    stream->setReadLimitSamples(samples);
+}
+
 bool AudioEngine::initDecoder(const Engine::PlaybackItem& item, bool allowPreparedStream)
 {
     const Track& track = item.track;
@@ -4613,6 +4643,7 @@ bool AudioEngine::setupNewTrackStream(const Track& track, bool applyPendingSeek)
         m_decoder.syncStreamPosition();
     }
 
+    updateCurrentStreamReadLimit();
     m_decoder.start();
 
     if(applyPendingSeek) {
@@ -5112,6 +5143,7 @@ bool AudioEngine::executeSegmentSwitchLoad(const Engine::PlaybackItem& item, boo
 
         clearPreparedNextTrack();
         setCurrentTrackContext(item);
+        updateCurrentStreamReadLimit();
         clearTrackEndLatch();
         m_transitions.clearTrackEnding();
 
