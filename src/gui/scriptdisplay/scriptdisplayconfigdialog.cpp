@@ -121,6 +121,8 @@ ScriptDisplayConfigDialog::ScriptDisplayConfigDialog(ScriptDisplay* widget, QWid
 
     formatLayout->addWidget(m_script, 1, 0);
 
+    QObject::connect(widget, &ScriptDisplay::configChanged, this, &ScriptDisplayConfigDialog::syncCurrentConfig);
+
     loadCurrentConfig();
 }
 
@@ -141,6 +143,7 @@ ScriptDisplay::ConfigData ScriptDisplayConfigDialog::config() const
 
         .horizontalAlignment = m_horizontalAlignment->currentData().toInt(),
         .verticalAlignment   = m_verticalAlignment->currentData().toInt(),
+        .showScrollBar       = widget()->currentConfig().showScrollBar,
     };
 }
 
@@ -167,5 +170,14 @@ void ScriptDisplayConfigDialog::setConfig(const ScriptDisplay::ConfigData& confi
     if(const int index = m_verticalAlignment->findData(config.verticalAlignment); index >= 0) {
         m_verticalAlignment->setCurrentIndex(index);
     }
+}
+
+void ScriptDisplayConfigDialog::mergeExternalConfig(const ScriptDisplay::ConfigData& previous,
+                                                    const ScriptDisplay::ConfigData& current)
+{
+    mergeExternalFields(previous, current, &ScriptDisplay::ConfigData::script, &ScriptDisplay::ConfigData::font,
+                        &ScriptDisplay::ConfigData::bgColour, &ScriptDisplay::ConfigData::fgColour,
+                        &ScriptDisplay::ConfigData::linkColour, &ScriptDisplay::ConfigData::horizontalAlignment,
+                        &ScriptDisplay::ConfigData::verticalAlignment, &ScriptDisplay::ConfigData::showScrollBar);
 }
 } // namespace Fooyin

@@ -72,6 +72,7 @@ public:
     void loadLayoutData(const QJsonObject& layout) override;
 
 Q_SIGNALS:
+    void configChanged();
     void requestArtworkSearch(const Fooyin::TrackList& tracks, Fooyin::Track::Cover type, bool quick);
     void requestArtworkRemoval(const Fooyin::TrackList& tracks, Fooyin::Track::Cover type);
 

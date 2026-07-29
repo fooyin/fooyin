@@ -698,6 +698,8 @@ void RadioBrowserWidget::clearSavedDefaults() const
 
 void RadioBrowserWidget::applyConfig(const ConfigData& config)
 {
+    const ConfigData previousConfig{m_config};
+
     const bool searchConfigChanged = m_hideBroken != config.hideBroken;
 
     m_config.doubleClickAction = config.doubleClickAction;
@@ -710,10 +712,14 @@ void RadioBrowserWidget::applyConfig(const ConfigData& config)
     m_hideBroken               = config.hideBroken;
 
     m_controller->setHideBroken(m_hideBroken);
-    setViewConfig(config.view);
+    setViewConfig(config.view, false);
 
     if(searchConfigChanged && !m_loadingLayout) {
         applyFilterSearch();
+    }
+
+    if(previousConfig != m_config) {
+        Q_EMIT configChanged();
     }
 }
 
@@ -724,9 +730,13 @@ bool RadioBrowserWidget::sendClicks() const
 
 void RadioBrowserWidget::setSendClicks(const bool enabled)
 {
-    m_sendClicks = enabled;
+    if(std::exchange(m_sendClicks, enabled) == enabled) {
+        return;
+    }
+
     m_settings->fileSet(SendClicksKey, enabled);
     m_controller->setSendClicks(enabled);
+    Q_EMIT sendClicksChanged(enabled);
 }
 
 bool RadioBrowserWidget::separateSavedStationsViewStateAllowed() const
@@ -755,7 +765,7 @@ void RadioBrowserWidget::showEvent(QShowEvent* event)
 
 void RadioBrowserWidget::openConfigDialog()
 {
-    showConfigDialog(new RadioBrowserConfigDialog(this, this));
+    showConfigDialog(new RadioBrowserConfigDialog(this, this), Qt::NonModal);
 }
 
 void RadioBrowserWidget::handleIconSizeChanged(const QSize& size)
@@ -1076,6 +1086,8 @@ RadioSearchRequest RadioBrowserWidget::currentFilterRequest() const
 
 void RadioBrowserWidget::setFilterRequest(const RadioSearchRequest& request)
 {
+    const bool hideBrokenChanged = m_config.hideBroken != request.hideBroken;
+
     m_filterRequest = request;
 
     if(m_filterBar) {
@@ -1086,6 +1098,10 @@ void RadioBrowserWidget::setFilterRequest(const RadioSearchRequest& request)
     m_config.hideBroken = m_hideBroken;
     m_controller->setHideBroken(m_hideBroken);
     updateSavedSearchState();
+
+    if(hideBrokenChanged) {
+        Q_EMIT configChanged();
+    }
 }
 
 void RadioBrowserWidget::updateSavedSearchState()
@@ -1898,8 +1914,9 @@ void RadioBrowserWidget::applyActiveViewState()
     updateIconColumnOrder();
 }
 
-void RadioBrowserWidget::setViewConfig(const ConfigData::ViewConfig& config)
+void RadioBrowserWidget::setViewConfig(const ConfigData::ViewConfig& config, const bool notify)
 {
+    const ConfigData::ViewConfig previousConfig{m_config.view};
     const bool separateViewStateWasEnabled = m_config.view.separateSavedStationsViewState;
 
     ConfigData::ViewConfig requestedConfig{config};
@@ -1998,6 +2015,10 @@ void RadioBrowserWidget::setViewConfig(const ConfigData::ViewConfig& config)
     }
 
     QMetaObject::invokeMethod(m_resultsView->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+
+    if(notify && previousConfig != m_config.view) {
+        Q_EMIT configChanged();
+    }
 }
 
 void RadioBrowserWidget::updateIconColumnOrder()

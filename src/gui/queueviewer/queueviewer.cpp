@@ -276,6 +276,7 @@ void QueueViewer::setupConnections()
 
         m_config.iconSize = size;
         m_model->setIconSize(size);
+        Q_EMIT configChanged();
     });
     QObject::connect(m_view, &QAbstractItemView::doubleClicked, this, &QueueViewer::handleQueueDoubleClicked);
 
@@ -835,6 +836,8 @@ void QueueViewer::applyConfig(const ConfigData& config)
     m_view->setAlternatingRowColors(m_config.alternatingRows);
 
     QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+
+    Q_EMIT configChanged();
 }
 
 QueueViewer::ConfigData QueueViewer::configFromLayout(const QJsonObject& layout) const
@@ -917,6 +920,6 @@ void QueueViewer::loadTopLevelState()
 
 void QueueViewer::openConfigDialog()
 {
-    showConfigDialog(new QueueViewerConfigDialog(this, this));
+    showConfigDialog(new QueueViewerConfigDialog(this, this), Qt::NonModal);
 }
 } // namespace Fooyin

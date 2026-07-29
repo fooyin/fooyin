@@ -89,6 +89,9 @@ public:
 
     [[nodiscard]] QSize minimumSizeHint() const override;
 
+Q_SIGNALS:
+    void configChanged();
+
 protected:
     void paintEvent(QPaintEvent* event) override;
     void timerEvent(QTimerEvent* event) override;

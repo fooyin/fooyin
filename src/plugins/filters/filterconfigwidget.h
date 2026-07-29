@@ -43,6 +43,8 @@ public:
 protected:
     [[nodiscard]] FilterWidget::ConfigData config() const override;
     void setConfig(const FilterWidget::ConfigData& config) override;
+    void mergeExternalConfig(const FilterWidget::ConfigData& previous,
+                             const FilterWidget::ConfigData& current) override;
 
 private:
     FilterColumnRegistry* m_columnRegistry;

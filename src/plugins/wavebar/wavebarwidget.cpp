@@ -341,6 +341,8 @@ void WaveBarWidget::applyConfig(const ConfigData& config)
     m_builder->setDecibelScale(m_config.decibelScale);
 
     QMetaObject::invokeMethod(m_container, [this]() { rescaleWaveform(); }, Qt::QueuedConnection);
+
+    Q_EMIT configChanged();
 }
 
 WaveBarWidget::ConfigData WaveBarWidget::configFromLayout(const QJsonObject& layout) const
@@ -530,7 +532,7 @@ void WaveBarWidget::resizeEvent(QResizeEvent* event)
 
 void WaveBarWidget::openConfigDialog()
 {
-    showConfigDialog(new WaveBarConfigDialog(this, this));
+    showConfigDialog(new WaveBarConfigDialog(this, this), Qt::NonModal);
 }
 
 void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)

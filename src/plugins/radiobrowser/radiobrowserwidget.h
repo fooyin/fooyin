@@ -97,6 +97,8 @@ public:
             bool useIconGapsForSideCaptions{true};
             int iconItemBorderWidth{2};
             bool uniformStationIcons{true};
+
+            bool operator==(const ViewConfig&) const = default;
         };
 
         ViewConfig view;
@@ -104,6 +106,8 @@ public:
         int middleClickAction{0};
         bool playbackOnSend{true};
         bool hideBroken{true};
+
+        bool operator==(const ConfigData&) const = default;
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;
@@ -116,6 +120,10 @@ public:
     void setSendClicks(bool enabled);
     [[nodiscard]] bool separateSavedStationsViewStateAllowed() const;
     void setSeparateSavedStationsViewStateAllowed(bool allowed);
+
+Q_SIGNALS:
+    void configChanged();
+    void sendClicksChanged(bool enabled);
 
 protected:
     void showEvent(QShowEvent* event) override;
@@ -188,7 +196,7 @@ private:
 
     void saveCurrentViewState();
     void applyActiveViewState();
-    void setViewConfig(const ConfigData::ViewConfig& config);
+    void setViewConfig(const ConfigData::ViewConfig& config, bool notify = true);
     void updateIconColumnOrder();
     void disconnectFilterBar();
     void updateFilterBarCategories();

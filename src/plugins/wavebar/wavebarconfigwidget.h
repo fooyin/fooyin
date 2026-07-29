@@ -52,6 +52,8 @@ public:
 protected:
     [[nodiscard]] WaveBarWidget::ConfigData config() const override;
     void setConfig(const WaveBarWidget::ConfigData& config) override;
+    void mergeExternalConfig(const WaveBarWidget::ConfigData& previous,
+                             const WaveBarWidget::ConfigData& current) override;
 
 private:
     void setGlobalCacheConfig(int numSamples);

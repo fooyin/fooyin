@@ -480,6 +480,8 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     layout->addWidget(tabs, 0, 0);
     layout->setColumnStretch(0, 1);
 
+    QObject::connect(spectrum, &SpectrumWidget::configChanged, this, &SpectrumConfigDialog::syncCurrentConfig);
+
     loadCurrentConfig();
 }
 
@@ -649,6 +651,30 @@ void SpectrumConfigDialog::setConfig(const SpectrumWidget::ConfigData& config)
     loadColour(m_octaveGridColour, Colours::Type::OctaveGrid);
     loadColour(m_whiteKeyColour, Colours::Type::WhiteKey);
     loadColour(m_blackKeyColour, Colours::Type::BlackKey);
+}
+
+void SpectrumConfigDialog::mergeExternalConfig(const SpectrumWidget::ConfigData& previous,
+                                               const SpectrumWidget::ConfigData& current)
+{
+    mergeExternalFields(previous, current, &SpectrumWidget::ConfigData::bandCount,
+                        &SpectrumWidget::ConfigData::barSpacing, &SpectrumWidget::ConfigData::barSections,
+                        &SpectrumWidget::ConfigData::sectionSpacing, &SpectrumWidget::ConfigData::minFrequencyHz,
+                        &SpectrumWidget::ConfigData::maxFrequencyHz, &SpectrumWidget::ConfigData::minNote,
+                        &SpectrumWidget::ConfigData::maxNote, &SpectrumWidget::ConfigData::pitchHz,
+                        &SpectrumWidget::ConfigData::transpose, &SpectrumWidget::ConfigData::amplitudeMinDb,
+                        &SpectrumWidget::ConfigData::amplitudeMaxDb, &SpectrumWidget::ConfigData::amplitudesEnabled,
+                        &SpectrumWidget::ConfigData::amplitudeHoldTimeMs, &SpectrumWidget::ConfigData::amplitudeGravity,
+                        &SpectrumWidget::ConfigData::peaksEnabled, &SpectrumWidget::ConfigData::peakHoldTimeMs,
+                        &SpectrumWidget::ConfigData::peakGravity, &SpectrumWidget::ConfigData::updateFps,
+                        &SpectrumWidget::ConfigData::fftSize, &SpectrumWidget::ConfigData::windowFunction,
+                        &SpectrumWidget::ConfigData::gradientOrientation, &SpectrumWidget::ConfigData::labelMode,
+                        &SpectrumWidget::ConfigData::drawStyle, &SpectrumWidget::ConfigData::showTopLabels,
+                        &SpectrumWidget::ConfigData::showBottomLabels, &SpectrumWidget::ConfigData::showLeftLabels,
+                        &SpectrumWidget::ConfigData::showRightLabels, &SpectrumWidget::ConfigData::showHorizontalGrid,
+                        &SpectrumWidget::ConfigData::showVerticalGrid, &SpectrumWidget::ConfigData::showWhiteKeys,
+                        &SpectrumWidget::ConfigData::showBlackKeys, &SpectrumWidget::ConfigData::showTooltip,
+                        &SpectrumWidget::ConfigData::fillSpectrum, &SpectrumWidget::ConfigData::interpolate,
+                        &SpectrumWidget::ConfigData::axisFont, &SpectrumWidget::ConfigData::colours);
 }
 } // namespace Fooyin::Spectrum
 

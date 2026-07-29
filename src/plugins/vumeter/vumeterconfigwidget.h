@@ -40,10 +40,13 @@ class VuMeterConfigDialog : public WidgetConfigDialog<VuMeterWidget, VuMeterWidg
 public:
     explicit VuMeterConfigDialog(VuMeterWidget* vuMeter, QWidget* parent = nullptr);
 
-private:
+protected:
     [[nodiscard]] VuMeterWidget::ConfigData config() const override;
     void setConfig(const VuMeterWidget::ConfigData& config) override;
+    void mergeExternalConfig(const VuMeterWidget::ConfigData& previous,
+                             const VuMeterWidget::ConfigData& current) override;
 
+private:
     QSpinBox* m_peakHold;
     QSpinBox* m_falloff;
     QSpinBox* m_peakFalloff;

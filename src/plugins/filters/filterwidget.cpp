@@ -541,7 +541,14 @@ void FilterWidget::applyConfig(const ConfigData& config)
         validated.iconSize = factoryConfig().iconSize;
     }
 
-    const bool sendPlaybackChanged = m_config.sendPlayback != validated.sendPlayback;
+    const bool hasConfigChanged
+        = m_config.doubleClickAction != validated.doubleClickAction
+       || m_config.middleClickAction != validated.middleClickAction || m_config.sendPlayback != validated.sendPlayback
+       || m_config.playlistEnabled != validated.playlistEnabled || m_config.autoSwitch != validated.autoSwitch
+       || m_config.keepAlive != validated.keepAlive || m_config.playlistName != validated.playlistName
+       || m_config.rowHeight != validated.rowHeight || m_config.iconSize != validated.iconSize
+       || m_config.iconHorizontalGap != validated.iconHorizontalGap
+       || m_config.iconVerticalGap != validated.iconVerticalGap;
 
     m_config = validated;
 
@@ -552,7 +559,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
     m_view->changeIconSize(m_config.iconSize);
     QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
 
-    if(sendPlaybackChanged) {
+    if(hasConfigChanged) {
         Q_EMIT configChanged();
     }
 }
@@ -624,7 +631,7 @@ void FilterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
 
 void FilterWidget::openConfigDialog()
 {
-    showConfigDialog(new FilterConfigDialog(this, m_columnRegistry, this));
+    showConfigDialog(new FilterConfigDialog(this, m_columnRegistry, this), Qt::NonModal);
 }
 
 void FilterWidget::finalise()
@@ -791,6 +798,7 @@ void FilterWidget::setupConnections()
             m_config.iconSize = size;
             m_model->setIconSize(size);
             scheduleVisibleCoverPinUpdate();
+            Q_EMIT configChanged();
         }
     });
     QObject::connect(m_view->verticalScrollBar(), &QScrollBar::valueChanged, this,

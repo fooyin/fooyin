@@ -172,6 +172,8 @@ void OscilloscopeWidget::applyConfig(const ConfigData& config)
     m_config = validated;
     updateSessionConfig();
     update();
+
+    Q_EMIT configChanged();
 }
 
 QSize OscilloscopeWidget::minimumSizeHint() const
@@ -266,7 +268,7 @@ void OscilloscopeWidget::contextMenuEvent(QContextMenuEvent* event)
 
 void OscilloscopeWidget::openConfigDialog()
 {
-    showConfigDialog(new OscilloscopeConfigDialog(this, this));
+    showConfigDialog(new OscilloscopeConfigDialog(this, this), Qt::NonModal);
 }
 
 void OscilloscopeWidget::handlePlayStateChanged(Player::PlayState state)

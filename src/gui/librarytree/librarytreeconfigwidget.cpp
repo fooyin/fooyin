@@ -205,6 +205,8 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
         dialog->open();
     });
 
+    QObject::connect(libraryTree, &LibraryTreeWidget::configChanged, this, &LibraryTreeConfigDialog::syncCurrentConfig);
+
     loadCurrentConfig();
 }
 
@@ -260,5 +262,21 @@ void LibraryTreeConfigDialog::setConfig(const LibraryTreeWidget::ConfigData& con
     m_playlistName->setEnabled(m_playlistEnabled->isChecked());
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
     m_keepAlive->setEnabled(m_playlistEnabled->isChecked());
+}
+
+void LibraryTreeConfigDialog::mergeExternalConfig(const LibraryTreeWidget::ConfigData& previous,
+                                                  const LibraryTreeWidget::ConfigData& current)
+{
+    mergeExternalFields(
+        previous, current, &LibraryTreeWidget::ConfigData::doubleClickAction,
+        &LibraryTreeWidget::ConfigData::middleClickAction, &LibraryTreeWidget::ConfigData::sendPlayback,
+        &LibraryTreeWidget::ConfigData::playlistEnabled, &LibraryTreeWidget::ConfigData::autoSwitch,
+        &LibraryTreeWidget::ConfigData::keepAlive, &LibraryTreeWidget::ConfigData::playlistName,
+        &LibraryTreeWidget::ConfigData::restoreState, &LibraryTreeWidget::ConfigData::expandOnSingleClick,
+        &LibraryTreeWidget::ConfigData::autoExpandSearchResultLimit, &LibraryTreeWidget::ConfigData::animated,
+        &LibraryTreeWidget::ConfigData::showHeader, &LibraryTreeWidget::ConfigData::showScrollbar,
+        &LibraryTreeWidget::ConfigData::alternatingRows, &LibraryTreeWidget::ConfigData::showSummaryNode,
+        &LibraryTreeWidget::ConfigData::summaryNodeTitle, &LibraryTreeWidget::ConfigData::rowHeight,
+        &LibraryTreeWidget::ConfigData::iconSize);
 }
 } // namespace Fooyin

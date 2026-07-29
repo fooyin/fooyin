@@ -786,7 +786,7 @@ void PlaylistOrganiser::saveConfigToLayout(const ConfigData& config, QJsonObject
 
 void PlaylistOrganiser::openConfigDialog()
 {
-    showConfigDialog(new PlaylistOrganiserConfigDialog(this, this));
+    showConfigDialog(new PlaylistOrganiserConfigDialog(this, this), Qt::NonModal);
 }
 } // namespace Fooyin
 

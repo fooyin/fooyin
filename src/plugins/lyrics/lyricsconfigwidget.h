@@ -47,6 +47,8 @@ public:
 protected:
     [[nodiscard]] LyricsWidget::ConfigData config() const override;
     void setConfig(const LyricsWidget::ConfigData& config) override;
+    void mergeExternalConfig(const LyricsWidget::ConfigData& previous,
+                             const LyricsWidget::ConfigData& current) override;
 
 private:
     [[nodiscard]] ScrollMode scrollMode() const;

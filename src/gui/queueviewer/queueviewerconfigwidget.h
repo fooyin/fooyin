@@ -37,10 +37,12 @@ class QueueViewerConfigDialog : public WidgetConfigDialog<QueueViewer, QueueView
 public:
     explicit QueueViewerConfigDialog(QueueViewer* queueViewer, QWidget* parent = nullptr);
 
-private:
+protected:
     void setConfig(const QueueViewer::ConfigData& config) override;
     [[nodiscard]] QueueViewer::ConfigData config() const override;
+    void mergeExternalConfig(const QueueViewer::ConfigData& previous, const QueueViewer::ConfigData& current) override;
 
+private:
     ScriptLineEdit* m_titleScript;
     ScriptLineEdit* m_subtitleScript;
 

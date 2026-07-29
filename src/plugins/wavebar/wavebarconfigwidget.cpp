@@ -280,6 +280,8 @@ WaveBarConfigDialog::WaveBarConfigDialog(WaveBarWidget* waveBar, QWidget* parent
         updateCacheSize();
     });
 
+    QObject::connect(waveBar, &WaveBarWidget::configChanged, this, &WaveBarConfigDialog::syncCurrentConfig);
+
     loadCurrentConfig();
     setGlobalCacheConfig(widget()->globalNumSamples());
     updateCacheSize();
@@ -409,6 +411,20 @@ void WaveBarConfigDialog::setConfig(const WaveBarWidget::ConfigData& config)
     loadColour(m_rmsMinBorder, Colours::Type::RmsMinBorder);
     loadColour(m_cursorColour, Colours::Type::Cursor);
     loadColour(m_seekingCursorColour, Colours::Type::SeekingCursor);
+}
+
+void WaveBarConfigDialog::mergeExternalConfig(const WaveBarWidget::ConfigData& previous,
+                                              const WaveBarWidget::ConfigData& current)
+{
+    mergeExternalFields(previous, current, &WaveBarWidget::ConfigData::showLabels,
+                        &WaveBarWidget::ConfigData::showRemainingTime, &WaveBarWidget::ConfigData::showCursor,
+                        &WaveBarWidget::ConfigData::cursorWidth, &WaveBarWidget::ConfigData::mode,
+                        &WaveBarWidget::ConfigData::downmix, &WaveBarWidget::ConfigData::barWidth,
+                        &WaveBarWidget::ConfigData::barGap, &WaveBarWidget::ConfigData::supersampleFactor,
+                        &WaveBarWidget::ConfigData::peakDisplayMode, &WaveBarWidget::ConfigData::normaliseToPeak,
+                        &WaveBarWidget::ConfigData::decibelScale, &WaveBarWidget::ConfigData::maxScale,
+                        &WaveBarWidget::ConfigData::centreGap, &WaveBarWidget::ConfigData::channelScale,
+                        &WaveBarWidget::ConfigData::colourOptions);
 }
 
 void WaveBarConfigDialog::apply()

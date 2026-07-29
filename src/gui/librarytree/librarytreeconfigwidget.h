@@ -43,6 +43,8 @@ public:
 protected:
     [[nodiscard]] LibraryTreeWidget::ConfigData config() const override;
     void setConfig(const LibraryTreeWidget::ConfigData& config) override;
+    void mergeExternalConfig(const LibraryTreeWidget::ConfigData& previous,
+                             const LibraryTreeWidget::ConfigData& current) override;
 
 private:
     LibraryTreeGroupRegistry* m_groupsRegistry;

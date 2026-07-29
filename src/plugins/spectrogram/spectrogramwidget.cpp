@@ -429,6 +429,8 @@ void SpectrogramWidget::applyConfig(const ConfigData& config)
     updateTimerState();
     renderFrame();
     update();
+
+    Q_EMIT configChanged();
 }
 
 QSize SpectrogramWidget::minimumSizeHint() const
@@ -611,7 +613,7 @@ void SpectrogramWidget::contextMenuEvent(QContextMenuEvent* event)
 
 void SpectrogramWidget::openConfigDialog()
 {
-    showConfigDialog(new SpectrogramConfigDialog(this, this));
+    showConfigDialog(new SpectrogramConfigDialog(this, this), Qt::NonModal);
 }
 
 SpectrogramWidget::ConfigData SpectrogramWidget::configFromLayout(const QJsonObject& layout) const
