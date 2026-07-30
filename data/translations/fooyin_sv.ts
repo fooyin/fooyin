@@ -868,17 +868,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="297"/>
         <source>Removes characters from the end</source>
-        <translation type="unfinished"></translation>
+        <translation>Tar bort karaktärer på slutet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="299"/>
         <source>Returns characters from the left</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar karaktärer från vänster</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="302"/>
         <source>Returns characters from the right</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar karaktärer från höger</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="305"/>
@@ -983,7 +983,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="352"/>
         <source>Trims surrounding whitespace</source>
-        <translation type="unfinished"></translation>
+        <translation>Trimmar omringande blankt utrymme</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="354"/>
@@ -2333,7 +2333,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="82"/>
         <source>Load</source>
-        <translation type="unfinished">Ladda</translation>
+        <translation>Läs in</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="83"/>
@@ -2415,13 +2415,13 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="125"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="204"/>
         <source>Converter Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Konverterar-setup</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="129"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="268"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Utmatning</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="130"/>
@@ -2433,23 +2433,23 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="131"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="270"/>
         <source>Processing</source>
-        <translation type="unfinished"></translation>
+        <translation>Bearbetning</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="132"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="271"/>
         <source>Other</source>
-        <translation type="unfinished">Övrigt</translation>
+        <translation>Övrigt</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="141"/>
         <source>Convert</source>
-        <translation type="unfinished">Konvertera</translation>
+        <translation>Konvertera</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="204"/>
         <source>No output encoder is available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingen utmatningskodare är tillgänglig.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="209"/>
@@ -2505,7 +2505,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="300"/>
         <source>Lossy sources only</source>
-        <translation type="unfinished"></translation>
+        <translation>Endast icke-förlustsfria källor</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="301"/>
@@ -3996,7 +3996,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="42"/>
         <source>Default</source>
-        <translation type="unfinished">Default</translation>
+        <translation>Default</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="44"/>
@@ -5720,7 +5720,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1230"/>
         <source>Converter setup…</source>
-        <translation type="unfinished"></translation>
+        <translation>Komverterar-setup…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1239"/>
@@ -6141,7 +6141,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="121"/>
         <source>Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Setup</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="123"/>
@@ -7060,7 +7060,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="136"/>
         <source>Auto refresh on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Auto-uppfräshning vid uppstart</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="139"/>
@@ -9321,7 +9321,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="60"/>
         <source>Time span of audio displayed across the oscilloscope</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidsperiod av ljud som visas över oscilloskopen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="69"/>
@@ -13027,7 +13027,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="44"/>
         <source>Remember My Stations display separately</source>
-        <translation type="unfinished"></translation>
+        <translation>Kom ihåg mina stationer-display separat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="45"/>
@@ -13671,7 +13671,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1816"/>
         <source>Show station tooltips</source>
-        <translation type="unfinished">Visa stationsinforutor</translation>
+        <translation>Visa stationsinforutor</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1825"/>
@@ -15737,7 +15737,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="460"/>
         <source>Force search in the current playlist</source>
-        <translation type="unfinished">Tvinga sökning i aktuell spellista</translation>
+        <translation>Tvinga sökning i den aktuella spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="460"/>
