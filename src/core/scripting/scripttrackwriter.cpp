@@ -21,7 +21,9 @@
 
 #include "scriptbinder.h"
 
+#include <cmath>
 #include <functional>
+#include <limits>
 #include <type_traits>
 
 namespace Fooyin {
@@ -75,6 +77,24 @@ void setEditorRating(Track& track, const ScriptFieldValue& value)
             }
             else if constexpr(std::is_same_v<std::decay_t<decltype(val)>, QString>) {
                 track.setRatingStars(val.toInt());
+            }
+        },
+        value);
+}
+
+void setPlayCount(Track& track, const ScriptFieldValue& value)
+{
+    std::visit(
+        [&track](const auto& val) {
+            if constexpr(std::is_arithmetic_v<std::decay_t<decltype(val)>>) {
+                const auto count = static_cast<long double>(val);
+                if(std::isnan(count)) {
+                    return;
+                }
+
+                static constexpr long double Min = std::numeric_limits<int>::min();
+                static constexpr long double Max = std::numeric_limits<int>::max();
+                track.setPlayCount(static_cast<int>(std::clamp(count, Min, Max)));
             }
         },
         value);
@@ -141,7 +161,7 @@ bool setBuiltInTrackValue(const VariableKind kind, const ScriptFieldValue& value
             setStarRating(track, value);
             return true;
         case VariableKind::PlayCount:
-            invokeTrackSetter<&Track::setPlayCount>(track, value);
+            setPlayCount(track, value);
             return true;
         case VariableKind::FirstPlayed:
             invokeTrackSetter<&Track::setFirstPlayed>(track, value);

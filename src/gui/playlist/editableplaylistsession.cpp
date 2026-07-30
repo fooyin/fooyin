@@ -1090,10 +1090,10 @@ void EditablePlaylistSession::pasteTracks(PlaylistWidgetSessionHost& sessionHost
 
     int insertIndex{-1};
     if(!selected.empty()) {
-        insertIndex = std::ranges::max(selected | std::views::transform([](const QModelIndex& index) {
-                                           return index.data(PlaylistItem::Index).toInt();
-                                       }))
-                    + 1;
+        for(const QModelIndex& index : selected) {
+            insertIndex = std::max(insertIndex, index.data(PlaylistItem::Index).toInt());
+        }
+        ++insertIndex;
     }
 
     const UId playlistId      = host.playlistController()->currentPlaylist()->id();

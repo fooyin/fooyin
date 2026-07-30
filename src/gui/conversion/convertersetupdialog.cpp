@@ -64,6 +64,7 @@
 #include <QVBoxLayout>
 
 #include <set>
+#include <utility>
 
 using namespace Qt::StringLiterals;
 
@@ -1017,11 +1018,12 @@ void ConverterSetupDialog::applyPreset(const StoredConversionPreset& stored)
 
 void ConverterSetupDialog::applyDefaultPreset()
 {
-    const auto defaultProfile = std::ranges::find_if(m_profiles, [](const EncoderProfileEntry& entry) {
+    const auto& profiles      = std::as_const(m_profiles);
+    const auto defaultProfile = std::ranges::find_if(profiles, [](const EncoderProfileEntry& entry) {
         return entry.info.id == QLatin1StringView{ConverterSettings::DefaultEncoderProfileId};
     });
-    if(defaultProfile != m_profiles.cend()) {
-        m_profileTable->selectRow(static_cast<int>(std::ranges::distance(m_profiles.cbegin(), defaultProfile)));
+    if(defaultProfile != profiles.cend()) {
+        m_profileTable->selectRow(static_cast<int>(std::ranges::distance(profiles.cbegin(), defaultProfile)));
     }
     else {
         m_profileTable->setCurrentIndex({});
