@@ -192,7 +192,7 @@ QByteArray id3TextFrame(QByteArrayView id, QByteArrayView value)
     payload.append(char{3}); // UTF-8
     payload.append(value);
 
-    QByteArray frame{id};
+    QByteArray frame{id.data(), id.size()};
     appendSynchsafe32(frame, static_cast<quint32>(payload.size()));
     frame.append(QByteArray{2, '\0'});
     frame.append(payload);
