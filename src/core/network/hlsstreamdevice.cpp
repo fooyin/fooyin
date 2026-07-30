@@ -26,8 +26,10 @@
 #include <QMetaObject>
 #include <QNetworkReply>
 #include <QPointer>
+#include <QStringDecoder>
 #include <QThread>
 #include <QTimer>
+#include <QtEndian>
 
 #include <algorithm>
 #include <condition_variable>
@@ -37,6 +39,10 @@
 #include <unordered_set>
 
 using namespace Qt::StringLiterals;
+
+constexpr size_t MaxRememberedHlsSegments = 256;
+constexpr qsizetype MaxMetadataProbeBytes = 64 * 1024;
+constexpr QByteArrayView AppleEmsgId3Scheme{"https://developer.apple.com/streaming/emsg-id3"};
 
 namespace Fooyin {
 struct HlsVariant
@@ -86,7 +92,10 @@ public:
     QString error;
     bool finished{false};
     bool aborted{false};
+    bool metadataProbeComplete{false};
     std::stop_token readCancellationToken;
+    QByteArray metadataProbe;
+    NetworkStreamMetadata metadata;
     StreamUtils::BufferState streamBuffer;
     HlsPlaylistState playlist;
     StreamUtils::ReadModeState readMode;
@@ -96,9 +105,12 @@ public:
         error.clear();
         finished              = false;
         aborted               = false;
+        metadataProbeComplete = false;
         readCancellationToken = {};
         reply                 = nullptr;
         replyKind             = ReplyKind::None;
+        metadataProbe.clear();
+        metadata = {};
         streamBuffer.reset();
         playlist.reset(playlistUrl);
         readMode.reset();
@@ -106,7 +118,224 @@ public:
 };
 
 namespace {
-constexpr size_t MaxRememberedHlsSegments = 256;
+enum class Id3Version : uchar
+{
+    V2_3 = 3,
+    V2_4 = 4,
+};
+
+enum class Id3TextEncoding : uchar
+{
+    Latin1  = 0,
+    Utf16   = 1,
+    Utf16BE = 2,
+    Utf8    = 3,
+};
+
+uint32_t bigEndianUint32(QByteArrayView data, qsizetype offset)
+{
+    return qFromBigEndian<uint32_t>(data.data() + offset);
+}
+
+uint32_t syncSafeUint32(QByteArrayView data, qsizetype offset)
+{
+    return (static_cast<uint32_t>(static_cast<uchar>(data.at(offset))) << 21U)
+         | (static_cast<uint32_t>(static_cast<uchar>(data.at(offset + 1))) << 14U)
+         | (static_cast<uint32_t>(static_cast<uchar>(data.at(offset + 2))) << 7U)
+         | static_cast<uint32_t>(static_cast<uchar>(data.at(offset + 3)));
+}
+
+QString decodeId3Text(QByteArrayView data)
+{
+    if(data.isEmpty()) {
+        return {};
+    }
+
+    const auto encoding = static_cast<Id3TextEncoding>(data.front());
+    data                = data.sliced(1);
+
+    QString text;
+    switch(encoding) {
+        case Id3TextEncoding::Latin1:
+            text = QString::fromLatin1(data);
+            break;
+        case Id3TextEncoding::Utf16:
+            text = QStringDecoder{QStringDecoder::Utf16}(data);
+            break;
+        case Id3TextEncoding::Utf16BE:
+            text = QStringDecoder{QStringDecoder::Utf16BE}(data);
+            break;
+        case Id3TextEncoding::Utf8:
+            text = QString::fromUtf8(data);
+            break;
+        default:
+            return {};
+    }
+
+    text.remove(QChar::Null);
+    return text.trimmed();
+}
+
+std::optional<NetworkStreamMetadata> parseId3Metadata(QByteArrayView data)
+{
+    if(data.size() < 10 || data.first(3) != "ID3") {
+        return {};
+    }
+
+    const auto version = static_cast<Id3Version>(data.at(3));
+    if(version != Id3Version::V2_3 && version != Id3Version::V2_4) {
+        return {};
+    }
+
+    const qsizetype tagEnd = std::min<qsizetype>(data.size(), 10 + syncSafeUint32(data, 6));
+    qsizetype offset{10};
+    QString title;
+    QString artist;
+    QString station;
+
+    while(offset + 10 <= tagEnd) {
+        const QByteArrayView frameId = data.sliced(offset, 4);
+        if(frameId == QByteArrayView{"\0\0\0\0", 4}) {
+            break;
+        }
+
+        const uint32_t frameSize
+            = version == Id3Version::V2_4 ? syncSafeUint32(data, offset + 4) : bigEndianUint32(data, offset + 4);
+        offset += 10;
+        if(frameSize == 0 || std::cmp_greater(frameSize, tagEnd - offset)) {
+            break;
+        }
+
+        const QByteArrayView value = data.sliced(offset, frameSize);
+        if(frameId == "TIT2") {
+            title = decodeId3Text(value);
+        }
+        else if(frameId == "TPE1") {
+            artist = decodeId3Text(value);
+        }
+        else if(frameId == "TRSN") {
+            station = decodeId3Text(value);
+        }
+        offset += frameSize;
+    }
+
+    if(title.isEmpty() && artist.isEmpty() && station.isEmpty()) {
+        return {};
+    }
+
+    NetworkStreamMetadata metadata;
+    metadata.streamName = station;
+    if(!title.isEmpty()) {
+        metadata.streamTitle = artist.isEmpty() ? title : u"%1 - %2"_s.arg(artist, title);
+    }
+    return metadata;
+}
+
+std::optional<QByteArrayView> cString(QByteArrayView data, qsizetype& offset)
+{
+    const qsizetype start{offset};
+    while(offset < data.size() && data.at(offset) != '\0') {
+        ++offset;
+    }
+    if(offset >= data.size()) {
+        return {};
+    }
+
+    const QByteArrayView value = data.sliced(start, offset - start);
+    ++offset;
+    return value;
+}
+
+std::optional<NetworkStreamMetadata> parseEmsgMetadata(QByteArrayView box)
+{
+    if(box.size() < 12 || box.sliced(4, 4) != "emsg") {
+        return {};
+    }
+
+    const QByteArrayView payload = box.sliced(8);
+    const auto version           = static_cast<uchar>(payload.front());
+    qsizetype offset{4};
+    std::optional<QByteArrayView> scheme;
+
+    if(version == 0) {
+        scheme = cString(payload, offset);
+        if(!scheme || !cString(payload, offset) || offset + 16 > payload.size()) {
+            return {};
+        }
+        offset += 16;
+    }
+    else if(version == 1) {
+        if(offset + 20 > payload.size()) {
+            return {};
+        }
+        offset += 20;
+        scheme = cString(payload, offset);
+        if(!scheme || !cString(payload, offset)) {
+            return {};
+        }
+    }
+    else {
+        return {};
+    }
+
+    if(*scheme != AppleEmsgId3Scheme) {
+        return {};
+    }
+    return parseId3Metadata(payload.sliced(offset));
+}
+
+void updateMetadata(HlsStreamDeviceState& state, NetworkStreamMetadata metadata)
+{
+    if(state.metadata.streamName == metadata.streamName && state.metadata.streamTitle == metadata.streamTitle
+       && state.metadata.streamUrl == metadata.streamUrl) {
+        return;
+    }
+
+    metadata.revision = state.metadata.revision + 1;
+    state.metadata    = std::move(metadata);
+}
+
+void probeSegmentMetadata(HlsStreamDeviceState& state, QByteArrayView data)
+{
+    if(state.metadataProbeComplete || data.isEmpty()) {
+        return;
+    }
+
+    const qsizetype remaining = MaxMetadataProbeBytes - state.metadataProbe.size();
+    state.metadataProbe.append(data.first(std::max<qsizetype>(0, std::min(remaining, data.size()))));
+
+    const QByteArrayView probe{state.metadataProbe};
+    qsizetype offset{0};
+
+    while(offset + 8 <= probe.size()) {
+        const uint32_t boxSize = bigEndianUint32(probe, offset);
+        if(boxSize < 8 || boxSize > static_cast<uint32_t>(MaxMetadataProbeBytes)) {
+            state.metadataProbeComplete = true;
+            return;
+        }
+        if(std::cmp_greater(boxSize, probe.size() - offset)) {
+            break;
+        }
+
+        const QByteArrayView box = probe.sliced(offset, boxSize);
+        if(box.sliced(4, 4) == "emsg") {
+            if(const auto metadata = parseEmsgMetadata(box)) {
+                updateMetadata(state, *metadata);
+                state.metadataProbeComplete = true;
+                return;
+            }
+        }
+        else if(box.sliced(4, 4) == "moof" || box.sliced(4, 4) == "mdat") {
+            state.metadataProbeComplete = true;
+            return;
+        }
+        offset += boxSize;
+    }
+
+    if(state.metadataProbe.size() >= MaxMetadataProbeBytes) {
+        state.metadataProbeComplete = true;
+    }
+}
 
 void appendSegmentData(HlsStreamDeviceState& state, QNetworkReply* reply)
 {
@@ -114,7 +343,12 @@ void appendSegmentData(HlsStreamDeviceState& state, QNetworkReply* reply)
         return;
     }
 
+    const quint64 bytesReceivedBefore = state.streamBuffer.bytesReceived;
     StreamUtils::appendReplyData(state.streamBuffer, reply);
+    const auto bytesAppended = static_cast<qsizetype>(state.streamBuffer.bytesReceived - bytesReceivedBefore);
+    if(bytesAppended > 0) {
+        probeSegmentMetadata(state, QByteArrayView{state.streamBuffer.data}.last(bytesAppended));
+    }
 }
 
 QUrl absoluteUrl(const QUrl& base, const QString& value)
@@ -355,6 +589,10 @@ void HlsRequestScheduler::startRequest(const QUrl& url, HlsStreamDeviceState::Re
             }
             scheduler.m_state->reply     = reply;
             scheduler.m_state->replyKind = kind;
+            if(kind == HlsStreamDeviceState::ReplyKind::Segment) {
+                scheduler.m_state->metadataProbe.clear();
+                scheduler.m_state->metadataProbeComplete = false;
+            }
         }
 
         QObject::connect(reply, &QIODevice::readyRead, reply, [state = scheduler.m_state, reply]() {
@@ -471,6 +709,12 @@ qsizetype HlsStreamDevice::bufferedByteCount() const
 bool HlsStreamDevice::shouldExposePathToDecoder() const
 {
     return false;
+}
+
+std::optional<NetworkStreamMetadata> HlsStreamDevice::remoteStreamMetadata() const
+{
+    const std::scoped_lock lock{m_state->mutex};
+    return m_state->metadata;
 }
 
 void HlsStreamDevice::setNonBlockingReadsEnabled(bool enabled)

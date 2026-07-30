@@ -46,6 +46,7 @@ public:
     [[nodiscard]] bool readWouldBlock() const override;
     [[nodiscard]] qsizetype bufferedByteCount() const override;
     [[nodiscard]] bool shouldExposePathToDecoder() const override;
+    [[nodiscard]] std::optional<NetworkStreamMetadata> remoteStreamMetadata() const override;
     void setNonBlockingReadsEnabled(bool enabled) override;
     void setReadCancellationToken(std::stop_token token) override;
 

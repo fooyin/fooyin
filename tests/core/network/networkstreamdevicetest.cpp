@@ -17,6 +17,7 @@
  *
  */
 
+#include <core/network/hlsstreamdevice.h>
 #include <core/network/networkstreamdevice.h>
 #include <core/network/networkutils.h>
 
@@ -26,6 +27,7 @@
 #include <QNetworkReply>
 #include <QPointer>
 #include <QStandardPaths>
+#include <QtEndian>
 
 #include <algorithm>
 #include <chrono>
@@ -160,6 +162,70 @@ QByteArray icyStreamData(QByteArrayView audio, QByteArray metadata)
     data.append(static_cast<char>(blockCount));
     data.append(metadata);
     return data;
+}
+
+void appendBigEndian32(QByteArray& data, quint32 value)
+{
+    char encoded[4];
+    qToBigEndian(value, encoded);
+    data.append(encoded, 4);
+}
+
+void appendBigEndian64(QByteArray& data, quint64 value)
+{
+    char encoded[8];
+    qToBigEndian(value, encoded);
+    data.append(encoded, 8);
+}
+
+void appendSynchsafe32(QByteArray& data, quint32 value)
+{
+    data.append(static_cast<char>((value >> 21U) & 0x7FU));
+    data.append(static_cast<char>((value >> 14U) & 0x7FU));
+    data.append(static_cast<char>((value >> 7U) & 0x7FU));
+    data.append(static_cast<char>(value & 0x7FU));
+}
+
+QByteArray id3TextFrame(QByteArrayView id, QByteArrayView value)
+{
+    QByteArray payload;
+    payload.append(char{3}); // UTF-8
+    payload.append(value);
+
+    QByteArray frame{id};
+    appendSynchsafe32(frame, static_cast<quint32>(payload.size()));
+    frame.append(QByteArray{2, '\0'});
+    frame.append(payload);
+    return frame;
+}
+
+QByteArray timedId3Emsg(QByteArrayView artist, QByteArrayView title, QByteArrayView station)
+{
+    QByteArray frames;
+    frames.append(id3TextFrame("TPE1", artist));
+    frames.append(id3TextFrame("TIT2", title));
+    frames.append(id3TextFrame("TRSN", station));
+
+    QByteArray id3{"ID3\x04\x00\x00", 6};
+    appendSynchsafe32(id3, static_cast<quint32>(frames.size()));
+    id3.append(frames);
+
+    QByteArray payload{4, '\0'};
+    payload[0] = char{1}; // emsg version 1
+    appendBigEndian32(payload, 48'000);
+    appendBigEndian64(payload, 0);
+    appendBigEndian32(payload, 0);
+    appendBigEndian32(payload, 1);
+    payload.append("https://developer.apple.com/streaming/emsg-id3");
+    payload.append('\0');
+    payload.append('\0'); // Empty value
+    payload.append(id3);
+
+    QByteArray box;
+    appendBigEndian32(box, static_cast<quint32>(8 + payload.size()));
+    box.append("emsg");
+    box.append(payload);
+    return box;
 }
 } // namespace
 
@@ -362,5 +428,64 @@ TEST_F(NetworkStreamDeviceTest, StopsReconnectLoopAfterRepeatedEmptyCleanFinishe
     QCoreApplication::processEvents();
 
     EXPECT_EQ(network->requestCount, MaxReconnects + 1);
+}
+
+TEST_F(NetworkStreamDeviceTest, HlsReadsTimedId3MetadataFromEmsg)
+{
+    auto network = makeFakeNetworkAccessManager();
+    HlsStreamDevice device{network, QUrl{u"https://radio.example.com/live/playlist.m3u8"_s}, 2048};
+
+    ASSERT_TRUE(device.open(QIODevice::ReadOnly));
+
+    QPointer<FakeReply> playlistReply = network->lastReply;
+    ASSERT_FALSE(playlistReply.isNull());
+    playlistReply->appendData("#EXTM3U\n"
+                              "#EXTINF:3,\n"
+                              "segment-1.m4s\n"
+                              "#EXTINF:3,\n"
+                              "segment-2.m4s\n"
+                              "#EXT-X-ENDLIST\n");
+    playlistReply->emitFinished();
+    QCoreApplication::processEvents();
+
+    QPointer<FakeReply> segmentReply = network->lastReply;
+    ASSERT_FALSE(segmentReply.isNull());
+    const QByteArray firstMetadata = timedId3Emsg("Paul Carrack", "Don't Shed a Tear", "LG73");
+    segmentReply->appendData(firstMetadata.first(17));
+    segmentReply->emitReadyRead();
+    QCoreApplication::processEvents();
+
+    ASSERT_TRUE(device.remoteStreamMetadata().has_value());
+    EXPECT_EQ(device.remoteStreamMetadata()->revision, 0);
+
+    segmentReply->appendData(firstMetadata.sliced(17));
+    segmentReply->emitReadyRead();
+    QCoreApplication::processEvents();
+
+    const auto metadata = device.remoteStreamMetadata();
+    ASSERT_TRUE(metadata.has_value());
+    EXPECT_EQ(metadata->streamTitle, u"Paul Carrack - Don't Shed a Tear"_s);
+    EXPECT_EQ(metadata->streamName, u"LG73"_s);
+    EXPECT_EQ(metadata->revision, 1);
+
+    auto read = std::async(std::launch::async, [&device, size = firstMetadata.size()]() { return device.read(size); });
+    ASSERT_EQ(read.wait_for(std::chrono::milliseconds{500}), std::future_status::ready);
+    EXPECT_EQ(read.get(), firstMetadata);
+
+    segmentReply->emitFinished();
+    QCoreApplication::processEvents();
+
+    QPointer<FakeReply> nextSegmentReply = network->lastReply;
+    ASSERT_FALSE(nextSegmentReply.isNull());
+    ASSERT_NE(nextSegmentReply, segmentReply);
+    nextSegmentReply->appendData(timedId3Emsg("The Police", "Message In A Bottle", "LG73"));
+    nextSegmentReply->emitReadyRead();
+    QCoreApplication::processEvents();
+
+    const auto updatedMetadata = device.remoteStreamMetadata();
+    ASSERT_TRUE(updatedMetadata.has_value());
+    EXPECT_EQ(updatedMetadata->streamTitle, u"The Police - Message In A Bottle"_s);
+    EXPECT_EQ(updatedMetadata->streamName, u"LG73"_s);
+    EXPECT_EQ(updatedMetadata->revision, 2);
 }
 } // namespace Fooyin::Testing
