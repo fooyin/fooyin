@@ -7487,7 +7487,7 @@ och senast spelad använder det senare värdet.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="173"/>
         <source>Read ratings from ID3 POPM frames in MP3 files before text rating tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>Läs betyg från ID3 POPM-ramar i MP3-filer före textbetygstaggar.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="175"/>
@@ -15205,7 +15205,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="51"/>
         <source>Token</source>
-        <translation type="unfinished"></translation>
+        <translation>Pollett</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="61"/>
@@ -15225,7 +15225,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="166"/>
         <source>Token authenticated successfully</source>
-        <translation type="unfinished"></translation>
+        <translation>Pollett autentiserad med succé</translation>
     </message>
 </context>
 <context>
@@ -15233,12 +15233,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="114"/>
         <source>Malformed login callback.</source>
-        <translation type="unfinished"></translation>
+        <translation>Missformad inloggnings-återanrop.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="120"/>
         <source>No login token in callback.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingen inloggningspollet i återanrop.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="131"/>
@@ -15447,7 +15447,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="274"/>
         <source>Token</source>
-        <translation type="unfinished"></translation>
+        <translation>Pollett</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="277"/>
@@ -15457,7 +15457,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="298"/>
         <source>You can find your token here</source>
-        <translation type="unfinished"></translation>
+        <translation>Du kan hitta din pollett här</translation>
     </message>
 </context>
 <context>
