@@ -62,6 +62,7 @@
 #include <core/internalcoresettings.h>
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
+#include <core/network/networkutils.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/playlist/playlistloader.h>
 #include <core/playlist/playlistparser.h>
@@ -1802,7 +1803,7 @@ void GuiApplication::addStreamUrl()
     const QString input = dialog.text().trimmed();
     const QUrl url{input, QUrl::StrictMode};
     const QFileInfo urlInfo{url.path()};
-    if(m_core->playlistLoader()->parserForExtension(urlInfo.suffix().toLower())) {
+    if(!isHlsStreamUrl(url) && m_core->playlistLoader()->parserForExtension(urlInfo.suffix().toLower())) {
         const QString playlistName = !urlInfo.completeBaseName().isEmpty() ? urlInfo.completeBaseName() : url.host();
         m_playlistInteractor.loadPlaylist({{playlistName, url}});
         return;

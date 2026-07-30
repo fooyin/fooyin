@@ -871,15 +871,15 @@ int64_t ffSeek(void* data, int64_t offset, int whence)
     int64_t seekPos{0};
 
     switch(whence) {
-        case(AVSEEK_SIZE):
+        case AVSEEK_SIZE:
             return device->size();
-        case(SEEK_SET):
+        case SEEK_SET:
             seekPos = offset;
             break;
-        case(SEEK_CUR):
+        case SEEK_CUR:
             seekPos = device->pos() + offset;
             break;
-        case(SEEK_END):
+        case SEEK_END:
             seekPos = device->size() - offset;
             break;
         default:
@@ -902,7 +902,10 @@ FormatContext createAVFormatContext(const AudioSource& source, std::stop_token a
     ioContextData->remoteDevice = source.remoteStreamDevice;
     ioContextData->abortToken   = std::move(abortToken);
 
-    fc.ioContext.reset(avio_alloc_context(nullptr, 0, 0, ioContextData.get(), ffRead, nullptr, ffSeek));
+    // FFmpeg infers seek support from the callback itself, so returning an error from ffSeek is not enough to keep
+    // demuxers on their sequential path in all cases
+    auto* seek = source.device && source.device->isSequential() ? nullptr : ffSeek;
+    fc.ioContext.reset(avio_alloc_context(nullptr, 0, 0, ioContextData.get(), ffRead, nullptr, seek));
     if(!fc.ioContext) {
         qCWarning(FFMPEG) << "Failed to allocate AVIO context";
         return {};

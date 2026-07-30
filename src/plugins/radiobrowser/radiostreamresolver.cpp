@@ -61,11 +61,6 @@ bool shouldFetchAsPlaylist(const QUrl& url)
     return path.endsWith(u".m3u"_s) || path.endsWith(u".pls"_s);
 }
 
-bool isHlsUrl(const QUrl& url)
-{
-    return url.path().toLower().endsWith(u".m3u8"_s);
-}
-
 bool isPlaylistContentType(const QString& contentType)
 {
     const QString type = contentType.toLower();
@@ -132,7 +127,7 @@ void RadioStreamResolver::resolve(int requestId, const QString& url)
         return;
     }
 
-    if(isHlsUrl(streamUrl)) {
+    if(isHlsStreamUrl(streamUrl)) {
         Q_EMIT resolved(requestId, url, {url});
         return;
     }

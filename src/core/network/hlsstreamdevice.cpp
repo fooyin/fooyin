@@ -378,6 +378,9 @@ void HlsRequestScheduler::startRequest(const QUrl& url, HlsStreamDeviceState::Re
                 }
 
                 replyKind = scheduler.m_state->replyKind;
+                if(replyKind == HlsStreamDeviceState::ReplyKind::Segment && reply->error() == QNetworkReply::NoError) {
+                    appendSegmentData(*scheduler.m_state, reply);
+                }
                 if(reply->error() != QNetworkReply::NoError && !scheduler.m_state->aborted
                    && scheduler.m_state->error.isEmpty()) {
                     scheduler.m_state->error = reply->errorString();
