@@ -2246,12 +2246,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/core/engine/conversion/conversionpathresolver.cpp" line="161"/>
         <source>Duplicate output path</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторяющийся путь вывода</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/conversion/conversionpathresolver.cpp" line="176"/>
         <source>Could not resolve output path</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось разрешить путь вывода</translation>
     </message>
 </context>
 <context>
@@ -2259,79 +2259,80 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="60"/>
         <source>Preparing conversion…</source>
-        <translation type="unfinished"></translation>
+        <translation>Подготовка преобразования…</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="60"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="64"/>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="190"/>
         <source>Audio Conversion</source>
-        <translation type="unfinished"></translation>
+        <translation>Преобразование аудио</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="99"/>
         <source>Current file</source>
-        <translation type="unfinished">Текущий файл</translation>
+        <translation>Текущий файл</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="121"/>
         <source>File already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл уже существует</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="122"/>
         <source>The file already exists:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл уже существует:
+%1</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="125"/>
         <source>Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Перезаписать</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="126"/>
         <source>Skip</source>
-        <translation type="unfinished"></translation>
+        <translation>Пропустить</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="185"/>
         <source>Converted: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Преобразовано: %Ln дорожка</numerusform>
+            <numerusform>Преобразовано: %Ln дорожки</numerusform>
+            <numerusform>Преобразовано: %Ln дорожек</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="186"/>
         <source>Skipped: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Пропущено: %Ln дорожка</numerusform>
+            <numerusform>Пропущено: %Ln дорожки</numerusform>
+            <numerusform>Пропущено: %Ln дорожек</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="187"/>
         <source>Failed: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Ошибка: %Ln дорожка</numerusform>
+            <numerusform>Ошибка: %Ln дорожки</numerusform>
+            <numerusform>Ошибка: %Ln дорожек</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="188"/>
         <source>Cancelled: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Отменено: %Ln дорожка</numerusform>
+            <numerusform>Отменено: %Ln дорожки</numerusform>
+            <numerusform>Отменено: %Ln дорожек</numerusform>
         </translation>
     </message>
 </context>
@@ -2340,389 +2341,389 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="82"/>
         <source>Load</source>
-        <translation type="unfinished">Загрузить</translation>
+        <translation>Загрузить</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="83"/>
         <source>Save</source>
-        <translation type="unfinished">Сохранить</translation>
+        <translation>Сохранить</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="84"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1100"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Убрать</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="85"/>
         <source>Import</source>
-        <translation type="unfinished">Импорт</translation>
+        <translation>Импорт</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="86"/>
         <source>Export</source>
-        <translation type="unfinished">Экспорт</translation>
+        <translation>Экспорт</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="89"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Править</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="94"/>
         <source>Browse…</source>
-        <translation type="unfinished">Обзор…</translation>
+        <translation>Обзор…</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="99"/>
         <source>Transfer metadata (tags)</source>
-        <translation type="unfinished"></translation>
+        <translation>Переносить метаданные (теги)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="100"/>
         <source>Transfer rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Переносить оценку</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="101"/>
         <source>Transfer play count</source>
-        <translation type="unfinished"></translation>
+        <translation>Переносить счётчик воспроизведений</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="102"/>
         <source>Transfer attached pictures</source>
-        <translation type="unfinished"></translation>
+        <translation>Переносить вложенные изображения</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="104"/>
         <source>Prevent clipping</source>
-        <translation type="unfinished"></translation>
+        <translation>Предотвращать клиппинг</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="107"/>
         <source>Don&apos;t reset DSP between tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Не сбрасывать DSP между дорожками</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="114"/>
         <source>Generate short previews instead of converting entire tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Создавать короткие предпросмотры вместо преобразования целых дорожек</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="116"/>
         <source>Show full status report</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать полный отчёт о состоянии</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="118"/>
         <source>Verify converted output</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверять преобразованный вывод</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="125"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="204"/>
         <source>Converter Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройка преобразователя</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="129"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="268"/>
         <source>Output</source>
-        <translation type="unfinished">Вывод</translation>
+        <translation>Вывод</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="130"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="269"/>
         <source>Destination</source>
-        <translation type="unfinished">Назначение</translation>
+        <translation>Назначение</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="131"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="270"/>
         <source>Processing</source>
-        <translation type="unfinished"></translation>
+        <translation>Обработка</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="132"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="271"/>
         <source>Other</source>
-        <translation type="unfinished">Другое</translation>
+        <translation>Другое</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="141"/>
         <source>Convert</source>
-        <translation type="unfinished"></translation>
+        <translation>Преобразовать</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="204"/>
         <source>No output encoder is available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет доступного выходного кодировщика.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="209"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1064"/>
         <source>Choose destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать папку назначения</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="234"/>
         <source>Saved presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранённые предустановки</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="255"/>
         <source>Current settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Текущие настройки</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="292"/>
         <source>Auto</source>
-        <translation type="unfinished"></translation>
+        <translation>Авто</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="293"/>
         <source>8-bit integer</source>
-        <translation type="unfinished"></translation>
+        <translation>8-битное целое</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="294"/>
         <source>16-bit integer</source>
-        <translation type="unfinished"></translation>
+        <translation>16-битное целое</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="295"/>
         <source>24-bit integer</source>
-        <translation type="unfinished"></translation>
+        <translation>24-битное целое</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="296"/>
         <source>32-bit integer</source>
-        <translation type="unfinished"></translation>
+        <translation>32-битное целое</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="297"/>
         <source>32-bit floating point</source>
-        <translation type="unfinished"></translation>
+        <translation>32-битное число с плавающей запятой</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="299"/>
         <source>Never</source>
-        <translation type="unfinished"></translation>
+        <translation>Никогда</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="300"/>
         <source>Lossy sources only</source>
-        <translation type="unfinished"></translation>
+        <translation>Только сжатые источники</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="301"/>
         <source>Always</source>
-        <translation type="unfinished"></translation>
+        <translation>Всегда</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="307"/>
         <source>Output sample format</source>
-        <translation type="unfinished"></translation>
+        <translation>Выходной формат выборки</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="309"/>
         <source>Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>Дизеринг</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="335"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1150"/>
         <source>Ask when conversion starts</source>
-        <translation type="unfinished"></translation>
+        <translation>Спрашивать при запуске преобразования</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="336"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1153"/>
         <source>Source track folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Папка исходной дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="337"/>
         <source>Specified folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Указанная папка</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="338"/>
         <source>Ask</source>
-        <translation type="unfinished"></translation>
+        <translation>Спросить</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="339"/>
         <source>Skip</source>
-        <translation type="unfinished"></translation>
+        <translation>Пропустить</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="340"/>
         <source>Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Перезаписать</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="341"/>
         <source>Convert each track to an individual file</source>
-        <translation type="unfinished"></translation>
+        <translation>Преобразовывать каждую дорожку в отдельный файл</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="343"/>
         <source>Generate one multi-track file per name group</source>
-        <translation type="unfinished"></translation>
+        <translation>Создавать один многодорожечный файл на группу имён</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="345"/>
         <source>Merge all tracks into one output file</source>
-        <translation type="unfinished"></translation>
+        <translation>Объединять все дорожки в один выходной файл</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="355"/>
         <source>Output path</source>
-        <translation type="unfinished"></translation>
+        <translation>Путь вывода</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="357"/>
         <source>Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Папка</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="359"/>
         <source>Output style</source>
-        <translation type="unfinished"></translation>
+        <translation>Стиль вывода</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="361"/>
         <source>Name format</source>
-        <translation type="unfinished"></translation>
+        <translation>Формат имени</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="363"/>
         <source>If file already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Если файл уже существует</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="369"/>
         <source>Preview</source>
-        <translation type="unfinished">Предпросмотр</translation>
+        <translation>Предпросмотр</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="387"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1209"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1226"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="388"/>
         <source>Track gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Усиление дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="389"/>
         <source>Album gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Усиление альбома</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="396"/>
         <source> dB</source>
-        <translation type="unfinished"> дБ</translation>
+        <translation> дБ</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="399"/>
         <source>ReplayGain processing</source>
-        <translation type="unfinished"></translation>
+        <translation>Обработка ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="402"/>
         <source>Mode</source>
-        <translation type="unfinished">Режим</translation>
+        <translation>Режим</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="405"/>
         <source>Preamp</source>
-        <translation type="unfinished">Предусиление</translation>
+        <translation>Предусиление</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="407"/>
         <source>Without ReplayGain info</source>
-        <translation type="unfinished"></translation>
+        <translation>Без информации ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="410"/>
         <source>ReplayGain is applied permanently to the converted audio.</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain применяется к преобразованному аудио на постоянной основе.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="441"/>
         <source>DSP chain</source>
-        <translation type="unfinished"></translation>
+        <translation>Цепочка DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="443"/>
         <source>Active DSPs</source>
-        <translation type="unfinished"></translation>
+        <translation>Активные DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="446"/>
         <source>Available DSPs</source>
-        <translation type="unfinished">Доступные модули DSP</translation>
+        <translation>Доступные модули DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="455"/>
         <source>Metadata</source>
-        <translation type="unfinished">Метаданные</translation>
+        <translation>Метаданные</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="508"/>
         <source>Preview generation</source>
-        <translation type="unfinished"></translation>
+        <translation>Создание предпросмотра</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="513"/>
         <source>Length</source>
-        <translation type="unfinished">Длина</translation>
+        <translation>Длина</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="517"/>
         <source>When done</source>
-        <translation type="unfinished"></translation>
+        <translation>По завершении</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="522"/>
         <source>Copy other files to the destination folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать другие файлы в папку назначения</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="711"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="717"/>
         <source>DSP Settings</source>
-        <translation type="unfinished">Параметры DSP</translation>
+        <translation>Параметры DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="711"/>
         <source>This DSP has no configurable settings.</source>
-        <translation type="unfinished">Этот модуль DSP не имеет настраиваемых параметров.</translation>
+        <translation>Этот модуль DSP не имеет настраиваемых параметров.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="718"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
-        <translation type="unfinished">Не удалось открыть параметры для модуля DSP «%1».</translation>
+        <translation>Не удалось открыть параметры для модуля DSP «%1».</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="771"/>
         <source>Default settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки по умолчанию</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="800"/>
         <source>Save Converter Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить предустановку преобразователя</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="800"/>
         <source>Name</source>
-        <translation type="unfinished">Имя</translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="857"/>
@@ -2730,133 +2731,133 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="872"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="881"/>
         <source>Import Converter Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт предустановок преобразователя</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="858"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="929"/>
         <source>fooyin Converter Presets (*.fycp)</source>
-        <translation type="unfinished"></translation>
+        <translation>Предустановки преобразователя fooyin (*.fycp)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="866"/>
         <source>The preset file could not be opened.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось открыть файл предустановки.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="872"/>
         <source>The preset file is invalid or empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл предустановки недействителен или пуст.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="882"/>
         <source>Encoder is unavailable for preset: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Кодировщик недоступен для предустановки: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="928"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="938"/>
         <source>Export Converter Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт предустановки преобразователя</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="938"/>
         <source>The preset file could not be written.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось записать файл предустановки.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1100"/>
         <source>Reset</source>
-        <translation type="unfinished">Сбросить</translation>
+        <translation>Сбросить</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1144"/>
         <source>No encoder available</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет доступного кодировщика</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1157"/>
         <source>No folder specified</source>
-        <translation type="unfinished"></translation>
+        <translation>Папка не указана</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1165"/>
         <source>group tracks by output name</source>
-        <translation type="unfinished"></translation>
+        <translation>группировать дорожки по имени вывода</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1168"/>
         <source>merge tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>объединять дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1172"/>
         <source>No name format</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет формата имени</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1179"/>
         <source>metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>метаданные</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1182"/>
         <source>rating</source>
-        <translation type="unfinished"></translation>
+        <translation>оценка</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1185"/>
         <source>play count</source>
-        <translation type="unfinished"></translation>
+        <translation>счётчик воспроизведений</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1188"/>
         <source>attached pictures</source>
-        <translation type="unfinished"></translation>
+        <translation>вложенные изображения</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1193"/>
         <source>ReplayGain (track)</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain (дорожка)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1196"/>
         <source>ReplayGain (album)</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain (альбом)</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1203"/>
         <source>%Ln DSP(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln DSP</numerusform>
+            <numerusform>%Ln DSP</numerusform>
+            <numerusform>%Ln DSP</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1205"/>
         <source>continuous DSP</source>
-        <translation type="unfinished"></translation>
+        <translation>непрерывный DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1214"/>
         <source>%1% previews</source>
-        <translation type="unfinished"></translation>
+        <translation>предпросмотры на %1%</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1217"/>
         <source>Show status report</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать отчёт о состоянии</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1220"/>
         <source>Copy matching files</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать соответствующие файлы</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1223"/>
         <source>Verify output</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверять вывод</translation>
     </message>
 </context>
 <context>
@@ -4004,97 +4005,97 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="42"/>
         <source>Default</source>
-        <translation type="unfinished">По умолчанию</translation>
+        <translation>По умолчанию</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="44"/>
         <source>Variable bitrate (VBR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Переменный битрейт (VBR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="46"/>
         <source>Constrained variable bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Ограниченный переменный битрейт</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="48"/>
         <source>Constant quality (VBR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Постоянное качество (VBR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="50"/>
         <source>Average bitrate (ABR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Средний битрейт (ABR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="52"/>
         <source>Constant bitrate (CBR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Постоянный битрейт (CBR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="54"/>
         <source>Lossless compression</source>
-        <translation type="unfinished"></translation>
+        <translation>Сжатие без потерь</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="66"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="68"/>
         <source>Mode</source>
-        <translation type="unfinished">Режим</translation>
+        <translation>Режим</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="69"/>
         <source>Quality</source>
-        <translation type="unfinished">Качество</translation>
+        <translation>Качество</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="70"/>
         <source>Estimated bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Расчётный битрейт</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="72"/>
         <source>Bitrate</source>
-        <translation type="unfinished">Битрейт</translation>
+        <translation>Битрейт</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="73"/>
         <source>Level</source>
-        <translation type="unfinished"></translation>
+        <translation>Уровень</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="80"/>
         <source>Encoder Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Профиль кодировщика</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="107"/>
         <source>Encoder</source>
-        <translation type="unfinished"></translation>
+        <translation>Кодировщик</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="111"/>
         <source>Format</source>
-        <translation type="unfinished">Формат</translation>
+        <translation>Формат</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="113"/>
         <source>Name</source>
-        <translation type="unfinished">Имя</translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="226"/>
         <source>Compression level</source>
-        <translation type="unfinished"></translation>
+        <translation>Уровень сжатия</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="227"/>
         <source>Encoding effort</source>
-        <translation type="unfinished"></translation>
+        <translation>Затраты на кодирование</translation>
     </message>
 </context>
 <context>
@@ -4102,57 +4103,57 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="42"/>
         <source>VBR</source>
-        <translation type="unfinished"></translation>
+        <translation>VBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="44"/>
         <source>CVBR</source>
-        <translation type="unfinished"></translation>
+        <translation>CVBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="46"/>
         <source>VBR quality %1</source>
-        <translation type="unfinished"></translation>
+        <translation>качество VBR %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="48"/>
         <source>ABR</source>
-        <translation type="unfinished"></translation>
+        <translation>ABR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="50"/>
         <source>CBR</source>
-        <translation type="unfinished"></translation>
+        <translation>CBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="52"/>
         <source>level %1</source>
-        <translation type="unfinished"></translation>
+        <translation>уровень %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="87"/>
         <source>%1 kbps</source>
-        <translation type="unfinished">%1 кбит/с</translation>
+        <translation>%1 кбит/с</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="90"/>
         <source>~%1 kbps</source>
-        <translation type="unfinished"></translation>
+        <translation>~%1 кбит/с</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="113"/>
         <source>Name</source>
-        <translation type="unfinished">Имя</translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="115"/>
         <source>Bitrate</source>
-        <translation type="unfinished">Битрейт</translation>
+        <translation>Битрейт</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="117"/>
         <source>Settings</source>
-        <translation type="unfinished">Настройки</translation>
+        <translation>Настройки</translation>
     </message>
 </context>
 <context>
@@ -5707,13 +5708,13 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1117"/>
         <source>Choose destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать папку назначения</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1193"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1201"/>
         <source>Convert using preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Преобразовать с предустановкой %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1200"/>
@@ -5721,7 +5722,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1242"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1251"/>
         <source>Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1200"/>
@@ -5730,32 +5731,32 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1251"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1262"/>
         <source>Convert</source>
-        <translation type="unfinished"></translation>
+        <translation>Преобразовать</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1230"/>
         <source>Converter setup…</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройка преобразователя…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1239"/>
         <source>Using default settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать настройки по умолчанию</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1243"/>
         <source>Convert using default settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Преобразовать с настройками по умолчанию</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1248"/>
         <source>Repeat last conversion</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторить последнее преобразование</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1279"/>
         <source>Custom conversion…</source>
-        <translation type="unfinished"></translation>
+        <translation>Пользовательское преобразование…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1514"/>
@@ -7146,7 +7147,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="253"/>
         <source>Directory</source>
-        <translation>Папка</translation>
+        <translation>Каталог</translation>
     </message>
 </context>
 <context>
@@ -8546,7 +8547,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="129"/>
         <source>Directory</source>
-        <translation>Папка</translation>
+        <translation>Каталог</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="130"/>

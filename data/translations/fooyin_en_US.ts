@@ -2297,33 +2297,33 @@ When disabled, existing track order is preserved and only newly added matching t
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="185"/>
         <source>Converted: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Converted: %Ln track</numerusform>
+            <numerusform>Converted: %Ln tracks</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="186"/>
         <source>Skipped: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Skipped: %Ln track</numerusform>
+            <numerusform>Skipped: %Ln tracks</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="187"/>
         <source>Failed: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Failed: %Ln track</numerusform>
+            <numerusform>Failed: %Ln tracks</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="188"/>
         <source>Cancelled: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Cancelled: %Ln track</numerusform>
+            <numerusform>Cancelled: %Ln tracks</numerusform>
         </translation>
     </message>
 </context>
@@ -2819,9 +2819,9 @@ When disabled, existing track order is preserved and only newly added matching t
     <message numerus="yes">
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1203"/>
         <source>%Ln DSP(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln DSP</numerusform>
+            <numerusform>%Ln DSPs</numerusform>
         </translation>
     </message>
     <message>
@@ -10040,7 +10040,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="125"/>
         <source>Track is counted as &apos;played&apos; once either threshold is reached</source>
-        <translation>Track is counted as “played” once either threshold is reached</translation>
+        <translation>Track is counted as &quot;played&quot; once either threshold is reached</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="154"/>
@@ -12238,9 +12238,9 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message numerus="yes">
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="263"/>
         <source>%Ln preset(s) found.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln preset found.</numerusform>
+            <numerusform>%Ln presets found.</numerusform>
         </translation>
     </message>
 </context>
@@ -12320,9 +12320,9 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message numerus="yes">
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="610"/>
         <source>Using presets from %Ln folder(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Using presets from %Ln folder</numerusform>
+            <numerusform>Using presets from %Ln folders</numerusform>
         </translation>
     </message>
 </context>
@@ -12428,7 +12428,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="593"/>
         <source>%1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>%1&#xa0;seconds</translation>
     </message>
 </context>
 <context>
