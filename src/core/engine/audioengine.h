@@ -314,6 +314,8 @@ private:
     void refreshVbrUpdateTimer();
     void setupSettings();
     void reconfigureActiveStreamBuffering(uint64_t positionMs);
+    [[nodiscard]] bool rebuildCurrentTrackStreamAt(uint64_t positionMs, uint64_t requestId,
+                                                   bool preserveUpcomingCandidate, const char* reason);
     void updatePlaybackState(Engine::PlaybackState state);
     void updateTrackStatus(Engine::TrackStatus status, bool flushDspOnEnd = true);
     void setPhase(Playback::Phase phase, PhaseChangeReason reason);
@@ -326,6 +328,7 @@ private:
     [[nodiscard]] Engine::PlaybackItem upcomingTrackCandidateItem() const;
     [[nodiscard]] Engine::PlaybackItem preparedCrossfadeTargetItem() const;
     [[nodiscard]] Engine::PlaybackItem preparedGaplessTargetItem() const;
+    [[nodiscard]] bool hasStagedPreparedGaplessDecoder() const;
     std::optional<AutoTransitionEligibility>
     evaluateAutoTransitionEligibility(const Track& track, bool isManualChange, bool requireTransitionReady = true,
                                       const char** rejectionReason = nullptr) const;

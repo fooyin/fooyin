@@ -1027,8 +1027,10 @@ void AudioEngine::play()
         return;
     }
 
+    const bool resumeLoadedTrack        = m_phase == Playback::Phase::Loading;
     const bool interruptedTransportFade = isFadingTransport(m_phase);
-    if(playAction == PlaybackAction::Continue && !interruptedTransportFade && !m_fadeController.hasPendingFade()) {
+    if(playAction == PlaybackAction::Continue && !resumeLoadedTrack && !interruptedTransportFade
+       && !m_fadeController.hasPendingFade()) {
         return;
     }
 
@@ -1061,6 +1063,11 @@ void AudioEngine::play()
 
     const bool preserveTransportFade
         = !m_fadeController.hasPendingResumeFadeIn() && m_fadeController.fadeOnNext() && hasActiveTransportFade;
+    const auto restoreLoadedTrackPhase = [this, resumeLoadedTrack]() {
+        if(resumeLoadedTrack && m_phase == Playback::Phase::Loading) {
+            setPhase(Playback::Phase::Playing, PhaseChangeReason::PlaybackStatePlaying);
+        }
+    };
     if(preserveTransportFade) {
         if(auto stream = m_decoder.activeStream()) {
             m_pipeline.sendStreamCommand(stream->id(), AudioStream::Command::Play);
@@ -1073,6 +1080,7 @@ void AudioEngine::play()
         m_audioClock.start();
 
         updatePlaybackState(Engine::PlaybackState::Playing);
+        restoreLoadedTrackPhase();
         updateTrackStatus(Engine::TrackStatus::Buffered);
         maybeUpdateRemoteBuffering("play");
         return;
@@ -1091,6 +1099,7 @@ void AudioEngine::play()
     m_audioClock.start();
 
     updatePlaybackState(Engine::PlaybackState::Playing);
+    restoreLoadedTrackPhase();
     updateTrackStatus(Engine::TrackStatus::Buffered);
     maybeUpdateRemoteBuffering("play");
 }
@@ -1302,6 +1311,21 @@ void AudioEngine::seekWithRequest(uint64_t positionMs, uint64_t requestId)
     }
 
     if(!m_decoder.isSeekable()) {
+        return;
+    }
+
+    if(hasStagedPreparedGaplessDecoder()) {
+        qCDebug(ENGINE) << "Rebuilding current track for seek after prepared gapless decoder adoption:"
+                        << "currentTrackId=" << m_currentTrack.id() << "currentItemId=" << m_currentTrackItemId
+                        << "preparedTrackId=" << m_preparedGaplessTransition.targetTrack.id()
+                        << "preparedItemId=" << m_preparedGaplessTransition.targetItemId
+                        << "generation=" << m_trackGeneration << "positionMs=" << positionMs
+                        << "requestId=" << requestId;
+        if(!rebuildCurrentTrackStreamAt(positionMs, requestId, true, "seek-after-gapless-adoption")) {
+            qCWarning(ENGINE) << "Failed to rebuild current track for seek after prepared gapless decoder adoption:"
+                              << "currentTrackId=" << m_currentTrack.id() << "currentItemId=" << m_currentTrackItemId
+                              << "positionMs=" << positionMs << "requestId=" << requestId;
+        }
         return;
     }
 
@@ -2180,38 +2204,69 @@ void AudioEngine::interruptTransportFade()
 
 void AudioEngine::reconfigureActiveStreamBuffering(uint64_t positionMs)
 {
+    if(!rebuildCurrentTrackStreamAt(positionMs, 0, false, "buffering-reconfiguration")) {
+        qCWarning(ENGINE) << "Failed to rebuild current stream after playback buffering reconfiguration:"
+                          << "currentTrackId=" << m_currentTrack.id() << "currentItemId=" << m_currentTrackItemId
+                          << "positionMs=" << positionMs;
+    }
+}
+
+bool AudioEngine::rebuildCurrentTrackStreamAt(uint64_t positionMs, uint64_t requestId, bool preserveUpcomingCandidate,
+                                              const char* reason)
+{
     if(!m_currentTrack.isValid()) {
-        return;
+        return false;
     }
 
     const auto barrier = m_engineTaskQueue.barrierScope();
 
+    const auto prevTrackStatus = m_trackStatus.load(std::memory_order_relaxed);
+    const Track upcomingTrack  = preserveUpcomingCandidate ? m_upcomingTrackCandidate : Track{};
+    const uint64_t upcomingId  = preserveUpcomingCandidate ? m_upcomingTrackCandidateItemId : 0;
+    const bool pausePending    = m_phase == Playback::Phase::FadingToPause
+                              || m_fadeController.state() == FadeState::FadingToPause || m_pendingAudiblePause.active;
+
     if(m_pipeline.hasOrphanStream()) {
-        qCWarning(ENGINE) << "Reconfiguring playback buffering during active transition; forcing orphan cleanup";
-        m_pipeline.cleanupOrphanImmediate();
+        qCDebug(ENGINE) << "Rebuilding current stream during active transition:"
+                        << "reason=" << reason << "currentTrackId=" << m_currentTrack.id()
+                        << "currentItemId=" << m_currentTrackItemId;
     }
 
     if(isCrossfading(m_phase)) {
-        qCWarning(ENGINE) << "Reconfiguring playback buffering while crossfade state is active; forcing idle state";
+        qCDebug(ENGINE) << "Rebuilding current stream while crossfade state is active:"
+                        << "reason=" << reason << "phase=" << Utils::Enum::toString(m_phase);
     }
 
     clearPendingAudiblePause();
+    cancelFadesForReinit();
+    if(pausePending) {
+        qCDebug(ENGINE) << "Completing pending pause before current stream reconstruction:"
+                        << "reason=" << reason << "currentTrackId=" << m_currentTrack.id()
+                        << "currentItemId=" << m_currentTrackItemId;
+        finalisePausedState();
+    }
+    clearPendingAudibleTrackCommit();
     clearAutoCrossfadeTailFadeState();
     clearAutoBoundaryFadeState(true);
-    clearTrackEndAutoTransitions();
+    m_upcomingTrackCandidate       = {};
+    m_upcomingTrackCandidateItemId = 0;
+    clearAutoAdvanceState();
+    clearPreparedCrossfadeTransition();
+    discardPreparedGaplessTransition(true);
+    clearPreparedNextTrackAndCancelPendingJobs();
     clearPendingAnalysisData();
     clearTrackEndLatch();
     m_transitions.cancelPendingSeek();
     m_transitions.setSeekInProgress(false);
     m_transitions.clearTrackEnding();
-    m_fadeController.invalidateActiveFade();
+    m_positionCoordinator.clearGaplessHold();
 
     m_decoder.stopDecoding();
     cleanupActiveStream();
 
     if(!initDecoder(currentPlaybackItem(), false)) {
         updateTrackStatus(Engine::TrackStatus::Invalid);
-        return;
+        return false;
     }
 
     syncDecoderTrackMetadata();
@@ -2230,12 +2285,13 @@ void AudioEngine::reconfigureActiveStreamBuffering(uint64_t positionMs)
 
     if(!hasOutput || outputFormatChanged) {
         if(outputFormatChanged && hasOutput) {
-            qCDebug(ENGINE) << "Playback buffering reconfiguration requires output reinit";
+            qCDebug(ENGINE) << "Current stream reconstruction requires output reinit:"
+                            << "reason=" << reason;
             m_outputController.uninitOutput();
         }
         if(!m_outputController.initOutput(m_format, m_volume)) {
             updateTrackStatus(Engine::TrackStatus::Invalid);
-            return;
+            return false;
         }
     }
     else if(inputFormatChanged) {
@@ -2246,11 +2302,21 @@ void AudioEngine::reconfigureActiveStreamBuffering(uint64_t positionMs)
     if(m_currentTrack.duration() > 0) {
         clampedPositionMs = std::min<uint64_t>(clampedPositionMs, m_currentTrack.duration());
     }
-    m_transitions.queueInitialSeek(clampedPositionMs, m_currentTrack.id(), 0);
+    m_transitions.queueInitialSeek(clampedPositionMs, m_currentTrack.id(), requestId);
 
     if(!setupNewTrackStream(m_currentTrack, true)) {
         updateTrackStatus(Engine::TrackStatus::Invalid);
+        return false;
     }
+
+    m_upcomingTrackCandidate       = upcomingTrack;
+    m_upcomingTrackCandidateItemId = upcomingId;
+
+    if(prevTrackStatus == Engine::TrackStatus::End) {
+        updateTrackStatus(Engine::TrackStatus::Buffered);
+    }
+
+    return true;
 }
 
 void AudioEngine::reinitOutputForCurrentFormat()
@@ -2567,6 +2633,13 @@ void AudioEngine::scheduleGaplessBoundaryStallDiagnostic(uint64_t generation, St
            || m_preparedGaplessTransition.sourceGeneration != generation
            || m_preparedGaplessTransition.streamId != preparedStreamId
            || !m_autoAdvanceState.boundaryPendingUntilAudible) {
+            return;
+        }
+
+        if(!hasPlaybackState(Engine::PlaybackState::Playing)) {
+            qCDebug(ENGINE) << "Gapless handoff diagnostic suppressed while transport is not playing:"
+                            << "trackId=" << m_currentTrack.id() << "generation=" << generation
+                            << "preparedStreamId=" << preparedStreamId;
             return;
         }
 
@@ -4362,6 +4435,18 @@ Engine::PlaybackItem AudioEngine::preparedCrossfadeTargetItem() const
 Engine::PlaybackItem AudioEngine::preparedGaplessTargetItem() const
 {
     return {.track = m_preparedGaplessTransition.targetTrack, .itemId = m_preparedGaplessTransition.targetItemId};
+}
+
+bool AudioEngine::hasStagedPreparedGaplessDecoder() const
+{
+    if(!m_preparedGaplessTransition.active || !m_preparedGaplessTransition.decoderAdopted
+       || m_preparedGaplessTransition.sourceGeneration != m_trackGeneration) {
+        return false;
+    }
+
+    const auto activeStream = m_decoder.activeStream();
+    return activeStream && activeStream->id() == m_preparedGaplessTransition.streamId
+        && m_preparedGaplessTransition.preCommitTimingStream;
 }
 
 std::optional<AudioEngine::AutoTransitionEligibility>
