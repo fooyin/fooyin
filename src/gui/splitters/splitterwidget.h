@@ -57,6 +57,10 @@ public:
     void replaceWidget(int index, FyWidget* newWidget) override;
     void moveWidget(int index, int newIndex) override;
 
+    [[nodiscard]] bool isWidgetLocked(int index) const;
+    [[nodiscard]] bool canLockWidget(int index) const;
+    bool setWidgetLocked(int index, bool locked);
+
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
     void layoutEditingMenu(QMenu* menu) override;
