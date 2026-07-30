@@ -3009,7 +3009,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="61"/>
         <source>Alignment</source>
-        <translation>Justering</translation>
+        <translation>Position</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="63"/>
@@ -7842,7 +7842,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="86"/>
         <source>Use &lt;code&gt;||&lt;/code&gt; to split tree levels. &lt;b&gt;Sort Grouping&lt;/b&gt; must use the same &lt;code&gt;||&lt;/code&gt; level structure as &lt;b&gt;Display Grouping&lt;/b&gt;; each sort level applies to the matching display level, and a sort level may be empty (for example &lt;code&gt;||%year%||&lt;/code&gt;).</source>
-        <translation>Använd &lt;code&gt;||&lt;/code&gt; för att splitta trädnivåer. &lt;b&gt;Sorteringsgruppering&lt;/b&gt; måste använda samma &lt;code&gt;||&lt;/code&gt; nivåstruktur som &lt;b&gt;Displaygruppering&lt;/b&gt;; varje sorteringsnivå tillämpas på den matchande displaynivån, och en sorteringsnivå får inte vara tom (till exempel &lt;code&gt;||%year%||&lt;/code&gt;).</translation>
+        <translation>Använd &lt;code&gt;||&lt;/code&gt; för att splitta trädnivåer. &lt;b&gt;Sorteringsgruppering&lt;/b&gt; måste använda samma &lt;code&gt;||&lt;/code&gt; nivåstruktur som &lt;b&gt;displaygruppering&lt;/b&gt;; varje sorteringsnivå tillämpas på den matchande displaynivån, och en sorteringsnivå får inte vara tom (till exempel &lt;code&gt;||%year%||&lt;/code&gt;).</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="103"/>
@@ -7852,7 +7852,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="95"/>
         <source>Add artwork to the tree by placing a cover variable such as &lt;code&gt;%frontcover%&lt;/code&gt; at the start or end of a level.</source>
-        <translation>Lägg till konstverk i trädet genom att placera en omslagsbariabel som &lt;code&gt;%frontcover%&lt;/code&gt; vid början eller slutet av en nivå.</translation>
+        <translation>Lägg till konstverk i trädet genom att placera en omslagsvariabel som &lt;code&gt;%frontcover%&lt;/code&gt; vid början eller slutet av en nivå.</translation>
     </message>
 </context>
 <context>
@@ -9222,7 +9222,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="45"/>
         <source>Volume ramping</source>
-        <translation type="unfinished"></translation>
+        <translation>Volymstegring</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="46"/>
@@ -14998,7 +14998,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="331"/>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="339"/>
         <source>Centre</source>
-        <translation type="unfinished">Centrerat</translation>
+        <translation>Mitten</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="332"/>
@@ -15082,7 +15082,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="87"/>
         <source>Alignment</source>
-        <translation>Justering</translation>
+        <translation>Position</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="90"/>
@@ -18963,7 +18963,7 @@ Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</transla
         <location filename="../../src/gui/widgets.cpp" line="556"/>
         <location filename="../../src/gui/widgets.cpp" line="563"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Utmatning</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="542"/>
@@ -18983,7 +18983,7 @@ Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</transla
     <message>
         <location filename="../../src/gui/widgets.cpp" line="557"/>
         <source>Automatically resample unsupported output rates</source>
-        <translation type="unfinished"></translation>
+        <translation>Omsampla automatiskt ostödda utgångsfrekvenser</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="558"/>
