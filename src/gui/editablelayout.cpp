@@ -24,6 +24,7 @@
 #include "dialog/exportlayoutdialog.h"
 #include "internalguisettings.h"
 #include "layoutcommands.h"
+#include "splitters/splitterwidget.h"
 #include "utils/actions/command.h"
 #include "widgets/dummy.h"
 #include "widgets/menuheader.h"
@@ -513,6 +514,33 @@ void EditableLayoutPrivate::setupContextMenu(FyWidget* widget, QMenu* menu)
                 if(id == QLatin1StringView{ContextMenuIds::LayoutEditing::WidgetActions}) {
                     if(sectionEnabled(ContextMenuIds::LayoutEditing::WidgetActions)) {
                         currentWidget->layoutEditingMenu(targetMenu);
+
+                        if(!isDummy) {
+                            if(auto* splitter = qobject_cast<SplitterWidget*>(parent)) {
+                                const int index   = splitter->widgetIndex(currentWidget->id());
+                                const bool locked = splitter->isWidgetLocked(index);
+
+                                const bool lockWidth = splitter->orientation() == Qt::Horizontal;
+                                const QString text
+                                    = lockWidth ? EditableLayout::tr("Lock width") : EditableLayout::tr("Lock height");
+                                const QString statusTip
+                                    = lockWidth
+                                        ? EditableLayout::tr("Keep the width unchanged during automatic resizing; "
+                                                             "splitter handles can still resize it")
+                                        : EditableLayout::tr("Keep the height unchanged during automatic resizing; "
+                                                             "splitter handles can still resize it");
+
+                                auto* lockDimension = new QAction(text, targetMenu);
+                                lockDimension->setStatusTip(statusTip);
+                                lockDimension->setCheckable(true);
+                                lockDimension->setChecked(locked);
+                                lockDimension->setEnabled(locked || splitter->canLockWidget(index));
+                                QObject::connect(
+                                    lockDimension, &QAction::toggled, currentWidget,
+                                    [splitter, index](bool lock) { splitter->setWidgetLocked(index, lock); });
+                                targetMenu->addAction(lockDimension);
+                            }
+                        }
                     }
                     return;
                 }

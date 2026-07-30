@@ -171,6 +171,7 @@ private:
     void onSelectionChanged();
     void onCustomMarginsChanged(bool enabled);
     void onCustomSplitterSpacingChanged(bool enabled);
+    void onSplitterLockChanged(bool locked);
     void updateMarginControls();
     void updateSplitterControls();
     void updateMetadataControls();
@@ -201,7 +202,9 @@ private:
     QSpinBox* m_bottomMargin;
     QGroupBox* m_splitterGroup;
     QCheckBox* m_customSplitterSpacing;
+    QLabel* m_splitterSpacingLabel;
     QSpinBox* m_splitterSpacing;
+    QCheckBox* m_lockSplitterSize;
     QGroupBox* m_metadataGroup;
     QCheckBox* m_applyTheme;
     QCheckBox* m_applyWindowSize;
@@ -215,6 +218,7 @@ private:
     bool m_applying{false};
     bool m_updatingMargins{false};
     bool m_updatingSplitterSpacing{false};
+    bool m_updatingSplitterLock{false};
 };
 
 GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, EditableLayout* editableLayout,
@@ -232,7 +236,9 @@ GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, Editabl
     , m_bottomMargin{new QSpinBox(this)}
     , m_splitterGroup{new QGroupBox(tr("Splitter"), this)}
     , m_customSplitterSpacing{new QCheckBox(tr("Use custom spacing"), this)}
+    , m_splitterSpacingLabel{new QLabel(tr("Spacing") + u":"_s, m_splitterGroup)}
     , m_splitterSpacing{new QSpinBox(this)}
+    , m_lockSplitterSize{new QCheckBox(this)}
     , m_metadataGroup{new QGroupBox(tr("Layout options"), this)}
     , m_applyTheme{new QCheckBox(tr("Restore theme when switching to this layout"), this)}
     , m_applyWindowSize{new QCheckBox(tr("Restore window size when switching to this layout"), this)}
@@ -265,8 +271,9 @@ GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, Editabl
 
     auto* splitterLayout = new QGridLayout(m_splitterGroup);
     splitterLayout->addWidget(m_customSplitterSpacing, 0, 0, 1, 3);
-    splitterLayout->addWidget(new QLabel(tr("Spacing") + u":"_s, m_splitterGroup), 1, 0);
+    splitterLayout->addWidget(m_splitterSpacingLabel, 1, 0);
     splitterLayout->addWidget(m_splitterSpacing, 1, 1);
+    splitterLayout->addWidget(m_lockSplitterSize, 2, 0, 1, 3);
     splitterLayout->setColumnStretch(2, 1);
 
     auto* metadataLayout = new QGridLayout(m_metadataGroup);
@@ -322,6 +329,7 @@ GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, Editabl
                      &GuiLayoutPageWidget::updateModelSplitterSpacing);
     QObject::connect(m_customSplitterSpacing, &QCheckBox::toggled, this,
                      &GuiLayoutPageWidget::onCustomSplitterSpacingChanged);
+    QObject::connect(m_lockSplitterSize, &QCheckBox::toggled, this, &GuiLayoutPageWidget::onSplitterLockChanged);
 
     updateMarginControls();
     updateSplitterControls();
@@ -675,6 +683,16 @@ void GuiLayoutPageWidget::onCustomSplitterSpacingChanged(bool enabled)
     updateSplitterControls();
 }
 
+void GuiLayoutPageWidget::onSplitterLockChanged(bool locked)
+{
+    if(m_updatingSplitterLock) {
+        return;
+    }
+
+    m_model->setSplitterItemLocked(m_layoutTree->currentIndex(), locked);
+    updateSplitterControls();
+}
+
 void GuiLayoutPageWidget::updateMarginControls()
 {
     const QModelIndex index = m_layoutTree->currentIndex();
@@ -698,18 +716,39 @@ void GuiLayoutPageWidget::updateMarginControls()
 
 void GuiLayoutPageWidget::updateSplitterControls()
 {
-    const QModelIndex index = m_layoutTree->currentIndex();
-    const bool custom       = m_model->hasCustomSplitterSpacing(index);
+    const QModelIndex index   = m_layoutTree->currentIndex();
+    const bool spacingEnabled = m_model->hasConfigurableSplitterSpacing(index);
+    const bool customSpacing  = m_model->hasCustomSplitterSpacing(index);
 
     m_updatingSplitterSpacing = true;
-    m_customSplitterSpacing->setChecked(custom);
+    m_customSplitterSpacing->setChecked(customSpacing);
     m_splitterSpacing->setValue(m_model->splitterSpacing(index));
     m_updatingSplitterSpacing = false;
 
-    const bool enabled = m_model->hasConfigurableSplitterSpacing(index);
+    m_customSplitterSpacing->setVisible(spacingEnabled);
+    m_splitterSpacingLabel->setVisible(spacingEnabled);
+    m_splitterSpacing->setVisible(spacingEnabled);
+    m_splitterSpacing->setEnabled(customSpacing);
 
-    m_splitterGroup->setVisible(enabled);
-    m_splitterSpacing->setEnabled(enabled && custom);
+    const bool lockEnabled = m_model->hasConfigurableSplitterLock(index);
+    m_lockSplitterSize->setVisible(lockEnabled);
+
+    if(lockEnabled) {
+        const bool lockWidth = m_model->splitterLockOrientation(index) == Qt::Horizontal;
+        m_lockSplitterSize->setText(lockWidth ? tr("Lock width") : tr("Lock height"));
+        m_lockSplitterSize->setStatusTip(
+            lockWidth
+                ? tr("Keep the width unchanged during automatic resizing; splitter handles can still resize it")
+                : tr("Keep the height unchanged during automatic resizing; splitter handles can still resize it"));
+
+        const bool locked      = m_model->isSplitterItemLocked(index);
+        m_updatingSplitterLock = true;
+        m_lockSplitterSize->setChecked(locked);
+        m_updatingSplitterLock = false;
+        m_lockSplitterSize->setEnabled(locked || m_model->canLockSplitterItem(index));
+    }
+
+    m_splitterGroup->setVisible(spacingEnabled || lockEnabled);
 }
 
 void GuiLayoutPageWidget::updateMetadataControls()

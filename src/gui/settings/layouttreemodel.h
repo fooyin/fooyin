@@ -90,6 +90,11 @@ public:
     [[nodiscard]] int splitterSpacing(const QModelIndex& index) const;
     void setSplitterSpacing(const QModelIndex& index, int spacing);
     void clearSplitterSpacing(const QModelIndex& index);
+    [[nodiscard]] bool hasConfigurableSplitterLock(const QModelIndex& index) const;
+    [[nodiscard]] Qt::Orientation splitterLockOrientation(const QModelIndex& index) const;
+    [[nodiscard]] bool isSplitterItemLocked(const QModelIndex& index) const;
+    [[nodiscard]] bool canLockSplitterItem(const QModelIndex& index) const;
+    bool setSplitterItemLocked(const QModelIndex& index, bool locked);
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;

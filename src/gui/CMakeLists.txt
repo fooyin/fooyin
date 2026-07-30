@@ -482,6 +482,10 @@ set(SOURCES
     settings/shortcuts/shortcutspage.h
     settings/widgets/statuswidgetpage.cpp
     settings/widgets/statuswidgetpage.h
+    splitters/fysplitter.cpp
+    splitters/fysplitter.h
+    splitters/splitterstate.cpp
+    splitters/splitterstate.h
     splitters/splitterwidget.cpp
     splitters/splitterwidget.h
     splitters/tabstackwidget.cpp
