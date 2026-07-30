@@ -121,6 +121,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
 
     m_settings->createSetting<Internal::MonitorLibraryDirectories>(false, u"Library/MonitorLibraries"_s);
     m_settings->createSetting<Internal::MonitorTrackFiles>(false, u"Library/MonitorTrackFiles"_s);
+    m_settings->createSetting<Internal::PlaylistSkipUnavailable>(false, u"Playlist/SkipUnavailable"_s);
     m_settings->createTempSetting<Internal::MuteVolume>(m_settings->value<OutputVolume>());
     m_settings->createSetting<Internal::DisabledPlugins>(QStringList{}, u"Plugins/Disabled"_s);
     m_settings->createSetting<Internal::EngineFading>(false, u"Engine/Fading"_s);

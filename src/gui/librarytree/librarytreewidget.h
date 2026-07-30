@@ -111,6 +111,9 @@ public:
     void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
 
+Q_SIGNALS:
+    void configChanged();
+
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;

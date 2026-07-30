@@ -38,6 +38,7 @@ public:
 protected:
     [[nodiscard]] DirBrowser::ConfigData config() const override;
     void setConfig(const DirBrowser::ConfigData& config) override;
+    void mergeExternalConfig(const DirBrowser::ConfigData& previous, const DirBrowser::ConfigData& current) override;
 
 private:
     QRadioButton* m_treeMode;

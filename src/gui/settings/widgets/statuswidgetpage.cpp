@@ -97,6 +97,11 @@ StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
 
     layout->setColumnStretch(0, 1);
     layout->setRowStretch(2, 1);
+
+    m_settings->subscribe<Settings::Gui::Internal::StatusShowIcon>(m_showIcon, &QCheckBox::setChecked);
+    m_settings->subscribe<Settings::Gui::Internal::StatusShowSelection>(m_showSelection, &QCheckBox::setChecked);
+    m_settings->subscribe<Settings::Gui::Internal::StatusShowPlaylist>(m_showPlaylist, &QCheckBox::setChecked);
+    m_settings->subscribe<Settings::Gui::ShowStatusTips>(m_showStatusTips, &QCheckBox::setChecked);
 }
 
 void StatusWidgetPageWidget::load()

@@ -310,7 +310,7 @@ void RadioGuideWidget::applyConfig(const ConfigData& config)
 
 void RadioGuideWidget::openConfigDialog()
 {
-    showConfigDialog(new RadioGuideConfigDialog(this, this));
+    showConfigDialog(new RadioGuideConfigDialog(this, this), Qt::NonModal);
 }
 
 void RadioGuideWidget::initialiseModel()

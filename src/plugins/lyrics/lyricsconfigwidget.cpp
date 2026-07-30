@@ -261,6 +261,8 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
         m_edgeFadeSize->setEnabled(enabled);
     });
 
+    QObject::connect(lyricsWidget, &LyricsWidget::configChanged, this, &LyricsConfigDialog::syncCurrentConfig);
+
     loadCurrentConfig();
 }
 
@@ -379,6 +381,21 @@ void LyricsConfigDialog::setConfig(const LyricsWidget::ConfigData& config)
     loadFont(m_lineFontBtn, config.lineFont, Lyrics::defaultLineFont(*m_styleProvider));
     loadFont(m_wordLineFontBtn, config.wordLineFont, Lyrics::defaultWordLineFont(*m_styleProvider));
     loadFont(m_wordFontBtn, config.wordFont, Lyrics::defaultWordFont(*m_styleProvider));
+}
+
+void LyricsConfigDialog::mergeExternalConfig(const LyricsWidget::ConfigData& previous,
+                                             const LyricsWidget::ConfigData& current)
+{
+    mergeExternalFields(previous, current, &LyricsWidget::ConfigData::seekOnClick,
+                        &LyricsWidget::ConfigData::noLyricsScript, &LyricsWidget::ConfigData::scrollDuration,
+                        &LyricsWidget::ConfigData::scrollMode, &LyricsWidget::ConfigData::edgeFadeMode,
+                        &LyricsWidget::ConfigData::edgeFadeSize, &LyricsWidget::ConfigData::showScrollbar,
+                        &LyricsWidget::ConfigData::alignment, &LyricsWidget::ConfigData::lineSpacing,
+                        &LyricsWidget::ConfigData::centreFirstSyncedLine,
+                        &LyricsWidget::ConfigData::centreLastSyncedLine, &LyricsWidget::ConfigData::progressMode,
+                        &LyricsWidget::ConfigData::margins, &LyricsWidget::ConfigData::colours,
+                        &LyricsWidget::ConfigData::baseFont, &LyricsWidget::ConfigData::lineFont,
+                        &LyricsWidget::ConfigData::wordLineFont, &LyricsWidget::ConfigData::wordFont);
 }
 
 ScrollMode LyricsConfigDialog::scrollMode() const

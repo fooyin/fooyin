@@ -351,6 +351,8 @@ void SpectrumWidget::applyConfig(const ConfigData& config)
 
     m_config = validated;
     m_view->setConfig(m_config);
+
+    Q_EMIT configChanged();
 }
 
 QSize SpectrumWidget::minimumSizeHint() const
@@ -370,7 +372,7 @@ void SpectrumWidget::contextMenuEvent(QContextMenuEvent* event)
 
 void SpectrumWidget::openConfigDialog()
 {
-    showConfigDialog(new SpectrumConfigDialog(this, this));
+    showConfigDialog(new SpectrumConfigDialog(this, this), Qt::NonModal);
 }
 
 SpectrumWidget::ConfigData SpectrumWidget::configFromLayout(const QJsonObject& layout) const

@@ -220,10 +220,15 @@ protected:
      */
     QAction* addConfigureAction(QMenu* menu, bool addSeparator = true);
     /*!
-     * Opens @p dialog and keeps it singleton per widget instance.
+     * Opens @p dialog as window-modal and keeps it singleton per widget instance.
      * If a config dialog is already open for this widget, that dialog is focused instead.
      */
     void showConfigDialog(QDialog* dialog);
+    /*!
+     * Shows @p dialog with @p modality and keeps it singleton per widget instance.
+     * If a config dialog is already open for this widget, that dialog is focused instead.
+     */
+    void showConfigDialog(QDialog* dialog, Qt::WindowModality modality);
 
 Q_SIGNALS:
     /*!

@@ -24,6 +24,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/helpers.h
     ${CMAKE_SOURCE_DIR}/include/utils/id.h
     ${CMAKE_SOURCE_DIR}/include/utils/itemregistry.h
+    ${CMAKE_SOURCE_DIR}/include/utils/jsonutils.h
     ${CMAKE_SOURCE_DIR}/include/utils/lockfreeringbuffer.h
     ${CMAKE_SOURCE_DIR}/include/utils/logging/messagehandler.h
     ${CMAKE_SOURCE_DIR}/include/utils/modelutils.h
@@ -69,6 +70,7 @@ set(SOURCES
     fypaths.cpp
     id.cpp
     itemregistry.cpp
+    jsonutils.cpp
     logging/logmodel.cpp
     logging/logmodel.h
     logging/logwidget.cpp

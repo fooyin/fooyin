@@ -198,6 +198,15 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     layout->setColumnStretch(0, 1);
     layout->setColumnStretch(1, 1);
     layout->setRowStretch(row, 1);
+
+    m_settings->subscribe<Settings::Gui::CursorFollowsPlayback>(m_cursorFollowsPlayback, &QCheckBox::setChecked);
+    m_settings->subscribe<Settings::Gui::PlaybackFollowsCursor>(m_playbackFollowsCursor, &QCheckBox::setChecked);
+    m_settings->subscribe<Settings::Core::StopAfterCurrent>(this, [this](const bool enabled) {
+        m_stopAfterCurrent->setChecked(enabled);
+        updateWidgetState();
+    });
+    m_settings->subscribe<Settings::Core::ResetStopAfterCurrent>(m_resetStopAfterCurrent, &QCheckBox::setChecked);
+    m_settings->subscribe<Settings::Core::Internal::PlaylistSkipUnavailable>(m_skipUnavailable, &QCheckBox::setChecked);
 }
 
 void PlaybackPageWidget::load()
@@ -214,8 +223,7 @@ void PlaybackPageWidget::load()
     m_stopAfterCurrent->setChecked(m_settings->value<Settings::Core::StopAfterCurrent>());
     m_resetStopAfterCurrent->setChecked(m_settings->value<Settings::Core::ResetStopAfterCurrent>());
     m_rewindPrevious->setChecked(m_settings->value<Settings::Core::RewindPreviousTrack>());
-    m_skipUnavailable->setChecked(
-        m_settings->fileValue(Settings::Core::Internal::PlaylistSkipUnavailable, false).toBool());
+    m_skipUnavailable->setChecked(m_settings->value<Settings::Core::Internal::PlaylistSkipUnavailable>());
     m_stopIfActiveDeleted->setChecked(m_settings->value<Settings::Core::StopIfActivePlaylistDeleted>());
 
     m_seekStep->setValue(m_settings->value<Settings::Gui::SeekStepSmall>());
@@ -245,7 +253,7 @@ void PlaybackPageWidget::apply()
     m_settings->set<Settings::Core::StopAfterCurrent>(m_stopAfterCurrent->isChecked());
     m_settings->set<Settings::Core::ResetStopAfterCurrent>(m_resetStopAfterCurrent->isChecked());
     m_settings->set<Settings::Core::RewindPreviousTrack>(m_rewindPrevious->isChecked());
-    m_settings->fileSet(Settings::Core::Internal::PlaylistSkipUnavailable, m_skipUnavailable->isChecked());
+    m_settings->set<Settings::Core::Internal::PlaylistSkipUnavailable>(m_skipUnavailable->isChecked());
     m_settings->set<Settings::Core::StopIfActivePlaylistDeleted>(m_stopIfActiveDeleted->isChecked());
 
     m_settings->set<Settings::Gui::SeekStepSmall>(m_seekStep->value());
@@ -273,7 +281,7 @@ void PlaybackPageWidget::reset()
     m_settings->reset<Settings::Core::StopAfterCurrent>();
     m_settings->reset<Settings::Core::ResetStopAfterCurrent>();
     m_settings->reset<Settings::Core::RewindPreviousTrack>();
-    m_settings->fileRemove(Settings::Core::Internal::PlaylistSkipUnavailable);
+    m_settings->reset<Settings::Core::Internal::PlaylistSkipUnavailable>();
     m_settings->reset<Settings::Core::StopIfActivePlaylistDeleted>();
     m_settings->reset<Settings::Gui::SeekStepSmall>();
     m_settings->reset<Settings::Gui::SeekStepLarge>();

@@ -147,6 +147,8 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
         dialog->open();
     });
 
+    QObject::connect(filterWidget, &FilterWidget::configChanged, this, &FilterConfigDialog::syncCurrentConfig);
+
     loadCurrentConfig();
 }
 
@@ -187,5 +189,16 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
     m_playlistName->setEnabled(m_playlistEnabled->isChecked());
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
     m_keepAlive->setEnabled(m_playlistEnabled->isChecked());
+}
+
+void FilterConfigDialog::mergeExternalConfig(const FilterWidget::ConfigData& previous,
+                                             const FilterWidget::ConfigData& current)
+{
+    mergeExternalFields(previous, current, &FilterWidget::ConfigData::doubleClickAction,
+                        &FilterWidget::ConfigData::middleClickAction, &FilterWidget::ConfigData::sendPlayback,
+                        &FilterWidget::ConfigData::playlistEnabled, &FilterWidget::ConfigData::autoSwitch,
+                        &FilterWidget::ConfigData::keepAlive, &FilterWidget::ConfigData::playlistName,
+                        &FilterWidget::ConfigData::rowHeight, &FilterWidget::ConfigData::iconSize,
+                        &FilterWidget::ConfigData::iconHorizontalGap, &FilterWidget::ConfigData::iconVerticalGap);
 }
 } // namespace Fooyin::Filters

@@ -945,6 +945,8 @@ void VuMeterWidget::applyConfig(const ConfigData& config)
 
     p->updateSize();
     update();
+
+    Q_EMIT configChanged();
 }
 
 VuMeterWidget::ConfigData VuMeterWidget::configFromLayout(const QJsonObject& layout) const
@@ -1159,6 +1161,8 @@ void VuMeterWidget::setShowLegend(bool show)
     m_config.showLegend = show;
     p->updateSize();
     update();
+
+    Q_EMIT configChanged();
 }
 
 void VuMeterWidget::setChannelSpacing(int size)
@@ -1198,7 +1202,7 @@ void VuMeterWidget::setSectionSpacing(int size)
 
 void VuMeterWidget::openConfigDialog()
 {
-    showConfigDialog(new VuMeterConfigDialog(this, this));
+    showConfigDialog(new VuMeterConfigDialog(this, this), Qt::NonModal);
 }
 
 QSize VuMeterWidget::minimumSizeHint() const
@@ -1278,6 +1282,8 @@ void VuMeterWidget::contextMenuEvent(QContextMenuEvent* event)
         p->m_showPeaks     = checked;
         m_config.showPeaks = checked;
         update();
+
+        Q_EMIT configChanged();
     });
 
     auto* showLegend = new QAction(tr("Show legend"), menu);

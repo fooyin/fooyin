@@ -233,6 +233,8 @@ void ScriptDisplay::applyConfig(const ConfigData& config)
 
     applyAppearance();
     updateText();
+
+    Q_EMIT configChanged();
 }
 
 void ScriptDisplay::saveDefaults(const ConfigData& config) const
@@ -348,7 +350,7 @@ void ScriptDisplay::contextMenuEvent(QContextMenuEvent* event)
 
 void ScriptDisplay::openConfigDialog()
 {
-    showConfigDialog(new ScriptDisplayConfigDialog(this, this));
+    showConfigDialog(new ScriptDisplayConfigDialog(this, this), Qt::NonModal);
 }
 
 void ScriptDisplay::resizeEvent(QResizeEvent* event)

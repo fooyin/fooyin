@@ -99,6 +99,8 @@ CoverWidgetConfigDialog::CoverWidgetConfigDialog(CoverWidget* coverWidget, QWidg
     layout->setColumnStretch(0, 1);
     layout->setRowStretch(2, 1);
 
+    QObject::connect(coverWidget, &CoverWidget::configChanged, this, &CoverWidgetConfigDialog::syncCurrentConfig);
+
     loadCurrentConfig();
 }
 
@@ -125,5 +127,13 @@ CoverWidget::ConfigData CoverWidgetConfigDialog::config() const
         .fadeCoverChanges = m_fadeEnabled->isChecked(),
         .fadeDurationMs   = m_fadeDuration->value(),
     };
+}
+
+void CoverWidgetConfigDialog::mergeExternalConfig(const CoverWidget::ConfigData& previous,
+                                                  const CoverWidget::ConfigData& current)
+{
+    mergeExternalFields(previous, current, &CoverWidget::ConfigData::coverType,
+                        &CoverWidget::ConfigData::coverAlignment, &CoverWidget::ConfigData::keepAspectRatio,
+                        &CoverWidget::ConfigData::fadeCoverChanges, &CoverWidget::ConfigData::fadeDurationMs);
 }
 } // namespace Fooyin

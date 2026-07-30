@@ -99,6 +99,9 @@ public:
     [[nodiscard]] QSize minimumSizeHint() const override;
     [[nodiscard]] QSize sizeHint() const override;
 
+Q_SIGNALS:
+    void configChanged();
+
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
     void openConfigDialog() override;

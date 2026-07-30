@@ -45,7 +45,6 @@ GmeSettings::GmeSettings(QWidget* parent)
     , m_fadeNonLoopingTracks{new QCheckBox(tr("Fade non-looping tracks"), this)}
 {
     setWindowTitle(tr("GME Settings"));
-    setModal(true);
 
     auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     QObject::connect(buttons, &QDialogButtonBox::accepted, this, &GmeSettings::accept);

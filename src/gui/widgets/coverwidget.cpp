@@ -167,6 +167,8 @@ void CoverWidget::applyConfig(const ConfigData& config)
     m_fadeController->setDurationMs(m_config.fadeDurationMs);
     m_fadeController->setEnabled(m_config.fadeCoverChanges);
 
+    Q_EMIT configChanged();
+
     if(!m_fadeCoverChanges) {
         stopCoverFade();
     }
@@ -604,7 +606,7 @@ void CoverWidget::paintEvent(QPaintEvent* /*event*/)
 
 void CoverWidget::openConfigDialog()
 {
-    showConfigDialog(new CoverWidgetConfigDialog(this, this));
+    showConfigDialog(new CoverWidgetConfigDialog(this, this), Qt::NonModal);
 }
 
 void CoverWidget::showArtworkViewer()

@@ -188,6 +188,9 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
 
     QObject::connect(m_overrideMargin, &QCheckBox::toggled, m_editableLayoutMargin, &QWidget::setEnabled);
     QObject::connect(m_overrideSplitterHandle, &QCheckBox::toggled, m_splitterHandleGap, &QWidget::setEnabled);
+
+    m_settings->subscribe<ShowMenuBar>(m_showMenuBar, &QCheckBox::setChecked);
+    m_settings->subscribe<LockSplitterHandles>(m_lockSplitters, &QCheckBox::setChecked);
 }
 
 void GuiGeneralPageWidget::load()

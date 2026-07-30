@@ -36,7 +36,6 @@ SleepInhibitorSettings::SleepInhibitorSettings(QWidget* parent)
     namespace Settings = SleepInhibitor::Settings;
 
     setWindowTitle(tr("Sleep Inhibitor Settings"));
-    setModal(true);
 
     auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     QObject::connect(buttons, &QDialogButtonBox::accepted, this, &SleepInhibitorSettings::accept);

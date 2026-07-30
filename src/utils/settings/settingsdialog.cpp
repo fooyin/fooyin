@@ -180,7 +180,6 @@ SettingsDialog::SettingsDialog(PageList pages, QWidget* parent)
     , m_pages{std::move(pages)}
 {
     setWindowTitle(tr("Settings"));
-    setModal(true);
 
     m_stackedLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -215,7 +214,8 @@ SettingsDialog::SettingsDialog(PageList pages, QWidget* parent)
 
 void SettingsDialog::openSettings()
 {
-    open();
+    setWindowModality(Qt::NonModal);
+    show();
 }
 
 void SettingsDialog::openPage(const Id& id)

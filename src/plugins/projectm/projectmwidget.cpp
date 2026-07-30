@@ -315,6 +315,8 @@ void ProjectMWidget::loadLayoutData(const QJsonObject& layout)
     }
 
     updateActionState();
+
+    Q_EMIT configChanged();
 }
 
 ProjectMWidget::ConfigData ProjectMWidget::factoryConfig() const
@@ -368,6 +370,8 @@ void ProjectMWidget::applyConfig(const ConfigData& config)
     scanPresetLibrary();
     m_view->setPresetDirs(presetDirs(m_config));
     m_view->applySettings(m_config.settings);
+
+    Q_EMIT configChanged();
 }
 
 void ProjectMWidget::saveDefaults(const ConfigData& config) const
@@ -492,7 +496,8 @@ void ProjectMWidget::closeEvent(QCloseEvent* event)
 
 void ProjectMWidget::openConfigDialog()
 {
-    showConfigDialog(new ProjectMConfigDialog(this, m_fullScreenWindow ? m_fullScreenWindow.data() : this));
+    showConfigDialog(new ProjectMConfigDialog(this, m_fullScreenWindow ? m_fullScreenWindow.data() : this),
+                     Qt::NonModal);
 }
 
 void ProjectMWidget::setupActions()
@@ -783,6 +788,8 @@ void ProjectMWidget::setPresetDuration(int seconds)
     m_config                         = normaliseConfig(m_config);
     m_view->applySettings(m_config.settings);
     updateActionState();
+
+    Q_EMIT configChanged();
 }
 
 void ProjectMWidget::installSplitterEventFilters()

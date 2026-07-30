@@ -93,6 +93,8 @@ QueueViewerConfigDialog::QueueViewerConfigDialog(QueueViewer* queueViewer, QWidg
         m_headers->setEnabled(false);
     }
 
+    QObject::connect(queueViewer, &QueueViewer::configChanged, this, &QueueViewerConfigDialog::syncCurrentConfig);
+
     loadCurrentConfig();
 }
 
@@ -121,5 +123,14 @@ QueueViewer::ConfigData QueueViewerConfigDialog::config() const
         .showScrollBar   = m_scrollBars->isChecked(),
         .alternatingRows = m_altRowColours->isChecked(),
     };
+}
+
+void QueueViewerConfigDialog::mergeExternalConfig(const QueueViewer::ConfigData& previous,
+                                                  const QueueViewer::ConfigData& current)
+{
+    mergeExternalFields(previous, current, &QueueViewer::ConfigData::leftScript, &QueueViewer::ConfigData::rightScript,
+                        &QueueViewer::ConfigData::showCurrent, &QueueViewer::ConfigData::showIcon,
+                        &QueueViewer::ConfigData::iconSize, &QueueViewer::ConfigData::showHeader,
+                        &QueueViewer::ConfigData::showScrollBar, &QueueViewer::ConfigData::alternatingRows);
 }
 } // namespace Fooyin

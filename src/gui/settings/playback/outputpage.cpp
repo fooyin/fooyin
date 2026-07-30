@@ -58,6 +58,7 @@ public:
 
 private:
     void refreshBufferConstraints();
+    void syncCurrentOutput();
 
     EngineController* m_engine;
     SettingsManager* m_settings;
@@ -203,6 +204,9 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
         }
     });
 
+    QObject::connect(m_engine, &EngineController::outputChanged, this, &OutputPageWidget::syncCurrentOutput);
+    QObject::connect(m_engine, &EngineController::deviceChanged, this, &OutputPageWidget::syncCurrentOutput);
+
     syncWatermarkRatioBounds();
     updateWatermarkHint();
 }
@@ -236,8 +240,7 @@ void OutputPageWidget::load()
         return std::pair{lowRatio, highRatio};
     };
 
-    setupOutputs();
-    setupDevices(m_outputBox->currentText());
+    syncCurrentOutput();
     m_gaplessPlayback->setChecked(m_settings->value<Settings::Core::GaplessPlayback>());
 
     refreshBufferConstraints();
@@ -247,23 +250,6 @@ void OutputPageWidget::load()
                          m_settings->value<Settings::Core::Internal::DecodeHighWatermarkRatio>());
     m_decodeLowWatermark->setValue(static_cast<int>(std::lround(lowWatermarkRatio * 100.0)));
     m_decodeHighWatermark->setValue(static_cast<int>(std::lround(highWatermarkRatio * 100.0)));
-
-    const int bitDepthSetting = m_settings->value<Settings::Core::OutputBitDepth>();
-    const bool ditherSetting
-        = bitDepthSetting == static_cast<int>(SampleFormat::S16) && m_settings->value<Settings::Core::OutputDither>();
-
-    int bitDepthIndex{-1};
-    const int bitDepthItemCount = m_bitDepthBox->count();
-    for(int i{0}; i < bitDepthItemCount; ++i) {
-        if(m_bitDepthBox->itemData(i).toInt() == bitDepthSetting
-           && m_bitDepthBox->itemData(i, Qt::UserRole + 1).toBool() == ditherSetting) {
-            bitDepthIndex = i;
-            break;
-        }
-    }
-
-    m_bitDepthBox->setCurrentIndex(bitDepthIndex >= 0 ? bitDepthIndex : 0);
-    m_bitDepthBox->resizeToFitCurrent();
 }
 
 void OutputPageWidget::apply()
@@ -360,6 +346,29 @@ void OutputPageWidget::setupDevices(const QString& output)
 
     m_deviceBox->resizeDropDown();
     m_deviceBox->resizeToFitCurrent();
+}
+
+void OutputPageWidget::syncCurrentOutput()
+{
+    setupOutputs();
+    setupDevices(m_outputBox->currentText());
+
+    const int bitDepthSetting = m_settings->value<Settings::Core::OutputBitDepth>();
+    const bool ditherSetting
+        = bitDepthSetting == static_cast<int>(SampleFormat::S16) && m_settings->value<Settings::Core::OutputDither>();
+
+    int bitDepthIndex{-1};
+    const int bitDepthItemCount = m_bitDepthBox->count();
+    for(int i{0}; i < bitDepthItemCount; ++i) {
+        if(m_bitDepthBox->itemData(i).toInt() == bitDepthSetting
+           && m_bitDepthBox->itemData(i, Qt::UserRole + 1).toBool() == ditherSetting) {
+            bitDepthIndex = i;
+            break;
+        }
+    }
+
+    m_bitDepthBox->setCurrentIndex(bitDepthIndex >= 0 ? bitDepthIndex : 0);
+    m_bitDepthBox->resizeToFitCurrent();
 }
 
 OutputPage::OutputPage(EngineController* engine, SettingsManager* settings, QObject* parent)

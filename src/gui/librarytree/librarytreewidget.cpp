@@ -429,6 +429,8 @@ void LibraryTreeWidget::applyConfig(const ConfigData& config)
     m_libraryTree->setIconSize(m_config.iconSize);
 
     QMetaObject::invokeMethod(m_libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+
+    Q_EMIT configChanged();
 }
 
 void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
@@ -549,7 +551,7 @@ void LibraryTreeWidget::saveConfigToLayout(const ConfigData& config, QJsonObject
 
 void LibraryTreeWidget::openConfigDialog()
 {
-    showConfigDialog(new LibraryTreeConfigDialog(this, m_groupsRegistry, this));
+    showConfigDialog(new LibraryTreeConfigDialog(this, m_groupsRegistry, this), Qt::NonModal);
 }
 
 void LibraryTreeWidget::setupConnections()
@@ -577,6 +579,7 @@ void LibraryTreeWidget::setupConnections()
         if(size.isValid() && m_config.iconSize != size) {
             m_config.iconSize = size;
             QMetaObject::invokeMethod(m_libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+            Q_EMIT configChanged();
         }
     });
     QObject::connect(m_groupsRegistry, &LibraryTreeGroupRegistry::groupingChanged, this,

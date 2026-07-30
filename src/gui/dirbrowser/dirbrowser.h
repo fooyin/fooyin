@@ -99,6 +99,7 @@ public:
     void applyConfig(const ConfigData& config);
 
 Q_SIGNALS:
+    void configChanged();
     void rootChanged();
 
 public Q_SLOTS:

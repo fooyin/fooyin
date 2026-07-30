@@ -165,6 +165,8 @@ VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidge
     layout->addWidget(tabs, 0, 0);
     layout->setRowStretch(0, 1);
 
+    QObject::connect(vuMeter, &VuMeterWidget::configChanged, this, &VuMeterConfigDialog::syncCurrentConfig);
+
     loadCurrentConfig();
 }
 
@@ -240,5 +242,17 @@ void VuMeterConfigDialog::setConfig(const VuMeterWidget::ConfigData& config)
     m_barGradient->setColours(colours.gradient(palette()));
     m_barGradient->setEnabled(m_barGradientEnabled->isChecked());
     m_barGradient->setOrientation(widget()->orientation());
+}
+
+void VuMeterConfigDialog::mergeExternalConfig(const VuMeterWidget::ConfigData& previous,
+                                              const VuMeterWidget::ConfigData& current)
+{
+    mergeExternalFields(previous, current, &VuMeterWidget::ConfigData::peakHoldTimeMs,
+                        &VuMeterWidget::ConfigData::falloffTime, &VuMeterWidget::ConfigData::peakFalloffTime,
+                        &VuMeterWidget::ConfigData::showPeaks, &VuMeterWidget::ConfigData::showLegend,
+                        &VuMeterWidget::ConfigData::updateFps, &VuMeterWidget::ConfigData::channelSpacing,
+                        &VuMeterWidget::ConfigData::barSize, &VuMeterWidget::ConfigData::barSpacing,
+                        &VuMeterWidget::ConfigData::barSections, &VuMeterWidget::ConfigData::sectionSpacing,
+                        &VuMeterWidget::ConfigData::meterColours);
 }
 } // namespace Fooyin::VuMeter

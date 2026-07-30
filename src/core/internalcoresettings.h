@@ -39,7 +39,6 @@ enum class ReplayGainType : uint8_t
 namespace Settings::Core::Internal {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 
-constexpr auto PlaylistSkipUnavailable           = "Playlist/SkipUnavailable";
 constexpr auto PlaylistSaveMetadata              = "Playlist/SaveMetadata";
 constexpr auto PlaylistSavePathType              = "Playlist/SavePathType";
 constexpr auto AutoExportPlaylists               = "Playlist/AutoExport";
@@ -97,6 +96,7 @@ enum CoreInternalSettings : uint32_t
     MonitorTrackFiles         = 24 | Type::Bool,
     OutputAutoResample        = 25 | Type::Bool,
     OutputResamplerPreference = 26 | Type::StringList,
+    PlaylistSkipUnavailable   = 27 | Type::Bool,
 };
 Q_ENUM_NS(CoreInternalSettings)
 } // namespace Settings::Core::Internal

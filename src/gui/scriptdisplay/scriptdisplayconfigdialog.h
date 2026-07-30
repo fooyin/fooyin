@@ -42,6 +42,8 @@ public:
 protected:
     [[nodiscard]] ScriptDisplay::ConfigData config() const override;
     void setConfig(const ScriptDisplay::ConfigData& config) override;
+    void mergeExternalConfig(const ScriptDisplay::ConfigData& previous,
+                             const ScriptDisplay::ConfigData& current) override;
 
 private:
     ScriptTextEdit* m_script;

@@ -479,6 +479,8 @@ void LyricsWidget::applyConfig(const ConfigData& config)
     if(!m_currentLyrics.isValid() && m_currentTrack.isValid()) {
         m_lyricsView->setDisplayString(noLyricsDisplayText(m_currentTrack));
     }
+
+    Q_EMIT configChanged();
 }
 
 void LyricsWidget::timerEvent(QTimerEvent* event)
@@ -600,7 +602,7 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
 
 void LyricsWidget::openConfigDialog()
 {
-    showConfigDialog(new LyricsConfigDialog(this, m_styleProvider, this));
+    showConfigDialog(new LyricsConfigDialog(this, m_styleProvider, this), Qt::NonModal);
 }
 
 void LyricsWidget::loadLyrics(const Lyrics& lyrics)

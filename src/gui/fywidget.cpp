@@ -223,6 +223,11 @@ QAction* FyWidget::addConfigureAction(QMenu* menu, bool addSeparator)
 
 void FyWidget::showConfigDialog(QDialog* dialog)
 {
+    showConfigDialog(dialog, Qt::WindowModal);
+}
+
+void FyWidget::showConfigDialog(QDialog* dialog, const Qt::WindowModality modality)
+{
     if(!dialog) {
         return;
     }
@@ -235,8 +240,10 @@ void FyWidget::showConfigDialog(QDialog* dialog)
     }
 
     p->m_configDialog = dialog;
+
     QObject::connect(dialog, &QDialog::destroyed, this, [this]() { p->m_configDialog = nullptr; });
-    dialog->open();
+    dialog->setWindowModality(modality);
+    dialog->show();
 }
 } // namespace Fooyin
 

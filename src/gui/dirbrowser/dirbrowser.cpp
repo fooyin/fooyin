@@ -380,6 +380,7 @@ void DirBrowser::updateDir(const QString& dir)
 {
     const QModelIndex root = m_model->setRootPath(dir);
     m_rootPath             = m_model->rootPath();
+    m_config.rootPath      = m_rootPath;
     m_dirTree->setRootIndex(m_proxyModel->mapFromSource(root));
 
     if(m_dirEdit) {
@@ -480,6 +481,8 @@ void DirBrowser::applyConfig(const ConfigData& config)
     setShowHidden(m_config.showHidden);
     setRootPath(m_config.rootPath);
     updateControlState();
+
+    Q_EMIT configChanged();
 }
 
 void DirBrowser::playstateChanged(Player::PlayState state)
@@ -645,7 +648,7 @@ void DirBrowser::keyPressEvent(QKeyEvent* event)
 
 void DirBrowser::openConfigDialog()
 {
-    showConfigDialog(new DirBrowserConfigDialog(this, this));
+    showConfigDialog(new DirBrowserConfigDialog(this, this), Qt::NonModal);
 }
 
 void DirBrowser::checkIconProvider()

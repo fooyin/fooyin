@@ -39,6 +39,7 @@ public:
 protected:
     void setConfig(const CoverWidget::ConfigData& config) override;
     [[nodiscard]] CoverWidget::ConfigData config() const override;
+    void mergeExternalConfig(const CoverWidget::ConfigData& previous, const CoverWidget::ConfigData& current) override;
 
 private:
     QButtonGroup* m_coverTypeGroup;

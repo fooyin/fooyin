@@ -98,6 +98,8 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
     QObject::connect(m_treeMode, &QRadioButton::toggled, this,
                      [this](bool checked) { m_indentList->setEnabled(!checked); });
 
+    QObject::connect(browser, &DirBrowser::configChanged, this, &DirBrowserConfigDialog::syncCurrentConfig);
+
     loadCurrentConfig();
 }
 
@@ -139,5 +141,16 @@ void DirBrowserConfigDialog::setConfig(const DirBrowser::ConfigData& config)
 
     TrackSelectionController::setCurrentAction(m_doubleClick, config.doubleClickAction);
     TrackSelectionController::setCurrentAction(m_middleClick, config.middleClickAction);
+}
+
+void DirBrowserConfigDialog::mergeExternalConfig(const DirBrowser::ConfigData& previous,
+                                                 const DirBrowser::ConfigData& current)
+{
+    mergeExternalFields(
+        previous, current, &DirBrowser::ConfigData::doubleClickAction, &DirBrowser::ConfigData::middleClickAction,
+        &DirBrowser::ConfigData::sendPlayback, &DirBrowser::ConfigData::showIcons, &DirBrowser::ConfigData::indentList,
+        &DirBrowser::ConfigData::showHorizScrollbar, &DirBrowser::ConfigData::mode,
+        &DirBrowser::ConfigData::showControls, &DirBrowser::ConfigData::showLocation,
+        &DirBrowser::ConfigData::showSymLinks, &DirBrowser::ConfigData::showHidden, &DirBrowser::ConfigData::rootPath);
 }
 } // namespace Fooyin

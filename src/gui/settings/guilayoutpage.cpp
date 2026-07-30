@@ -21,12 +21,14 @@
 
 #include "layouttreemodel.h"
 
+#include <core/constants.h>
 #include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/layoutprovider.h>
 #include <gui/theme/fytheme.h>
 #include <gui/widgetprovider.h>
+#include <utils/jsonutils.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
@@ -44,6 +46,9 @@
 #include <QTreeView>
 
 #include <algorithm>
+#include <optional>
+#include <ranges>
+#include <unordered_map>
 #include <vector>
 
 using namespace Qt::StringLiterals;
@@ -112,6 +117,22 @@ void setEqualButtonWidth(std::initializer_list<QPushButton*> buttons)
         button->setFixedWidth(width);
     }
 }
+
+QString arrayItemId(const QJsonValue& value)
+{
+    if(!value.isObject()) {
+        return {};
+    }
+
+    const auto object = value.toObject();
+    if(object.size() != 1 || !object.constBegin()->isObject()) {
+        return {};
+    }
+
+    const QString id = object.constBegin()->toObject().value("ID"_L1).toString();
+    return id.isEmpty() ? QString{} : object.constBegin().key() + QLatin1String{Constants::UnitSeparator} + id;
+}
+
 } // namespace
 
 class GuiLayoutPageWidget : public SettingsPageWidget
@@ -127,6 +148,24 @@ public:
     void reset() override;
 
 private:
+    struct LayoutDraft
+    {
+        FyLayout baseline;
+        FyLayout layout;
+        bool applyTheme{false};
+        bool applyWindowSize{false};
+    };
+
+    void refreshLayouts(const QString& selectedName);
+    void showLayout(const QString& name);
+    void saveDisplayedDraft();
+    void mergeExternalLayout(const FyLayout& layout);
+    void onCurrentLayoutChanged(const FyLayout& layout);
+    void onLayoutChanged(const FyLayout& layout);
+    void onLayoutAdded(const FyLayout& layout);
+    void onLayoutRemoved(const QString& name);
+    [[nodiscard]] FyLayout finaliseDraft(const LayoutDraft& draft) const;
+
     void onContextMenuRequested(const QPoint& pos);
     void onChangeLayout();
     void onSelectionChanged();
@@ -170,7 +209,10 @@ private:
     QComboBox* m_layoutCombo;
     QPushButton* m_deleteLayout;
     QJsonObject m_clipboardItem;
+    std::unordered_map<QString, LayoutDraft> m_drafts;
+    QString m_displayedLayoutName;
     bool m_loading{false};
+    bool m_applying{false};
     bool m_updatingMargins{false};
     bool m_updatingSplitterSpacing{false};
 };
@@ -257,7 +299,11 @@ GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, Editabl
                      &GuiLayoutPageWidget::onContextMenuRequested);
 
     QObject::connect(m_layoutCombo, &QComboBox::currentIndexChanged, this, &GuiLayoutPageWidget::onChangeLayout);
-    QObject::connect(m_layoutProvider, &LayoutProvider::currentLayoutChanged, this, &GuiLayoutPageWidget::load);
+    QObject::connect(m_layoutProvider, &LayoutProvider::currentLayoutChanged, this,
+                     &GuiLayoutPageWidget::onCurrentLayoutChanged);
+    QObject::connect(m_layoutProvider, &LayoutProvider::layoutChanged, this, &GuiLayoutPageWidget::onLayoutChanged);
+    QObject::connect(m_layoutProvider, &LayoutProvider::layoutAdded, this, &GuiLayoutPageWidget::onLayoutAdded);
+    QObject::connect(m_layoutProvider, &LayoutProvider::layoutRemoved, this, &GuiLayoutPageWidget::onLayoutRemoved);
 
     QObject::connect(newLayout, &QPushButton::clicked, this, &GuiLayoutPageWidget::onNewLayout);
     QObject::connect(m_deleteLayout, &QPushButton::clicked, this, &GuiLayoutPageWidget::onDeleteLayout);
@@ -284,6 +330,12 @@ GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, Editabl
 
 void GuiLayoutPageWidget::load()
 {
+    m_drafts.clear();
+    refreshLayouts(m_layoutProvider->currentLayout().name());
+}
+
+void GuiLayoutPageWidget::refreshLayouts(const QString& selectedName)
+{
     m_loading = true;
 
     m_layoutCombo->clear();
@@ -305,55 +357,219 @@ void GuiLayoutPageWidget::load()
         }
     }
 
-    const QString current = m_layoutProvider->currentLayout().name();
-    const int idx         = m_layoutCombo->findText(current);
+    const int idx = m_layoutCombo->findText(selectedName);
     if(idx >= 0) {
         m_layoutCombo->setCurrentIndex(idx);
     }
 
-    m_model->populate(m_layoutProvider->currentLayout());
+    showLayout(idx >= 0 ? selectedName : QString{});
     m_layoutTree->setEnabled(idx >= 0);
-    updateMarginControls();
-    updateSplitterControls();
-    updateMetadataControls();
     updateButtonStates();
 
     m_loading = false;
 }
 
+void GuiLayoutPageWidget::showLayout(const QString& name)
+{
+    m_displayedLayoutName = name;
+
+    if(name.isEmpty()) {
+        m_model->populate({});
+    }
+    else {
+        const auto draft = m_drafts.find(name);
+        if(draft != m_drafts.end()) {
+            m_model->populate(draft->second.layout);
+        }
+        else {
+            const FyLayout layout = m_layoutProvider->layoutByName(name);
+            m_drafts.emplace(name, LayoutDraft{
+                                       .baseline        = layout,
+                                       .layout          = layout,
+                                       .applyTheme      = layout.appliesTheme(),
+                                       .applyWindowSize = layout.appliesWindowSize(),
+                                   });
+            m_model->populate(layout);
+        }
+    }
+
+    updateMarginControls();
+    updateSplitterControls();
+    updateMetadataControls();
+
+    if(const auto draft = m_drafts.find(name); draft != m_drafts.end()) {
+        m_applyTheme->setChecked(draft->second.applyTheme);
+        m_applyWindowSize->setChecked(draft->second.applyWindowSize);
+    }
+}
+
+void GuiLayoutPageWidget::saveDisplayedDraft()
+{
+    if(m_loading || m_displayedLayoutName.isEmpty()) {
+        return;
+    }
+
+    const FyLayout layout = m_model->layout();
+    if(!layout.isValid()) {
+        return;
+    }
+
+    auto draft = m_drafts.find(m_displayedLayoutName);
+    if(draft == m_drafts.end()) {
+        const FyLayout baseline = m_layoutProvider->layoutByName(m_displayedLayoutName);
+        draft                   = m_drafts
+                                      .emplace(m_displayedLayoutName,
+                                               LayoutDraft{
+                                                   .baseline        = baseline,
+                                                   .layout          = layout,
+                                                   .applyTheme      = m_applyTheme->isChecked(),
+                                                   .applyWindowSize = m_applyWindowSize->isChecked(),
+                                               })
+                                      .first;
+    }
+
+    draft->second.layout          = layout;
+    draft->second.applyTheme      = m_applyTheme->isChecked();
+    draft->second.applyWindowSize = m_applyWindowSize->isChecked();
+}
+
+void GuiLayoutPageWidget::mergeExternalLayout(const FyLayout& layout)
+{
+    if(!layout.isValid()) {
+        return;
+    }
+
+    const auto draft = m_drafts.find(layout.name());
+    if(draft == m_drafts.end()) {
+        return;
+    }
+
+    auto& state = draft->second;
+    const auto mergedJson
+        = Utils::mergeJsonThreeWay(state.baseline.json(), layout.json(), state.layout.json(), arrayItemId).toObject();
+
+    if(state.applyTheme == state.baseline.appliesTheme()) {
+        state.applyTheme = layout.appliesTheme();
+    }
+    if(state.applyWindowSize == state.baseline.appliesWindowSize()) {
+        state.applyWindowSize = layout.appliesWindowSize();
+    }
+
+    state.baseline = layout;
+    state.layout   = FyLayout{layout.name(), mergedJson};
+}
+
+void GuiLayoutPageWidget::onCurrentLayoutChanged(const FyLayout& layout)
+{
+    if(m_applying) {
+        return;
+    }
+
+    saveDisplayedDraft();
+    mergeExternalLayout(layout);
+    refreshLayouts(layout.name());
+}
+
+void GuiLayoutPageWidget::onLayoutChanged(const FyLayout& layout)
+{
+    if(m_applying) {
+        return;
+    }
+
+    saveDisplayedDraft();
+    mergeExternalLayout(layout);
+
+    if(layout.name() == m_displayedLayoutName) {
+        const TreeSelectionGuard selectionGuard{m_layoutTree, m_model};
+        showLayout(layout.name());
+    }
+}
+
+void GuiLayoutPageWidget::onLayoutAdded(const FyLayout& /*layout*/)
+{
+    if(!m_applying) {
+        saveDisplayedDraft();
+        refreshLayouts(m_displayedLayoutName);
+    }
+}
+
+void GuiLayoutPageWidget::onLayoutRemoved(const QString& name)
+{
+    if(m_applying) {
+        return;
+    }
+
+    saveDisplayedDraft();
+    m_drafts.erase(name);
+    const QString selected
+        = name == m_displayedLayoutName ? m_layoutProvider->currentLayout().name() : m_displayedLayoutName;
+    refreshLayouts(selected);
+}
+
+FyLayout GuiLayoutPageWidget::finaliseDraft(const LayoutDraft& draft) const
+{
+    FyLayout layout{draft.layout};
+
+    if(draft.applyTheme) {
+        const auto theme = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
+        layout.removeTheme();
+        layout.setAppliesTheme(true);
+        if(theme.isValid()) {
+            layout.saveTheme(theme);
+        }
+    }
+    else {
+        layout.removeTheme();
+    }
+
+    if(draft.applyWindowSize) {
+        layout.saveWindowSize();
+    }
+    else {
+        layout.removeWindowSize();
+    }
+
+    return layout;
+}
+
 void GuiLayoutPageWidget::apply()
 {
-    FyLayout layout = m_model->layout();
-    if(layout.isValid()) {
-        if(m_applyTheme->isChecked()) {
-            const auto theme = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
-            layout.removeTheme();
-            layout.setAppliesTheme(true);
-            if(theme.isValid()) {
-                layout.saveTheme(theme);
-            }
-        }
-        else {
-            layout.removeTheme();
+    saveDisplayedDraft();
+
+    const QString currentName = m_layoutProvider->currentLayout().name();
+
+    std::vector<FyLayout> layouts;
+    layouts.reserve(m_drafts.size());
+
+    for(const auto& draft : m_drafts | std::views::values) {
+        const bool changed = draft.layout.json() != draft.baseline.json()
+                          || draft.applyTheme != draft.baseline.appliesTheme()
+                          || draft.applyWindowSize != draft.baseline.appliesWindowSize();
+        if(!changed) {
+            continue;
         }
 
-        if(m_applyWindowSize->isChecked()) {
-            layout.saveWindowSize();
+        FyLayout layout = finaliseDraft(draft);
+        if(layout.isValid()) {
+            layouts.push_back(std::move(layout));
         }
-        else {
-            layout.removeWindowSize();
-        }
-
-        const FyLayout currentLayout = m_layoutProvider->currentLayout();
-        if(currentLayout.isValid() && layout.name() == currentLayout.name() && layout.json() == currentLayout.json()) {
-            return;
-        }
-
-        const TreeSelectionGuard selectionGuard{m_layoutTree, m_model};
-        m_editableLayout->changeLayout(layout);
-        m_layoutProvider->saveCurrentLayout();
-        load();
     }
+
+    m_applying = true;
+
+    for(const auto& layout : layouts) {
+        if(layout.name() != currentName) {
+            m_layoutProvider->saveLayout(layout);
+        }
+    }
+    if(const auto current = std::ranges::find(layouts, currentName, &FyLayout::name); current != layouts.end()) {
+        const TreeSelectionGuard selectionGuard{m_layoutTree, m_model};
+        m_editableLayout->changeLayout(*current);
+        m_layoutProvider->saveCurrentLayout();
+    }
+
+    m_applying = false;
+    load();
 }
 
 void GuiLayoutPageWidget::reset() { }
@@ -413,13 +629,12 @@ void GuiLayoutPageWidget::onChangeLayout()
         return;
     }
 
-    const FyLayout layout = m_layoutProvider->layoutByName(m_layoutCombo->currentText());
-    m_model->populate(layout);
-    m_layoutTree->setEnabled(layout.isValid());
+    saveDisplayedDraft();
+
+    const QString name = m_layoutCombo->currentText();
+    showLayout(name);
+    m_layoutTree->setEnabled(m_model->layout().isValid());
     updateButtonStates();
-    updateMarginControls();
-    updateSplitterControls();
-    updateMetadataControls();
 }
 
 void GuiLayoutPageWidget::onSelectionChanged()
@@ -584,12 +799,11 @@ void GuiLayoutPageWidget::onNewLayout()
                                                defaultName, &success)
                              .trimmed();
 
-    static const QJsonObject layout{
+    const QJsonObject layout{
         {u"Name"_s, name}, {u"Version"_s, 1}, {u"Widgets"_s, QJsonArray{QJsonObject{{u"Playlist"_s, QJsonObject{}}}}}};
 
     if(success && !name.isEmpty() && m_layoutProvider->createLayout(name, FyLayout{name, layout})) {
-        load();
-        m_layoutCombo->setCurrentText(name);
+        refreshLayouts(name);
     }
 }
 
@@ -606,8 +820,8 @@ void GuiLayoutPageWidget::onDeleteLayout()
             if(wasCurrent) {
                 m_editableLayout->changeLayout(m_layoutProvider->currentLayout());
             }
-            load();
-            m_layoutCombo->setCurrentText(name);
+            m_drafts.erase(name);
+            refreshLayouts(name);
         }
         return;
     }
@@ -624,7 +838,8 @@ void GuiLayoutPageWidget::onDeleteLayout()
         if(wasCurrent && m_layoutProvider->currentLayout().isValid()) {
             m_editableLayout->changeLayout(m_layoutProvider->currentLayout());
         }
-        load();
+        m_drafts.erase(name);
+        refreshLayouts(m_layoutProvider->currentLayout().name());
     }
 }
 
@@ -640,9 +855,21 @@ void GuiLayoutPageWidget::onRenameLayout()
                                                   QLineEdit::Normal, oldName, &success)
                                 .trimmed();
 
+    saveDisplayedDraft();
+    const auto oldDraft = m_drafts.find(oldName);
+    const std::optional<LayoutDraft> renamedDraft
+        = oldDraft == m_drafts.end() ? std::nullopt : std::optional{oldDraft->second};
+
     if(success && m_layoutProvider->renameLayout(oldName, newName)) {
-        load();
-        m_layoutCombo->setCurrentText(newName);
+        if(renamedDraft) {
+            auto state      = *renamedDraft;
+            auto json       = state.layout.json();
+            json["Name"_L1] = newName;
+            state.baseline  = m_layoutProvider->layoutByName(newName);
+            state.layout    = FyLayout{newName, json};
+            m_drafts.insert_or_assign(newName, std::move(state));
+        }
+        refreshLayouts(newName);
     }
 }
 
@@ -659,9 +886,13 @@ void GuiLayoutPageWidget::onDuplicateLayout()
                                                   QLineEdit::Normal, defaultName, &success)
                                 .trimmed();
 
-    if(success && m_layoutProvider->duplicateLayout(sourceName, newName)) {
-        load();
-        m_layoutCombo->setCurrentText(newName);
+    saveDisplayedDraft();
+    const auto source = m_drafts.find(sourceName);
+    const FyLayout sourceLayout
+        = source == m_drafts.end() ? m_layoutProvider->layoutByName(sourceName) : source->second.layout;
+
+    if(success && m_layoutProvider->createLayout(newName, sourceLayout)) {
+        refreshLayouts(newName);
     }
 }
 
