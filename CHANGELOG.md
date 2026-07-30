@@ -1,5 +1,35 @@
 # Changelog
 
+## Unreleased
+
+### Improvements
+
+* Interface
+  - Make settings and configuration dialogs non-modal ([#1402](https://github.com/fooyin/fooyin/issues/1402), [#1427](https://github.com/fooyin/fooyin/pull/1427))
+* Remote Streams
+  - Add timed ID3 metadata support for HLS streams
+
+### Fixes
+
+* Library/Playlists
+  - Fix removing deleted tracks from playlists ([#1420](https://github.com/fooyin/fooyin/issues/1420))
+* Playback
+  - Fix gapless pause and seek races at track boundaries ([#1426](https://github.com/fooyin/fooyin/issues/1426))
+  - Fix Stop After Current for segmented tracks ([#1399](https://github.com/fooyin/fooyin/issues/1399))
+  - Check Resampler DSP libsoxr support at runtime
+* Remote Streams
+  - Fix adding HLS stream URLs to playlists
+  - Fix remote stream decoding and cancellation ([#1425](https://github.com/fooyin/fooyin/issues/1425))
+* Scripting
+  - Fix evaluation of `$iflonger`
+
+### Build/System
+
+* CI
+  - Shorten Windows build and vcpkg paths ([#1422](https://github.com/fooyin/fooyin/pull/1422))
+  - Update GitHub Actions dependencies ([#1415](https://github.com/fooyin/fooyin/pull/1415), [#1416](https://github.com/fooyin/fooyin/pull/1416), [#1417](https://github.com/fooyin/fooyin/pull/1417))
+
+
 ## [0.12.0](https://github.com/fooyin/fooyin/releases/tag/v0.12.0) (2026-07-27)
 
 ### New Features
