@@ -32,6 +32,10 @@ set(CMAKE_LINK_DEPENDS_NO_SHARED ON)
 # Needed for some 3rdparty libs
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
+if(POLICY CMP0177)
+    cmake_policy(SET CMP0177 NEW)
+endif()
+
 if(NOT DEFINED CMAKE_SKIP_BUILD_RPATH)
     set(CMAKE_SKIP_BUILD_RPATH OFF)
 endif()
@@ -194,7 +198,7 @@ elseif(INSTALL_FHS)
 else()
     set(BIN_INSTALL_DIR .)
     set(LIB_INSTALL_DIR .)
-    set(TRANSLATION_INSTALL_DIR "${BIN_INSTALL_DIR}/translations")
+    set(TRANSLATION_INSTALL_DIR translations)
 endif()
 
 fooyin_convert_to_relative_path(BIN_INSTALL_DIR)
@@ -212,6 +216,8 @@ file(RELATIVE_PATH FOOYIN_RELATIVE_TRANSLATION_PATH "/${BIN_INSTALL_DIR}" "/${TR
 
 if(APPLE)
     set(FOOYIN_PLUGIN_INSTALL_DIR "${FOOYIN_BUNDLE_NAME}/Contents/PlugIns")
+elseif(LIB_INSTALL_DIR STREQUAL ".")
+    set(FOOYIN_PLUGIN_INSTALL_DIR plugins)
 else()
     set(FOOYIN_PLUGIN_INSTALL_DIR "${LIB_INSTALL_DIR}/plugins")
 endif()
