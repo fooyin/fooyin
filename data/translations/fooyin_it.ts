@@ -11,7 +11,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="232"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Aggiungi alla playlist corrente</translation>
+        <translation>Aggiungi alla playlist attuale</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="235"/>
@@ -41,7 +41,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="251"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Accoda alla prossima riproduzione</translation>
+        <translation>Accoda come prossimo</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="254"/>
@@ -51,12 +51,12 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="258"/>
         <source>Set as root</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta come radice</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="261"/>
         <source>View mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modalità di visualizzazione</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="264"/>
@@ -79,7 +79,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="54"/>
         <source>Widget actions</source>
-        <translation type="unfinished"></translation>
+        <translation>Azioni del widget</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="58"/>
@@ -99,7 +99,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="68"/>
         <source>Copy</source>
-        <translation type="unfinished">Copia</translation>
+        <translation>Copia</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="71"/>
@@ -109,7 +109,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="75"/>
         <source>Insert</source>
-        <translation>Inserici</translation>
+        <translation>Inserisci</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="78"/>
@@ -119,7 +119,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="82"/>
         <source>Remove</source>
-        <translation type="unfinished">Rimuovi</translation>
+        <translation>Rimuovi</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="407"/>
@@ -129,7 +129,7 @@
     <message>
         <location filename="../../src/gui/widgets.cpp" line="409"/>
         <source>Unchecked items will be hidden from the layout editing context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gli elementi non selezionati verranno nascosti dal menu contestuale di modifica del layout.</translation>
     </message>
 </context>
 <context>
@@ -137,7 +137,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="48"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Aggiungi alla playlist corrente</translation>
+        <translation>Aggiungi alla playlist corrente</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="51"/>
@@ -162,7 +162,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="64"/>
         <source>Add to playback queue</source>
-        <translation>Aggiungi alla playlist di coda</translation>
+        <translation>Aggiungi alla coda di riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="67"/>
@@ -187,7 +187,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="82"/>
         <source>Track menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Menù traccia</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="55"/>
@@ -197,7 +197,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="57"/>
         <source>Unchecked items will be hidden from the library filter context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gli elementi non selezionati verranno nascosti dal menu contestuale del filtro della libreria.</translation>
     </message>
 </context>
 <context>
@@ -274,7 +274,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="108"/>
         <source>Unique artists combined into one value</source>
-        <translation type="unfinished"></translation>
+        <translation>Artisti univoci combinati in un solo valore</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="110"/>
@@ -449,7 +449,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="187"/>
         <source>Path relative to the library root</source>
-        <translation type="unfinished"></translation>
+        <translation>Percorso relativo alla radice della libreria</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="189"/>
@@ -469,12 +469,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="195"/>
         <source>Containing directory name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome cartella contenitore</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="197"/>
         <source>Containing directory path</source>
-        <translation type="unfinished"></translation>
+        <translation>Percorso cartella contenitore</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="199"/>
@@ -484,32 +484,32 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="201"/>
         <source>ReplayGain track gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Guadagno ReplayGain della traccia</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="203"/>
         <source>ReplayGain track peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Picco ReplayGain della traccia</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="205"/>
         <source>ReplayGain track peak in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>Picco ReplayGain della traccia in dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="207"/>
         <source>ReplayGain album gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Guadagno ReplayGain dell&apos;album</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="209"/>
         <source>ReplayGain album peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Picco ReplayGain dell&apos;album</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="211"/>
         <source>ReplayGain album peak in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>Picco ReplayGain dell&apos;album in dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="212"/>
@@ -523,12 +523,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="213"/>
         <source>Number of tracks in the list</source>
-        <translation type="unfinished"></translation>
+        <translation>Numero di tracce nella lista</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="215"/>
         <source>Combined duration of the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>Durata complessiva della lista</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="219"/>
@@ -545,17 +545,17 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="240"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="242"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="221"/>
         <source>Elapsed time within the active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo trascorso nella playlist attiva</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="223"/>
         <source>Unique genres across the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>Generi univoci nella lista</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="320"/>
@@ -565,43 +565,43 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="452"/>
         <source>Checks whether two numeric values are equal</source>
-        <translation type="unfinished"></translation>
+        <translation>Controlla se due valori numerici sono uguali</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="225"/>
         <source>First playback queue index for the specified item</source>
-        <translation type="unfinished"></translation>
+        <translation>Indice della coda di prima riproduzione per l&apos;elemento specificato</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="58"/>
         <source>Functions</source>
-        <translation type="unfinished"></translation>
+        <translation>Funzioni</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="155"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="159"/>
         <source>Numeric rating in stars</source>
-        <translation type="unfinished"></translation>
+        <translation>Valutazione numerica in stelle</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Normalized rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Valutazione normalizzata</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="163"/>
         <source>Rating shown as stars with trailing empty stars</source>
-        <translation type="unfinished"></translation>
+        <translation>Valutazione a stelle visualizzando anche quelle vuote</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="179"/>
         <source>File created timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Marca temporale creazione file</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="217"/>
         <source>Combined file size of the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>Dimensione complessiva dei file nella lista</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="224"/>
@@ -623,42 +623,42 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="231"/>
         <source>Current playback position formatted as time</source>
-        <translation type="unfinished"></translation>
+        <translation>Posizione corrente della riproduzione disposto come tempo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="233"/>
         <source>Current playback position in seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Posizione corrente della riproduzione disposto in secondi</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="235"/>
         <source>Remaining playback time formatted as time</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo rimanente della riproduzione disposto come tempo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="237"/>
         <source>Remaining playback time in seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo rimanente della riproduzione disposto in secondi</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="239"/>
         <source>Returns 1 while playback is active</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce 1 quando la riproduzione è attiva</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="241"/>
         <source>Returns 1 while playback is paused</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce 1 quando la riproduzione è in pausa</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="243"/>
         <source>Returns 1 while playback is stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce 1 quando la riproduzione è ferma</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="244"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>Sistema</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
@@ -669,7 +669,7 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="246"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="248"/>
         <source>Library</source>
-        <translation type="unfinished">Libreria</translation>
+        <translation>Libreria</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="247"/>
@@ -693,27 +693,27 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="251"/>
         <source>Makes the enclosed text bold</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra il testo contenuto in grassetto</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="253"/>
         <source>Makes the enclosed text italic</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra il testo contenuto in corsivo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="255"/>
         <source>Sets the font family for the enclosed text</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta la famiglia di font per il testo contenuto</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="257"/>
         <source>Sets the font size in points</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta la grandezza del font in punti</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="259"/>
         <source>Adjusts the current font size by a positive or negative delta</source>
-        <translation type="unfinished"></translation>
+        <translation>Regola l&apos;attuale grandezza del font di un delta positivo o negativo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="261"/>
@@ -721,32 +721,32 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="265"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="268"/>
         <source>Colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Colore</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="262"/>
         <source>Sets the text alpha channel from 0 to 255</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta il canale alfa del testo da 0 a 255</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="264"/>
         <source>Sets the text colour from red, green and blue components</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta il colore del testo da componenti rossi, verdi e blu</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="266"/>
         <source>Sets the text colour from red, green, blue, and alpha components</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta il colore del testo da componenti rossi, verdi, blu ed alfa</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="269"/>
         <source>Sets the text colour from a named colour or hex code</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta il colore del testo dal nome di un colore o codice hex</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="270"/>
         <source>Adds numeric arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiunge argomenti numerici</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="271"/>
@@ -761,57 +761,57 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="290"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="402"/>
         <source>Numeric</source>
-        <translation type="unfinished"></translation>
+        <translation>Numerico</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
         <source>Subtracts later values from the first</source>
-        <translation type="unfinished"></translation>
+        <translation>Sottrae i valori susseguenti dal primo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
         <source>Multiplies numeric arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Moltiplica argomenti numerici</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="276"/>
         <source>Divides the first value by the second</source>
-        <translation type="unfinished"></translation>
+        <translation>Divide il primo valore per il secondo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="278"/>
         <source>Returns the smallest numeric value</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce il valore numerico più piccolo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="280"/>
         <source>Returns the largest numeric value</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce il valore numerico più grande</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="282"/>
         <source>Returns the remainder of a division</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce il resto di una divisione</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="284"/>
         <source>Returns a random number in range</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce un numero casuale nell&apos;intervallo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="286"/>
         <source>Rounds a numeric value</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrotonda un valore numerico</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="289"/>
         <source>Formats a number with leading zeroes</source>
-        <translation type="unfinished"></translation>
+        <translation>Dispone il numero con zeri iniziali</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="291"/>
         <source>Replaces text fragments</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimpiazza frammenti di testo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="292"/>
@@ -853,37 +853,37 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="397"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="400"/>
         <source>String</source>
-        <translation type="unfinished"></translation>
+        <translation>Stringa</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="293"/>
         <source>Converts text to ASCII</source>
-        <translation type="unfinished"></translation>
+        <translation>Converte testo in ASCII</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="295"/>
         <source>Returns a slice of text</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce una porzione di testo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="297"/>
         <source>Removes characters from the end</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuove caratteri dalla fine</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="299"/>
         <source>Returns characters from the left</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce caratteri dalla sinistra</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="302"/>
         <source>Returns characters from the right</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce caratteri dalla destra</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="305"/>
         <source>Inserts text at a position</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisce il testo in una posizione</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="306"/>
@@ -913,47 +913,47 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="323"/>
         <source>Joins non-empty values with a separator</source>
-        <translation type="unfinished"></translation>
+        <translation>Unisce valori non vuoti con un separatore</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="325"/>
         <source>Returns the text length</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce la lunghezza del testo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="327"/>
         <source>Returns the longest string</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce la stringa più lunga</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="329"/>
         <source>Compares two strings</source>
-        <translation type="unfinished"></translation>
+        <translation>Mette in comparazione due stringhe</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="331"/>
         <source>Compares two strings ignoring case</source>
-        <translation type="unfinished"></translation>
+        <translation>Mette in comparazione due stringhe ignorando maiuscole e minuscole</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="333"/>
         <source>Tests whether one string is longer</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifica se una stringa è più lunga</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="335"/>
         <source>Returns the unit separator character</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce il carattere separatore di unità</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="337"/>
         <source>Returns a newline</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce una riga a capo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="339"/>
         <source>Returns a tab character</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce un carattere di tabulazione</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="342"/>
@@ -978,7 +978,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="350"/>
         <source>Repeats text</source>
-        <translation type="unfinished"></translation>
+        <translation>Ripete testo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="352"/>
@@ -1286,7 +1286,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="59"/>
         <source>La&amp;yout</source>
-        <translation type="unfinished"></translation>
+        <translation>La&amp;yout</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="63"/>
@@ -1310,7 +1310,7 @@
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="211"/>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="212"/>
         <source>Advanced</source>
-        <translation type="unfinished"></translation>
+        <translation>Avanzate</translation>
     </message>
 </context>
 <context>
@@ -1318,7 +1318,7 @@
     <message>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="77"/>
         <source>Filter</source>
-        <translation type="unfinished">Filtra</translation>
+        <translation>Filtra</translation>
     </message>
 </context>
 <context>
@@ -1326,12 +1326,12 @@
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="35"/>
         <source>ALSA Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Impostazioni ALSA</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="41"/>
         <source>Buffer length</source>
-        <translation type="unfinished"></translation>
+        <translation>Lunghezza buffer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="42"/>
@@ -1344,39 +1344,39 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="66"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerca</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="68"/>
         <source>Artwork Finder</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerca copertina</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="70"/>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="121"/>
         <source>Artist</source>
-        <translation type="unfinished">Artista</translation>
+        <translation>Artista</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="71"/>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="123"/>
         <source>Album</source>
-        <translation type="unfinished">Album</translation>
+        <translation>Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="125"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="214"/>
         <source>Searching…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ricerca in corso…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="220"/>
         <source>No artwork found</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessuna copertina trovata</translation>
     </message>
 </context>
 <context>
@@ -1384,17 +1384,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="250"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Download</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="251"/>
         <source>Interface</source>
-        <translation type="unfinished">Interfaccia</translation>
+        <translation>Interfaccia</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="251"/>
         <source>Artwork</source>
-        <translation type="unfinished">Copertina</translation>
+        <translation>Copertina</translation>
     </message>
 </context>
 <context>
@@ -1402,77 +1402,77 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="79"/>
         <source>Embed in file</source>
-        <translation type="unfinished"></translation>
+        <translation>Incorpora nel file</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="80"/>
         <source>Save to directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Salva nella cartella</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="84"/>
         <source>Quality</source>
-        <translation type="unfinished"></translation>
+        <translation>Qualità</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="100"/>
         <source>Front Cover</source>
-        <translation type="unfinished">Copertina Frontale</translation>
+        <translation>Copertina Frontale</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="101"/>
         <source>Back Cover</source>
-        <translation type="unfinished">Copertina Posteriore</translation>
+        <translation>Copertina Posteriore</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="102"/>
         <source>Artist</source>
-        <translation type="unfinished">Artista</translation>
+        <translation>Artista</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="111"/>
         <source>Save Method</source>
-        <translation type="unfinished"></translation>
+        <translation>Metodo di salvataggio</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="120"/>
         <source>Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="122"/>
         <source>Save Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Cartella di salvataggio</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="125"/>
         <source>Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Cartella</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="126"/>
         <source>Filename</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome del file</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="127"/>
         <source>File type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo di file</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="129"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatico</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="179"/>
         <source>Cover type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo di copertina</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="240"/>
         <source>Select Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona Cartella</translation>
     </message>
 </context>
 <context>
@@ -1480,17 +1480,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="201"/>
         <source>General</source>
-        <translation type="unfinished">Generale</translation>
+        <translation>Generale</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="202"/>
         <source>Interface</source>
-        <translation type="unfinished">Interfaccia</translation>
+        <translation>Interfaccia</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="202"/>
         <source>Artwork</source>
-        <translation type="unfinished">Copertina</translation>
+        <translation>Copertina</translation>
     </message>
 </context>
 <context>
@@ -1498,22 +1498,22 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="74"/>
         <source>Prefer currently playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>Preferisci copertina traccia attualmente in riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="75"/>
         <source>Prefer current selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Preferisci selezione attuale</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="76"/>
         <source>Prefer directory artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Preferisci copertina cartella</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="77"/>
         <source>Prefer embedded artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Preferisci copertina incorporata</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="82"/>
@@ -1523,12 +1523,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="92"/>
         <source>Local Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Sorgente Locale</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="102"/>
         <source>Thumbnails</source>
-        <translation type="unfinished"></translation>
+        <translation>Copertine</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="105"/>
@@ -1548,17 +1548,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="117"/>
         <source>Pixmap cache size</source>
-        <translation type="unfinished"></translation>
+        <translation>Dimensione cache pixmap</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="123"/>
         <source>Clear Cache</source>
-        <translation type="unfinished"></translation>
+        <translation>Pulisci Cache</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="194"/>
         <source>Disk cache usage</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilizzo cache disco</translation>
     </message>
 </context>
 <context>
@@ -1566,17 +1566,17 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="74"/>
         <source>Front Cover</source>
-        <translation type="unfinished">Copertina Frontale</translation>
+        <translation>Copertina Frontale</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="75"/>
         <source>Back Cover</source>
-        <translation type="unfinished">Copertina Posteriore</translation>
+        <translation>Copertina Posteriore</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="76"/>
         <source>Artist</source>
-        <translation type="unfinished">Artista</translation>
+        <translation>Artista</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="322"/>
@@ -19723,82 +19723,82 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="79"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">Crea nuova playlist</translation>
+        <translation>Crea nuova playlist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="83"/>
         <source>Add to playlist</source>
-        <translation type="unfinished">Aggiungi a playlist</translation>
+        <translation>Aggiungi a playlist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="88"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Aggiungi alla playlist di coda</translation>
+        <translation>Aggiungi alla coda di riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="92"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Accoda alla prossima riproduzione</translation>
+        <translation>Accoda alla prossima riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="96"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished">Rimuovi dalla coda di riproduzione</translation>
+        <translation>Rimuovi dalla coda di riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="101"/>
         <source>Add to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi a Le Mie Stazioni</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="105"/>
         <source>Remove from My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuovi da Le Mie Stazioni</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="108"/>
         <source>Edit station</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifica stazione</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="112"/>
         <source>Add custom station</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi stazione personalizzata</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="116"/>
         <source>Copy stream URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia URL della stream</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="119"/>
         <source>Open homepage</source>
-        <translation type="unfinished"></translation>
+        <translation>Apri pagina iniziale</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="123"/>
         <source>Open radio-browser.info page</source>
-        <translation type="unfinished"></translation>
+        <translation>Apre pagina radio-browser.info</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="127"/>
         <source>Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Display</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="130"/>
         <source>Configure</source>
-        <translation type="unfinished">Configura</translation>
+        <translation>Configura</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="84"/>
         <source>Radio Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Esplora Radio</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="86"/>
         <source>Unchecked items will be hidden from the radio browser context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gli elementi non selezionati verranno nascosti dal menu contestuale dell&apos;esploratore radio.</translation>
     </message>
 </context>
 <context>
@@ -19806,47 +19806,47 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="404"/>
         <source>Artwork</source>
-        <translation type="unfinished">Copertina</translation>
+        <translation>Copertina</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1663"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Aggiungi alla playlist corrente</translation>
+        <translation>Aggiungi alla playlist corrente</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1664"/>
         <source>Add to current playlist and play if stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi alla playlist corrente e riproduci se fermato</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1666"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Aggiungi alla playlist attiva</translation>
+        <translation>Aggiungi alla playlist attiva</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1667"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished">Rimpiazza playlist attuale</translation>
+        <translation>Rimpiazza playlist attuale</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1668"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">Crea nuova playlist</translation>
+        <translation>Crea nuova playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1672"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Aggiungi alla playlist di coda</translation>
+        <translation>Aggiungi alla coda di riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1673"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi di fronte alla coda di riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1674"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished">Rimpiazza playlist di coda</translation>
+        <translation>Rimpiazza coda di riproduzione</translation>
     </message>
 </context>
 </TS>
