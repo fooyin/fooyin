@@ -93,7 +93,7 @@ ConverterSetupDialog::ConverterSetupDialog(AudioEncoderRegistry* registry, DspCh
     , m_destinationMode{new QComboBox(this)}
     , m_folder{new QLineEdit(this)}
     , m_browse{new QPushButton(tr("Browse…"), this)}
-    , m_filenamePattern{new QLineEdit(u"%title%"_s, this)}
+    , m_filenamePattern{new QLineEdit(u"%filename%"_s, this)}
     , m_existingFileMode{new QComboBox(this)}
     , m_outputStyle{new QComboBox(this)}
     , m_preview{new QListWidget(this)}
@@ -290,13 +290,14 @@ QWidget* ConverterSetupDialog::createOutputPage()
 
     m_profileTable->addCustomTool(m_editProfile);
 
-    m_sampleFormat->addItem(tr("Auto"), static_cast<int>(SampleFormat::Unknown));
+    m_sampleFormat->addItem(tr("Automatic (preserve source)"), static_cast<int>(SampleFormat::Unknown));
     m_sampleFormat->addItem(tr("8-bit integer"), static_cast<int>(SampleFormat::U8));
     m_sampleFormat->addItem(tr("16-bit integer"), static_cast<int>(SampleFormat::S16));
     m_sampleFormat->addItem(tr("24-bit integer"), static_cast<int>(SampleFormat::S24In32));
     m_sampleFormat->addItem(tr("32-bit integer"), static_cast<int>(SampleFormat::S32));
     m_sampleFormat->addItem(tr("32-bit floating point"), static_cast<int>(SampleFormat::F32));
 
+    m_dither->addItem(tr("Automatic (when reducing bit depth)"), static_cast<int>(DitherMode::Automatic));
     m_dither->addItem(tr("Never"), static_cast<int>(DitherMode::Never));
     m_dither->addItem(tr("Lossy sources only"), static_cast<int>(DitherMode::LossySourceOnly));
     m_dither->addItem(tr("Always"), static_cast<int>(DitherMode::Always));
@@ -1018,10 +1019,15 @@ void ConverterSetupDialog::applyPreset(const StoredConversionPreset& stored)
 
 void ConverterSetupDialog::applyDefaultPreset()
 {
-    const auto& profiles      = std::as_const(m_profiles);
-    const auto defaultProfile = std::ranges::find_if(profiles, [](const EncoderProfileEntry& entry) {
-        return entry.info.id == QLatin1StringView{ConverterSettings::DefaultEncoderProfileId};
+    const auto& profiles = std::as_const(m_profiles);
+    auto defaultProfile  = std::ranges::find_if(profiles, [](const EncoderProfileEntry& entry) {
+        return entry.info.id == QLatin1StringView{ConverterSettings::PreferredDefaultEncoderProfileId};
     });
+    if(defaultProfile == profiles.cend()) {
+        defaultProfile = std::ranges::find_if(profiles, [](const EncoderProfileEntry& entry) {
+            return entry.info.id == QLatin1StringView{ConverterSettings::FallbackDefaultEncoderProfileId};
+        });
+    }
     if(defaultProfile != profiles.cend()) {
         m_profileTable->selectRow(static_cast<int>(std::ranges::distance(profiles.cbegin(), defaultProfile)));
     }
@@ -1030,12 +1036,12 @@ void ConverterSetupDialog::applyDefaultPreset()
     }
 
     m_sampleFormat->setCurrentIndex(m_sampleFormat->findData(static_cast<int>(SampleFormat::Unknown)));
-    m_dither->setCurrentIndex(m_dither->findData(static_cast<int>(DitherMode::Never)));
+    m_dither->setCurrentIndex(m_dither->findData(static_cast<int>(DitherMode::Automatic)));
     m_destinationMode->setCurrentIndex(m_destinationMode->findData(static_cast<int>(DestinationMode::Ask)));
     m_existingFileMode->setCurrentIndex(m_existingFileMode->findData(static_cast<int>(ExistingFileMode::Ask)));
     m_outputStyle->setCurrentIndex(m_outputStyle->findData(static_cast<int>(OutputStyle::IndividualFiles)));
     m_folder->clear();
-    m_filenamePattern->setText(u"%title%"_s);
+    m_filenamePattern->setText(u"%filename%"_s);
     m_transferMetadata->setChecked(true);
     m_transferRating->setChecked(true);
     m_transferPlaycount->setChecked(false);

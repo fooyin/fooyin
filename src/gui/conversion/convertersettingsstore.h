@@ -37,7 +37,8 @@ struct StoredConversionPreset
 };
 
 namespace ConverterSettings {
-constexpr auto DefaultEncoderProfileId = "ffmpeg-wav";
+constexpr auto PreferredDefaultEncoderProfileId = "ffmpeg-flac";
+constexpr auto FallbackDefaultEncoderProfileId  = "ffmpeg-wav";
 
 EncoderProfile applyStoredEncoderProfile(EncoderProfile profile, const StoredEncoderProfile& stored);
 

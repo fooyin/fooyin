@@ -116,13 +116,15 @@ bool encoderSupportsOption(const AVCodec* codec, const char* name)
     return supported;
 }
 
-QStringList codecNamesForSettings(const AudioEncoderSettings& settings)
+QStringList codecNamesForSettings(const AudioEncoderSettings& settings, const AudioFormat& input)
 {
     if(settings.profile.id != u"ffmpeg-wav"_s) {
         return {settings.profile.codecName};
     }
 
-    switch(settings.outputSampleFormat) {
+    const SampleFormat outputFormat
+        = settings.outputSampleFormat == SampleFormat::Unknown ? input.sampleFormat() : settings.outputSampleFormat;
+    switch(outputFormat) {
         case SampleFormat::U8:
             return {u"pcm_u8"_s};
         case SampleFormat::S24In32:
@@ -204,36 +206,94 @@ std::span<const int> supportedSampleRates(const AVCodec* codec)
 #endif
 }
 
-AVSampleFormat selectSampleFormat(const AVCodec* codec, SampleFormat requested)
+struct SelectedSampleFormat
+{
+    AVSampleFormat format{AV_SAMPLE_FMT_NONE};
+    SampleFormat sampleFormat{SampleFormat::Unknown};
+};
+
+SelectedSampleFormat supportedSampleFormat(const std::span<const AVSampleFormat> formats, SampleFormat requested)
+{
+    const int bps     = requested == SampleFormat::S24In32 ? 24 : 0;
+    const auto format = std::ranges::find_if(formats, [requested, bps](AVSampleFormat candidate) {
+        return Utils::sampleFormat(candidate, bps) == requested;
+    });
+    return format != formats.end() ? SelectedSampleFormat{.format = *format, .sampleFormat = requested}
+                                   : SelectedSampleFormat{};
+}
+
+SelectedSampleFormat selectSampleFormat(const AVCodec* codec, SampleFormat requested, SampleFormat source)
 {
     const auto formats = supportedSampleFormats(codec);
     if(formats.empty()) {
-        return requested == SampleFormat::Unknown ? AV_SAMPLE_FMT_S16 : Utils::sampleFormat(requested);
+        const SampleFormat fallback = requested == SampleFormat::Unknown
+                                        ? (source == SampleFormat::Unknown ? SampleFormat::S16 : source)
+                                        : requested;
+        return {.format = Utils::sampleFormat(fallback), .sampleFormat = fallback};
     }
 
     if(requested != SampleFormat::Unknown) {
-        for(const AVSampleFormat format : formats) {
-            const int bitsPerSample = requested == SampleFormat::S24In32 ? 24 : 0;
-            if(Utils::sampleFormat(format, bitsPerSample) == requested) {
-                return format;
-            }
-        }
-        return AV_SAMPLE_FMT_NONE;
+        return supportedSampleFormat(formats, requested);
     }
 
-    constexpr std::array preferredFormats{
-        SampleFormat::S16, SampleFormat::S32, SampleFormat::F32, SampleFormat::U8, SampleFormat::F64,
-    };
+    std::array<SampleFormat, 6> preferredFormats;
+    switch(source) {
+        case SampleFormat::U8:
+            preferredFormats = {SampleFormat::U8,  SampleFormat::S16, SampleFormat::S24In32,
+                                SampleFormat::S32, SampleFormat::F32, SampleFormat::F64};
+            break;
+        case SampleFormat::S16:
+            preferredFormats = {SampleFormat::S16, SampleFormat::S24In32, SampleFormat::S32,
+                                SampleFormat::F32, SampleFormat::F64,     SampleFormat::U8};
+            break;
+        case SampleFormat::S24In32:
+            preferredFormats = {SampleFormat::S24In32, SampleFormat::S32, SampleFormat::F32,
+                                SampleFormat::F64,     SampleFormat::S16, SampleFormat::U8};
+            break;
+        case SampleFormat::S32:
+            preferredFormats = {SampleFormat::S32,     SampleFormat::F64, SampleFormat::F32,
+                                SampleFormat::S24In32, SampleFormat::S16, SampleFormat::U8};
+            break;
+        case SampleFormat::F32:
+            preferredFormats = {SampleFormat::F32,     SampleFormat::F64, SampleFormat::S32,
+                                SampleFormat::S24In32, SampleFormat::S16, SampleFormat::U8};
+            break;
+        case SampleFormat::F64:
+            preferredFormats = {SampleFormat::F64,     SampleFormat::F32, SampleFormat::S32,
+                                SampleFormat::S24In32, SampleFormat::S16, SampleFormat::U8};
+            break;
+        case SampleFormat::Unknown:
+            preferredFormats = {SampleFormat::S16, SampleFormat::S24In32, SampleFormat::S32,
+                                SampleFormat::F32, SampleFormat::U8,      SampleFormat::F64};
+            break;
+    }
 
     for(const SampleFormat preferred : preferredFormats) {
-        for(const AVSampleFormat format : formats) {
-            if(Utils::sampleFormat(format, 0) == preferred) {
-                return format;
-            }
+        if(const SelectedSampleFormat selected = supportedSampleFormat(formats, preferred);
+           selected.format != AV_SAMPLE_FMT_NONE) {
+            return selected;
         }
     }
 
-    return formats.front();
+    return {.format = formats.front(), .sampleFormat = Utils::sampleFormat(formats.front(), 0)};
+}
+
+bool shouldAutomaticallyDither(SampleFormat input, SampleFormat output)
+{
+    const bool integerOutput = output == SampleFormat::U8 || output == SampleFormat::S16
+                            || output == SampleFormat::S24In32 || output == SampleFormat::S32;
+    if(!integerOutput) {
+        return false;
+    }
+
+    if(input == SampleFormat::F32 || input == SampleFormat::F64) {
+        return true;
+    }
+
+    const AudioFormat inputFormat{input, 1, 1};
+    const AudioFormat outputFormat{output, 1, 1};
+    return inputFormat.isValid() && outputFormat.isValid()
+        && outputFormat.bitsPerSample() < inputFormat.bitsPerSample();
 }
 
 int selectSampleRate(const AVCodec* codec, int requestedRate)
@@ -376,7 +436,7 @@ std::vector<FFmpegProfileDescriptor> builtInProfiles()
             .extension        = u"mp3"_s,
             .containerName    = u"mp3"_s,
             .codecNames       = {u"libmp3lame"_s, u"mp3"_s},
-            .mode             = EncoderMode::ConstantBitrate,
+            .mode             = EncoderMode::ConstantQuality,
             .bitrateKbps      = 192,
             .quality          = 2.0,
             .compressionLevel = 2,
@@ -387,7 +447,7 @@ std::vector<FFmpegProfileDescriptor> builtInProfiles()
                     .quality          = {.minimum = 0, .maximum = 9, .step = 1},
                     .compressionLevel = {.minimum = 0, .maximum = 9, .step = 1},
             },
-            .settingsSummary  = u"CBR 192 kbps"_s,
+            .settingsSummary  = u"VBR quality 2"_s,
             .estimateBitrateKbps = estimateMp3BitrateKbps,
             .supportsPictures = true,
         },
@@ -476,7 +536,7 @@ AudioEncoder::Result FFmpegEncoder::init(const QString& outputPath, const AudioF
     }
 
     QString codecName;
-    const AVCodec* codec = findEncoder(codecNamesForSettings(settings), &codecName);
+    const AVCodec* codec = findEncoder(codecNamesForSettings(settings, input), &codecName);
     if(!codec) {
         return Result::failure(u"Encoder is not available"_s);
     }
@@ -501,7 +561,9 @@ AudioEncoder::Result FFmpegEncoder::init(const QString& outputPath, const AudioF
         return Result::failure(u"Failed to allocate encoder context"_s);
     }
 
-    m_outputSampleFormat = selectSampleFormat(codec, settings.outputSampleFormat);
+    const SelectedSampleFormat selectedFormat
+        = selectSampleFormat(codec, settings.outputSampleFormat, input.sampleFormat());
+    m_outputSampleFormat = selectedFormat.format;
     if(m_outputSampleFormat == AV_SAMPLE_FMT_NONE) {
         return Result::failure(u"Requested output sample format is unsupported by the encoder"_s);
     }
@@ -514,11 +576,13 @@ AudioEncoder::Result FFmpegEncoder::init(const QString& outputPath, const AudioF
     m_codecContext->time_base   = AVRational{.num = 1, .den = m_outputSampleRate};
     m_stream->time_base         = m_codecContext->time_base;
 
-    if(settings.outputSampleFormat == SampleFormat::S24In32) {
+    if(selectedFormat.sampleFormat == SampleFormat::S24In32) {
         m_codecContext->bits_per_raw_sample = 24;
     }
 
-    m_dither = settings.ditherMode == DitherMode::Always;
+    m_dither = settings.ditherMode == DitherMode::Always
+            || (settings.ditherMode == DitherMode::Automatic
+                && shouldAutomaticallyDither(input.sampleFormat(), selectedFormat.sampleFormat));
 
     const bool constantQuality = settings.profile.mode == EncoderMode::ConstantQuality;
     if(constantQuality) {

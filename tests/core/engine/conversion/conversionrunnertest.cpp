@@ -562,6 +562,50 @@ TEST(ConversionRunnerTest, ResolvesLossySourceDitherPerTrack)
     EXPECT_EQ((*ditherModes)[1], DitherMode::Never);
 }
 
+TEST(ConversionRunnerTest, EnablesAutomaticDitherWhenReducingBitDepth)
+{
+    QTemporaryDir outputDir;
+    ASSERT_TRUE(outputDir.isValid());
+
+    AudioLoader loader;
+    loader.addDecoder(u"FFmpeg"_s, [] { return std::make_unique<FFmpegDecoder>(); });
+
+    auto ditherModes = std::make_shared<std::vector<DitherMode>>();
+    AudioEncoderRegistry encoderRegistry;
+    encoderRegistry.addEncoderBackend(u"capture"_s, u"Capture"_s,
+                                      [ditherModes] { return std::make_unique<CapturingAudioEncoder>(ditherModes); });
+
+    const QString sourcePath
+        = QDir{QString::fromLatin1(FOOYIN_TEST_SOURCE_DIR)}.filePath(u"data/audio/audiotest.wav"_s);
+    Track track{sourcePath};
+    track.setTitle(u"Automatic Dither"_s);
+
+    ConversionPreset preset;
+    preset.encoder.profile.id            = u"capture-wav"_s;
+    preset.encoder.profile.extension     = u"wav"_s;
+    preset.encoder.profile.containerName = u"wav"_s;
+    preset.encoder.profile.codecName     = u"capture"_s;
+    preset.encoder.outputSampleFormat    = SampleFormat::S16;
+    preset.encoder.ditherMode            = DitherMode::Automatic;
+    preset.destination.mode              = DestinationMode::FixedFolder;
+    preset.destination.fixedFolder       = outputDir.path();
+    preset.destination.filenamePattern   = u"%title%"_s;
+    preset.destination.existingFileMode  = ExistingFileMode::Overwrite;
+    preset.processing.replayGainMode     = ConversionReplayGainMode::Track;
+
+    ConversionRunner::Request request;
+    request.audioLoader     = &loader;
+    request.encoderRegistry = &encoderRegistry;
+    request.job.tracks      = {track};
+    request.job.preset      = preset;
+
+    const auto results = ConversionRunner::run(request);
+    ASSERT_EQ(results.size(), 1);
+    EXPECT_EQ(results.front().status, ConversionResultStatus::Succeeded);
+    ASSERT_EQ(ditherModes->size(), 1);
+    EXPECT_EQ(ditherModes->front(), DitherMode::Always);
+}
+
 TEST(ConversionRunnerTest, GeneratesPercentagePreview)
 {
     const auto wavProfile = profileById(FFmpegEncoder{}.availableEncoders(), u"ffmpeg-wav"_s);

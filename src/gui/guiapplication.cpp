@@ -1136,9 +1136,14 @@ void GuiApplication::startConversionPreset(const StoredConversionPreset& stored,
 void GuiApplication::startDefaultConversion(const TrackList& tracks)
 {
     const auto encoders = m_core->audioEncoderRegistry()->availableEncoders();
-    const auto encoder  = std::ranges::find_if(encoders, [](const AudioEncoderInfo& info) {
-        return info.id == QLatin1StringView{ConverterSettings::DefaultEncoderProfileId};
+    auto encoder        = std::ranges::find_if(encoders, [](const AudioEncoderInfo& info) {
+        return info.id == QLatin1StringView{ConverterSettings::PreferredDefaultEncoderProfileId};
     });
+    if(encoder == encoders.cend()) {
+        encoder = std::ranges::find_if(encoders, [](const AudioEncoderInfo& info) {
+            return info.id == QLatin1StringView{ConverterSettings::FallbackDefaultEncoderProfileId};
+        });
+    }
     if(encoder == encoders.cend()) {
         return;
     }
@@ -1218,7 +1223,8 @@ void GuiApplication::refreshConversionPresetActions()
     if(m_defaultConversionAction) {
         const auto encoders = m_core->audioEncoderRegistry()->availableEncoders();
         m_defaultConversionAction->setEnabled(std::ranges::any_of(encoders, [](const AudioEncoderInfo& encoder) {
-            return encoder.id == QLatin1StringView{ConverterSettings::DefaultEncoderProfileId};
+            return encoder.id == QLatin1StringView{ConverterSettings::PreferredDefaultEncoderProfileId}
+                || encoder.id == QLatin1StringView{ConverterSettings::FallbackDefaultEncoderProfileId};
         }));
     }
     if(m_lastUsedConversionAction) {

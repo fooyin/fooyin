@@ -17,6 +17,7 @@
  *
  */
 
+#include <core/engine/audioconverter.h>
 #include <core/engine/input/ffmpeg/ffmpegencoder.h>
 
 #include <gtest/gtest.h>
@@ -74,7 +75,7 @@ std::optional<AudioEncoderInfo> profileById(const std::vector<AudioEncoderInfo>&
     return *it;
 }
 
-AudioBuffer makeSineBuffer()
+AudioBuffer makeSineBuffer(SampleFormat sampleFormat = SampleFormat::S16)
 {
     constexpr int SampleRate = 44100;
     constexpr int Channels   = 2;
@@ -89,7 +90,13 @@ AudioBuffer makeSineBuffer()
         samples[static_cast<size_t>(frame * Channels + 1)] = sample;
     }
 
-    return {reinterpret_cast<const uint8_t*>(samples.data()), samples.size() * sizeof(int16_t), format, 0};
+    AudioBuffer buffer{reinterpret_cast<const uint8_t*>(samples.data()), samples.size() * sizeof(int16_t), format, 0};
+    if(sampleFormat == SampleFormat::S16) {
+        return buffer;
+    }
+
+    format.setSampleFormat(sampleFormat);
+    return Audio::convert(buffer, format);
 }
 
 bool outputHasAudioStream(const QString& path, AVCodecID expectedCodec, int expectedSampleRate,
@@ -127,7 +134,8 @@ bool outputHasAudioStream(const QString& path, AVCodecID expectedCodec, int expe
 
 void encodeSmokeTest(const QString& profileId, AVCodecID expectedCodec, int bitrateKbps = 0, int compressionLevel = -1,
                      int expectedSampleRate = 44100, SampleFormat sampleFormat = SampleFormat::S16,
-                     int expectedBitsPerSample = 0, EncoderMode mode = EncoderMode::Default, double quality = 2.0)
+                     int expectedBitsPerSample = 0, EncoderMode mode = EncoderMode::Default, double quality = 2.0,
+                     SampleFormat inputSampleFormat = SampleFormat::S16)
 {
     const auto profile = profileById(FFmpegEncoder{}.availableEncoders(), profileId);
     if(!profile) {
@@ -152,11 +160,12 @@ void encodeSmokeTest(const QString& profileId, AVCodecID expectedCodec, int bitr
     }
     settings.profile.quality = quality;
 
+    const AudioBuffer input = makeSineBuffer(inputSampleFormat);
     FFmpegEncoder encoder;
-    auto result = encoder.init(outputPath, makeSineBuffer().format(), settings);
+    auto result = encoder.init(outputPath, input.format(), settings);
     ASSERT_TRUE(result.ok) << result.error.toStdString();
 
-    result = encoder.write(makeSineBuffer());
+    result = encoder.write(input);
     ASSERT_TRUE(result.ok) << result.error.toStdString();
 
     result = encoder.finish();
@@ -214,6 +223,8 @@ TEST(FFmpegEncoderTest, Mp3AdvertisesGenericRateControlCapabilities)
     EXPECT_TRUE(profile->capabilities.quality.isValid());
     EXPECT_TRUE(profile->capabilities.bitrateKbps.isValid());
     EXPECT_TRUE(profile->capabilities.compressionLevel.isValid());
+    EXPECT_EQ(profile->profile.mode, EncoderMode::ConstantQuality);
+    EXPECT_DOUBLE_EQ(profile->profile.quality, 2.0);
     ASSERT_TRUE(profile->estimateBitrateKbps);
 
     EncoderProfile encoderProfile = profile->profile;
@@ -280,6 +291,21 @@ TEST(FFmpegEncoderTest, EncodesRequestedWavSampleFormats)
 TEST(FFmpegEncoderTest, Encodes24BitFlac)
 {
     encodeSmokeTest(u"ffmpeg-flac"_s, AV_CODEC_ID_FLAC, 0, 5, 44100, SampleFormat::S24In32, 24);
+}
+
+TEST(FFmpegEncoderTest, AutomaticSampleFormatPreserves24BitWav)
+{
+    if(!hasEncoder({u"pcm_s24le"_s})) {
+        GTEST_SKIP() << "Runtime FFmpeg 24-bit PCM encoder is unavailable";
+    }
+    encodeSmokeTest(u"ffmpeg-wav"_s, AV_CODEC_ID_PCM_S24LE, 0, -1, 44100, SampleFormat::Unknown, 24,
+                    EncoderMode::Default, 2.0, SampleFormat::S24In32);
+}
+
+TEST(FFmpegEncoderTest, AutomaticSampleFormatPreserves24BitFlac)
+{
+    encodeSmokeTest(u"ffmpeg-flac"_s, AV_CODEC_ID_FLAC, 0, 5, 44100, SampleFormat::Unknown, 24, EncoderMode::Default,
+                    2.0, SampleFormat::S24In32);
 }
 
 TEST(FFmpegEncoderTest, RejectsUnsupportedExplicitSampleFormat)
