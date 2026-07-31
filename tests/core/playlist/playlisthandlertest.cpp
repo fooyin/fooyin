@@ -39,6 +39,7 @@
 #include <gtest/gtest.h>
 
 #include <optional>
+#include <ranges>
 
 using namespace Qt::StringLiterals;
 
@@ -114,6 +115,12 @@ public:
     void setTracks(TrackList tracks)
     {
         m_tracks = std::move(tracks);
+        m_libraryTracks.reset();
+    }
+
+    void setLibraryTracks(TrackList tracks)
+    {
+        m_libraryTracks = std::move(tracks);
     }
 
     void emitTracksLoaded()
@@ -183,7 +190,7 @@ public:
 
     TrackList libraryTracks() const override
     {
-        return m_tracks;
+        return m_libraryTracks.value_or(m_tracks);
     }
 
     Track trackForId(int id) const override
@@ -247,6 +254,7 @@ public:
 
 private:
     TrackList m_tracks;
+    std::optional<TrackList> m_libraryTracks;
 };
 
 struct PlaylistHandlerHarness
@@ -469,6 +477,42 @@ TEST(PlaylistHandlerTest, TracksMetadataChangedUpdatesAutoPlaylistTrackCustomTag
     ASSERT_EQ(changeSet.updatedEntries.size(), 1);
     EXPECT_EQ(playlistTrack->track.metaValue(u"custom"_s), u"After"_s);
     EXPECT_EQ(changeSet.updatedEntries.front(), playlistTrack->entryId);
+}
+
+TEST(PlaylistHandlerTest, AutoPlaylistsOnlyContainLibraryTracks)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_auto_library_tracks_test.ini"_s};
+    registerCoreSettings(settings);
+    PlaylistHandlerHarness harness{settings};
+    ASSERT_TRUE(harness.dbInitialised);
+
+    const Track libraryTrack = makeTrack(u"/music/track.flac"_s, 1);
+    const Track portalTrack  = makeTrack(u"/run/user/1000/doc/portal/track.flac"_s, 2);
+    harness.library.setTracks({libraryTrack, portalTrack});
+    harness.library.setLibraryTracks({libraryTrack});
+
+    auto* playlist = harness.handler.createNewAutoPlaylist(u"Library only"_s, u"title PRESENT"_s);
+    ASSERT_NE(playlist, nullptr);
+    ASSERT_EQ(playlist->trackCount(), 1);
+    EXPECT_EQ(playlist->tracks().front().filepath(), libraryTrack.filepath());
+
+    harness.library.emitTracksLoaded();
+    ASSERT_EQ(playlist->trackCount(), 1);
+    EXPECT_EQ(playlist->tracks().front().filepath(), libraryTrack.filepath());
+
+    const Track addedLibraryTrack = makeTrack(u"/music/added.flac"_s, 3);
+    harness.library.setTracks({libraryTrack, portalTrack, addedLibraryTrack});
+    harness.library.setLibraryTracks({libraryTrack, addedLibraryTrack});
+    Q_EMIT harness.library.tracksAdded({addedLibraryTrack});
+
+    ASSERT_EQ(playlist->trackCount(), 2);
+    EXPECT_TRUE(std::ranges::any_of(playlist->tracks(), [&libraryTrack](const Track& track) {
+        return track.filepath() == libraryTrack.filepath();
+    }));
+    EXPECT_TRUE(std::ranges::any_of(playlist->tracks(), [&addedLibraryTrack](const Track& track) {
+        return track.filepath() == addedLibraryTrack.filepath();
+    }));
 }
 
 TEST(PlaylistHandlerTest, DeletedTracksAreRemovedFromAllPlaylists)

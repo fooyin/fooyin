@@ -222,7 +222,9 @@ void PlaylistHandlerPrivate::populatePlaylists()
 {
     std::unordered_map<int, Track> idTracks;
 
-    const TrackList tracks = m_library->tracks();
+    const TrackList tracks        = m_library->tracks();
+    const TrackList libraryTracks = m_library->libraryTracks();
+
     for(const Track& track : tracks) {
         idTracks.emplace(track.id(), track);
     }
@@ -234,7 +236,7 @@ void PlaylistHandlerPrivate::populatePlaylists()
                 playlist->replaceTracks(playlistTracks);
                 playlist->setTracksModified(false);
             }
-            playlist->regenerateTracks(tracks);
+            playlist->regenerateTracks(libraryTracks);
         }
         else {
             const TrackList playlistTracks = m_playlistConnector.getPlaylistTracks(*playlist, idTracks);
@@ -249,7 +251,7 @@ void PlaylistHandlerPrivate::populatePlaylists()
 
 void PlaylistHandlerPrivate::regenerateAutoPlaylists(const TrackList& updatedTracks)
 {
-    const TrackList tracks            = m_library->tracks();
+    const TrackList tracks            = m_library->libraryTracks();
     const TrackKeySet updatedTrackIds = playlistTrackKeySet(updatedTracks);
 
     for(auto& playlist : m_playlists) {
@@ -842,7 +844,7 @@ Playlist* PlaylistHandler::createAutoPlaylist(const QString& name, const QString
             playlist->setSortQuery(sortQuery);
             playlist->setForceSorted(forceSorted);
 
-            const TrackList regeneratedTracks      = playlist->autoPlaylistTracks(p->m_library->tracks());
+            const TrackList regeneratedTracks      = playlist->autoPlaylistTracks(p->m_library->libraryTracks());
             const PlaylistTrackList playlistTracks = rebuildPlaylistTracks(playlist, regeneratedTracks);
 
             if(!playlistTracksSameData(playlist->playlistTracks(), PlaylistTrack::updateIndexes(playlistTracks))) {
@@ -867,7 +869,7 @@ Playlist* PlaylistHandler::createNewAutoPlaylist(const QString& name, const QStr
     auto* playlist        = p->addNewAutoPlaylist(newName, query, sortQuery, forceSorted);
 
     if(playlist) {
-        const TrackList regeneratedTracks = playlist->autoPlaylistTracks(p->m_library->tracks());
+        const TrackList regeneratedTracks = playlist->autoPlaylistTracks(p->m_library->libraryTracks());
         p->replacePlaylistTracks(playlist, rebuildPlaylistTracks(playlist, regeneratedTracks));
         Q_EMIT playlistAdded(playlist);
     }
