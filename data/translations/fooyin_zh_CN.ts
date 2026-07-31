@@ -3907,22 +3907,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="525"/>
         <source>Lock width</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定宽度</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="525"/>
         <source>Lock height</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定高度</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="528"/>
         <source>Keep the width unchanged during automatic resizing; splitter handles can still resize it</source>
-        <translation type="unfinished"></translation>
+        <translation>自动调整大小时保持宽度不变；分割手柄仍然可以调整其大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="530"/>
         <source>Keep the height unchanged during automatic resizing; splitter handles can still resize it</source>
-        <translation type="unfinished"></translation>
+        <translation>自动调整大小时保持高度不变；分割手柄仍然可以调整其大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="549"/>
@@ -6317,22 +6317,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="738"/>
         <source>Lock width</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定宽度</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="738"/>
         <source>Lock height</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定高度</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="741"/>
         <source>Keep the width unchanged during automatic resizing; splitter handles can still resize it</source>
-        <translation type="unfinished"></translation>
+        <translation>自动调整大小时保持宽度不变；分割手柄仍然可以调整其大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="742"/>
         <source>Keep the height unchanged during automatic resizing; splitter handles can still resize it</source>
-        <translation type="unfinished"></translation>
+        <translation>自动调整大小时保持高度不变；分割手柄仍然可以调整其大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="788"/>
