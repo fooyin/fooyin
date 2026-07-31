@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [0.12.1](https://github.com/fooyin/fooyin/releases/tag/v0.12.1) (2026-07-31)
 
 ### Improvements
 
@@ -20,6 +20,8 @@
 
 * Library/Playlists
   - Fix removing deleted tracks from playlists ([#1420](https://github.com/fooyin/fooyin/issues/1420))
+  - Fix track actions from playlist search results ([#1432](https://github.com/fooyin/fooyin/issues/1432), [#1433](https://github.com/fooyin/fooyin/issues/1433))
+  - Restrict autoplaylist generation to library tracks ([#1434](https://github.com/fooyin/fooyin/issues/1434))
 * Playback
   - Fix gapless pause and seek races at track boundaries ([#1426](https://github.com/fooyin/fooyin/issues/1426))
   - Fix Stop After Current for segmented tracks ([#1399](https://github.com/fooyin/fooyin/issues/1399))
