@@ -39,6 +39,13 @@ public:
     };
     Q_ENUM(TabShape)
 
+    enum class TabPosition : uint8_t
+    {
+        Top = 0,
+        Bottom
+    };
+    Q_ENUM(TabPosition)
+
     explicit SingleTabbedWidget(QWidget* parent = nullptr);
     ~SingleTabbedWidget() override;
 
@@ -74,6 +81,9 @@ public:
 
     [[nodiscard]] TabShape tabShape() const;
     void setTabShape(TabShape shape);
+
+    [[nodiscard]] TabPosition tabPosition() const;
+    void setTabPosition(TabPosition position);
 
     [[nodiscard]] QSize sizeHint() const override;
     [[nodiscard]] QSize minimumSizeHint() const override;

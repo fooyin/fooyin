@@ -38,14 +38,37 @@ class SettingsManager;
 class SingleTabbedWidget;
 class TrackSelectionController;
 
+enum class PlaylistTabPosition : uint8_t
+{
+    Top = 0,
+    Bottom
+};
+
 class PlaylistTabs : public WidgetContainer
 {
     Q_OBJECT
 
 public:
+    struct ConfigData
+    {
+        PlaylistTabPosition position{PlaylistTabPosition::Top};
+        bool expand{false};
+        bool showAddButton{false};
+        bool showClearButton{false};
+        bool showCloseButton{false};
+        bool closeOnMiddleClick{false};
+    };
+
     explicit PlaylistTabs(WidgetProvider* widgetProvider, PlaylistController* playlistController,
                           TrackSelectionController* selectionController, SettingsManager* settings,
                           QWidget* parent = nullptr);
+
+    [[nodiscard]] ConfigData factoryConfig() const;
+    [[nodiscard]] ConfigData defaultConfig() const;
+    [[nodiscard]] const ConfigData& currentConfig() const;
+    void applyConfig(const ConfigData& config);
+    void saveDefaults(const ConfigData& config) const;
+    void clearSavedDefaults() const;
 
     void setupTabs();
 
@@ -76,6 +99,7 @@ public:
     void moveWidget(int index, int newIndex) override;
 
 Q_SIGNALS:
+    void configChanged();
     void filesDropped(const QList<QUrl>& urls, const Fooyin::UId& playlistId);
     void tracksDropped(const QByteArray& data, const Fooyin::UId& playlistId);
     void trackListDropped(const Fooyin::TrackList& tracks, const Fooyin::UId& playlistId);
@@ -88,10 +112,14 @@ protected:
     void dragLeaveEvent(QDragLeaveEvent* event) override;
     void timerEvent(QTimerEvent* event) override;
     void dropEvent(QDropEvent* event) override;
+    void openConfigDialog() override;
 
 private:
     void setupConnections();
     void setupButtons();
+
+    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
+    static void saveConfigToLayout(const ConfigData& config, QJsonObject& layout);
 
     void tabChanged(int index) const;
     void tabMoved(int from, int to) const;
@@ -108,6 +136,7 @@ private:
     PlaylistHandler* m_playlistHandler;
     TrackSelectionController* m_selectionController;
     SettingsManager* m_settings;
+    ConfigData m_config;
 
     QVBoxLayout* m_layout;
     SingleTabbedWidget* m_tabs;

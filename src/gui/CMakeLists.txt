@@ -285,6 +285,8 @@ set(SOURCES
     playlist/playlistpreset.h
     playlist/playlisttabs.cpp
     playlist/playlisttabs.h
+    playlist/playlisttabsconfigdialog.cpp
+    playlist/playlisttabsconfigdialog.h
     playlist/playlistview.cpp
     playlist/playlistview.h
     playlist/detachedplaylistsession.cpp
@@ -464,8 +466,6 @@ set(SOURCES
     settings/playlist/playlistpresetspage.h
     settings/playlist/playlistsavingpage.cpp
     settings/playlist/playlistsavingpage.h
-    settings/playlist/playlisttabspage.cpp
-    settings/playlist/playlisttabspage.h
     settings/plugins/pluginaboutdialog.cpp
     settings/plugins/pluginaboutdialog.h
     settings/plugins/pluginsmodel.cpp

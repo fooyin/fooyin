@@ -53,9 +53,13 @@ void initStyleBaseOption(QStyleOptionTabBarBase* optTabBase, QTabBar* tabBar, QS
     if(parent && overlap > 0) {
         QRect rect;
         switch(tabOverlap.shape) {
-            case(QTabBar::RoundedNorth):
-            case(QTabBar::TriangularNorth):
+            case QTabBar::RoundedNorth:
+            case QTabBar::TriangularNorth:
                 rect.setRect(0, size.height() - overlap, size.width(), overlap);
+                break;
+            case QTabBar::RoundedSouth:
+            case QTabBar::TriangularSouth:
+                rect.setRect(0, 0, size.width(), overlap);
                 break;
             default:
                 break;
@@ -69,7 +73,8 @@ namespace Fooyin {
 class SingleTabbedWidgetPrivate
 {
 public:
-    using TabShape = SingleTabbedWidget::TabShape;
+    using TabShape    = SingleTabbedWidget::TabShape;
+    using TabPosition = SingleTabbedWidget::TabPosition;
 
     explicit SingleTabbedWidgetPrivate(SingleTabbedWidget* self);
 
@@ -84,6 +89,7 @@ public:
 
     EditableTabBar* m_tabBar;
     TabShape m_shape{TabShape::Rounded};
+    TabPosition m_position{TabPosition::Top};
     QRect m_panelRect;
     QPointer<QWidget> m_widget;
     QWidget* m_leftCornerWidget{nullptr};
@@ -114,7 +120,12 @@ void SingleTabbedWidgetPrivate::initBasicStyleOption(QStyleOptionTabWidgetFrame*
         option->lineWidth = m_self->style()->pixelMetric(QStyle::PM_DefaultFrameWidth, nullptr, m_self);
     }
 
-    option->shape = m_shape == TabShape::Rounded ? QTabBar::RoundedNorth : QTabBar::TriangularNorth;
+    if(m_position == TabPosition::Top) {
+        option->shape = m_shape == TabShape::Rounded ? QTabBar::RoundedNorth : QTabBar::TriangularNorth;
+    }
+    else {
+        option->shape = m_shape == TabShape::Rounded ? QTabBar::RoundedSouth : QTabBar::TriangularSouth;
+    }
 
     option->tabBarRect = m_tabBar->geometry();
 }
@@ -130,7 +141,7 @@ void SingleTabbedWidgetPrivate::initStyleOption(QStyleOptionTabWidgetFrame* opti
     const int baseHeight = m_self->style()->pixelMetric(QStyle::PM_TabBarBaseHeight, nullptr, m_self);
     QSize tabsSize{0, m_widget ? m_widget->width() : 0};
 
-    if(m_tabBar->isVisibleTo(const_cast<SingleTabbedWidget*>(m_self))) {
+    if(m_tabBar->isVisibleTo(m_self)) {
         tabsSize = m_tabBar->sizeHint();
         if(m_self->documentMode()) {
             tabsSize.setWidth(m_self->width());
@@ -187,8 +198,14 @@ void SingleTabbedWidgetPrivate::setupLayout(bool onlyCheck)
 
     m_tabBar->setGeometry(tabRect);
     if(m_widget) {
-        m_widget->setGeometry(m_panelRect.x(), contentsRect.y(), m_panelRect.width(),
-                              (m_panelRect.y() + m_panelRect.height()) - contentsRect.y());
+        if(m_position == TabPosition::Top) {
+            m_widget->setGeometry(m_panelRect.x(), contentsRect.y(), m_panelRect.width(),
+                                  m_panelRect.bottom() - contentsRect.y() + 1);
+        }
+        else {
+            m_widget->setGeometry(m_panelRect.x(), m_panelRect.y(), m_panelRect.width(),
+                                  contentsRect.bottom() - m_panelRect.y() + 1);
+        }
     }
     if(m_leftCornerWidget) {
         m_leftCornerWidget->setGeometry(leftCornerRect);
@@ -378,7 +395,25 @@ SingleTabbedWidget::TabShape SingleTabbedWidget::tabShape() const
 void SingleTabbedWidget::setTabShape(TabShape shape)
 {
     if(std::exchange(p->m_shape, shape) != shape) {
-        p->m_tabBar->setShape(shape == TabShape::Rounded ? QTabBar::RoundedNorth : QTabBar::TriangularNorth);
+        const bool top = p->m_position == TabPosition::Top;
+        p->m_tabBar->setShape(shape == TabShape::Rounded ? (top ? QTabBar::RoundedNorth : QTabBar::RoundedSouth)
+                                                         : (top ? QTabBar::TriangularNorth : QTabBar::TriangularSouth));
+        p->setupLayout();
+    }
+}
+
+SingleTabbedWidget::TabPosition SingleTabbedWidget::tabPosition() const
+{
+    return p->m_position;
+}
+
+void SingleTabbedWidget::setTabPosition(TabPosition position)
+{
+    if(std::exchange(p->m_position, position) != position) {
+        const bool rounded = p->m_shape == TabShape::Rounded;
+        p->m_tabBar->setShape(position == TabPosition::Top
+                                  ? (rounded ? QTabBar::RoundedNorth : QTabBar::TriangularNorth)
+                                  : (rounded ? QTabBar::RoundedSouth : QTabBar::TriangularSouth));
         p->setupLayout();
     }
 }
