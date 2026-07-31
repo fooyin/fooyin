@@ -4,8 +4,15 @@
 
 ### Improvements
 
+* Audio Conversion
+  - Improve default conversion presets, filename patterns, bit-depth handling, and dithering behaviour
 * Interface
+  - Add per-widget splitter size locking ([#886](https://github.com/fooyin/fooyin/issues/886), [#1429](https://github.com/fooyin/fooyin/pull/1429))
   - Make settings and configuration dialogs non-modal ([#1402](https://github.com/fooyin/fooyin/issues/1402), [#1427](https://github.com/fooyin/fooyin/pull/1427))
+* Playlist Tabs
+  - Add per-instance configuration and a tab position option
+* ProjectM
+  - Show config hint when preset paths are missing or empty
 * Remote Streams
   - Add timed ID3 metadata support for HLS streams
 
@@ -28,6 +35,8 @@
 * CI
   - Shorten Windows build and vcpkg paths ([#1422](https://github.com/fooyin/fooyin/pull/1422))
   - Update GitHub Actions dependencies ([#1415](https://github.com/fooyin/fooyin/pull/1415), [#1416](https://github.com/fooyin/fooyin/pull/1416), [#1417](https://github.com/fooyin/fooyin/pull/1417))
+* Translations
+  - Update translations and translation sources ([#1430](https://github.com/fooyin/fooyin/pull/1430), [#1431](https://github.com/fooyin/fooyin/pull/1431))
 
 
 ## [0.12.0](https://github.com/fooyin/fooyin/releases/tag/v0.12.0) (2026-07-27)
