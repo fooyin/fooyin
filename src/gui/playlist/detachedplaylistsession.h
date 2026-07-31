@@ -49,7 +49,6 @@ public:
                                   const std::set<Track>& selectedTracks) const override;
     [[nodiscard]] PlaylistTrackList searchSourceTracks(const PlaylistController* playlistController,
                                                        const MusicLibrary* library) const override;
-    void selectionChanged(PlaylistWidgetSessionHost& host) override;
 };
 
 class DetachedLibrarySession final : public DetachedSearchSession

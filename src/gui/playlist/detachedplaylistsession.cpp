@@ -127,8 +127,6 @@ PlaylistTrackList DetachedPlaylistSession::searchSourceTracks(const PlaylistCont
     return {};
 }
 
-void DetachedPlaylistSession::selectionChanged(PlaylistWidgetSessionHost& /*host*/) { }
-
 PlaylistWidget::ModeCapabilities DetachedLibrarySession::capabilities() const
 {
     return {};
