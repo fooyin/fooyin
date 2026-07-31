@@ -20,6 +20,7 @@
 #include "playlistmanagerwidget.h"
 
 #include "dialog/autoplaylistdialog.h"
+#include "playlist/playlistbox.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
 #include "playlistmanagermodel.h"
@@ -449,7 +450,11 @@ void PlaylistManagerWidget::removePlaylist(const Playlist* playlist)
         return;
     }
 
-    m_playlistController->playlistHandler()->removePlaylist(playlist->id());
+    const auto playlistId = playlist->id();
+
+    if(confirmPlaylistRemoval(m_settings, this)) {
+        m_playlistController->playlistHandler()->removePlaylist(playlistId);
+    }
 }
 
 void PlaylistManagerWidget::editCurrentAutoPlaylist()

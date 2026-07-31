@@ -186,7 +186,7 @@ void Widgets::registerWidgets()
 
     provider->registerWidget(
         u"PlaylistSwitcher"_s,
-        [this]() { return new PlaylistBox(m_gui->actionManager(), m_playlistController, m_window); },
+        [this]() { return new PlaylistBox(m_gui->actionManager(), m_playlistController, m_settings, m_window); },
         tr("Playlist Switcher"));
     provider->setSubMenus(u"PlaylistSwitcher"_s, {tr("Playlist")});
 

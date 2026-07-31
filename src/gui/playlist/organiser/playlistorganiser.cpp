@@ -20,6 +20,7 @@
 #include "playlistorganiser.h"
 
 #include "dialog/autoplaylistdialog.h"
+#include "playlist/playlistbox.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
 #include "playlistorganiserconfigwidget.h"
@@ -122,6 +123,33 @@ void restoreExpandedState(QTreeView* view, QAbstractItemModel* model, QByteArray
             }
         }
     }
+}
+
+bool containsPlaylist(const QModelIndex& index, QAbstractItemModel* model)
+{
+    if(!index.isValid()) {
+        return false;
+    }
+
+    std::stack<QModelIndex> indexes;
+    indexes.push(index);
+
+    while(!indexes.empty()) {
+        const QModelIndex currentIndex = indexes.top();
+        indexes.pop();
+
+        if(currentIndex.data(Fooyin::PlaylistOrganiserItem::ItemType).toInt()
+           == Fooyin::PlaylistOrganiserItem::PlaylistItem) {
+            return true;
+        }
+
+        const int childCount = model->rowCount(currentIndex);
+        for(int row{0}; row < childCount; ++row) {
+            indexes.push(model->index(row, 0, currentIndex));
+        }
+    }
+
+    return false;
 }
 
 class OrganiserTreeView : public QTreeView
@@ -264,7 +292,15 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
         sortAndRestoreState(
             [this, indexes]() { m_model->sortGroupPlaylists(indexes, PlaylistOrganiserModel::SortOrder::Ascending); });
     });
-    QObject::connect(m_removePlaylist, &QAction::triggered, this, [this]() { m_model->removeItems(actionIndexes()); });
+    QObject::connect(m_removePlaylist, &QAction::triggered, this, [this]() {
+        const QModelIndexList indexes = actionIndexes();
+        const bool hasPlaylists       = std::ranges::any_of(
+            indexes, [this](const QModelIndex& index) { return containsPlaylist(index, m_model); });
+
+        if(!hasPlaylists || confirmPlaylistRemoval(m_settings, this)) {
+            m_model->removeItems(indexes);
+        }
+    });
     QObject::connect(m_renamePlaylist, &QAction::triggered, this, [this]() { m_organiserTree->edit(actionIndex()); });
     QObject::connect(m_newPlaylist, &QAction::triggered, this, [this]() { createPlaylist(actionIndex(), false); });
     QObject::connect(m_newAutoPlaylist, &QAction::triggered, this, [this]() { createPlaylist(actionIndex(), true); });
