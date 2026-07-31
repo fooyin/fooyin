@@ -201,7 +201,16 @@ ProjectMWidget::ProjectMWidget(ActionManager* actionManager, EngineController* e
         const bool showView = ready || !m_view->hasInitialised() || m_view->isRecreating();
         m_viewContainer->setVisible(showView);
         m_statusLabel->setVisible(!showView);
-        m_statusLabel->setText(text);
+
+        QString statusText{text};
+        if(!ready && m_library.presets().empty()) {
+            if(m_library.isReady()) {
+                statusText = tr("No projectM presets were found in the configured location.");
+            }
+            statusText += u"\n\n"_s + tr("Right-click to configure presets.");
+        }
+        m_statusLabel->setText(statusText);
+
         updateActionState();
     });
     QObject::connect(m_view, &ProjectMView::activated, m_viewContainer, [this]() { m_viewContainer->setFocus(); });
