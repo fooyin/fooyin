@@ -56,10 +56,12 @@ private:
     ToolButton* m_prev;
     ToolButton* m_playPause;
     ToolButton* m_next;
+    ToolButton* m_randomTrack;
 
     bool m_showStop;
     bool m_showPrev;
     bool m_showPlayPause;
     bool m_showNext;
+    bool m_showRandomTrack;
 };
 } // namespace Fooyin
