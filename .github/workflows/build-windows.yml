@@ -2,6 +2,7 @@ name: Build Windows
 
 on:
   workflow_call:
+  workflow_dispatch:
 
 env:
   QT_VERSION: '6.8.3'
