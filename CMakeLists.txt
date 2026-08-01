@@ -133,6 +133,7 @@ find_package(
                Concurrent
                Network
                Svg
+    OPTIONAL_COMPONENTS OpenGL
 )
 set_package_properties(Qt6Core PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Widgets PROPERTIES TYPE REQUIRED)
