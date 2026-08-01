@@ -419,7 +419,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="173"/>
         <source>Tag type list</source>
-        <translation type="unfinished"></translation>
+        <translation>Liste de type d&apos;étiquettes</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="175"/>
