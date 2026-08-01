@@ -2242,7 +2242,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/core/engine/conversion/conversionpathresolver.cpp" line="161"/>
         <source>Duplicate output path</source>
-        <translation type="unfinished"></translation>
+        <translation>Doppelter Ausgabepfad</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/conversion/conversionpathresolver.cpp" line="176"/>
@@ -2306,25 +2306,25 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="186"/>
         <source>Skipped: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Übersprungen: %Ln Titel</numerusform>
+            <numerusform>Übersprungen: %Ln Titel</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="187"/>
         <source>Failed: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Fehlgeschlagen: %Ln Titel</numerusform>
+            <numerusform>Fehlgeschlagen: %Ln Titel</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="188"/>
         <source>Cancelled: %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Abgebrochen: %Ln Titel</numerusform>
+            <numerusform>Abgebrochen: %Ln Titel</numerusform>
         </translation>
     </message>
 </context>
@@ -2333,389 +2333,389 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="82"/>
         <source>Load</source>
-        <translation type="unfinished">Laden</translation>
+        <translation>Laden</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="83"/>
         <source>Save</source>
-        <translation type="unfinished">Speichern</translation>
+        <translation>Speichern</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="84"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1100"/>
         <source>Remove</source>
-        <translation type="unfinished">Entfernen</translation>
+        <translation>Entfernen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="85"/>
         <source>Import</source>
-        <translation type="unfinished">Import</translation>
+        <translation>Importieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="86"/>
         <source>Export</source>
-        <translation type="unfinished">Export</translation>
+        <translation>Exportieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="89"/>
         <source>Edit</source>
-        <translation type="unfinished">Bearbeiten</translation>
+        <translation>Bearbeiten</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="94"/>
         <source>Browse…</source>
-        <translation type="unfinished">Durchsuchen…</translation>
+        <translation>Durchsuchen…</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="99"/>
         <source>Transfer metadata (tags)</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadaten (Tags) übertragen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="100"/>
         <source>Transfer rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Bewertung übertragen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="101"/>
         <source>Transfer play count</source>
-        <translation type="unfinished"></translation>
+        <translation>Abspielzähler übertragen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="102"/>
         <source>Transfer attached pictures</source>
-        <translation type="unfinished"></translation>
+        <translation>Angehängte Bilder übertragen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="104"/>
         <source>Prevent clipping</source>
-        <translation type="unfinished"></translation>
+        <translation>Clipping verhindern</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="107"/>
         <source>Don&apos;t reset DSP between tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP zwischen Titeln nicht zurücksetzen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="114"/>
         <source>Generate short previews instead of converting entire tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Kurze Vorschauen erzeugen, anstatt ganze Titel zu konvertieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="116"/>
         <source>Show full status report</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige vollständigen Statusbericht</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="118"/>
         <source>Verify converted output</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifiziere konvertierte Ausgabe</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="125"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="204"/>
         <source>Converter Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Einrichtung: Konverter</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="129"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="268"/>
         <source>Output</source>
-        <translation type="unfinished">Ausgabe</translation>
+        <translation>Ausgabe</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="130"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="269"/>
         <source>Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Ziel</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="131"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="270"/>
         <source>Processing</source>
-        <translation type="unfinished"></translation>
+        <translation>Verarbeiten</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="132"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="271"/>
         <source>Other</source>
-        <translation type="unfinished">Andere</translation>
+        <translation>Andere</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="141"/>
         <source>Convert</source>
-        <translation type="unfinished"></translation>
+        <translation>Konvertieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="204"/>
         <source>No output encoder is available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Es steht kein Ausgabe-Encoder zur Verfügung.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="209"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1064"/>
         <source>Choose destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Ziel wählen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="234"/>
         <source>Saved presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Gespeicherte Voreinstellungen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="255"/>
         <source>Current settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuelle Einstellungen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="292"/>
         <source>Auto</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisch</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="293"/>
         <source>8-bit integer</source>
-        <translation type="unfinished"></translation>
+        <translation>8-Bit-Ganzzahl</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="294"/>
         <source>16-bit integer</source>
-        <translation type="unfinished"></translation>
+        <translation>16-Bit-Ganzzahl</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="295"/>
         <source>24-bit integer</source>
-        <translation type="unfinished"></translation>
+        <translation>24-Bit-Ganzzahl</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="296"/>
         <source>32-bit integer</source>
-        <translation type="unfinished"></translation>
+        <translation>32-Bit-Ganzzahl</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="297"/>
         <source>32-bit floating point</source>
-        <translation type="unfinished"></translation>
+        <translation>32-Bit-Gleitkomma</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="299"/>
         <source>Never</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="300"/>
         <source>Lossy sources only</source>
-        <translation type="unfinished"></translation>
+        <translation>Nur verlustbehaftete Quellen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="301"/>
         <source>Always</source>
-        <translation type="unfinished"></translation>
+        <translation>Immer</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="307"/>
         <source>Output sample format</source>
-        <translation type="unfinished"></translation>
+        <translation>Abtastformat der Ausgabe</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="309"/>
         <source>Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>Dithering</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="335"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1150"/>
         <source>Ask when conversion starts</source>
-        <translation type="unfinished"></translation>
+        <translation>Beim Start der Konvertierung nachfragen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="336"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1153"/>
         <source>Source track folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordner der Quelltitel</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="337"/>
         <source>Specified folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Angegebener Ordner</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="338"/>
         <source>Ask</source>
-        <translation type="unfinished"></translation>
+        <translation>Fragen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="339"/>
         <source>Skip</source>
-        <translation type="unfinished">Überspringen</translation>
+        <translation>Überspringen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="340"/>
         <source>Overwrite</source>
-        <translation type="unfinished">Überschreiben</translation>
+        <translation>Überschreiben</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="341"/>
         <source>Convert each track to an individual file</source>
-        <translation type="unfinished"></translation>
+        <translation>Konvertiere jeden Titel in eine individuelle Datei</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="343"/>
         <source>Generate one multi-track file per name group</source>
-        <translation type="unfinished"></translation>
+        <translation>Generiere eine mehrspurige Datei für jede Namensgruppe</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="345"/>
         <source>Merge all tracks into one output file</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Titel in eine Ausgabedatei zusammenführen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="355"/>
         <source>Output path</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgabepfad</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="357"/>
         <source>Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordner</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="359"/>
         <source>Output style</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgabestil</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="361"/>
         <source>Name format</source>
-        <translation type="unfinished"></translation>
+        <translation>Namensformat</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="363"/>
         <source>If file already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenn die Datei bereits existiert</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="369"/>
         <source>Preview</source>
-        <translation type="unfinished">Vorschau</translation>
+        <translation>Vorschau</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="387"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1209"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1226"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="388"/>
         <source>Track gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel-Verstärkung</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="389"/>
         <source>Album gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Album-Verstärkung</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="396"/>
         <source> dB</source>
-        <translation type="unfinished"> dB</translation>
+        <translation> dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="399"/>
         <source>ReplayGain processing</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain-Verarbeitung</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="402"/>
         <source>Mode</source>
-        <translation type="unfinished">Modus</translation>
+        <translation>Modus</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="405"/>
         <source>Preamp</source>
-        <translation type="unfinished">Vorverstärker</translation>
+        <translation>Vorverstärker</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="407"/>
         <source>Without ReplayGain info</source>
-        <translation type="unfinished"></translation>
+        <translation>Ohne ReplayGain-Informationen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="410"/>
         <source>ReplayGain is applied permanently to the converted audio.</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain wird unwiderruflich auf die konvertierte Audiodatei angewandt.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="441"/>
         <source>DSP chain</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP-Kette</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="443"/>
         <source>Active DSPs</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktive DSPs</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="446"/>
         <source>Available DSPs</source>
-        <translation type="unfinished">Verfügbare DSPs</translation>
+        <translation>Verfügbare DSPs</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="455"/>
         <source>Metadata</source>
-        <translation type="unfinished">Metadaten</translation>
+        <translation>Metadaten</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="508"/>
         <source>Preview generation</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorschaugenerierung</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="513"/>
         <source>Length</source>
-        <translation type="unfinished">Länge</translation>
+        <translation>Länge</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="517"/>
         <source>When done</source>
-        <translation type="unfinished"></translation>
+        <translation>Bei Abschluss</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="522"/>
         <source>Copy other files to the destination folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiere andere Dateien in den Zielordner</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="711"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="717"/>
         <source>DSP Settings</source>
-        <translation type="unfinished">DSP-Einstellungen</translation>
+        <translation>Einstellungen: DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="711"/>
         <source>This DSP has no configurable settings.</source>
-        <translation type="unfinished">Dieser DSP hat keine Einstellmöglichkeiten.</translation>
+        <translation>Dieser DSP hat keine Einstellmöglichkeiten.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="718"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
-        <translation type="unfinished">Einstellungen für DSP „%1“ konnten nicht geöffnet werden.</translation>
+        <translation>Einstellungen für DSP „%1“ konnten nicht geöffnet werden.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="771"/>
         <source>Default settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Standardeinstellungen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="800"/>
         <source>Save Converter Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Konverter-Voreinstellung speichern</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="800"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="857"/>
@@ -2723,132 +2723,132 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="872"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="881"/>
         <source>Import Converter Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Konverter-Voreinstellungen importieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="858"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="929"/>
         <source>fooyin Converter Presets (*.fycp)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin Konverter-Voreinstellungen (*.fycp)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="866"/>
         <source>The preset file could not be opened.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Voreinstellungsdatei konnte nicht geöffnet werden.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="872"/>
         <source>The preset file is invalid or empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Voreinstellungsdatei ist ungültig oder leer.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="882"/>
         <source>Encoder is unavailable for preset: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Encoder steht nicht für Voreinstellung zur Verfügung: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="928"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="938"/>
         <source>Export Converter Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Konverter-Voreinstellung exportieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="938"/>
         <source>The preset file could not be written.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Voreinstellungsdatei konnte nicht geschrieben werden.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1100"/>
         <source>Reset</source>
-        <translation type="unfinished">Zurücksetzen</translation>
+        <translation>Zurücksetzen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1144"/>
         <source>No encoder available</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Encoder verfügbar</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1157"/>
         <source>No folder specified</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Ordner angegeben</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1165"/>
         <source>group tracks by output name</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel nach Ausgabenamen gruppieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1168"/>
         <source>merge tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel zusammenführen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1172"/>
         <source>No name format</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Namensformat</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1179"/>
         <source>metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadaten</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1182"/>
         <source>rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Bewertung</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1185"/>
         <source>play count</source>
-        <translation type="unfinished"></translation>
+        <translation>Abspielzähler</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1188"/>
         <source>attached pictures</source>
-        <translation type="unfinished"></translation>
+        <translation>angehängte Bilder</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1193"/>
         <source>ReplayGain (track)</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain (Titel)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1196"/>
         <source>ReplayGain (album)</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain (Album)</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1203"/>
         <source>%Ln DSP(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln DSP</numerusform>
+            <numerusform>%Ln DSPs</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1205"/>
         <source>continuous DSP</source>
-        <translation type="unfinished"></translation>
+        <translation>durchgehender DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1214"/>
         <source>%1% previews</source>
-        <translation type="unfinished"></translation>
+        <translation>%1% Vorschauen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1217"/>
         <source>Show status report</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Statusbericht</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1220"/>
         <source>Copy matching files</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiere übereinstimmende Dateien</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1223"/>
         <source>Verify output</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgabe verifizieren</translation>
     </message>
 </context>
 <context>
@@ -3901,22 +3901,22 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="525"/>
         <source>Lock width</source>
-        <translation type="unfinished"></translation>
+        <translation>Breite sperren</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="525"/>
         <source>Lock height</source>
-        <translation type="unfinished"></translation>
+        <translation>Höhe sperren</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="528"/>
         <source>Keep the width unchanged during automatic resizing; splitter handles can still resize it</source>
-        <translation type="unfinished"></translation>
+        <translation>Behalte die Breite während automatischer Größenänderungen bei; Teilergriffe können die Größe weiterhin ändern</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="530"/>
         <source>Keep the height unchanged during automatic resizing; splitter handles can still resize it</source>
-        <translation type="unfinished"></translation>
+        <translation>Behalte die Höhe während automatischer Größenänderungen bei; Teilergriffe können die Größe weiterhin ändern</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="549"/>
@@ -4016,97 +4016,97 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="42"/>
         <source>Default</source>
-        <translation type="unfinished">Standard</translation>
+        <translation>Standard</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="44"/>
         <source>Variable bitrate (VBR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Variable Bitrate (VBR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="46"/>
         <source>Constrained variable bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Begrenzte variable Bitrate</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="48"/>
         <source>Constant quality (VBR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Konstante Qualität (VBR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="50"/>
         <source>Average bitrate (ABR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Durchschnittliche Bitrate (ABR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="52"/>
         <source>Constant bitrate (CBR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Konstante Bitrate (CBR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="54"/>
         <source>Lossless compression</source>
-        <translation type="unfinished"></translation>
+        <translation>Verlustfreie Komprimierung</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="66"/>
         <source>Options</source>
-        <translation type="unfinished">Optionen</translation>
+        <translation>Optionen</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="68"/>
         <source>Mode</source>
-        <translation type="unfinished">Modus</translation>
+        <translation>Modus</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="69"/>
         <source>Quality</source>
-        <translation type="unfinished">Qualität</translation>
+        <translation>Qualität</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="70"/>
         <source>Estimated bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Geschätzte Bitrate</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="72"/>
         <source>Bitrate</source>
-        <translation type="unfinished">Bitrate</translation>
+        <translation>Bitrate</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="73"/>
         <source>Level</source>
-        <translation type="unfinished"></translation>
+        <translation>Stufe</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="80"/>
         <source>Encoder Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Encoder-Profil</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="107"/>
         <source>Encoder</source>
-        <translation type="unfinished"></translation>
+        <translation>Encoder</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="111"/>
         <source>Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Format</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="113"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="226"/>
         <source>Compression level</source>
-        <translation type="unfinished"></translation>
+        <translation>Komprimierungsstufe</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="227"/>
         <source>Encoding effort</source>
-        <translation type="unfinished"></translation>
+        <translation>Kodierungsaufwand</translation>
     </message>
 </context>
 <context>
@@ -4114,57 +4114,57 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="42"/>
         <source>VBR</source>
-        <translation type="unfinished"></translation>
+        <translation>VBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="44"/>
         <source>CVBR</source>
-        <translation type="unfinished"></translation>
+        <translation>CVBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="46"/>
         <source>VBR quality %1</source>
-        <translation type="unfinished"></translation>
+        <translation>VBR-Qualität %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="48"/>
         <source>ABR</source>
-        <translation type="unfinished"></translation>
+        <translation>ABR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="50"/>
         <source>CBR</source>
-        <translation type="unfinished"></translation>
+        <translation>CBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="52"/>
         <source>level %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Stufe %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="87"/>
         <source>%1 kbps</source>
-        <translation type="unfinished">%1 kbps</translation>
+        <translation>%1 kbps</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="90"/>
         <source>~%1 kbps</source>
-        <translation type="unfinished"></translation>
+        <translation>~%1 kbps</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="113"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="115"/>
         <source>Bitrate</source>
-        <translation type="unfinished">Bitrate</translation>
+        <translation>Bitrate</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="117"/>
         <source>Settings</source>
-        <translation type="unfinished">Einstellungen</translation>
+        <translation>Einstellungen</translation>
     </message>
 </context>
 <context>
@@ -5712,13 +5712,13 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1118"/>
         <source>Choose destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle Ziel</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1194"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1202"/>
         <source>Convert using preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit Voreinstellung %1 konvertieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1201"/>
@@ -5726,7 +5726,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/gui/guiapplication.cpp" line="1243"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1252"/>
         <source>Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1201"/>
@@ -5735,32 +5735,32 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/gui/guiapplication.cpp" line="1252"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1263"/>
         <source>Convert</source>
-        <translation type="unfinished"></translation>
+        <translation>Konvertieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1231"/>
         <source>Converter setup…</source>
-        <translation type="unfinished"></translation>
+        <translation>Konverter-Einrichtung…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1240"/>
         <source>Using default settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende Standardeinstellungen</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1244"/>
         <source>Convert using default settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit Standardeinstellungen konvertieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1249"/>
         <source>Repeat last conversion</source>
-        <translation type="unfinished"></translation>
+        <translation>Letzte Konvertierung wiederholen</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1280"/>
         <source>Custom conversion…</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzerdefinierte Konvertierung…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1515"/>
@@ -6333,22 +6333,22 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="738"/>
         <source>Lock width</source>
-        <translation type="unfinished"></translation>
+        <translation>Breite sperren</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="738"/>
         <source>Lock height</source>
-        <translation type="unfinished"></translation>
+        <translation>Höhe sperren</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="741"/>
         <source>Keep the width unchanged during automatic resizing; splitter handles can still resize it</source>
-        <translation type="unfinished"></translation>
+        <translation>Behalte die Breite während automatischer Größenänderungen bei; Teilergriffe können die Größe weiterhin ändern</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="742"/>
         <source>Keep the height unchanged during automatic resizing; splitter handles can still resize it</source>
-        <translation type="unfinished"></translation>
+        <translation>Behalte die Höhe während automatischer Größenänderungen bei; Teilergriffe können die Größe weiterhin ändern</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="788"/>
