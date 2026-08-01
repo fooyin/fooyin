@@ -394,7 +394,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="161"/>
         <source>Rating shown as stars</source>
-        <translation>Betyg visad som stjärnor</translation>
+        <translation>Betyg visat som stjärnor</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="165"/>
@@ -736,7 +736,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="266"/>
         <source>Sets the text colour from red, green, blue, and alpha components</source>
-        <translation>Sätter färgtexten från röda, gröna, blåa, och alfakomponenter</translation>
+        <translation>Sätter färgtexten från röda, gröna, blåa och alfakomponenter</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="269"/>
@@ -15160,7 +15160,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="724"/>
         <source>Item</source>
-        <translation type="unfinished">Föremål</translation>
+        <translation>Föremål</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="724"/>
