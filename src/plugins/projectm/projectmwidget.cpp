@@ -47,7 +47,6 @@
 #include <QMenu>
 #include <QOpenGLWindow>
 #include <QPixmap>
-#include <QRandomGenerator>
 #include <QSizePolicy>
 #include <QSplitter>
 #include <QSplitterHandle>
@@ -758,15 +757,7 @@ void ProjectMWidget::scanPresetLibrary()
 
 void ProjectMWidget::selectRandomPreset()
 {
-    const auto& presets = m_library.presets();
-    if(presets.empty()) {
-        m_view->selectRandomPreset();
-        saveSelectedPreset();
-        return;
-    }
-
-    const int index = QRandomGenerator::global()->bounded(static_cast<int>(presets.size()));
-    m_view->selectPreset(presets.at(static_cast<size_t>(index)).path);
+    m_view->selectRandomPreset();
     saveSelectedPreset();
 }
 
