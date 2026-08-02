@@ -51,6 +51,8 @@ FYGUI_EXPORT RatingStarSymbols ratingStarSymbols(const SettingsManager& settings
 FYGUI_EXPORT QMap<PaletteKey, QColor> coloursFromPalette();
 FYGUI_EXPORT QMap<PaletteKey, QColor> coloursFromStylePalette();
 FYGUI_EXPORT QMap<PaletteKey, QColor> coloursFromPalette(const QPalette& palette);
+FYGUI_EXPORT bool styleSupportsCustomPalette(const QString& styleName);
+FYGUI_EXPORT bool styleSupportsDarkMode(const QString& styleName);
 
 FYGUI_EXPORT void refreshItemViewPalette(QAbstractItemView* view);
 FYGUI_EXPORT void refreshItemViewPalette(QAbstractItemView* view, const QPalette& palette);

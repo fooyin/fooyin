@@ -41,6 +41,8 @@
 #include <QTreeView>
 #include <QUrl>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Gui {
 namespace {
 QHeaderView* itemViewHeader(QAbstractItemView* view)
@@ -54,6 +56,29 @@ QHeaderView* itemViewHeader(QAbstractItemView* view)
     return nullptr;
 }
 } // namespace
+
+bool styleSupportsCustomPalette(const QString& styleName)
+{
+#ifdef Q_OS_WIN
+    return styleName.compare("windows11"_L1, Qt::CaseInsensitive) != 0
+        && styleName.compare("windowsvista"_L1, Qt::CaseInsensitive) != 0
+        && styleName.compare("windows"_L1, Qt::CaseInsensitive) != 0;
+#else
+    Q_UNUSED(styleName)
+    return true;
+#endif
+}
+
+bool styleSupportsDarkMode(const QString& styleName)
+{
+#ifdef Q_OS_WIN
+    return styleName.compare("windows11"_L1, Qt::CaseInsensitive) == 0
+        || styleName.compare("windows"_L1, Qt::CaseInsensitive) == 0;
+#else
+    Q_UNUSED(styleName)
+    return false;
+#endif
+}
 
 TrackList tracksFromMimeData(MusicLibrary* library, QByteArray data)
 {

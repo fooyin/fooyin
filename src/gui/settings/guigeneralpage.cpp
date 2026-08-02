@@ -25,6 +25,7 @@
 #include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/guiutils.h>
 #include <gui/layoutprovider.h>
 #include <gui/theme/fytheme.h>
 #include <gui/theme/themeregistry.h>
@@ -68,6 +69,10 @@ private:
     void importLayout();
     void exportLayout();
 
+#ifdef Q_OS_WIN
+    void updateDarkModeState();
+#endif
+
     LayoutProvider* m_layoutProvider;
     EditableLayout* m_editableLayout;
     ThemeRegistry* m_themeRegistry;
@@ -75,6 +80,10 @@ private:
     SettingsManager* m_settings;
 
     QComboBox* m_styles;
+
+#ifdef Q_OS_WIN
+    QCheckBox* m_darkMode;
+#endif
 
     QRadioButton* m_detectIconTheme;
     QRadioButton* m_lightTheme;
@@ -104,6 +113,9 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_presetRegistry{presetRegistry}
     , m_settings{settings}
     , m_styles{new QComboBox(this)}
+#ifdef Q_OS_WIN
+    , m_darkMode{new QCheckBox(tr("Dark mode"), this)}
+#endif
     , m_detectIconTheme{new QRadioButton(tr("Auto-detect theme"), this)}
     , m_lightTheme{new QRadioButton(tr("Light"), this)}
     , m_darkTheme{new QRadioButton(tr("Dark"), this)}
@@ -144,6 +156,9 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     row = 0;
     appearanceGroupLayout->addWidget(new QLabel(tr("Style") + u":"_s, appearanceGroup), row, 0);
     appearanceGroupLayout->addWidget(m_styles, row++, 1);
+#ifdef Q_OS_WIN
+    appearanceGroupLayout->addWidget(m_darkMode, row++, 0, 1, 2);
+#endif
     appearanceGroupLayout->addWidget(iconThemeBox, row++, 0, 1, 2);
     appearanceGroupLayout->setColumnStretch(1, 1);
 
@@ -188,6 +203,9 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
 
     QObject::connect(m_overrideMargin, &QCheckBox::toggled, m_editableLayoutMargin, &QWidget::setEnabled);
     QObject::connect(m_overrideSplitterHandle, &QCheckBox::toggled, m_splitterHandleGap, &QWidget::setEnabled);
+#ifdef Q_OS_WIN
+    QObject::connect(m_styles, &QComboBox::currentTextChanged, this, &GuiGeneralPageWidget::updateDarkModeState);
+#endif
 
     m_settings->subscribe<ShowMenuBar>(m_showMenuBar, &QCheckBox::setChecked);
     m_settings->subscribe<LockSplitterHandles>(m_lockSplitters, &QCheckBox::setChecked);
@@ -202,6 +220,10 @@ void GuiGeneralPageWidget::load()
     const auto style     = m_settings->value<Style>();
     const int styleIndex = m_styles->findText(style);
     m_styles->setCurrentIndex(style.isEmpty() || styleIndex < 0 ? 0 : styleIndex);
+#ifdef Q_OS_WIN
+    m_darkMode->setChecked(m_settings->value<DarkMode>());
+    updateDarkModeState();
+#endif
 
     const auto iconTheme = static_cast<IconThemeOption>(m_settings->value<IconTheme>());
     switch(iconTheme) {
@@ -240,6 +262,9 @@ void GuiGeneralPageWidget::load()
 void GuiGeneralPageWidget::apply()
 {
     m_settings->set<Style>(m_styles->currentIndex() == 0 ? QString{} : m_styles->currentText());
+#ifdef Q_OS_WIN
+    m_settings->set<DarkMode>(m_darkMode->isChecked());
+#endif
 
     IconThemeOption iconThemeOption;
     if(m_detectIconTheme->isChecked()) {
@@ -285,6 +310,9 @@ void GuiGeneralPageWidget::apply()
 void GuiGeneralPageWidget::reset()
 {
     m_settings->reset<Style>();
+#ifdef Q_OS_WIN
+    m_settings->reset<DarkMode>();
+#endif
     m_settings->reset<IconTheme>();
     m_settings->reset<ShowMenuBar>();
     m_settings->reset<ShowSplitterHandles>();
@@ -293,6 +321,17 @@ void GuiGeneralPageWidget::reset()
     m_settings->reset<SplitterHandleSize>();
     m_settings->reset<ToolButtonStyle>();
 }
+
+#ifdef Q_OS_WIN
+void GuiGeneralPageWidget::updateDarkModeState()
+{
+    const QString styleName
+        = m_styles->currentIndex() == 0 ? m_settings->value<SystemStyle>() : m_styles->currentText();
+    const bool supported = Gui::styleSupportsDarkMode(styleName);
+    m_darkMode->setEnabled(supported);
+    m_darkMode->setToolTip(supported ? QString{} : tr("Dark mode is not supported by this style."));
+}
+#endif
 
 void GuiGeneralPageWidget::showQuickSetup()
 {

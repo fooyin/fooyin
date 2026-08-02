@@ -108,6 +108,7 @@
 #include <QCheckBox>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QGuiApplication>
 #include <QImageReader>
 #include <QInputDialog>
 #include <QJsonArray>
@@ -121,6 +122,7 @@
 #include <QPushButton>
 #include <QStyle>
 #include <QStyleFactory>
+#include <QStyleHints>
 #include <QTimer>
 #include <QUrl>
 
@@ -583,6 +585,7 @@ void GuiApplication::initialise()
     setupConvertMenu();
     setupUtilitiesMenu();
     setStyle();
+    updateColourScheme();
     setIconTheme();
     registerLayouts();
 
@@ -735,8 +738,17 @@ void GuiApplication::setupConnections()
             m_settings->refresh<Settings::Gui::IconTheme>();
         }
     });
+    m_settings->subscribe<Settings::Gui::DarkMode>(this, [this]() {
+        updateColourScheme();
+        scheduleThemeUpdate(true);
+        if(setIconTheme()) {
+            QPixmapCache::clear();
+            m_settings->refresh<Settings::Gui::IconTheme>();
+        }
+    });
     m_settings->subscribe<Settings::Gui::Style>(this, [this]() {
         setStyle();
+        updateColourScheme();
         scheduleThemeUpdate(true);
         if(setIconTheme()) {
             QPixmapCache::clear();
@@ -794,6 +806,16 @@ void GuiApplication::showPluginsNotFoundMessage()
     if(message.clickedButton() == quitButton) {
         Application::quit();
     }
+}
+
+void GuiApplication::updateColourScheme() const
+{
+#ifdef Q_OS_WIN
+    const auto* style = QApplication::style();
+    const bool useDarkMode
+        = style && Gui::styleSupportsDarkMode(style->name()) && m_settings->value<Settings::Gui::DarkMode>();
+    QGuiApplication::styleHints()->setColorScheme(useDarkMode ? Qt::ColorScheme::Dark : Qt::ColorScheme::Unknown);
+#endif
 }
 
 void GuiApplication::initialiseTray()
@@ -1394,8 +1416,10 @@ void GuiApplication::applyTheme()
         m_settings->set<Settings::Gui::Internal::SystemPalette>(systemPalette);
 
         auto newPalette{systemPalette};
-        for(const auto& [key, colour] : Utils::asRange(currTheme.colours)) {
-            newPalette.setColor(key.group, key.role, colour);
+        if(const auto* style = QApplication::style(); style && Gui::styleSupportsCustomPalette(style->name())) {
+            for(const auto& [key, colour] : Utils::asRange(currTheme.colours)) {
+                newPalette.setColor(key.group, key.role, colour);
+            }
         }
 
         QApplication::setPalette(newPalette);

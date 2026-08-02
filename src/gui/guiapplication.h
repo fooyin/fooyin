@@ -155,6 +155,7 @@ private:
     void changeVolume(double delta) const;
     void mute() const;
     void setStyle() const;
+    void updateColourScheme() const;
     void scheduleThemeUpdate(bool refreshSystemBaseline = false);
     void applyTheme();
     void handleSystemThemeChanged();

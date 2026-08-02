@@ -9,7 +9,7 @@ To build Fooyin you will need *at least*:
 
 The following libraries are required:
 
-* [Qt6](https://www.qt.io) (6.4+)
+* [Qt6](https://www.qt.io) (6.4+, 6.8+ on Windows)
 * [TagLib](https://taglib.org) (1.12+)
 * [FFmpeg](https://ffmpeg.org) (4.4+)
 * [ICU](https://icu.unicode.org/)

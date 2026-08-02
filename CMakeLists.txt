@@ -124,8 +124,14 @@ list(
 
 # ---- Dependencies ----
 
+if(WIN32)
+    set(FOOYIN_QT_MIN_VERSION 6.8)
+else()
+    set(FOOYIN_QT_MIN_VERSION 6.4)
+endif()
+
 find_package(
-    Qt6 REQUIRED
+    Qt6 ${FOOYIN_QT_MIN_VERSION} REQUIRED
     COMPONENTS Core
                Widgets
                Gui
