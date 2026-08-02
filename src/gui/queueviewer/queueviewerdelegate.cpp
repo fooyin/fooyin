@@ -99,7 +99,7 @@ PreparedTextLines prepareTextLines(const QStyleOptionViewItem& option, int maxWi
             prepared.text   = text;
             prepared.font   = font;
             prepared.colour = colour;
-            prepared.width  = metrics.boundingRect(text).width();
+            prepared.width  = metrics.horizontalAdvance(text);
             prepared.height = metrics.height();
 
             line.totalWidth += prepared.width;
@@ -142,7 +142,7 @@ QSize richTextNaturalSize(const QStyleOptionViewItem& option, const RichText& ri
             const QFont font = resolvedRichTextFont(block.format, option.font);
             const QFontMetrics metrics{font};
 
-            lineWidth += metrics.boundingRect(block.text).width();
+            lineWidth += metrics.horizontalAdvance(block.text);
             lineHeight = std::max(lineHeight, metrics.height());
         }
 
@@ -198,24 +198,28 @@ void QueueViewerDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
 
     const QStyle* style  = opt.widget ? opt.widget->style() : QApplication::style();
     const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, opt.widget) * 2;
+    const int leftMargin = std::max(6, textMargin);
     QRect textRect       = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
-    textRect.adjust(textMargin, 0, -textMargin, 0);
+    textRect.adjust(leftMargin, 0, -textMargin, 0);
 
     const auto leftRichText  = index.data(QueueViewerItem::RichTitle).value<RichText>();
     const auto rightRichText = index.data(QueueViewerItem::RichRightText).value<RichText>();
     const QSize rightSize    = richTextNaturalSize(opt, rightRichText);
 
-    const int rightWidth = std::min(rightSize.width() + RightContentPadding, textRect.width());
+    QRect rightContentRect{textRect};
+    rightContentRect.setRight(std::max(rightContentRect.left(), rightContentRect.right() - RightContentPadding));
+
+    const int rightWidth = std::min(rightSize.width(), rightContentRect.width());
     int leftWidth        = textRect.width();
     if(rightWidth > 0) {
-        leftWidth = std::max(0, textRect.width() - rightWidth - textMargin);
+        leftWidth = std::max(0, rightContentRect.width() - rightWidth - textMargin);
     }
 
     QRect leftRect{textRect};
     leftRect.setWidth(leftWidth);
 
-    QRect rightRect{textRect};
-    rightRect.setLeft(textRect.right() - rightWidth + 1);
+    QRect rightRect{rightContentRect};
+    rightRect.setLeft(rightContentRect.right() - rightWidth + 1);
 
     const auto leftLines  = prepareTextLines(opt, leftRect.width(), leftRichText);
     const auto rightLines = prepareTextLines(opt, rightRect.width(), rightRichText);
