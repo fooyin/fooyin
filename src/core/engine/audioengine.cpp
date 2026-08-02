@@ -1396,7 +1396,10 @@ void AudioEngine::setAudioOutput(const OutputCreator& output, const QString& dev
         const bool initOk = m_outputController.initOutput(m_format, m_volume);
         if(initOk) {
             if(wasPlaying) {
-                play();
+                if(auto stream = m_decoder.activeStream()) {
+                    m_pipeline.sendStreamCommand(stream->id(), AudioStream::Command::Play);
+                }
+                m_pipeline.play();
             }
         }
     }
@@ -1454,7 +1457,10 @@ void AudioEngine::applyOutputProfile(const OutputCreator& output, const QString&
         m_outputController.uninitOutput();
         const bool initOk = m_outputController.initOutput(m_format, m_volume);
         if(initOk && wasPlaying) {
-            play();
+            if(auto stream = m_decoder.activeStream()) {
+                m_pipeline.sendStreamCommand(stream->id(), AudioStream::Command::Play);
+            }
+            m_pipeline.play();
         }
     }
 }
@@ -1483,7 +1489,10 @@ void AudioEngine::setOutputDevice(const QString& device)
     m_outputController.uninitOutput();
     const bool initOk = m_outputController.initOutput(m_format, m_volume);
     if(initOk && wasPlaying) {
-        play();
+        if(auto stream = m_decoder.activeStream()) {
+            m_pipeline.sendStreamCommand(stream->id(), AudioStream::Command::Play);
+        }
+        m_pipeline.play();
     }
 }
 

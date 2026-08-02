@@ -1593,7 +1593,7 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SetVolumeClampsAndPropagatesT
     EXPECT_DOUBLE_EQ(harness.outputStats->volume(), 0.0);
 }
 
-FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SetAudioOutputReinitializesLoadedOutput)
+FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SetAudioOutputResumesPlaybackAfterReinitialisingOutput)
 {
     ensureCoreApplication();
     EngineHarness harness{false};
@@ -1603,15 +1603,20 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SetAudioOutputReinitializesLo
     ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.trackStatus() == Engine::TrackStatus::Loaded; }));
     ASSERT_EQ(harness.outputStats->initCalls.load(), 1);
 
+    harness.engine.play();
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.playbackState() == Engine::PlaybackState::Playing; }));
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.outputStats->writeCalls.load() > 0; }, 2000ms));
+
     auto newOutputStats = std::make_shared<OutputStats>();
     harness.engine.setAudioOutput([stats = newOutputStats]() { return std::make_unique<FakeAudioOutput>(stats); },
                                   QString{});
 
     ASSERT_TRUE(pumpUntil([&harness]() { return harness.outputStats->uninitCalls.load() >= 1; }, 2000ms));
     ASSERT_TRUE(pumpUntil([&newOutputStats]() { return newOutputStats->initCalls.load() >= 1; }, 2000ms));
+    EXPECT_TRUE(pumpUntil([&newOutputStats]() { return newOutputStats->writeCalls.load() > 0; }, 2000ms));
 }
 
-FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SetOutputDeviceReinitialisesLoadedOutput)
+FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SetOutputDeviceResumesPlaybackAfterReinitialisingOutput)
 {
     ensureCoreApplication();
     EngineHarness harness{false};
@@ -1621,11 +1626,19 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SetOutputDeviceReinitialisesL
     ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.trackStatus() == Engine::TrackStatus::Loaded; }));
     ASSERT_EQ(harness.outputStats->initCalls.load(), 1);
 
+    harness.engine.play();
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.playbackState() == Engine::PlaybackState::Playing; }));
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.outputStats->writeCalls.load() > 0; }, 2000ms));
+    const int writesBeforeSwitch = harness.outputStats->writeCalls.load();
+
     harness.engine.setOutputDevice(u"hw:test"_s);
 
     ASSERT_TRUE(pumpUntil([&harness]() { return harness.outputStats->uninitCalls.load() >= 1; }, 2000ms));
     ASSERT_TRUE(pumpUntil([&harness]() { return harness.outputStats->initCalls.load() >= 2; }, 2000ms));
     ASSERT_TRUE(pumpUntil([&harness]() { return harness.outputStats->device() == u"hw:test"_s; }, 2000ms));
+    EXPECT_TRUE(pumpUntil(
+        [&harness, writesBeforeSwitch]() { return harness.outputStats->writeCalls.load() > writesBeforeSwitch; },
+        2000ms));
 }
 
 FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, BufferLengthChangeReconfiguresPlaybackWithoutReinitialisingOutput)
