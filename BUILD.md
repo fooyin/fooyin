@@ -72,13 +72,37 @@ sudo dnf install \
     soxr-devel
 ```
 
+### Windows
+
+Official fooyin Windows builds use MSVC.
+
+Install the following tools:
+
+* [Visual Studio 2026](https://visualstudio.microsoft.com/vs/) with the **Desktop development with C++** workload,
+  which includes vcpkg
+* [Git](https://git-scm.com/download/win)
+* [Qt 6](https://www.qt.io/download-qt-installer-oss) using the Qt Online Installer
+
+Qt must be installed separately rather than through vcpkg. In the Qt installer, select an MSVC build of Qt 6.8 or
+newer that matches the architecture being built.
+
+Set the following user or system environment variable:
+
+| Variable | Example value |
+|----------|---------------|
+| `QT_ROOT_DIR` | `C:\Qt\6.8.3\msvc2022_64` |
+
+`QT_ROOT_DIR` must point to Qt's compiler-specific directory, not the top-level `C:\Qt` directory.
+
 ## Building
+
+### Building from the command line
 
 1. Using a terminal, switch to the directory where fooyin will be checked out
 2. Clone the fooyin repository (including submodules):
 
 ```
-git clone https://github.com/fooyin/fooyin.git
+git clone --recurse-submodules https://github.com/fooyin/fooyin.git
 ```
 
 3. Switch into the directory: `cd fooyin`
@@ -116,6 +140,17 @@ or use a semicolon/comma-separated list of plugin names to include or `-name` en
 * `-DBUILD_ASAN` - Enable AddressSanitizer (OFF by default)
 * `-DINSTALL_FHS` - Install in Linux distros /usr hierarchy (ON by default)
 * `-DINSTALL_HEADERS` - Install development files (OFF by default)
+
+### Building with Visual Studio on Windows
+
+Open the repository folder in Visual Studio. Visual Studio will detect `CMakePresets.json`; use the CMake preset
+selector to choose one of the vcpkg presets appropriate for the desired architecture and build type:
+
+* `debug-vcpkg` or `release-vcpkg` for x64
+* `debug-vcpkg-arm64` or `release-vcpkg-arm64` for ARM64
+
+Visual Studio uses the selected preset to configure the project and vcpkg to install the non-Qt dependencies. Once
+configuration has completed, select **Build All** from the **Build** menu.
 
 ## Installing
 
