@@ -29,6 +29,7 @@
 #include <QPainter>
 
 constexpr auto RightContentPadding = 5;
+constexpr auto TextElideMargin     = 1;
 
 namespace Fooyin {
 namespace {
@@ -209,7 +210,7 @@ void QueueViewerDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     QRect rightContentRect{textRect};
     rightContentRect.setRight(std::max(rightContentRect.left(), rightContentRect.right() - RightContentPadding));
 
-    const int rightWidth = std::min(rightSize.width(), rightContentRect.width());
+    const int rightWidth = std::min(rightSize.width() + TextElideMargin, rightContentRect.width());
     int leftWidth        = textRect.width();
     if(rightWidth > 0) {
         leftWidth = std::max(0, rightContentRect.width() - rightWidth - textMargin);
@@ -250,7 +251,7 @@ QSize QueueViewerDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
     const QSize leftSize  = richTextNaturalSize(opt, index.data(QueueViewerItem::RichTitle).value<RichText>());
     const QSize rightSize = richTextNaturalSize(opt, index.data(QueueViewerItem::RichRightText).value<RichText>());
     const QSize textSize{leftSize.width() + rightSize.width()
-                             + (rightSize.width() > 0 ? textGap + RightContentPadding : 0),
+                             + (rightSize.width() > 0 ? textGap + RightContentPadding + TextElideMargin : 0),
                          std::max(leftSize.height(), rightSize.height())};
 
     QSize size = style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, textSize, opt.widget);
