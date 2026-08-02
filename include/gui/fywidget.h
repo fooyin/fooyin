@@ -29,6 +29,7 @@
 #include <unordered_map>
 
 class QAction;
+class QCloseEvent;
 class QDialog;
 class QMenu;
 
@@ -208,7 +209,19 @@ public:
      */
     virtual void finalise();
 
+    /*!
+     * Shows this widget as a self-owned top-level window.
+     *
+     * The window geometry and widget-specific layout data are restored from and
+     * saved to @p stateKey. This gives the window configuration independent state
+     * from instances embedded in a layout.
+     */
+    void showStandaloneWindow(const QString& title, const QString& stateKey,
+                              const QSize& defaultSize = QSize{800, 450});
+
 protected:
+    void closeEvent(QCloseEvent* event) override;
+
     /*!
      * Opens this widget's configuration dialog.
      * Reimplement for widgets that support per-instance configuration.

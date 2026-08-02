@@ -54,6 +54,9 @@ MainMenuBar::MainMenuBar(ActionManager* actionManager, QObject* parent)
     m_menubar->addMenu(viewMenu, Constants::Groups::View);
     viewMenu->menu()->setTitle(ActionManager::tr("&View"));
 
+    ActionContainer* visualisationsMenu = m_actionManager->createMenu(Constants::Menus::Visualisations);
+    visualisationsMenu->menu()->setTitle(ActionManager::tr("&Visualisations"));
+
     ActionContainer* layoutMenu = m_actionManager->createMenu(Constants::Menus::Layout);
     m_menubar->addMenu(layoutMenu, Constants::Groups::Layout);
     layoutMenu->menu()->setTitle(ActionManager::tr("La&yout"));

@@ -88,7 +88,6 @@ Q_SIGNALS:
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
     void showEvent(QShowEvent* event) override;
-    void closeEvent(QCloseEvent* event) override;
 
     void openConfigDialog() override;
 
@@ -112,9 +111,6 @@ private:
     void beginSplitterResize();
     void endSplitterResize();
     void updateResizeSnapshotGeometry();
-    [[nodiscard]] bool isWindowWidget() const;
-    void saveTopLevelState();
-    void loadTopLevelState();
 
     ProjectMView* m_view;
     QWidget* m_viewContainer;
@@ -146,7 +142,6 @@ private:
     bool m_rememberPreset;
     bool m_detachedWindowFullScreen;
     bool m_splitterResizeActive;
-    bool m_topLevelStateLoaded;
 };
 } // namespace ProjectM
 } // namespace Fooyin

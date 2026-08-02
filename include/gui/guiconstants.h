@@ -86,6 +86,7 @@ namespace Menus {
 constexpr auto File           = "Fooyin.Menu.File";
 constexpr auto Edit           = "Fooyin.Menu.Edit";
 constexpr auto View           = "Fooyin.Menu.View";
+constexpr auto Visualisations = "Fooyin.Menu.View.Visualisations";
 constexpr auto EditSort       = "Fooyin.Menu.Edit.Sort";
 constexpr auto Layout         = "Fooyin.Menu.Layout";
 constexpr auto Playback       = "Fooyin.Menu.Playback";

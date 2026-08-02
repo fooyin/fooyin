@@ -30,7 +30,9 @@
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
 #include <gui/widgets/elapsedprogressdialog.h>
+#include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/async.h>
 #include <utils/utils.h>
 
@@ -85,6 +87,16 @@ void WaveBarPlugin::initialise(const GuiPluginContext& context)
 
     m_widgetProvider->registerWidget(u"WaveBar"_s, [this]() { return createWavebar(); }, tr("Waveform Seekbar"));
     m_widgetProvider->setSubMenus(u"WaveBar"_s, {tr("Visualisations")});
+
+    auto* showWaveBar = new QAction(tr("&Waveform Seekbar"), this);
+    showWaveBar->setStatusTip(tr("Open a waveform seekbar in a separate window"));
+    auto* showWaveBarCmd = m_actionManager->registerAction(showWaveBar, "WaveBar.ShowWindow");
+    showWaveBarCmd->setCategories({tr("View"), tr("Visualisations")});
+    m_actionManager->actionContainer(::Fooyin::Constants::Menus::Visualisations)->addAction(showWaveBarCmd);
+    QObject::connect(showWaveBar, &QAction::triggered, this, [this]() {
+        auto* window = createWavebar();
+        window->showStandaloneWindow(tr("Waveform Seekbar"), u"WaveBar/WindowState"_s);
+    });
 
     m_trackSelection->registerTrackContextSubmenu(this, TrackContextMenuArea::Track,
                                                   ::Fooyin::Constants::Menus::Context::TrackSelection,

@@ -45,10 +45,7 @@ void ProjectMPlugin::initialise(const GuiPluginContext& context)
     m_actionManager  = context.actionManager;
     m_widgetProvider = context.widgetProvider;
 
-    auto* viewMenu           = m_actionManager->actionContainer(Constants::Menus::View);
-    auto* visualisationsMenu = m_actionManager->createMenu("Fooyin.Menu.View.Visualisations");
-    visualisationsMenu->menu()->setTitle(tr("&Visualisations"));
-    viewMenu->addMenu(visualisationsMenu);
+    auto* visualisationsMenu = m_actionManager->actionContainer(Constants::Menus::Visualisations);
 
     auto* showProjectM = new QAction(tr("project&M"), this);
     showProjectM->setStatusTip(tr("Open projectM in a separate window"));
@@ -65,10 +62,7 @@ void ProjectMPlugin::initialise(const GuiPluginContext& context)
 void ProjectMPlugin::showProjectMWindow()
 {
     auto* window = new ProjectMWidget(m_actionManager, m_engine, m_settings);
-    window->setAttribute(Qt::WA_DeleteOnClose);
-    window->setWindowTitle(tr("projectM"));
-    window->resize(800, 450);
-    window->show();
+    window->showStandaloneWindow(tr("projectM"), u"ProjectM/WindowState"_s);
 }
 } // namespace Fooyin::ProjectM
 

@@ -23,7 +23,6 @@
 #include "projectmpresetdialog.h"
 #include "projectmview.h"
 
-#include <core/coresettings.h>
 #include <core/engine/enginecontroller.h>
 #include <core/engine/visualisationservice.h>
 #include <utils/actions/actionmanager.h>
@@ -34,7 +33,6 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QApplication>
-#include <QCloseEvent>
 #include <QCursor>
 #include <QDir>
 #include <QEvent>
@@ -100,9 +98,6 @@ constexpr auto RandomPresetAction   = "ProjectM.RandomPreset";
 constexpr auto LockPresetAction     = "ProjectM.LockPreset";
 constexpr auto ShufflePresetsAction = "ProjectM.ShufflePresets";
 
-constexpr auto GeometryKey            = "Geometry"_L1;
-constexpr auto ProjectMWindowStateKey = "ProjectM/WindowState"_L1;
-
 namespace Fooyin::ProjectM {
 namespace {
 bool isPresetDuration(int seconds)
@@ -167,7 +162,6 @@ ProjectMWidget::ProjectMWidget(ActionManager* actionManager, EngineController* e
     , m_rememberPreset{false}
     , m_detachedWindowFullScreen{false}
     , m_splitterResizeActive{false}
-    , m_topLevelStateLoaded{false}
 {
     m_actionManager->addContextObject(m_context);
 
@@ -485,21 +479,8 @@ void ProjectMWidget::contextMenuEvent(QContextMenuEvent* event)
 
 void ProjectMWidget::showEvent(QShowEvent* event)
 {
-    if(isWindowWidget() && !m_topLevelStateLoaded) {
-        loadTopLevelState();
-    }
-
     FyWidget::showEvent(event);
     installSplitterEventFilters();
-}
-
-void ProjectMWidget::closeEvent(QCloseEvent* event)
-{
-    if(isWindowWidget()) {
-        saveTopLevelState();
-    }
-
-    FyWidget::closeEvent(event);
 }
 
 void ProjectMWidget::openConfigDialog()
@@ -866,32 +847,4 @@ void ProjectMWidget::updateResizeSnapshotGeometry()
     }
 }
 
-bool ProjectMWidget::isWindowWidget() const
-{
-    return parentWidget() == nullptr;
-}
-
-void ProjectMWidget::saveTopLevelState()
-{
-    QJsonObject state;
-    saveLayoutData(state);
-    state[GeometryKey] = QString::fromUtf8(saveGeometry().toBase64());
-
-    FyStateSettings settings;
-    settings.setValue(ProjectMWindowStateKey, state);
-}
-
-void ProjectMWidget::loadTopLevelState()
-{
-    const FyStateSettings settings;
-    const QJsonObject state = settings.value(ProjectMWindowStateKey).toJsonObject();
-    if(!state.isEmpty()) {
-        loadLayoutData(state);
-        if(state.contains(GeometryKey)) {
-            restoreGeometry(QByteArray::fromBase64(state.value(GeometryKey).toString().toUtf8()));
-        }
-    }
-
-    m_topLevelStateLoaded = true;
-}
 } // namespace Fooyin::ProjectM
