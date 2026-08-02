@@ -34,6 +34,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatterregistry.h
     ${CMAKE_SOURCE_DIR}/include/gui/statusevent.h
     ${CMAKE_SOURCE_DIR}/include/gui/theme/fytheme.h
+    ${CMAKE_SOURCE_DIR}/include/gui/theme/fythemefile.h
     ${CMAKE_SOURCE_DIR}/include/gui/theme/themeregistry.h
     ${CMAKE_SOURCE_DIR}/include/gui/trackmimedata.h
     ${CMAKE_SOURCE_DIR}/include/gui/trackselectioncontroller.h
@@ -494,6 +495,7 @@ set(SOURCES
     systemtrayicon.cpp
     systemtrayicon.h
     theme/fytheme.cpp
+    theme/fythemefile.cpp
     theme/themeregistry.cpp
     trackmimedata.cpp
     trackselectioncontroller.cpp

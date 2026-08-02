@@ -75,6 +75,7 @@ fooyin_add_test(test_ratingtagpolicy core/tagging/ratingtagpolicytest.cpp)
 fooyin_add_test(test_tagwriter core/tagging/tagwritertest.cpp data/audio.qrc)
 
 fooyin_add_test(test_guiutils gui/guiutilstest.cpp)
+fooyin_add_test(test_fythemefile gui/fythemefiletest.cpp)
 fooyin_add_test(test_fysplitter gui/fysplittertest.cpp)
 fooyin_add_test(test_scriptformatter gui/scriptformattertest.cpp)
 
