@@ -34,6 +34,7 @@ using namespace Qt::StringLiterals;
 
 constexpr auto SdlPeriodMs       = 40;
 constexpr auto SdlTargetBufferMs = 200;
+constexpr auto SdlAllowedChanges = SDL_AUDIO_ALLOW_FREQUENCY_CHANGE | SDL_AUDIO_ALLOW_FORMAT_CHANGE;
 
 namespace {
 SDL_AudioFormat findFormat(Fooyin::SampleFormat format)
@@ -118,23 +119,40 @@ bool SdlOutput::init(const AudioFormat& format)
     m_desiredSpec.callback = nullptr;
 
     if(m_device == u"default"_s) {
-        m_audioDeviceId = SDL_OpenAudioDevice(nullptr, 0, &m_desiredSpec, &m_obtainedSpec, SDL_AUDIO_ALLOW_ANY_CHANGE);
+        m_audioDeviceId = SDL_OpenAudioDevice(nullptr, 0, &m_desiredSpec, &m_obtainedSpec, SdlAllowedChanges);
     }
     else {
+        // SDL2 compatible implementations may map names to backend instance IDs previously cached
+        if(SDL_GetNumAudioDevices(0) < 0) {
+            qCWarning(SDL) << "Error refreshing SDL audio devices:" << SDL_GetError();
+            SDL_Quit();
+            return false;
+        }
+
         m_audioDeviceId = SDL_OpenAudioDevice(m_device.toLocal8Bit().constData(), 0, &m_desiredSpec, &m_obtainedSpec,
-                                              SDL_AUDIO_ALLOW_ANY_CHANGE);
+                                              SdlAllowedChanges);
     }
 
     if(m_audioDeviceId == 0) {
         qCWarning(SDL) << "Error opening audio device:" << SDL_GetError();
+        SDL_Quit();
         return false;
     }
 
     m_deviceBufferFrames = std::max(1, static_cast<int>(m_obtainedSpec.samples));
 
-    if(format.sampleFormat() == SampleFormat::F64 || m_obtainedSpec.format != m_desiredSpec.format) {
+    const SampleFormat obtainedSampleFormat = findSampleFormat(m_obtainedSpec.format);
+    if(obtainedSampleFormat == SampleFormat::Unknown) {
+        qCWarning(SDL) << "SDL selected an unsupported sample format:" << m_obtainedSpec.format;
+        SDL_CloseAudioDevice(m_audioDeviceId);
+        m_audioDeviceId = 0;
+        SDL_Quit();
+        return false;
+    }
+
+    if(obtainedSampleFormat != format.sampleFormat()) {
         qCDebug(SDL) << "Format not supported:" << m_format.prettyFormat();
-        m_format.setSampleFormat(findSampleFormat(m_obtainedSpec.format));
+        m_format.setSampleFormat(obtainedSampleFormat);
         qCDebug(SDL) << "Using compatible format:" << m_format.prettyFormat();
     }
     if(m_obtainedSpec.freq != m_desiredSpec.freq) {
@@ -225,7 +243,10 @@ OutputDevices SdlOutput::getAllDevices(bool isCurrentOutput)
     OutputDevices devices;
 
     if(!isCurrentOutput) {
-        SDL_Init(SDL_INIT_AUDIO);
+        if(SDL_Init(SDL_INIT_AUDIO) != 0) {
+            qCWarning(SDL) << "Error initialising SDL audio for device enumeration:" << SDL_GetError();
+            return devices;
+        }
     }
 
     devices.emplace_back(u"default"_s, u"Default"_s);
