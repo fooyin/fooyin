@@ -17,7 +17,7 @@
  *
  */
 
-#include <QtSystemDetection>
+#include <QtGlobal>
 
 #ifdef Q_OS_WIN
 #include <GL/glew.h>
@@ -35,8 +35,6 @@
 #include <QMouseEvent>
 #include <QOpenGLContext>
 #include <QOpenGLDebugLogger>
-#include <QtGlobal>
-
 #include <algorithm>
 
 Q_LOGGING_CATEGORY(PROJECTM_GL, "fooyin.projectm")
