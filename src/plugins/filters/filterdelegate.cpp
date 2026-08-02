@@ -169,13 +169,19 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     if(!richText.empty()) {
         painter->save();
 
-        if(opt.backgroundBrush.style() != Qt::NoBrush) {
+        QStyleOptionViewItem backgroundOpt{opt};
+        if(opt.state & QStyle::State_Selected) {
+            painter->fillRect(option.rect, opt.palette.brush(QPalette::Highlight));
+            backgroundOpt.state &= ~QStyle::State_Selected;
+            backgroundOpt.backgroundBrush = Qt::NoBrush;
+        }
+        else if(opt.backgroundBrush.style() != Qt::NoBrush) {
             painter->fillRect(option.rect, opt.backgroundBrush);
-            opt.backgroundBrush = Qt::NoBrush;
+            backgroundOpt.backgroundBrush = Qt::NoBrush;
         }
 
-        opt.text.clear();
-        style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+        backgroundOpt.text.clear();
+        style->drawControl(QStyle::CE_ItemViewItem, &backgroundOpt, painter, backgroundOpt.widget);
 
         QRect textRect       = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
         const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) * 2;
@@ -189,19 +195,19 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     if(!richLines.empty()) {
         painter->save();
 
-        const bool selected = opt.state & QStyle::State_Selected;
-        if(selected) {
+        QStyleOptionViewItem backgroundOpt{opt};
+        if(opt.state & QStyle::State_Selected) {
             painter->fillRect(option.rect, opt.palette.brush(QPalette::Highlight));
-            opt.state &= ~QStyle::State_Selected;
-            opt.backgroundBrush = Qt::NoBrush;
+            backgroundOpt.state &= ~QStyle::State_Selected;
+            backgroundOpt.backgroundBrush = Qt::NoBrush;
         }
         else if(opt.backgroundBrush.style() != Qt::NoBrush) {
             painter->fillRect(option.rect, opt.backgroundBrush);
-            opt.backgroundBrush = Qt::NoBrush;
+            backgroundOpt.backgroundBrush = Qt::NoBrush;
         }
 
-        opt.text.clear();
-        style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+        backgroundOpt.text.clear();
+        style->drawControl(QStyle::CE_ItemViewItem, &backgroundOpt, painter, backgroundOpt.widget);
 
         const QRect textRect = iconTextRect(opt);
         drawRichTextLines(painter, opt, textRect, richLines);
