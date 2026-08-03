@@ -575,7 +575,9 @@ OutputState WasapiOutput::currentState()
         const DWORD waitResult = WaitForSingleObject(m_bufferEvent, 0);
         if(waitResult == WAIT_OBJECT_0) {
             m_bufferEventAvailable = true;
-            m_packetSubmitted      = false;
+            if(m_exclusiveMode) {
+                m_packetSubmitted = false;
+            }
         }
         else if(waitResult == WAIT_FAILED) {
             handleError(HRESULT_FROM_WIN32(GetLastError()), u"Failed to query WASAPI buffer event"_s, true);
@@ -599,6 +601,8 @@ OutputState WasapiOutput::currentState()
         handleError(result, u"Failed to query current padding"_s, true);
         return state;
     }
+
+    m_packetSubmitted = paddingFrames > 0;
 
     const UINT32 measuredQueuedFrames = clockQueuedFrames(paddingFrames).value_or(paddingFrames);
     const int queuedFrames            = static_cast<int>(std::min(measuredQueuedFrames, m_bufferFrameCount));
@@ -798,6 +802,16 @@ void WasapiOutput::setPaused(bool pause)
             return;
         }
         m_started = false;
+
+        if(!m_exclusiveMode) {
+            UINT32 paddingFrames{0};
+            const HRESULT paddingResult = m_audioClient->GetCurrentPadding(&paddingFrames);
+            if(FAILED(paddingResult)) {
+                handleError(paddingResult, u"Failed to query shared padding while pausing"_s, true);
+                return;
+            }
+            m_packetSubmitted = paddingFrames > 0;
+        }
         return;
     }
 
@@ -805,13 +819,25 @@ void WasapiOutput::setPaused(bool pause)
         const DWORD waitResult = WaitForSingleObject(m_bufferEvent, 0);
         if(waitResult == WAIT_OBJECT_0) {
             m_bufferEventAvailable = true;
-            m_packetSubmitted      = false;
+            if(m_exclusiveMode) {
+                m_packetSubmitted = false;
+            }
         }
         else if(waitResult == WAIT_FAILED) {
             handleError(HRESULT_FROM_WIN32(GetLastError()), u"Failed to query WASAPI buffer event while resuming"_s,
                         true);
             return;
         }
+    }
+
+    if(!m_exclusiveMode) {
+        UINT32 paddingFrames{0};
+        const HRESULT paddingResult = m_audioClient->GetCurrentPadding(&paddingFrames);
+        if(FAILED(paddingResult)) {
+            handleError(paddingResult, u"Failed to query shared padding while resuming"_s, true);
+            return;
+        }
+        m_packetSubmitted = paddingFrames > 0;
     }
 
     if(m_packetSubmitted) {
