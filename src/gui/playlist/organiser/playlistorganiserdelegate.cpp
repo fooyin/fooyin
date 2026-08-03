@@ -194,6 +194,7 @@ void PlaylistOrganiserDelegate::paint(QPainter* painter, const QStyleOptionViewI
 {
     QStyleOptionViewItem opt{option};
     initStyleOption(&opt, index);
+    opt.decorationSize = option.decorationSize;
 
     QStyle* style = option.widget ? option.widget->style() : QApplication::style();
     opt.text.clear();
@@ -245,6 +246,7 @@ QSize PlaylistOrganiserDelegate::sizeHint(const QStyleOptionViewItem& option, co
 {
     QStyleOptionViewItem opt{option};
     initStyleOption(&opt, index);
+    opt.decorationSize = option.decorationSize;
     opt.text.clear();
 
     const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
