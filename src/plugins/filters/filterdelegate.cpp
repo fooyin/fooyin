@@ -21,6 +21,7 @@
 
 #include "filteritem.h"
 
+#include <gui/guiutils.h>
 #include <gui/scripting/richtext.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/widgets/expandedtreeview.h>
@@ -171,7 +172,6 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
 
         QStyleOptionViewItem backgroundOpt{opt};
         if(opt.state & QStyle::State_Selected) {
-            painter->fillRect(option.rect, opt.palette.brush(QPalette::Highlight));
             backgroundOpt.state &= ~QStyle::State_Selected;
             backgroundOpt.backgroundBrush = Qt::NoBrush;
         }
@@ -183,9 +183,7 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
         backgroundOpt.text.clear();
         style->drawControl(QStyle::CE_ItemViewItem, &backgroundOpt, painter, backgroundOpt.widget);
 
-        QRect textRect       = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
-        const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) * 2;
-        textRect.adjust(textMargin, 0, -textMargin, 0);
+        const QRect textRect = Gui::itemViewTextRect(opt);
         drawTextBlocks(painter, opt, textRect, richText.blocks);
 
         painter->restore();
@@ -197,7 +195,6 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
 
         QStyleOptionViewItem backgroundOpt{opt};
         if(opt.state & QStyle::State_Selected) {
-            painter->fillRect(option.rect, opt.palette.brush(QPalette::Highlight));
             backgroundOpt.state &= ~QStyle::State_Selected;
             backgroundOpt.backgroundBrush = Qt::NoBrush;
         }
@@ -278,7 +275,7 @@ QRect FilterDelegate::iconTextRect(const QStyleOptionViewItem& option)
 
     const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
     QRect rect          = option.rect;
-    const int margin    = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &option, option.widget);
+    const int margin    = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &option, option.widget) + 1;
 
     switch(view->captionDisplay()) {
         case ExpandedTreeView::CaptionDisplay::Right: {

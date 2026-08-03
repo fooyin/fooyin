@@ -237,6 +237,8 @@ set(SOURCES
     nowplayingoutput/nowplayingoutputservice.h
     nowplayingoutput/nowplayingoutputpage.cpp
     nowplayingoutput/nowplayingoutputpage.h
+    playlist/manager/playlistmanagerdelegate.cpp
+    playlist/manager/playlistmanagerdelegate.h
     playlist/manager/playlistmanagermodel.cpp
     playlist/manager/playlistmanagermodel.h
     playlist/manager/playlistmanagerwidget.cpp

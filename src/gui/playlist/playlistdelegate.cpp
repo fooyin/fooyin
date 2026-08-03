@@ -21,6 +21,7 @@
 
 #include "playlistitem.h"
 
+#include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/widgets/expandedtreeview.h>
@@ -354,12 +355,11 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 
     const bool singleColumn = index.data(PlaylistItem::Role::SingleColumnMode).toBool();
 
-    const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) * 2;
+    const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) + 1;
 
     if(singleColumn) {
-        QRect iconRect = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
-        QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
-        textRect.adjust(textMargin, 0, -textMargin, 0);
+        QRect iconRect       = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
+        const QRect textRect = Gui::itemViewTextRect(opt);
 
         const int indent     = opt.icon.isNull() ? 0 : textMargin;
         const auto leftSide  = index.data(PlaylistItem::Role::Left).value<RichText>().blocks;
@@ -400,8 +400,7 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
                 opt.decorationPosition = decPos;
             }
 
-            QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
-            textRect.adjust(textMargin, 0, -textMargin, 0);
+            const QRect textRect = Gui::itemViewTextRect(opt);
 
             const auto columnText = index.data(PlaylistItem::Role::Column).value<RichText>().blocks;
 

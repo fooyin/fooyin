@@ -28,6 +28,7 @@
 
 #include <QByteArray>
 #include <QModelIndexList>
+#include <QStyleOptionViewItem>
 
 class QMimeData;
 class QLabel;
@@ -53,6 +54,9 @@ FYGUI_EXPORT QMap<PaletteKey, QColor> coloursFromStylePalette();
 FYGUI_EXPORT QMap<PaletteKey, QColor> coloursFromPalette(const QPalette& palette);
 FYGUI_EXPORT bool styleSupportsCustomPalette(const QString& styleName);
 FYGUI_EXPORT bool styleSupportsDarkMode(const QString& styleName);
+
+/*! Returns the style-provided item text rectangle with spacing for leading row decorations. */
+FYGUI_EXPORT QRect itemViewTextRect(const QStyleOptionViewItem& option);
 
 FYGUI_EXPORT void refreshItemViewPalette(QAbstractItemView* view);
 FYGUI_EXPORT void refreshItemViewPalette(QAbstractItemView* view, const QPalette& palette);

@@ -80,6 +80,28 @@ bool styleSupportsDarkMode(const QString& styleName)
 #endif
 }
 
+QRect itemViewTextRect(const QStyleOptionViewItem& option)
+{
+    const QStyle* style     = option.widget ? option.widget->style() : QApplication::style();
+    QRect textRect          = style->subElementRect(QStyle::SE_ItemViewItemText, &option, option.widget);
+    const int textMargin    = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &option, option.widget) + 1;
+    const int frameWidth    = style->pixelMetric(QStyle::PM_DefaultFrameWidth, &option, option.widget);
+    const int leadingInset  = textMargin + frameWidth + 1;
+    const bool leadingCell  = option.viewItemPosition == QStyleOptionViewItem::Beginning
+                           || option.viewItemPosition == QStyleOptionViewItem::OnlyOne
+                           || option.viewItemPosition == QStyleOptionViewItem::Invalid;
+    const int leadingMargin = leadingCell ? leadingInset : textMargin;
+
+    if(option.direction == Qt::RightToLeft) {
+        textRect.adjust(textMargin, 0, -leadingMargin, 0);
+    }
+    else {
+        textRect.adjust(leadingMargin, 0, -textMargin, 0);
+    }
+
+    return textRect;
+}
+
 TrackList tracksFromMimeData(MusicLibrary* library, QByteArray data)
 {
     QDataStream stream(&data, QIODevice::ReadOnly);

@@ -21,6 +21,7 @@
 
 #include "queuevieweritem.h"
 
+#include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/scripting/richtext.h>
 #include <gui/scripting/richtextutils.h>
@@ -198,10 +199,8 @@ void QueueViewerDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     opt.text.clear();
 
     const QStyle* style  = opt.widget ? opt.widget->style() : QApplication::style();
-    const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, opt.widget) * 2;
-    const int leftMargin = std::max(6, textMargin);
-    QRect textRect       = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
-    textRect.adjust(leftMargin, 0, -textMargin, 0);
+    const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) + 1;
+    const QRect textRect = Gui::itemViewTextRect(opt);
 
     const auto leftRichText  = index.data(QueueViewerItem::RichTitle).value<RichText>();
     const auto rightRichText = index.data(QueueViewerItem::RichRightText).value<RichText>();

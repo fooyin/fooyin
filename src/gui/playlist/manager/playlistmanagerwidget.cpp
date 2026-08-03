@@ -22,6 +22,7 @@
 #include "dialog/autoplaylistdialog.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
+#include "playlistmanagerdelegate.h"
 #include "playlistmanagermodel.h"
 
 #include <core/coresettings.h>
@@ -157,6 +158,7 @@ PlaylistManagerWidget::PlaylistManagerWidget(ActionManager* actionManager, Playl
     layout->addWidget(m_view);
 
     m_view->setModel(m_proxyModel);
+    m_view->setItemDelegate(new PlaylistManagerDelegate(this));
     m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_view->setSelectionMode(QAbstractItemView::SingleSelection);
     m_view->setSortingEnabled(true);
