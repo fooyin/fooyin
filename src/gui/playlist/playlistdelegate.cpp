@@ -166,10 +166,6 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
     opt.text.clear();
     opt.icon = {};
 
-    const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
-
-    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
-
     QPen linePen = painter->pen();
     linePen.setWidth(1);
     QColor lineColour = opt.palette.color(QPalette::Text);
@@ -257,10 +253,6 @@ void paintSimpleHeader(QPainter* painter, const QStyleOptionViewItem& option, co
     opt.text.clear();
     opt.icon = {};
 
-    const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
-
-    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
-
     QPen linePen = painter->pen();
     linePen.setWidth(1);
     QColor lineColour = opt.palette.color(QPalette::Text);
@@ -302,10 +294,6 @@ void paintSimpleHeader(QPainter* painter, const QStyleOptionViewItem& option, co
 
 void paintSubheader(QPainter* painter, const QStyleOptionViewItem& opt, const QModelIndex& index)
 {
-    const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
-
-    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
-
     QPen linePen = painter->pen();
     linePen.setWidth(1);
     QColor lineColour = opt.palette.color(QPalette::Text);
