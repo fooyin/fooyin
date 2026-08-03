@@ -361,7 +361,8 @@ void InfoPanel::loadLayoutData(const QJsonObject& layout)
 
 void InfoPanel::finalise()
 {
-    m_view->setHeaderHidden(!m_showHeader);
+    m_view->header()->setFixedHeight(m_showHeader ? QWIDGETSIZE_MAX : 0);
+    m_view->header()->adjustSize();
     m_view->setVerticalScrollBarPolicy(m_showVerticalScrollbar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
     m_view->setHorizontalScrollBarPolicy(m_showHorizontalScrollbar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
     m_view->setElideText(!m_showHorizontalScrollbar);
@@ -472,7 +473,7 @@ void InfoPanel::contextMenuEvent(QContextMenuEvent* event)
 
     auto* showHeaders = new QAction(tr("Show header"), menu);
     showHeaders->setCheckable(true);
-    showHeaders->setChecked(!m_view->isHeaderHidden());
+    showHeaders->setChecked(m_showHeader);
     QAction::connect(showHeaders, &QAction::triggered, this, [this](bool checked) {
         m_showHeader = checked;
         finalise();

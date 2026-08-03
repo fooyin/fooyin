@@ -54,8 +54,8 @@ void InfoView::resizeView()
     }
     else {
         int columnsWidth = 0;
-        for(int i = 0; i < lastColumn; ++i) {
-            columnsWidth += sizeHintForColumn(i);
+        for(int i{0}; i < lastColumn; ++i) {
+            columnsWidth += header()->sectionSize(i);
         }
         header()->setSectionResizeMode(lastColumn, QHeaderView::Fixed);
         header()->resizeSection(lastColumn, std::max(0, viewportWidth - columnsWidth));
