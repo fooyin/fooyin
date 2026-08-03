@@ -19,6 +19,7 @@
 
 #include "playlistorganiserdelegate.h"
 
+#include <gui/guiutils.h>
 #include <gui/scripting/richtext.h>
 #include <gui/scripting/richtextutils.h>
 
@@ -99,7 +100,7 @@ PreparedTextLines prepareTextLines(const QStyleOptionViewItem& option, int maxWi
             prepared.text   = text;
             prepared.font   = font;
             prepared.colour = colour;
-            prepared.width  = metrics.boundingRect(text).width();
+            prepared.width  = metrics.horizontalAdvance(text);
             prepared.height = metrics.height();
 
             line.totalWidth += prepared.width;
@@ -142,7 +143,7 @@ QSize richTextNaturalSize(const QStyleOptionViewItem& option, const RichText& ri
             const QFont font = resolvedRichTextFont(block.format, option.font);
             const QFontMetrics metrics{font};
 
-            lineWidth += metrics.boundingRect(block.text).width();
+            lineWidth += metrics.horizontalAdvance(block.text);
             lineHeight = std::max(lineHeight, metrics.height());
         }
 
@@ -209,9 +210,7 @@ void PlaylistOrganiserDelegate::paint(QPainter* painter, const QStyleOptionViewI
     }
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, option.widget);
 
-    const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, opt.widget) * 2;
-    QRect textRect       = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
-    textRect.adjust(textMargin, 0, -textMargin, 0);
+    const QRect textRect = Gui::itemViewTextRect(opt);
 
     const QSize rightSize = richTextNaturalSize(opt, rightRichText);
 
