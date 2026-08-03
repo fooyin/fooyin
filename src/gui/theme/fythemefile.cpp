@@ -100,7 +100,7 @@ std::optional<PaletteKey> paletteKey(const QString& name)
         return {};
     }
 
-    return PaletteKey{static_cast<QPalette::ColorRole>(role), *group};
+    return PaletteKey{.role = static_cast<QPalette::ColorRole>(role), .group = *group};
 }
 
 QString fontStyleName(QFont::Style style)
@@ -171,7 +171,9 @@ std::optional<QFont::Capitalization> capitalisation(const QString& name)
 QJsonObject fontToJson(const QFont& font)
 {
     QJsonArray families;
-    for(const QString& family : font.families()) {
+
+    const auto fontFamilies = font.families();
+    for(const QString& family : fontFamilies) {
         families.append(family);
     }
 
@@ -227,12 +229,15 @@ std::expected<QFont, QString> fontFromJson(const QJsonValue& value)
     }
 
     QStringList families;
-    for(const QJsonValue& family : json.value(u"families"_s).toArray()) {
+
+    const auto fontFamilies = json.value(u"families"_s).toArray();
+    for(const auto& family : fontFamilies) {
         if(!family.isString() || family.toString().isEmpty()) {
             return std::unexpected(u"Font families must be non-empty strings."_s);
         }
         families.emplace_back(family.toString());
     }
+
     if(families.isEmpty()) {
         return std::unexpected(u"A font must contain at least one family."_s);
     }
