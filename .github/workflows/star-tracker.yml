@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: fbuireu/github-star-tracker@v1
+      - uses: fbuireu/github-star-tracker@v1.24.2
         with:
           github-token: ${{ secrets.STAR_TRACKER_TOKEN }}
           only-repos: 'fooyin'
