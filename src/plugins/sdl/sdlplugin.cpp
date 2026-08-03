@@ -19,6 +19,7 @@
 
 #include "sdlplugin.h"
 
+#include "sdlaudiosubsystem.h"
 #include "sdloutput.h"
 
 #include <SDL2/SDL.h>
@@ -26,18 +27,21 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::Sdl {
+SdlPlugin::SdlPlugin()
+    : m_audioSubsystem{std::make_shared<SdlAudioSubsystem>()}
+{ }
+
 QString SdlPlugin::name() const
 {
-    SDL_Init(SDL_INIT_AUDIO);
+    auto audioLease = m_audioSubsystem->acquire();
     const QString name = u"SDL2 (%1)"_s.arg(QString::fromLatin1(SDL_GetCurrentAudioDriver()));
-    SDL_Quit();
     return name;
 }
 
 OutputCreator SdlPlugin::creator() const
 {
-    return []() {
-        return std::make_unique<SdlOutput>();
+    return [audioSubsystem = m_audioSubsystem]() {
+        return std::make_unique<SdlOutput>(audioSubsystem);
     };
 }
 } // namespace Fooyin::Sdl

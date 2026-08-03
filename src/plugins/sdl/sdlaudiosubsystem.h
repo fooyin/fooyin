@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <luket@pm.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,30 +19,41 @@
 
 #pragma once
 
-#include <core/engine/outputplugin.h>
-#include <core/plugins/plugin.h>
-
-#include <memory>
+#include <mutex>
+#include <optional>
 
 namespace Fooyin::Sdl {
 class SdlAudioSubsystem;
 
-class SdlPlugin : public QObject,
-                  public Plugin,
-                  public OutputPlugin
+class SdlAudioLease
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin" FILE "sdl.json")
-    Q_INTERFACES(Fooyin::Plugin)
-    Q_INTERFACES(Fooyin::OutputPlugin)
-
 public:
-    SdlPlugin();
+    ~SdlAudioLease();
 
-    [[nodiscard]] QString name() const override;
-    [[nodiscard]] OutputCreator creator() const override;
+    SdlAudioLease(const SdlAudioLease&)            = delete;
+    SdlAudioLease& operator=(const SdlAudioLease&) = delete;
+
+    SdlAudioLease(SdlAudioLease&& other) noexcept;
+    SdlAudioLease& operator=(SdlAudioLease&& other) noexcept;
 
 private:
-    std::shared_ptr<SdlAudioSubsystem> m_audioSubsystem;
+    friend class SdlAudioSubsystem;
+
+    explicit SdlAudioLease(SdlAudioSubsystem* subsystem);
+
+    SdlAudioSubsystem* m_subsystem;
+};
+
+class SdlAudioSubsystem
+{
+public:
+    [[nodiscard]] std::optional<SdlAudioLease> acquire();
+
+private:
+    friend class SdlAudioLease;
+
+    void release();
+
+    std::mutex m_mutex;
 };
 } // namespace Fooyin::Sdl

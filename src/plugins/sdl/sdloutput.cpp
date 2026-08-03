@@ -88,8 +88,9 @@ int targetQueueFrames(const Fooyin::AudioFormat& format, const SDL_AudioSpec& ob
 } // namespace
 
 namespace Fooyin::Sdl {
-SdlOutput::SdlOutput()
-    : m_deviceBufferFrames{0}
+SdlOutput::SdlOutput(std::shared_ptr<SdlAudioSubsystem> audioSubsystem)
+    : m_audioSubsystem{std::move(audioSubsystem)}
+    , m_deviceBufferFrames{0}
     , m_targetBufferFrames{0}
     , m_initialised{false}
     , m_device{u"default"_s}
@@ -97,17 +98,14 @@ SdlOutput::SdlOutput()
     , m_obtainedSpec{}
     , m_audioDeviceId{0}
     , m_event{}
-{
-#ifdef Q_OS_WIN32
-    SDL_setenv("SDL_AUDIODRIVER", "directsound", true); // WASAPI driver (default) is broken
-#endif
-}
+{ }
 
 bool SdlOutput::init(const AudioFormat& format)
 {
     m_format = format;
 
-    if(SDL_Init(SDL_INIT_AUDIO) != 0) {
+    m_audioLease = m_audioSubsystem->acquire();
+    if(!m_audioLease) {
         qCWarning(SDL) << "Error initialising SDL audio:" << SDL_GetError();
         return false;
     }
@@ -125,7 +123,7 @@ bool SdlOutput::init(const AudioFormat& format)
         // SDL2 compatible implementations may map names to backend instance IDs previously cached
         if(SDL_GetNumAudioDevices(0) < 0) {
             qCWarning(SDL) << "Error refreshing SDL audio devices:" << SDL_GetError();
-            SDL_Quit();
+            m_audioLease.reset();
             return false;
         }
 
@@ -135,7 +133,7 @@ bool SdlOutput::init(const AudioFormat& format)
 
     if(m_audioDeviceId == 0) {
         qCWarning(SDL) << "Error opening audio device:" << SDL_GetError();
-        SDL_Quit();
+        m_audioLease.reset();
         return false;
     }
 
@@ -146,7 +144,7 @@ bool SdlOutput::init(const AudioFormat& format)
         qCWarning(SDL) << "SDL selected an unsupported sample format:" << m_obtainedSpec.format;
         SDL_CloseAudioDevice(m_audioDeviceId);
         m_audioDeviceId = 0;
-        SDL_Quit();
+        m_audioLease.reset();
         return false;
     }
 
@@ -180,7 +178,7 @@ void SdlOutput::uninit()
         m_audioDeviceId = 0;
     }
 
-    SDL_Quit();
+    m_audioLease.reset();
 
     m_deviceBufferFrames = 0;
     m_targetBufferFrames = 0;
@@ -238,29 +236,23 @@ OutputState SdlOutput::currentState()
     return state;
 }
 
-OutputDevices SdlOutput::getAllDevices(bool isCurrentOutput)
+OutputDevices SdlOutput::getAllDevices(bool /*isCurrentOutput*/)
 {
     OutputDevices devices;
-
-    if(!isCurrentOutput) {
-        if(SDL_Init(SDL_INIT_AUDIO) != 0) {
-            qCWarning(SDL) << "Error initialising SDL audio for device enumeration:" << SDL_GetError();
-            return devices;
-        }
+    auto audioLease = m_audioSubsystem->acquire();
+    if(!audioLease) {
+        qCWarning(SDL) << "Error initialising SDL audio for device enumeration:" << SDL_GetError();
+        return devices;
     }
 
     devices.emplace_back(u"default"_s, u"Default"_s);
 
     const int num = SDL_GetNumAudioDevices(0);
-    for(int i = 0; i < num; ++i) {
+    for(int i{0}; i < num; ++i) {
         const QString devName = QString::fromUtf8(SDL_GetAudioDeviceName(i, 0));
         if(!devName.isNull()) {
             devices.emplace_back(devName, devName);
         }
-    }
-
-    if(!isCurrentOutput) {
-        SDL_Quit();
     }
 
     return devices;
