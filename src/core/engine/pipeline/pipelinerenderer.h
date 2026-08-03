@@ -25,6 +25,7 @@
 #include "core/engine/dsp/dspchain.h"
 #include "core/engine/output/outputfader.h"
 
+#include <chrono>
 #include <cstddef>
 #include <optional>
 #include <unordered_map>
@@ -80,7 +81,7 @@ public:
     //! Render one cycle worth of frames through mixer + master chain + fader.
     [[nodiscard]] RenderResult render(int framesToProcess, OutputFader& outputFader, bool outputSupportsVolume,
                                       double masterVolume, AudioAnalysisBus* visualisationBus,
-                                      AudioAnalysisBus* analysisBus, uint64_t playbackDelayMs);
+                                      AudioAnalysisBus* analysisBus, std::chrono::nanoseconds playbackDelay);
 
     //! Clear runtime-only processing state (buffers, temporary chunks).
     void clearRuntimeState();
@@ -146,7 +147,7 @@ private:
     void setWorkingFormats(const AudioFormat& input, const AudioFormat& output);
     void clearFormats();
     void rebuildProcessChunksFromMixerRead(const AudioMixer::ReadResult& readResult, int framesRead);
-    void tapAnalysis(AudioAnalysisBus* analysisBus, uint64_t playbackDelayMs, StreamId streamId);
+    void tapAnalysis(AudioAnalysisBus* analysisBus, std::chrono::nanoseconds playbackDelay, StreamId streamId);
 
     Engine::DspChain m_perTrackChainDefs;
 

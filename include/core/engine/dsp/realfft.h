@@ -43,6 +43,8 @@ public:
     [[nodiscard]] bool isValid() const;
     [[nodiscard]] int fftSize() const;
     [[nodiscard]] int binCount() const;
+    //! Return the supported real-transform size closest to fftSize, or 0 for an invalid request.
+    [[nodiscard]] static int nearestValidSize(int fftSize);
 
     // Computes magnitude bins for a real-valued input signal. Output must provide fftSize()/2 + 1 bins.
     [[nodiscard]] bool transformMagnitudes(std::span<const float> input, std::span<float> output) const;

@@ -163,6 +163,12 @@ public:
     [[nodiscard]] bool getSpectrumWindowEndingAt(SpectrumWindow& out, uint64_t endTimeMs, int fftSize,
                                                  SpectrumWindowFunction windowFunction
                                                  = SpectrumWindowFunction::Hann) const;
+    [[nodiscard]] bool getSpectrumWindowForDuration(SpectrumWindow& out, uint64_t centerTimeMs, uint64_t durationMs,
+                                                    SpectrumWindowFunction windowFunction
+                                                    = SpectrumWindowFunction::Hann) const;
+    [[nodiscard]] bool getSpectrumWindowEndingAtDuration(SpectrumWindow& out, uint64_t endTimeMs, uint64_t durationMs,
+                                                         SpectrumWindowFunction windowFunction
+                                                         = SpectrumWindowFunction::Hann) const;
 
 private:
     friend class VisualisationService;

@@ -394,10 +394,16 @@ void SpectrumView::tick()
 bool SpectrumView::renderLatestSpectrum()
 {
     VisualisationSession::SpectrumWindow spectrum;
-    const auto windowFunction = toBackendWindowFunction(m_config.windowFunction);
-    const uint64_t endTimeMs  = m_session->currentTimeMs();
-    const bool gotSpectrum
-        = endTimeMs > 0 && m_session->getSpectrumWindowEndingAt(spectrum, endTimeMs, m_config.fftSize, windowFunction);
+    const uint64_t endTimeMs = m_session->currentTimeMs();
+
+    bool gotSpectrum{false};
+    if(endTimeMs > 0) {
+        const auto windowFunction = toBackendWindowFunction(m_config.windowFunction);
+        gotSpectrum = m_config.fftSizingMode == FftSizingMode::Duration
+                        ? m_session->getSpectrumWindowEndingAtDuration(spectrum, endTimeMs, m_config.fftDurationMs,
+                                                                       windowFunction)
+                        : m_session->getSpectrumWindowEndingAt(spectrum, endTimeMs, m_config.fftSize, windowFunction);
+    }
 
     if(!gotSpectrum) {
         return false;

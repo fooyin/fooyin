@@ -60,6 +60,8 @@ constexpr auto PeakHoldTimeKey        = u"Spectrum/PeakHoldTimeMs";
 constexpr auto PeakGravityKey         = u"Spectrum/PeakGravity";
 constexpr auto UpdateFpsKey           = u"Spectrum/UpdateFps";
 constexpr auto FftSizeKey             = u"Spectrum/FftSize";
+constexpr auto FftDurationKey         = u"Spectrum/FftDurationMs";
+constexpr auto FftSizingModeKey       = u"Spectrum/FftSizingMode";
 constexpr auto WindowFunctionKey      = u"Spectrum/WindowFunction";
 constexpr auto GradientOrientationKey = u"Spectrum/GradientOrientation";
 constexpr auto LabelModeKey           = u"Spectrum/LabelMode";
@@ -166,7 +168,15 @@ SpectrumWidget::ConfigData SpectrumWidget::defaultConfig() const
     config.peakGravity         = m_settings->fileValue(PeakGravityKey, config.peakGravity).toInt();
     config.updateFps           = m_settings->fileValue(UpdateFpsKey, config.updateFps).toInt();
     config.fftSize             = m_settings->fileValue(FftSizeKey, config.fftSize).toInt();
-    config.windowFunction      = static_cast<WindowFunction>(
+    config.fftDurationMs       = m_settings->fileValue(FftDurationKey, config.fftDurationMs).toInt();
+
+    config.fftSizingMode = static_cast<FftSizingMode>(
+        m_settings->fileValue(FftSizingModeKey, static_cast<int>(config.fftSizingMode)).toInt());
+    if(!m_settings->fileContains(FftSizingModeKey) && m_settings->fileContains(FftSizeKey)) {
+        config.fftSizingMode = FftSizingMode::Samples;
+    }
+
+    config.windowFunction = static_cast<WindowFunction>(
         m_settings->fileValue(WindowFunctionKey, static_cast<int>(config.windowFunction)).toInt());
     config.gradientOrientation = static_cast<GradientOrientation>(
         m_settings->fileValue(GradientOrientationKey, static_cast<int>(config.gradientOrientation)).toInt());
@@ -218,6 +228,8 @@ void SpectrumWidget::saveDefaults(const ConfigData& config) const
     validated.peakGravity      = std::clamp(validated.peakGravity, MinPeakGravity, MaxPeakGravity);
     validated.updateFps        = std::clamp(validated.updateFps, MinUpdateFps, MaxUpdateFps);
     validated.fftSize          = normaliseFftSize(validated.fftSize);
+    validated.fftDurationMs    = std::clamp(validated.fftDurationMs, MinFftDurationMs, MaxFftDurationMs);
+    validated.fftSizingMode    = std::clamp(validated.fftSizingMode, FftSizingMode::Samples, FftSizingMode::Duration);
     validated.windowFunction
         = std::clamp(validated.windowFunction, WindowFunction::BlackmanHarris, WindowFunction::None);
     validated.gradientOrientation
@@ -252,6 +264,8 @@ void SpectrumWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(PeakGravityKey, validated.peakGravity);
     m_settings->fileSet(UpdateFpsKey, validated.updateFps);
     m_settings->fileSet(FftSizeKey, validated.fftSize);
+    m_settings->fileSet(FftDurationKey, validated.fftDurationMs);
+    m_settings->fileSet(FftSizingModeKey, static_cast<int>(validated.fftSizingMode));
     m_settings->fileSet(WindowFunctionKey, static_cast<int>(validated.windowFunction));
     m_settings->fileSet(GradientOrientationKey, static_cast<int>(validated.gradientOrientation));
     m_settings->fileSet(LabelModeKey, static_cast<int>(validated.labelMode));
@@ -296,6 +310,8 @@ void SpectrumWidget::clearSavedDefaults() const
     m_settings->fileRemove(PeakGravityKey);
     m_settings->fileRemove(UpdateFpsKey);
     m_settings->fileRemove(FftSizeKey);
+    m_settings->fileRemove(FftDurationKey);
+    m_settings->fileRemove(FftSizingModeKey);
     m_settings->fileRemove(WindowFunctionKey);
     m_settings->fileRemove(GradientOrientationKey);
     m_settings->fileRemove(LabelModeKey);
@@ -337,6 +353,8 @@ void SpectrumWidget::applyConfig(const ConfigData& config)
     validated.peakGravity      = std::clamp(validated.peakGravity, MinPeakGravity, MaxPeakGravity);
     validated.updateFps        = std::clamp(validated.updateFps, MinUpdateFps, MaxUpdateFps);
     validated.fftSize          = normaliseFftSize(validated.fftSize);
+    validated.fftDurationMs    = std::clamp(validated.fftDurationMs, MinFftDurationMs, MaxFftDurationMs);
+    validated.fftSizingMode    = std::clamp(validated.fftSizingMode, FftSizingMode::Samples, FftSizingMode::Duration);
     validated.windowFunction
         = std::clamp(validated.windowFunction, WindowFunction::BlackmanHarris, WindowFunction::None);
     validated.gradientOrientation
@@ -438,6 +456,15 @@ SpectrumWidget::ConfigData SpectrumWidget::configFromLayout(const QJsonObject& l
     }
     if(layout.contains("FftSize"_L1)) {
         config.fftSize = layout.value("FftSize"_L1).toInt();
+    }
+    if(layout.contains("FftDurationMs"_L1)) {
+        config.fftDurationMs = layout.value("FftDurationMs"_L1).toInt();
+    }
+    if(layout.contains("FftSizingMode"_L1)) {
+        config.fftSizingMode = static_cast<FftSizingMode>(layout.value("FftSizingMode"_L1).toInt());
+    }
+    else if(layout.contains("FftSize"_L1)) {
+        config.fftSizingMode = FftSizingMode::Samples;
     }
     if(layout.contains("WindowFunction"_L1)) {
         config.windowFunction = static_cast<WindowFunction>(layout.value("WindowFunction"_L1).toInt());
@@ -570,6 +597,8 @@ void SpectrumWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& l
     layout["PeakGravity"_L1]         = config.peakGravity;
     layout["UpdateFps"_L1]           = config.updateFps;
     layout["FftSize"_L1]             = config.fftSize;
+    layout["FftDurationMs"_L1]       = config.fftDurationMs;
+    layout["FftSizingMode"_L1]       = static_cast<int>(config.fftSizingMode);
     layout["WindowFunction"_L1]      = static_cast<int>(config.windowFunction);
     layout["GradientOrientation"_L1] = static_cast<int>(config.gradientOrientation);
     layout["LabelMode"_L1]           = static_cast<int>(config.labelMode);
@@ -684,17 +713,29 @@ void SpectrumWidget::showContextMenu(const QPoint& globalPos)
     axisMenu->addAction(frequencies);
     axisMenu->addAction(notes);
 
-    auto* fftSizeMenu  = new QMenu(tr("FFT size"), menu);
+    auto* fftSizeMenu  = new QMenu(tr("FFT window"), menu);
     auto* fftSizeGroup = new QActionGroup(fftSizeMenu);
+
+    auto* durationBased = new QAction(tr("Sample rate based (%1 ms)").arg(m_config.fftDurationMs), fftSizeGroup);
+    durationBased->setCheckable(true);
+    durationBased->setChecked(m_config.fftSizingMode == FftSizingMode::Duration);
+    QObject::connect(durationBased, &QAction::triggered, this, [this]() {
+        auto config{m_config};
+        config.fftSizingMode = FftSizingMode::Duration;
+        applyConfig(config);
+    });
+    fftSizeMenu->addAction(durationBased);
+    fftSizeMenu->addSeparator();
 
     for(int fftSize{MinFftSize}; fftSize <= MaxFftSize; fftSize <<= 1) {
         auto* action = new QAction(QString::number(fftSize), fftSizeGroup);
         action->setCheckable(true);
-        action->setChecked(m_config.fftSize == fftSize);
+        action->setChecked(m_config.fftSizingMode == FftSizingMode::Samples && m_config.fftSize == fftSize);
 
         QObject::connect(action, &QAction::triggered, this, [this, fftSize]() {
             auto config{m_config};
-            config.fftSize = fftSize;
+            config.fftSize       = fftSize;
+            config.fftSizingMode = FftSizingMode::Samples;
             applyConfig(config);
         });
 

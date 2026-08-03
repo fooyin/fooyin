@@ -1594,6 +1594,7 @@ void AudioPipeline::processAudio()
     const int desiredBufferedFrames = std::max({0, freeFrames, prerollFrames});
     const int processChunkFrames    = processFrameChunkLimit(m_renderer.outputFormat());
     const int initialQueuedFrames   = pendingOutputFrames();
+    const auto initialPlaybackDelay = std::chrono::milliseconds{m_timelineUnit.playbackDelayMs()};
     const int initialDeficitFrames  = std::max(1, desiredBufferedFrames - initialQueuedFrames);
     const int topUpPullBudget
         = std::max(1, (initialDeficitFrames + processChunkFrames - 1) / std::max(1, processChunkFrames));
@@ -1630,10 +1631,18 @@ void AudioPipeline::processAudio()
             break;
         }
 
+        const int newlyQueuedFrames = std::max(0, queuedFrames - initialQueuedFrames);
+        std::chrono::nanoseconds presentationDelay{initialPlaybackDelay};
+        if(newlyQueuedFrames > 0 && m_renderer.outputFormat().sampleRate() > 0) {
+            const auto queuedNs = (static_cast<uint64_t>(newlyQueuedFrames) * Time::NsPerSecond)
+                                / static_cast<uint64_t>(m_renderer.outputFormat().sampleRate());
+            presentationDelay += std::chrono::nanoseconds{queuedNs};
+        }
+
         const auto pullResult
             = m_renderer.render(framesToProcess, m_outputFader, m_outputUnit.outputSupportsVolume(), m_masterVolume,
                                 m_visualisationAnalysisBus.load(std::memory_order_acquire),
-                                m_analysisBus.load(std::memory_order_acquire), m_timelineUnit.playbackDelayMs());
+                                m_analysisBus.load(std::memory_order_acquire), presentationDelay);
         const int framesRead = pullResult.framesRead;
 
         if(framesRead <= 0) {

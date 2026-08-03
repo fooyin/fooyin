@@ -47,6 +47,12 @@ enum class DrawStyle : uint8_t
     Curve
 };
 
+enum class FftSizingMode : uint8_t
+{
+    Samples = 0,
+    Duration
+};
+
 constexpr auto MinBandCount     = 1;
 constexpr auto MaxBandCount     = 2048;
 constexpr auto DefaultBandCount = 80;
@@ -106,4 +112,8 @@ constexpr auto DefaultUpdateFps = 40;
 constexpr auto MinFftSize     = 256;
 constexpr auto MaxFftSize     = 16384;
 constexpr auto DefaultFftSize = 8192;
+
+constexpr auto MinFftDurationMs     = 6;
+constexpr auto MaxFftDurationMs     = 372;
+constexpr auto DefaultFftDurationMs = 100;
 } // namespace Fooyin::Spectrum

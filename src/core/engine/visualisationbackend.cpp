@@ -24,6 +24,7 @@
 #include <numbers>
 
 #include <functional>
+#include <limits>
 #include <mutex>
 #include <ranges>
 #include <utility>
@@ -505,6 +506,62 @@ bool VisualisationBackend::getSpectrumWindowEndingAt(VisualisationSession::Spect
     return fillSpectrumWindow(out, window, selection, windowFunction);
 }
 
+bool VisualisationBackend::getSpectrumWindowForDuration(VisualisationSession::SpectrumWindow& out,
+                                                        uint64_t centerTimeMs, uint64_t durationMs,
+                                                        const ChannelSelection& selection,
+                                                        SpectrumWindowFunction windowFunction) const
+{
+    VisualisationSession::PcmWindow window;
+
+    {
+        const std::shared_lock lock{m_mutex};
+
+        const int fftSize = spectrumFramesForDuration(durationMs);
+        if(fftSize <= 0) {
+            return false;
+        }
+
+        WindowRange range;
+        if(!resolveWindow(range, centerTimeMs, fftSize, 2, WindowAnchor::Center)) {
+            return false;
+        }
+
+        if(!fillWindow(window, range.startFrame, range.frameCount, selection)) {
+            return false;
+        }
+    }
+
+    return fillSpectrumWindow(out, window, selection, windowFunction);
+}
+
+bool VisualisationBackend::getSpectrumWindowEndingAtDuration(VisualisationSession::SpectrumWindow& out,
+                                                             uint64_t endTimeMs, uint64_t durationMs,
+                                                             const ChannelSelection& selection,
+                                                             SpectrumWindowFunction windowFunction) const
+{
+    VisualisationSession::PcmWindow window;
+
+    {
+        const std::shared_lock lock{m_mutex};
+
+        const int fftSize = spectrumFramesForDuration(durationMs);
+        if(fftSize <= 0) {
+            return false;
+        }
+
+        WindowRange range;
+        if(!resolveSpectrumWindowEndingAt(range, endTimeMs, fftSize, MinimumSpectrumFrameCount)) {
+            return false;
+        }
+
+        if(!fillWindow(window, range.startFrame, range.frameCount, selection)) {
+            return false;
+        }
+    }
+
+    return fillSpectrumWindow(out, window, selection, windowFunction);
+}
+
 uint64_t VisualisationBackend::mapSourceTimeToVisualTime(uint32_t streamId, uint64_t sourceTimeMs) const
 {
     if(const auto it = m_sourceTimelines.find(streamId); it != m_sourceTimelines.end()) {
@@ -696,6 +753,25 @@ uint64_t VisualisationBackend::msToFrames(uint64_t ms, int sampleRate)
     }
 
     return (ms * static_cast<uint64_t>(sampleRate)) / 1000ULL;
+}
+
+int VisualisationBackend::spectrumFramesForDuration(uint64_t durationMs) const
+{
+    if(durationMs == 0 || !m_format.isValid() || m_format.sampleRate() <= 0) {
+        return 0;
+    }
+
+    const auto sampleRate = static_cast<uint64_t>(m_format.sampleRate());
+    if(durationMs > std::numeric_limits<uint64_t>::max() / sampleRate) {
+        return 0;
+    }
+
+    const uint64_t requestedFrames = std::max<uint64_t>(MinimumSpectrumFrameCount, (durationMs * sampleRate) / 1000ULL);
+    if(requestedFrames > static_cast<uint64_t>(std::numeric_limits<int>::max())) {
+        return 0;
+    }
+
+    return Dsp::RealFft::nearestValidSize(static_cast<int>(requestedFrames));
 }
 
 void VisualisationBackend::resetLocked()
