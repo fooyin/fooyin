@@ -21,6 +21,8 @@
 
 #include <SDL2/SDL.h>
 
+#include <utility>
+
 namespace Fooyin::Sdl {
 SdlAudioLease::SdlAudioLease(SdlAudioSubsystem* subsystem)
     : m_subsystem{subsystem}

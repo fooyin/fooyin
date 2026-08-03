@@ -33,7 +33,7 @@ SdlPlugin::SdlPlugin()
 
 QString SdlPlugin::name() const
 {
-    auto audioLease = m_audioSubsystem->acquire();
+    auto audioLease    = m_audioSubsystem->acquire();
     const QString name = u"SDL2 (%1)"_s.arg(QString::fromLatin1(SDL_GetCurrentAudioDriver()));
     return name;
 }
