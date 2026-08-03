@@ -832,7 +832,7 @@ void EngineHandler::changeOutput(const QString& output)
     }
 
     const QString& newName = newOutput.at(0);
-    const QString& device  = newOutput.at(1);
+    const QString device   = newOutput.sliced(1).join(u'|');
 
     if(m_outputs.empty()) {
         qCWarning(ENG_HANDLER) << "No Outputs have been registered";
