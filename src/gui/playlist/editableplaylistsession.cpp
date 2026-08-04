@@ -65,12 +65,12 @@ EditablePlaylistSessionHost& editableHost(PlaylistWidget* widget)
 
 bool canEditPlaylistTracks(const Playlist* playlist)
 {
-    return playlist && !playlist->isAutoPlaylist();
+    return playlist && !playlist->isAutoPlaylist() && !playlist->isLocked();
 }
 
 bool canReorderPlaylist(const Playlist* playlist)
 {
-    return playlist && (!playlist->isAutoPlaylist() || !playlist->forceSorted());
+    return playlist && !playlist->isLocked() && (!playlist->isAutoPlaylist() || !playlist->forceSorted());
 }
 } // namespace
 

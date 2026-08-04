@@ -22,8 +22,10 @@
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
 
+#include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
+#include <gui/iconloader.h>
 #include <gui/trackmimedata.h>
 #include <utils/stringutils.h>
 
@@ -84,6 +86,7 @@ PlaylistManagerModel::PlaylistManagerModel(PlaylistInteractor* playlistInteracto
     : QAbstractTableModel{parent}
     , m_playlistInteractor{playlistInteractor}
     , m_playlistHandler{playlistInteractor->handler()}
+    , m_playerController{playlistInteractor->playerController()}
 {
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistsPopulated, this, &PlaylistManagerModel::populate);
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistAdded, this, &PlaylistManagerModel::addPlaylist);
@@ -99,6 +102,14 @@ PlaylistManagerModel::PlaylistManagerModel(PlaylistInteractor* playlistInteracto
     QObject::connect(m_playlistHandler, &PlaylistHandler::tracksChanged, this, &PlaylistManagerModel::refreshPlaylist);
     QObject::connect(m_playlistHandler, &PlaylistHandler::tracksUpdated, this, &PlaylistManagerModel::refreshPlaylist);
     QObject::connect(m_playlistHandler, &PlaylistHandler::tracksRemoved, this, &PlaylistManagerModel::refreshPlaylist);
+
+    const auto refreshDecorations = [this]() {
+        if(!m_playlists.empty()) {
+            Q_EMIT dataChanged(index(0, Name), index(rowCount({}) - 1, Name), {Qt::DecorationRole});
+        }
+    };
+    QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this, refreshDecorations);
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, refreshDecorations);
 
     populate();
 }
@@ -139,6 +150,21 @@ QVariant PlaylistManagerModel::data(const QModelIndex& index, int role) const
 
     if(role == Qt::EditRole && index.column() == Name) {
         return playlist->name();
+    }
+
+    if(role == Qt::DecorationRole && index.column() == Name) {
+        if(const auto* active = m_playlistHandler->activePlaylist(); active && active->id() == playlist->id()) {
+            const auto state = m_playerController->playState();
+            if(state == Player::PlayState::Playing) {
+                return Gui::pixmapFromTheme(Constants::Icons::Play);
+            }
+            if(state == Player::PlayState::Paused) {
+                return Gui::pixmapFromTheme(Constants::Icons::Pause);
+            }
+        }
+        if(playlist->isLocked()) {
+            return Gui::pixmapFromTheme(Constants::Icons::ReadOnly);
+        }
     }
 
     if(role == Qt::TextAlignmentRole && index.column() != Name) {
@@ -201,7 +227,7 @@ bool PlaylistManagerModel::canDropMimeData(const QMimeData* data, Qt::DropAction
     }
 
     if(auto* playlist = playlistForDropTarget(row, parent)) {
-        return !playlist->isAutoPlaylist();
+        return !playlist->isAutoPlaylist() && !playlist->isLocked();
     }
 
     return true;

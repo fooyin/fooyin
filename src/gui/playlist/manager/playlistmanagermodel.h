@@ -28,6 +28,7 @@ class QMimeData;
 namespace Fooyin {
 class PlaylistInteractor;
 class PlaylistHandler;
+class PlayerController;
 
 struct PlaylistSummary
 {
@@ -89,6 +90,7 @@ private:
 
     PlaylistInteractor* m_playlistInteractor;
     PlaylistHandler* m_playlistHandler;
+    PlayerController* m_playerController;
     PlaylistList m_playlists;
     std::vector<PlaylistSummary> m_summaries;
 };

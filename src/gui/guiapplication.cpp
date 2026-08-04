@@ -120,6 +120,7 @@
 #include <QPixmapCache>
 #include <QPointer>
 #include <QPushButton>
+#include <QSignalBlocker>
 #include <QStyle>
 #include <QStyleFactory>
 #include <QStyleHints>
@@ -974,6 +975,33 @@ void GuiApplication::registerActions()
     QObject::connect(m_playlistController.get(), &PlaylistController::currentPlaylistTracksRemoved, m_mainWindow.get(),
                      updateClearPlaylistState);
     updateClearPlaylistState();
+
+    auto* lockPlaylistAction
+        = new QAction(Gui::iconFromTheme(Constants::Icons::ReadOnly), tr("Lock playlist"), m_mainWindow.get());
+    lockPlaylistAction->setCheckable(true);
+    lockPlaylistAction->setStatusTip(tr("Prevent changes to the contents of the current playlist"));
+    auto* lockPlaylistCmd = m_actionManager->registerAction(lockPlaylistAction, Constants::Actions::LockPlaylist);
+    lockPlaylistCmd->setCategories({tr("Playlist")});
+    lockPlaylistCmd->setDescription(tr("Lock Current Playlist"));
+    QObject::connect(lockPlaylistAction, &QAction::triggered, m_mainWindow.get(), [this](bool locked) {
+        if(const auto* playlist = m_playlistController->currentPlaylist()) {
+            m_playlistController->playlistHandler()->setPlaylistLocked(playlist->id(), locked);
+        }
+    });
+
+    const auto updateLockPlaylistState = [this, lockPlaylistAction]() {
+        const auto* playlist = m_playlistController->currentPlaylist();
+        const QSignalBlocker blocker{lockPlaylistAction};
+        lockPlaylistAction->setEnabled(playlist && !playlist->isAutoPlaylist());
+        lockPlaylistAction->setChecked(playlist && playlist->isLocked());
+    };
+    QObject::connect(m_playlistController.get(), &PlaylistController::playlistsLoaded, m_mainWindow.get(),
+                     updateLockPlaylistState);
+    QObject::connect(m_playlistController.get(), &PlaylistController::currentPlaylistChanged, m_mainWindow.get(),
+                     updateLockPlaylistState);
+    QObject::connect(m_playlistController.get(), &PlaylistController::currentPlaylistUpdated, m_mainWindow.get(),
+                     updateLockPlaylistState);
+    updateLockPlaylistState();
 
     const QStringList seekCategory = {tr("Playback"), tr("Seek")};
 

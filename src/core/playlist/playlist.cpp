@@ -39,6 +39,8 @@
 
 using namespace Qt::StringLiterals;
 
+constexpr auto PlaylistLockedProperty = "core/locked"_L1;
+
 namespace Fooyin {
 using AlbumTracks = std::vector<int>;
 
@@ -992,6 +994,21 @@ bool Playlist::isTemporary() const
 bool Playlist::isAutoPlaylist() const
 {
     return p->m_isAutoPlaylist;
+}
+
+bool Playlist::isLocked() const
+{
+    return p->m_extraProps.value(PlaylistLockedProperty) == "1"_L1;
+}
+
+void Playlist::setLocked(bool locked)
+{
+    if(locked) {
+        setExtraProperty(PlaylistLockedProperty, u"1"_s);
+    }
+    else {
+        removeExtraProperty(PlaylistLockedProperty);
+    }
 }
 
 QString Playlist::query() const

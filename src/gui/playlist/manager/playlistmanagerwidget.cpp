@@ -29,6 +29,7 @@
 #include <core/playlist/playlist.h>
 #include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
+#include <gui/iconloader.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/expandedtreeview.h>
 #include <utils/actions/actionmanager.h>
@@ -494,6 +495,17 @@ void PlaylistManagerWidget::showPlaylistContextMenu(const QPoint& pos)
         }
 
         menu->addAction(m_renameCmd->action());
+
+        if(!playlist->isAutoPlaylist()) {
+            auto* lockAction = new QAction(Gui::iconFromTheme(Constants::Icons::ReadOnly), tr("Lock playlist"), menu);
+            lockAction->setCheckable(true);
+            lockAction->setChecked(playlist->isLocked());
+            QObject::connect(lockAction, &QAction::toggled, this, [this, id = playlist->id()](bool locked) {
+                m_playlistController->playlistHandler()->setPlaylistLocked(id, locked);
+            });
+            menu->addAction(lockAction);
+        }
+
         menu->addAction(m_removeCmd->action());
 
         menu->addSeparator();

@@ -22,8 +22,10 @@
 #include "dialog/autoplaylistdialog.h"
 #include "playlist/playlistcontroller.h"
 
+#include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
+#include <gui/iconloader.h>
 #include <gui/widgets/popuplineedit.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
@@ -43,6 +45,24 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
+namespace {
+QIcon playlistIcon(const Playlist* playlist, const Playlist* activePlaylist, Player::PlayState state)
+{
+    if(playlist && activePlaylist && playlist->id() == activePlaylist->id()) {
+        if(state == Player::PlayState::Playing) {
+            return Gui::iconFromTheme(Constants::Icons::Play);
+        }
+        if(state == Player::PlayState::Paused) {
+            return Gui::iconFromTheme(Constants::Icons::Pause);
+        }
+    }
+    if(playlist && playlist->isLocked()) {
+        return Gui::iconFromTheme(Constants::Icons::ReadOnly);
+    }
+    return {};
+}
+} // namespace
+
 PlaylistBox::PlaylistBox(ActionManager* actionManager, PlaylistController* playlistController, QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
@@ -87,6 +107,12 @@ PlaylistBox::PlaylistBox(ActionManager* actionManager, PlaylistController* playl
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistRemoved, this, &PlaylistBox::removePlaylist);
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistRenamed, this,
                      [this](const Playlist* playlist) { playlistRenamed(playlist); });
+    QObject::connect(m_playlistHandler, &PlaylistHandler::playlistUpdated, this,
+                     [this](const Playlist* playlist) { playlistUpdated(playlist); });
+    QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this,
+                     [this](Playlist*) { refreshPlaylistIcons(); });
+    QObject::connect(m_playlistController->playerController(), &PlayerController::playStateChanged, this,
+                     [this]() { refreshPlaylistIcons(); });
     QObject::connect(m_playlistController, &PlaylistController::currentPlaylistChanged, this,
                      [this](const Playlist*, const Playlist*) { updateActionState(); });
 
@@ -122,7 +148,8 @@ void PlaylistBox::addPlaylist(const Playlist* playlist)
         return;
     }
 
-    m_playlistBox->addItem(playlist->name(), QVariant::fromValue(playlist->id()));
+    const QIcon icon = playlistIcon(playlist, m_playlistHandler->activePlaylist(), m_playlistController->playState());
+    m_playlistBox->addItem(icon, playlist->name(), QVariant::fromValue(playlist->id()));
 }
 
 void PlaylistBox::removePlaylist(const Playlist* playlist)
@@ -156,6 +183,34 @@ void PlaylistBox::playlistRenamed(const Playlist* playlist) const
         if(m_playlistBox->itemData(i).value<UId>() == playlist->id()) {
             m_playlistBox->setItemText(i, playlist->name());
         }
+    }
+}
+
+void PlaylistBox::playlistUpdated(const Playlist* playlist) const
+{
+    if(!playlist) {
+        return;
+    }
+
+    const int count = m_playlistBox->count();
+    for(int i{0}; i < count; ++i) {
+        if(m_playlistBox->itemData(i).value<UId>() == playlist->id()) {
+            const QIcon icon
+                = playlistIcon(playlist, m_playlistHandler->activePlaylist(), m_playlistController->playState());
+            m_playlistBox->setItemIcon(i, icon);
+            break;
+        }
+    }
+}
+
+void PlaylistBox::refreshPlaylistIcons() const
+{
+    const auto* activePlaylist = m_playlistHandler->activePlaylist();
+    const auto state           = m_playlistController->playState();
+
+    for(int i{0}; i < m_playlistBox->count(); ++i) {
+        const auto id = m_playlistBox->itemData(i).value<UId>();
+        m_playlistBox->setItemIcon(i, playlistIcon(m_playlistHandler->playlistById(id), activePlaylist, state));
     }
 }
 
@@ -291,6 +346,12 @@ void PlaylistBox::showContextMenu(const QPoint& pos)
         }
 
         menu->addAction(m_renameCmd->action());
+        if(!playlist->isAutoPlaylist()) {
+            if(auto* command = m_actionManager->command(Constants::Actions::LockPlaylist)) {
+                auto* lockAction = command->action();
+                menu->addAction(lockAction);
+            }
+        }
         menu->addAction(m_removeCmd->action());
     }
 

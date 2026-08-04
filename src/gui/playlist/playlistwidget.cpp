@@ -466,9 +466,11 @@ void PlaylistWidget::resetModel()
 
     const bool forceSortedAutoPlaylist
         = currentPlaylist && currentPlaylist->isAutoPlaylist() && currentPlaylist->forceSorted();
-    const bool readOnly = m_session->hasSearch() || forceSortedAutoPlaylist;
+    const bool locked   = currentPlaylist && currentPlaylist->isLocked();
+    const bool readOnly = m_session->hasSearch() || forceSortedAutoPlaylist || locked;
 
-    setReadOnly(readOnly, currentPlaylist && (!currentPlaylist->isAutoPlaylist() || !currentPlaylist->forceSorted()));
+    setReadOnly(readOnly,
+                currentPlaylist && !locked && (!currentPlaylist->isAutoPlaylist() || !currentPlaylist->forceSorted()));
 
     if(m_session->canResetWithoutPlaylist() || currentPlaylist) {
         m_model->reset(layoutState().currentPreset,
@@ -1162,9 +1164,10 @@ void PlaylistWidget::refreshSortActions()
 
 void PlaylistWidget::updateSortActionState()
 {
-    const auto* playlist          = m_playlistController->currentPlaylist();
-    const bool canReorderPlaylist = playlist && (!playlist->isAutoPlaylist() || !playlist->forceSorted());
-    const bool canSortTracks      = canReorderPlaylist && playlist->trackCount() > 1;
+    const auto* playlist = m_playlistController->currentPlaylist();
+    const bool canReorderPlaylist
+        = playlist && !playlist->isLocked() && (!playlist->isAutoPlaylist() || !playlist->forceSorted());
+    const bool canSortTracks = canReorderPlaylist && playlist->trackCount() > 1;
 
     if(auto* randomiseAction = m_session->randomiseAction()) {
         randomiseAction->setEnabled(canSortTracks);

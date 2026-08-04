@@ -38,6 +38,13 @@ void PlaylistManagerDelegate::paint(QPainter* painter, const QStyleOptionViewIte
     const QString text   = opt.fontMetrics.elidedText(opt.text, opt.textElideMode, textRect.width());
     const auto textRole  = opt.state.testFlag(QStyle::State_Selected) ? QPalette::HighlightedText : QPalette::Text;
 
+    if(!opt.icon.isNull()) {
+        const QRect decorationRect = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
+        const QIcon::Mode mode     = opt.state.testFlag(QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled;
+        const QIcon::State state   = opt.state.testFlag(QStyle::State_Open) ? QIcon::On : QIcon::Off;
+        opt.icon.paint(painter, decorationRect, opt.decorationAlignment, mode, state);
+    }
+
     style->drawItemText(painter, textRect, opt.displayAlignment, opt.palette, opt.state.testFlag(QStyle::State_Enabled),
                         text, textRole);
 }

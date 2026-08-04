@@ -11,6 +11,7 @@
         <file>icons/dark/scalable/actions/command.svg</file>
         <file>icons/dark/scalable/actions/edit-clear.svg</file>
         <file>icons/dark/scalable/actions/edit-find.svg</file>
+        <file>icons/dark/scalable/actions/emblem-readonly.svg</file>
         <file>icons/dark/scalable/actions/favorite.svg</file>
         <file>icons/dark/scalable/actions/favorite-favorited.svg</file>
         <file alias="icons/dark/scalable/actions/org.fooyin.fooyin.svg">icons/dark/scalable/actions/fooyin.svg</file>
@@ -65,6 +66,7 @@
         <file>icons/light/scalable/actions/command.svg</file>
         <file>icons/light/scalable/actions/edit-clear.svg</file>
         <file>icons/light/scalable/actions/edit-find.svg</file>
+        <file>icons/light/scalable/actions/emblem-readonly.svg</file>
         <file>icons/light/scalable/actions/favorite.svg</file>
         <file>icons/light/scalable/actions/favorite-favorited.svg</file>
         <file>icons/light/scalable/actions/fooyin.svg</file>
