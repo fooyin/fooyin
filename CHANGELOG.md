@@ -1,5 +1,47 @@
 # Changelog
 
+## Unreleased
+
+### Improvements
+
+* Audio Output
+  - Add a WASAPI output plugin ([#1445](https://github.com/fooyin/fooyin/pull/1445))
+* Interface
+  - Add an optional Random Track button to Player Controls
+  - Add native dark mode support on Windows
+  - Add theme import and export support
+* Spectrum
+  - Add duration-based FFT sizing and improve behaviour across sample rates ([#1446](https://github.com/fooyin/fooyin/issues/1446))
+* Visualisations
+  - Add standalone visualisation windows with persistent state
+
+### Fixes
+
+* Artwork
+  - Limit the artwork viewer zoom range ([#1442](https://github.com/fooyin/fooyin/issues/1442))
+* Audio Output
+  - Fix silent playback after switching outputs
+  - Fix SDL output switching and device enumeration
+* Filters
+  - Fix selected colours for rich text rows
+* Interface
+  - Fix Playlist header transparency with background images
+  - Fix Playlist Organiser row height and text margins
+  - Fix Queue Viewer clipped and fractionally-sized text
+  - Fix Selection Info sizing with hidden headers
+* ProjectM
+  - Fix OpenGL setup and preset selection
+
+### Build/System
+
+* Build
+  - Update Windows build documentation
+* CI
+  - Update supported Fedora versions
+* Dependencies
+  - Add libebur128 to vcpkg dependencies
+
+
 ## [0.12.1](https://github.com/fooyin/fooyin/releases/tag/v0.12.1) (2026-07-31)
 
 ### Improvements
