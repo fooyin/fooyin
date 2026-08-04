@@ -247,9 +247,9 @@ bool FilterWidget::autoSwitch() const
     return m_config.autoSwitch;
 }
 
-bool FilterWidget::keepAlive() const
+bool FilterWidget::preservePlaybackPlaylist() const
 {
-    return m_config.keepAlive;
+    return m_config.preservePlaybackPlaylist;
 }
 
 QString FilterWidget::playlistName() const
@@ -467,7 +467,8 @@ FilterWidget::ConfigData FilterWidget::defaultConfig() const
     config.sendPlayback      = m_settings->fileValue(FilterSendPlaybackKey, config.sendPlayback).toBool();
     config.playlistEnabled   = m_settings->fileValue(FilterPlaylistEnabledKey, config.playlistEnabled).toBool();
     config.autoSwitch        = m_settings->fileValue(FilterAutoSwitchKey, config.autoSwitch).toBool();
-    config.keepAlive         = m_settings->fileValue(FilterKeepAliveKey, config.keepAlive).toBool();
+    config.preservePlaybackPlaylist
+        = m_settings->fileValue(FilterKeepAliveKey, config.preservePlaybackPlaylist).toBool();
     config.playlistName      = m_settings->fileValue(FilterAutoPlaylistKey, config.playlistName).toString();
     config.rowHeight         = m_settings->fileValue(FilterRowHeightKey, config.rowHeight).toInt();
     config.iconSize          = m_settings->fileValue(FilterIconSizeKey, config.iconSize).toSize();
@@ -480,17 +481,17 @@ FilterWidget::ConfigData FilterWidget::defaultConfig() const
 FilterWidget::ConfigData FilterWidget::factoryConfig() const
 {
     return {
-        .doubleClickAction = 1,
-        .middleClickAction = 0,
-        .sendPlayback      = true,
-        .playlistEnabled   = true,
-        .autoSwitch        = true,
-        .keepAlive         = false,
-        .playlistName      = FilterController::defaultPlaylistName(),
-        .rowHeight         = 0,
-        .iconSize          = QSize{100, 100},
-        .iconHorizontalGap = -1,
-        .iconVerticalGap   = 10,
+        .doubleClickAction        = 1,
+        .middleClickAction        = 0,
+        .sendPlayback             = true,
+        .playlistEnabled          = true,
+        .autoSwitch               = true,
+        .preservePlaybackPlaylist = true,
+        .playlistName             = FilterController::defaultPlaylistName(),
+        .rowHeight                = 0,
+        .iconSize                 = QSize{100, 100},
+        .iconHorizontalGap        = -1,
+        .iconVerticalGap          = 10,
     };
 }
 
@@ -506,7 +507,7 @@ void FilterWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(FilterSendPlaybackKey, config.sendPlayback);
     m_settings->fileSet(FilterPlaylistEnabledKey, config.playlistEnabled);
     m_settings->fileSet(FilterAutoSwitchKey, config.autoSwitch);
-    m_settings->fileSet(FilterKeepAliveKey, config.keepAlive);
+    m_settings->fileSet(FilterKeepAliveKey, config.preservePlaybackPlaylist);
     m_settings->fileSet(FilterAutoPlaylistKey, config.playlistName);
     m_settings->fileSet(FilterRowHeightKey, config.rowHeight);
     m_settings->fileSet(FilterIconSizeKey, config.iconSize);
@@ -545,9 +546,9 @@ void FilterWidget::applyConfig(const ConfigData& config)
         = m_config.doubleClickAction != validated.doubleClickAction
        || m_config.middleClickAction != validated.middleClickAction || m_config.sendPlayback != validated.sendPlayback
        || m_config.playlistEnabled != validated.playlistEnabled || m_config.autoSwitch != validated.autoSwitch
-       || m_config.keepAlive != validated.keepAlive || m_config.playlistName != validated.playlistName
-       || m_config.rowHeight != validated.rowHeight || m_config.iconSize != validated.iconSize
-       || m_config.iconHorizontalGap != validated.iconHorizontalGap
+       || m_config.preservePlaybackPlaylist != validated.preservePlaybackPlaylist
+       || m_config.playlistName != validated.playlistName || m_config.rowHeight != validated.rowHeight
+       || m_config.iconSize != validated.iconSize || m_config.iconHorizontalGap != validated.iconHorizontalGap
        || m_config.iconVerticalGap != validated.iconVerticalGap;
 
     m_config = validated;
@@ -584,7 +585,7 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
         config.autoSwitch = layout.value("AutoSwitch"_L1).toBool();
     }
     if(layout.contains("KeepAlive"_L1)) {
-        config.keepAlive = layout.value("KeepAlive"_L1).toBool();
+        config.preservePlaybackPlaylist = layout.value("KeepAlive"_L1).toBool();
     }
     if(layout.contains("PlaylistName"_L1)) {
         config.playlistName = layout.value("PlaylistName"_L1).toString();
@@ -620,7 +621,7 @@ void FilterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
     layout["SendPlayback"_L1]      = config.sendPlayback;
     layout["PlaylistEnabled"_L1]   = config.playlistEnabled;
     layout["AutoSwitch"_L1]        = config.autoSwitch;
-    layout["KeepAlive"_L1]         = config.keepAlive;
+    layout["KeepAlive"_L1]         = config.preservePlaybackPlaylist;
     layout["PlaylistName"_L1]      = config.playlistName;
     layout["RowHeight"_L1]         = config.rowHeight;
     layout["IconWidth"_L1]         = config.iconSize.width();

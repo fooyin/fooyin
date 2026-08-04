@@ -77,7 +77,7 @@ public:
     [[nodiscard]] bool sendPlayback() const;
     [[nodiscard]] bool playlistEnabled() const;
     [[nodiscard]] bool autoSwitch() const;
-    [[nodiscard]] bool keepAlive() const;
+    [[nodiscard]] bool preservePlaybackPlaylist() const;
     [[nodiscard]] QString playlistName() const;
     [[nodiscard]] bool hasSelection() const;
     void openConfigDialog() override;
@@ -102,7 +102,7 @@ public:
         bool sendPlayback{true};
         bool playlistEnabled{true};
         bool autoSwitch{true};
-        bool keepAlive{false};
+        bool preservePlaybackPlaylist{true};
         QString playlistName;
         int rowHeight{0};
         QSize iconSize{100, 100};

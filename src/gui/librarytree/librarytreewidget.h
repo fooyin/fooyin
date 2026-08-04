@@ -89,7 +89,7 @@ public:
         bool sendPlayback{true};
         bool playlistEnabled{false};
         bool autoSwitch{true};
-        bool keepAlive{false};
+        bool preservePlaybackPlaylist{true};
         QString playlistName{LibraryTreeController::defaultPlaylistName()};
         bool restoreState{true};
         bool expandOnSingleClick{false};

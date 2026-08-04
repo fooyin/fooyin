@@ -491,8 +491,8 @@ void FilterControllerPrivate::handleSelectionChanged(FilterWidget* filter, const
     if(filter->playlistEnabled() && m_trackSelection) {
         PlaylistAction::ActionOptions options{PlaylistAction::None};
 
-        if(filter->keepAlive()) {
-            options |= PlaylistAction::KeepActive;
+        if(filter->preservePlaybackPlaylist()) {
+            options |= PlaylistAction::PreservePlaybackPlaylist;
         }
         if(filter->autoSwitch()) {
             options |= PlaylistAction::Switch;

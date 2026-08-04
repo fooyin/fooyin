@@ -330,9 +330,10 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::defaultConfig() const
     config.sendPlayback      = m_settings->fileValue(LibTreeSendPlaybackKey, config.sendPlayback).toBool();
     config.playlistEnabled   = m_settings->fileValue(LibTreePlaylistEnabledKey, config.playlistEnabled).toBool();
     config.autoSwitch        = m_settings->fileValue(LibTreeAutoSwitchKey, config.autoSwitch).toBool();
-    config.keepAlive         = m_settings->fileValue(LibTreeKeepAliveKey, config.keepAlive).toBool();
-    config.playlistName      = m_settings->fileValue(LibTreeAutoPlaylistKey, config.playlistName).toString();
-    config.restoreState      = m_settings->fileValue(LibTreeRestoreStateKey, config.restoreState).toBool();
+    config.preservePlaybackPlaylist
+        = m_settings->fileValue(LibTreeKeepAliveKey, config.preservePlaybackPlaylist).toBool();
+    config.playlistName = m_settings->fileValue(LibTreeAutoPlaylistKey, config.playlistName).toString();
+    config.restoreState = m_settings->fileValue(LibTreeRestoreStateKey, config.restoreState).toBool();
     config.expandOnSingleClick
         = m_settings->fileValue(LibTreeExpandSingleClickKey, config.expandOnSingleClick).toBool();
     config.autoExpandSearchResultLimit
@@ -361,7 +362,7 @@ void LibraryTreeWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(LibTreeSendPlaybackKey, config.sendPlayback);
     m_settings->fileSet(LibTreePlaylistEnabledKey, config.playlistEnabled);
     m_settings->fileSet(LibTreeAutoSwitchKey, config.autoSwitch);
-    m_settings->fileSet(LibTreeKeepAliveKey, config.keepAlive);
+    m_settings->fileSet(LibTreeKeepAliveKey, config.preservePlaybackPlaylist);
     m_settings->fileSet(LibTreeAutoPlaylistKey, config.playlistName);
     m_settings->fileSet(LibTreeRestoreStateKey, config.restoreState);
     m_settings->fileSet(LibTreeExpandSingleClickKey, config.expandOnSingleClick);
@@ -473,7 +474,7 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::configFromLayout(const QJsonObj
         config.autoSwitch = layout.value("AutoSwitch"_L1).toBool();
     }
     if(layout.contains("KeepAlive"_L1)) {
-        config.keepAlive = layout.value("KeepAlive"_L1).toBool();
+        config.preservePlaybackPlaylist = layout.value("KeepAlive"_L1).toBool();
     }
     if(layout.contains("PlaylistName"_L1)) {
         config.playlistName = layout.value("PlaylistName"_L1).toString();
@@ -533,7 +534,7 @@ void LibraryTreeWidget::saveConfigToLayout(const ConfigData& config, QJsonObject
     layout["SendPlayback"_L1]                = config.sendPlayback;
     layout["PlaylistEnabled"_L1]             = config.playlistEnabled;
     layout["AutoSwitch"_L1]                  = config.autoSwitch;
-    layout["KeepAlive"_L1]                   = config.keepAlive;
+    layout["KeepAlive"_L1]                   = config.preservePlaybackPlaylist;
     layout["PlaylistName"_L1]                = config.playlistName;
     layout["RestoreState"_L1]                = config.restoreState;
     layout["ExpandOnSingleClick"_L1]         = config.expandOnSingleClick;
@@ -940,16 +941,16 @@ void LibraryTreeWidget::syncSelectionPlaylist(const TrackList& tracks) const
 
     const QString playlistName{m_config.playlistName};
 
-    if(m_config.keepAlive) {
+    if(m_config.preservePlaybackPlaylist) {
         if(const auto* activePlaylist = m_playlistHandler->activePlaylist();
            activePlaylist && activePlaylist->name() == playlistName) {
-            const QString keepActiveName = playlistName + u" ("_s + tr("Playback") + u")"_s;
+            const QString playbackPlaylistName = playlistName + u" ("_s + tr("Playback") + u")"_s;
 
-            if(auto* keepActivePlaylist = m_playlistHandler->playlistByName(keepActiveName)) {
-                m_playlistHandler->movePlaylistTracks(activePlaylist->id(), keepActivePlaylist->id());
+            if(auto* playbackPlaylist = m_playlistHandler->playlistByName(playbackPlaylistName)) {
+                m_playlistHandler->movePlaylistTracks(activePlaylist->id(), playbackPlaylist->id());
             }
             else {
-                m_playlistHandler->renamePlaylist(activePlaylist->id(), keepActiveName);
+                m_playlistHandler->renamePlaylist(activePlaylist->id(), playbackPlaylistName);
             }
         }
     }

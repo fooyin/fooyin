@@ -980,7 +980,7 @@ void TrackSelectionControllerPrivate::sendToNewPlaylist(PlaylistAction::ActionOp
     const auto& selection = m_contextSelection.at(m_activeContext);
     const QString newName = !playlistName.isEmpty() ? playlistName : Track::findCommonField(selection.tracks);
 
-    if(options & PlaylistAction::KeepActive) {
+    if(options & PlaylistAction::PreservePlaybackPlaylist) {
         const auto* activePlaylist = m_playlistHandler->activePlaylist();
 
         if(!activePlaylist || activePlaylist->name() != newName) {
@@ -988,13 +988,13 @@ void TrackSelectionControllerPrivate::sendToNewPlaylist(PlaylistAction::ActionOp
             handleActions(options, playlist);
             return;
         }
-        const QString keepActiveName = newName + u" ("_s + tr("Playback") + u")"_s;
+        const QString playbackPlaylistName = newName + u" ("_s + tr("Playback") + u")"_s;
 
-        if(auto* keepActivePlaylist = m_playlistHandler->playlistByName(keepActiveName)) {
-            m_playlistHandler->movePlaylistTracks(activePlaylist->id(), keepActivePlaylist->id());
+        if(auto* playbackPlaylist = m_playlistHandler->playlistByName(playbackPlaylistName)) {
+            m_playlistHandler->movePlaylistTracks(activePlaylist->id(), playbackPlaylist->id());
         }
         else {
-            m_playlistHandler->renamePlaylist(activePlaylist->id(), keepActiveName);
+            m_playlistHandler->renamePlaylist(activePlaylist->id(), playbackPlaylistName);
         }
     }
 

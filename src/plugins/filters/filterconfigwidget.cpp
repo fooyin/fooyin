@@ -44,7 +44,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     , m_playbackOnSend{new QCheckBox(tr("Start playback immediately"), this)}
     , m_playlistEnabled{new QCheckBox(tr("Enabled"), this)}
     , m_autoSwitch{new QCheckBox(tr("Switch when changed"), this)}
-    , m_keepAlive{new QCheckBox(tr("Keep alive"), this)}
+    , m_preservePlaybackPlaylist{new QCheckBox(tr("Preserve playback playlist"), this)}
     , m_playlistName{new QLineEdit(this)}
     , m_overrideRowHeight{new QCheckBox(tr("Override row height") + u":"_s, this)}
     , m_rowHeight{new QSpinBox(this)}
@@ -70,11 +70,13 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     auto* selectionPlaylist       = new QGroupBox(tr("Filter Selection Playlist"), this);
     auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
 
-    m_keepAlive->setToolTip(tr("If this is the active playlist, keep it alive when changing selection"));
+    m_preservePlaybackPlaylist->setToolTip(
+        tr("When this selection playlist is used for playback, preserve it with \"(Playback)\" appended to its "
+           "name instead of replacing its tracks."));
 
     selectionPlaylistLayout->addWidget(m_playlistEnabled, 0, 0, 1, 3);
     selectionPlaylistLayout->addWidget(m_autoSwitch, 1, 0, 1, 3);
-    selectionPlaylistLayout->addWidget(m_keepAlive, 2, 0, 1, 3);
+    selectionPlaylistLayout->addWidget(m_preservePlaybackPlaylist, 2, 0, 1, 3);
     selectionPlaylistLayout->addWidget(new QLabel(tr("Name") + u":"_s, this), 3, 0);
     selectionPlaylistLayout->addWidget(m_playlistName, 3, 1, 1, 2);
     selectionPlaylistLayout->setColumnStretch(2, 1);
@@ -140,7 +142,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     QObject::connect(m_playlistEnabled, &QCheckBox::toggled, this, [this](bool checked) {
         m_playlistName->setEnabled(checked);
         m_autoSwitch->setEnabled(checked);
-        m_keepAlive->setEnabled(checked);
+        m_preservePlaybackPlaylist->setEnabled(checked);
     });
     QObject::connect(m_manageColumns, &QPushButton::clicked, this, [this]() {
         auto* dialog = new FilterColumnEditorDialog(m_columnRegistry, this);
@@ -155,17 +157,17 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
 FilterWidget::ConfigData FilterConfigDialog::config() const
 {
     return {
-        .doubleClickAction = m_doubleClick->currentData().toInt(),
-        .middleClickAction = m_middleClick->currentData().toInt(),
-        .sendPlayback      = m_playbackOnSend->isChecked(),
-        .playlistEnabled   = m_playlistEnabled->isChecked(),
-        .autoSwitch        = m_autoSwitch->isChecked(),
-        .keepAlive         = m_keepAlive->isChecked(),
-        .playlistName      = m_playlistName->text(),
-        .rowHeight         = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0,
-        .iconSize          = {m_iconWidth->value(), m_iconHeight->value()},
-        .iconHorizontalGap = m_iconHorizontalGap->value(),
-        .iconVerticalGap   = m_iconVerticalGap->value(),
+        .doubleClickAction        = m_doubleClick->currentData().toInt(),
+        .middleClickAction        = m_middleClick->currentData().toInt(),
+        .sendPlayback             = m_playbackOnSend->isChecked(),
+        .playlistEnabled          = m_playlistEnabled->isChecked(),
+        .autoSwitch               = m_autoSwitch->isChecked(),
+        .preservePlaybackPlaylist = m_preservePlaybackPlaylist->isChecked(),
+        .playlistName             = m_playlistName->text(),
+        .rowHeight                = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0,
+        .iconSize                 = {m_iconWidth->value(), m_iconHeight->value()},
+        .iconHorizontalGap        = m_iconHorizontalGap->value(),
+        .iconVerticalGap          = m_iconVerticalGap->value(),
     };
 }
 
@@ -177,7 +179,7 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
     m_playbackOnSend->setChecked(config.sendPlayback);
     m_playlistEnabled->setChecked(config.playlistEnabled);
     m_autoSwitch->setChecked(config.autoSwitch);
-    m_keepAlive->setChecked(config.keepAlive);
+    m_preservePlaybackPlaylist->setChecked(config.preservePlaybackPlaylist);
     m_playlistName->setText(config.playlistName);
     m_overrideRowHeight->setChecked(config.rowHeight > 0);
     m_rowHeight->setValue(config.rowHeight > 0 ? config.rowHeight : 1);
@@ -188,7 +190,7 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
     m_iconVerticalGap->setValue(config.iconVerticalGap);
     m_playlistName->setEnabled(m_playlistEnabled->isChecked());
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
-    m_keepAlive->setEnabled(m_playlistEnabled->isChecked());
+    m_preservePlaybackPlaylist->setEnabled(m_playlistEnabled->isChecked());
 }
 
 void FilterConfigDialog::mergeExternalConfig(const FilterWidget::ConfigData& previous,
@@ -197,7 +199,7 @@ void FilterConfigDialog::mergeExternalConfig(const FilterWidget::ConfigData& pre
     mergeExternalFields(previous, current, &FilterWidget::ConfigData::doubleClickAction,
                         &FilterWidget::ConfigData::middleClickAction, &FilterWidget::ConfigData::sendPlayback,
                         &FilterWidget::ConfigData::playlistEnabled, &FilterWidget::ConfigData::autoSwitch,
-                        &FilterWidget::ConfigData::keepAlive, &FilterWidget::ConfigData::playlistName,
+                        &FilterWidget::ConfigData::preservePlaybackPlaylist, &FilterWidget::ConfigData::playlistName,
                         &FilterWidget::ConfigData::rowHeight, &FilterWidget::ConfigData::iconSize,
                         &FilterWidget::ConfigData::iconHorizontalGap, &FilterWidget::ConfigData::iconVerticalGap);
 }

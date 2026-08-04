@@ -55,7 +55,7 @@ private:
 
     QCheckBox* m_playlistEnabled;
     QCheckBox* m_autoSwitch;
-    QCheckBox* m_keepAlive;
+    QCheckBox* m_preservePlaybackPlaylist;
     QLineEdit* m_playlistName;
 
     QCheckBox* m_restoreState;

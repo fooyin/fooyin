@@ -96,11 +96,11 @@ Q_DECLARE_FLAGS(ActionGroups, ActionGroup)
 namespace PlaylistAction {
 enum ActionOption : uint8_t
 {
-    None          = 0,
-    Switch        = 1 << 0,
-    KeepActive    = 1 << 1,
-    StartPlayback = 1 << 2,
-    TempPlaylist  = 1 << 3
+    None                     = 0,
+    Switch                   = 1 << 0,
+    PreservePlaybackPlaylist = 1 << 1,
+    StartPlayback            = 1 << 2,
+    TempPlaylist             = 1 << 3
 };
 Q_DECLARE_FLAGS(ActionOptions, ActionOption)
 } // namespace PlaylistAction
