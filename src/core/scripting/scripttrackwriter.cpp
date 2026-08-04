@@ -40,6 +40,21 @@ void invokeTrackSetter(Track& track, const ScriptFieldValue& arg)
         arg);
 }
 
+template <auto Func>
+void invokeTrackListSetter(Track& track, const ScriptFieldValue& arg)
+{
+    std::visit(
+        [&]<typename Param>(Param&& value) {
+            if constexpr(std::is_same_v<std::decay_t<Param>, QString>) {
+                std::invoke(Func, track, QStringList{value});
+            }
+            else if constexpr(std::is_invocable_v<decltype(Func), Track&, Param>) {
+                std::invoke(Func, track, value);
+            }
+        },
+        arg);
+}
+
 void setNormalizedRating(Track& track, const ScriptFieldValue& value)
 {
     std::visit(
@@ -107,13 +122,13 @@ bool setBuiltInTrackValue(const VariableKind kind, const ScriptFieldValue& value
             invokeTrackSetter<&Track::setTitle>(track, value);
             return true;
         case VariableKind::Artist:
-            invokeTrackSetter<&Track::setArtists>(track, value);
+            invokeTrackListSetter<&Track::setArtists>(track, value);
             return true;
         case VariableKind::Album:
             invokeTrackSetter<&Track::setAlbum>(track, value);
             return true;
         case VariableKind::AlbumArtist:
-            invokeTrackSetter<&Track::setAlbumArtists>(track, value);
+            invokeTrackListSetter<&Track::setAlbumArtists>(track, value);
             return true;
         case VariableKind::Track:
             invokeTrackSetter<&Track::setTrackNumber>(track, value);
@@ -129,13 +144,13 @@ bool setBuiltInTrackValue(const VariableKind kind, const ScriptFieldValue& value
             return true;
         case VariableKind::Genre:
         case VariableKind::Genres:
-            invokeTrackSetter<&Track::setGenres>(track, value);
+            invokeTrackListSetter<&Track::setGenres>(track, value);
             return true;
         case VariableKind::Composer:
-            invokeTrackSetter<&Track::setComposers>(track, value);
+            invokeTrackListSetter<&Track::setComposers>(track, value);
             return true;
         case VariableKind::Performer:
-            invokeTrackSetter<&Track::setPerformers>(track, value);
+            invokeTrackListSetter<&Track::setPerformers>(track, value);
             return true;
         case VariableKind::Duration:
             invokeTrackSetter<&Track::setDuration>(track, value);

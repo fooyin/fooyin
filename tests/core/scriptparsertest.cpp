@@ -633,6 +633,26 @@ TEST_F(ScriptParserTest, RatingScriptWritesUseExpectedScales)
     EXPECT_FLOAT_EQ(track.rating(), 0.7F);
 }
 
+TEST_F(ScriptParserTest, MultiValueScriptWritesAcceptSingleStrings)
+{
+    Track track;
+
+    setTrackScriptValue(u"artist"_s, u"Artist"_s, track);
+    setTrackScriptValue(u"albumartist"_s, u"Album Artist"_s, track);
+    setTrackScriptValue(u"genre"_s, u"Genre"_s, track);
+    setTrackScriptValue(u"composer"_s, u"Composer"_s, track);
+    setTrackScriptValue(u"performer"_s, u"Performer"_s, track);
+
+    EXPECT_EQ(track.artists(), QStringList{u"Artist"_s});
+    EXPECT_EQ(track.albumArtists(), QStringList{u"Album Artist"_s});
+    EXPECT_EQ(track.genres(), QStringList{u"Genre"_s});
+    EXPECT_EQ(track.composers(), QStringList{u"Composer"_s});
+    EXPECT_EQ(track.performers(), QStringList{u"Performer"_s});
+
+    setTrackScriptValue(u"genre"_s, QString{}, track);
+    EXPECT_FALSE(track.hasGenres());
+}
+
 TEST_F(ScriptParserTest, TrackListTest)
 {
     TrackList tracks;
