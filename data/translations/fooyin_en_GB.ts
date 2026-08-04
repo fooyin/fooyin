@@ -77,7 +77,7 @@
 <context>
     <name>Fooyin::ConverterSetupDialog</name>
     <message numerus="yes">
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1203"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1211"/>
         <source>%Ln DSP(s)</source>
         <translation>
             <numerusform>%Ln DSP</numerusform>
@@ -224,7 +224,7 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1670"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1673"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
@@ -246,7 +246,7 @@
 <context>
     <name>Fooyin::ProjectM::ProjectMView</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="584"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="618"/>
         <source>Using presets from %Ln folder(s)</source>
         <translation>
             <numerusform>Using presets from %Ln folder</numerusform>
