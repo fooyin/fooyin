@@ -257,6 +257,8 @@ LibraryThreadHandlerPrivate::LibraryThreadHandlerPrivate(LibraryThreadHandler* s
     m_scanner.moveToThread(&m_thread);
     m_trackDatabaseManager.moveToThread(&m_thread);
 
+    QObject::connect(&m_thread, &QThread::finished, &m_monitor, &LibraryMonitor::shutdown, Qt::DirectConnection);
+
     m_thread.start();
 }
 
@@ -1093,6 +1095,7 @@ LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibr
 
 LibraryThreadHandler::~LibraryThreadHandler()
 {
+    p->m_monitor.cancelSetup();
     p->cancelWriteOperations();
 
     p->m_scanner.closeThread();

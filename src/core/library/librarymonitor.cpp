@@ -30,37 +30,141 @@
 #include <set>
 #include <vector>
 
+constexpr qsizetype WatchBatchSize = 64;
+
+namespace {
+bool addPaths(Fooyin::LibraryWatcher& watcher, const QStringList& paths, const std::stop_token stopToken)
+{
+    for(qsizetype offset{0}; offset < paths.size(); offset += WatchBatchSize) {
+        if(stopToken.stop_requested()) {
+            return false;
+        }
+
+        const qsizetype count = std::min(WatchBatchSize, paths.size() - offset);
+        watcher.addPaths(paths.sliced(offset, count));
+    }
+
+    return !stopToken.stop_requested();
+}
+} // namespace
+
 namespace Fooyin {
 LibraryMonitor::LibraryMonitor(QObject* parent)
     : QObject{parent}
 { }
 
-void LibraryMonitor::addWatcher(const LibraryInfo& library, const TrackList& tracks, bool monitorTrackFiles)
+void LibraryMonitor::cancelSetup()
 {
-    const auto watchPaths = [this, library](const QString& path) {
-        QStringList dirs = Utils::File::getAllSubdirectories(QDir{path});
+    m_setupStopSource.request_stop();
+}
+
+void LibraryMonitor::setupWatchers(const LibraryInfoMap& libraries, const TrackList& tracks, bool monitorDirectories,
+                                   bool monitorTrackFiles)
+{
+    const std::stop_token stopToken = m_setupStopSource.get_token();
+    if(stopToken.stop_requested()) {
+        return;
+    }
+
+    std::vector<int> removedLibraries;
+    for(const auto& id : m_watchers | std::views::keys) {
+        if(!libraries.contains(id)) {
+            removedLibraries.push_back(id);
+        }
+    }
+    for(const int id : removedLibraries) {
+        m_watchers.erase(id);
+    }
+
+    for(const auto& library : libraries | std::views::values) {
+        if(stopToken.stop_requested()) {
+            return;
+        }
+
+        if(!monitorDirectories) {
+            if(library.status == LibraryInfo::Status::Monitoring) {
+                LibraryInfo updatedLibrary{library};
+                updatedLibrary.status = LibraryInfo::Status::Idle;
+                Q_EMIT statusChanged(updatedLibrary);
+            }
+        }
+        else {
+            if(m_watchers.contains(library.id)) {
+                m_watchers.erase(library.id);
+            }
+
+            if(!addWatcher(library, tracks, monitorTrackFiles, stopToken)) {
+                return;
+            }
+
+            LibraryInfo updatedLibrary{library};
+            updatedLibrary.status = LibraryInfo::Status::Monitoring;
+            Q_EMIT statusChanged(updatedLibrary);
+        }
+    }
+
+    if(!monitorDirectories) {
+        m_watchers.clear();
+    }
+}
+
+void LibraryMonitor::shutdown()
+{
+    m_watchers.clear();
+}
+
+bool LibraryMonitor::addWatcher(const LibraryInfo& library, const TrackList& tracks, const bool monitorTrackFiles,
+                                const std::stop_token stopToken)
+{
+    const auto watchPaths = [this, library, stopToken](const QString& path) {
+        if(stopToken.stop_requested()) {
+            return false;
+        }
+
+        QStringList dirs = Utils::File::getAllSubdirectories(QDir{path}, stopToken);
+        if(stopToken.stop_requested()) {
+            return false;
+        }
+
         dirs.append(path);
-        m_watchers[library.id].addPaths(dirs);
+        return addPaths(m_watchers[library.id], dirs, stopToken);
     };
 
-    watchPaths(library.path);
+    if(!watchPaths(library.path)) {
+        return false;
+    }
 
     auto& watcher = m_watchers[library.id];
 
     QObject::connect(&watcher, &LibraryWatcher::libraryDirsChanged, this,
                      [this, watchPaths, library](const QStringList& dirs) {
-                         std::ranges::for_each(dirs, watchPaths);
-                         Q_EMIT directoriesChanged(library, dirs);
+                         for(const QString& dir : dirs) {
+                             if(!watchPaths(dir)) {
+                                 return;
+                             }
+                         }
+
+                         if(!m_setupStopSource.stop_requested()) {
+                             Q_EMIT directoriesChanged(library, dirs);
+                         }
                      });
     QObject::connect(&watcher, &LibraryWatcher::libraryTrackFilesChanged, this,
-                     [this, library](const QStringList& files) { Q_EMIT trackFilesChanged(library, files); });
+                     [this, library](const QStringList& files) {
+                         if(!m_setupStopSource.stop_requested()) {
+                             Q_EMIT trackFilesChanged(library, files);
+                         }
+                     });
 
     if(!monitorTrackFiles) {
-        return;
+        return true;
     }
 
     std::set<QString> files;
     for(const Track& track : tracks) {
+        if(stopToken.stop_requested()) {
+            return false;
+        }
+
         if(track.libraryId() != library.id || track.hasCue()) {
             continue;
         }
@@ -74,47 +178,14 @@ void LibraryMonitor::addWatcher(const LibraryInfo& library, const TrackList& tra
     QStringList watchFiles;
     watchFiles.reserve(static_cast<qsizetype>(files.size()));
     for(const QString& file : files) {
+        if(stopToken.stop_requested()) {
+            return false;
+        }
+
         watchFiles.push_back(file);
     }
-    watcher.addPaths(watchFiles);
-}
 
-void LibraryMonitor::setupWatchers(const LibraryInfoMap& libraries, const TrackList& tracks, bool monitorDirectories,
-                                   bool monitorTrackFiles)
-{
-    std::vector<int> removedLibraries;
-    for(const auto& id : m_watchers | std::views::keys) {
-        if(!libraries.contains(id)) {
-            removedLibraries.push_back(id);
-        }
-    }
-    for(const int id : removedLibraries) {
-        m_watchers.erase(id);
-    }
-
-    for(const auto& library : libraries | std::views::values) {
-        if(!monitorDirectories) {
-            if(library.status == LibraryInfo::Status::Monitoring) {
-                LibraryInfo updatedLibrary{library};
-                updatedLibrary.status = LibraryInfo::Status::Idle;
-                Q_EMIT statusChanged(updatedLibrary);
-            }
-        }
-        else {
-            if(m_watchers.contains(library.id)) {
-                m_watchers.erase(library.id);
-            }
-
-            addWatcher(library, tracks, monitorTrackFiles);
-            LibraryInfo updatedLibrary{library};
-            updatedLibrary.status = LibraryInfo::Status::Monitoring;
-            Q_EMIT statusChanged(updatedLibrary);
-        }
-    }
-
-    if(!monitorDirectories) {
-        m_watchers.clear();
-    }
+    return addPaths(watcher, watchFiles, stopToken);
 }
 } // namespace Fooyin
 
