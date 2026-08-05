@@ -1286,7 +1286,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="62"/>
         <source>&amp;Visualisations</source>
-        <translation type="unfinished">視覺化(&amp;S)</translation>
+        <translation>視覺化(&amp;V)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="84"/>
@@ -2467,7 +2467,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="293"/>
         <source>Automatic (preserve source)</source>
-        <translation type="unfinished"></translation>
+        <translation>自動(保留來源)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="294"/>
@@ -2497,7 +2497,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="300"/>
         <source>Automatic (when reducing bit depth)</source>
-        <translation type="unfinished"></translation>
+        <translation>自動(當減少位元深度時)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="301"/>
@@ -5106,12 +5106,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="47"/>
         <source>Preserve playback playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>保留播放播放清單</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="74"/>
         <source>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>當此選擇播放清單用於播放時，在其名稱後面附加&quot;(播放)&quot;加以保留它，而非取代其曲目。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="80"/>
@@ -5620,17 +5620,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="980"/>
         <source>Lock playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>鎖定播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="982"/>
         <source>Prevent changes to the contents of the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>對目前播放清單內容防止進行變更</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="985"/>
         <source>Lock Current Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>鎖定目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1006"/>
@@ -5955,17 +5955,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="170"/>
         <source>&amp;Import…</source>
-        <translation type="unfinished"></translation>
+        <translation>匯入(&amp;I)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="171"/>
         <source>E&amp;xport…</source>
-        <translation type="unfinished"></translation>
+        <translation>匯出(&amp;X)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="174"/>
         <source>Theme colours are disabled when using a Windows style. Select Fusion as the interface style to customise colours.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 Windows 樣式時，主題顏色會被停用。選擇 Fusion 作為介面樣式，以自訂顏色。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="207"/>
@@ -6110,7 +6110,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="375"/>
         <source>Custom colours are only supported with the Fusion style on Windows.</source>
-        <translation type="unfinished"></translation>
+        <translation>自訂顏色僅支援於 Windows 上的 Fusion 樣式使用。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="540"/>
@@ -6120,38 +6120,38 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="558"/>
         <source>Open Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟主題</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="558"/>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="591"/>
         <source>fooyin Theme (*.fyt)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin 主題 (*.fyt)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="566"/>
         <source>Import Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>匯入主題</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="566"/>
         <source>Could not import theme</source>
-        <translation type="unfinished"></translation>
+        <translation>無法匯入主題</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="590"/>
         <source>Save Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>儲存主題</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="601"/>
         <source>Export Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>匯出主題</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="601"/>
         <source>Could not export theme</source>
-        <translation type="unfinished"></translation>
+        <translation>無法匯出主題</translation>
     </message>
 </context>
 <context>
@@ -6182,7 +6182,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="117"/>
         <source>Dark mode</source>
-        <translation type="unfinished"></translation>
+        <translation>暗光模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="119"/>
@@ -6282,7 +6282,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="332"/>
         <source>Dark mode is not supported by this style.</source>
-        <translation type="unfinished"></translation>
+        <translation>此樣式不支援暗光模式。</translation>
     </message>
 </context>
 <context>
@@ -7600,17 +7600,17 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="173"/>
         <source>Read ratings from ID3 POPM frames in MP3 files before text rating tags.</source>
-        <translation>在文字評分標籤之前，從 MP3 檔案中的 ID3 POPM 框架來讀取評分。</translation>
+        <translation>在文字評分標籤之前，從 MP3 檔案中的 ID3 POPM 框格來讀取評分。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="175"/>
         <source>Additionally save ratings to ID3 POPM frames when writing MP3 files. Other formats are unaffected.</source>
-        <translation>此外，在寫入 MP3 檔案時，將評分儲存至 ID3 POPM 框架。其他格式則不受影響。</translation>
+        <translation>此外，在寫入 MP3 檔案時，將評分儲存至 ID3 POPM 框格。其他格式則不受影響。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="177"/>
         <source>Owner identifier for POPM frames. Leave empty to read the first POPM frame and write an empty owner.</source>
-        <translation>擁有者識別碼 用於 POPM 框架。留下空白以讀取第一個 POPM 框架，並寫入空白擁有者。</translation>
+        <translation>擁有者識別碼 用於 POPM 音框。留下空白以讀取第一個 POPM 框格，並寫入空白擁有者。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="178"/>
@@ -7855,7 +7855,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="49"/>
         <source>Preserve playback playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>保留播放播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="81"/>
@@ -7866,7 +7866,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="99"/>
         <source>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>當此選擇播放清單使用於播放時，將附加&quot;(播放)&quot;加以保留，而非取代其曲目。</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="116"/>
@@ -9491,17 +9491,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="49"/>
         <source>&amp;Oscilloscope</source>
-        <translation type="unfinished"></translation>
+        <translation>示波器(&amp;O)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="50"/>
         <source>Open an oscilloscope in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟示波器於個別的視窗</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="52"/>
         <source>View</source>
-        <translation type="unfinished">檢視</translation>
+        <translation>檢視</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="56"/>
@@ -10241,7 +10241,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="153"/>
         <source>Show Random Track</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示隨機曲目</translation>
     </message>
 </context>
 <context>
@@ -11168,7 +11168,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="500"/>
         <source>Lock playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>鎖定播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="519"/>
@@ -11286,7 +11286,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="509"/>
         <source>Lock playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>鎖定播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="451"/>
@@ -11646,7 +11646,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="455"/>
         <source>Lock playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>鎖定播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="470"/>
@@ -11681,17 +11681,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="545"/>
         <source>Tab position</source>
-        <translation type="unfinished"></translation>
+        <translation>分頁位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="562"/>
         <source>Top</source>
-        <translation type="unfinished">頂部</translation>
+        <translation>頂部</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="563"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="731"/>
@@ -11720,47 +11720,47 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="32"/>
         <source>Playlist Tabs Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>播放清單分頁設定</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="34"/>
         <source>Expand tabs to fill empty space</source>
-        <translation type="unfinished">展開分頁以填寫空位</translation>
+        <translation>展開分頁以填滿空白位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="35"/>
         <source>Show add button</source>
-        <translation type="unfinished">顯示添加按鈕</translation>
+        <translation>顯示添加按鈕</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="36"/>
         <source>Show clear button</source>
-        <translation type="unfinished">顯示清除按鈕</translation>
+        <translation>顯示清除按鈕</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="37"/>
         <source>Show delete button on tabs</source>
-        <translation type="unfinished">顯示刪除按鈕在分頁上</translation>
+        <translation>顯示刪除按鈕於分頁上</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="38"/>
         <source>Delete playlists on middle click</source>
-        <translation type="unfinished">用中鍵點選時刪除播放清單</translation>
+        <translation>用中鍵點選來刪除播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="40"/>
         <source>Top</source>
-        <translation type="unfinished">頂部</translation>
+        <translation>頂部</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="41"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="46"/>
         <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation>位置</translation>
     </message>
 </context>
 <context>
@@ -12281,7 +12281,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="130"/>
         <source>Maximum rendering frame rate in frames per second</source>
-        <translation>最大渲染影格率 (每秒影格數)</translation>
+        <translation>最大渲染音框率 (每秒音框數)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="136"/>
@@ -12376,7 +12376,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="177"/>
         <source>Max. frame rate</source>
-        <translation>最大影格率</translation>
+        <translation>最大音框率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="178"/>
@@ -12416,7 +12416,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="51"/>
         <source>Open projectM in a separate window</source>
-        <translation>開啟 projectM 於單獨的視窗</translation>
+        <translation>開啟 projectM 於個別的視窗</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="53"/>
@@ -12452,17 +12452,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="415"/>
         <source>Could not initialise OpenGL: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>無法初始化 OpenGL: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="420"/>
         <source>projectM requires OpenGL 3.3 or newer.</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM 必須要有 OpenGL 3.3 或更新版本。.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="548"/>
         <source>projectM requires an initialised OpenGL 3.3 context.</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM 必須要有初始化的 OpenGL 3.3 環境。.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="553"/>
@@ -12543,12 +12543,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="201"/>
         <source>No projectM presets were found in the configured location.</source>
-        <translation type="unfinished"></translation>
+        <translation>找無 projectM 預設集於設定所指的位置。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="203"/>
         <source>Right-click to configure presets.</source>
-        <translation type="unfinished"></translation>
+        <translation>點按滑鼠右鍵以調設預設集。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="245"/>
@@ -13220,7 +13220,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="52"/>
         <source>Use uniform station icon frames</source>
-        <translation>使用統一的站台圖示框架</translation>
+        <translation>使用統一的站台圖示畫框</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="54"/>
@@ -16661,17 +16661,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="46"/>
         <source>Spectro&amp;gram</source>
-        <translation type="unfinished"></translation>
+        <translation>頻譜圖(&amp;G)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="47"/>
         <source>Open a spectrogram in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟頻譜圖於個別的視窗</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="49"/>
         <source>View</source>
-        <translation type="unfinished">檢視</translation>
+        <translation>檢視</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="53"/>
@@ -16849,12 +16849,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="251"/>
         <source>Duration (sample-rate based)</source>
-        <translation type="unfinished"></translation>
+        <translation>持續時間(基於取樣率)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="252"/>
         <source>Fixed samples</source>
-        <translation type="unfinished"></translation>
+        <translation>固定取樣</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="254"/>
@@ -16920,12 +16920,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="268"/>
         <source>Signal level mapped to the bottom of the spectrum</source>
-        <translation>訊號層級已經映對至波譜底部</translation>
+        <translation>訊號層級已經映對至頻譜底部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="269"/>
         <source>Signal level mapped to the top of the spectrum</source>
-        <translation>訊號層級已經映對至波譜頂部</translation>
+        <translation>訊號層級已經映對至頻譜頂部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="270"/>
@@ -16935,17 +16935,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="271"/>
         <source>Number of samples analysed per spectrum frame; higher values improve frequency detail but respond more slowly</source>
-        <translation>每個波譜幀框所分析的樣本數量；較高數值可增進頻率細緻，但反應速度較慢</translation>
+        <translation>每個頻譜音框所分析的樣本數量；較高數值可增進頻率細緻，但反應速度較慢</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="274"/>
         <source>Length of audio analysed per spectrum frame; the FFT size adapts to the sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>每個頻譜音框所分析音訊的長度；FFT 大小適用於取樣率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="276"/>
         <source>Keep the analysis duration consistent across sample rates, or use a fixed number of samples</source>
-        <translation type="unfinished"></translation>
+        <translation>維持分析持續時間一致，跨越不同的取樣率，或使用固定的取樣數</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="277"/>
@@ -16995,27 +16995,27 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="286"/>
         <source>Maximum spectrum refresh rate</source>
-        <translation>最大波譜重新整理頻率</translation>
+        <translation>最大頻譜重新整理頻率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="287"/>
         <source>Highlight white piano-key note ranges behind the spectrum</source>
-        <translation>突出顯示波譜後面的白色鋼琴鍵音符範圍</translation>
+        <translation>強調顯示頻譜後方的白色琴鍵音符範圍</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="288"/>
         <source>Highlight black piano-key note ranges behind the spectrum</source>
-        <translation>突出顯示波譜後面的黑色鋼琴鍵音符範圍</translation>
+        <translation>強調顯示頻譜後方的黑色琴鍵音符範圍</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="289"/>
         <source>Show frequency or note and level when hovering over the spectrum</source>
-        <translation>當游標位處在波譜上時，顯示頻率或音符及層級</translation>
+        <translation>當游標位處在頻譜上時，顯示頻率或音符及層級</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="290"/>
         <source>Fill the spectrum area instead of drawing only the outline</source>
-        <translation>填滿波譜區域而非僅於廓線繪製</translation>
+        <translation>填滿頻譜區域，而非只是繪製輪廓線</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="291"/>
@@ -17045,7 +17045,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="296"/>
         <source>Font used for spectrum axis labels</source>
-        <translation>用於波譜軸標籤的字型</translation>
+        <translation>用於頻譜軸線標籤的字型</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="297"/>
@@ -17065,12 +17065,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="331"/>
         <source>Frequency or note range covered by the spectrum</source>
-        <translation>波譜所函蓋的頻率或音符範圍</translation>
+        <translation>頻譜所函蓋的頻率或音符範圍</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="336"/>
         <source>Decibel range mapped to the spectrum height</source>
-        <translation>映射至波譜高度的分貝範圍</translation>
+        <translation>映射至頻譜高度的分貝範圍</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="344"/>
@@ -17095,7 +17095,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="350"/>
         <source>FFT sizing</source>
-        <translation type="unfinished"></translation>
+        <translation>FFT 大小</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="351"/>
@@ -17105,7 +17105,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="352"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>持續</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="353"/>
@@ -17217,24 +17217,24 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="50"/>
         <source>&amp;Spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>頻譜(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="51"/>
         <source>Open a spectrum in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟頻譜於個別的視窗</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="53"/>
         <source>View</source>
-        <translation type="unfinished">檢視</translation>
+        <translation>檢視</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="57"/>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="61"/>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="63"/>
         <source>Spectrum</source>
-        <translation>波譜</translation>
+        <translation>頻譜</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="53"/>
@@ -17248,7 +17248,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="124"/>
         <source>Spectrum</source>
-        <translation>波譜</translation>
+        <translation>頻譜</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="668"/>
@@ -17283,12 +17283,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="716"/>
         <source>FFT window</source>
-        <translation type="unfinished"></translation>
+        <translation>FFT 視窗</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="719"/>
         <source>Sample rate based (%1 ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>基於取樣率 (%1 ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="745"/>
@@ -17298,7 +17298,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="754"/>
         <source>Fill spectrum</source>
-        <translation>填滿波譜</translation>
+        <translation>填滿頻譜</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="763"/>
@@ -18465,37 +18465,37 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="58"/>
         <source>View</source>
-        <translation type="unfinished">檢視</translation>
+        <translation>檢視</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="67"/>
         <source>&amp;VU Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>音量計(&amp;V)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="67"/>
         <source>Open a VU meter in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟音量計於個別的視窗</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="68"/>
         <source>VU Meter</source>
-        <translation type="unfinished">音量計</translation>
+        <translation>音量計</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="69"/>
         <source>&amp;Peak Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>峰值計(&amp;P)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="69"/>
         <source>Open a peak meter in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟峰值計於個別的視窗</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="70"/>
         <source>Peak Meter</source>
-        <translation type="unfinished">峰值計</translation>
+        <translation>峰值計</translation>
     </message>
 </context>
 <context>
@@ -18839,17 +18839,17 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="91"/>
         <source>&amp;Waveform Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>波形搜尋列(&amp;W)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="92"/>
         <source>Open a waveform seekbar in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟波形搜尋列於個別的視窗</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="94"/>
         <source>View</source>
-        <translation type="unfinished">檢視</translation>
+        <translation>檢視</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="103"/>
