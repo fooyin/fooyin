@@ -835,6 +835,9 @@ void QueueViewer::applyConfig(const ConfigData& config)
     m_view->setVerticalScrollBarPolicy(m_config.showScrollBar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
     m_view->setAlternatingRowColors(m_config.alternatingRows);
 
+    const QVariant resolvedStyleValue = m_settings->value<Settings::Gui::ResolvedAppStyle>();
+    Gui::refreshItemViewPalette(m_view, resolvedStyleValue.value<ResolvedAppStyle>().palette);
+
     QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
 
     Q_EMIT configChanged();

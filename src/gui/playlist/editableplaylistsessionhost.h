@@ -43,6 +43,7 @@ public:
 
     virtual void setHeaderVisible(bool visible)           = 0;
     virtual void setScrollbarVisible(bool visible)        = 0;
+    virtual void setAlternatingRowColors(bool enabled)    = 0;
     virtual void setMiddleClickAction(TrackAction action) = 0;
 };
 } // namespace Fooyin

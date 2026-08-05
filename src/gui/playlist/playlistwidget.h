@@ -139,6 +139,7 @@ public:
     void resetSort(bool force = false);
     void setHeaderVisible(bool visible);
     void setScrollbarVisible(bool visible);
+    void setAlternatingRowColors(bool enabled);
     void selectAll();
 
     void handlePresetChanged(const PlaylistPreset& preset);

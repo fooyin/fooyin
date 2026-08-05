@@ -155,6 +155,10 @@ public:
     {
         m_widget->setScrollbarVisible(visible);
     }
+    void setAlternatingRowColors(bool enabled) override
+    {
+        m_widget->setAlternatingRowColors(enabled);
+    }
     void setMiddleClickAction(TrackAction action) override
     {
         m_widget->setMiddleClickAction(action);
@@ -541,6 +545,14 @@ void PlaylistWidget::setHeaderVisible(bool visible)
 void PlaylistWidget::setScrollbarVisible(bool visible)
 {
     m_playlistView->setVerticalScrollBarPolicy(visible ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+}
+
+void PlaylistWidget::setAlternatingRowColors(bool enabled)
+{
+    m_playlistView->setAlternatingRowColors(enabled);
+    if(m_styleProvider->isResolved()) {
+        Gui::refreshItemViewPalette(m_playlistView, m_styleProvider->style().palette);
+    }
 }
 
 void PlaylistWidget::selectAll()
@@ -1321,7 +1333,7 @@ void PlaylistWidget::applyInitialViewSettings()
 {
     setHeaderVisible(m_settings->value<PlaylistHeader>());
     setScrollbarVisible(m_settings->value<PlaylistScrollBar>());
-    m_playlistView->setAlternatingRowColors(m_settings->value<PlaylistAltColours>());
+    setAlternatingRowColors(m_settings->value<PlaylistAltColours>());
 }
 
 void PlaylistWidget::applySessionTexts()

@@ -54,6 +54,8 @@ FYGUI_EXPORT QMap<PaletteKey, QColor> coloursFromStylePalette();
 FYGUI_EXPORT QMap<PaletteKey, QColor> coloursFromPalette(const QPalette& palette);
 FYGUI_EXPORT bool styleSupportsCustomPalette(const QString& styleName);
 FYGUI_EXPORT bool styleSupportsDarkMode(const QString& styleName);
+FYGUI_EXPORT bool styleUsesNormalItemViewSelectionText(const QString& styleName, bool alternatingRows = false);
+FYGUI_EXPORT QPalette::ColorRole itemViewSelectionTextRole(const QStyleOptionViewItem& option);
 
 /*! Returns the style-provided item text rectangle with spacing for leading row decorations. */
 FYGUI_EXPORT QRect itemViewTextRect(const QStyleOptionViewItem& option);

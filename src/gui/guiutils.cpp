@@ -80,6 +80,25 @@ bool styleSupportsDarkMode(const QString& styleName)
 #endif
 }
 
+bool styleUsesNormalItemViewSelectionText(const QString& styleName, bool alternatingRows)
+{
+    if(styleName.compare("windows11"_L1, Qt::CaseInsensitive) == 0) {
+        // Windows 11 uses an accent selection with contrasting text for alternating rows
+        return !alternatingRows;
+    }
+    return styleName.compare("windowsvista"_L1, Qt::CaseInsensitive) == 0;
+}
+
+QPalette::ColorRole itemViewSelectionTextRole(const QStyleOptionViewItem& option)
+{
+    const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
+    const auto* view    = qobject_cast<const QAbstractItemView*>(option.widget);
+    const bool normalSelectionText
+        = style && styleUsesNormalItemViewSelectionText(style->name(), view && view->alternatingRowColors());
+
+    return normalSelectionText ? QPalette::Text : QPalette::HighlightedText;
+}
+
 QRect itemViewTextRect(const QStyleOptionViewItem& option)
 {
     const QStyle* style     = option.widget ? option.widget->style() : QApplication::style();
@@ -289,12 +308,20 @@ void refreshItemViewPalette(QAbstractItemView* view, const QPalette& palette)
         return;
     }
 
-    view->setPalette(palette);
+    QPalette itemViewPalette{palette};
+    if(const auto* style = view->style();
+       style && styleUsesNormalItemViewSelectionText(style->name(), view->alternatingRowColors())) {
+        for(const auto group : {QPalette::Active, QPalette::Disabled, QPalette::Inactive}) {
+            itemViewPalette.setBrush(group, QPalette::HighlightedText, itemViewPalette.brush(group, QPalette::Text));
+        }
+    }
+
+    view->setPalette(itemViewPalette);
     if(view->viewport()) {
-        view->viewport()->setPalette(palette);
+        view->viewport()->setPalette(itemViewPalette);
     }
     if(auto* header = itemViewHeader(view)) {
-        header->setPalette(palette);
+        header->setPalette(itemViewPalette);
     }
 }
 

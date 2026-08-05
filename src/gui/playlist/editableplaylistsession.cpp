@@ -337,7 +337,7 @@ void EditablePlaylistSession::setupConnections(PlaylistWidgetSessionHost& sessio
     host.settingsManager()->subscribe<Settings::Gui::Internal::PlaylistScrollBar>(
         widget, [widget](bool show) { editableHost(widget).setScrollbarVisible(show); });
     host.settingsManager()->subscribe<Settings::Gui::Internal::PlaylistAltColours>(
-        host.playlistView(), &PlaylistView::setAlternatingRowColors);
+        widget, [widget](bool enabled) { editableHost(widget).setAlternatingRowColors(enabled); });
 }
 
 void EditablePlaylistSession::setupActions(PlaylistWidgetSessionHost& sessionHost, ActionContainer* editMenu,

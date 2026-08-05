@@ -68,7 +68,7 @@ PreparedTextLines prepareTextLines(const QStyleOptionViewItem& option, int maxWi
         return result;
     }
 
-    const QColor selectedColor = option.palette.color(QPalette::HighlightedText);
+    const QColor selectedColor = option.palette.color(Gui::itemViewSelectionTextRole(option));
     const QColor defaultColour = option.palette.color(QPalette::Text);
     const QColor linkColour    = option.palette.color(QPalette::Link);
     const int defaultHeight    = QFontMetrics{option.font}.height();
@@ -162,8 +162,9 @@ void drawPreparedTextLines(QPainter* painter, const QStyleOptionViewItem& option
         return;
     }
 
-    const QStyle* style   = option.widget ? option.widget->style() : QApplication::style();
-    const auto colourRole = option.state & QStyle::State_Selected ? QPalette::HighlightedText : QPalette::NoRole;
+    const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
+    const auto colourRole
+        = option.state & QStyle::State_Selected ? Gui::itemViewSelectionTextRole(option) : QPalette::NoRole;
 
     int totalHeight{0};
     for(const auto& line : lines) {

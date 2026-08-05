@@ -888,6 +888,10 @@ void FilterWidget::updateAppearance()
 {
     m_view->setVerticalScrollBarPolicy(m_showScrollbar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
     m_view->setAlternatingRowColors(m_alternatingColours);
+
+    const QVariant resolvedStyleValue = m_settings->value<Settings::Gui::ResolvedAppStyle>();
+    Gui::refreshItemViewPalette(m_view, resolvedStyleValue.value<ResolvedAppStyle>().palette);
+
     m_header->setFixedHeight(!m_showHeader ? 0 : QWIDGETSIZE_MAX);
     m_header->adjustSize();
 }
