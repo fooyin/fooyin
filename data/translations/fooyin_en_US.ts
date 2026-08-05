@@ -5980,7 +5980,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="174"/>
         <source>Theme colours are disabled when using a Windows style. Select Fusion as the interface style to customise colours.</source>
-        <translation type="unfinished"></translation>
+        <translation>Theme colors are disabled when using a Windows style. Select Fusion as the interface style to customize colors.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="207"/>
@@ -6125,7 +6125,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="375"/>
         <source>Custom colours are only supported with the Fusion style on Windows.</source>
-        <translation type="unfinished"></translation>
+        <translation>Custom colors are only supported with the Fusion style on Windows.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="540"/>
@@ -9570,7 +9570,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="237"/>
         <source>%1 ms</source>
-        <translation type="unfinished"></translation>
+        <translation>%1&#xa0;ms</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="248"/>
@@ -11308,7 +11308,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="509"/>
         <source>Lock playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Lock playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="451"/>
@@ -12476,7 +12476,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="415"/>
         <source>Could not initialise OpenGL: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Could not initialize OpenGL: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="420"/>
@@ -12486,7 +12486,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="548"/>
         <source>projectM requires an initialised OpenGL 3.3 context.</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM requires an initialized OpenGL 3.3 context.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="553"/>
@@ -17320,7 +17320,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="719"/>
         <source>Sample rate based (%1 ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Sample rate based (%1&#xa0;ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="745"/>
