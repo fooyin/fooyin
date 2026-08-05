@@ -36,8 +36,8 @@ void PlaylistManagerDelegate::paint(QPainter* painter, const QStyleOptionViewIte
     const QStyle* style  = opt.widget ? opt.widget->style() : QApplication::style();
     const QRect textRect = Gui::itemViewTextRect(opt);
     const QString text   = opt.fontMetrics.elidedText(opt.text, opt.textElideMode, textRect.width());
-    const auto textRole  = opt.state.testFlag(QStyle::State_Selected) ? Gui::itemViewSelectionTextRole(opt)
-                                                                      : QPalette::Text;
+    const auto textRole
+        = opt.state.testFlag(QStyle::State_Selected) ? Gui::itemViewSelectionTextRole(opt) : QPalette::Text;
 
     if(!opt.icon.isNull()) {
         const QRect decorationRect = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
