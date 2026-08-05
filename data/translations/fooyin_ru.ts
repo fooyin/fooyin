@@ -1286,7 +1286,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="62"/>
         <source>&amp;Visualisations</source>
-        <translation type="unfinished">&amp;Визуализации</translation>
+        <translation>&amp;Визуализации</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="84"/>
@@ -2483,7 +2483,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="293"/>
         <source>Automatic (preserve source)</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматически (сохранять исходный)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="294"/>
@@ -2513,7 +2513,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="300"/>
         <source>Automatic (when reducing bit depth)</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматически (при уменьшении разрядности)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="301"/>
@@ -2880,7 +2880,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="409"/>
         <source>Keep aspect ratio</source>
-        <translation>Сохранить соотношение сторон</translation>
+        <translation>Сохранять пропорции</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="422"/>
@@ -2988,7 +2988,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="38"/>
         <source>Keep aspect ratio</source>
-        <translation>Сохранить соотношение сторон</translation>
+        <translation>Сохранять пропорции</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="39"/>
@@ -3108,7 +3108,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="169"/>
         <source>Tag readers</source>
-        <translation>Экстракторы тегов</translation>
+        <translation>Считыватели тегов</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="226"/>
@@ -3188,7 +3188,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="244"/>
         <source>Go up to the parent directory</source>
-        <translation>Перейти в родительский каталог</translation>
+        <translation>Перейти выше в родительский каталог</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="249"/>
@@ -3449,12 +3449,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="69"/>
         <source>Show playstate</source>
-        <translation>Показать состояние проигрывания</translation>
+        <translation>Показывать состояние воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="70"/>
         <source>Clear on pause</source>
-        <translation>Очистить при паузе</translation>
+        <translation>Очищать при паузе</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="73"/>
@@ -3479,7 +3479,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="89"/>
         <source>Rich Presence</source>
-        <translation>Функция Rich Presence</translation>
+        <translation>Статус активности Rich Presence</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="105"/>
@@ -4021,7 +4021,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="180"/>
         <source>Calculating…</source>
-        <translation>Подсчёт…</translation>
+        <translation>Вычисление…</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="180"/>
@@ -4624,7 +4624,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="58"/>
         <source>Add stream &amp;URL…</source>
-        <translation>Добавить &amp;URL-адрес потока…</translation>
+        <translation>Д&amp;обавить адрес потока…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="59"/>
@@ -4644,7 +4644,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="75"/>
         <source>&amp;New autoplaylist</source>
-        <translation>&amp;Новый автоплейлист</translation>
+        <translation>Новый ав&amp;топлейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="76"/>
@@ -5138,12 +5138,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="47"/>
         <source>Preserve playback playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранять плейлист воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="74"/>
         <source>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>Когда этот плейлист выделения используется для воспроизведения, сохранять его с добавлением «(Воспроизведение)» к имени вместо замены его дорожек.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="80"/>
@@ -5359,7 +5359,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="721"/>
         <source>More…</source>
-        <translation>Ещё…</translation>
+        <translation>Больше…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="320"/>
@@ -5454,7 +5454,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="92"/>
         <source>Wait for tracks</source>
-        <translation>Ждать загрузку треков</translation>
+        <translation>Ожидать загрузку дорожек</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="93"/>
@@ -5469,7 +5469,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="97"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
-        <translation>Ждать загрузку треков при открытии проигрывателя</translation>
+        <translation>Задерживать открытие fooyin до полной загрузки всех дорожек</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="99"/>
@@ -5652,17 +5652,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="980"/>
         <source>Lock playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Блокировать плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="982"/>
         <source>Prevent changes to the contents of the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Предотвращать изменения содержимого текущего плейлиста</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="985"/>
         <source>Lock Current Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Блокировать текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1006"/>
@@ -5836,12 +5836,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1846"/>
         <source>Add Stream URL</source>
-        <translation>Добавить URL-адрес потока</translation>
+        <translation>Добавить адрес потока</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1846"/>
         <source>Stream URL:</source>
-        <translation>URL-адрес потока:</translation>
+        <translation>Адрес потока:</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="354"/>
@@ -5987,17 +5987,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="170"/>
         <source>&amp;Import…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Импортировать…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="171"/>
         <source>E&amp;xport…</source>
-        <translation type="unfinished"></translation>
+        <translation>Э&amp;кспортировать…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="174"/>
         <source>Theme colours are disabled when using a Windows style. Select Fusion as the interface style to customise colours.</source>
-        <translation type="unfinished"></translation>
+        <translation>Цвета тем отключены при использовании стиля Windows. Выберите Fusion в качестве стиля интерфейса для настройки цветов.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="207"/>
@@ -6132,7 +6132,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="261"/>
         <source>Advanced Colours</source>
-        <translation>Дополнительные цвета</translation>
+        <translation>Расширенные цвета</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="262"/>
@@ -6142,7 +6142,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="375"/>
         <source>Custom colours are only supported with the Fusion style on Windows.</source>
-        <translation type="unfinished"></translation>
+        <translation>Пользовательские цвета поддерживаются только со стилем Fusion в Windows.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="540"/>
@@ -6152,38 +6152,38 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="558"/>
         <source>Open Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть тему</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="558"/>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="591"/>
         <source>fooyin Theme (*.fyt)</source>
-        <translation type="unfinished"></translation>
+        <translation>Тема fooyin (*.fyt)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="566"/>
         <source>Import Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт темы</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="566"/>
         <source>Could not import theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось импортировать тему</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="590"/>
         <source>Save Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить тему</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="601"/>
         <source>Export Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт темы</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="601"/>
         <source>Could not export theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось экспортировать тему</translation>
     </message>
 </context>
 <context>
@@ -6214,7 +6214,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="117"/>
         <source>Dark mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Тёмный режим</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="119"/>
@@ -6314,7 +6314,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="332"/>
         <source>Dark mode is not supported by this style.</source>
-        <translation type="unfinished"></translation>
+        <translation>Тёмный режим не поддерживается этим стилем.</translation>
     </message>
 </context>
 <context>
@@ -6640,7 +6640,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="140"/>
         <source>Selection info</source>
-        <translation>Информация о выделении</translation>
+        <translation>Сведения о выделении</translation>
     </message>
 </context>
 <context>
@@ -6658,7 +6658,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="59"/>
         <source>&amp;Scripting help</source>
-        <translation>&amp;Справка по написанию скриптов</translation>
+        <translation>Спра&amp;вка по скриптам</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="60"/>
@@ -7297,7 +7297,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="61"/>
         <source>&amp;Clean</source>
-        <translation>&amp;Очистить</translation>
+        <translation>Очи&amp;стить</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="62"/>
@@ -7893,7 +7893,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="49"/>
         <source>Preserve playback playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранять плейлист воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="81"/>
@@ -7904,7 +7904,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="99"/>
         <source>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>Когда этот плейлист выделения используется для воспроизведения, сохранять его с добавлением «(Воспроизведение)» к имени вместо замены его дорожек.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="116"/>
@@ -8141,7 +8141,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="87"/>
         <source>&amp;Clear</source>
-        <translation>&amp;Очистить</translation>
+        <translation>Очи&amp;стить</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="89"/>
@@ -8609,7 +8609,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="87"/>
         <source>Autosave after 60 seconds or 1/3 of track duration</source>
-        <translation>Автосохранение через 60 с или 1/3 длины дорожки</translation>
+        <translation>Автосохранение через 60 с или 1/3 длины трека</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="88"/>
@@ -8844,12 +8844,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="65"/>
         <source>Skip remaining sources when lyrics are found</source>
-        <translation>Пропустить оставшиеся источники, если текст песни найден</translation>
+        <translation>Пропускать оставшиеся источники, если текст песни найден</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="66"/>
         <source>Skip external sources if local lyrics are found</source>
-        <translation>Пропустить внешние источники, если текст песни найден локально</translation>
+        <translation>Пропускать внешние источники, если текст песни найден локально</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="70"/>
@@ -8911,7 +8911,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="85"/>
         <source>Lyrics will be searched for in the above order.</source>
-        <translation>Поиск текстов песен будет происходить в показанном выше порядке.</translation>
+        <translation>Поиск текстов песен выполняется в показанном выше порядке.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="86"/>
@@ -9531,17 +9531,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="49"/>
         <source>&amp;Oscilloscope</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Осциллограф</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="50"/>
         <source>Open an oscilloscope in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть осциллограф в отдельном окне</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="52"/>
         <source>View</source>
-        <translation type="unfinished">Вид</translation>
+        <translation>Вид</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="56"/>
@@ -9639,31 +9639,31 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="312"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="330"/>
         <source>16-bit (dithered)</source>
-        <translation>16-битный (с дизерингом)</translation>
+        <translation>16-бит (с дизерингом)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="312"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="329"/>
         <source>16-bit</source>
-        <translation>16-битный</translation>
+        <translation>16-бит</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="314"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="331"/>
         <source>24-bit</source>
-        <translation>24-битный</translation>
+        <translation>24-бита</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="316"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="332"/>
         <source>32-bit</source>
-        <translation>32-битный</translation>
+        <translation>32-бита</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="318"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="333"/>
         <source>32-bit float</source>
-        <translation>32-битный с плавающей точкой</translation>
+        <translation>32-бита с плавающей точкой</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="321"/>
@@ -9741,27 +9741,27 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="124"/>
         <source>16-bit</source>
-        <translation>16-битный</translation>
+        <translation>16-бит</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="125"/>
         <source>16-bit (dithered)</source>
-        <translation>16-битный (с дизерингом)</translation>
+        <translation>16-бит (с дизерингом)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="127"/>
         <source>24-bit</source>
-        <translation>24-битный</translation>
+        <translation>24-бита</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="128"/>
         <source>32-bit</source>
-        <translation>32-битный</translation>
+        <translation>32-бита</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="129"/>
         <source>32-bit float</source>
-        <translation>32-битный с плавающей точкой</translation>
+        <translation>32-бита с плавающей точкой</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="130"/>
@@ -10107,7 +10107,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="88"/>
         <source>Save/restore playback state</source>
-        <translation>Сохранить/восстановить состояние воспроизведения</translation>
+        <translation>Запоминать состояние воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="89"/>
@@ -10122,7 +10122,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="96"/>
         <source>Rewind track on previous</source>
-        <translation>Начать трек с начала</translation>
+        <translation>Играть трек с начала при нажатии «Предыдущий»</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="93"/>
@@ -10132,12 +10132,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="87"/>
         <source>Save/restore active playlist state</source>
-        <translation>Сохранить/восстановить состояние активного плейлиста</translation>
+        <translation>Запоминать состояние активного плейлиста</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="91"/>
         <source>Stop playback after the current track</source>
-        <translation>Остановить проигрывание после текущей дорожки</translation>
+        <translation>Остановить проигрывание после текущего трека</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="92"/>
@@ -10147,7 +10147,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="94"/>
         <source>Stop playback after queue finishes</source>
-        <translation>Останавливать воспроизведение после завершения очереди</translation>
+        <translation>Остановить воспроизведение по завершении очереди</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="95"/>
@@ -10202,7 +10202,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="117"/>
         <source>If the current track in a playlist is unavailable, silently continue to the next track</source>
-        <translation>Если текущий трек в плейлисте недоступен, перейти на следующий трек</translation>
+        <translation>Если текущая дорожка в плейлисте недоступна, бесшумно переходить к следующей</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="122"/>
@@ -10285,7 +10285,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="153"/>
         <source>Show Random Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать случайную дорожку</translation>
     </message>
 </context>
 <context>
@@ -11212,7 +11212,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="500"/>
         <source>Lock playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Блокировать плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="519"/>
@@ -11332,7 +11332,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="509"/>
         <source>Lock playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Блокировать плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="451"/>
@@ -11692,7 +11692,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="455"/>
         <source>Lock playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Блокировать плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="470"/>
@@ -11727,17 +11727,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="545"/>
         <source>Tab position</source>
-        <translation type="unfinished"></translation>
+        <translation>Положение вкладок</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="562"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Сверху</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="563"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Снизу</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="731"/>
@@ -11766,47 +11766,47 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="32"/>
         <source>Playlist Tabs Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки вкладок плейлиста</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="34"/>
         <source>Expand tabs to fill empty space</source>
-        <translation type="unfinished">Расширить вкладки на всё доступное пространство</translation>
+        <translation>Расширить вкладки на всё доступное пространство</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="35"/>
         <source>Show add button</source>
-        <translation type="unfinished">Показывать кнопку для добавления</translation>
+        <translation>Показывать кнопку для добавления</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="36"/>
         <source>Show clear button</source>
-        <translation type="unfinished">Показывать кнопку для очистки</translation>
+        <translation>Показывать кнопку для очистки</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="37"/>
         <source>Show delete button on tabs</source>
-        <translation type="unfinished">Показывать кнопку удаления на вкладках</translation>
+        <translation>Показывать кнопку удаления на вкладках</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="38"/>
         <source>Delete playlists on middle click</source>
-        <translation type="unfinished">Удалять плейлисты щелчком средней кнопки</translation>
+        <translation>Удалять плейлисты щелчком средней кнопки</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="40"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Сверху</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="41"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Снизу</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="46"/>
         <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation>Позиция</translation>
     </message>
 </context>
 <context>
@@ -11832,7 +11832,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1213"/>
         <source>Use custom layout for this playlist</source>
-        <translation>Использовать пользовательский макет для этого плейлиста</translation>
+        <translation>Применять свой макет для этого плейлиста</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1214"/>
@@ -11927,7 +11927,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1261"/>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1299"/>
         <source>More…</source>
-        <translation>Ещё…</translation>
+        <translation>Больше…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="318"/>
@@ -12502,17 +12502,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="415"/>
         <source>Could not initialise OpenGL: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось инициализировать OpenGL: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="420"/>
         <source>projectM requires OpenGL 3.3 or newer.</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM требует OpenGL 3.3 или новее.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="548"/>
         <source>projectM requires an initialised OpenGL 3.3 context.</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM требует инициализированного контекста OpenGL 3.3.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="553"/>
@@ -12595,12 +12595,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="201"/>
         <source>No projectM presets were found in the configured location.</source>
-        <translation type="unfinished"></translation>
+        <translation>Предустановки projectM не найдены в настроенном расположении.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="203"/>
         <source>Right-click to configure presets.</source>
-        <translation type="unfinished"></translation>
+        <translation>Щёлкните правой кнопкой мыши для настройки предустановок.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="245"/>
@@ -12743,7 +12743,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="98"/>
         <source>&amp;Clear</source>
-        <translation>&amp;Очистить</translation>
+        <translation>Очи&amp;стить</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="100"/>
@@ -13091,7 +13091,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="144"/>
         <source>Calculation</source>
-        <translation>Подсчёт</translation>
+        <translation>Вычисление</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="145"/>
@@ -13109,12 +13109,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="59"/>
         <source>Use sample peak for calculating peaks</source>
-        <translation>Использовать пик сэмпла для расчёта пиков</translation>
+        <translation>Использовать пик сэмпла для вычисления пиков</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="60"/>
         <source>Use true peak for calculating peaks</source>
-        <translation>Использовать истинный пик для расчёта пиков</translation>
+        <translation>Использовать истинный пик для вычисления пиков</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="63"/>
@@ -13409,7 +13409,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="146"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
-        <translation>Использовать &lt;b&gt;Ctrl+прокрутка&lt;/b&gt; в виджете для изменения размера значков.</translation>
+        <translation>Используйте &lt;b&gt;Ctrl+прокрутка&lt;/b&gt; в виджете для изменения размера значков.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="148"/>
@@ -13667,7 +13667,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="238"/>
         <source>Loading stations…</source>
-        <translation>Загрузка станций…</translation>
+        <translation>Загружаются станции…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="242"/>
@@ -13804,7 +13804,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1609"/>
         <source>Add custom station…</source>
-        <translation>Добавить пользовательскую станцию…</translation>
+        <translation>Добавить свою станцию…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1610"/>
@@ -13814,7 +13814,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1619"/>
         <source>Copy stream URL</source>
-        <translation>Копировать URL-адрес потока</translation>
+        <translation>Копировать адрес потока</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1620"/>
@@ -14139,7 +14139,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="101"/>
         <source>More Genres</source>
-        <translation>Больше жанров</translation>
+        <translation>Прочие жанры</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="102"/>
@@ -14274,7 +14274,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="127"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="135"/>
         <source>Talk</source>
-        <translation>Разговорная</translation>
+        <translation>Разговорное</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="128"/>
@@ -14455,7 +14455,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="596"/>
         <source>Add custom station…</source>
-        <translation>Добавить пользовательскую станцию…</translation>
+        <translation>Добавить свою станцию…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="597"/>
@@ -14722,12 +14722,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="138"/>
         <source>Add Custom Station</source>
-        <translation>Добавить пользовательскую станцию</translation>
+        <translation>Добавить свою станцию</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="141"/>
         <source>Edit Custom Station</source>
-        <translation>Править пользовательскую станцию</translation>
+        <translation>Править свою станцию</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="144"/>
@@ -14754,7 +14754,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="185"/>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="213"/>
         <source>Stream URL</source>
-        <translation>URL-адрес потока</translation>
+        <translation>Адрес потока</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="189"/>
@@ -16137,7 +16137,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/selectioninfo/selectioninfosettingspage.cpp" line="126"/>
         <location filename="../../src/gui/selectioninfo/selectioninfosettingspage.cpp" line="127"/>
         <source>Selection Info</source>
-        <translation>Информация о выделении</translation>
+        <translation>Сведения о выделенном</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfosettingspage.cpp" line="127"/>
@@ -16401,7 +16401,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/sortactionhandler.cpp" line="140"/>
         <source>More…</source>
-        <translation>Ещё…</translation>
+        <translation>Больше…</translation>
     </message>
     <message>
         <location filename="../../src/gui/sortactionhandler.cpp" line="141"/>
@@ -16727,17 +16727,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="46"/>
         <source>Spectro&amp;gram</source>
-        <translation type="unfinished"></translation>
+        <translation>Спектро&amp;грамма</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="47"/>
         <source>Open a spectrogram in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть спектрограмму в отдельном окне</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="49"/>
         <source>View</source>
-        <translation type="unfinished">Вид</translation>
+        <translation>Вид</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="53"/>
@@ -16915,12 +16915,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="251"/>
         <source>Duration (sample-rate based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Длительность (на основе частоты дискретизации)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="252"/>
         <source>Fixed samples</source>
-        <translation type="unfinished"></translation>
+        <translation>Фиксированное количество выборок</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="254"/>
@@ -17006,12 +17006,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="274"/>
         <source>Length of audio analysed per spectrum frame; the FFT size adapts to the sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Длина аудио, анализируемого на кадр спектра; размер БПФ адаптируется под частоту дискретизации</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="276"/>
         <source>Keep the analysis duration consistent across sample rates, or use a fixed number of samples</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранять длительность анализа одинаковой при разных частотах дискретизации или использовать фиксированное количество выборок</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="277"/>
@@ -17161,7 +17161,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="350"/>
         <source>FFT sizing</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер БПФ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="351"/>
@@ -17171,7 +17171,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="352"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Длительность</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="353"/>
@@ -17283,17 +17283,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="50"/>
         <source>&amp;Spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Спектр</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="51"/>
         <source>Open a spectrum in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть спектр в отдельном окне</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="53"/>
         <source>View</source>
-        <translation type="unfinished">Вид</translation>
+        <translation>Вид</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="57"/>
@@ -17349,12 +17349,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="716"/>
         <source>FFT window</source>
-        <translation type="unfinished"></translation>
+        <translation>Окно БПФ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="719"/>
         <source>Sample rate based (%1 ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>На основе частоты дискретизации (%1 мс)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="745"/>
@@ -18531,37 +18531,37 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="58"/>
         <source>View</source>
-        <translation type="unfinished">Вид</translation>
+        <translation>Вид</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="67"/>
         <source>&amp;VU Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Уровнемер</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="67"/>
         <source>Open a VU meter in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть уровнемер в отдельном окне</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="68"/>
         <source>VU Meter</source>
-        <translation type="unfinished">Уровнемер</translation>
+        <translation>Уровнемер</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="69"/>
         <source>&amp;Peak Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>И&amp;змеритель пиков</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="69"/>
         <source>Open a peak meter in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть измеритель пиков в отдельном окне</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="70"/>
         <source>Peak Meter</source>
-        <translation type="unfinished">Измеритель пиков</translation>
+        <translation>Измеритель пиков</translation>
     </message>
 </context>
 <context>
@@ -18905,17 +18905,17 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="91"/>
         <source>&amp;Waveform Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Волновая панель перемотки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="92"/>
         <source>Open a waveform seekbar in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть волновую панель перемотки в отдельном окне</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="94"/>
         <source>View</source>
-        <translation type="unfinished">Вид</translation>
+        <translation>Вид</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="103"/>
@@ -19355,7 +19355,7 @@ Set to 0 to choose automatically from the remote buffer length.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="562"/>
         <source>Automatic resampling preference</source>
-        <translation>Предпочтения автоматической передискретизации</translation>
+        <translation>Настройки авто-передискретизации</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="563"/>
@@ -20110,12 +20110,12 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="112"/>
         <source>Add custom station</source>
-        <translation>Добавить пользовательскую станцию</translation>
+        <translation>Добавить свою станцию</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="116"/>
         <source>Copy stream URL</source>
-        <translation>Копировать URL-адрес потока</translation>
+        <translation>Копировать адрес потока</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="119"/>
