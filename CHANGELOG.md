@@ -10,6 +10,9 @@
   - Add an optional Random Track button to Player Controls
   - Add native dark mode support on Windows
   - Add theme import and export support
+  - Enable library viewer playback playlist preservation by default and improve naming ([#1381](https://github.com/fooyin/fooyin/issues/1381))
+* Playlist
+  - Add support for locking playlists ([#1381](https://github.com/fooyin/fooyin/issues/1381))
 * Spectrum
   - Add duration-based FFT sizing and improve behaviour across sample rates ([#1446](https://github.com/fooyin/fooyin/issues/1446))
 * Visualisations
@@ -26,11 +29,18 @@
   - Fix selected colours for rich text rows
 * Interface
   - Fix Playlist header transparency with background images
+  - Fix high-volume logging causing UI stalls
+  - Fix selected text and icon contrast in item views on Windows
   - Fix Playlist Organiser row height and text margins
   - Fix Queue Viewer clipped and fractionally-sized text
   - Fix Selection Info sizing with hidden headers
+* Library/Metadata
+  - Cancel library monitor setup during shutdown
+  - Fix single-value writes to multivalue metadata fields ([#1319](https://github.com/fooyin/fooyin/issues/1319), [#1443](https://github.com/fooyin/fooyin/issues/1443))
 * ProjectM
   - Fix OpenGL setup and preset selection
+* Radio Browser
+  - Enforce a minimum size for the radio station dialog ([#1453](https://github.com/fooyin/fooyin/issues/1453))
 
 ### Build/System
 
@@ -40,6 +50,8 @@
   - Update supported Fedora versions
 * Dependencies
   - Add libebur128 to vcpkg dependencies
+* Translations
+  - Update translations and translation sources ([#1450](https://github.com/fooyin/fooyin/pull/1450), [#1451](https://github.com/fooyin/fooyin/pull/1451))
 
 
 ## [0.12.1](https://github.com/fooyin/fooyin/releases/tag/v0.12.1) (2026-07-31)
