@@ -24,9 +24,11 @@
 
 #include <gui/editablelayout.h>
 #include <gui/guisettings.h>
+#include <gui/guiutils.h>
 #include <gui/layoutprovider.h>
 #include <gui/theme/themeregistry.h>
 
+#include <QApplication>
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -48,6 +50,7 @@ QuickSetupDialog::QuickSetupDialog(LayoutProvider* layoutProvider, ThemeRegistry
     , m_presetRegistry{presetRegistry}
     , m_editableLayout{editableLayout}
     , m_settings{settings}
+    , m_useNativeDarkMode{QApplication::style() && !Gui::styleSupportsCustomPalette(QApplication::style()->name())}
     , m_layoutList{new QListWidget(this)}
     , m_themeList{new QListWidget(this)}
     , m_playlistPresetList{new QListWidget(this)}
@@ -64,7 +67,7 @@ QuickSetupDialog::QuickSetupDialog(LayoutProvider* layoutProvider, ThemeRegistry
     auto* layoutGroupLayout = new QGridLayout(layoutGroup);
     layoutGroupLayout->addWidget(m_layoutList, 0, 0);
 
-    auto* themeGroup       = new QGroupBox(tr("Colours"), this);
+    auto* themeGroup       = new QGroupBox(m_useNativeDarkMode ? tr("Dark mode") : tr("Colours"), this);
     auto* themeGroupLayout = new QGridLayout(themeGroup);
     themeGroupLayout->addWidget(m_themeList, 0, 0);
 
@@ -119,6 +122,23 @@ void QuickSetupDialog::populateLayouts() const
 
 void QuickSetupDialog::populateThemes() const
 {
+    if(m_useNativeDarkMode) {
+        auto* disabled = new QListWidgetItem(tr("Disabled"), m_themeList);
+        disabled->setData(Id, 0);
+
+        auto* enabled = new QListWidgetItem(tr("Enabled"), m_themeList);
+        enabled->setData(Id, 1);
+
+        const auto* style = QApplication::style();
+        if(!style || !Gui::styleSupportsDarkMode(style->name())) {
+            enabled->setFlags(enabled->flags() & ~Qt::ItemIsEnabled);
+            enabled->setToolTip(tr("Dark mode is not supported by the current style."));
+        }
+
+        m_themeList->setCurrentItem(m_settings->value<Settings::Gui::DarkMode>() ? enabled : disabled);
+        return;
+    }
+
     auto* systemDefaults = new QListWidgetItem(tr("System defaults"), m_themeList);
     systemDefaults->setData(Id, -1);
 
@@ -212,6 +232,11 @@ void QuickSetupDialog::changeTheme()
     }
 
     const int id = m_themeList->currentItem()->data(Id).toInt();
+    if(m_useNativeDarkMode) {
+        m_settings->set<Settings::Gui::DarkMode>(id > 0);
+        return;
+    }
+
     if(id < 0) {
         m_settings->reset<Settings::Gui::CustomTheme>();
         return;

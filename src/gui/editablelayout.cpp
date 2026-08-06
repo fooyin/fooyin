@@ -32,6 +32,7 @@
 #include <gui/contextmenuutils.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/guiutils.h>
 #include <gui/layoutprovider.h>
 #include <gui/widgetprovider.h>
 #include <gui/widgets/overlaywidget.h>
@@ -846,7 +847,8 @@ bool EditableLayout::loadLayout(const FyLayout& layout)
         const FyTheme importedTheme = layout.loadTheme();
         const auto themeOptions     = layout.themeOptions();
         auto theme                  = p->m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
-        if(themeOptions.testFlag(FyLayout::SaveColours)) {
+        if(themeOptions.testFlag(FyLayout::SaveColours)
+           && (!QApplication::style() || Gui::styleSupportsCustomPalette(QApplication::style()->name()))) {
             theme.colours = importedTheme.colours;
         }
         if(themeOptions.testFlag(FyLayout::SaveFonts)) {

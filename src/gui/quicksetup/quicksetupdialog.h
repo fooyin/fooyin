@@ -62,6 +62,7 @@ private:
     PresetRegistry* m_presetRegistry;
     EditableLayout* m_editableLayout;
     SettingsManager* m_settings;
+    bool m_useNativeDarkMode;
 
     QListWidget* m_layoutList;
     QListWidget* m_themeList;
