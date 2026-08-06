@@ -39,6 +39,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
                                        QWidget* parent)
     : WidgetConfigDialog{filterWidget, tr("Filter Settings"), parent}
     , m_columnRegistry{columnRegistry}
+    , m_source{new QComboBox(this)}
     , m_middleClick{new QComboBox(this)}
     , m_doubleClick{new QComboBox(this)}
     , m_playbackOnSend{new QCheckBox(tr("Start playback immediately"), this)}
@@ -120,7 +121,13 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     auto* generalGroup       = new QGroupBox(tr("General"), this);
     auto* generalGroupLayout = new QGridLayout(generalGroup);
 
-    generalGroupLayout->addWidget(m_manageColumns, 1, 0);
+    m_source->addItem(tr("Library"), static_cast<int>(FilterSource::Library));
+    m_source->addItem(tr("Current playlist"), static_cast<int>(FilterSource::CurrentPlaylist));
+
+    generalGroupLayout->addWidget(new QLabel(tr("Source") + u":"_s, this), 0, 0);
+    generalGroupLayout->addWidget(m_source, 0, 1);
+    generalGroupLayout->addWidget(m_manageColumns, 1, 0, 1, 3);
+    generalGroupLayout->setColumnStretch(2, 1);
 
     auto* mainLayout = contentLayout();
 
@@ -160,6 +167,7 @@ FilterWidget::ConfigData FilterConfigDialog::config() const
         .doubleClickAction        = m_doubleClick->currentData().toInt(),
         .middleClickAction        = m_middleClick->currentData().toInt(),
         .sendPlayback             = m_playbackOnSend->isChecked(),
+        .source                   = static_cast<FilterSource>(m_source->currentData().toInt()),
         .playlistEnabled          = m_playlistEnabled->isChecked(),
         .autoSwitch               = m_autoSwitch->isChecked(),
         .preservePlaybackPlaylist = m_preservePlaybackPlaylist->isChecked(),
@@ -177,6 +185,7 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
     TrackSelectionController::setCurrentAction(m_middleClick, config.middleClickAction);
 
     m_playbackOnSend->setChecked(config.sendPlayback);
+    m_source->setCurrentIndex(m_source->findData(static_cast<int>(config.source)));
     m_playlistEnabled->setChecked(config.playlistEnabled);
     m_autoSwitch->setChecked(config.autoSwitch);
     m_preservePlaybackPlaylist->setChecked(config.preservePlaybackPlaylist);
@@ -198,9 +207,10 @@ void FilterConfigDialog::mergeExternalConfig(const FilterWidget::ConfigData& pre
 {
     mergeExternalFields(previous, current, &FilterWidget::ConfigData::doubleClickAction,
                         &FilterWidget::ConfigData::middleClickAction, &FilterWidget::ConfigData::sendPlayback,
-                        &FilterWidget::ConfigData::playlistEnabled, &FilterWidget::ConfigData::autoSwitch,
-                        &FilterWidget::ConfigData::preservePlaybackPlaylist, &FilterWidget::ConfigData::playlistName,
-                        &FilterWidget::ConfigData::rowHeight, &FilterWidget::ConfigData::iconSize,
-                        &FilterWidget::ConfigData::iconHorizontalGap, &FilterWidget::ConfigData::iconVerticalGap);
+                        &FilterWidget::ConfigData::source, &FilterWidget::ConfigData::playlistEnabled,
+                        &FilterWidget::ConfigData::autoSwitch, &FilterWidget::ConfigData::preservePlaybackPlaylist,
+                        &FilterWidget::ConfigData::playlistName, &FilterWidget::ConfigData::rowHeight,
+                        &FilterWidget::ConfigData::iconSize, &FilterWidget::ConfigData::iconHorizontalGap,
+                        &FilterWidget::ConfigData::iconVerticalGap);
 }
 } // namespace Fooyin::Filters

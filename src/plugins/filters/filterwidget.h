@@ -48,6 +48,12 @@ class FilterModel;
 class FilterSortModel;
 class FilterView;
 
+enum class FilterSource : uint8_t
+{
+    Library = 0,
+    CurrentPlaylist,
+};
+
 class FilterWidget : public FyWidget
 {
     Q_OBJECT
@@ -75,6 +81,7 @@ public:
     [[nodiscard]] TrackAction doubleClickAction() const;
     [[nodiscard]] TrackAction middleClickAction() const;
     [[nodiscard]] bool sendPlayback() const;
+    [[nodiscard]] FilterSource source() const;
     [[nodiscard]] bool playlistEnabled() const;
     [[nodiscard]] bool autoSwitch() const;
     [[nodiscard]] bool preservePlaybackPlaylist() const;
@@ -100,6 +107,7 @@ public:
         int doubleClickAction{1};
         int middleClickAction{0};
         bool sendPlayback{true};
+        FilterSource source{FilterSource::Library};
         bool playlistEnabled{true};
         bool autoSwitch{true};
         bool preservePlaybackPlaylist{true};

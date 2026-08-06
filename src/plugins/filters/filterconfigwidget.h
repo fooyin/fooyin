@@ -49,6 +49,7 @@ protected:
 private:
     FilterColumnRegistry* m_columnRegistry;
 
+    QComboBox* m_source;
     QComboBox* m_middleClick;
     QComboBox* m_doubleClick;
     QCheckBox* m_playbackOnSend;
