@@ -46,6 +46,7 @@ jobs:
     needs:
       - linux
       - freebsd
+      - windows
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -77,6 +78,13 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           pattern: freebsd-*
+          path: ./artifacts
+          merge-multiple: true
+
+      - name: Download Windows artifacts
+        uses: actions/download-artifact@v8
+        with:
+          pattern: windows-*
           path: ./artifacts
           merge-multiple: true
 
