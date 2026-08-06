@@ -42,7 +42,7 @@ It's built around extensibility and supports plugins for widgets, decoders, tag 
 - Internet radio discovery and remote audio stream playback
 - Gapless and bit-perfect playback
 - Configurable fade and crossfade behaviour for pause, stop, seek, manual track changes, and automatic transitions
-- Waveform seekbar, spectrum, and VU meter visualisations
+- Waveform seekbar, spectrum, and other visualisations
 - Audio output and device configuration
 
 ### Audio and metadata tools

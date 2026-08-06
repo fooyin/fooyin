@@ -11,32 +11,33 @@
     </developer>
     <description>
         <p>
-            fooyin is a music player built around customisation.
+            fooyin is a customisable desktop music player.
             It combines flexible playback, library management, playlists, and scripting tools
             in an interface that can be rearranged from a blank canvas or adapted from preset layouts.
         </p>
         <p>
-            The player is highly extensible with a plugin system and includes FooScript
-            for advanced display formatting, autoplaylists, and widget behaviour.
-            The playback engine also supports DSP chains, fading and crossfading.
+            It is built around extensibility and supports plugins for widgets, decoders, tag readers,
+            DSPs, and integrations. It also includes FooScript for advanced display formatting,
+            queries, autoplaylists, and widget behaviour.
         </p>
         <p>Key features:</p>
         <ul>
             <li>Fully customisable layouts and widgets, with per-widget settings and configurable shortcuts</li>
-            <li>Support for major audio formats, including archives, CUE sheets, VGM, and tracker formats</li>
+            <li>Support for major audio formats and containers, including files played directly from archives</li>
+            <li>Native support for VGM and tracker formats through optional plugins</li>
             <li>Internet radio discovery and remote audio stream playback</li>
-            <li>Gapless playback, ReplayGain, and configurable fade and crossfade settings</li>
-            <li>DSP plugin support with built-in effects such as equaliser, resampling, tempo and pitch adjustment,
-                and silence skipping</li>
+            <li>Gapless and bit-perfect playback, ReplayGain, and configurable fade and crossfade behaviour</li>
+            <li>DSP chains with built-in and plugin-provided DSPs</li>
             <li>Audio output and device configuration</li>
             <li>Advanced library browsing with filters, tree views, and an integrated directory browser</li>
-            <li>Playlist management with autoplaylists and M3U/M3U8 import and export</li>
-            <li>Built-in tag editing and metadata management, including artwork embedding</li>
-            <li>Artwork tools for finding, viewing, exporting, extracting, and downloading covers</li>
-            <li>Visualisations including a waveform seekbar, spectrum, and VU meter</li>
-            <li>Lyrics search, editing, syncing, and display, with configurable presentation for synced lyrics panels</li>
-            <li>FooScript-powered scripting and display tools for rich formatting throughout the interface</li>
-            <li>Plugin-based extensibility for widgets, decoders, tag readers, DSPs, and others</li>
+            <li>Playlist management with autoplaylists, a playback queue, and M3U/M3U8 import and export</li>
+            <li>Built-in tag editing and metadata management tools</li>
+            <li>Artwork embedding, downloading, viewing, exporting, and extracting</li>
+            <li>File renaming, copying, moving, and deletion</li>
+            <li>Audio conversion to common formats with reusable presets</li>
+            <li>Visualisations including a waveform seekbar and spectrum</li>
+            <li>Lyrics search, editing, syncing, and display</li>
+            <li>FooScript-powered formatting, display logic, queries, autoplaylists, and widget behaviour</li>
             <li>Desktop integration with MPRIS, scrobbling services, and Discord Rich Presence</li>
         </ul>
     </description>
@@ -48,7 +49,7 @@
     <url type="homepage">https://fooyin.org</url>
     <url type="bugtracker">https://github.com/fooyin/fooyin/issues</url>
     <url type="vcs-browser">https://github.com/fooyin/fooyin</url>
-    <url type="donation">https://github.com/sponsors/ludouzi</url>
+    <url type="donation">https://fooyin.org/donate</url>
     <screenshots>
         <screenshot type="default">
             <image>https://github.com/user-attachments/assets/8e8732a7-a7e5-4542-87b4-7d0a7b5e8fa0</image>
@@ -68,6 +69,9 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="0.12.2" date="2026-08-07">
+            <url>https://github.com/fooyin/fooyin/releases/tag/v0.12.2</url>
+        </release>
         <release version="0.12.1" date="2026-07-31">
             <url>https://github.com/fooyin/fooyin/releases/tag/v0.12.1</url>
         </release>
