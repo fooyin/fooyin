@@ -34,6 +34,7 @@
 #include <gui/guistyleprovider.h>
 #include <gui/internalguisettings.h>
 #include <gui/layoutprovider.h>
+#include <gui/playlist/currentplaylistcontroller.h>
 #include <gui/widgetprovider.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
@@ -170,6 +171,44 @@ public:
     }
 };
 
+class TestCurrentPlaylistController : public CurrentPlaylistController
+{
+public:
+    using CurrentPlaylistController::CurrentPlaylistController;
+
+    [[nodiscard]] Playlist* currentPlaylist() const override
+    {
+        return m_playlist;
+    }
+
+    [[nodiscard]] UId currentPlaylistId() const override
+    {
+        return m_playlist ? m_playlist->id() : UId{};
+    }
+
+    void changeCurrentPlaylist(const UId& /*id*/) override { }
+
+    void selectTracks(const TrackList& tracks) override
+    {
+        m_selectedTracks = tracks;
+    }
+
+    void setCurrentPlaylist(Playlist* playlist)
+    {
+        Playlist* previous = std::exchange(m_playlist, playlist);
+        Q_EMIT currentPlaylistChanged(previous, playlist);
+    }
+
+    [[nodiscard]] const TrackList& selectedTracks() const
+    {
+        return m_selectedTracks;
+    }
+
+private:
+    Playlist* m_playlist{nullptr};
+    TrackList m_selectedTracks;
+};
+
 QJsonObject savedWidgetLayout(Filters::FilterWidget& widget)
 {
     QJsonArray layout;
@@ -247,9 +286,23 @@ protected:
             nullptr, nullptr, nullptr, &m_library, nullptr, m_settings.get(), m_audioLoader, nullptr, nullptr, {},
         };
 
-        m_controller = std::make_unique<Filters::FilterController>(m_actionManager.get(), coreContext, nullptr,
-                                                                   m_editableLayout.get(), m_coverRepository.get(),
-                                                                   m_settings.get(), m_styleProvider.get());
+        m_controller = std::make_unique<Filters::FilterController>(
+            m_actionManager.get(), coreContext, &m_playlistController, nullptr, m_editableLayout.get(),
+            m_coverRepository.get(), m_settings.get(), m_styleProvider.get());
+    }
+
+    void TearDown() override
+    {
+        std::set<Filters::FilterWidget*> widgets;
+        for(const auto& group : m_controller->filterGroups() | std::views::values) {
+            widgets.insert(group.filters.cbegin(), group.filters.cend());
+        }
+        for(auto* widget : m_controller->ungroupedFilters() | std::views::values) {
+            widgets.emplace(widget);
+        }
+        for(auto* widget : widgets) {
+            delete widget;
+        }
     }
 
     [[nodiscard]] Filters::FilterGroup defaultGroup() const
@@ -261,6 +314,7 @@ protected:
 
     QTemporaryDir m_settingsDir;
     EmptyMusicLibrary m_library;
+    TestCurrentPlaylistController m_playlistController;
     WidgetProvider m_widgetProvider;
     LayoutProvider m_layoutProvider;
 

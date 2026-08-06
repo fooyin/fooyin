@@ -66,10 +66,16 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     clickBehaviourLayout->addWidget(new QLabel(tr("Middle-click") + u":"_s, this), 1, 0);
     clickBehaviourLayout->addWidget(m_middleClick, 1, 1);
     clickBehaviourLayout->addWidget(m_playbackOnSend, 2, 0, 1, 2);
+    auto* playlistClickHint = new QLabel(
+        u"🛈 "_s + tr("Set <b>Double-click</b> to <b>Play</b> to start playback at the first matching track."), this);
+    playlistClickHint->setWordWrap(true);
+    clickBehaviourLayout->addWidget(playlistClickHint, 3, 0, 1, 3);
     clickBehaviourLayout->setColumnStretch(2, 1);
 
     auto* selectionPlaylist       = new QGroupBox(tr("Filter Selection Playlist"), this);
     auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
+    selectionPlaylist->setToolTip(
+        tr("In current playlist mode, matching tracks are selected directly in the playlist."));
 
     m_preservePlaybackPlaylist->setToolTip(
         tr("When this selection playlist is used for playback, preserve it with \"(Playback)\" appended to its "
@@ -126,7 +132,14 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
 
     generalGroupLayout->addWidget(new QLabel(tr("Source") + u":"_s, this), 0, 0);
     generalGroupLayout->addWidget(m_source, 0, 1);
-    generalGroupLayout->addWidget(m_manageColumns, 1, 0, 1, 3);
+    auto* playlistSourceHint = new QLabel(
+        u"🛈 "_s
+            + tr("Current playlist mode uses the displayed playlist as its source and selects the matching "
+                 "tracks in that playlist."),
+        this);
+    playlistSourceHint->setWordWrap(true);
+    generalGroupLayout->addWidget(playlistSourceHint, 1, 0, 1, 3);
+    generalGroupLayout->addWidget(m_manageColumns, 2, 0, 1, 3);
     generalGroupLayout->setColumnStretch(2, 1);
 
     auto* mainLayout = contentLayout();
@@ -140,9 +153,11 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
     TrackSelectionController::addAction(m_doubleClick, tr("None"), TrackAction::None);
+    TrackSelectionController::addAction(m_doubleClick, tr("Play"), TrackAction::Play);
     TrackSelectionController::addStandardActions(m_doubleClick);
 
     TrackSelectionController::addAction(m_middleClick, tr("None"), TrackAction::None);
+    TrackSelectionController::addAction(m_middleClick, tr("Play"), TrackAction::Play);
     TrackSelectionController::addStandardActions(m_middleClick);
 
     QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, m_rowHeight, &QWidget::setEnabled);
@@ -151,6 +166,14 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
         m_autoSwitch->setEnabled(checked);
         m_preservePlaybackPlaylist->setEnabled(checked);
     });
+
+    const auto updateSourceModeUi = [this, selectionPlaylist]() {
+        const bool playlistSource = m_source->currentData().toInt() == static_cast<int>(FilterSource::CurrentPlaylist);
+        selectionPlaylist->setEnabled(!playlistSource);
+    };
+    QObject::connect(m_source, &QComboBox::currentIndexChanged, selectionPlaylist, updateSourceModeUi);
+    updateSourceModeUi();
+
     QObject::connect(m_manageColumns, &QPushButton::clicked, this, [this]() {
         auto* dialog = new FilterColumnEditorDialog(m_columnRegistry, this);
         dialog->open();

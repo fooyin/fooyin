@@ -177,6 +177,11 @@ void PlaylistController::changeCurrentPlaylist(const UId& id)
     }
 }
 
+void PlaylistController::selectTracks(const TrackList& tracks)
+{
+    m_uiController->selectPlaylistTracks(tracks);
+}
+
 void PlaylistController::changePlaylistIndex(const UId& playlistId, int index)
 {
     m_handler->changePlaylistIndex(playlistId, index);

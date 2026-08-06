@@ -180,6 +180,7 @@ public:
     void schedulePlaylistRecomputes();
     [[nodiscard]] bool usesCurrentPlaylist(const FilterGroupState& group) const;
     [[nodiscard]] TrackList sourceTracks(const FilterGroupState& group) const;
+    void publishCurrentPlaylistSelection(const FilterGroupState& group) const;
     void handleLibraryTracksPatched(const TrackList& changedTracks);
     [[nodiscard]] bool patchGroup(const Id& groupId, const TrackList& sourceTracks, const TrackIds& changedTrackIds);
     void recomputeGroup(const Id& groupId);
@@ -217,6 +218,8 @@ public:
     std::unordered_map<Id, FilterGroupState, Id::IdHash> m_groups;
     std::unordered_map<FilterWidget*, WidgetLocation> m_widgetLocations;
     std::unordered_set<FilterWidget*> m_ungrouped;
+    std::optional<Id> m_playlistSelectionGroup;
+    bool m_selectPlaylistMatches{false};
     bool m_syncingSource{false};
 };
 
@@ -258,6 +261,9 @@ void FilterControllerPrivate::handleAction(FilterWidget* filter, const TrackActi
     }
     if(filter->sendPlayback()) {
         options |= PlaylistAction::StartPlayback;
+    }
+    if(action == TrackAction::Play && filter->source() == FilterSource::Library) {
+        options |= PlaylistAction::TempPlaylist;
     }
 
     m_trackSelection->executeAction(action, options);
@@ -466,6 +472,28 @@ void FilterControllerPrivate::updateWidgetSelection(FilterStageState& stage) con
 
     TrackSelection selection;
     selection.tracks = Gui::sortTracksForLibraryViewerPlaylist(m_settings, stage.selectedTracks);
+
+    if(stage.widget->source() == FilterSource::CurrentPlaylist) {
+        if(const Playlist* playlist = m_playlistController->currentPlaylist()) {
+            const std::set<Track> matchingTracks{stage.selectedTracks.cbegin(), stage.selectedTracks.cend()};
+            const auto playlistTracks = playlist->playlistTracks();
+            for(const PlaylistTrack& playlistTrack : playlistTracks) {
+                if(!matchingTracks.contains(playlistTrack.track)) {
+                    continue;
+                }
+
+                selection.playlistIndexes.push_back(playlistTrack.indexInPlaylist);
+                selection.playlistEntryIds.push_back(playlistTrack.entryId);
+            }
+
+            selection.playlistId     = playlist->id();
+            selection.playlistBacked = true;
+            if(!selection.playlistIndexes.empty()) {
+                selection.primaryPlaylistIndex = selection.playlistIndexes.front();
+            }
+        }
+    }
+
     m_trackSelection->changeSelectedTracks(stage.widget->widgetContext(), selection);
 }
 
@@ -502,7 +530,7 @@ void FilterControllerPrivate::handleSelectionChanged(FilterWidget* filter, const
     stage->isActive       = selection.isActive;
     updateWidgetSelection(*stage);
 
-    if(filter->playlistEnabled() && m_trackSelection) {
+    if(filter->source() == FilterSource::Library && filter->playlistEnabled() && m_trackSelection) {
         PlaylistAction::ActionOptions options{PlaylistAction::None};
 
         if(filter->preservePlaybackPlaylist()) {
@@ -518,6 +546,11 @@ void FilterControllerPrivate::handleSelectionChanged(FilterWidget* filter, const
     const int stageIndex      = location->stageIndex;
     const bool hasPriorActive = std::ranges::any_of(group->stages | std::views::take(stageIndex),
                                                     [](const FilterStageState& state) { return state.isActive; });
+
+    if(usesCurrentPlaylist(*group)) {
+        m_playlistSelectionGroup = group->id;
+        m_selectPlaylistMatches  = std::ranges::any_of(keys, [](const RowKey& key) { return !key.isEmpty(); });
+    }
 
     if(stage->searchText.isEmpty()) {
         stage->searchedRows.reset();
@@ -688,6 +721,15 @@ TrackList FilterControllerPrivate::sourceTracks(const FilterGroupState& group) c
     return m_library->libraryTracks();
 }
 
+void FilterControllerPrivate::publishCurrentPlaylistSelection(const FilterGroupState& group) const
+{
+    if(!m_playlistSelectionGroup || *m_playlistSelectionGroup != group.id || !usesCurrentPlaylist(group)) {
+        return;
+    }
+
+    m_playlistController->selectTracks(m_selectPlaylistMatches ? group.finalFilteredTracks : TrackList{});
+}
+
 void FilterControllerPrivate::handleLibraryTracksPatched(const TrackList& changedTracks)
 {
     if(!m_styleProvider->isResolved()) {
@@ -795,6 +837,7 @@ void FilterControllerPrivate::recomputeStage(const Id& groupId, int stageIndex, 
     if(std::cmp_greater_equal(stageIndex, group.stages.size())) {
         group.finalFilteredTracks = constrained ? std::move(currentTracks) : TrackList{};
         group.hasActiveStages     = constrained;
+        publishCurrentPlaylistSelection(group);
         return;
     }
 
@@ -990,6 +1033,18 @@ void FilterControllerPrivate::handleConfigChanged(FilterWidget* widget)
         }
     }
 
+    if(usesCurrentPlaylist(group)) {
+        if(!m_playlistSelectionGroup || *m_playlistSelectionGroup != group.id) {
+            m_selectPlaylistMatches = false;
+        }
+        m_playlistSelectionGroup = group.id;
+    }
+    else if(m_playlistSelectionGroup && *m_playlistSelectionGroup == group.id) {
+        m_playlistController->selectTracks({});
+        m_playlistSelectionGroup.reset();
+        m_selectPlaylistMatches = false;
+    }
+
     scheduleRecompute(*groupId);
 }
 
@@ -1052,6 +1107,11 @@ std::optional<Id> FilterControllerPrivate::detachWidget(FilterWidget* widget)
     m_ungrouped.erase(widget);
 
     if(group.filters.empty()) {
+        if(m_playlistSelectionGroup && *m_playlistSelectionGroup == *groupId) {
+            m_playlistController->selectTracks({});
+            m_playlistSelectionGroup.reset();
+            m_selectPlaylistMatches = false;
+        }
         m_groups.erase(groupId.value());
         return groupId;
     }

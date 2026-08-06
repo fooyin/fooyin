@@ -39,12 +39,14 @@ public:
     void addPlaylistMenu(QMenu* menu) const;
     void showNowPlaying();
     void selectTrackIds(const TrackIds& ids);
+    void selectPlaylistTracks(const TrackList& tracks);
     void focusPlaylist();
     void filterCurrentPlaylist(const PlaylistTrackList& tracks);
 
 Q_SIGNALS:
     void showCurrentTrack();
     void selectTracks(const Fooyin::TrackIds& ids);
+    void selectMatchingTracks(const Fooyin::TrackList& tracks);
     void filterTracks(const Fooyin::PlaylistTrackList& tracks);
     void requestPlaylistFocus();
 

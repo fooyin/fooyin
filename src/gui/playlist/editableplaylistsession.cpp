@@ -324,6 +324,8 @@ void EditablePlaylistSession::setupConnections(PlaylistWidgetSessionHost& sessio
                      });
     QObject::connect(widget->playlistController()->uiController(), &PlaylistUiController::selectTracks, widget,
                      [widget, this](const std::vector<int>& ids) { selectTrackIds(widget, ids); });
+    QObject::connect(widget->playlistController()->uiController(), &PlaylistUiController::selectMatchingTracks, widget,
+                     [widget, this](const TrackList& tracks) { selectTracks(widget, tracks); });
     QObject::connect(widget->playlistController()->uiController(), &PlaylistUiController::filterTracks, widget,
                      [widget, this](const PlaylistTrackList& tracks) { filterTracks(widget, tracks); });
     QObject::connect(widget->playlistController()->uiController(), &PlaylistUiController::requestPlaylistFocus,
@@ -1465,13 +1467,44 @@ void EditablePlaylistSession::selectTrackIds(PlaylistWidget* widget, const std::
         }
     }
 
-    if(!selection.empty()) {
-        const QModelIndex firstIndex = selection.indexes().front();
-        host.playlistView()->setCurrentIndex(firstIndex);
-        host.playlistView()->selectionModel()->select(selection,
-                                                      QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
-        host.playlistView()->scrollTo(firstIndex, QAbstractItemView::PositionAtCenter);
+    if(selection.empty()) {
+        host.playlistView()->selectionModel()->clearSelection();
+        return;
     }
+
+    const QModelIndex firstIndex = selection.indexes().front();
+    host.playlistView()->setCurrentIndex(firstIndex);
+    host.playlistView()->selectionModel()->select(selection,
+                                                  QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+    host.playlistView()->scrollTo(firstIndex, QAbstractItemView::PositionAtCenter);
+}
+
+void EditablePlaylistSession::selectTracks(PlaylistWidget* widget, const TrackList& tracks) const
+{
+    auto& host = editableHost(widget);
+    QItemSelection selection;
+
+    const std::set<Track> matchingTracks{tracks.cbegin(), tracks.cend()};
+    QModelIndexList trackIndexes;
+    getAllTrackIndexes(host.playlistModel(), {}, trackIndexes);
+
+    for(const QModelIndex& index : trackIndexes) {
+        const auto playlistTrack = index.data(PlaylistItem::PersistentItemData).value<PlaylistTrack>();
+        if(matchingTracks.contains(playlistTrack.track)) {
+            selection.select(index, index);
+        }
+    }
+
+    if(selection.empty()) {
+        host.playlistView()->selectionModel()->clearSelection();
+        return;
+    }
+
+    const QModelIndex firstIndex = selection.indexes().front();
+    host.playlistView()->setCurrentIndex(firstIndex);
+    host.playlistView()->selectionModel()->select(selection,
+                                                  QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+    host.playlistView()->scrollTo(firstIndex, QAbstractItemView::PositionAtCenter);
 }
 
 void EditablePlaylistSession::filterTracks(PlaylistWidget* widget, const PlaylistTrackList& tracks)
