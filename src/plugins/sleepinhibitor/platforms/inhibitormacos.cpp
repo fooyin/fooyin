@@ -47,7 +47,7 @@ void InhibitorMacOs::inhibitSleep(InhibitionType type)
             = IOPMAssertionCreateWithName(assertionType, kIOPMAssertionLevelOn, assertionName, &m_assertionId);
         CFRelease(assertionName);
         return status;
-    }).then([this](IOReturn status) {
+    }).then(this, [this](IOReturn status) {
         if(status == kIOReturnSuccess) {
             setState(State::Inhibited);
         }
@@ -73,7 +73,7 @@ void InhibitorMacOs::uninhibitSleep()
     QtConcurrent::run([this] -> IOReturn {
         qCDebug(SLEEPINHIBITOR) << "Uninhibiting sleep";
         return IOPMAssertionRelease(m_assertionId);
-    }).then([this](IOReturn status) {
+    }).then(this, [this](IOReturn status) {
         if(status == kIOReturnSuccess) {
             setState(State::Uninhibited);
         }
