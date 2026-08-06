@@ -6,11 +6,16 @@
 
 * Audio Output
   - Add a WASAPI output plugin ([#1445](https://github.com/fooyin/fooyin/pull/1445))
+* Filters
+  - Add a mode to use the current playlist as the filter source
+  - Add playlist-aware selection and playback for filter results
 * Interface
   - Add an optional Random Track button to Player Controls
   - Add native dark mode support on Windows
   - Add theme import and export support
   - Enable library viewer playback playlist preservation by default and improve naming ([#1381](https://github.com/fooyin/fooyin/issues/1381))
+  - Register playback cursor-follow commands for shortcuts ([#1421](https://github.com/fooyin/fooyin/issues/1421))
+  - Refine Quick Setup for native Windows styles
 * Playlist
   - Add support for locking playlists ([#1381](https://github.com/fooyin/fooyin/issues/1381))
 * Spectrum
@@ -47,6 +52,7 @@
 * Build
   - Update Windows build documentation
 * CI
+  - Attach Windows artifacts to new releases
   - Update supported Fedora versions
 * Dependencies
   - Add libebur128 to vcpkg dependencies
