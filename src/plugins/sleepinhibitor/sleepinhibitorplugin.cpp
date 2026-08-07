@@ -47,7 +47,11 @@ Q_SIGNALS:
 
 SleepInhibitorPlugin::SleepInhibitorPlugin()
     : m_inhibitor{new Inhibitor(this)}
-{ }
+{
+    m_inhibitionType = m_settings.value(Settings::PreventDisplaySleep, false).toBool()
+                         ? InhibitionType::DisplayAndSystem
+                         : InhibitionType::System;
+}
 
 void SleepInhibitorPlugin::initialise(const CorePluginContext& context)
 {
@@ -72,10 +76,19 @@ std::unique_ptr<PluginSettingsProvider> SleepInhibitorPlugin::settingsProvider()
 
 void SleepInhibitorPlugin::updateInhibition()
 {
-    const auto enabled            = m_settings.value(Settings::Enabled, true).toBool();
-    const auto onlyDuringPlayback = m_settings.value(Settings::OnlyDuringPlayback, true).toBool();
+    const auto enabled             = m_settings.value(Settings::Enabled, true).toBool();
+    const auto onlyDuringPlayback  = m_settings.value(Settings::OnlyDuringPlayback, true).toBool();
+    const auto preventDisplaySleep = m_settings.value(Settings::PreventDisplaySleep, false).toBool();
+    const auto inhibitionType      = preventDisplaySleep ? InhibitionType::DisplayAndSystem : InhibitionType::System;
+
+    if(enabled && m_inhibitionType != inhibitionType) {
+        m_inhibitionType = inhibitionType;
+        // Release the previous inhibitor so the next inhibitSleep call uses the new inhibition type.
+        m_inhibitor->uninhibitSleep();
+    }
+
     if(enabled && (!onlyDuringPlayback || m_playerController->playState() == Player::PlayState::Playing)) {
-        m_inhibitor->inhibitSleep();
+        m_inhibitor->inhibitSleep(m_inhibitionType);
     }
     else {
         m_inhibitor->uninhibitSleep();

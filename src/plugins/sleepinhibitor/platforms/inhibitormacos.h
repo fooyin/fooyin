@@ -22,6 +22,8 @@
 
 #include "inhibitor.h"
 
+#include <optional>
+
 #include <IOKit/pwr_mgt/IOPMLib.h>
 
 namespace Fooyin::SleepInhibitor {
@@ -32,10 +34,12 @@ class InhibitorMacOs : public InhibitorPrivate
 public:
     explicit InhibitorMacOs(QObject* parent = nullptr);
 
-    void inhibitSleep() override;
+    void inhibitSleep(InhibitionType type) override;
     void uninhibitSleep() override;
 
 private:
     IOPMAssertionID m_assertionId{};
+    std::optional<State> m_desiredState;
+    InhibitionType m_desiredType;
 };
 } // namespace Fooyin::SleepInhibitor
