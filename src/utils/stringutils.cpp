@@ -116,7 +116,13 @@ QString capitalise(const QString& str)
 
 QByteArray detectEncoding(const QByteArray& content, const DetectEncodingOptions& options)
 {
+    if(content.isEmpty()) {
+        return {};
+    }
+
     QByteArray encoding;
+    constexpr int32_t LowConfidenceFallbackThreshold{50};
+    int32_t encodingConfidence{100};
     UErrorCode status{U_ZERO_ERROR};
 
     UCharsetDetector* csd = ucsdet_open(&status);
@@ -153,11 +159,18 @@ QByteArray detectEncoding(const QByteArray& content, const DetectEncodingOptions
             }
 
             if(encoding.isEmpty()) {
+                UErrorCode confidenceStatus{U_ZERO_ERROR};
+                const int32_t confidence = ucsdet_getConfidence(matches[i], &confidenceStatus);
+                if(U_SUCCESS(confidenceStatus)) {
+                    encodingConfidence = confidence;
+                }
                 encoding = candidate;
             }
         }
 
-        if(!preferredFallbackEncoding.isEmpty() && isLatinEncoding(encoding)) {
+        // ICU confidence is 0-100; below 50 is ambiguous enough to honour the user's fallback.
+        if(!preferredFallbackEncoding.isEmpty()
+           && (isLatinEncoding(encoding) || encodingConfidence < LowConfidenceFallbackThreshold)) {
             encoding = preferredFallbackEncoding;
         }
     }
