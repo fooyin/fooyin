@@ -86,9 +86,9 @@ See [BUILD.md](BUILD.md) for dependencies, build options, and installation instr
 
 ## Platform support
 
-fooyin is developed and supported primarily on Linux, but build configurations and CI workflows are maintained for macOS and Windows.
+fooyin is developed and supported on Linux and Windows. Build configurations and CI workflows are also maintained for macOS.
 
-Official support for Windows and macOS is coming soon.
+Official macOS support is coming soon.
 
 ## Documentation and support
 
