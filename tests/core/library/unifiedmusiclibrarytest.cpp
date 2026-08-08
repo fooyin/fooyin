@@ -24,6 +24,7 @@
 #include "core/library/libraryscanner.h"
 #include "core/network/networkaccessmanager.h"
 #include "core/network/remoteioservice.h"
+#include "core/playlist/parsers/cueparser.h"
 #include "core/playlist/playlisthandler.h"
 #include "core/playlist/playlistloader.h"
 #include <core/coresettings.h>
@@ -35,6 +36,7 @@
 #include <utils/database/dbquery.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QBuffer>
 #include <QCoreApplication>
 #include <QElapsedTimer>
 #include <QEventLoop>
@@ -53,6 +55,7 @@
 
 #include <algorithm>
 #include <atomic>
+#include <map>
 #include <memory>
 #include <mutex>
 
@@ -192,6 +195,19 @@ QStringList trackFileNames(const Fooyin::TrackList& tracks)
     return fileNames;
 }
 
+QStringList activeTrackTitles(const Fooyin::TrackList& tracks)
+{
+    QStringList titles;
+    for(const auto& track : tracks) {
+        if(track.isInLibrary() && track.isEnabled()) {
+            titles.push_back(track.title());
+        }
+    }
+
+    std::ranges::sort(titles);
+    return titles;
+}
+
 QVariantList waitForSignal(QSignalSpy& spy, int timeoutMs = 10000)
 {
     if(spy.isEmpty()) {
@@ -301,6 +317,67 @@ private:
     std::shared_ptr<State> m_state;
 };
 
+struct FakeArchiveReaderState
+{
+    std::map<QString, QByteArray> entries;
+};
+
+class FakeArchiveReader : public Fooyin::ArchiveReader
+{
+public:
+    explicit FakeArchiveReader(std::shared_ptr<FakeArchiveReaderState> state)
+        : m_state{std::move(state)}
+    { }
+
+    QStringList extensions() const override
+    {
+        return {u"zip"_s};
+    }
+
+    QString type() const override
+    {
+        return u"zip"_s;
+    }
+
+    bool init(const QString& /*file*/) override
+    {
+        return true;
+    }
+
+    Fooyin::ArchiveEntryData entry(const QString& file) override
+    {
+        const auto entry = m_state->entries.find(file);
+        if(entry == m_state->entries.cend()) {
+            return {};
+        }
+
+        auto buffer = std::make_unique<QBuffer>();
+        buffer->setData(entry->second);
+        buffer->open(QIODevice::ReadOnly);
+
+        return {
+            .info = {.path = entry->first, .size = static_cast<uint64_t>(entry->second.size()), .isRegularFile = true},
+            .device = std::move(buffer),
+        };
+    }
+
+    bool readTracks(ReadEntryCallback readEntry) override
+    {
+        for(const auto& path : m_state->entries | std::views::keys) {
+            readEntry(entry(path));
+        }
+        return true;
+    }
+
+    QByteArray readCover(const Fooyin::Track& /*track*/, Fooyin::Track::Cover /*cover*/) override
+    {
+        return {};
+    }
+
+private:
+    std::shared_ptr<FakeArchiveReaderState> m_state;
+};
+
 struct LibraryTestContext
 {
     LibraryTestContext()
@@ -312,6 +389,7 @@ struct LibraryTestContext
         , playlistLoader{std::make_shared<Fooyin::PlaylistLoader>()}
         , audioLoader{std::make_shared<Fooyin::AudioLoader>()}
         , readerState{std::make_shared<FakeLibraryReader::State>()}
+        , archiveReaderState{std::make_shared<FakeArchiveReaderState>()}
         , network{std::make_shared<Fooyin::NetworkAccessManager>(&settings)}
         , remoteIo{std::make_shared<Fooyin::RemoteIoService>(network, &settings)}
         , library{&libraryManager, dbPool, playlistLoader, audioLoader, remoteIo, &settings}
@@ -319,6 +397,9 @@ struct LibraryTestContext
     {
         audioLoader->addReader(u"fake-library-reader"_s,
                                [state = readerState]() { return std::make_unique<FakeLibraryReader>(state); });
+        audioLoader->addArchiveReader(u"fake-archive-reader"_s, [state = archiveReaderState]() {
+            return std::make_unique<FakeArchiveReader>(state);
+        });
     }
 
     QTemporaryDir tempDir;
@@ -330,6 +411,7 @@ struct LibraryTestContext
     std::shared_ptr<Fooyin::PlaylistLoader> playlistLoader;
     std::shared_ptr<Fooyin::AudioLoader> audioLoader;
     std::shared_ptr<FakeLibraryReader::State> readerState;
+    std::shared_ptr<FakeArchiveReaderState> archiveReaderState;
     std::shared_ptr<Fooyin::NetworkAccessManager> network;
     std::shared_ptr<Fooyin::RemoteIoService> remoteIo;
     Fooyin::UnifiedMusicLibrary library;
@@ -413,6 +495,73 @@ TEST_F(UnifiedMusicLibraryTest, ScanForChangesMakesTracksVisibleBeforeScanFinish
     EXPECT_EQ(tracksAtFinish, 2);
     EXPECT_EQ(context().library.tracks().size(), 2U);
     EXPECT_EQ(sortedTrackTitles(context().library.tracks()), (QStringList{u"Added Later"_s, u"Initial"_s}));
+}
+
+TEST_F(UnifiedMusicLibraryTest, ExcludingArchiveTypeRemovesPreviouslyIndexedEntries)
+{
+    const QString archivePath = context().tempDir.filePath(u"album.zip"_s);
+    writeFile(archivePath, "archive");
+    context().archiveReaderState->entries.emplace(u"track.mp3"_s, "track");
+
+    const LibraryInfo libraryInfo = addLibrary(u"Archive Exclusion"_s);
+    ASSERT_GE(libraryInfo.id, 0);
+
+    waitForSuccessfulScan([&]() { return context().library.rescan(libraryInfo); });
+    ASSERT_EQ(context().library.tracks().size(), 1);
+    EXPECT_TRUE(context().library.tracks().front().isInArchive());
+
+    context().settings.fileSet(Settings::Core::Internal::LibraryExcludeTypes, QStringList{u"zip"_s});
+
+    QSignalSpy summarySpy{&context().library, &MusicLibrary::scanSummary};
+    QSignalSpy finishedSpy{&context().library, &MusicLibrary::scanFinished};
+
+    const ScanRequest request       = context().library.rescan(libraryInfo);
+    const QVariantList finishedArgs = waitForSignal(finishedSpy);
+    const QVariantList summaryArgs  = waitForSignal(summarySpy);
+
+    expectFinishedSignal(finishedArgs, request.id, ScanRequest::Library);
+    expectSummarySignal(summaryArgs, request.id, ScanRequest::Library, {.added = 0, .updated = 0, .removed = 1});
+    ASSERT_EQ(context().library.tracks().size(), 1);
+    EXPECT_FALSE(context().library.tracks().front().isInLibrary());
+    EXPECT_FALSE(context().library.tracks().front().isEnabled());
+    EXPECT_TRUE(QFileInfo::exists(archivePath));
+}
+
+TEST_F(UnifiedMusicLibraryTest, RemovingCueEntryRemovesOnlyStaleTrack)
+{
+    createTrackFile(u"album.mp3"_s, u"Backing File"_s);
+    const QString cuePath = context().tempDir.filePath(u"album.cue"_s);
+    writeFile(cuePath, "FILE \"album.mp3\" MP3\n"
+                       "  TRACK 01 AUDIO\n"
+                       "    TITLE \"Cue One\"\n"
+                       "    INDEX 01 00:00:00\n"
+                       "  TRACK 02 AUDIO\n"
+                       "    TITLE \"Cue Two\"\n"
+                       "    INDEX 01 01:00:00\n");
+    context().playlistLoader->addParser(std::make_unique<CueParser>());
+    context().settings.fileSet(Settings::Core::Internal::LibraryExcludeTypes, QStringList{});
+
+    const LibraryInfo libraryInfo = addLibrary(u"Changed CUE"_s);
+    ASSERT_GE(libraryInfo.id, 0);
+
+    waitForSuccessfulScan([&]() { return context().library.rescan(libraryInfo); });
+    ASSERT_EQ(activeTrackTitles(context().library.tracks()), (QStringList{u"Cue One"_s, u"Cue Two"_s}));
+
+    writeFile(cuePath, "FILE \"album.mp3\" MP3\n"
+                       "  TRACK 01 AUDIO\n"
+                       "    TITLE \"Cue One\"\n"
+                       "    INDEX 01 00:00:00\n");
+
+    QSignalSpy summarySpy{&context().library, &MusicLibrary::scanSummary};
+    QSignalSpy finishedSpy{&context().library, &MusicLibrary::scanFinished};
+
+    const ScanRequest request       = context().library.rescan(libraryInfo);
+    const QVariantList finishedArgs = waitForSignal(finishedSpy);
+    const QVariantList summaryArgs  = waitForSignal(summarySpy);
+
+    expectFinishedSignal(finishedArgs, request.id, ScanRequest::Library);
+    expectSummarySignal(summaryArgs, request.id, ScanRequest::Library, {.added = 0, .updated = 1, .removed = 1});
+    EXPECT_EQ(activeTrackTitles(context().library.tracks()), (QStringList{u"Cue One"_s}));
 }
 
 TEST_F(UnifiedMusicLibraryTest, MultipleScanUpdatesCommitInOrder)
