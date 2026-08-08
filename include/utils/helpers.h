@@ -167,26 +167,4 @@ public:
 private:
     T& m_data;
 };
-
-template <typename T>
-class ScopedValueRestore
-{
-public:
-    explicit ScopedValueRestore(T& value)
-        : m_value{value}
-        , m_originalValue{value}
-    { }
-
-    ScopedValueRestore(const ScopedValueRestore&)            = delete;
-    ScopedValueRestore& operator=(const ScopedValueRestore&) = delete;
-
-    ~ScopedValueRestore()
-    {
-        m_value = m_originalValue;
-    }
-
-private:
-    T& m_value;
-    T m_originalValue;
-};
 } // namespace Fooyin::Utils

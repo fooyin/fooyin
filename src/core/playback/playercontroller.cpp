@@ -30,10 +30,10 @@
 #include <core/player/playbackqueue.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
-#include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QLoggingCategory>
+#include <QScopedValueRollback>
 
 #include <optional>
 
@@ -1146,7 +1146,7 @@ void PlayerController::previous()
     }
 
     // Temporarily disable repeating track when user clicks 'previous'.
-    const Utils::ScopedValueRestore playModeRestore{p->m_playMode};
+    const QScopedValueRollback playModeRestore{p->m_playMode};
 
     p->m_playMode &= ~Playlist::RepeatTrack;
 
@@ -1179,8 +1179,8 @@ void PlayerController::previous()
 void PlayerController::next()
 {
     // Temporarily disable repeating track and 'stop after current' when user clicks 'next'.
-    const Utils::ScopedValueRestore playModeRestore{p->m_playMode};
-    const Utils::ScopedValueRestore stopCurrentSkipRestore{p->m_stopCurrentSkip};
+    const QScopedValueRollback playModeRestore{p->m_playMode};
+    const QScopedValueRollback stopCurrentSkipRestore{p->m_stopCurrentSkip};
 
     p->m_playMode &= ~Playlist::RepeatTrack;
     p->m_stopCurrentSkip = true;
