@@ -3411,6 +3411,10 @@ PlaylistTrackList PlaylistModel::tracksWithPlayingTrackOverlay(const PlaylistTra
 
 PlaylistModel::PlayingTrackIndexResolution PlaylistModel::resolvePlayingTrackIndex(const PlaylistTrack& track) const
 {
+    if(!m_currentPlaylist || track.playlistId != m_currentPlaylist->id()) {
+        return {.index = -1, .structuralRemapPending = false};
+    }
+
     const int entryIndex = track.entryId.isValid() ? playlistIndexForTrackEntry(track.entryId) : -1;
     const bool structuralRemapPending
         = track.entryId.isValid() && track.indexInPlaylist >= 0
