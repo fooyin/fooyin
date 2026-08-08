@@ -266,7 +266,12 @@ RichText FilterDelegate::recolourRichText(RichText richText, const QColor& colou
     return richText;
 }
 
-QRect FilterDelegate::iconTextRect(const QStyleOptionViewItem& option)
+void FilterDelegate::setAlignCaptionsToArtwork(bool align)
+{
+    m_alignCaptionsToArtwork = align;
+}
+
+QRect FilterDelegate::iconTextRect(const QStyleOptionViewItem& option) const
 {
     const auto* view = qobject_cast<const ExpandedTreeView*>(option.widget);
     if(!view) {
@@ -283,10 +288,19 @@ QRect FilterDelegate::iconTextRect(const QStyleOptionViewItem& option)
             rect.adjust(margin, 0, -margin, 0);
             break;
         }
-        case ExpandedTreeView::CaptionDisplay::Bottom:
+        case ExpandedTreeView::CaptionDisplay::Bottom: {
+            const QRect decorationRect
+                = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &option, option.widget);
             rect.setTop(rect.top() + option.decorationSize.height() + (IconCaptionMargin / 2));
-            rect.adjust(margin, 0, -margin, 0);
+            if(m_alignCaptionsToArtwork && decorationRect.isValid()) {
+                rect.setLeft(decorationRect.left());
+                rect.setRight(decorationRect.right());
+            }
+            else {
+                rect.adjust(margin, 0, -margin, 0);
+            }
             break;
+        }
         case ExpandedTreeView::CaptionDisplay::None:
             break;
     }
@@ -294,7 +308,7 @@ QRect FilterDelegate::iconTextRect(const QStyleOptionViewItem& option)
     return rect;
 }
 
-int FilterDelegate::iconTextWidth(const QStyleOptionViewItem& option)
+int FilterDelegate::iconTextWidth(const QStyleOptionViewItem& option) const
 {
     const auto* view = qobject_cast<const ExpandedTreeView*>(option.widget);
     if(!view) {

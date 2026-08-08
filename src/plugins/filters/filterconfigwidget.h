@@ -65,6 +65,7 @@ private:
     QSpinBox* m_iconHeight;
     QSpinBox* m_iconHorizontalGap;
     QSpinBox* m_iconVerticalGap;
+    QCheckBox* m_alignCaptionsToArtwork;
     QPushButton* m_manageColumns;
 };
 } // namespace Fooyin::Filters

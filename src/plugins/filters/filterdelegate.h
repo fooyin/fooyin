@@ -35,12 +35,13 @@ public:
 
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+    void setAlignCaptionsToArtwork(bool align);
 
 private:
     static RichText recolourRichText(RichText richText, const QColor& colour);
 
-    static QRect iconTextRect(const QStyleOptionViewItem& option);
-    static int iconTextWidth(const QStyleOptionViewItem& option);
+    [[nodiscard]] QRect iconTextRect(const QStyleOptionViewItem& option) const;
+    [[nodiscard]] int iconTextWidth(const QStyleOptionViewItem& option) const;
 
     [[nodiscard]] static IconCaptionLineList iconRichLines(const QModelIndex& index,
                                                            const QStyleOptionViewItem& option);
@@ -58,5 +59,7 @@ private:
                                   const IconCaptionLineList& lines);
     static void drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& option, QRect rect,
                                const std::vector<RichTextBlock>& blocks);
+
+    bool m_alignCaptionsToArtwork{true};
 };
 } // namespace Fooyin::Filters

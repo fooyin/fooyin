@@ -44,6 +44,7 @@ enum class TrackAction;
 
 namespace Filters {
 class FilterColumnRegistry;
+class FilterDelegate;
 class FilterModel;
 class FilterSortModel;
 class FilterView;
@@ -116,6 +117,7 @@ public:
         QSize iconSize{100, 100};
         int iconHorizontalGap{-1};
         int iconVerticalGap{10};
+        bool alignCaptionsToArtwork{true};
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;
@@ -170,6 +172,7 @@ private:
     SettingsManager* m_settings;
 
     FilterView* m_view;
+    FilterDelegate* m_delegate;
     AutoHeaderView* m_header;
     FilterModel* m_model;
     FilterSortModel* m_sortProxy;

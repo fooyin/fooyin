@@ -53,6 +53,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     , m_iconHeight{new QSpinBox(this)}
     , m_iconHorizontalGap{new QSpinBox(this)}
     , m_iconVerticalGap{new QSpinBox(this)}
+    , m_alignCaptionsToArtwork{new QCheckBox(tr("Align labels to artwork"), this)}
     , m_manageColumns{new QPushButton(tr("Manage columns..."), this)}
 {
     m_playbackOnSend->setToolTip(
@@ -91,8 +92,12 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceLayout = new QGridLayout(appearance);
 
+    m_alignCaptionsToArtwork->setToolTip(
+        tr("Align bottom labels to the horizontal bounds of the artwork in artwork mode."));
+
     appearanceLayout->addWidget(m_overrideRowHeight, 0, 0, 1, 2);
     appearanceLayout->addWidget(m_rowHeight, 0, 2);
+    appearanceLayout->addWidget(m_alignCaptionsToArtwork, 1, 0, 1, 3);
     appearanceLayout->setColumnStretch(3, 1);
 
     auto* artworkMode   = new QGroupBox(tr("Artwork Mode"), this);
@@ -199,6 +204,7 @@ FilterWidget::ConfigData FilterConfigDialog::config() const
         .iconSize                 = {m_iconWidth->value(), m_iconHeight->value()},
         .iconHorizontalGap        = m_iconHorizontalGap->value(),
         .iconVerticalGap          = m_iconVerticalGap->value(),
+        .alignCaptionsToArtwork   = m_alignCaptionsToArtwork->isChecked(),
     };
 }
 
@@ -220,6 +226,7 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
     m_iconHeight->setValue(config.iconSize.height());
     m_iconHorizontalGap->setValue(config.iconHorizontalGap);
     m_iconVerticalGap->setValue(config.iconVerticalGap);
+    m_alignCaptionsToArtwork->setChecked(config.alignCaptionsToArtwork);
     m_playlistName->setEnabled(m_playlistEnabled->isChecked());
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
     m_preservePlaybackPlaylist->setEnabled(m_playlistEnabled->isChecked());
@@ -234,6 +241,6 @@ void FilterConfigDialog::mergeExternalConfig(const FilterWidget::ConfigData& pre
                         &FilterWidget::ConfigData::autoSwitch, &FilterWidget::ConfigData::preservePlaybackPlaylist,
                         &FilterWidget::ConfigData::playlistName, &FilterWidget::ConfigData::rowHeight,
                         &FilterWidget::ConfigData::iconSize, &FilterWidget::ConfigData::iconHorizontalGap,
-                        &FilterWidget::ConfigData::iconVerticalGap);
+                        &FilterWidget::ConfigData::iconVerticalGap, &FilterWidget::ConfigData::alignCaptionsToArtwork);
 }
 } // namespace Fooyin::Filters

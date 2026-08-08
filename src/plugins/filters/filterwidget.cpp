@@ -68,6 +68,7 @@ constexpr auto FilterKeepAliveKey         = u"Filters/KeepAlive";
 constexpr auto FilterIconSizeKey          = u"Filters/IconSize";
 constexpr auto FilterIconHorizontalGapKey = u"Filters/IconHorizontalGap";
 constexpr auto FilterIconVerticalGapKey   = u"Filters/IconVerticalGap";
+constexpr auto FilterAlignCaptionsKey     = u"Filters/AlignCaptionsToArtwork";
 constexpr int FilterModelPinUpdateDelay   = 50;
 
 namespace Fooyin::Filters {
@@ -105,6 +106,7 @@ FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* c
     , m_columnRegistry{columnRegistry}
     , m_settings{settings}
     , m_view{new FilterView(this)}
+    , m_delegate{new FilterDelegate(this)}
     , m_header{new AutoHeaderView(Qt::Horizontal, this)}
     , m_model{new FilterModel(library, new CoverProvider(coverRepository, this), m_settings, this)}
     , m_sortProxy{new FilterSortModel(this)}
@@ -128,7 +130,7 @@ FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* c
     m_sortProxy->setSourceModel(m_model);
     m_view->setModel(m_sortProxy);
     m_view->setHeader(m_header);
-    m_view->setItemDelegate(new FilterDelegate(this));
+    m_view->setItemDelegate(m_delegate);
     m_view->viewport()->installEventFilter(new ToolTipFilter(this));
     QObject::connect(m_view, &FilterView::displayChanged, this, &FilterWidget::filterUpdated);
     QObject::connect(m_view, &FilterView::displayChanged, this, [this]() { scheduleVisibleCoverPinUpdate(); });
@@ -323,7 +325,7 @@ void FilterWidget::setViewState(const FilterViewState& state)
     m_applyingViewState = false;
     // Restored layouts can publish rows before the widget has gone through a resize,
     // so nudge the view to recalculate delegate-driven row heights immediately.
-    QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+    QMetaObject::invokeMethod(m_delegate, "sizeHintChanged", Q_ARG(QModelIndex, {}));
 }
 
 QString FilterWidget::name() const
@@ -514,6 +516,7 @@ FilterWidget::ConfigData FilterWidget::factoryConfig() const
         .iconSize                 = QSize{100, 100},
         .iconHorizontalGap        = -1,
         .iconVerticalGap          = 10,
+        .alignCaptionsToArtwork   = true,
     };
 }
 
@@ -535,6 +538,8 @@ FilterWidget::ConfigData FilterWidget::defaultConfig() const
     config.iconSize          = m_settings->fileValue(FilterIconSizeKey, config.iconSize).toSize();
     config.iconHorizontalGap = m_settings->fileValue(FilterIconHorizontalGapKey, config.iconHorizontalGap).toInt();
     config.iconVerticalGap   = m_settings->fileValue(FilterIconVerticalGapKey, config.iconVerticalGap).toInt();
+    config.alignCaptionsToArtwork
+        = m_settings->fileValue(FilterAlignCaptionsKey, config.alignCaptionsToArtwork).toBool();
 
     return config;
 }
@@ -558,6 +563,7 @@ void FilterWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(FilterIconSizeKey, config.iconSize);
     m_settings->fileSet(FilterIconHorizontalGapKey, config.iconHorizontalGap);
     m_settings->fileSet(FilterIconVerticalGapKey, config.iconVerticalGap);
+    m_settings->fileSet(FilterAlignCaptionsKey, config.alignCaptionsToArtwork);
 }
 
 void FilterWidget::clearSavedDefaults() const
@@ -574,6 +580,7 @@ void FilterWidget::clearSavedDefaults() const
     m_settings->fileRemove(FilterIconSizeKey);
     m_settings->fileRemove(FilterIconHorizontalGapKey);
     m_settings->fileRemove(FilterIconVerticalGapKey);
+    m_settings->fileRemove(FilterAlignCaptionsKey);
 }
 
 void FilterWidget::applyConfig(const ConfigData& config)
@@ -600,7 +607,8 @@ void FilterWidget::applyConfig(const ConfigData& config)
        || m_config.preservePlaybackPlaylist != validated.preservePlaybackPlaylist
        || m_config.playlistName != validated.playlistName || m_config.rowHeight != validated.rowHeight
        || m_config.iconSize != validated.iconSize || m_config.iconHorizontalGap != validated.iconHorizontalGap
-       || m_config.iconVerticalGap != validated.iconVerticalGap;
+       || m_config.iconVerticalGap != validated.iconVerticalGap
+       || m_config.alignCaptionsToArtwork != validated.alignCaptionsToArtwork;
 
     m_config = validated;
 
@@ -608,8 +616,9 @@ void FilterWidget::applyConfig(const ConfigData& config)
     m_model->setIconSize(m_config.iconSize);
     m_view->setIconHorizontalGap(m_config.iconHorizontalGap);
     m_view->setIconVerticalGap(m_config.iconVerticalGap);
+    m_delegate->setAlignCaptionsToArtwork(m_config.alignCaptionsToArtwork);
     m_view->changeIconSize(m_config.iconSize);
-    QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+    QMetaObject::invokeMethod(m_delegate, "sizeHintChanged", Q_ARG(QModelIndex, {}));
 
     if(hasConfigChanged) {
         Q_EMIT configChanged();
@@ -1094,6 +1103,9 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
     if(layout.contains("IconVerticalGap"_L1)) {
         config.iconVerticalGap = layout.value("IconVerticalGap"_L1).toInt();
     }
+    if(layout.contains("AlignCaptionsToArtwork"_L1)) {
+        config.alignCaptionsToArtwork = layout.value("AlignCaptionsToArtwork"_L1).toBool();
+    }
 
     config.rowHeight         = std::max(config.rowHeight, 0);
     config.iconHorizontalGap = std::max(config.iconHorizontalGap, -1);
@@ -1108,19 +1120,20 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
 
 void FilterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
 {
-    layout["DoubleClickAction"_L1] = config.doubleClickAction;
-    layout["MiddleClickAction"_L1] = config.middleClickAction;
-    layout["SendPlayback"_L1]      = config.sendPlayback;
-    layout["FilterSource"_L1]      = static_cast<int>(config.source);
-    layout["PlaylistEnabled"_L1]   = config.playlistEnabled;
-    layout["AutoSwitch"_L1]        = config.autoSwitch;
-    layout["KeepAlive"_L1]         = config.preservePlaybackPlaylist;
-    layout["PlaylistName"_L1]      = config.playlistName;
-    layout["RowHeight"_L1]         = config.rowHeight;
-    layout["IconWidth"_L1]         = config.iconSize.width();
-    layout["IconHeight"_L1]        = config.iconSize.height();
-    layout["IconHorizontalGap"_L1] = config.iconHorizontalGap;
-    layout["IconVerticalGap"_L1]   = config.iconVerticalGap;
+    layout["DoubleClickAction"_L1]      = config.doubleClickAction;
+    layout["MiddleClickAction"_L1]      = config.middleClickAction;
+    layout["SendPlayback"_L1]           = config.sendPlayback;
+    layout["FilterSource"_L1]           = static_cast<int>(config.source);
+    layout["PlaylistEnabled"_L1]        = config.playlistEnabled;
+    layout["AutoSwitch"_L1]             = config.autoSwitch;
+    layout["KeepAlive"_L1]              = config.preservePlaybackPlaylist;
+    layout["PlaylistName"_L1]           = config.playlistName;
+    layout["RowHeight"_L1]              = config.rowHeight;
+    layout["IconWidth"_L1]              = config.iconSize.width();
+    layout["IconHeight"_L1]             = config.iconSize.height();
+    layout["IconHorizontalGap"_L1]      = config.iconHorizontalGap;
+    layout["IconVerticalGap"_L1]        = config.iconVerticalGap;
+    layout["AlignCaptionsToArtwork"_L1] = config.alignCaptionsToArtwork;
 }
 } // namespace Fooyin::Filters
 
