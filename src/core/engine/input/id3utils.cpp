@@ -136,6 +136,23 @@ bool isLyricsField(const QString& field)
 std::optional<TimedMetadata> parseTimedMetadata(QByteArrayView data)
 {
     if(data.size() < 10 || data.first(3) != "ID3") {
+        if(data.size() < 5) {
+            return {};
+        }
+
+        // FFmpeg 5 strips "ID3", the major version and revision from
+        // MPEG-TS timed-ID3 packets. Reconstruct the missing prefix and
+        // try both supported encodings.
+        for(const char version : {char{3}, char{4}}) {
+            QByteArray reconstructed{"ID3", 3};
+            reconstructed.append(version);
+            reconstructed.append(char{0});
+            reconstructed.append(data);
+            if(auto metadata = parseTimedMetadata(reconstructed)) {
+                return metadata;
+            }
+        }
+
         return {};
     }
 

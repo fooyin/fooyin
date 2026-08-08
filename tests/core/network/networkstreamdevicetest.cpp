@@ -270,6 +270,19 @@ TEST_F(NetworkStreamDeviceTest, ParsesMpegTsTimedId3Payload)
     EXPECT_TRUE(metadata->station.isEmpty());
 }
 
+TEST_F(NetworkStreamDeviceTest, ParsesMpegTsTimedId3PayloadStrippedByFfmpeg5)
+{
+    const QByteArray payload = QByteArray::fromHex(
+        "49443303000000000035544954320000000fc00003436c6f73652054686520446f6f725450453100000012c0000354656464"
+        "792050656e6465726772617373");
+
+    const auto metadata = Id3Utils::parseTimedMetadata(QByteArrayView{payload}.sliced(5));
+
+    ASSERT_TRUE(metadata.has_value());
+    EXPECT_EQ(metadata->title, u"Close The Door"_s);
+    EXPECT_EQ(metadata->artist, u"Teddy Pendergrass"_s);
+}
+
 TEST_F(NetworkStreamDeviceTest, PreservesApostrophesInIcyMetadataFields)
 {
     auto network = makeFakeNetworkAccessManager();
