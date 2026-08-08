@@ -1,5 +1,29 @@
 # Changelog
 
+## Unreleased
+
+### Improvements
+
+* Filters
+  - Add a built-in Gallery layout
+  - Add an option to align captions with artwork
+* Oscilloscope
+  - Keep the waveform continuous across track changes
+* Remote Streams
+  - Add MPEG-TS timed ID3 metadata support for HLS streams
+
+### Fixes
+
+* Interface
+  - Fix transparent item view editors in some styles
+* Library
+  - Remove excluded and stale tracks during library rescans ([#1439](https://github.com/fooyin/fooyin/issues/1439))
+* Playlist
+  - Always clear live metadata when switching playlists
+* Spectrum
+  - Fix frequency mapping at low sample rates ([#1446](https://github.com/fooyin/fooyin/issues/1446))
+
+
 ## [0.12.2](https://github.com/fooyin/fooyin/releases/tag/v0.12.2) (2026-08-07)
 
 ### Improvements
