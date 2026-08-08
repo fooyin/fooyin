@@ -77,6 +77,11 @@ Track AudioDecoder::changedTrack() const
     return {};
 }
 
+std::optional<AudioDecoder::TimedTrackChange> AudioDecoder::takeTimedTrackChange()
+{
+    return {};
+}
+
 int AudioDecoder::bitrate() const
 {
     return 0;

@@ -2583,6 +2583,22 @@ void AudioEngine::syncDecoderTrackMetadata()
     Q_EMIT trackChanged(changedTrack);
 }
 
+void AudioEngine::syncTimedTrackMetadata(const AudioStreamPtr& stream, uint64_t sourcePositionMs)
+{
+    const auto changed = stream->takeTimedTrackChange(sourcePositionMs);
+    if(!changed || !changed->isValid() || !sameTrackIdentity(m_currentTrack, *changed)
+       || changed->sameDataAs(m_currentTrack)) {
+        return;
+    }
+
+    m_currentTrack = *changed;
+    stream->setTrack(*changed);
+    if(changed->bitrate() >= MinLiveBitrateKbps) {
+        publishBitrate(changed->bitrate());
+    }
+    Q_EMIT trackChanged(*changed);
+}
+
 void AudioEngine::publishBitrate(int bitrate)
 {
     const int clampedBitrate = std::max(0, bitrate);
@@ -3638,6 +3654,14 @@ void AudioEngine::updatePosition()
 
     if(!output.positionAvailable) {
         return;
+    }
+
+    if(pipelineStatus.renderedSegment.valid && pipelineStatus.renderedSegment.streamId == stream->id()) {
+        const uint64_t sourceDelayMs       = scaledDelayMs(pipelineDelayMs, delayToSourceScale);
+        const uint64_t renderedSourceEndMs = pipelineStatus.renderedSegment.sourceEndMs;
+        const uint64_t audibleSourcePositionMs
+            = renderedSourceEndMs > sourceDelayMs ? renderedSourceEndMs - sourceDelayMs : 0;
+        syncTimedTrackMetadata(stream, audibleSourcePositionMs);
     }
 
     const bool preparedGaplessRendered = m_preparedGaplessTransition.active

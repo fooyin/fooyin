@@ -40,7 +40,9 @@
 
 #include <chrono>
 #include <cstring>
+#include <deque>
 #include <stop_token>
+#include <utility>
 
 #ifdef Q_OS_WINDOWS
 #define snprintf _snprintf
@@ -1028,6 +1030,7 @@ public:
 
     void applyStreamProperties(Track& track) const;
     void updateNetworkMetadata() const;
+    void processTimedMetadataPacket(const AVPacket& packet);
     void readNext();
     void seek(uint64_t pos);
     [[nodiscard]] bool isRemoteStream() const;
@@ -1056,6 +1059,8 @@ public:
     AudioDecoder::DecoderOptions m_options;
     Track m_baseTrack;
     mutable Track m_changedTrack;
+    Track m_lastTimedTrack;
+    std::deque<AudioDecoder::TimedTrackChange> m_timedTrackChanges;
     RemoteStreamDevice* m_remoteDevice{nullptr};
     mutable quint64 m_networkMetadataRevision{0};
     AudioBuffer m_buffer;
@@ -1092,6 +1097,8 @@ void FFmpegInputPrivate::reset()
     m_trackChanged            = false;
     m_baseTrack               = {};
     m_changedTrack            = {};
+    m_lastTimedTrack          = {};
+    m_timedTrackChanges.clear();
     m_remoteDevice            = nullptr;
     m_networkMetadataRevision = 0;
     m_buffer.clear();
@@ -1387,6 +1394,53 @@ void FFmpegInputPrivate::updateNetworkMetadata() const
     m_trackChanged = true;
 }
 
+void FFmpegInputPrivate::processTimedMetadataPacket(const AVPacket& packet)
+{
+    if(!m_options.testFlag(AudioDecoder::UpdateTracks) || !m_context || packet.stream_index < 0
+       || std::cmp_greater_equal(packet.stream_index, m_context->nb_streams) || !packet.data || packet.size <= 0) {
+        return;
+    }
+
+    const AVStream* stream = m_context->streams[packet.stream_index];
+    if(!stream || !stream->codecpar || stream->codecpar->codec_id != AV_CODEC_ID_TIMED_ID3) {
+        return;
+    }
+
+    const auto metadata
+        = Id3Utils::parseTimedMetadata(QByteArrayView{reinterpret_cast<const char*>(packet.data), packet.size});
+    if(!metadata) {
+        return;
+    }
+
+    Track track = m_lastTimedTrack.isValid() ? m_lastTimedTrack : m_baseTrack;
+    if(!metadata->title.isEmpty()) {
+        track.setTitle(metadata->title);
+        track.setArtists(metadata->artist.isEmpty() ? QStringList{} : QStringList{metadata->artist});
+        const QString streamTitle
+            = metadata->artist.isEmpty() ? metadata->title : u"%1 - %2"_s.arg(metadata->artist, metadata->title);
+        track.replaceExtraTag(u"STREAMTITLE"_s, streamTitle);
+    }
+    if(!metadata->station.isEmpty()) {
+        track.replaceExtraTag(u"STATION"_s, metadata->station);
+    }
+
+    track.setMetadataWasRead(true);
+    applyStreamProperties(track);
+
+    if(track.sameDataAs(m_lastTimedTrack)) {
+        return;
+    }
+
+    uint64_t timestampMs{0};
+    const int64_t timestamp = packet.pts != AV_NOPTS_VALUE ? packet.pts : packet.dts;
+    if(timestamp != AV_NOPTS_VALUE && timestamp >= 0) {
+        timestampMs = static_cast<uint64_t>(av_rescale_q(timestamp, stream->time_base, TimeBaseMs));
+    }
+
+    m_lastTimedTrack = track;
+    m_timedTrackChanges.push_back({.timestampMs = timestampMs, .track = track});
+}
+
 void FFmpegInputPrivate::applyStreamProperties(Track& track) const
 {
     if(!m_codec.isValid() || !m_audioFormat.isValid()) {
@@ -1429,7 +1483,7 @@ void FFmpegInputPrivate::readNext()
     }
 
     if(m_pendingPacket) {
-        PacketPtr pendingPacket = std::move(m_pendingPacket);
+        const PacketPtr pendingPacket = std::move(m_pendingPacket);
         decodeAudio(pendingPacket);
         return;
     }
@@ -1478,6 +1532,7 @@ void FFmpegInputPrivate::readNext()
     updateNetworkMetadata();
 
     if(packet->stream_index != m_codec.streamIndex()) {
+        processTimedMetadataPacket(*packet);
         readNext();
         return;
     }
@@ -1533,10 +1588,12 @@ void FFmpegInputPrivate::seek(uint64_t pos)
     m_bufferPos     = 0;
     m_buffer        = {};
     m_pendingPacket = {};
-    m_eof           = false;
-    m_draining      = false;
-    m_skipBytes     = 0;
-    m_currentPos    = pos;
+    m_timedTrackChanges.clear();
+    m_lastTimedTrack = {};
+    m_eof            = false;
+    m_draining       = false;
+    m_skipBytes      = 0;
+    m_currentPos     = pos;
 }
 
 FFmpegDecoder::FFmpegDecoder()
@@ -1567,6 +1624,17 @@ Track FFmpegDecoder::changedTrack() const
     p->updateNetworkMetadata();
     p->m_trackChanged = false;
     return p->m_changedTrack;
+}
+
+std::optional<AudioDecoder::TimedTrackChange> FFmpegDecoder::takeTimedTrackChange()
+{
+    if(p->m_timedTrackChanges.empty()) {
+        return {};
+    }
+
+    TimedTrackChange change = std::move(p->m_timedTrackChanges.front());
+    p->m_timedTrackChanges.pop_front();
+    return change;
 }
 
 std::optional<AudioFormat> FFmpegDecoder::init(const AudioSource& source, const Track& track, DecoderOptions options)

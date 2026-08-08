@@ -537,6 +537,27 @@ std::vector<double> readSamples(AudioMixer& mixer, int frames)
 }
 } // namespace
 
+TEST(AudioStreamTest, ReleasesNewestDueTimedTrackChange)
+{
+    auto stream = StreamFactory::createStream(testFormat(), 64);
+    Track first{u"https://radio.example.com/live"_s};
+    first.setTitle(u"First"_s);
+    Track second{first};
+    second.setTitle(u"Second"_s);
+
+    stream->appendTimedTrackChange(200, second);
+    stream->appendTimedTrackChange(100, first);
+
+    EXPECT_FALSE(stream->takeTimedTrackChange(99).has_value());
+    const auto firstDue = stream->takeTimedTrackChange(100);
+    ASSERT_TRUE(firstDue.has_value());
+    EXPECT_EQ(firstDue->title(), u"First"_s);
+    const auto secondDue = stream->takeTimedTrackChange(250);
+    ASSERT_TRUE(secondDue.has_value());
+    EXPECT_EQ(secondDue->title(), u"Second"_s);
+    EXPECT_FALSE(stream->takeTimedTrackChange(250).has_value());
+}
+
 TEST(AudioMixerTest, ReadsSinglePlayingStream)
 {
     AudioMixer mixer{testFormat()};

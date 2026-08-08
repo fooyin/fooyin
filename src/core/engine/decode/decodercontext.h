@@ -28,6 +28,7 @@
 #include <core/engine/audioloader.h>
 #include <core/track.h>
 
+#include <deque>
 #include <memory>
 #include <optional>
 #include <vector>
@@ -143,6 +144,10 @@ private:
     std::optional<uint64_t> m_windowEndPos;
     EndPolicy m_endPolicy;
     AudioDecoder::PlaybackHints m_playbackHints;
+
+    std::deque<AudioDecoder::TimedTrackChange> m_pendingTimedTrackChanges;
+    std::optional<uint64_t> m_timedMetadataSourceAnchorMs;
+    uint64_t m_timedMetadataStreamAnchorMs{0};
 
     bool m_isDecoding;
     bool m_lastDecodeNeededMoreInput;

@@ -21,10 +21,74 @@
 
 #include <core/engine/tagdefs.h>
 
+#include <QStringDecoder>
+#include <QtEndian>
+
+#include <algorithm>
+#include <cstdint>
+
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::Id3Utils {
 namespace {
+enum class Id3Version : uchar
+{
+    V2_3 = 3,
+    V2_4 = 4,
+};
+
+enum class Id3TextEncoding : uchar
+{
+    Latin1  = 0,
+    Utf16   = 1,
+    Utf16BE = 2,
+    Utf8    = 3,
+};
+
+uint32_t bigEndianUint32(QByteArrayView data, qsizetype offset)
+{
+    return qFromBigEndian<uint32_t>(data.data() + offset);
+}
+
+uint32_t syncSafeUint32(QByteArrayView data, qsizetype offset)
+{
+    return (static_cast<uint32_t>(static_cast<uchar>(data.at(offset))) << 21U)
+         | (static_cast<uint32_t>(static_cast<uchar>(data.at(offset + 1))) << 14U)
+         | (static_cast<uint32_t>(static_cast<uchar>(data.at(offset + 2))) << 7U)
+         | static_cast<uint32_t>(static_cast<uchar>(data.at(offset + 3)));
+}
+
+QString decodeId3Text(QByteArrayView data)
+{
+    if(data.isEmpty()) {
+        return {};
+    }
+
+    const auto encoding = static_cast<Id3TextEncoding>(data.front());
+    data                = data.sliced(1);
+
+    QString text;
+    switch(encoding) {
+        case Id3TextEncoding::Latin1:
+            text = QString::fromLatin1(data);
+            break;
+        case Id3TextEncoding::Utf16:
+            text = QStringDecoder{QStringDecoder::Utf16}(data);
+            break;
+        case Id3TextEncoding::Utf16BE:
+            text = QStringDecoder{QStringDecoder::Utf16BE}(data);
+            break;
+        case Id3TextEncoding::Utf8:
+            text = QString::fromUtf8(data);
+            break;
+        default:
+            return {};
+    }
+
+    text.remove(QChar::Null);
+    return text.trimmed();
+}
+
 QStringList splitValues(const QStringList& values, QChar separator)
 {
     QStringList result;
@@ -68,6 +132,53 @@ bool isLyricsField(const QString& field)
         || field == "UNSYNCHRONIZED LYRICS"_L1 || field == "USLT"_L1 || field == "SYLT"_L1;
 }
 } // namespace
+
+std::optional<TimedMetadata> parseTimedMetadata(QByteArrayView data)
+{
+    if(data.size() < 10 || data.first(3) != "ID3") {
+        return {};
+    }
+
+    const auto version = static_cast<Id3Version>(data.at(3));
+    if(version != Id3Version::V2_3 && version != Id3Version::V2_4) {
+        return {};
+    }
+
+    const qsizetype tagEnd = std::min<qsizetype>(data.size(), 10 + syncSafeUint32(data, 6));
+    qsizetype offset{10};
+    TimedMetadata metadata;
+
+    while(offset + 10 <= tagEnd) {
+        const QByteArrayView frameId = data.sliced(offset, 4);
+        if(frameId == QByteArrayView{"\0\0\0\0", 4}) {
+            break;
+        }
+
+        const uint32_t frameSize
+            = version == Id3Version::V2_4 ? syncSafeUint32(data, offset + 4) : bigEndianUint32(data, offset + 4);
+        offset += 10;
+        if(frameSize == 0 || std::cmp_greater(frameSize, tagEnd - offset)) {
+            break;
+        }
+
+        const QByteArrayView value = data.sliced(offset, frameSize);
+        if(frameId == "TIT2") {
+            metadata.title = decodeId3Text(value);
+        }
+        else if(frameId == "TPE1") {
+            metadata.artist = decodeId3Text(value);
+        }
+        else if(frameId == "TRSN") {
+            metadata.station = decodeId3Text(value);
+        }
+        offset += frameSize;
+    }
+
+    if(metadata.title.isEmpty() && metadata.artist.isEmpty() && metadata.station.isEmpty()) {
+        return {};
+    }
+    return metadata;
+}
 
 QStringList splitStandardField(const QString& field, const QStringList& values, bool splitSemicolonSeparated)
 {

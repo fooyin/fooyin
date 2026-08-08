@@ -21,12 +21,12 @@
 
 #include "streamdeviceutils.h"
 
+#include <core/engine/input/id3utils.h>
 #include <core/network/networkutils.h>
 
 #include <QMetaObject>
 #include <QNetworkReply>
 #include <QPointer>
-#include <QStringDecoder>
 #include <QThread>
 #include <QTimer>
 #include <QtEndian>
@@ -118,117 +118,9 @@ public:
 };
 
 namespace {
-enum class Id3Version : uchar
-{
-    V2_3 = 3,
-    V2_4 = 4,
-};
-
-enum class Id3TextEncoding : uchar
-{
-    Latin1  = 0,
-    Utf16   = 1,
-    Utf16BE = 2,
-    Utf8    = 3,
-};
-
 uint32_t bigEndianUint32(QByteArrayView data, qsizetype offset)
 {
     return qFromBigEndian<uint32_t>(data.data() + offset);
-}
-
-uint32_t syncSafeUint32(QByteArrayView data, qsizetype offset)
-{
-    return (static_cast<uint32_t>(static_cast<uchar>(data.at(offset))) << 21U)
-         | (static_cast<uint32_t>(static_cast<uchar>(data.at(offset + 1))) << 14U)
-         | (static_cast<uint32_t>(static_cast<uchar>(data.at(offset + 2))) << 7U)
-         | static_cast<uint32_t>(static_cast<uchar>(data.at(offset + 3)));
-}
-
-QString decodeId3Text(QByteArrayView data)
-{
-    if(data.isEmpty()) {
-        return {};
-    }
-
-    const auto encoding = static_cast<Id3TextEncoding>(data.front());
-    data                = data.sliced(1);
-
-    QString text;
-    switch(encoding) {
-        case Id3TextEncoding::Latin1:
-            text = QString::fromLatin1(data);
-            break;
-        case Id3TextEncoding::Utf16:
-            text = QStringDecoder{QStringDecoder::Utf16}(data);
-            break;
-        case Id3TextEncoding::Utf16BE:
-            text = QStringDecoder{QStringDecoder::Utf16BE}(data);
-            break;
-        case Id3TextEncoding::Utf8:
-            text = QString::fromUtf8(data);
-            break;
-        default:
-            return {};
-    }
-
-    text.remove(QChar::Null);
-    return text.trimmed();
-}
-
-std::optional<NetworkStreamMetadata> parseId3Metadata(QByteArrayView data)
-{
-    if(data.size() < 10 || data.first(3) != "ID3") {
-        return {};
-    }
-
-    const auto version = static_cast<Id3Version>(data.at(3));
-    if(version != Id3Version::V2_3 && version != Id3Version::V2_4) {
-        return {};
-    }
-
-    const qsizetype tagEnd = std::min<qsizetype>(data.size(), 10 + syncSafeUint32(data, 6));
-    qsizetype offset{10};
-    QString title;
-    QString artist;
-    QString station;
-
-    while(offset + 10 <= tagEnd) {
-        const QByteArrayView frameId = data.sliced(offset, 4);
-        if(frameId == QByteArrayView{"\0\0\0\0", 4}) {
-            break;
-        }
-
-        const uint32_t frameSize
-            = version == Id3Version::V2_4 ? syncSafeUint32(data, offset + 4) : bigEndianUint32(data, offset + 4);
-        offset += 10;
-        if(frameSize == 0 || std::cmp_greater(frameSize, tagEnd - offset)) {
-            break;
-        }
-
-        const QByteArrayView value = data.sliced(offset, frameSize);
-        if(frameId == "TIT2") {
-            title = decodeId3Text(value);
-        }
-        else if(frameId == "TPE1") {
-            artist = decodeId3Text(value);
-        }
-        else if(frameId == "TRSN") {
-            station = decodeId3Text(value);
-        }
-        offset += frameSize;
-    }
-
-    if(title.isEmpty() && artist.isEmpty() && station.isEmpty()) {
-        return {};
-    }
-
-    NetworkStreamMetadata metadata;
-    metadata.streamName = station;
-    if(!title.isEmpty()) {
-        metadata.streamTitle = artist.isEmpty() ? title : u"%1 - %2"_s.arg(artist, title);
-    }
-    return metadata;
 }
 
 std::optional<QByteArrayView> cString(QByteArrayView data, qsizetype& offset)
@@ -281,7 +173,18 @@ std::optional<NetworkStreamMetadata> parseEmsgMetadata(QByteArrayView box)
     if(*scheme != AppleEmsgId3Scheme) {
         return {};
     }
-    return parseId3Metadata(payload.sliced(offset));
+
+    const auto id3 = Id3Utils::parseTimedMetadata(payload.sliced(offset));
+    if(!id3) {
+        return {};
+    }
+
+    NetworkStreamMetadata metadata;
+    metadata.streamName = id3->station;
+    if(!id3->title.isEmpty()) {
+        metadata.streamTitle = id3->artist.isEmpty() ? id3->title : u"%1 - %2"_s.arg(id3->artist, id3->title);
+    }
+    return metadata;
 }
 
 void updateMetadata(HlsStreamDeviceState& state, NetworkStreamMetadata metadata)

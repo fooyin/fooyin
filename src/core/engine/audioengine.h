@@ -243,6 +243,7 @@ private:
     [[nodiscard]] bool cancelPendingAudiblePause();
     void handlePipelineFadeEvent(const AudioPipeline::FadeEvent& event);
     void syncDecoderTrackMetadata();
+    void syncTimedTrackMetadata(const AudioStreamPtr& stream, uint64_t sourcePositionMs);
     void publishBitrate(int bitrate);
     void syncDecoderBitrate();
     void publishPosition(uint64_t sourcePositionMs, uint64_t outputDelayMs, double delayToSourceScale,

@@ -40,7 +40,9 @@
 #include <chrono>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <thread>
+#include <utility>
 #include <vector>
 
 using namespace std::chrono_literals;
@@ -268,6 +270,16 @@ public:
         return m_stats->bitrate.load(std::memory_order_relaxed);
     }
 
+    void setTimedTrackChange(TimedTrackChange change)
+    {
+        m_timedTrackChange = std::move(change);
+    }
+
+    std::optional<TimedTrackChange> takeTimedTrackChange() override
+    {
+        return std::exchange(m_timedTrackChange, std::nullopt);
+    }
+
     std::optional<AudioFormat> init(const AudioSource& source, const Track& track, DecoderOptions options) override
     {
         Q_UNUSED(source)
@@ -345,6 +357,7 @@ private:
     uint64_t m_sourceEnd{0};
     bool m_started{false};
     bool m_initValid{false};
+    std::optional<TimedTrackChange> m_timedTrackChange;
 };
 
 class FakeAudioOutput : public AudioOutput
@@ -816,6 +829,36 @@ FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, AdoptPreparedDecoderPreservesDe
 
     adoptedContext.stop();
     EXPECT_EQ(1, stats->stopCalls.load());
+}
+
+FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, DecoderContextQueuesTimedTrackChangesOnActiveStream)
+{
+    auto stats   = std::make_shared<DecoderStats>();
+    auto decoder = std::make_unique<FakeDecoder>(stats);
+
+    const Track track = makeTrack(u"timed-metadata.fyt"_s, 0, 1000);
+    Track changed{track};
+    changed.setTitle(u"Now Playing"_s);
+    constexpr uint64_t SourceEpochMs = 66'035'000;
+    decoder->setTimedTrackChange({.timestampMs = SourceEpochMs + 5, .track = changed});
+
+    LoadedDecoder loaded;
+    loaded.format = decoder->init(AudioSource{}, track, AudioDecoder::UpdateTracks);
+    decoder->seek(SourceEpochMs);
+    loaded.decoder = std::move(decoder);
+    ASSERT_TRUE(loaded.format.has_value());
+
+    DecoderContext context;
+    ASSERT_TRUE(context.init(std::move(loaded), track));
+    auto stream = context.createStream(128);
+    context.setActiveStream(stream);
+    context.start();
+
+    ASSERT_GT(context.decodeChunk(10), 0);
+    EXPECT_FALSE(stream->takeTimedTrackChange(4).has_value());
+    const auto due = stream->takeTimedTrackChange(5);
+    ASSERT_TRUE(due.has_value());
+    EXPECT_EQ(due->title(), u"Now Playing"_s);
 }
 
 FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, ContiguousSegmentSwitchDoesNotReinitDecoderOrOutput)

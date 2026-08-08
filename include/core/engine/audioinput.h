@@ -29,6 +29,7 @@
 
 #include <chrono>
 #include <memory>
+#include <optional>
 #include <stop_token>
 #include <utility>
 
@@ -162,6 +163,12 @@ public:
         }
     };
 
+    struct TimedTrackChange
+    {
+        uint64_t timestampMs{0};
+        Track track;
+    };
+
     AudioDecoder();
     virtual ~AudioDecoder();
 
@@ -208,6 +215,8 @@ public:
      * @note Called only when `trackHasChanged()` returns true.
      */
     [[nodiscard]] virtual Track changedTrack() const;
+    /*! Returns and removes the next timestamped metadata change reported by the demuxer. */
+    [[nodiscard]] virtual std::optional<TimedTrackChange> takeTimedTrackChange();
     /*!
      * Returns the current variable/dynamic bitrate.
      * @note this should return 0 if the file isn't encoded with VBR.

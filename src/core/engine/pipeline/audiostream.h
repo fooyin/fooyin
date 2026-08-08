@@ -192,6 +192,12 @@ public:
     void appendBitrateSpan(uint64_t startSample, uint64_t endSample, int bitrate);
     //! Drop all buffered bitrate metadata.
     void clearBitrateSpans();
+    //! Queue a track metadata change at an absolute source-timeline timestamp.
+    void appendTimedTrackChange(uint64_t timestampMs, const Track& track);
+    //! Remove all due changes and return the newest one.
+    [[nodiscard]] std::optional<Track> takeTimedTrackChange(uint64_t timestampMs);
+    //! Drop all queued timestamped metadata.
+    void clearTimedTrackChanges();
 
 private:
     struct BitrateSpan
@@ -223,6 +229,14 @@ private:
     mutable std::mutex m_metadataMutex;
     mutable std::mutex m_bitrateMutex;
     mutable std::deque<BitrateSpan> m_bitrateSpans;
+
+    struct TimedTrackChange
+    {
+        uint64_t timestampMs{0};
+        Track track;
+    };
+    mutable std::mutex m_timedMetadataMutex;
+    std::deque<TimedTrackChange> m_timedTrackChanges;
 
     const StreamId m_id;
 

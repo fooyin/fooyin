@@ -41,6 +41,18 @@ namespace {
     return endPosMs != std::numeric_limits<uint64_t>::max() && positionMs >= endPosMs;
 }
 
+[[nodiscard]] uint64_t mapSourceTimestamp(uint64_t timestampMs, uint64_t sourceAnchorMs, uint64_t streamAnchorMs)
+{
+    if(timestampMs >= sourceAnchorMs) {
+        const uint64_t delta = timestampMs - sourceAnchorMs;
+        return delta > std::numeric_limits<uint64_t>::max() - streamAnchorMs ? std::numeric_limits<uint64_t>::max()
+                                                                             : streamAnchorMs + delta;
+    }
+
+    const uint64_t delta = sourceAnchorMs - timestampMs;
+    return delta < streamAnchorMs ? streamAnchorMs - delta : 0;
+}
+
 [[nodiscard]] std::optional<Fooyin::AudioBuffer> trimBufferToTrackWindow(const Fooyin::AudioBuffer& buffer,
                                                                          uint64_t windowStartMs, uint64_t windowEndMs)
 {
@@ -238,6 +250,9 @@ AudioStreamPtr DecoderContext::createStream(size_t bufferSamples, Engine::FadeCu
 void DecoderContext::setActiveStream(AudioStreamPtr stream)
 {
     m_activeStream = std::move(stream);
+    m_pendingTimedTrackChanges.clear();
+    m_timedMetadataSourceAnchorMs.reset();
+    m_timedMetadataStreamAnchorMs = 0;
 }
 
 AudioStreamPtr DecoderContext::detachStream()
@@ -274,6 +289,9 @@ bool DecoderContext::seek(uint64_t positionMs)
 
     m_decoder->seek(positionMs);
     m_currentPos = positionMs;
+    m_pendingTimedTrackChanges.clear();
+    m_timedMetadataSourceAnchorMs.reset();
+    m_timedMetadataStreamAnchorMs = 0;
 
     return true;
 }
@@ -358,6 +376,20 @@ int DecoderContext::decodeChunk(size_t maxFrames)
         const auto readResult       = m_decoder->readAudio(bytesToRead);
         m_lastDecodeNeededMoreInput = readResult.status == AudioDecoder::ReadStatus::NeedMoreInput;
 
+        while(const auto change = m_decoder->takeTimedTrackChange()) {
+            m_pendingTimedTrackChanges.push_back(*change);
+        }
+
+        if(m_timedMetadataSourceAnchorMs) {
+            while(!m_pendingTimedTrackChanges.empty()) {
+                auto change = std::move(m_pendingTimedTrackChanges.front());
+                m_pendingTimedTrackChanges.pop_front();
+                const uint64_t streamTimestampMs = mapSourceTimestamp(
+                    change.timestampMs, *m_timedMetadataSourceAnchorMs, m_timedMetadataStreamAnchorMs);
+                m_activeStream->appendTimedTrackChange(streamTimestampMs, change.track);
+            }
+        }
+
         if(readResult.status != AudioDecoder::ReadStatus::DecodedAudio) {
             if(readResult.status == AudioDecoder::ReadStatus::NeedMoreInput) {
                 return 0;
@@ -388,6 +420,19 @@ int DecoderContext::decodeChunk(size_t maxFrames)
 
         auto format = boundedInput->format();
         format.setSampleFormat(SampleFormat::F64);
+
+        if(!m_timedMetadataSourceAnchorMs) {
+            m_timedMetadataSourceAnchorMs = boundedInput->startTime();
+            m_timedMetadataStreamAnchorMs = m_activeStream->positionMs() + m_activeStream->bufferedDurationMs();
+
+            while(!m_pendingTimedTrackChanges.empty()) {
+                auto change = std::move(m_pendingTimedTrackChanges.front());
+                m_pendingTimedTrackChanges.pop_front();
+                const uint64_t streamTimestampMs = mapSourceTimestamp(
+                    change.timestampMs, *m_timedMetadataSourceAnchorMs, m_timedMetadataStreamAnchorMs);
+                m_activeStream->appendTimedTrackChange(streamTimestampMs, change.track);
+            }
+        }
 
         auto convertedBuffer = Audio::convert(boundedInput.value(), format);
         if(!convertedBuffer.isValid()) {
@@ -567,8 +612,11 @@ void DecoderContext::reset()
     m_currentPos = 0;
     m_startPos   = 0;
     m_windowEndPos.reset();
-    m_endPolicy                 = EndPolicy::DecoderEofOnly;
-    m_lastDecodeNeededMoreInput = false;
+    m_pendingTimedTrackChanges.clear();
+    m_timedMetadataSourceAnchorMs.reset();
+    m_timedMetadataStreamAnchorMs = 0;
+    m_endPolicy                   = EndPolicy::DecoderEofOnly;
+    m_lastDecodeNeededMoreInput   = false;
     std::vector<double>{}.swap(m_decodeScratch);
 }
 } // namespace Fooyin
