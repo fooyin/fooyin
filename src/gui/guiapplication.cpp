@@ -103,6 +103,8 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QAbstractItemView>
+#include <QAbstractSpinBox>
 #include <QAction>
 #include <QApplication>
 #include <QCheckBox>
@@ -530,6 +532,21 @@ CoverRepository* GuiApplication::coverRepository() const
 
 bool GuiApplication::eventFilter(QObject* watched, QEvent* event)
 {
+    if(event->type() == QEvent::Polish) {
+        if(auto* editor = qobject_cast<QWidget*>(watched);
+           qobject_cast<QLineEdit*>(editor) || qobject_cast<QAbstractSpinBox*>(editor)) {
+            QWidget* editorParent = editor->parentWidget();
+            for(QWidget* ancestor = editorParent; ancestor; ancestor = ancestor->parentWidget()) {
+                if(auto* view = qobject_cast<QAbstractItemView*>(ancestor); view && view->viewport() == editorParent) {
+                    // Some styles leave item view editors transparent, allowing the cell text painted underneath
+                    // to show through while editing
+                    editor->setAutoFillBackground(true);
+                    break;
+                }
+            }
+        }
+    }
+
     if(watched == qApp) {
         switch(event->type()) {
             case QEvent::ApplicationFontChange:
