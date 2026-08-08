@@ -434,18 +434,20 @@ void FileOpsWorker::simulateCopy()
             const auto files = Utils::File::getFilesInDirRecursive(srcPath);
             for(const QString& file : files) {
                 const QString relativePath = srcDir.relativeFilePath(file);
-                const QString fileDestPath = QDir::cleanPath(destPath + "/"_L1 + relativePath);
-
-                const QString parentPath = QFileInfo{fileDestPath}.absolutePath();
-                createDir(parentPath);
 
                 if(m_trackPaths.contains(file)) {
-                    const Track fileTrack = m_trackPaths.equal_range(file).first->second;
+                    const Track fileTrack      = m_trackPaths.equal_range(file).first->second;
+                    const QString fileDestPath = QDir::cleanPath(evaluatePath(script, fileTrack));
+
+                    createDir(QFileInfo{fileDestPath}.absolutePath());
                     m_operations.emplace_back(Operation::Copy, fileTrack.filenameExt(), fileTrack.filepath(),
                                               fileDestPath);
                 }
                 else {
+                    const QString fileDestPath = QDir::cleanPath(destPath + "/"_L1 + relativePath);
                     const QFileInfo info{file};
+
+                    createDir(QFileInfo{fileDestPath}.absolutePath());
                     m_operations.emplace_back(Operation::Copy, info.fileName(), file, fileDestPath);
                 }
             }
