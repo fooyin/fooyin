@@ -6435,12 +6435,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="741"/>
         <source>Keep the width unchanged during automatic resizing; splitter handles can still resize it</source>
-        <translation type="unfinished"></translation>
+        <translation>Håll bredden oförändrad under automatisk ändring av storlek; splittrarhandtag kan fortfarande ändra dess storlek</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="742"/>
         <source>Keep the height unchanged during automatic resizing; splitter handles can still resize it</source>
-        <translation type="unfinished"></translation>
+        <translation>Håll höjden oförändrad under automatisk ändring av storlek; splittrarhandtag kan fortfarande ändra dess storlek</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="788"/>
@@ -7614,7 +7614,7 @@ och senast spelad använder det senare värdet.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="170"/>
         <source>Value range used when saving rated values as text metadata. Unrated tracks remove the rating tag instead of writing zero.</source>
-        <translation type="unfinished"></translation>
+        <translation>Värdesintervall som används när betygsatta värden sparas som textmetadata. Obetygsatta spår tar bort betygstaggen istället för att skriva noll.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="173"/>
@@ -10205,12 +10205,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="176"/>
         <source>Seek step (small)</source>
-        <translation>Let-steg (litet)</translation>
+        <translation>Letningssteg (litet)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="178"/>
         <source>Seek step (large)</source>
-        <translation>Let-steg (stort)</translation>
+        <translation>Letningssteg (stort)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="180"/>
@@ -10518,7 +10518,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="196"/>
         <source>Image padding</source>
-        <translation type="unfinished"></translation>
+        <translation>Bildutfyllning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="203"/>
@@ -13862,12 +13862,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1781"/>
         <source>Icons (right captions)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ikoner (höger text)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1782"/>
         <source>Icons (bottom captions)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ikoner (nedre text)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1823"/>
@@ -16016,7 +16016,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="340"/>
         <source>Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Letningsruta</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="377"/>
@@ -16459,7 +16459,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="54"/>
         <source>Allow imaging on upsampling</source>
-        <translation type="unfinished"></translation>
+        <translation>Tillåt bildtagning vid uppsampling</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="73"/>
@@ -17948,7 +17948,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="88"/>
         <source>Split manually edited multivalue tags on</source>
-        <translation type="unfinished"></translation>
+        <translation>Splitta manuellt redigerade multivärdestaggar på</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="89"/>
@@ -18832,7 +18832,7 @@ Supersampling är tänkt för 1&#xa0;px-stolpar med 0&#xa0;px-mellanrum; andra s
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="220"/>
         <source>Seeking</source>
-        <translation type="unfinished"></translation>
+        <translation>Letande</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="228"/>
@@ -18860,7 +18860,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="88"/>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="98"/>
         <source>Waveform Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Vågform-letningsruta</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="89"/>
@@ -18876,7 +18876,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="92"/>
         <source>Open a waveform seekbar in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna en vågform-letningsruta i ett separat fönster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="94"/>
@@ -19116,7 +19116,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/widgets.cpp" line="277"/>
         <source>Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Letningsruta</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="282"/>
@@ -19206,12 +19206,12 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/widgets.cpp" line="468"/>
         <source>Seeking</source>
-        <translation type="unfinished"></translation>
+        <translation>Letande</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="469"/>
         <source>Focus seekbars when clicked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fokusera letningsrutar när klickade</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="482"/>
@@ -19372,7 +19372,7 @@ Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</transla
     <message>
         <location filename="../../src/gui/widgets.cpp" line="650"/>
         <source>Leave null</source>
-        <translation type="unfinished"></translation>
+        <translation>Lämna som null</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="680"/>
@@ -19398,7 +19398,7 @@ Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</transla
     <message>
         <location filename="../../src/gui/widgets.cpp" line="470"/>
         <source>Give seekbars keyboard focus after clicking them</source>
-        <translation type="unfinished"></translation>
+        <translation>Ge letningsrutor tangentbordsfokus efter att ha klickat på dem</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="475"/>
