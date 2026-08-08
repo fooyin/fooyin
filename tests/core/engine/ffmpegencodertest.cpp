@@ -143,15 +143,43 @@ QByteArray makeTimedId3TransportStream()
         return {};
     }
     const auto freePacket = qScopeGuard([&packet] { av_packet_free(&packet); });
-    if(av_new_packet(packet, tag.size()) < 0) {
+
+    const auto writePacket = [context, packet](AVStream* stream, QByteArrayView data, int64_t pts, int64_t duration,
+                                               AVRational sourceTimeBase) {
+        av_packet_unref(packet);
+        if(av_new_packet(packet, data.size()) < 0) {
+            return false;
+        }
+        std::memcpy(packet->data, data.data(), static_cast<size_t>(data.size()));
+        packet->stream_index = stream->index;
+        packet->pts          = pts;
+        packet->dts          = pts;
+        packet->duration     = duration;
+        packet->flags        = AV_PKT_FLAG_KEY;
+        av_packet_rescale_ts(packet, sourceTimeBase, stream->time_base);
+        return av_interleaved_write_frame(context, packet) >= 0;
+    };
+
+    static constexpr std::array<unsigned char, 21> FirstAacFrame{
+        0xdc, 0x00, 0x4c, 0x61, 0x76, 0x63, 0x36, 0x33, 0x2e, 0x31, 0x2e,
+        0x31, 0x30, 0x30, 0x00, 0x42, 0x20, 0x08, 0xc1, 0x18, 0x38,
+    };
+    static constexpr std::array<unsigned char, 6> SubsequentAacFrame{0x21, 0x10, 0x04, 0x60, 0x8c, 0x1c};
+    const QByteArrayView firstAudio{reinterpret_cast<const char*>(FirstAacFrame.data()), FirstAacFrame.size()};
+    const QByteArrayView nextAudio{reinterpret_cast<const char*>(SubsequentAacFrame.data()), SubsequentAacFrame.size()};
+
+    if(!writePacket(audio, firstAudio, 0, 1024, AVRational{1, 44'100})) {
         return {};
     }
-    std::memcpy(packet->data, tag.constData(), static_cast<size_t>(tag.size()));
-    packet->stream_index = id3->index;
-    packet->pts          = 1234;
-    packet->dts          = 1234;
-    packet->flags        = AV_PKT_FLAG_KEY;
-    if(av_interleaved_write_frame(context, packet) < 0 || av_write_trailer(context) < 0) {
+    for(int frame{1}; frame < 20; ++frame) {
+        if(frame == 3 && !writePacket(id3, tag, 50, 0, AVRational{1, 1000})) {
+            return {};
+        }
+        if(!writePacket(audio, nextAudio, frame * 1024, 1024, AVRational{1, 44'100})) {
+            return {};
+        }
+    }
+    if(av_write_trailer(context) < 0) {
         return {};
     }
 
@@ -496,8 +524,14 @@ TEST(FFmpegInputTest, ReadsTimedId3FromMpegTsDataStream)
     ASSERT_TRUE(decoder.init(source, track, AudioDecoder::UpdateTracks).has_value());
     decoder.start();
 
-    static_cast<void>(decoder.readAudio(4096));
-    const auto change = decoder.takeTimedTrackChange();
+    std::optional<AudioDecoder::TimedTrackChange> change;
+    for(int attempt{0}; attempt < 64 && !change; ++attempt) {
+        const auto read = decoder.readAudio(4096);
+        change          = decoder.takeTimedTrackChange();
+        if(read.status == AudioDecoder::ReadStatus::EndOfStream || read.status == AudioDecoder::ReadStatus::Error) {
+            break;
+        }
+    }
 
     ASSERT_TRUE(change.has_value());
     EXPECT_GT(change->timestampMs, 0);
