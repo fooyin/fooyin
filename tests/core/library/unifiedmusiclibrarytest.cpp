@@ -58,6 +58,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <ranges>
 
 using namespace Qt::StringLiterals;
 
