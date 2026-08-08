@@ -102,6 +102,20 @@ void FiltersPlugin::registerLayouts() const
             3b20c1db282d4bfe9a95c776e6723608"}}]}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAADAAABdAAABGgAAAFgAP////8BAAAAAQA=",
             "Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAABdAAAAU0A/////wEAAAACAA==","Widgets":[{"ArtworkPanel":{}},
             {"SelectionInfo":{}}]}},{"Playlist":{}},{"PlaylistOrganiser":{}}]}},{"StatusBar":{}}]}}]})");
+
+    m_layoutProvider->registerLayout(
+        R"({"Name":"Gallery","Widgets":[{"SplitterVertical":{"Locked":[true,false,true],"State":"AAAA/wAAAAEAAAADAAAAGgAAA3EAAAAWAP////8BAAAAAgA=",
+            "Widgets":[{"SplitterHorizontal":{"Locked":[true,false,false,false],"State":"AAAA/wAAAAEAAAAEAAAAegAABHkAAAA9AAAAdwD/////AQAAAAEA",
+            "Widgets":[{"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}},
+            {"SplitterHorizontal":{"Locked":[true,false,true],"State":"AAAA/wAAAAEAAAADAAAAsgAAAzgAAAHyAP////8BAAAAAQA=",
+            "Widgets":[{"LibraryFilter":{"AlternatingRows":false,"Artwork":0,"AutoSwitch":true,"Captions":1,"Columns":"1","Display":0,"DoubleClickAction":1,
+            "FilterSource":0,"Group":"Gallery","IconHeight":100,"IconHorizontalGap":-1,"IconVerticalGap":10,"IconWidth":100,"Index":0,"KeepAlive":true,"MiddleClickAction":0,
+            "PlaylistEnabled":true,"PlaylistName":"Filter Results","RowHeight":0,"SendPlayback":true,"ShowHeader":true,"ShowScrollbar":true,"ShowSummary":true,"Source":-1,
+            "State":"AAAAJXjaY2BgYGRgYNjAAKFBgNH+A5QBFWAAAChLAeQ="}},{"LibraryFilter":{"AlternatingRows":false,"Artwork":0,"AutoSwitch":true,"Captions":1,"Columns":"3|1",
+            "Display":1,"DoubleClickAction":3,"FilterSource":0,"Group":"Gallery","IconHeight":160,"IconHorizontalGap":-1,"IconVerticalGap":12,"IconWidth":160,"Index":1,
+            "KeepAlive":true,"MiddleClickAction":0,"PlaylistEnabled":true,"PlaylistName":"Filter Results","RowHeight":0,"SendPlayback":true,"ShowHeader":true,
+            "ShowScrollbar":true,"ShowSummary":false,"Source":-1,"State":"AAAANXjaY2BgYGJgYJwLxEsYwGwwYASx7e9vb1T8XSFk/0DFPp/J+TsjTBIAucsIdg=="}},
+            {"Playlist":{"Preset":1,"SingleMode":true}}]}},{"StatusBar":{}}]}}]})");
 }
 } // namespace Fooyin::Filters
 
