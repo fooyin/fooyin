@@ -29,7 +29,7 @@ It's built around extensibility and supports plugins for widgets, decoders, tag 
 
 | ![Simple layout](https://fooyin.org/assets/images/simple.webp)     | ![Directory browser layout](https://fooyin.org/assets/images/browser.webp) |
 |--------------------------------------------------------------------|----------------------------------------------------------------------------|
-| ![Obsidian layout](https://fooyin.org/assets/images/obsidian.webp) | ![Viewer layout](https://fooyin.org/assets/images/viewer.webp)             |
+| ![Obsidian layout](https://fooyin.org/assets/images/obsidian.webp) | ![Gallery layout](https://fooyin.org/assets/images/gallery.webp)             |
 | ![Radio layout](https://fooyin.org/assets/images/radio.webp)       | ![Custom layout](https://fooyin.org/assets/images/custom.webp)             |
 
 ## Features
