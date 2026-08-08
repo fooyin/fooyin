@@ -101,7 +101,8 @@ protected:
 
 private:
     void handlePlayStateChanged(Player::PlayState state);
-    void clearWindow(bool stopTimer);
+    void clearWindow();
+    void resetPresentation();
     [[nodiscard]] int displayedLanes() const;
     [[nodiscard]] Colours colours() const;
     void updateSessionConfig();
