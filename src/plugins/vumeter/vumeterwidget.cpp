@@ -230,6 +230,8 @@ void VuMeterWidgetPrivate::reset()
     std::ranges::fill(m_channelDbLevels, MinDb);
     std::ranges::fill(m_channelPeaks, MinDb);
     std::ranges::fill(m_peakHoldRemainingMs, 0);
+    std::ranges::fill(m_previousChannelDbLevels, MinDb);
+    std::ranges::fill(m_previousChannelPeaks, MinDb);
 }
 
 void VuMeterWidgetPrivate::updateSize()
@@ -283,7 +285,9 @@ void VuMeterWidgetPrivate::calculatePeak()
     const int channels = m_format.channelCount();
     for(int channel{0}; channel < channels; ++channel) {
         updateChannelLevels(channel, elapsedTime, peakTime, falloff, peakFalloff, m_zeroLevel);
-        updateRect = updateRect.united(calculateUpdateRect(channel));
+        updateRect                            = updateRect.united(calculateUpdateRect(channel));
+        m_previousChannelDbLevels.at(channel) = m_channelDbLevels.at(channel);
+        m_previousChannelPeaks.at(channel)    = m_channelPeaks.at(channel);
     }
 
     if(m_stopping && m_zeroLevel) {
@@ -292,6 +296,7 @@ void VuMeterWidgetPrivate::calculatePeak()
     }
 
     if(m_changingTrack || !updateRect.isValid()) {
+        m_changingTrack = false;
         m_self->update();
     }
     else {
@@ -640,9 +645,6 @@ void VuMeterWidgetPrivate::drawChannel(QPainter& painter, float start, int chann
     const float channelLevel = m_channelDbLevels.at(channel);
     const float channelPeak  = m_channelPeaks.at(channel);
 
-    m_previousChannelDbLevels.at(channel) = channelLevel;
-    m_previousChannelPeaks.at(channel)    = channelPeak;
-
     if(isHorizontal()) {
         drawHorizontalBars(painter, x, y, channelLevel, channelSize, start);
     }
@@ -661,8 +663,6 @@ void VuMeterWidgetPrivate::drawChannel(QPainter& painter, float start, int chann
             painter.drawLine(QLineF{x, peakY, x + channelSize - m_channelSpacing, peakY});
         }
     }
-
-    m_changingTrack = false;
 }
 
 void VuMeterWidgetPrivate::drawHorizontalBars(QPainter& painter, float x, float y, float channelLevel,
@@ -1120,7 +1120,9 @@ void VuMeterWidget::renderLevel(const LevelFrame& frame)
 
     if(p->m_format.channelCount() != channels) {
         p->m_format.setChannelCount(channels);
+        p->m_changingTrack = true;
         p->updateSize();
+        update();
     }
 
     for(int i{0}; i < channels; ++i) {
@@ -1220,6 +1222,7 @@ void VuMeterWidget::resizeEvent(QResizeEvent* event)
 {
     p->updateSize();
     FyWidget::resizeEvent(event);
+    update();
 }
 
 void VuMeterWidget::timerEvent(QTimerEvent* event)
