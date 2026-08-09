@@ -43,10 +43,11 @@ using namespace Qt::StringLiterals;
 namespace {
 void configureOpenGLSurfaceFormat()
 {
-    QSurfaceFormat format;
+    QSurfaceFormat format{QSurfaceFormat::defaultFormat()};
     format.setRenderableType(QSurfaceFormat::OpenGL);
     format.setVersion(3, 3);
     format.setProfile(QSurfaceFormat::CoreProfile);
+    format.setAlphaBufferSize(8);
     format.setDepthBufferSize(24);
     format.setStencilBufferSize(8);
     format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
