@@ -321,6 +321,7 @@ private:
     QString m_headerText;
 
     QColor m_playingColour;
+    QVariant m_playingFont;
     QColor m_disabledColour;
 
     QThread m_populatorThread;

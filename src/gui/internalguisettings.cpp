@@ -180,6 +180,8 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::PlaylistBackgroundFadeDuration>(0, u"PlaylistWidget/BackgroundFadeDuration"_s);
     m_settings->createSetting<Internal::PlaylistBackgroundCoverType>(static_cast<int>(Track::Cover::Front),
                                                                      u"PlaylistWidget/BackgroundCoverType"_s);
+    m_settings->createSetting<Internal::PlaylistPlayingRowColour>(QVariant{}, u"PlaylistWidget/PlayingRowColour"_s);
+    m_settings->createSetting<Internal::PlaylistPlayingRowFont>(QVariant{}, u"PlaylistWidget/PlayingRowFont"_s);
     m_settings->createSetting<Internal::PixmapCacheSize>(PixmapCacheSize, u"Interface/PixmapCacheSize"_s);
     m_settings->createSetting<Internal::EditableLayoutMargin>(-1, u"Interface/EditableLayoutMargin"_s);
     m_settings->createSetting<Internal::ShowTrayIcon>(false, u"Interface/ShowTrayIcon"_s);
