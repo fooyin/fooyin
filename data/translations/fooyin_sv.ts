@@ -1225,7 +1225,7 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="477"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="479"/>
         <source>Lookup</source>
-        <translation type="unfinished"></translation>
+        <translation>Uppsökning</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="460"/>
@@ -1354,7 +1354,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="68"/>
         <source>Artwork Finder</source>
-        <translation>Omslagshittare</translation>
+        <translation>Konstverkshittare</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="70"/>
@@ -1770,7 +1770,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="90"/>
         <source>Size of thumbnails in Artwork Finder when searching for artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Storlek på minibilder i konstverkshittaren vid sökning efter konstverk</translation>
     </message>
 </context>
 <context>
@@ -13286,7 +13286,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="69"/>
         <source>Draw station icons inside equally sized frames so rows and icon captions align consistently</source>
-        <translation type="unfinished"></translation>
+        <translation>Rita stationsikoner inuti lika stora ramar så att rader och ikontexter positioneras konsekvent</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="70"/>
@@ -13326,7 +13326,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="97"/>
         <source>Apply the configured horizontal and vertical gaps when captions appear to the right of station icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Applicera de konfigurerade horisontella och vertikala mellanrumen när text visas till höger om stationsikoner</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="99"/>
@@ -13386,7 +13386,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="148"/>
         <source>Gap</source>
-        <translation type="unfinished"></translation>
+        <translation>Mellanrum</translation>
     </message>
 </context>
 <context>
@@ -18782,7 +18782,7 @@ Supersampling är tänkt för 1&#xa0;px-stolpar med 0&#xa0;px-mellanrum; andra s
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="188"/>
         <source>Centre gap</source>
-        <translation type="unfinished"></translation>
+        <translation>Mittenmellanrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="197"/>
