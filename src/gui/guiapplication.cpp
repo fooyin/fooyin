@@ -540,6 +540,16 @@ bool GuiApplication::eventFilter(QObject* watched, QEvent* event)
                 if(auto* view = qobject_cast<QAbstractItemView*>(ancestor); view && view->viewport() == editorParent) {
                     // Some styles leave item view editors transparent, allowing the cell text painted underneath
                     // to show through while editing
+                    QPalette palette{editor->palette()};
+                    const auto makeBaseOpaque = [&palette](QPalette::ColorGroup group) {
+                        QColor base = palette.color(group, QPalette::Base);
+                        base.setAlpha(255);
+                        palette.setColor(group, QPalette::Base, base);
+                    };
+                    makeBaseOpaque(QPalette::Active);
+                    makeBaseOpaque(QPalette::Inactive);
+                    makeBaseOpaque(QPalette::Disabled);
+                    editor->setPalette(palette);
                     editor->setAutoFillBackground(true);
                     break;
                 }
