@@ -212,6 +212,7 @@ void FyWidget::showStandaloneWindow(const QString& title, const QString& stateKe
     p->m_standaloneStateKey = stateKey;
 
     setAttribute(Qt::WA_DeleteOnClose);
+    setAttribute(Qt::WA_TranslucentBackground);
     setWindowTitle(title);
     resize(defaultSize);
 
