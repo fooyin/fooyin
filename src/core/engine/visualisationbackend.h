@@ -141,6 +141,7 @@ private:
     {
         uint64_t nextFrame{0};
         int64_t visualTimeOffsetMs{0};
+        std::chrono::steady_clock::time_point nextPresentationTime;
     };
     std::unordered_map<uint32_t, SourceTimeline> m_sourceTimelines;
 

@@ -272,19 +272,31 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
     const uint32_t sourceKey          = frame.streamId;
     const uint64_t reportedStartFrame = msToFrames(frame.streamTimeMs, sampleRate);
     const uint64_t reportedNextFrame  = reportedStartFrame + static_cast<uint64_t>(frameCount);
-    bool resetBacklog                 = false;
-    const bool formatChanged          = m_format.isValid() && m_format != format;
+    const bool hasPresentationTime    = frame.presentationTime != std::chrono::steady_clock::time_point{};
+    const auto presentationDuration   = std::chrono::nanoseconds{(static_cast<uint64_t>(frameCount) * 1'000'000'000ULL)
+                                                                 / static_cast<uint64_t>(sampleRate)};
+    const auto reportedNextPresentationTime = frame.presentationTime + presentationDuration;
 
-    if(formatChanged) {
+    bool resetBacklog{false};
+    if(m_format.isValid() && m_format != format) {
         resetBacklog = true;
     }
     else if(m_frameCount > 0) {
         if(const auto it = m_sourceTimelines.find(sourceKey); it != m_sourceTimelines.end()) {
-            const uint64_t toleranceFrames   = std::max<uint64_t>(1, msToFrames(ContinuityToleranceMs, sampleRate));
-            const bool sourceTimestampBehind = reportedStartFrame + toleranceFrames < it->second.nextFrame;
-            const bool sourceTimestampAhead  = reportedStartFrame > it->second.nextFrame + toleranceFrames;
+            bool timelineDiscontinuity{false};
+            if(hasPresentationTime && it->second.nextPresentationTime != std::chrono::steady_clock::time_point{}) {
+                const auto tolerance  = std::chrono::milliseconds{ContinuityToleranceMs};
+                timelineDiscontinuity = frame.presentationTime + tolerance < it->second.nextPresentationTime
+                                     || frame.presentationTime > it->second.nextPresentationTime + tolerance;
+            }
+            else {
+                const uint64_t toleranceFrames   = std::max<uint64_t>(1, msToFrames(ContinuityToleranceMs, sampleRate));
+                const bool sourceTimestampBehind = reportedStartFrame + toleranceFrames < it->second.nextFrame;
+                const bool sourceTimestampAhead  = reportedStartFrame > it->second.nextFrame + toleranceFrames;
+                timelineDiscontinuity            = sourceTimestampBehind || sourceTimestampAhead;
+            }
 
-            if(sourceTimestampBehind || sourceTimestampAhead) {
+            if(timelineDiscontinuity) {
                 resetBacklog = true;
             }
         }
@@ -310,6 +322,8 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
     auto& sourceTimeline              = m_sourceTimelines[sourceKey];
     sourceTimeline.nextFrame          = reportedNextFrame;
     sourceTimeline.visualTimeOffsetMs = static_cast<int64_t>(visualStartMs) - static_cast<int64_t>(frame.streamTimeMs);
+    sourceTimeline.nextPresentationTime
+        = hasPresentationTime ? reportedNextPresentationTime : std::chrono::steady_clock::time_point{};
 
     if(frame.streamId != 0) {
         m_currentStreamId = frame.streamId;
@@ -318,8 +332,8 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
     const size_t requiredFrames = std::max<size_t>(
         static_cast<size_t>(frameCount), requestedBacklogFrames(sampleRate) + static_cast<size_t>(frameCount));
     ensureCapacity(requiredFrames);
-    appendFrames(std::span<const float>{frame.samples.data(), sampleCount}, static_cast<size_t>(frameCount),
-                 channelCount, visualStartFrame);
+    appendFrames(std::span{frame.samples.data(), sampleCount}, static_cast<size_t>(frameCount), channelCount,
+                 visualStartFrame);
 
     const uint64_t availableEndMs      = (m_nextStreamFrame * 1000ULL) / static_cast<uint64_t>(sampleRate);
     const CurrentTimeSnapshot snapshot = currentTimeSnapshot();
