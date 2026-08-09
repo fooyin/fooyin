@@ -1301,8 +1301,7 @@ void TreeView::drawRowBackground(QPainter* painter, const QStyleOptionViewItem& 
 {
     const auto bg                      = index.data(Qt::BackgroundRole).value<QBrush>();
     const bool transparentBase         = m_view->property("transparent_base_rows").toBool();
-    const bool preserveStyleBackground = option.state.testFlag(QStyle::State_Selected)
-                                      || option.state.testFlag(QStyle::State_MouseOver) || bg.style() != Qt::NoBrush;
+    const bool preserveStyleBackground = option.state.testFlag(QStyle::State_Selected) || bg.style() != Qt::NoBrush;
 
     const auto paintRects = m_p->rectsToPaint(index, option, y);
     for(const auto& rect : paintRects) {
