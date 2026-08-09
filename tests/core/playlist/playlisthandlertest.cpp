@@ -446,6 +446,28 @@ TEST(PlaylistHandlerTest, LockedPlaylistRejectsContentChangesAndPersistsState)
     EXPECT_EQ(playlist->trackCount(), 0);
 }
 
+TEST(PlaylistHandlerTest, AutoPlaylistRejectsAppendedTracks)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_auto_append_test.ini"_s};
+    registerCoreSettings(settings);
+    PlaylistHandlerHarness harness{settings};
+    ASSERT_TRUE(harness.dbInitialised);
+
+    const Track libraryTrack = makeTrack(u"/music/library.flac"_s, 1);
+    harness.library.setTracks({libraryTrack});
+    harness.library.setLibraryTracks({libraryTrack});
+
+    auto* playlist = harness.handler.createNewAutoPlaylist(u"Read only"_s, u"title PRESENT"_s);
+    ASSERT_NE(playlist, nullptr);
+    ASSERT_EQ(playlist->trackCount(), 1);
+
+    harness.handler.appendToPlaylist(playlist->id(), {makeTrack(u"/music/appended.flac"_s, 2)});
+
+    ASSERT_EQ(playlist->trackCount(), 1);
+    EXPECT_EQ(playlist->tracks().front().filepath(), libraryTrack.filepath());
+}
+
 TEST(PlaylistHandlerTest, TracksMetadataChangedUpdatesPlaylistTrackWhenFilepathChanges)
 {
     ensureCoreApplication();

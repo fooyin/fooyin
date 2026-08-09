@@ -883,7 +883,7 @@ Playlist* PlaylistHandler::createNewAutoPlaylist(const QString& name, const QStr
 void PlaylistHandler::appendToPlaylist(const UId& id, const TrackList& tracks)
 {
     if(auto* playlist = playlistById(id)) {
-        if(playlist->isLocked()) {
+        if(playlist->isAutoPlaylist() || playlist->isLocked()) {
             return;
         }
         auto playlistTracks       = playlist->playlistTracks();

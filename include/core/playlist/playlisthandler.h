@@ -93,7 +93,7 @@ public:
     Playlist* createNewAutoPlaylist(const QString& name, const QString& query, const QString& sortQuery = {},
                                     bool forceSorted = true);
 
-    /** Adds @p tracks to the end of the playlist with @p id if found. */
+    /** Adds @p tracks to the end of the writable playlist with @p id if found. */
     void appendToPlaylist(const UId& id, const TrackList& tracks);
     /** Replaces the @p tracks of the playlist with @p id if found. */
     void replacePlaylistTracks(const UId& id, const TrackList& tracks,
