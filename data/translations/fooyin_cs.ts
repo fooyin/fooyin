@@ -5223,7 +5223,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="136"/>
         <source>Current playlist</source>
-        <translation>Aktivní seznam skladeb</translation>
+        <translation>Vybraný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="138"/>
@@ -5233,7 +5233,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="142"/>
         <source>Current playlist mode uses the displayed playlist as its source and selects the matching tracks in that playlist.</source>
-        <translation>Režim aktivního seznamu skladeb používá jako zdroj zobrazený seznam skladeb a vybírá odpovídající skladby přímo v tomto seznamu skladeb.</translation>
+        <translation>Režim vybraného seznamu skladeb používá jako zdroj zobrazený seznam skladeb a vybírá odpovídající skladby přímo v tomto seznamu skladeb.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="160"/>
@@ -5340,7 +5340,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="709"/>
         <source>Current playlist</source>
-        <translation>Aktivní seznam skladeb</translation>
+        <translation>Vybraný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="890"/>
@@ -5718,12 +5718,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1009"/>
         <source>Prevent changes to the contents of the current playlist</source>
-        <translation>Znemožnit úpravy aktuálního seznamu skladeb</translation>
+        <translation>Znemožnit úpravy vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1012"/>
         <source>Lock Current Playlist</source>
-        <translation>Uzamknout aktuální seznam skladeb</translation>
+        <translation>Uzamknout vybraný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1033"/>
@@ -5950,7 +5950,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1085"/>
         <source>Remove Current Playlist</source>
-        <translation>Odstranit aktivní seznam skladeb</translation>
+        <translation>Odstranit vybraný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1375"/>
@@ -9982,12 +9982,12 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="92"/>
         <source>Start playing the next track in the current playlist</source>
-        <translation>Přehrát další skladbu aktuálního seznamu skladeb</translation>
+        <translation>Přehrát další skladbu vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="98"/>
         <source>Start playing the previous track in the current playlist</source>
-        <translation>Přehrát předchozí skladbu aktuálního seznamu skladeb</translation>
+        <translation>Přehrát předchozí skladbu vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="105"/>
@@ -10002,7 +10002,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="111"/>
         <source>Start playing a random track in the current playlist</source>
-        <translation>Přehrát náhodně vybranou skladbu z aktivního seznamu skladeb</translation>
+        <translation>Přehrát náhodně vybranou skladbu z vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="114"/>
@@ -10012,7 +10012,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="117"/>
         <source>Start playing the first track of a random album in the current playlist</source>
-        <translation>Přehrát první skladbu z náhodně vybraného alba z aktivního seznamu skladeb</translation>
+        <translation>Přehrát první skladbu z náhodně vybraného alba z vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="120"/>
@@ -10032,7 +10032,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="130"/>
         <source>Start playing the first track of the next album in the current playlist</source>
-        <translation>Přehrát první skladbu následujícího alba v aktivním seznamu skladeb</translation>
+        <translation>Přehrát první skladbu následujícího alba ve vybraném seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="133"/>
@@ -10042,7 +10042,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="136"/>
         <source>Start playing the first track of the previous album in the current playlist</source>
-        <translation>Přehrát první skladbu předchozího alba v aktivním seznamu skladeb</translation>
+        <translation>Přehrát první skladbu předchozího alba ve vybraném seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="139"/>
@@ -10072,7 +10072,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="198"/>
         <source>Set playback order to shuffle tracks in the current playlist</source>
-        <translation>Promíchat skladby v aktuálním seznamu skladeb</translation>
+        <translation>Promíchat skladby ve vybraném seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="180"/>
@@ -10082,17 +10082,17 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="186"/>
         <source>Set playback order to repeat the current playlist</source>
-        <translation>Nastavit opakování aktuálního seznamu skladeb</translation>
+        <translation>Nastavit opakování vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="192"/>
         <source>Set playback order to shuffle albums in the current playlist</source>
-        <translation>Promíchat alba v aktuálním seznamu skladeb</translation>
+        <translation>Promíchat alba ve vybraném seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="204"/>
         <source>Set playback order to play a random track in the current playlist</source>
-        <translation>Nastavit přehrávání náhodné skladby v aktuálním seznamu skladeb</translation>
+        <translation>Nastavit přehrávání náhodné skladby ve vybraném seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="223"/>
@@ -11978,7 +11978,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1814"/>
         <source>Select all tracks in the current playlist</source>
-        <translation>Vybrat všechny skladby aktuálního seznamu skladeb</translation>
+        <translation>Vybrat všechny skladby vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1147"/>
@@ -12159,12 +12159,12 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="415"/>
         <source>Remove all tracks from the current playlist</source>
-        <translation>Odstranit všechny skladby aktuálního seznamu skladeb</translation>
+        <translation>Odstranit všechny skladby vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="423"/>
         <source>Remove the selected tracks from the current playlist</source>
-        <translation>Odstranit vybrané skladby z aktuálního seznamu skladeb</translation>
+        <translation>Odstranit vybrané skladby z vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="437"/>
@@ -17655,7 +17655,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="90"/>
         <source>Current playlist</source>
-        <translation>Aktivní seznam skladeb</translation>
+        <translation>Vybraný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="71"/>
@@ -17670,7 +17670,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="65"/>
         <source>Show current playlist info</source>
-        <translation>Zobrazit informace aktivního seznamu skladeb</translation>
+        <translation>Zobrazit informace vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="79"/>
