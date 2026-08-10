@@ -25,6 +25,7 @@
 #include <QString>
 
 #include <chrono>
+#include <optional>
 
 class QFontMetrics;
 class QJsonValue;
@@ -43,6 +44,7 @@ FYUTILS_EXPORT QString elideTextWithBreaks(const QString& text, const QFontMetri
                                            Qt::TextElideMode mode);
 FYUTILS_EXPORT QString capitalise(const QString& str);
 FYUTILS_EXPORT QByteArray detectEncoding(const QByteArray& content, const DetectEncodingOptions& options = {});
+FYUTILS_EXPORT std::optional<QString> decodeText(const QByteArray& content, const QByteArray& encoding);
 FYUTILS_EXPORT QString foldForSearch(QStringView text);
 
 FYUTILS_EXPORT QString msToString(std::chrono::milliseconds ms, bool includeMs);

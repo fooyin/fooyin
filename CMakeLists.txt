@@ -6,6 +6,11 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 include(CheckBuildDir)
 include(CheckLevel)
 
+if(BUILD_TESTING)
+    list(APPEND VCPKG_MANIFEST_FEATURES fooyin-tests)
+    list(REMOVE_DUPLICATES VCPKG_MANIFEST_FEATURES)
+endif()
+
 project(
     fooyin
     VERSION 0.12.2
@@ -400,6 +405,7 @@ endif()
 # ---- Fooyin testing ----
 
 if(BUILD_TESTING)
+    enable_testing()
     find_package(Qt6 REQUIRED COMPONENTS Test)
     set_package_properties(Qt6Test PROPERTIES TYPE REQUIRED)
     find_package(GTest)

@@ -196,7 +196,7 @@ TEST_F(M3uParserTest, SavesExternalCueTracksAsSingleCueEntry)
     m_parser->savePlaylist(&buffer, u"m3u"_s, {track1, track2}, QDir{u"/music"_s}, PlaylistParser::PathType::Absolute,
                            false);
 
-    EXPECT_EQ(u"/music/album.cue\n"_s, QString::fromUtf8(output));
+    EXPECT_EQ(u"/music/album.cue\n"_s, QString::fromUtf8(output).replace(u"\r\n"_s, u"\n"_s));
 }
 
 TEST_F(M3uParserTest, SavesEmbeddedCueTracksAsSingleFileEntry)
@@ -216,7 +216,7 @@ TEST_F(M3uParserTest, SavesEmbeddedCueTracksAsSingleFileEntry)
     m_parser->savePlaylist(&buffer, u"m3u"_s, {track1, track2}, QDir{u"/music"_s}, PlaylistParser::PathType::Absolute,
                            false);
 
-    EXPECT_EQ(u"/music/album.flac\n"_s, QString::fromUtf8(output));
+    EXPECT_EQ(u"/music/album.flac\n"_s, QString::fromUtf8(output).replace(u"\r\n"_s, u"\n"_s));
 }
 
 TEST_F(M3uParserTest, ReadsExternalCueEntriesAsCueTracks)

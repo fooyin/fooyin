@@ -26,8 +26,7 @@
         "VCPKG_INSTALL_OPTIONS": "--x-abi-tools-use-exact-versions",
         "QT_DIR": "$env{QT_ROOT_DIR}/lib/cmake/Qt6",
         "Qt6_DIR": "$env{QT_ROOT_DIR}/lib/cmake/Qt6",
-        "INSTALL_FHS": "OFF",
-        "BUILD_TESTING": false
+        "INSTALL_FHS": "OFF"
       },
       "inherits": [ "base" ]
     },

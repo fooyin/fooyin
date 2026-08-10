@@ -65,8 +65,10 @@ QString createPath(const QString& path, const QString& appendPath)
 
 QString configPath(const QString& appendPath)
 {
-    const auto path = isPortable() ? QCoreApplication::applicationDirPath() + "/config"_L1
-                                   : QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    const QString configHome = QFile::decodeName(qgetenv("XDG_CONFIG_HOME"));
+    const auto path          = isPortable() ? QCoreApplication::applicationDirPath() + "/config"_L1
+                             : configHome.isEmpty() ? QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation)
+                                                    : configHome;
     return createPath(path, appendPath);
 }
 
@@ -79,15 +81,15 @@ QString statePath(const QString& appendPath)
         return createPath(path, appendPath);
     }
 
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
     QString stateHome = QFile::decodeName(qgetenv("XDG_STATE_HOME"));
-    if(!stateHome.startsWith(u'/')) {
-        stateHome.clear();
+    if(QDir::isAbsolutePath(stateHome)) {
+        path = stateHome + "/fooyin"_L1;
+        return createPath(path, appendPath);
     }
-    if(stateHome.isEmpty()) {
-        stateHome = QDir::homePath() + "/.local/state"_L1;
-    }
-    path = stateHome + "/fooyin"_L1;
+
+#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+    stateHome = QDir::homePath() + "/.local/state"_L1;
+    path      = stateHome + "/fooyin"_L1;
 #else
     path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 #endif

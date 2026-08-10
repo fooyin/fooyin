@@ -92,6 +92,9 @@ const AVCodec* findEncoder(const QStringList& codecNames, QString* selectedName 
 {
     for(const QString& codecName : codecNames) {
         if(const AVCodec* codec = avcodec_find_encoder_by_name(codecName.toUtf8().constData())) {
+            if(codec->capabilities & AV_CODEC_CAP_EXPERIMENTAL) {
+                continue;
+            }
             if(selectedName) {
                 *selectedName = codecName;
             }

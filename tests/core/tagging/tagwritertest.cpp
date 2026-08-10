@@ -52,6 +52,11 @@ namespace Fooyin::Testing {
 class TagWriterTest : public ::testing::Test
 {
 protected:
+    TagWriterTest()
+    {
+        resetRatingSettings();
+    }
+
     TagLibReader m_parser;
 };
 
@@ -1310,24 +1315,28 @@ TEST_F(TagWriterTest, OpusWriteUsesR128TagsInsteadOfReplayGainTags)
     }
 
     const QByteArray localPath = file.fileName().toLocal8Bit();
-    const TagLib::Ogg::Opus::File opusFile(localPath.constData());
-    ASSERT_TRUE(opusFile.isValid());
-    ASSERT_TRUE(opusFile.tag());
+    {
+        const TagLib::Ogg::Opus::File opusFile(localPath.constData());
+        ASSERT_TRUE(opusFile.isValid());
+        ASSERT_TRUE(opusFile.tag());
 
-    const auto& fields = opusFile.tag()->fieldListMap();
-    ASSERT_TRUE(fields.contains("R128_TRACK_GAIN"));
-    ASSERT_TRUE(fields.contains("R128_ALBUM_GAIN"));
-    EXPECT_EQ(QString::fromUtf8(fields["R128_TRACK_GAIN"].front().toCString(true)), QStringLiteral("0"));
-    EXPECT_EQ(QString::fromUtf8(fields["R128_ALBUM_GAIN"].front().toCString(true)), QStringLiteral("256"));
+        const auto& fields = opusFile.tag()->fieldListMap();
+        ASSERT_TRUE(fields.contains("R128_TRACK_GAIN"));
+        ASSERT_TRUE(fields.contains("R128_ALBUM_GAIN"));
+        EXPECT_EQ(QString::fromUtf8(fields["R128_TRACK_GAIN"].front().toCString(true)), QStringLiteral("0"));
+        EXPECT_EQ(QString::fromUtf8(fields["R128_ALBUM_GAIN"].front().toCString(true)), QStringLiteral("256"));
 
-    EXPECT_FALSE(fields.contains("REPLAYGAIN_TRACK_GAIN"));
-    EXPECT_FALSE(fields.contains("REPLAYGAIN_ALBUM_GAIN"));
+        EXPECT_FALSE(fields.contains("REPLAYGAIN_TRACK_GAIN"));
+        EXPECT_FALSE(fields.contains("REPLAYGAIN_ALBUM_GAIN"));
+    }
 
-    QFile headerFile{file.fileName()};
-    ASSERT_TRUE(headerFile.open(QIODevice::ReadOnly));
-    const auto headerGain = readOpusHeaderGainQ78(&headerFile);
-    ASSERT_TRUE(headerGain.has_value());
-    EXPECT_EQ(*headerGain, -3205);
+    {
+        QFile headerFile{file.fileName()};
+        ASSERT_TRUE(headerFile.open(QIODevice::ReadOnly));
+        const auto headerGain = readOpusHeaderGainQ78(&headerFile);
+        ASSERT_TRUE(headerGain.has_value());
+        EXPECT_EQ(*headerGain, -3205);
+    }
 
     Track rereadTrack{file.fileName()};
     ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
@@ -1358,19 +1367,23 @@ TEST_F(TagWriterTest, OpusWriteTrackHeaderModeUsesOpusR128Offset)
     }
 
     const QByteArray localPath = file.fileName().toLocal8Bit();
-    const TagLib::Ogg::Opus::File opusFile(localPath.constData());
-    ASSERT_TRUE(opusFile.isValid());
-    ASSERT_TRUE(opusFile.tag());
+    {
+        const TagLib::Ogg::Opus::File opusFile(localPath.constData());
+        ASSERT_TRUE(opusFile.isValid());
+        ASSERT_TRUE(opusFile.tag());
 
-    const auto& fields = opusFile.tag()->fieldListMap();
-    ASSERT_TRUE(fields.contains("R128_TRACK_GAIN"));
-    EXPECT_EQ(QString::fromUtf8(fields["R128_TRACK_GAIN"].front().toCString(true)), QStringLiteral("0"));
+        const auto& fields = opusFile.tag()->fieldListMap();
+        ASSERT_TRUE(fields.contains("R128_TRACK_GAIN"));
+        EXPECT_EQ(QString::fromUtf8(fields["R128_TRACK_GAIN"].front().toCString(true)), QStringLiteral("0"));
+    }
 
-    QFile headerFile{file.fileName()};
-    ASSERT_TRUE(headerFile.open(QIODevice::ReadOnly));
-    const auto headerGain = readOpusHeaderGainQ78(&headerFile);
-    ASSERT_TRUE(headerGain.has_value());
-    EXPECT_EQ(*headerGain, -1344);
+    {
+        QFile headerFile{file.fileName()};
+        ASSERT_TRUE(headerFile.open(QIODevice::ReadOnly));
+        const auto headerGain = readOpusHeaderGainQ78(&headerFile);
+        ASSERT_TRUE(headerGain.has_value());
+        EXPECT_EQ(*headerGain, -1344);
+    }
 
     Track rereadTrack{file.fileName()};
     ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
@@ -1442,7 +1455,7 @@ TEST_F(TagWriterTest, OpusRemoveReplayGainClearsAllReplayGainTags)
     }
 
     {
-        TagLib::Ogg::Opus::File opusFile(localPath.constData());
+        TagLib::Ogg::Opus::File opusFile(file.fileName().toLocal8Bit().constData());
         ASSERT_TRUE(opusFile.isValid());
         ASSERT_TRUE(opusFile.tag());
 

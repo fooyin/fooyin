@@ -92,6 +92,8 @@ public:
 
 QCoreApplication* ensureCoreApplication()
 {
+    static QTemporaryDir configDir{QDir::tempPath() + u"/fooyin-audioloader-config-XXXXXX"_s};
+    qputenv("XDG_CONFIG_HOME", configDir.path().toUtf8());
     QStandardPaths::setTestModeEnabled(true);
 
     if(auto* app = QCoreApplication::instance()) {

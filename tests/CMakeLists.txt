@@ -1,9 +1,20 @@
-enable_testing(true)
-
 include(GoogleTest)
+
+if(WIN32)
+    add_custom_target(
+        fooyin_test_runtime
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:Qt6::Test>" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
+        COMMENT "Deploying the Qt Test runtime"
+    )
+endif()
 
 function(fooyin_add_test name)
     add_executable(${name} ${ARGN} testutils.cpp)
+    set_property(GLOBAL APPEND PROPERTY FOOYIN_TEST_TARGETS ${name})
+    if(WIN32)
+        add_dependencies(${name} fooyin_test_runtime)
+    endif()
     fooyin_set_rpath(${name} ${LIB_INSTALL_DIR})
     target_include_directories(${name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     target_include_directories(${name} SYSTEM PRIVATE ${FFMPEG_INCLUDE_DIRS})

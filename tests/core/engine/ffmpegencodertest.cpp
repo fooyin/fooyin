@@ -52,7 +52,8 @@ namespace {
 bool hasEncoder(const QStringList& codecNames)
 {
     for(const QString& codecName : codecNames) {
-        if(avcodec_find_encoder_by_name(codecName.toUtf8().constData())) {
+        const AVCodec* codec = avcodec_find_encoder_by_name(codecName.toUtf8().constData());
+        if(codec && !(codec->capabilities & AV_CODEC_CAP_EXPERIMENTAL)) {
             return true;
         }
     }
@@ -506,7 +507,7 @@ TEST(FFmpegEncoderTest, EncodesOpusInAdvertisedBitrateModes)
 
     for(const EncoderMode mode : profile->capabilities.modes) {
         SCOPED_TRACE(static_cast<int>(mode));
-        encodeSmokeTest(u"ffmpeg-opus"_s, AV_CODEC_ID_OPUS, 160, -1, 48000, SampleFormat::S16, 0, mode);
+        encodeSmokeTest(u"ffmpeg-opus"_s, AV_CODEC_ID_OPUS, 160, -1, 48000, SampleFormat::Unknown, 0, mode);
     }
 }
 

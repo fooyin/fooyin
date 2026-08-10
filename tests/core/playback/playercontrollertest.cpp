@@ -52,6 +52,8 @@ constexpr auto LastPlaybackState        = "Player/LastState"_L1;
 
 QCoreApplication* ensureCoreApplication()
 {
+    static QTemporaryDir stateDir{QDir::tempPath() + u"/fooyin-playercontroller-state-XXXXXX"_s};
+    qputenv("XDG_STATE_HOME", stateDir.path().toUtf8());
     QStandardPaths::setTestModeEnabled(true);
 
     if(auto* app = QCoreApplication::instance()) {

@@ -73,7 +73,6 @@
 #include <QLoggingCategory>
 #include <QMimeDatabase>
 #include <QPixmap>
-#include <QStringDecoder>
 
 #include <cmath>
 #include <cstring>
@@ -578,13 +577,8 @@ QByteArray detectLegacyEncoding(const QByteArray& data)
         return {};
     }
 
-    QStringDecoder decoder{encoding.constData()};
-    if(!decoder.isValid()) {
-        return {};
-    }
-
-    const QString decoded = decoder(data);
-    if(decoder.hasError() || decoded == QString::fromLatin1(data)) {
+    const auto decoded = Utils::decodeText(data, encoding);
+    if(!decoded || *decoded == QString::fromLatin1(data)) {
         return {};
     }
 
@@ -599,13 +593,8 @@ QString decodeLegacyId3Value(const TagLib::String& value, const QByteArray& enco
         return text;
     }
 
-    QStringDecoder decoder{encoding.constData()};
-    if(!decoder.isValid()) {
-        return text;
-    }
-
-    const QString decoded = decoder(data);
-    return decoder.hasError() ? text : decoded;
+    const auto decoded = Utils::decodeText(data, encoding);
+    return decoded.value_or(text);
 }
 
 TagLib::PropertyMap id3v1Properties(const TagLib::ID3v1::Tag* tag)

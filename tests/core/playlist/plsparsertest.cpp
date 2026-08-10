@@ -169,7 +169,7 @@ TEST_F(PlsParserTest, SavesPlaylist)
 
     m_parser->savePlaylist(&buffer, u"pls"_s, {first, second}, QDir{u"/music"_s}, PlaylistParser::PathType::Auto, true);
 
-    const QString saved = QString::fromUtf8(output);
+    const QString saved = QString::fromUtf8(output).replace(u"\r\n"_s, u"\n"_s);
     const QString expected{u"[playlist]\n"
                            "File1=https://stream.example.com/main\n"
                            "Title1=Main Stream\n"

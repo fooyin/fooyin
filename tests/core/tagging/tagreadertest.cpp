@@ -48,6 +48,11 @@ namespace Fooyin::Testing {
 class TagReaderTest : public ::testing::Test
 {
 protected:
+    TagReaderTest()
+    {
+        resetRatingSettings();
+    }
+
     TagLibReader m_parser;
 };
 
@@ -461,8 +466,17 @@ TEST_F(TagReaderTest, Mp3ReadRepairsLegacyTextInLatin1Id3Frames)
         ASSERT_TRUE(mp3File.save(TagLib::MPEG::File::ID3v2, TagLib::MPEG::File::StripOthers, TagLib::ID3v2::v3));
     }
 
+    FySettings settings;
+    settings.setValue(Utils::PreferredFallbackEncodingSetting, u"windows-1251"_s);
+    settings.sync();
+
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    const bool success = m_parser.readTrack({filepath, &file, nullptr}, track);
+
+    settings.remove(Utils::PreferredFallbackEncodingSetting);
+    settings.sync();
+
+    ASSERT_TRUE(success);
 
     EXPECT_EQ(track.title(), u"Как молоды мы были"_s);
     EXPECT_EQ(track.artist(), u"Александр Градский"_s);
@@ -730,10 +744,12 @@ TEST_F(TagReaderTest, OggAutomaticPlaycountReadPrefersFmpsPlaycount)
         settings.setValue(PlaycountSettings::ReadTag, u"PLAYCOUNT"_s);
         settings.sync();
 
-        TagLib::Ogg::Vorbis::File oggFile{file.fileName().toLocal8Bit().constData()};
-        ASSERT_TRUE(oggFile.isValid());
-        setXiphPlaycountFields(oggFile.tag(), u"17"_s, u"42"_s);
-        ASSERT_TRUE(oggFile.save());
+        {
+            TagLib::Ogg::Vorbis::File oggFile{file.fileName().toLocal8Bit().constData()};
+            ASSERT_TRUE(oggFile.isValid());
+            setXiphPlaycountFields(oggFile.tag(), u"17"_s, u"42"_s);
+            ASSERT_TRUE(oggFile.save());
+        }
 
         Track track{file.fileName()};
         ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
@@ -910,8 +926,9 @@ TEST_F(FFmpegTagReaderTest, TakRead)
     TempResource file{filepath};
     file.checkValid();
 
-    Track track{file.fileName()};
-    AudioSource source{file.fileName(), &file, nullptr};
+    const QString localFilepath = file.QFile::fileName();
+    Track track{localFilepath};
+    AudioSource source{localFilepath, &file, nullptr};
     ASSERT_TRUE(m_parser.init(source));
     ASSERT_TRUE(m_parser.readTrack(source, track));
 
@@ -942,8 +959,9 @@ TEST_F(FFmpegTagReaderTest, TakReadApeCoverArt)
     appendApeCoverItems(file.fileName());
     ASSERT_TRUE(file.seek(0));
 
-    Track track{file.fileName()};
-    AudioSource source{file.fileName(), &file, nullptr};
+    const QString localFilepath = file.QFile::fileName();
+    Track track{localFilepath};
+    AudioSource source{localFilepath, &file, nullptr};
 
     const QByteArray frontCover = m_parser.readCover(source, track, Track::Cover::Front);
     const QByteArray backCover  = m_parser.readCover(source, track, Track::Cover::Back);

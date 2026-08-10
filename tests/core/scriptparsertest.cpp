@@ -29,6 +29,7 @@
 
 #include <QDateTime>
 #include <QDir>
+#include <QFileInfo>
 
 using namespace Qt::StringLiterals;
 
@@ -381,8 +382,11 @@ TEST_F(ScriptParserTest, BasicLiteral)
 
 TEST_F(ScriptParserTest, EscapeComment)
 {
-    EXPECT_EQ(u"I am a % test.", m_parser.evaluate(uR"("I am a \% test.")"_s));
-    EXPECT_EQ(u"I am an \"escape test.", m_parser.evaluate(uR"("I am an \"escape test.")"_s));
+    const QString escapedPercent = uR"("I am a \% test.")"_s;
+    const QString escapedQuote   = uR"("I am an \"escape test.")"_s;
+
+    EXPECT_EQ(u"I am a % test.", m_parser.evaluate(escapedPercent));
+    EXPECT_EQ(u"I am an \"escape test.", m_parser.evaluate(escapedQuote));
 }
 
 TEST_F(ScriptParserTest, Quote)
@@ -848,18 +852,21 @@ TEST_F(ScriptParserTest, ContextEvaluationEnvironmentPreservesPathVariableSepara
 {
     ScriptParser parser;
 
+    const QString libraryPath = QFileInfo{u"/tmp/music"_s}.absoluteFilePath();
+    const QString filePath    = QFileInfo{u"/tmp/music/foo/bar.mp3"_s}.absoluteFilePath();
+
     TestPlaylistEnvironment environment;
     environment.setEvaluationState(TrackListContextPolicy::Unresolved, {}, false, false, {}, {}, {}, true);
-    environment.setLibraryState({}, u"/tmp/music"_s);
+    environment.setLibraryState({}, libraryPath);
 
     ScriptContext context;
     context.environment = &environment;
     Track track;
-    track.setFilePath(u"/tmp/music/foo/bar.mp3"_s);
+    track.setFilePath(filePath);
     track.setTitle(u"foo/bar"_s);
 
-    EXPECT_EQ(u"/tmp/music/foo", parser.evaluate(u"%path%"_s, track, context));
-    EXPECT_EQ(u"/tmp/music/foo/bar.mp3", parser.evaluate(u"%filepath%"_s, track, context));
+    EXPECT_EQ(QFileInfo{filePath}.path(), parser.evaluate(u"%path%"_s, track, context));
+    EXPECT_EQ(filePath, parser.evaluate(u"%filepath%"_s, track, context));
     EXPECT_EQ(u"foo/bar.mp3", parser.evaluate(u"%relativepath%"_s, track, context));
     EXPECT_EQ(u"foo-bar", parser.evaluate(u"%title%"_s, track, context));
 }

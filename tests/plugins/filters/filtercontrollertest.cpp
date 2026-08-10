@@ -495,7 +495,11 @@ TEST_F(FilterControllerTest, FilterModelSetRowsUpdatesExistingRowWithoutModelRes
 int main(int argc, char** argv)
 {
     if(qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM")) {
+#ifdef Q_OS_WIN
+        qputenv("QT_QPA_PLATFORM", "windows");
+#else
         qputenv("QT_QPA_PLATFORM", "offscreen");
+#endif
     }
 
     const QApplication app(argc, argv);

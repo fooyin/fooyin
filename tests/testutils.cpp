@@ -79,20 +79,49 @@ void resetRatingSettings()
 }
 
 TempResource::TempResource(const QString& filename, QObject* parent)
-    : QTemporaryFile{parent}
+    : QFile{parent}
+    , m_tempDir{QDir::tempPath() + QStringLiteral("/fooyin-test-XXXXXX")}
     , m_file{filename}
 {
-    setFileTemplate(QDir::tempPath() + QStringLiteral("/fooyin_test_XXXXXXXXXXXXXXX"));
+    QString resourceName = QStringLiteral("resource");
+    const QString suffix = QFileInfo{filename}.suffix();
+    if(!suffix.isEmpty()) {
+        resourceName += u'.' + suffix;
+    }
+    setFileName(m_tempDir.filePath(resourceName));
 
-    if(open()) {
+    if(m_tempDir.isValid() && open(QIODevice::ReadWrite)) {
         QFile resource{filename};
         if(resource.open(QIODevice::ReadOnly)) {
             write(resource.readAll());
+            flush();
         }
     }
 
-    QTemporaryFile::reset();
+    seek(0);
 }
+
+TempResource::~TempResource()
+{
+    close();
+}
+
+QString TempResource::fileName()
+{
+    // TagLib opens paths independently, which requires releasing our handle on Windows
+    flush();
+    close();
+    return QFile::fileName();
+}
+
+bool TempResource::seek(qint64 position)
+{
+    if(!isOpen() && !open(QIODevice::ReadWrite)) {
+        return false;
+    }
+    return QFile::seek(position);
+}
+
 void TempResource::checkValid() const
 {
     QByteArray origFileData;
@@ -110,7 +139,7 @@ void TempResource::checkValid() const
     }
 
     {
-        QFile tmpFile{fileName()};
+        QFile tmpFile{QFile::fileName()};
         const bool isOpen = tmpFile.open(QIODevice::ReadOnly);
 
         EXPECT_TRUE(tmpFile.isOpen());
