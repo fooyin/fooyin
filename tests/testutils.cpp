@@ -21,6 +21,7 @@
 
 #include <core/corepaths.h>
 #include <core/coresettings.h>
+#include <core/engine/input/playcounttagpolicy.h>
 #include <core/engine/input/ratingtagpolicy.h>
 #include <core/playlist/playlist.h>
 
@@ -70,6 +71,10 @@ void resetRatingSettings()
     settings.remove(RatingSettings::PopmMapping);
     settings.remove(RatingSettings::ReadAsfSharedRating);
     settings.remove(RatingSettings::WriteAsfSharedRating);
+    settings.remove(PlaycountSettings::ReadTag);
+    settings.remove(PlaycountSettings::WriteTag);
+    settings.remove(PlaycountSettings::ReadId3Popm);
+    settings.remove(PlaycountSettings::WriteId3Popm);
     settings.sync();
 }
 

@@ -21,6 +21,7 @@
 
 #include <core/coresettings.h>
 #include <core/engine/input/ffmpeg/ffmpeginput.h>
+#include <core/engine/input/playcounttagpolicy.h>
 #include <core/engine/input/ratingtagpolicy.h>
 #include <core/engine/input/taglibparser.h>
 #include <core/track.h>
@@ -95,6 +96,14 @@ void setXiphRatingFields(TagLib::Ogg::XiphComment* tag, const QString& rating, c
 
     tag->addField("RATING", TagLib::String{rating.toUtf8().constData(), TagLib::String::UTF8}, true);
     tag->addField("FMPS_RATING", TagLib::String{fmpsRating.toUtf8().constData(), TagLib::String::UTF8}, true);
+}
+
+void setXiphPlaycountFields(TagLib::Ogg::XiphComment* tag, const QString& playcount, const QString& fmpsPlaycount)
+{
+    ASSERT_NE(tag, nullptr);
+
+    tag->addField("PLAYCOUNT", TagLib::String{playcount.toUtf8().constData(), TagLib::String::UTF8}, true);
+    tag->addField("FMPS_PLAYCOUNT", TagLib::String{fmpsPlaycount.toUtf8().constData(), TagLib::String::UTF8}, true);
 }
 
 void setRatingReadPolicy(const QString& tag, const QString& scale)
@@ -580,6 +589,48 @@ TEST_F(TagReaderTest, Mp3ReadHonoursPopmSettings)
         ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
 
         EXPECT_LE(track.rating(), 0.0F);
+        EXPECT_EQ(track.playCount(), 0);
+        EXPECT_EQ(track.rawRatingTag(u"POPM"_s), QString{});
+    }
+
+    {
+        FySettings settings;
+        settings.setValue(PlaycountSettings::ReadId3Popm, true);
+        settings.sync();
+
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+        EXPECT_LE(track.rating(), 0.0F);
+        EXPECT_EQ(track.playCount(), 12);
+        EXPECT_EQ(track.rawRatingTag(u"POPM"_s), QString{});
+    }
+
+    {
+        FySettings settings;
+        settings.setValue(RatingSettings::ReadId3Popm, true);
+        settings.setValue(PlaycountSettings::ReadId3Popm, false);
+        settings.sync();
+
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+        EXPECT_FLOAT_EQ(track.rating(), 0.8F);
+        EXPECT_EQ(track.playCount(), 0);
+        EXPECT_EQ(track.rawRatingTag(u"POPM"_s), u"owner@example.com|196|12"_s);
+    }
+
+    {
+        FySettings settings;
+        settings.setValue(RatingSettings::PopmOwner, u"missing@example.com"_s);
+        settings.setValue(PlaycountSettings::ReadId3Popm, true);
+        settings.sync();
+
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+        EXPECT_LE(track.rating(), 0.0F);
+        EXPECT_EQ(track.playCount(), 0);
         EXPECT_EQ(track.rawRatingTag(u"POPM"_s), QString{});
     }
 
@@ -638,6 +689,58 @@ TEST_F(TagReaderTest, OggReadPrefersFmpsRatingOverRating)
     EXPECT_FLOAT_EQ(track.rating(), 0.8F);
     EXPECT_EQ(track.rawRatingTag(u"RATING"_s), u"1"_s);
     EXPECT_EQ(track.rawRatingTag(u"FMPS_RATING"_s), u"0.8"_s);
+}
+
+TEST_F(TagReaderTest, OggAutomaticPlaycountReadPrefersFmpsPlaycount)
+{
+    resetTagReaderRatingSettings();
+
+    const QString filepath = u":/audio/audiotest.ogg"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    {
+        TagLib::Ogg::Vorbis::File oggFile{file.fileName().toLocal8Bit().constData()};
+        ASSERT_TRUE(oggFile.isValid());
+        setXiphPlaycountFields(oggFile.tag(), u"17"_s, u"42"_s);
+        ASSERT_TRUE(oggFile.save());
+    }
+
+    {
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        EXPECT_EQ(track.playCount(), 42);
+    }
+
+    {
+        TagLib::Ogg::Vorbis::File oggFile{file.fileName().toLocal8Bit().constData()};
+        ASSERT_TRUE(oggFile.isValid());
+        setXiphPlaycountFields(oggFile.tag(), u"17"_s, u"invalid"_s);
+        ASSERT_TRUE(oggFile.save());
+    }
+
+    {
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        EXPECT_EQ(track.playCount(), 17);
+    }
+
+    {
+        FySettings settings;
+        settings.setValue(PlaycountSettings::ReadTag, u"PLAYCOUNT"_s);
+        settings.sync();
+
+        TagLib::Ogg::Vorbis::File oggFile{file.fileName().toLocal8Bit().constData()};
+        ASSERT_TRUE(oggFile.isValid());
+        setXiphPlaycountFields(oggFile.tag(), u"17"_s, u"42"_s);
+        ASSERT_TRUE(oggFile.save());
+
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        EXPECT_EQ(track.playCount(), 17);
+    }
+
+    resetTagReaderRatingSettings();
 }
 
 TEST_F(TagReaderTest, OggAutomaticRatingReadDetectsTenPointRating)

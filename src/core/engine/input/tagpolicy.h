@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "playcounttagpolicy.h"
 #include "ratingtagpolicy.h"
 
 #include "fycore_export.h"
@@ -27,6 +28,7 @@ namespace Fooyin {
 struct FYCORE_EXPORT TagPolicy
 {
     RatingTagPolicy rating;
+    PlaycountTagPolicy playcount;
     bool splitId3v23SemicolonSeparatedTags{false};
 };
 

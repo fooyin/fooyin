@@ -21,6 +21,7 @@
 
 #include <core/constants.h>
 #include <core/coresettings.h>
+#include <core/engine/input/playcounttagpolicy.h>
 #include <core/engine/input/ratingtagpolicy.h>
 #include <core/engine/input/taglibparser.h>
 #include <core/engine/tagdefs.h>
@@ -38,6 +39,8 @@
 #include <QImage>
 
 #include <gtest/gtest.h>
+
+#include <array>
 
 // clazy:excludeall=returning-void-expression
 
@@ -654,6 +657,271 @@ TEST_F(TagWriterTest, Mp3WriteHonoursTextRatingTagSettings)
     resetTagWriterRatingSettings();
 }
 
+TEST_F(TagWriterTest, Mp3WriteAndReadConfiguredPlaycountTags)
+{
+    struct Case
+    {
+        QString tag;
+        QByteArray description;
+    };
+
+    const std::array cases{
+        Case{.tag = u"FMPS_PLAYCOUNT"_s, .description = "FMPS_Playcount"},
+        Case{.tag = u"PLAYCOUNT"_s, .description = "PLAYCOUNT"},
+    };
+
+    for(const auto& testCase : cases) {
+        resetTagWriterRatingSettings();
+
+        const QString filepath = u":/audio/audiotest.mp3"_s;
+        TempResource file{filepath};
+        file.checkValid();
+
+        AudioSource source;
+        source.filepath = file.fileName();
+        source.device   = &file;
+
+        {
+            FySettings settings;
+            settings.setValue(PlaycountSettings::ReadTag, testCase.tag);
+            settings.setValue(PlaycountSettings::WriteTag, testCase.tag);
+            settings.sync();
+        }
+
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack(source, track));
+        track.setId(0);
+        track.setPlayCount(42);
+        ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Playcount));
+        ASSERT_TRUE(file.flush());
+
+        {
+            TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+            ASSERT_TRUE(mp3File.isValid());
+            ASSERT_NE(mp3File.ID3v2Tag(), nullptr);
+
+            EXPECT_EQ(id3UserTextFrameValue(mp3File.ID3v2Tag(), testCase.description.constData()), u"42"_s);
+            EXPECT_FALSE(mp3File.ID3v2Tag()->frameListMap().contains("FMPS"));
+            EXPECT_FALSE(mp3File.ID3v2Tag()->frameListMap().contains("PLAY"));
+
+            mp3File.ID3v2Tag()->removeFrames("POPM");
+            ASSERT_TRUE(mp3File.save());
+        }
+
+        Track rereadTrack{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
+        EXPECT_EQ(rereadTrack.playCount(), 42);
+    }
+
+    resetTagWriterRatingSettings();
+}
+
+TEST_F(TagWriterTest, Mp3WriteCanSkipPlaycountPopm)
+{
+    resetTagWriterRatingSettings();
+
+    const QString filepath = u":/audio/audiotest.mp3"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    {
+        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        ASSERT_NE(mp3File.ID3v2Tag(true), nullptr);
+        mp3File.ID3v2Tag()->removeFrames("POPM");
+        ASSERT_TRUE(mp3File.save());
+    }
+
+    {
+        FySettings settings;
+        settings.setValue(PlaycountSettings::WriteId3Popm, false);
+        settings.setValue(RatingSettings::PopmOwner, u"owner@example.com"_s);
+        settings.sync();
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, track));
+    track.setPlayCount(42);
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Playcount));
+    ASSERT_TRUE(file.flush());
+
+    {
+        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        ASSERT_NE(mp3File.ID3v2Tag(), nullptr);
+        EXPECT_FALSE(mp3File.ID3v2Tag()->frameListMap().contains("POPM"));
+        EXPECT_EQ(id3UserTextFrameValue(mp3File.ID3v2Tag(), "FMPS_Playcount"), u"42"_s);
+    }
+
+    resetTagWriterRatingSettings();
+}
+
+TEST_F(TagWriterTest, Mp3WritePlaycountUsesPopmOwnerAndPreservesRating)
+{
+    resetTagWriterRatingSettings();
+
+    const QString filepath = u":/audio/audiotest.mp3"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    {
+        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        ASSERT_NE(mp3File.ID3v2Tag(true), nullptr);
+        mp3File.ID3v2Tag()->removeFrames("POPM");
+
+        auto* other = new TagLib::ID3v2::PopularimeterFrame();
+        other->setEmail("other@example.com");
+        other->setRating(100);
+        other->setCounter(7);
+        mp3File.ID3v2Tag()->addFrame(other);
+
+        auto* selected = new TagLib::ID3v2::PopularimeterFrame();
+        selected->setEmail("owner@example.com");
+        selected->setRating(196);
+        selected->setCounter(5);
+        mp3File.ID3v2Tag()->addFrame(selected);
+        ASSERT_TRUE(mp3File.save());
+    }
+
+    {
+        FySettings settings;
+        settings.setValue(RatingSettings::PopmOwner, u"owner@example.com"_s);
+        settings.sync();
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, track));
+    track.setPlayCount(42);
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Playcount));
+    ASSERT_TRUE(file.flush());
+
+    {
+        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        auto* selected = popmFrameByOwner(mp3File.ID3v2Tag(), u"owner@example.com"_s);
+        ASSERT_NE(selected, nullptr);
+        EXPECT_EQ(selected->rating(), 196);
+        EXPECT_EQ(selected->counter(), 42U);
+
+        auto* other = popmFrameByOwner(mp3File.ID3v2Tag(), u"other@example.com"_s);
+        ASSERT_NE(other, nullptr);
+        EXPECT_EQ(other->rating(), 100);
+        EXPECT_EQ(other->counter(), 7U);
+    }
+
+    track.setPlayCount(0);
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Playcount));
+    ASSERT_TRUE(file.flush());
+
+    {
+        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        auto* selected = popmFrameByOwner(mp3File.ID3v2Tag(), u"owner@example.com"_s);
+        ASSERT_NE(selected, nullptr);
+        EXPECT_EQ(selected->rating(), 196);
+        EXPECT_EQ(selected->counter(), 0U);
+    }
+
+    resetTagWriterRatingSettings();
+}
+
+TEST_F(TagWriterTest, Mp3ClearPopmRatingPreservesPlaycount)
+{
+    resetTagWriterRatingSettings();
+
+    const QString filepath = u":/audio/audiotest.mp3"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    {
+        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        ASSERT_NE(mp3File.ID3v2Tag(true), nullptr);
+        mp3File.ID3v2Tag()->removeFrames("POPM");
+
+        auto* frame = new TagLib::ID3v2::PopularimeterFrame();
+        frame->setEmail("owner@example.com");
+        frame->setRating(196);
+        frame->setCounter(12);
+        mp3File.ID3v2Tag()->addFrame(frame);
+        ASSERT_TRUE(mp3File.save());
+    }
+
+    {
+        FySettings settings;
+        settings.setValue(RatingSettings::PopmOwner, u"owner@example.com"_s);
+        settings.sync();
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, track));
+    track.setRating(0.0F);
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Rating));
+    ASSERT_TRUE(file.flush());
+
+    {
+        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        auto* frame = popmFrameByOwner(mp3File.ID3v2Tag(), u"owner@example.com"_s);
+        ASSERT_NE(frame, nullptr);
+        EXPECT_EQ(frame->rating(), 0);
+        EXPECT_EQ(frame->counter(), 12U);
+    }
+
+    resetTagWriterRatingSettings();
+}
+
+TEST_F(TagWriterTest, Mp3CombinedPopmWriteKeepsPlaycountWhenRatingIsEmpty)
+{
+    resetTagWriterRatingSettings();
+
+    const QString filepath = u":/audio/audiotest.mp3"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    {
+        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        ASSERT_NE(mp3File.ID3v2Tag(true), nullptr);
+        mp3File.ID3v2Tag()->removeFrames("POPM");
+        ASSERT_TRUE(mp3File.save());
+    }
+
+    {
+        FySettings settings;
+        settings.setValue(RatingSettings::PopmOwner, u"owner@example.com"_s);
+        settings.sync();
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, track));
+    track.setRating(0.0F);
+    track.setPlayCount(42);
+    AudioReader::WriteOptions options{AudioReader::Rating};
+    options |= AudioReader::Playcount;
+    ASSERT_TRUE(m_parser.writeTrack(source, track, options));
+    ASSERT_TRUE(file.flush());
+
+    {
+        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        auto* frame = popmFrameByOwner(mp3File.ID3v2Tag(), u"owner@example.com"_s);
+        ASSERT_NE(frame, nullptr);
+        EXPECT_EQ(frame->rating(), 0);
+        EXPECT_EQ(frame->counter(), 42U);
+    }
+
+    resetTagWriterRatingSettings();
+}
+
 TEST_F(TagWriterTest, OggWriteHonoursTextRatingTagSettings)
 {
     resetTagWriterRatingSettings();
@@ -693,6 +961,49 @@ TEST_F(TagWriterTest, OggWriteHonoursTextRatingTagSettings)
         EXPECT_EQ(QString::fromUtf8(fields["RATING"].front().toCString(true)), u"7"_s);
         EXPECT_FALSE(fields.contains("FMPS_RATING"));
     }
+
+    resetTagWriterRatingSettings();
+}
+
+TEST_F(TagWriterTest, OggWriteAndReadConfiguredPlaycountTag)
+{
+    resetTagWriterRatingSettings();
+
+    const QString filepath = u":/audio/audiotest.ogg"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    {
+        FySettings settings;
+        settings.setValue(PlaycountSettings::ReadTag, u"PLAYCOUNT"_s);
+        settings.setValue(PlaycountSettings::WriteTag, u"PLAYCOUNT"_s);
+        settings.sync();
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, track));
+    track.setId(0);
+    track.setPlayCount(42);
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Playcount));
+    ASSERT_TRUE(file.flush());
+
+    {
+        TagLib::Ogg::Vorbis::File oggFile(file.fileName().toLocal8Bit().constData());
+        ASSERT_TRUE(oggFile.isValid());
+        ASSERT_NE(oggFile.tag(), nullptr);
+
+        const auto fields = oggFile.tag()->fieldListMap();
+        EXPECT_EQ(xiphStringItem(fields, "PLAYCOUNT"), u"42"_s);
+        EXPECT_FALSE(fields.contains("FMPS_PLAYCOUNT"));
+    }
+
+    Track rereadTrack{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
+    EXPECT_EQ(rereadTrack.playCount(), 42);
 
     resetTagWriterRatingSettings();
 }

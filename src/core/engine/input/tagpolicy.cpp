@@ -29,7 +29,8 @@ TagPolicy tagPolicy()
     const FySettings settings;
 
     return {
-        .rating = ratingTagPolicy(),
+        .rating    = ratingTagPolicy(),
+        .playcount = playcountTagPolicy(),
         .splitId3v23SemicolonSeparatedTags
         = settings.value(Settings::Core::Internal::SplitId3v23SemicolonSeparatedTags, true).toBool(),
     };
