@@ -67,8 +67,8 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     clickBehaviourLayout->addWidget(new QLabel(tr("Middle-click") + u":"_s, this), 1, 0);
     clickBehaviourLayout->addWidget(m_middleClick, 1, 1);
     clickBehaviourLayout->addWidget(m_playbackOnSend, 2, 0, 1, 2);
-    auto* playlistClickHint = new QLabel(
-        u"🛈 "_s + tr("Set <b>Double-click</b> to <b>Play</b> to start playback at the first matching track."), this);
+    auto* playlistClickHint
+        = new QLabel(u"🛈 "_s + tr("Set to <b>Play</b> to start playback at the first matching track."), this);
     playlistClickHint->setWordWrap(true);
     clickBehaviourLayout->addWidget(playlistClickHint, 3, 0, 1, 3);
     clickBehaviourLayout->setColumnStretch(2, 1);
