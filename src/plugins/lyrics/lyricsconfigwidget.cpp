@@ -181,7 +181,7 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
     auto* fontsGroupLayout = new QGridLayout(fontsGroup);
     auto* fadeGroup        = new QGroupBox(tr("Fade"), layoutPage);
     auto* fadeLayout       = new QGridLayout(fadeGroup);
-    auto* progressGroup    = new QGroupBox(tr("Progress"), stylePage);
+    auto* progressGroup    = new QGroupBox(tr("Progress highlighting"), stylePage);
     auto* progressLayout   = new QGridLayout(progressGroup);
 
     FontButton::alignLabels({m_baseFontBtn, m_lineFontBtn, m_wordLineFontBtn, m_wordFontBtn});
