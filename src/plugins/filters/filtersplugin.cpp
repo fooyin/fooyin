@@ -108,7 +108,7 @@ void FiltersPlugin::registerLayouts() const
             "Widgets":[{"SplitterHorizontal":{"Locked":[true,false,false,false],"State":"AAAA/wAAAAEAAAAEAAAAegAABHkAAAA9AAAAdwD/////AQAAAAEA",
             "Widgets":[{"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}},
             {"SplitterHorizontal":{"Locked":[true,false,true],"State":"AAAA/wAAAAEAAAADAAAAsgAAAzgAAAHyAP////8BAAAAAQA=",
-            "Widgets":[{"LibraryFilter":{"AlternatingRows":false,"Artwork":0,"AutoSwitch":true,"Captions":1,"Columns":"1","Display":0,"DoubleClickAction":1,
+            "Widgets":[{"LibraryFilter":{"AlternatingRows":false,"Artwork":0,"AutoSwitch":true,"Captions":1,"Columns":"1","Display":0,"DoubleClickAction":3,
             "FilterSource":0,"Group":"Gallery","IconHeight":100,"IconHorizontalGap":-1,"IconVerticalGap":10,"IconWidth":100,"Index":0,"KeepAlive":true,"MiddleClickAction":0,
             "PlaylistEnabled":true,"PlaylistName":"Filter Results","RowHeight":0,"SendPlayback":true,"ShowHeader":true,"ShowScrollbar":true,"ShowSummary":true,"Source":-1,
             "State":"AAAAJXjaY2BgYGRgYNjAAKFBgNH+A5QBFWAAAChLAeQ="}},{"LibraryFilter":{"AlternatingRows":false,"Artwork":0,"AutoSwitch":true,"Captions":1,"Columns":"3|1",
