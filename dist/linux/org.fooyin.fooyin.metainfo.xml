@@ -5,10 +5,14 @@
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>GPL-3.0</project_license>
     <name>fooyin</name>
-    <summary>A customisable music player</summary>
+    <summary>Play and manage your music with a powerful, highly customisable player</summary>
     <developer id="org.fooyin.luketaylor">
         <name>Luke Taylor</name>
     </developer>
+    <branding>
+        <color type="primary" scheme_preference="light">#90bcd5</color>
+        <color type="primary" scheme_preference="dark">#2a566f</color>
+    </branding>
     <description>
         <p>
             fooyin is a customisable desktop music player.
