@@ -15912,7 +15912,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="181"/>
         <source>Help</source>
-        <translation>Помощь</translation>
+        <translation>Справка</translation>
     </message>
 </context>
 <context>
@@ -16143,7 +16143,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="586"/>
         <source>Help</source>
-        <translation>Помощь</translation>
+        <translation>Справка</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1728"/>
