@@ -44,6 +44,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QRadioButton>
+#include <QStringList>
 #include <QTreeView>
 
 using namespace Qt::StringLiterals;
@@ -80,6 +81,7 @@ public:
     void simulateOp() const;
     void toggleRun();
     void modelUpdated();
+    void runFinished();
 
     void populateDestinationOptions() const;
     void browseDestination() const;
@@ -247,6 +249,8 @@ void FileOpsDialogPrivate::setup()
 
     QObject::connect(m_model, &FileOpsModel::simulated, this, &FileOpsDialogPrivate::modelUpdated);
     QObject::connect(m_model, &QAbstractItemModel::rowsRemoved, this, &FileOpsDialogPrivate::modelUpdated);
+    QObject::connect(m_model, &QAbstractItemModel::rowsInserted, this, &FileOpsDialogPrivate::modelUpdated);
+    QObject::connect(m_model, &FileOpsModel::finished, this, &FileOpsDialogPrivate::runFinished);
 
     changeOperation(m_operation);
     loadPresets();
@@ -463,18 +467,73 @@ void FileOpsDialogPrivate::toggleRun()
 
 void FileOpsDialogPrivate::modelUpdated()
 {
-    const int opCount = m_model->rowCount({});
+    const int pendingCount = m_model->pendingCount();
 
-    if(opCount == 0) {
-        m_runButton->setText(tr("&Run"));
-        m_running = false;
+    if(m_running) {
+        if(pendingCount > 0) {
+            m_status->setText(FileOpsDialog::tr("Pending operation(s): %Ln", nullptr, pendingCount));
+        }
+        else {
+            m_status->setText(FileOpsDialog::tr("Finishing operations…"));
+        }
+        m_runButton->setEnabled(true);
+        return;
+    }
+
+    m_runButton->setText(tr("&Run"));
+
+    if(pendingCount == 0) {
         m_status->setText(FileOpsDialog::tr("Nothing to do"));
         m_runButton->setEnabled(false);
     }
     else {
-        m_status->setText(FileOpsDialog::tr("Pending operation(s): %Ln", nullptr, opCount));
+        m_status->setText(FileOpsDialog::tr("Pending operation(s): %Ln", nullptr, pendingCount));
         m_runButton->setEnabled(true);
     }
+}
+
+void FileOpsDialogPrivate::runFinished()
+{
+    m_running = false;
+    m_runButton->setText(tr("&Run"));
+
+    const int pendingCount   = m_model->pendingCount();
+    const int succeededCount = m_model->succeededCount();
+    const int failedCount    = m_model->failedCount();
+    const int skippedCount   = m_model->skippedCount();
+    const int cancelledCount = m_model->cancelledCount();
+
+    if(pendingCount > 0) {
+        m_status->setText(FileOpsDialog::tr("Aborted: %Ln operation(s) not run", nullptr, pendingCount));
+        m_runButton->setEnabled(true);
+        return;
+    }
+
+    if(failedCount == 0 && skippedCount == 0 && cancelledCount == 0) {
+        m_status->setText(FileOpsDialog::tr("Completed %Ln operation(s)", nullptr, succeededCount));
+        m_runButton->setEnabled(false);
+        return;
+    }
+
+    QStringList summary;
+    if(succeededCount > 0) {
+        summary.push_back(FileOpsDialog::tr("%Ln succeeded", nullptr, succeededCount));
+    }
+    if(failedCount > 0) {
+        summary.push_back(FileOpsDialog::tr("%Ln failed", nullptr, failedCount));
+    }
+    if(skippedCount > 0) {
+        summary.push_back(FileOpsDialog::tr("%Ln skipped", nullptr, skippedCount));
+    }
+    if(cancelledCount > 0) {
+        summary.push_back(FileOpsDialog::tr("%Ln cancelled", nullptr, cancelledCount));
+    }
+
+    const int completedCount = succeededCount + failedCount + skippedCount + cancelledCount;
+    m_status->setText(
+        FileOpsDialog::tr("Completed %Ln operation(s): %1", nullptr, completedCount).arg(summary.join(u", "_s)));
+
+    m_runButton->setEnabled(false);
 }
 
 void FileOpsDialogPrivate::populateDestinationOptions() const

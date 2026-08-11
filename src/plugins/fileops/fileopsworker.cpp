@@ -262,34 +262,40 @@ void FileOpsWorker::run()
             break;
         }
 
-        const FileOpsItem& item = m_operations.front();
+        const FileOpsItem item = m_operations.front();
+        FileOpResult result{.operation = item, .status = FileOpStatus::Succeeded, .error = {}};
 
         switch(item.op) {
             case Operation::Create: {
                 const bool success = QDir{}.mkpath(item.destination);
                 if(!success) {
                     qCWarning(FILEOPS) << "Failed to create directory" << item.destination;
+                    result.status = FileOpStatus::Failed;
+                    result.error  = tr("Could not create directory");
                 }
                 break;
             }
             case Operation::Remove: {
                 const bool success = QDir{}.rmdir(item.source);
                 if(!success) {
-                    qCWarning(FILEOPS) << "Failed to remove directory" << item.destination;
+                    qCWarning(FILEOPS) << "Failed to remove directory" << item.source;
+                    result.status = FileOpStatus::Failed;
+                    result.error  = tr("Could not remove directory");
                 }
                 break;
             }
             case Operation::Rename:
             case Operation::Move: {
-                renameFile(item);
+                result = renameFile(item);
                 break;
             }
             case Operation::Copy: {
-                copyFile(item);
+                result = copyFile(item);
                 break;
             }
             case Operation::Extract: {
-                if(extractFile(item)) {
+                result = extractFile(item);
+                if(result.status == FileOpStatus::Succeeded) {
                     m_successfulArchives.emplace(item.archivePath);
                     if(m_preset.removeSourceArchive && m_trackPaths.contains(item.source)) {
                         m_extractedTrackDestinations.emplace(item.source, item.destination);
@@ -301,14 +307,14 @@ void FileOpsWorker::run()
                 break;
             }
             case Operation::RemoveArchive: {
-                removeArchive(item);
+                result = removeArchive(item);
                 break;
             }
             case Operation::Delete:
                 break;
         }
 
-        Q_EMIT operationFinished(item);
+        Q_EMIT operationCompleted(result);
         m_operations.pop_front();
     }
 
@@ -591,18 +597,18 @@ void FileOpsWorker::simulateRename()
     }
 }
 
-bool FileOpsWorker::renameFile(const FileOpsItem& item)
+FileOpResult FileOpsWorker::renameFile(const FileOpsItem& item)
 {
     QFile file{item.source};
 
     if(!file.exists()) {
         qCWarning(FILEOPS) << "File doesn't exist:" << item.source;
-        return false;
+        return {.operation = item, .status = FileOpStatus::Failed, .error = tr("Source file does not exist")};
     }
 
     if(!file.rename(item.destination)) {
         qCWarning(FILEOPS) << "Failed to move file from" << item.source << "to" << item.destination;
-        return false;
+        return {.operation = item, .status = FileOpStatus::Failed, .error = file.errorString()};
     }
 
     if(m_trackPaths.contains(item.source)) {
@@ -637,7 +643,7 @@ bool FileOpsWorker::renameFile(const FileOpsItem& item)
         }
     }
 
-    return true;
+    return {.operation = item, .status = FileOpStatus::Succeeded, .error = {}};
 }
 
 QString FileOpsWorker::evaluatePath(const ParsedScript& script, const Track& track)
@@ -647,40 +653,40 @@ QString FileOpsWorker::evaluatePath(const ParsedScript& script, const Track& tra
     return m_scriptParser.evaluate(script, track, context);
 }
 
-bool FileOpsWorker::copyFile(const FileOpsItem& item)
+FileOpResult FileOpsWorker::copyFile(const FileOpsItem& item)
 {
     QFile file{item.source};
 
     if(!file.exists()) {
         qCWarning(FILEOPS) << "File doesn't exist:" << item.source;
-        return false;
+        return {.operation = item, .status = FileOpStatus::Failed, .error = tr("Source file does not exist")};
     }
 
     if(!file.copy(item.destination)) {
         qCWarning(FILEOPS) << "Failed to copy file from" << item.source << "to" << item.destination;
-        return false;
+        return {.operation = item, .status = FileOpStatus::Failed, .error = file.errorString()};
     }
 
-    return true;
+    return {.operation = item, .status = FileOpStatus::Succeeded, .error = {}};
 }
 
-bool FileOpsWorker::extractFile(const FileOpsItem& item)
+FileOpResult FileOpsWorker::extractFile(const FileOpsItem& item)
 {
     auto archiveReader = m_audioLoader->archiveReaderForFile(item.archivePath);
     if(!archiveReader || !archiveReader->init(item.archivePath)) {
         qCWarning(FILEOPS) << "Failed to initialise archive reader for" << item.archivePath;
-        return false;
+        return {.operation = item, .status = FileOpStatus::Failed, .error = tr("Could not open archive")};
     }
 
     QFile file{item.destination};
     if(file.exists()) {
         qCWarning(FILEOPS) << "Destination file already exists:" << item.destination;
-        return false;
+        return {.operation = item, .status = FileOpStatus::Failed, .error = tr("Destination file already exists")};
     }
 
     if(!file.open(QIODevice::WriteOnly)) {
         qCWarning(FILEOPS) << "Failed to create file" << item.destination << file.errorString();
-        return false;
+        return {.operation = item, .status = FileOpStatus::Failed, .error = file.errorString()};
     }
 
     if(!archiveReader->copyEntryToDevice(item.archiveEntry, &file, [this]() { return mayRun(); })) {
@@ -688,22 +694,29 @@ bool FileOpsWorker::extractFile(const FileOpsItem& item)
                            << "to" << item.destination;
         file.close();
         file.remove();
-        return false;
+        if(!mayRun()) {
+            return {.operation = item,
+                    .status    = FileOpStatus::Cancelled,
+                    .error     = tr("Archive extraction was interrupted")};
+        }
+        return {.operation = item, .status = FileOpStatus::Failed, .error = tr("Could not extract archive entry")};
     }
 
-    return true;
+    return {.operation = item, .status = FileOpStatus::Succeeded, .error = {}};
 }
 
-bool FileOpsWorker::removeArchive(const FileOpsItem& item)
+FileOpResult FileOpsWorker::removeArchive(const FileOpsItem& item)
 {
     if(m_failedArchives.contains(item.archivePath)) {
         qCWarning(FILEOPS) << "Skipping archive deletion after extraction failure:" << item.archivePath;
-        return false;
+        return {.operation = item,
+                .status    = FileOpStatus::Skipped,
+                .error     = tr("One or more archive entries could not be extracted")};
     }
 
     if(!m_successfulArchives.contains(item.archivePath)) {
         qCWarning(FILEOPS) << "Skipping archive deletion without successful extraction:" << item.archivePath;
-        return false;
+        return {.operation = item, .status = FileOpStatus::Skipped, .error = tr("No archive entries were extracted")};
     }
 
     const bool immediateDelete = m_settings->fileValue(Settings::ImmediateDelete, false).toBool();
@@ -711,7 +724,7 @@ bool FileOpsWorker::removeArchive(const FileOpsItem& item)
 
     if(!deleted) {
         qCWarning(FILEOPS) << "Failed to delete source archive" << item.archivePath;
-        return false;
+        return {.operation = item, .status = FileOpStatus::Failed, .error = tr("Could not delete source archive")};
     }
 
     const bool deleteEmptyFolders = m_settings->fileValue(Settings::DeleteEmptyFolders, false).toBool();
@@ -720,7 +733,7 @@ bool FileOpsWorker::removeArchive(const FileOpsItem& item)
     }
 
     updateExtractedArchiveTracks(item.archivePath);
-    return true;
+    return {.operation = item, .status = FileOpStatus::Succeeded, .error = {}};
 }
 
 void FileOpsWorker::createDir(const QDir& dir)
