@@ -4,38 +4,37 @@
 
 ### Improvements
 
+* FileOps
+  - Remember dialog and results table state
+  - Show operation results and errors in the dialog ([#1400](https://github.com/fooyin/fooyin/issues/1400))
 * Filters
-  - Add a built-in Gallery layout
+  - Add a new built-in Gallery layout
   - Add an option to align captions with artwork
-* Oscilloscope
-  - Keep the waveform continuous across track changes
-* Playlist
-  - Add configurable font and background colours for the playing row ([#1441](https://github.com/fooyin/fooyin/issues/1441))
-* Remote Streams
-  - Add MPEG-TS timed ID3 metadata support for HLS streams
-* Visualisations
-  - Support transparent standalone windows
+* Library/Metadata: Add configurable playcount tag reading and writing
+* Oscilloscope: Keep the waveform continuous across track changes
+* Playlist: Add configurable font and background colours for the playing row ([#1441](https://github.com/fooyin/fooyin/issues/1441))
+* Remote Streams: Add MPEG-TS timed ID3 metadata support for HLS streams
+* Visualisations: Support transparent standalone windows
 
 ### Fixes
 
-* FileOps
-  - Apply filename formatting when copying entire folders ([#1461](https://github.com/fooyin/fooyin/issues/1461))
-* Interface
-  - Fix transparent item view editors in some styles
-* Library
-  - Remove excluded and stale tracks during library rescans ([#1439](https://github.com/fooyin/fooyin/issues/1439))
+* FileOps: Apply filename formatting when copying entire folders ([#1461](https://github.com/fooyin/fooyin/issues/1461))
+* Interface: Fix transparent item view editors in some styles
+* Library: Remove excluded and stale tracks during library rescans ([#1439](https://github.com/fooyin/fooyin/issues/1439))
 * Playlist
   - Always clear live metadata when switching playlists
+  - Fix inconsistent background colours for selected rows
   - Prevent adding tracks to read-only playlists ([#1464](https://github.com/fooyin/fooyin/issues/1464))
+  - Preserve header transparency with background images
   - Preserve row transparency on hover
-* Remote Streams
-  - Fix timed ID3 metadata handling with FFmpeg 5
-* Spectrum
-  - Fix frequency mapping at low sample rates ([#1446](https://github.com/fooyin/fooyin/issues/1446))
-* Visualisations
-  - Fix stuttering with temporal DSPs ([#1465](https://github.com/fooyin/fooyin/issues/1465))
-* VU Meter
-  - Fix gaps caused by partial repaints
+* Remote Streams: Fix timed ID3 metadata handling with FFmpeg 5
+* Spectrum: Fix frequency mapping at low sample rates ([#1446](https://github.com/fooyin/fooyin/issues/1446))
+* Visualisations: Fix stuttering with temporal DSPs ([#1465](https://github.com/fooyin/fooyin/issues/1465))
+* VU Meter: Fix gaps caused by partial repaints
+
+### Build/System
+
+* Update translations and translation sources ([#1467](https://github.com/fooyin/fooyin/pull/1467), [#1468](https://github.com/fooyin/fooyin/pull/1468), [#1472](https://github.com/fooyin/fooyin/pull/1472), [#1473](https://github.com/fooyin/fooyin/pull/1473))
 
 
 ## [0.12.2](https://github.com/fooyin/fooyin/releases/tag/v0.12.2) (2026-08-07)
