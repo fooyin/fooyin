@@ -1286,7 +1286,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="62"/>
         <source>&amp;Visualisations</source>
-        <translation type="unfinished">可视化(&amp;V)</translation>
+        <translation>可视化(&amp;V)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="84"/>
@@ -2467,7 +2467,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="293"/>
         <source>Automatic (preserve source)</source>
-        <translation type="unfinished"></translation>
+        <translation>自动（保留源）</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="294"/>
@@ -2497,7 +2497,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="300"/>
         <source>Automatic (when reducing bit depth)</source>
-        <translation type="unfinished"></translation>
+        <translation>自动（降低位深时）</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="301"/>
@@ -5106,27 +5106,27 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="48"/>
         <source>Preserve playback playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>保留播放列表</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="56"/>
         <source>Align labels to artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>标签与封面对齐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="71"/>
         <source>Set to &lt;b&gt;Play&lt;/b&gt; to start playback at the first matching track.</source>
-        <translation type="unfinished"></translation>
+        <translation>设置为&lt;b&gt;播放&lt;/b&gt;从第一个匹配的曲目开始播放。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="79"/>
         <source>In current playlist mode, matching tracks are selected directly in the playlist.</source>
-        <translation type="unfinished"></translation>
+        <translation>在当前的播放列表模式下，匹配的曲目直接在播放列表中选中。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="82"/>
         <source>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>当使用此选择播放列表进行播放时，请保留该播放列表，并在其名称后附加“（播放）”，而不是替换其曲目。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="88"/>
@@ -5141,7 +5141,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="96"/>
         <source>Align bottom labels to the horizontal bounds of the artwork in artwork mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>在作品模式下，将底部标签与作品的水平边界对齐。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="103"/>
@@ -5186,22 +5186,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="135"/>
         <source>Library</source>
-        <translation type="unfinished">媒体库</translation>
+        <translation>媒体库</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="136"/>
         <source>Current playlist</source>
-        <translation type="unfinished">当前播放列表</translation>
+        <translation>当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="138"/>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>来源</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="142"/>
         <source>Current playlist mode uses the displayed playlist as its source and selects the matching tracks in that playlist.</source>
-        <translation type="unfinished"></translation>
+        <translation>当前的播放列表模式以显示的播放列表为源，并从中选择匹配的曲目。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="160"/>
@@ -5213,7 +5213,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="161"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="165"/>
         <source>Play</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
 </context>
 <context>
@@ -5221,7 +5221,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="1227"/>
         <source>Filter Results</source>
-        <translation>过滤结果</translation>
+        <translation>筛选结果</translation>
     </message>
 </context>
 <context>
@@ -5298,17 +5298,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="697"/>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>来源</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="708"/>
         <source>Library</source>
-        <translation type="unfinished">媒体库</translation>
+        <translation>媒体库</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="709"/>
         <source>Current playlist</source>
-        <translation type="unfinished">当前播放列表</translation>
+        <translation>当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="890"/>
@@ -5681,17 +5681,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1007"/>
         <source>Lock playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1009"/>
         <source>Prevent changes to the contents of the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>防止更改当前播放列表的内容</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1012"/>
         <source>Lock Current Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1033"/>
@@ -6016,17 +6016,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="170"/>
         <source>&amp;Import…</source>
-        <translation type="unfinished"></translation>
+        <translation>导入(&amp;I)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="171"/>
         <source>E&amp;xport…</source>
-        <translation type="unfinished"></translation>
+        <translation>导出(&amp;X)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="174"/>
         <source>Theme colours are disabled when using a Windows style. Select Fusion as the interface style to customise colours.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 Windows 风格时，主题颜色功能不可用。请选择 Fusion 作为界面风格以自定义颜色。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="207"/>
@@ -6171,7 +6171,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="375"/>
         <source>Custom colours are only supported with the Fusion style on Windows.</source>
-        <translation type="unfinished"></translation>
+        <translation>自定义颜色仅在 Windows 上的 Fusion 风格下受支持。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="540"/>
@@ -6181,38 +6181,38 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="558"/>
         <source>Open Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>打开主题</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="558"/>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="591"/>
         <source>fooyin Theme (*.fyt)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin 主题 (*.fyt)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="566"/>
         <source>Import Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>导入主题</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="566"/>
         <source>Could not import theme</source>
-        <translation type="unfinished"></translation>
+        <translation>无法导入主题</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="590"/>
         <source>Save Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>保存主题</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="601"/>
         <source>Export Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>导出主题</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="601"/>
         <source>Could not export theme</source>
-        <translation type="unfinished"></translation>
+        <translation>无法导出主题</translation>
     </message>
 </context>
 <context>
@@ -6243,7 +6243,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="117"/>
         <source>Dark mode</source>
-        <translation type="unfinished"></translation>
+        <translation>深色模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="119"/>
@@ -6343,7 +6343,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="332"/>
         <source>Dark mode is not supported by this style.</source>
-        <translation type="unfinished"></translation>
+        <translation>此样式不支持深色模式。</translation>
     </message>
 </context>
 <context>
@@ -7916,7 +7916,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="49"/>
         <source>Preserve playback playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>保留播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="81"/>
@@ -7927,7 +7927,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="99"/>
         <source>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>当使用此选择播放列表进行播放时，请保留该播放列表，并在其名称后附加“（播放）”，而不是替换其曲目。</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="116"/>
@@ -9552,17 +9552,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="49"/>
         <source>&amp;Oscilloscope</source>
-        <translation type="unfinished"></translation>
+        <translation>示波器(&amp;O)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="50"/>
         <source>Open an oscilloscope in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>在单独的窗口中打开示波器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="52"/>
         <source>View</source>
-        <translation type="unfinished">视图</translation>
+        <translation>视图</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="56"/>
@@ -10303,7 +10303,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="153"/>
         <source>Show Random Track</source>
-        <translation type="unfinished"></translation>
+        <translation>显示随机曲目</translation>
     </message>
 </context>
 <context>
@@ -10337,12 +10337,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="110"/>
         <source>Background colour</source>
-        <translation type="unfinished">背景色</translation>
+        <translation>背景色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="111"/>
         <source>Font</source>
-        <translation type="unfinished">字体</translation>
+        <translation>字体</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="115"/>
@@ -10518,12 +10518,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="189"/>
         <source>Use a custom background colour for the currently playing row; transparency is supported</source>
-        <translation type="unfinished"></translation>
+        <translation>为当前播放的行使用自定义背景色；支持透明度</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="190"/>
         <source>Use a custom font for the currently playing row</source>
-        <translation type="unfinished"></translation>
+        <translation>为当前播放的行使用自定义字体</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="192"/>
@@ -10578,7 +10578,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="216"/>
         <source>Playing row</source>
-        <translation type="unfinished"></translation>
+        <translation>正在播放的行</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="219"/>
@@ -11255,7 +11255,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="500"/>
         <source>Lock playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="519"/>
@@ -11373,7 +11373,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="509"/>
         <source>Lock playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="451"/>
@@ -11733,7 +11733,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="455"/>
         <source>Lock playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="470"/>
@@ -11768,17 +11768,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="545"/>
         <source>Tab position</source>
-        <translation type="unfinished"></translation>
+        <translation>标签页位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="562"/>
         <source>Top</source>
-        <translation type="unfinished">顶部</translation>
+        <translation>顶部</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="563"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="731"/>
@@ -11807,47 +11807,47 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="32"/>
         <source>Playlist Tabs Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>播放列表标签页设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="34"/>
         <source>Expand tabs to fill empty space</source>
-        <translation type="unfinished">展开选项卡</translation>
+        <translation>展开选项卡</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="35"/>
         <source>Show add button</source>
-        <translation type="unfinished">显示添加按钮</translation>
+        <translation>显示添加按钮</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="36"/>
         <source>Show clear button</source>
-        <translation type="unfinished">显示清空按钮</translation>
+        <translation>显示清空按钮</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="37"/>
         <source>Show delete button on tabs</source>
-        <translation type="unfinished">在选项卡上显示删除按钮</translation>
+        <translation>在选项卡上显示删除按钮</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="38"/>
         <source>Delete playlists on middle click</source>
-        <translation type="unfinished">在中键点击时删除播放列表</translation>
+        <translation>在中键点击时删除播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="40"/>
         <source>Top</source>
-        <translation type="unfinished">顶部</translation>
+        <translation>顶部</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="41"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="46"/>
         <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation>位置</translation>
     </message>
 </context>
 <context>
@@ -12539,17 +12539,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="415"/>
         <source>Could not initialise OpenGL: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>无法初始化 OpenGL：%1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="420"/>
         <source>projectM requires OpenGL 3.3 or newer.</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM 需要 OpenGL 3.3 或更高版本。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="548"/>
         <source>projectM requires an initialised OpenGL 3.3 context.</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM 需要一个已初始化的 OpenGL 3.3 上下文。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="553"/>
@@ -12630,12 +12630,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="201"/>
         <source>No projectM presets were found in the configured location.</source>
-        <translation type="unfinished"></translation>
+        <translation>在配置的路径下未找到 projectM 预设。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="203"/>
         <source>Right-click to configure presets.</source>
-        <translation type="unfinished"></translation>
+        <translation>右键点击以配置预设。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="245"/>
@@ -12948,22 +12948,22 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="70"/>
         <source>Dark mode</source>
-        <translation type="unfinished"></translation>
+        <translation>深色模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="126"/>
         <source>Disabled</source>
-        <translation type="unfinished">已禁用</translation>
+        <translation>已禁用</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="129"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>已启用</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="135"/>
         <source>Dark mode is not supported by the current style.</source>
-        <translation type="unfinished"></translation>
+        <translation>当前样式不支持深色模式。</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="142"/>
@@ -16768,17 +16768,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="46"/>
         <source>Spectro&amp;gram</source>
-        <translation type="unfinished"></translation>
+        <translation>频谱图(&amp;G)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="47"/>
         <source>Open a spectrogram in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>在单独的窗口中打开频谱图</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="49"/>
         <source>View</source>
-        <translation type="unfinished">视图</translation>
+        <translation>视图</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="53"/>
@@ -16956,12 +16956,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="251"/>
         <source>Duration (sample-rate based)</source>
-        <translation type="unfinished"></translation>
+        <translation>时长（基于采样率）</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="252"/>
         <source>Fixed samples</source>
-        <translation type="unfinished"></translation>
+        <translation>固定采样</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="254"/>
@@ -17047,12 +17047,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="274"/>
         <source>Length of audio analysed per spectrum frame; the FFT size adapts to the sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>每个频谱帧分析的音频长度；FFT 大小会根据采样率进行调整</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="276"/>
         <source>Keep the analysis duration consistent across sample rates, or use a fixed number of samples</source>
-        <translation type="unfinished"></translation>
+        <translation>在不同采样率下保持分析时长一致，或使用固定的采样点数</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="277"/>
@@ -17202,7 +17202,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="350"/>
         <source>FFT sizing</source>
-        <translation type="unfinished"></translation>
+        <translation>FFT 大小</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="351"/>
@@ -17212,7 +17212,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="352"/>
         <source>Duration</source>
-        <translation type="unfinished">时长</translation>
+        <translation>时长</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="353"/>
@@ -17324,17 +17324,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="50"/>
         <source>&amp;Spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>光谱(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="51"/>
         <source>Open a spectrum in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>在单独的窗口中打开光谱</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="53"/>
         <source>View</source>
-        <translation type="unfinished">视图</translation>
+        <translation>视图</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="57"/>
@@ -17390,12 +17390,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="716"/>
         <source>FFT window</source>
-        <translation type="unfinished"></translation>
+        <translation>FFT 窗口</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="719"/>
         <source>Sample rate based (%1 ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>基于采样率（%1 ms）</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="745"/>
@@ -18572,37 +18572,37 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="58"/>
         <source>View</source>
-        <translation type="unfinished">视图</translation>
+        <translation>视图</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="67"/>
         <source>&amp;VU Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>VU 表(&amp;V)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="67"/>
         <source>Open a VU meter in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>在独立窗口中打开 VU 表</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="68"/>
         <source>VU Meter</source>
-        <translation type="unfinished">音量计</translation>
+        <translation>VU 表</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="69"/>
         <source>&amp;Peak Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>峰值表(&amp;P)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="69"/>
         <source>Open a peak meter in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>在单独的窗口中打开峰值表</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="70"/>
         <source>Peak Meter</source>
-        <translation type="unfinished">峰值计</translation>
+        <translation>峰值表</translation>
     </message>
 </context>
 <context>
@@ -18946,17 +18946,17 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="91"/>
         <source>&amp;Waveform Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>波形进度条(&amp;W)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="92"/>
         <source>Open a waveform seekbar in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>在独立窗口中打开波形进度条</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="94"/>
         <source>View</source>
-        <translation type="unfinished">视图</translation>
+        <translation>视图</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="103"/>

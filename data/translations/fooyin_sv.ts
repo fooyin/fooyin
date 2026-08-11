@@ -5132,7 +5132,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="71"/>
         <source>Set to &lt;b&gt;Play&lt;/b&gt; to start playback at the first matching track.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sätt till &lt;b&gt;spela&lt;/b&gt; för att starta uppspelning vid det första matchande spåret.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="79"/>
@@ -10540,12 +10540,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="189"/>
         <source>Use a custom background colour for the currently playing row; transparency is supported</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd en egen bakgrundsfärg för den aktuellt spelande raden; genomskinlighet stöds</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="190"/>
         <source>Use a custom font for the currently playing row</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd ett eget typsnitt för den aktuellt spelande raden</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="192"/>
@@ -10600,7 +10600,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="216"/>
         <source>Playing row</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande rad</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="219"/>
@@ -12990,7 +12990,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="135"/>
         <source>Dark mode is not supported by the current style.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mörkt läge stöds inte av den aktuella stilen.</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="142"/>

@@ -5143,17 +5143,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="56"/>
         <source>Align labels to artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Выравнивать подписи по обложке</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="71"/>
         <source>Set to &lt;b&gt;Play&lt;/b&gt; to start playback at the first matching track.</source>
-        <translation type="unfinished"></translation>
+        <translation>Установите &lt;b&gt;Играть&lt;/b&gt;, чтобы начать воспроизведение с первой подходящей дорожки.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="79"/>
         <source>In current playlist mode, matching tracks are selected directly in the playlist.</source>
-        <translation type="unfinished"></translation>
+        <translation>В режиме текущего плейлиста подходящие дорожки выделяются непосредственно в плейлисте.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="82"/>
@@ -5173,7 +5173,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="96"/>
         <source>Align bottom labels to the horizontal bounds of the artwork in artwork mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выравнивать нижние подписи по горизонтальным границам обложки в режиме обложек.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="103"/>
@@ -5218,22 +5218,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="135"/>
         <source>Library</source>
-        <translation type="unfinished">Фонотека</translation>
+        <translation>Фонотека</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="136"/>
         <source>Current playlist</source>
-        <translation type="unfinished">Текущий плейлист</translation>
+        <translation>Текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="138"/>
         <source>Source</source>
-        <translation type="unfinished">Источник</translation>
+        <translation>Источник</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="142"/>
         <source>Current playlist mode uses the displayed playlist as its source and selects the matching tracks in that playlist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим текущего плейлиста использует отображаемый плейлист как источник и выделяет в нём подходящие дорожки.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="160"/>
@@ -5245,7 +5245,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="161"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="165"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Играть</translation>
     </message>
 </context>
 <context>
@@ -5330,17 +5330,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="697"/>
         <source>Source</source>
-        <translation type="unfinished">Источник</translation>
+        <translation>Источник</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="708"/>
         <source>Library</source>
-        <translation type="unfinished">Фонотека</translation>
+        <translation>Фонотека</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="709"/>
         <source>Current playlist</source>
-        <translation type="unfinished">Текущий плейлист</translation>
+        <translation>Текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="890"/>
@@ -9456,7 +9456,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="68"/>
         <source>Off</source>
-        <translation>Отключено</translation>
+        <translation>Откл.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="70"/>
@@ -10381,12 +10381,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="110"/>
         <source>Background colour</source>
-        <translation type="unfinished">Цвет фона</translation>
+        <translation>Цвет фона</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="111"/>
         <source>Font</source>
-        <translation type="unfinished">Шрифт</translation>
+        <translation>Шрифт</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="115"/>
@@ -10562,12 +10562,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="189"/>
         <source>Use a custom background colour for the currently playing row; transparency is supported</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать пользовательский цвет фона для строки с воспроизводимой дорожкой; поддерживается прозрачность</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="190"/>
         <source>Use a custom font for the currently playing row</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать пользовательский шрифт для строки с воспроизводимой дорожкой</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="192"/>
@@ -10622,7 +10622,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="216"/>
         <source>Playing row</source>
-        <translation type="unfinished"></translation>
+        <translation>Строка воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="219"/>
@@ -13002,22 +13002,22 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="70"/>
         <source>Dark mode</source>
-        <translation type="unfinished">Тёмный режим</translation>
+        <translation>Тёмный режим</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="126"/>
         <source>Disabled</source>
-        <translation type="unfinished">Отключено</translation>
+        <translation>Отключено</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="129"/>
         <source>Enabled</source>
-        <translation type="unfinished">Включено</translation>
+        <translation>Включено</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="135"/>
         <source>Dark mode is not supported by the current style.</source>
-        <translation type="unfinished"></translation>
+        <translation>Тёмный режим не поддерживается текущим стилем.</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="142"/>
@@ -15912,7 +15912,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="181"/>
         <source>Help</source>
-        <translation>Помощь</translation>
+        <translation>Справка</translation>
     </message>
 </context>
 <context>
@@ -16143,7 +16143,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="586"/>
         <source>Help</source>
-        <translation>Помощь</translation>
+        <translation>Справка</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1728"/>
