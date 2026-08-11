@@ -658,7 +658,12 @@ void EngineHandler::handleTrackCommitted(const Engine::TrackCommitContext& conte
 void EngineHandler::handleTrackStatus(Engine::TrackStatus status, const Track& track, uint64_t generation,
                                       bool seekable)
 {
-    m_playerController->setCurrentTrackSeekable(seekable);
+    const bool retainStoppedSeekability = status == Engine::TrackStatus::NoTrack
+                                       && m_playerController->playState() == Player::PlayState::Stopped
+                                       && m_playerController->currentTrack().isValid();
+    if(!retainStoppedSeekability) {
+        m_playerController->setCurrentTrackSeekable(seekable);
+    }
 
     switch(status) {
         case Engine::TrackStatus::NoTrack:

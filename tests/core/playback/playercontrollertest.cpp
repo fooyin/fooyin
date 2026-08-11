@@ -428,6 +428,30 @@ TEST(PlayerControllerTest, RestartingCurrentTrackAfterStoppedCountsListenedTime)
     EXPECT_EQ(playedSpy.count(), 1);
 }
 
+TEST(PlayerControllerTest, StoppedTrackRemainsSeekable)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_stopped_seek_test.ini"_s};
+    registerControllerSettings(settings);
+    PlayerController controller{&settings, nullptr};
+
+    controller.commitCurrentTrack(makeTrack(u"/tmp/stopped-seek.flac"_s, 24, 10000));
+    controller.setCurrentTrackSeekable(true);
+    controller.syncPlayStateFromEngine(Player::PlayState::Playing);
+    controller.syncPlayStateFromEngine(Player::PlayState::Stopped);
+
+    EXPECT_TRUE(controller.currentTrackSeekable());
+
+    const QSignalSpy positionMovedSpy{&controller, &PlayerController::positionMoved};
+    controller.seek(5000);
+
+    ASSERT_EQ(positionMovedSpy.count(), 1);
+    EXPECT_EQ(positionMovedSpy.constFirst().constFirst().toULongLong(), 5000U);
+
+    controller.reset();
+    EXPECT_FALSE(controller.currentTrackSeekable());
+}
+
 TEST(PlayerControllerTest, RestartingCurrentTrackWithPendingRequestCountsListenedTime)
 {
     ensureCoreApplication();

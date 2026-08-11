@@ -457,7 +457,6 @@ bool PlayerControllerPrivate::enterStoppedState(bool requestTransportStop)
         return false;
     }
 
-    m_self->setCurrentTrackSeekable(false);
     emitPositionSignals(m_progressTracker.resetPosition());
 
     if(requestTransportStop) {
