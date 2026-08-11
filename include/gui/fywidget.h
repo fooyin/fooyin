@@ -214,9 +214,12 @@ public:
      *
      * The window geometry and widget-specific layout data are restored from and
      * saved to @p stateKey. This gives the window configuration independent state
-     * from instances embedded in a layout.
+     * from instances embedded in a layout. The window uses an opaque native
+     * surface unless the bool overload explicitly enables translucency.
      */
     void showStandaloneWindow(const QString& title, const QString& stateKey,
+                              const QSize& defaultSize = QSize{800, 450});
+    void showStandaloneWindow(const QString& title, const QString& stateKey, bool translucentBackground,
                               const QSize& defaultSize = QSize{800, 450});
 
 protected:

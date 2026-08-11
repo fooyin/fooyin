@@ -207,12 +207,18 @@ void FyWidget::finalise() { }
 
 void FyWidget::showStandaloneWindow(const QString& title, const QString& stateKey, const QSize& defaultSize)
 {
+    showStandaloneWindow(title, stateKey, false, defaultSize);
+}
+
+void FyWidget::showStandaloneWindow(const QString& title, const QString& stateKey, bool translucentBackground,
+                                    const QSize& defaultSize)
+{
     Q_ASSERT(!parentWidget());
 
     p->m_standaloneStateKey = stateKey;
 
     setAttribute(Qt::WA_DeleteOnClose);
-    setAttribute(Qt::WA_TranslucentBackground);
+    setAttribute(Qt::WA_TranslucentBackground, translucentBackground);
     setWindowTitle(title);
     resize(defaultSize);
 

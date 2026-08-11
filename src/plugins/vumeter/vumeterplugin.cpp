@@ -60,7 +60,7 @@ void VuMeterPlugin::initialise(const GuiPluginContext& context)
         QObject::connect(action, &QAction::triggered, this, [this, type, title, stateKey]() {
             auto* window = new VuMeterWidget(type, m_playerController, m_settings);
             QObject::connect(m_engine, &EngineController::levelReady, window, &VuMeterWidget::renderLevel);
-            window->showStandaloneWindow(title, stateKey);
+            window->showStandaloneWindow(title, stateKey, true);
         });
     };
 

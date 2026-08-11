@@ -50,7 +50,7 @@ void SpectrogramPlugin::initialise(const GuiPluginContext& context)
     context.actionManager->actionContainer(Constants::Menus::Visualisations)->addAction(showSpectrogramCmd);
     QObject::connect(showSpectrogram, &QAction::triggered, this, [this]() {
         auto* window = new SpectrogramWidget(m_playerController, m_engine, m_settings);
-        window->showStandaloneWindow(tr("Spectrogram"), u"Spectrogram/WindowState"_s);
+        window->showStandaloneWindow(tr("Spectrogram"), u"Spectrogram/WindowState"_s, true);
     });
 
     context.widgetProvider->registerWidget(

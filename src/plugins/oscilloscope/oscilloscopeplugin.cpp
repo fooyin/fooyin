@@ -53,7 +53,7 @@ void OscilloscopePlugin::initialise(const GuiPluginContext& context)
     context.actionManager->actionContainer(Constants::Menus::Visualisations)->addAction(showOscilloscopeCmd);
     QObject::connect(showOscilloscope, &QAction::triggered, this, [this]() {
         auto* window = new OscilloscopeWidget(m_engine, m_playerController, m_settings);
-        window->showStandaloneWindow(tr("Oscilloscope"), u"Oscilloscope/WindowState"_s);
+        window->showStandaloneWindow(tr("Oscilloscope"), u"Oscilloscope/WindowState"_s, true);
     });
 
     context.widgetProvider->registerWidget(

@@ -54,7 +54,7 @@ void SpectrumPlugin::initialise(const GuiPluginContext& context)
     context.actionManager->actionContainer(Constants::Menus::Visualisations)->addAction(showSpectrumCmd);
     QObject::connect(showSpectrum, &QAction::triggered, this, [this]() {
         auto* window = new SpectrumWidget(m_engine, m_settings);
-        window->showStandaloneWindow(tr("Spectrum"), u"Spectrum/WindowState"_s);
+        window->showStandaloneWindow(tr("Spectrum"), u"Spectrum/WindowState"_s, true);
     });
 
     m_widgetProvider->registerWidget(

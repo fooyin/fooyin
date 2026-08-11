@@ -95,7 +95,7 @@ void WaveBarPlugin::initialise(const GuiPluginContext& context)
     m_actionManager->actionContainer(::Fooyin::Constants::Menus::Visualisations)->addAction(showWaveBarCmd);
     QObject::connect(showWaveBar, &QAction::triggered, this, [this]() {
         auto* window = createWavebar();
-        window->showStandaloneWindow(tr("Waveform Seekbar"), u"WaveBar/WindowState"_s);
+        window->showStandaloneWindow(tr("Waveform Seekbar"), u"WaveBar/WindowState"_s, true);
     });
 
     m_trackSelection->registerTrackContextSubmenu(this, TrackContextMenuArea::Track,

@@ -63,6 +63,7 @@ struct Colours
         switch(type) {
             case Type::BgUnplayed:
             case Type::BgPlayed:
+                return palette.color(QPalette::Window);
             case Type::MaxBorder:
             case Type::MinBorder:
             case Type::RmsMaxBorder:
