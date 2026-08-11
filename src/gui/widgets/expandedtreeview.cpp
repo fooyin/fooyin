@@ -1268,6 +1268,7 @@ void TreeView::drawRow(QPainter* painter, const QStyleOptionViewItem& option, co
 
         if(m_view->selectionModel()->isSelected(modelIndex)) {
             opt.state |= QStyle::State_Selected;
+            opt.features.setFlag(QStyleOptionViewItem::Alternate, false);
         }
         if(rowFocused && (current == modelIndex)) {
             currentRowHasFocus = true;
