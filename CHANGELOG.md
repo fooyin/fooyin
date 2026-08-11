@@ -1,9 +1,10 @@
 # Changelog
 
-## Unreleased
+## [0.12.3](https://github.com/fooyin/fooyin/releases/tag/v0.12.3) (2026-08-11)
 
 ### Improvements
 
+* Audio Conversion: Make setup and progress dialogs non-modal
 * FileOps
   - Remember dialog and results table state
   - Show operation results and errors in the dialog ([#1400](https://github.com/fooyin/fooyin/issues/1400))
@@ -12,9 +13,11 @@
   - Add an option to align captions with artwork
 * Library/Metadata: Add configurable playcount tag reading and writing
 * Oscilloscope: Keep the waveform continuous across track changes
+* Playback: Make Repeat Track transitions gapless ([#1456](https://github.com/fooyin/fooyin/issues/1456))
 * Playlist: Add configurable font and background colours for the playing row ([#1441](https://github.com/fooyin/fooyin/issues/1441))
 * Remote Streams: Add MPEG-TS timed ID3 metadata support for HLS streams
 * Visualisations: Support transparent standalone windows
+* WaveBar: Support seeking while stopped
 
 ### Fixes
 
