@@ -136,6 +136,11 @@ bool DecoderContext::isSeekable() const
     return m_decoder && m_decoder->isSeekable();
 }
 
+AudioDecoder::RepeatHandling DecoderContext::repeatHandling() const
+{
+    return m_decoder ? m_decoder->repeatHandling() : AudioDecoder::RepeatHandling::EngineTransition;
+}
+
 AudioStreamPtr DecoderContext::activeStream() const
 {
     return m_activeStream;

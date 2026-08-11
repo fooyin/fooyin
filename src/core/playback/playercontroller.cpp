@@ -373,8 +373,9 @@ void PlayerControllerPrivate::emitUpcomingTrackChangedIfNeeded()
         upcoming.itemId = reuseLastUpcoming ? m_lastUpcomingTrack.itemId : nextPlaybackItemId();
     }
 
-    const bool upcomingChanged
-        = m_lastUpcomingTrack.track != upcoming.track || m_lastUpcomingTrack.isQueueTrack != upcoming.isQueueTrack;
+    const bool upcomingChanged = m_lastUpcomingTrack.track != upcoming.track
+                              || m_lastUpcomingTrack.isQueueTrack != upcoming.isQueueTrack
+                              || m_lastUpcomingTrack.itemId != upcoming.itemId;
 
     if(!upcomingChanged) {
         return;

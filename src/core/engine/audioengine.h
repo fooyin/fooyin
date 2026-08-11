@@ -153,7 +153,8 @@ public Q_SLOTS:
     //! Commit a previously armed prepared crossfade transition after UI track context changes.
     [[nodiscard]] bool commitPreparedCrossfadeTransition(const Fooyin::Engine::PlaybackItem& item);
     [[nodiscard]] static bool shouldEnableTimelineTransitionHints(const Fooyin::Track& track,
-                                                                  Fooyin::AudioDecoder::PlaybackHints playbackHints);
+                                                                  Fooyin::AudioDecoder::PlaybackHints playbackHints,
+                                                                  Fooyin::AudioDecoder::RepeatHandling repeatHandling);
     //! Stage a prepared gapless stream in the pipeline without committing UI track context.
     [[nodiscard]] bool armPreparedGaplessTransition(const Fooyin::Engine::PlaybackItem& item, uint64_t generation);
     //! Commit a previously armed prepared gapless transition after UI track context changes.

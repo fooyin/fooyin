@@ -210,6 +210,7 @@ public:
         bool valid{false};
         bool decoding{false};
         bool seekable{false};
+        AudioDecoder::RepeatHandling repeatHandling{AudioDecoder::RepeatHandling::EngineTransition};
         AudioStreamPtr activeStream;
         StreamId activeStreamId{InvalidStreamId};
         Track track;
@@ -331,6 +332,7 @@ public:
         next.valid                     = context.isValid();
         next.decoding                  = context.isDecoding();
         next.seekable                  = context.isSeekable();
+        next.repeatHandling            = context.repeatHandling();
         next.activeStream              = context.activeStream();
         next.activeStreamId            = context.activeStreamId();
         next.track                     = context.track();
@@ -752,6 +754,11 @@ bool DecodingController::isDecoding() const
 bool DecodingController::isSeekable() const
 {
     return p->currentSnapshot().seekable;
+}
+
+AudioDecoder::RepeatHandling DecodingController::repeatHandling() const
+{
+    return p->currentSnapshot().repeatHandling;
 }
 
 AudioStreamPtr DecodingController::activeStream() const

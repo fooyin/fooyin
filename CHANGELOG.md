@@ -36,6 +36,12 @@
 
 * Update translations and translation sources ([#1467](https://github.com/fooyin/fooyin/pull/1467), [#1468](https://github.com/fooyin/fooyin/pull/1468), [#1472](https://github.com/fooyin/fooyin/pull/1472), [#1473](https://github.com/fooyin/fooyin/pull/1473))
 
+### Dev/API
+
+* AudioDecoder API
+  - Add repeat-handling ownership so decoders can distinguish engine transitions from decoder-managed looping
+  - Notify decoders when playback hints change at runtime
+
 
 ## [0.12.2](https://github.com/fooyin/fooyin/releases/tag/v0.12.2) (2026-08-07)
 

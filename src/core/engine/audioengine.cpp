@@ -881,9 +881,12 @@ bool AudioEngine::commitPreparedCrossfadeTransition(const Engine::PlaybackItem& 
 }
 
 bool AudioEngine::shouldEnableTimelineTransitionHints(const Track& track,
-                                                      const AudioDecoder::PlaybackHints playbackHints)
+                                                      const AudioDecoder::PlaybackHints playbackHints,
+                                                      const AudioDecoder::RepeatHandling repeatHandling)
 {
-    return track.duration() > 0 && !playbackHints.testFlag(AudioDecoder::PlaybackHint::RepeatTrackEnabled);
+    const bool decoderOwnsRepeat = playbackHints.testFlag(AudioDecoder::PlaybackHint::RepeatTrackEnabled)
+                                && repeatHandling == AudioDecoder::RepeatHandling::DecoderLoop;
+    return track.duration() > 0 && !decoderOwnsRepeat;
 }
 
 bool AudioEngine::armPreparedGaplessTransition(const Engine::PlaybackItem& item, uint64_t generation)
@@ -4411,16 +4414,17 @@ AudioEngine::TrackEndingResult AudioEngine::checkTrackEnding(const AudioStreamPt
     const bool crossfadeUsesAudibleBoundary = configuredMode == AutoTransitionMode::Crossfade
                                            && m_crossfadeSwitchPolicy != Engine::CrossfadeSwitchPolicy::Boundary;
 
-    input.positionMs                     = crossfadeUsesAudibleBoundary ? audiblePosMs : relativePosMs;
-    input.durationMs                     = m_currentTrack.duration();
-    input.durationBoundaryEnabled        = isBoundedSegmentTrack(m_currentTrack);
-    input.predictiveTimelineHintsEnabled = shouldEnableTimelineTransitionHints(m_currentTrack, m_decoderPlaybackHints);
-    input.timelineDelayMs                = crossfadeUsesAudibleBoundary ? 0 : timelineDelayMs;
-    input.remainingOutputMs              = remainingOutputMs;
-    input.endOfInput                     = stream->endOfInput() || stream->readLimitReached();
-    input.bufferEmpty                    = stream->bufferEmpty() || stream->readLimitReached();
-    input.autoCrossfadeEnabled           = configuredMode == AutoTransitionMode::Crossfade;
-    input.gaplessEnabled                 = configuredMode == AutoTransitionMode::Gapless;
+    input.positionMs              = crossfadeUsesAudibleBoundary ? audiblePosMs : relativePosMs;
+    input.durationMs              = m_currentTrack.duration();
+    input.durationBoundaryEnabled = isBoundedSegmentTrack(m_currentTrack);
+    input.predictiveTimelineHintsEnabled
+        = shouldEnableTimelineTransitionHints(m_currentTrack, m_decoderPlaybackHints, m_decoder.repeatHandling());
+    input.timelineDelayMs        = crossfadeUsesAudibleBoundary ? 0 : timelineDelayMs;
+    input.remainingOutputMs      = remainingOutputMs;
+    input.endOfInput             = stream->endOfInput() || stream->readLimitReached();
+    input.bufferEmpty            = stream->bufferEmpty() || stream->readLimitReached();
+    input.autoCrossfadeEnabled   = configuredMode == AutoTransitionMode::Crossfade;
+    input.gaplessEnabled         = configuredMode == AutoTransitionMode::Gapless;
     input.autoFadeOutMs          = input.autoCrossfadeEnabled ? m_crossfadingValues.autoChange.effectiveOutMs() : 0;
     input.autoFadeInMs           = input.autoCrossfadeEnabled ? m_crossfadingValues.autoChange.effectiveInMs() : 0;
     input.boundaryFadeEnabled    = configuredMode == AutoTransitionMode::BoundaryFade;

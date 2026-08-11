@@ -647,6 +647,56 @@ TEST(PlayerControllerTest, RandomTrackRequestsDifferentTrackWhenPossible)
     EXPECT_TRUE(request.context.userInitiated);
 }
 
+TEST(PlayerControllerTest, RepeatTrackPublishesFreshUpcomingOccurrenceAfterEachCommit)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_repeat_occurrence_test.ini"_s};
+    registerControllerSettings(settings);
+    settings.set<Settings::Core::PlayMode>(static_cast<int>(Playlist::RepeatTrack));
+
+    PlaylistHandlerHarness harness{settings};
+    ASSERT_TRUE(harness.dbInitialised);
+
+    auto* playlist = harness.handler.createPlaylist(u"RepeatOccurrence"_s,
+                                                    {makeTrack(u"/tmp/repeat-occurrence.flac"_s, 35, 1000)});
+    ASSERT_NE(playlist, nullptr);
+
+    harness.handler.changeActivePlaylist(playlist);
+    playlist->changeCurrentIndex(0);
+
+    PlayerController controller{&settings, &harness.handler};
+    const auto track = playlist->playlistTrack(0);
+    ASSERT_TRUE(track.has_value());
+
+    QSignalSpy upcomingSpy{&controller, &PlayerController::upcomingTrackChanged};
+
+    controller.commitCurrentTrack(Player::TrackChangeRequest{
+        .track        = *track,
+        .context      = {.reason = Player::AdvanceReason::ManualSelection, .userInitiated = true},
+        .isQueueTrack = false,
+        .itemId       = 101,
+    });
+
+    ASSERT_EQ(upcomingSpy.count(), 1);
+    const auto firstUpcoming = upcomingSpy.takeFirst().front().value<Player::UpcomingTrack>();
+    EXPECT_EQ(firstUpcoming.track, *track);
+    EXPECT_NE(firstUpcoming.itemId, 0);
+    EXPECT_NE(firstUpcoming.itemId, 101);
+
+    controller.commitCurrentTrack(Player::TrackChangeRequest{
+        .track        = firstUpcoming.track,
+        .context      = {.reason = Player::AdvanceReason::NaturalEnd, .userInitiated = false},
+        .isQueueTrack = false,
+        .itemId       = firstUpcoming.itemId,
+    });
+
+    ASSERT_EQ(upcomingSpy.count(), 1);
+    const auto secondUpcoming = upcomingSpy.takeFirst().front().value<Player::UpcomingTrack>();
+    EXPECT_EQ(secondUpcoming.track, *track);
+    EXPECT_NE(secondUpcoming.itemId, 0);
+    EXPECT_NE(secondUpcoming.itemId, firstUpcoming.itemId);
+}
+
 TEST(PlayerControllerTest, RandomAlbumRequestsDifferentAlbumWhenPossible)
 {
     ensureCoreApplication();
