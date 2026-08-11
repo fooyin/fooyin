@@ -22,6 +22,7 @@
 #include "fileopsmodel.h"
 #include "fileopssettings.h"
 
+#include <core/coresettings.h>
 #include <core/library/librarymanager.h>
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
@@ -49,7 +50,9 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr auto CurrentPreset = "FileOps/CurrentPreset";
+constexpr auto CurrentPreset    = "FileOps/CurrentPreset";
+constexpr auto DialogStateGroup = "FileOpsDialog"_L1;
+constexpr auto HeaderState      = "FileOpsDialog/HeaderState"_L1;
 
 namespace Fooyin::FileOps {
 class FileOpsDialogPrivate : public QObject
@@ -77,6 +80,9 @@ public:
     void loadCurrentPreset() const;
     void loadPresets();
     void populatePresets();
+
+    void saveState() const;
+    void restoreState() const;
 
     void simulateOp() const;
     void toggleRun();
@@ -424,6 +430,23 @@ void FileOpsDialogPrivate::populatePresets()
     }
 }
 
+void FileOpsDialogPrivate::saveState() const
+{
+    FyStateSettings stateSettings;
+    Utils::saveState(m_self, stateSettings, DialogStateGroup);
+    stateSettings.setValue(HeaderState, m_resultsTable->header()->saveState());
+}
+
+void FileOpsDialogPrivate::restoreState() const
+{
+    const FyStateSettings stateSettings;
+    Utils::restoreState(m_self, stateSettings, DialogStateGroup);
+
+    if(const QByteArray headerState = stateSettings.value(HeaderState).toByteArray(); !headerState.isEmpty()) {
+        m_resultsTable->header()->restoreState(headerState);
+    }
+}
+
 void FileOpsDialogPrivate::simulateOp() const
 {
     if(m_loading) {
@@ -584,6 +607,7 @@ FileOpsDialog::FileOpsDialog(MusicLibrary* library, std::shared_ptr<AudioLoader>
     setModal(true);
 
     p->setup();
+    p->restoreState();
 }
 
 void FileOpsDialog::loadPreset(const QString& name)
@@ -614,6 +638,7 @@ void FileOpsDialog::loadPreset(const QString& name)
 
 void FileOpsDialog::done(int value)
 {
+    p->saveState();
     p->saveCurrentPreset();
     FileOps::savePresets(p->m_presets);
 
