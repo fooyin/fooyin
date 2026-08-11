@@ -4798,7 +4798,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="500"/>
         <source>Finishing operations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Dokončování operací…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="509"/>
@@ -4818,64 +4818,64 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="530"/>
         <source>Aborted: %Ln operation(s) not run</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Přerušeno: %Ln operace neproběhla</numerusform>
+            <numerusform>Přerušeno: %Ln operace neproběhly</numerusform>
+            <numerusform>Přerušeno: %Ln operací neproběhlo</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="536"/>
         <source>Completed %Ln operation(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Dokončena %Ln operace</numerusform>
+            <numerusform>Dokončeny %Ln operace</numerusform>
+            <numerusform>Dokončeno %Ln operací</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="543"/>
         <source>%Ln succeeded</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln úspěšná</numerusform>
+            <numerusform>%Ln úspěšné</numerusform>
+            <numerusform>%Ln úspěšných</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="546"/>
         <source>%Ln failed</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln selhala</numerusform>
+            <numerusform>%Ln selhaly</numerusform>
+            <numerusform>%Ln selhalo</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="549"/>
         <source>%Ln skipped</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln přeskočena</numerusform>
+            <numerusform>%Ln přeskočeny</numerusform>
+            <numerusform>%Ln přeskočeno</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="552"/>
         <source>%Ln cancelled</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln zrušena</numerusform>
+            <numerusform>%Ln zrušeny</numerusform>
+            <numerusform>%Ln zrušeno</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="557"/>
         <source>Completed %Ln operation(s): %1</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Dokončena %Ln operace: %1</numerusform>
+            <numerusform>Dokončeny %Ln operace: %1</numerusform>
+            <numerusform>Dokončeno %Ln operací: %1</numerusform>
         </translation>
     </message>
     <message>
@@ -4985,12 +4985,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="124"/>
         <source>Result</source>
-        <translation type="unfinished"></translation>
+        <translation>Výsledek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="165"/>
         <source>Pending</source>
-        <translation type="unfinished"></translation>
+        <translation>Čekající</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="238"/>
@@ -5036,27 +5036,27 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="261"/>
         <source>Succeeded</source>
-        <translation type="unfinished"></translation>
+        <translation>Úspěšné</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="263"/>
         <source>Failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Selhalo: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="265"/>
         <source>Skipped: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Přeskočeno: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="267"/>
         <source>Cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušeno</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="267"/>
         <source>Cancelled: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušeno: %1</translation>
     </message>
 </context>
 <context>
@@ -5134,53 +5134,53 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="274"/>
         <source>Could not create directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Složku se nepodařilo vytvořit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="283"/>
         <source>Could not remove directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Složku se nepodařilo odstranit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="606"/>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="662"/>
         <source>Source file does not exist</source>
-        <translation type="unfinished"></translation>
+        <translation>Zdrojový soubor neexistuje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="678"/>
         <source>Could not open archive</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se otevřít archiv</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="684"/>
         <source>Destination file already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Cílový soubor již existuje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="700"/>
         <source>Archive extraction was interrupted</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozbalování archivu bylo přerušeno</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="702"/>
         <source>Could not extract archive entry</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se rozbalit položku archivu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="714"/>
         <source>One or more archive entries could not be extracted</source>
-        <translation type="unfinished"></translation>
+        <translation>Jednu nebo více položek archivu se nepodařilo rozbalit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="719"/>
         <source>No archive entries were extracted</source>
-        <translation type="unfinished"></translation>
+        <translation>Nebyly rozbaleny žádné položky archivu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="727"/>
         <source>Could not delete source archive</source>
-        <translation type="unfinished"></translation>
+        <translation>Zdrojový archiv se nepodařilo smazat</translation>
     </message>
 </context>
 <context>
@@ -7800,7 +7800,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="357"/>
         <source>Ratings &amp;&amp; Playcounts</source>
-        <translation type="unfinished"></translation>
+        <translation>Hodnocení &amp;&amp; počet přehrání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="358"/>
@@ -7848,27 +7848,27 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="168"/>
         <source>Read ratings from ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Číst hodnocení z ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="169"/>
         <source>Write ratings to ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapsat hodnocení do ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="176"/>
         <source>Read playcounts from ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Číst počet přehrání z ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="177"/>
         <source>Write playcounts to ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapsat počet přehrání do ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="197"/>
         <source>Read ratings from ID3 POPM frames in MP3 files when no text rating was read.</source>
-        <translation type="unfinished"></translation>
+        <translation>U formátu MP3 číst hodnocení z ID3 POPM rámců pokud nebylo načteno textové hodnocení.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="199"/>
@@ -7900,22 +7900,22 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="209"/>
         <source>Tag field to read playcount values from. Automatic detection prefers FMPS_PLAYCOUNT, then PLAYCOUNT.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag, ze kterého číst hodnotu počtu přehrání. Automatická detekce upřednostňuje FMPS_PLAYCOUNT před PLAYCOUNT.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="210"/>
         <source>Tag field used when saving playcounts as text metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag použitý pro ukládání počtu přehrání jako textových metadat.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="212"/>
         <source>Read playcounts from ID3 POPM frames in MP3 files when no text playcount was read.</source>
-        <translation type="unfinished"></translation>
+        <translation>U formátu MP3 číst počet přehrání z ID3 POPM rámců pokud nebyl načten textový počet přehrání.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="214"/>
         <source>Additionally save playcounts to ID3 POPM frames when writing MP3 files. Other formats are unaffected.</source>
-        <translation type="unfinished"></translation>
+        <translation>U formátu MP3 zapisovat počet přehrání také do ID3 POPM rámců. Nastavení nemá žádný vliv na ostatní formáty.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="216"/>
@@ -7935,7 +7935,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="222"/>
         <source>Playcount Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Tagy počtu přehrání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="226"/>
@@ -7970,12 +7970,12 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="252"/>
         <source>Read playcount from</source>
-        <translation type="unfinished"></translation>
+        <translation>Počet přehrání číst z</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="254"/>
         <source>Write playcount to</source>
-        <translation type="unfinished"></translation>
+        <translation>Počet přehrání zapsat do</translation>
     </message>
 </context>
 <context>
@@ -8701,7 +8701,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="184"/>
         <source>Progress highlighting</source>
-        <translation type="unfinished"></translation>
+        <translation>Zvýraznění průběhu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="194"/>
