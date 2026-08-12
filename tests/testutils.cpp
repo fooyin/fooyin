@@ -41,7 +41,7 @@ QString ratingSettingsPath()
     static const QTemporaryDir configDir{QDir::tempPath() + QStringLiteral("/fooyin-rating-test-XXXXXX")};
     EXPECT_TRUE(configDir.isValid());
 
-    QStandardPaths::setTestModeEnabled(false);
+    QStandardPaths::setTestModeEnabled(true);
     qputenv("XDG_CONFIG_HOME", configDir.path().toUtf8());
     return Core::settingsPath();
 }
