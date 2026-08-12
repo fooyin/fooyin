@@ -95,7 +95,7 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
     libsoxr0"
 )
 
-set(CPACK_RPM_PACKAGE_LICENSE "GPLv3")
+set(CPACK_RPM_PACKAGE_LICENSE "GPL-3.0-or-later")
 set(CPACK_RPM_PACKAGE_GROUP "Applications/Multimedia")
 set(CPACK_RPM_PACKAGE_REQUIRES_POST "qt6-qtimageformats")
 

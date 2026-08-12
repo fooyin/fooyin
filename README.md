@@ -105,7 +105,7 @@ Translations are managed on [Hosted Weblate](https://hosted.weblate.org/projects
 
 ## Licence
 
-fooyin is free software released under the [GNU General Public License, version 3](COPYING).
+fooyin is free software released under the [GNU General Public License, version 3 or later](COPYING).
 
 ## Donate
 
