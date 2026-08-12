@@ -86,6 +86,7 @@ Q_SIGNALS:
     void configChanged();
 
 protected:
+    void changeEvent(QEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
     void showEvent(QShowEvent* event) override;
 
@@ -139,6 +140,7 @@ private:
     ConfigData m_config;
     ProjectMPresetLibrary m_library;
     QString m_presetPath;
+    Qt::WindowStates m_standaloneWindowState;
     bool m_rememberPreset;
     bool m_detachedWindowFullScreen;
     bool m_splitterResizeActive;

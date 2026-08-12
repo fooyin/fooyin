@@ -159,6 +159,7 @@ ProjectMWidget::ProjectMWidget(ActionManager* actionManager, EngineController* e
     , m_randomPresetCmd{nullptr}
     , m_lockPresetCmd{nullptr}
     , m_shufflePresetsCmd{nullptr}
+    , m_standaloneWindowState{Qt::WindowNoState}
     , m_rememberPreset{false}
     , m_detachedWindowFullScreen{false}
     , m_splitterResizeActive{false}
@@ -176,6 +177,7 @@ ProjectMWidget::ProjectMWidget(ActionManager* actionManager, EngineController* e
 
     m_viewContainer->setFocusPolicy(Qt::StrongFocus);
     m_viewContainer->installEventFilter(this);
+    m_view->installEventFilter(this);
 
     m_resizeSnapshot->setAttribute(Qt::WA_TransparentForMouseEvents);
     m_resizeSnapshot->setScaledContents(true);
@@ -461,6 +463,14 @@ bool ProjectMWidget::eventFilter(QObject* watched, QEvent* event)
         }
     }
 
+    if(watched == m_view && event->type() == QEvent::KeyPress && isWindow() && isFullScreen()) {
+        const auto* keyEvent = static_cast<QKeyEvent*>(event);
+        if(keyEvent->key() == Qt::Key_Escape || keyEvent->key() == Qt::Key_F11) {
+            leaveFullScreen();
+            return true;
+        }
+    }
+
     if(event->type() == QEvent::MouseButtonPress
        && std::ranges::any_of(m_splitterEventObjects, [watched](const auto& object) { return object == watched; })) {
         const auto* mouseEvent = static_cast<QMouseEvent*>(event);
@@ -470,6 +480,15 @@ bool ProjectMWidget::eventFilter(QObject* watched, QEvent* event)
     }
 
     return FyWidget::eventFilter(watched, event);
+}
+
+void ProjectMWidget::changeEvent(QEvent* event)
+{
+    FyWidget::changeEvent(event);
+
+    if(event->type() == QEvent::WindowStateChange) {
+        updateActionState();
+    }
 }
 
 void ProjectMWidget::contextMenuEvent(QContextMenuEvent* event)
@@ -546,11 +565,12 @@ void ProjectMWidget::setupActions()
 
 void ProjectMWidget::updateActionState()
 {
-    const bool ready = m_view->isReady();
+    const bool ready      = m_view->isReady();
+    const bool fullScreen = m_detachedWindowFullScreen || (isWindow() && isFullScreen());
 
-    m_fullScreenAction->setEnabled(ready || m_fullScreenWindow);
-    m_fullScreenAction->setText(m_detachedWindowFullScreen ? tr("E&xit Full Screen") : tr("&Full Screen"));
-    m_fullScreenAction->setChecked(m_detachedWindowFullScreen);
+    m_fullScreenAction->setEnabled(ready || m_fullScreenWindow || fullScreen);
+    m_fullScreenAction->setText(fullScreen ? tr("E&xit Full Screen") : tr("&Full Screen"));
+    m_fullScreenAction->setChecked(fullScreen);
     m_selectPresetAction->setEnabled(ready);
     m_previousPresetAction->setEnabled(ready);
     m_nextPresetAction->setEnabled(ready);
@@ -639,7 +659,15 @@ void ProjectMWidget::showPresetDialog()
 
 void ProjectMWidget::toggleFullScreen()
 {
-    if(m_fullScreenWindow && m_detachedWindowFullScreen) {
+    if(isWindow()) {
+        if(isFullScreen()) {
+            leaveFullScreen();
+        }
+        else {
+            enterFullScreen();
+        }
+    }
+    else if(m_fullScreenWindow && m_detachedWindowFullScreen) {
         leaveFullScreen();
     }
     else if(m_fullScreenWindow) {
@@ -689,11 +717,26 @@ void ProjectMWidget::openDetachedWindow(bool fullScreen)
 
 void ProjectMWidget::enterFullScreen()
 {
-    openDetachedWindow(true);
+    if(isWindow()) {
+        m_standaloneWindowState = windowState();
+        showFullScreen();
+        updateActionState();
+    }
+    else {
+        openDetachedWindow(true);
+    }
 }
 
 void ProjectMWidget::leaveFullScreen()
 {
+    if(isWindow()) {
+        if(isFullScreen()) {
+            setWindowState(m_standaloneWindowState);
+            updateActionState();
+        }
+        return;
+    }
+
     if(!m_fullScreenWindow) {
         return;
     }
