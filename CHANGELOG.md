@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.12.4](https://github.com/fooyin/fooyin/releases/tag/v0.12.4) (2026-08-12)
+
+### Improvements
+
+* Interface: Improve built-in layouts with splitter locks
+* Playlist: Add configurable double-click actions and optional immediate playback for queue actions ([#1424](https://github.com/fooyin/fooyin/issues/1424))
+* ProjectM: Fullscreen standalone visualisers in their existing windows ([#1478](https://github.com/fooyin/fooyin/issues/1478))
+
+### Fixes
+
+* System: Fix config and state paths in Flatpak ([#1479](https://github.com/fooyin/fooyin/issues/1479))
+* Visualisations: Fix unintended transparency in some windows
+
+
 ## [0.12.3](https://github.com/fooyin/fooyin/releases/tag/v0.12.3) (2026-08-11)
 
 ### Improvements

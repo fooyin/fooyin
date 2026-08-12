@@ -61,6 +61,13 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="0.12.4" date="2026-08-12">
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.12.4</url>
+            <description>
+                <p>Adds configurable playlist double-click actions, optional immediate playback for queue actions, and improved fullscreen handling for standalone projectM visualisers.</p>
+                <p>This release also fixes configuration and state paths in Flatpak and unintended transparency in some visualisation windows.</p>
+            </description>
+        </release>
         <release version="0.12.3" date="2026-08-11">
             <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.12.3</url>
             <description>
