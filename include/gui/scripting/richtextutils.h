@@ -27,7 +27,22 @@
 #include <QFont>
 #include <QString>
 
+class QFontMetrics;
+
 namespace Fooyin {
+struct FYGUI_EXPORT TextBaselineMetrics
+{
+    int ascent{0};
+    int descent{0};
+
+    [[nodiscard]] int height() const
+    {
+        return ascent + descent;
+    }
+
+    void expand(const QFontMetrics& metrics);
+};
+
 struct RichTextMetrics
 {
     int width{0};
@@ -54,6 +69,7 @@ struct RichTextBlockMetrics
 FYGUI_EXPORT QColor resolvedRichTextColour(const RichFormatting& formatting, const QColor& baseColour,
                                            const QColor& linkColour = {});
 FYGUI_EXPORT QFont resolvedRichTextFont(const RichFormatting& formatting, const QFont& baseFont);
+FYGUI_EXPORT TextBaselineMetrics textBaselineMetrics(const QFont& font);
 FYGUI_EXPORT QString richTextToHtml(const RichText& richText, const QColor& linkColour = {});
 FYGUI_EXPORT bool richTextHasLineBreaks(const RichText& richText);
 FYGUI_EXPORT int richTextExtraLineHeight(const RichText& richText, const QFont& baseFont = {});

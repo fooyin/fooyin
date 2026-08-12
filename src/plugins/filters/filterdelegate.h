@@ -49,7 +49,6 @@ private:
     [[nodiscard]] static RichText fallbackRichText(const QStyleOptionViewItem& option, const QModelIndex& index);
     [[nodiscard]] QSize richTextSize(const QStyleOptionViewItem& option, const QModelIndex& index) const;
     [[nodiscard]] QSize iconItemSize(const QStyleOptionViewItem& option, const QModelIndex& index) const;
-    [[nodiscard]] static QSize iconItemLayoutSize(const QStyleOptionViewItem& option);
     [[nodiscard]] static QSize iconItemSizeForText(const QStyleOptionViewItem& option,
                                                    const IconItemLayoutMetrics& metrics, const QSize& textSize);
 

@@ -34,15 +34,15 @@ namespace Fooyin {
 namespace {
 struct DrawTextResult
 {
-    QRect bound;
     int totalWidth{0};
-    int maxHeight{0};
+    TextBaselineMetrics baseline;
 };
 
 struct PaintLine
 {
     DrawTextResult measure;
     RichText text;
+    int ascent{0};
     int height{0};
 };
 
@@ -78,14 +78,10 @@ RichText rightRichText(const QModelIndex& index)
     return index.data(LibraryTreeItem::RightRichTitle).value<RichText>();
 }
 
-DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& option, QRect rect,
-                              const std::vector<RichTextBlock>& blocks)
+DrawTextResult measureTextBlocks(const QStyleOptionViewItem& option, QRect rect,
+                                 const std::vector<RichTextBlock>& blocks)
 {
     DrawTextResult result;
-
-    const auto selectedColour = option.palette.color(QPalette::HighlightedText);
-    const auto defaultColour  = option.palette.color(QPalette::Text);
-    const auto linkColour     = option.palette.color(QPalette::Link);
 
     for(const auto& block : blocks) {
         if(block.text.isEmpty() || rect.width() <= 0) {
@@ -93,26 +89,17 @@ DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& opt
         }
 
         const QFont font = resolvedRichTextFont(block.format, option.font);
-
-        painter->setFont(font);
-
-        QColor colour = resolvedRichTextColour(block.format, defaultColour, linkColour);
-        if(option.state & QStyle::State_Selected) {
-            colour = selectedColour;
-        }
-        painter->setPen(colour);
-
         const QFontMetrics metrics{font};
         const QString text = metrics.elidedText(block.text, Qt::ElideRight, rect.width());
         if(text.isEmpty()) {
             continue;
         }
 
-        result.bound = painter->boundingRect(rect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextSingleLine, text);
-        rect.setWidth(std::max(0, rect.width() - result.bound.width()));
-        rect.moveLeft(rect.x() + result.bound.width());
-        result.totalWidth += result.bound.width();
-        result.maxHeight = std::max(result.maxHeight, result.bound.height());
+        const int width = metrics.horizontalAdvance(text);
+        rect.setWidth(std::max(0, rect.width() - width));
+        rect.moveLeft(rect.x() + width);
+        result.totalWidth += width;
+        result.baseline.expand(metrics);
     }
 
     return result;
@@ -121,9 +108,6 @@ DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& opt
 void paintTextBlocks(QPainter* painter, const QStyleOptionViewItem& option, QRect rect, const DrawTextResult& measured,
                      const std::vector<RichTextBlock>& blocks)
 {
-    const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
-
-    const auto colourRole     = option.state & QStyle::State_Selected ? QPalette::HighlightedText : QPalette::NoRole;
     const auto defaultColour  = option.palette.color(QPalette::Text);
     const auto selectedColour = option.palette.color(QPalette::HighlightedText);
     const auto linkColour     = option.palette.color(QPalette::Link);
@@ -156,26 +140,27 @@ void paintTextBlocks(QPainter* painter, const QStyleOptionViewItem& option, QRec
             continue;
         }
 
-        const QRect blockRect{x, rect.y(), std::max(0, rect.right() - x + 1), rect.height()};
-        style->drawItemText(painter, blockRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextSingleLine, option.palette,
-                            true, text, colourRole);
+        painter->drawText(QPoint{x, rect.y()}, text);
         x += metrics.horizontalAdvance(text);
     }
 }
 
-PaintBlock measureDrawTextBlock(QPainter* painter, const QStyleOptionViewItem& option, const QRect& rect,
+PaintBlock measureDrawTextBlock(const QStyleOptionViewItem& option, const QRect& rect,
                                 const std::vector<RichText>& lines)
 {
     PaintBlock block;
     block.lines.reserve(lines.size());
 
     for(const auto& line : lines) {
-        const DrawTextResult measure = drawTextBlocks(painter, option, rect, line.blocks);
-        const int lineHeight         = std::max(measure.maxHeight, option.fontMetrics.height());
+        const DrawTextResult measure = measureTextBlocks(option, rect, line.blocks);
+        TextBaselineMetrics baseline = textBaselineMetrics(option.font);
+        baseline.ascent              = std::max(baseline.ascent, measure.baseline.ascent);
+        baseline.descent             = std::max(baseline.descent, measure.baseline.descent);
 
         block.width = std::max(block.width, measure.totalWidth);
-        block.height += lineHeight;
-        block.lines.push_back({.measure = measure, .text = line, .height = lineHeight});
+        block.height += baseline.height();
+        block.lines.push_back(
+            {.measure = measure, .text = line, .ascent = baseline.ascent, .height = baseline.height()});
     }
 
     return block;
@@ -187,7 +172,7 @@ void paintMeasuredBlock(QPainter* painter, const QStyleOptionViewItem& option, Q
 
     for(const auto& line : block.lines) {
         if(line.measure.totalWidth > 0) {
-            QRect lineRect{rect.x(), y, rect.width(), line.height};
+            QRect lineRect{rect.x(), y + line.ascent, rect.width(), line.height};
             if(option.direction == Qt::RightToLeft) {
                 lineRect.setLeft(rect.right() - line.measure.totalWidth + 1);
                 lineRect.setWidth(line.measure.totalWidth);
@@ -267,14 +252,14 @@ void LibraryTreeDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
         const auto lines      = splitRichTextLines(richText);
         const auto rightLines = splitRichTextLines(rightText);
 
-        const PaintBlock rightBlock = measureDrawTextBlock(painter, opt, textRect, rightLines);
+        const PaintBlock rightBlock = measureDrawTextBlock(opt, textRect, rightLines);
 
         QRect leftMeasureRect{textRect};
         if(rightBlock.width > 0) {
             leftMeasureRect.setWidth(
                 std::max(0, leftMeasureRect.width() - rightBlock.width - textMargin - RightContentPadding));
         }
-        const PaintBlock leftBlock = measureDrawTextBlock(painter, opt, leftMeasureRect, lines);
+        const PaintBlock leftBlock = measureDrawTextBlock(opt, leftMeasureRect, lines);
         const int totalHeight      = std::max(leftBlock.height, rightBlock.height);
 
         int y = textRect.y();

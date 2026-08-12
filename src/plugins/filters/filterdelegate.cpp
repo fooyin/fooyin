@@ -39,13 +39,13 @@ struct PreparedTextBlock
     QFont font;
     QColor colour;
     int width{0};
-    int height{0};
 };
 
 struct PreparedTextLine
 {
     std::vector<PreparedTextBlock> blocks;
     int totalWidth{0};
+    Fooyin::TextBaselineMetrics baseline;
     int maxHeight{0};
 };
 
@@ -69,6 +69,7 @@ PreparedTextLine prepareTextBlocks(const QStyleOptionViewItem& option, int maxWi
                                    const std::vector<Fooyin::RichTextBlock>& blocks)
 {
     PreparedTextLine result;
+    result.baseline = Fooyin::textBaselineMetrics(option.font);
 
     const auto selectedColour = option.palette.color(QPalette::HighlightedText);
     const auto defaultColour  = option.palette.color(QPalette::Text);
@@ -97,11 +98,10 @@ PreparedTextLine prepareTextBlocks(const QStyleOptionViewItem& option, int maxWi
         prepared.font   = font;
         prepared.colour = colour;
         prepared.width  = metrics.horizontalAdvance(text);
-        prepared.height = metrics.height();
 
         remainingWidth -= prepared.width;
         result.totalWidth += prepared.width;
-        result.maxHeight = std::max(result.maxHeight, prepared.height);
+        result.baseline.expand(metrics);
         result.blocks.push_back(std::move(prepared));
 
         if(text != block.text) {
@@ -109,32 +109,23 @@ PreparedTextLine prepareTextBlocks(const QStyleOptionViewItem& option, int maxWi
         }
     }
 
-    if(result.maxHeight <= 0) {
-        result.maxHeight = option.fontMetrics.height();
-    }
+    result.maxHeight = result.baseline.height();
 
     return result;
 }
 
-void drawPreparedTextLine(QPainter* painter, const QStyleOptionViewItem& option, QRect rect, Qt::Alignment alignment,
-                          const PreparedTextLine& line)
+void drawPreparedTextLine(QPainter* painter, QRect rect, Qt::Alignment alignment, const PreparedTextLine& line)
 {
     if(line.blocks.empty() || rect.width() <= 0 || rect.height() <= 0) {
         return;
     }
-
-    const QStyle* style   = option.widget ? option.widget->style() : QApplication::style();
-    const auto colourRole = option.state & QStyle::State_Selected ? QPalette::HighlightedText : QPalette::NoRole;
 
     int x = alignedLineX(rect, line.totalWidth, alignment);
 
     for(const auto& block : line.blocks) {
         painter->setFont(block.font);
         painter->setPen(block.colour);
-
-        const QRect blockRect{x, rect.y(), std::max(0, rect.right() - x + 1), rect.height()};
-        style->drawItemText(painter, blockRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextSingleLine, option.palette,
-                            true, block.text, colourRole);
+        painter->drawText(QPoint{x, rect.y() + line.baseline.ascent}, block.text);
 
         x += block.width;
     }
@@ -223,7 +214,7 @@ QSize FilterDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelI
 
     // In icon mode ExpandedTreeView asks sizeHint() for every row during layout. Use a
     // layout-only option setup here so we don't fetch Qt::DecorationRole
-    // and eagerly start cover loads for everyrow.
+    // and eagerly start cover loads for every row.
     if(view && view->viewMode() == ExpandedTreeView::ViewMode::Icon) {
         initLayoutOnlyOption(&opt, index);
     }
@@ -237,7 +228,7 @@ QSize FilterDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelI
     const QStyle* style  = opt.widget ? opt.widget->style() : QApplication::style();
     const bool iconMode  = view && view->viewMode() == ExpandedTreeView::ViewMode::Icon;
     const QSize textSize = iconMode ? QSize{} : richTextSize(opt, index);
-    QSize size           = iconMode ? iconItemLayoutSize(opt)
+    QSize size           = iconMode ? iconItemSize(opt, index)
                                     : style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, textSize, opt.widget);
 
     if(!iconMode) {
@@ -459,31 +450,6 @@ QSize FilterDelegate::iconItemSize(const QStyleOptionViewItem& option, const QMo
     return iconItemSizeForText(option, metrics, textSize);
 }
 
-QSize FilterDelegate::iconItemLayoutSize(const QStyleOptionViewItem& option)
-{
-    const auto* view = qobject_cast<const ExpandedTreeView*>(option.widget);
-    if(!view || view->viewMode() != ExpandedTreeView::ViewMode::Icon) {
-        return {};
-    }
-
-    const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
-
-    const int verticalMargin = std::max(2, style->pixelMetric(QStyle::PM_FocusFrameVMargin, &option, option.widget));
-    const IconItemLayoutMetrics metrics{.verticalPadding = 2 * verticalMargin};
-
-    const int lineCount  = option.text.isEmpty() ? 0 : option.text.count(QChar::LineSeparator) + 1;
-    const int textHeight = lineCount * option.fontMetrics.height();
-    int textWidth        = 0;
-    if(view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Right) {
-        textWidth = RightCaptionTextWidth;
-    }
-    else if(lineCount > 0) {
-        textWidth = option.decorationSize.width() + metrics.horizontalMargin;
-    }
-
-    return iconItemSizeForText(option, metrics, {textWidth, textHeight});
-}
-
 QSize FilterDelegate::iconItemSizeForText(const QStyleOptionViewItem& option, const IconItemLayoutMetrics& metrics,
                                           const QSize& textSize)
 {
@@ -600,7 +566,8 @@ void FilterDelegate::drawRichTextLines(QPainter* painter, const QStyleOptionView
         const auto logicalLines = splitRichTextLines(line.text);
         if(logicalLines.empty()) {
             PreparedTextLine prepared;
-            prepared.maxHeight = option.fontMetrics.height();
+            prepared.baseline  = textBaselineMetrics(option.font);
+            prepared.maxHeight = prepared.baseline.height();
             totalHeight += prepared.maxHeight;
             preparedLines.emplace_back(std::move(prepared), line.alignment);
             continue;
@@ -624,7 +591,7 @@ void FilterDelegate::drawRichTextLines(QPainter* painter, const QStyleOptionView
         }
 
         const QRect lineRect{rect.x(), y, rect.width(), prepared.maxHeight};
-        drawPreparedTextLine(painter, option, lineRect, alignment, prepared);
+        drawPreparedTextLine(painter, lineRect, alignment, prepared);
         y += prepared.maxHeight;
     }
 }
@@ -660,8 +627,8 @@ void FilterDelegate::drawTextBlocks(QPainter* painter, const QStyleOptionViewIte
             break;
         }
 
-        drawPreparedTextLine(painter, option, {rect.x(), y, rect.width(), preparedLine.maxHeight},
-                             option.displayAlignment, preparedLine);
+        drawPreparedTextLine(painter, {rect.x(), y, rect.width(), preparedLine.maxHeight}, option.displayAlignment,
+                             preparedLine);
         y += preparedLine.maxHeight;
     }
 }

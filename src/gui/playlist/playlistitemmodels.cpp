@@ -33,8 +33,7 @@ QSize singleLineTrackSize(const RichText& richText)
 
     for(const auto& [blockText, format] : richText.blocks) {
         const QFontMetrics fm{format.font};
-        const QRect br = fm.boundingRect(blockText);
-        blockSize.setWidth(blockSize.width() + br.width());
+        blockSize.rwidth() += fm.horizontalAdvance(blockText);
     }
 
     return blockSize;
@@ -42,15 +41,15 @@ QSize singleLineTrackSize(const RichText& richText)
 
 int singleLineTrackHeight(const RichText& richText)
 {
-    int height{0};
+    TextBaselineMetrics baseline = textBaselineMetrics({});
 
     for(const auto& block : richText.blocks) {
         const QFont font = resolvedRichTextFont(block.format, {});
         const QFontMetrics fm{font};
-        height = std::max(height, fm.height());
+        baseline.expand(fm);
     }
 
-    return std::max(height, QFontMetrics{QFont{}}.height());
+    return baseline.height();
 }
 
 int trackExtraLineHeight(const RichText& richText)

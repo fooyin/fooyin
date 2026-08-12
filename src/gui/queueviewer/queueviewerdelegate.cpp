@@ -40,13 +40,13 @@ struct PreparedTextBlock
     QFont font;
     QColor colour;
     int width{0};
-    int height{0};
 };
 
 struct PreparedTextLine
 {
     std::vector<PreparedTextBlock> blocks;
     int totalWidth{0};
+    TextBaselineMetrics baseline;
     int height{0};
 };
 
@@ -71,13 +71,12 @@ PreparedTextLines prepareTextLines(const QStyleOptionViewItem& option, int maxWi
     const QColor selectedColor = option.palette.color(Gui::itemViewSelectionTextRole(option));
     const QColor defaultColour = option.palette.color(QPalette::Text);
     const QColor linkColour    = option.palette.color(QPalette::Link);
-    const int defaultHeight    = QFontMetrics{option.font}.height();
-
-    const auto richLines = splitRichTextLines(richText);
+    const auto richLines       = splitRichTextLines(richText);
     result.reserve(richLines.size());
 
     for(const auto& richLine : richLines) {
         PreparedTextLine line;
+        line.baseline = textBaselineMetrics(option.font);
         int remainingWidth{maxWidth};
 
         for(const auto& block : richLine.blocks) {
@@ -102,10 +101,9 @@ PreparedTextLines prepareTextLines(const QStyleOptionViewItem& option, int maxWi
             prepared.font   = font;
             prepared.colour = colour;
             prepared.width  = metrics.horizontalAdvance(text);
-            prepared.height = metrics.height();
 
             line.totalWidth += prepared.width;
-            line.height = std::max(line.height, prepared.height);
+            line.baseline.expand(metrics);
             remainingWidth -= prepared.width;
 
             line.blocks.push_back(std::move(prepared));
@@ -115,7 +113,7 @@ PreparedTextLines prepareTextLines(const QStyleOptionViewItem& option, int maxWi
             }
         }
 
-        line.height = std::max(line.height, defaultHeight);
+        line.height = line.baseline.height();
         result.push_back(std::move(line));
     }
 
@@ -134,7 +132,7 @@ QSize richTextNaturalSize(const QStyleOptionViewItem& option, const RichText& ri
 
     for(const auto& line : lines) {
         int lineWidth{0};
-        int lineHeight{0};
+        TextBaselineMetrics baseline = textBaselineMetrics(option.font);
 
         for(const auto& block : line.blocks) {
             if(block.text.isEmpty()) {
@@ -145,26 +143,22 @@ QSize richTextNaturalSize(const QStyleOptionViewItem& option, const RichText& ri
             const QFontMetrics metrics{font};
 
             lineWidth += metrics.horizontalAdvance(block.text);
-            lineHeight = std::max(lineHeight, metrics.height());
+            baseline.expand(metrics);
         }
 
         size.setWidth(std::max(size.width(), lineWidth));
-        size.setHeight(size.height() + std::max(lineHeight, QFontMetrics{option.font}.height()));
+        size.setHeight(size.height() + baseline.height());
     }
 
     return size;
 }
 
-void drawPreparedTextLines(QPainter* painter, const QStyleOptionViewItem& option, const QRect& rect,
-                           const PreparedTextLines& lines, Qt::Alignment alignment)
+void drawPreparedTextLines(QPainter* painter, const QRect& rect, const PreparedTextLines& lines,
+                           Qt::Alignment alignment)
 {
     if(lines.empty() || rect.width() <= 0 || rect.height() <= 0) {
         return;
     }
-
-    const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
-    const auto colourRole
-        = option.state & QStyle::State_Selected ? Gui::itemViewSelectionTextRole(option) : QPalette::NoRole;
 
     int totalHeight{0};
     for(const auto& line : lines) {
@@ -179,10 +173,7 @@ void drawPreparedTextLines(QPainter* painter, const QStyleOptionViewItem& option
         for(const auto& block : line.blocks) {
             painter->setFont(block.font);
             painter->setPen(block.colour);
-
-            const QRect blockRect{x, y, std::max(0, rect.right() - x + 1), line.height};
-            style->drawItemText(painter, blockRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextSingleLine,
-                                option.palette, true, block.text, colourRole);
+            painter->drawText(QPoint{x, y + line.baseline.ascent}, block.text);
             x += block.width;
         }
 
@@ -235,8 +226,8 @@ void QueueViewerDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
 
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, option.widget);
     Gui::drawItemViewIcon(painter, opt, playbackIcon, playbackIconRect, opt.decorationAlignment);
-    drawPreparedTextLines(painter, opt, leftRect, leftLines, Qt::AlignLeft);
-    drawPreparedTextLines(painter, opt, rightRect, rightLines, Qt::AlignRight);
+    drawPreparedTextLines(painter, leftRect, leftLines, Qt::AlignLeft);
+    drawPreparedTextLines(painter, rightRect, rightLines, Qt::AlignRight);
 }
 
 QSize QueueViewerDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const

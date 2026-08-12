@@ -48,6 +48,7 @@ public:
     struct LaidOutChunk
     {
         QRect rect;
+        int baseline{0};
         int blockIndex{0};
         QString text;
     };

@@ -81,14 +81,6 @@ int preferredSplitLength(const QString& text, int maxWidth, const QFontMetrics& 
     return splitLength;
 }
 
-int textHeight(const QString& text, const QFontMetrics& fm)
-{
-    if(text.isEmpty()) {
-        return fm.height();
-    }
-    return std::max(fm.height(), fm.boundingRect(text).height());
-}
-
 qreal progressForTime(uint64_t currentTime, uint64_t startTime, uint64_t duration)
 {
     if(duration == 0 || currentTime <= startTime) {
@@ -116,7 +108,7 @@ void calculateWordRects(const QModelIndex& index, int width, const QFont& baseFo
 
     const int rightEdge = std::max(width, 1);
     int currentY{0};
-    int lineHeight{0};
+    TextBaselineMetrics lineBaseline = textBaselineMetrics(baseFont);
     std::vector<LyricsDelegate::LaidOutChunk> currentLineRects;
     int currentLineWidth{0};
 
@@ -137,16 +129,18 @@ void calculateWordRects(const QModelIndex& index, int width, const QFont& baseFo
 
         int x = lineStartX;
         for(auto& chunk : currentLineRects) {
+            chunk.rect.setHeight(lineBaseline.height());
             chunk.rect.moveLeft(x);
             chunk.rect.moveTop(currentY);
+            chunk.baseline = currentY + lineBaseline.ascent;
             wordRects.emplace_back(chunk);
             x += chunk.rect.width();
         }
 
-        currentY += lineHeight + (addSpacing ? lineSpacing : 0);
+        currentY += lineBaseline.height() + (addSpacing ? lineSpacing : 0);
         currentLineRects.clear();
         currentLineWidth = 0;
-        lineHeight       = 0;
+        lineBaseline     = textBaselineMetrics(baseFont);
     };
 
     for(size_t i{0}; i < richText.blocks.size(); ++i) {
@@ -155,8 +149,7 @@ void calculateWordRects(const QModelIndex& index, int width, const QFont& baseFo
         QString remainingText{block.text};
 
         while(!remainingText.isEmpty()) {
-            const int remainingWidth  = fm.horizontalAdvance(remainingText);
-            const int remainingHeight = textHeight(remainingText, fm);
+            const int remainingWidth = fm.horizontalAdvance(remainingText);
 
             if(currentLineWidth >= rightEdge && !currentLineRects.empty()) {
                 flushLine(true);
@@ -168,10 +161,9 @@ void calculateWordRects(const QModelIndex& index, int width, const QFont& baseFo
             }
 
             if(remainingWidth <= rightEdge - currentLineWidth) {
-                currentLineRects.emplace_back(QRect{0, 0, remainingWidth, remainingHeight}, static_cast<int>(i),
-                                              remainingText);
+                currentLineRects.emplace_back(QRect{0, 0, remainingWidth, 0}, 0, static_cast<int>(i), remainingText);
                 currentLineWidth += remainingWidth;
-                lineHeight = std::max(lineHeight, remainingHeight);
+                lineBaseline.expand(fm);
                 break;
             }
 
@@ -179,16 +171,15 @@ void calculateWordRects(const QModelIndex& index, int width, const QFont& baseFo
             const int segmentLength   = preferredSplitLength(remainingText, availableWidth, fm);
             const QString segmentText = remainingText.left(segmentLength);
             const int segmentWidth    = fm.horizontalAdvance(segmentText);
-            const int segmentHeight   = textHeight(segmentText, fm);
 
             if(currentLineWidth + segmentWidth > rightEdge && !currentLineRects.empty()) {
                 flushLine(true);
                 continue;
             }
 
-            currentLineRects.emplace_back(QRect{0, 0, segmentWidth, segmentHeight}, static_cast<int>(i), segmentText);
+            currentLineRects.emplace_back(QRect{0, 0, segmentWidth, 0}, 0, static_cast<int>(i), segmentText);
             currentLineWidth += segmentWidth;
-            lineHeight = std::max(lineHeight, segmentHeight);
+            lineBaseline.expand(fm);
 
             remainingText.remove(0, segmentLength);
 
@@ -236,7 +227,7 @@ void drawProgressOverlay(QPainter* painter, const QStyleOptionViewItem& option, 
         painter->setClipRect(QRect{chunk.rect.left(), chunk.rect.top(), fillWidth, chunk.rect.height()});
         painter->setFont(resolvedRichTextFont(richText.blocks[chunk.blockIndex].format, option.font));
         painter->setPen(progressColour);
-        painter->drawText(chunk.rect, Qt::AlignLeft | Qt::AlignVCenter, chunk.text);
+        painter->drawText(QPoint{chunk.rect.left(), chunk.baseline}, chunk.text);
 
         painter->restore();
 
@@ -318,6 +309,7 @@ void LyricsDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     // Offset word rects
     for(auto& chunk : wordRects) {
         chunk.rect.translate(contentRect.left(), option.rect.top());
+        chunk.baseline += option.rect.top();
     }
 
     qreal progress{0.0};
@@ -371,7 +363,7 @@ void LyricsDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
                             ? progressBaseColour
                             : resolvedRichTextColour(format, option.palette.color(QPalette::Text)));
 
-        painter->drawText(chunk.rect, Qt::AlignLeft | Qt::AlignVCenter, chunk.text);
+        painter->drawText(QPoint{chunk.rect.left(), chunk.baseline}, chunk.text);
     }
 
     drawProgressOverlay(painter, option, richText, progressChunks, progress, progressColour);

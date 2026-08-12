@@ -24,21 +24,27 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
+void TextBaselineMetrics::expand(const QFontMetrics& metrics)
+{
+    ascent  = std::max(ascent, metrics.ascent());
+    descent = std::max(descent, metrics.descent());
+}
+
 namespace {
 RichTextMetrics measureRichTextLine(const RichText& richText, const QFont& baseFont)
 {
     RichTextMetrics metrics;
-    const int defaultHeight = QFontMetrics{baseFont}.height();
+    TextBaselineMetrics baseline = textBaselineMetrics(baseFont);
 
     for(const auto& block : richText.blocks) {
         const QFont font = resolvedRichTextFont(block.format, baseFont);
         const QFontMetrics fm{font};
 
         metrics.width += fm.horizontalAdvance(block.text);
-        metrics.height = std::max(metrics.height, fm.height());
+        baseline.expand(fm);
     }
 
-    metrics.height = std::max(metrics.height, defaultHeight);
+    metrics.height = baseline.height();
     return metrics;
 }
 } // namespace
@@ -65,6 +71,13 @@ QColor resolvedRichTextColour(const RichFormatting& formatting, const QColor& ba
 QFont resolvedRichTextFont(const RichFormatting& formatting, const QFont& baseFont)
 {
     return formatting.font == QFont{} ? baseFont : formatting.font.resolve(baseFont);
+}
+
+TextBaselineMetrics textBaselineMetrics(const QFont& font)
+{
+    TextBaselineMetrics metrics;
+    metrics.expand(QFontMetrics{font});
+    return metrics;
 }
 
 RichText trimRichText(RichText richText)
