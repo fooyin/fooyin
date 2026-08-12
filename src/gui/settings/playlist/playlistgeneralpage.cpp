@@ -50,10 +50,14 @@ public:
     void reset() override;
 
 private:
+    void updateStartPlaybackState() const;
+
     SettingsManager* m_settings;
 
     QSpinBox* m_preloadCount;
+    QComboBox* m_doubleClick;
     QComboBox* m_middleClick;
+    QCheckBox* m_startPlaybackOnSend;
     QCheckBox* m_inlineTagEditing;
     QCheckBox* m_skipMissing;
     QCheckBox* m_ignoreFolderPlaylists;
@@ -66,7 +70,9 @@ private:
 PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     : m_settings{settings}
     , m_preloadCount{new QSpinBox(this)}
+    , m_doubleClick{new QComboBox(this)}
     , m_middleClick{new QComboBox(this)}
+    , m_startPlaybackOnSend{new QCheckBox(tr("Start playback immediately"), this)}
     , m_inlineTagEditing{new QCheckBox(tr("Enable inline tag editing"), this)}
     , m_skipMissing{new QCheckBox(tr("Skip missing tracks"), this)}
     , m_ignoreFolderPlaylists{new QCheckBox(tr("Ignore playlist files when adding folders"), this)}
@@ -99,9 +105,19 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
 
     row = 0;
+    clickBehaviourLayout->addWidget(new QLabel(tr("Double-click") + ":"_L1, this), row, 0);
+    clickBehaviourLayout->addWidget(m_doubleClick, row++, 1);
     clickBehaviourLayout->addWidget(new QLabel(tr("Middle-click") + ":"_L1, this), row, 0);
     clickBehaviourLayout->addWidget(m_middleClick, row++, 1);
+    clickBehaviourLayout->addWidget(m_startPlaybackOnSend, row++, 0, 1, 2);
     clickBehaviourLayout->setColumnStretch(clickBehaviourLayout->columnCount(), 1);
+
+    m_startPlaybackOnSend->setToolTip(
+        tr("After adding tracks to the front of or replacing the playback queue, start playback immediately"));
+    QObject::connect(m_doubleClick, &QComboBox::currentIndexChanged, this,
+                     &PlaylistGeneralPageWidget::updateStartPlaybackState);
+    QObject::connect(m_middleClick, &QComboBox::currentIndexChanged, this,
+                     &PlaylistGeneralPageWidget::updateStartPlaybackState);
 
     m_skipMissing->setToolTip(tr("Skip unavailable tracks when loading playlists"));
     m_ignoreFolderPlaylists->setToolTip(
@@ -145,11 +161,23 @@ void PlaylistGeneralPageWidget::load()
     m_preloadCount->setValue(m_settings->value<Settings::Gui::Internal::PlaylistTrackPreloadCount>());
     m_inlineTagEditing->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistInlineTagEditing>());
 
-    m_middleClick->clear();
-    TrackSelectionController::addAction(m_middleClick, tr("None"), TrackAction::None);
-    TrackSelectionController::addStandardActions(m_middleClick, ActionGroup::Queue);
+    const auto addClickActions = [](QComboBox* box) {
+        box->clear();
+        TrackSelectionController::addAction(box, tr("None"), TrackAction::None);
+        TrackSelectionController::addAction(box, tr("Play"), TrackAction::Play);
+        TrackSelectionController::addStandardActions(box, ActionGroup::Queue);
+    };
+
+    addClickActions(m_doubleClick);
+    TrackSelectionController::setCurrentAction(m_doubleClick,
+                                               m_settings->value<Settings::Gui::Internal::PlaylistDoubleClick>());
+
+    addClickActions(m_middleClick);
     TrackSelectionController::setCurrentAction(m_middleClick,
                                                m_settings->value<Settings::Gui::Internal::PlaylistMiddleClick>());
+
+    m_startPlaybackOnSend->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistStartPlaybackOnSend>());
+    updateStartPlaybackState();
 
     m_skipMissing->setChecked(m_settings->value<Settings::Core::PlaylistSkipMissing>());
     m_ignoreFolderPlaylists->setChecked(m_settings->value<Settings::Core::AddFoldersIgnorePlaylists>());
@@ -163,7 +191,9 @@ void PlaylistGeneralPageWidget::apply()
 {
     m_settings->set<Settings::Gui::Internal::PlaylistTrackPreloadCount>(m_preloadCount->value());
     m_settings->set<Settings::Gui::Internal::PlaylistInlineTagEditing>(m_inlineTagEditing->isChecked());
+    m_settings->set<Settings::Gui::Internal::PlaylistDoubleClick>(m_doubleClick->currentData().toInt());
     m_settings->set<Settings::Gui::Internal::PlaylistMiddleClick>(m_middleClick->currentData().toInt());
+    m_settings->set<Settings::Gui::Internal::PlaylistStartPlaybackOnSend>(m_startPlaybackOnSend->isChecked());
     m_settings->set<Settings::Core::PlaylistSkipMissing>(m_skipMissing->isChecked());
     m_settings->set<Settings::Core::AddFoldersIgnorePlaylists>(m_ignoreFolderPlaylists->isChecked());
     m_settings->set<Settings::Core::PlaylistPreventDuplicates>(m_preventDuplicates->isChecked());
@@ -176,13 +206,26 @@ void PlaylistGeneralPageWidget::reset()
 {
     m_settings->reset<Settings::Gui::Internal::PlaylistTrackPreloadCount>();
     m_settings->reset<Settings::Gui::Internal::PlaylistInlineTagEditing>();
+    m_settings->reset<Settings::Gui::Internal::PlaylistDoubleClick>();
     m_settings->reset<Settings::Gui::Internal::PlaylistMiddleClick>();
+    m_settings->reset<Settings::Gui::Internal::PlaylistStartPlaybackOnSend>();
     m_settings->reset<Settings::Core::PlaylistSkipMissing>();
     m_settings->reset<Settings::Core::AddFoldersIgnorePlaylists>();
     m_settings->reset<Settings::Core::PlaylistPreventDuplicates>();
     m_settings->reset<Settings::Gui::PlaylistIntegratedSearch>();
     m_settings->reset<Settings::Gui::PlaylistSearchMode>();
     m_settings->reset<Settings::Gui::PlaylistSearchScript>();
+}
+
+void PlaylistGeneralPageWidget::updateStartPlaybackState() const
+{
+    const auto supportsImmediatePlayback = [](const QComboBox* box) {
+        const int action = box->currentData().toInt();
+        return action == static_cast<int>(TrackAction::QueueNext)
+            || action == static_cast<int>(TrackAction::SendToQueue);
+    };
+    m_startPlaybackOnSend->setEnabled(supportsImmediatePlayback(m_doubleClick)
+                                      || supportsImmediatePlayback(m_middleClick));
 }
 
 PlaylistGeneralPage::PlaylistGeneralPage(SettingsManager* settings, QObject* parent)

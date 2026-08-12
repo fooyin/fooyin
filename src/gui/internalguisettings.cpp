@@ -187,6 +187,8 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::ShowTrayIcon>(false, u"Interface/ShowTrayIcon"_s);
     m_settings->createSetting<Internal::TrayOnClose>(true, u"Interface/TrayOnClose"_s);
     m_settings->createSetting<Internal::PlaylistMiddleClick>(0, u"PlaylistWidget/MiddleClickBehaviour"_s);
+    m_settings->createSetting<Internal::PlaylistDoubleClick>(5, u"PlaylistWidget/DoubleClickBehaviour"_s);
+    m_settings->createSetting<Internal::PlaylistStartPlaybackOnSend>(false, u"PlaylistWidget/StartPlaybackOnSend"_s);
     m_settings->createSetting<Internal::InfoDisplayPrefer>(0, u"SelectionInfo/PreferDisplay"_s);
     m_settings->createSetting<Internal::LibTreeIconSize>(QSize{36, 36}, u"LibraryTree/IconSize"_s);
     m_settings->createSetting<Internal::ArtworkSaveMethods>(QVariant::fromValue(defaultArtworkSaveMethods()),

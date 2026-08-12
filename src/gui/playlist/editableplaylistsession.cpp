@@ -332,8 +332,6 @@ void EditablePlaylistSession::setupConnections(PlaylistWidgetSessionHost& sessio
                      widget->playlistModel(), [widget, this]() { requestPlaylistFocus(widgetSessionHost(widget)); });
     QObject::connect(widget->playlistController()->uiController(), &PlaylistUiController::showCurrentTrack, widget,
                      [widget, this]() { followCurrentTrack(editableHost(widget)); });
-    host.settingsManager()->subscribe<Settings::Gui::Internal::PlaylistMiddleClick>(
-        widget, [widget](int action) { editableHost(widget).setMiddleClickAction(static_cast<TrackAction>(action)); });
     host.settingsManager()->subscribe<Settings::Gui::Internal::PlaylistHeader>(
         widget, [widget](bool show) { editableHost(widget).setHeaderVisible(show); });
     host.settingsManager()->subscribe<Settings::Gui::Internal::PlaylistScrollBar>(

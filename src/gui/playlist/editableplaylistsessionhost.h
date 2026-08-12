@@ -25,7 +25,6 @@ class QAction;
 
 namespace Fooyin {
 class ActionManager;
-enum class TrackAction;
 struct PlaylistPreset;
 class PresetRegistry;
 class Playlist;
@@ -41,9 +40,8 @@ public:
     virtual void handlePresetChanged(const PlaylistPreset& preset)                    = 0;
     virtual void changePlaylistLayout(Playlist* previousPlaylist, Playlist* playlist) = 0;
 
-    virtual void setHeaderVisible(bool visible)           = 0;
-    virtual void setScrollbarVisible(bool visible)        = 0;
-    virtual void setAlternatingRowColors(bool enabled)    = 0;
-    virtual void setMiddleClickAction(TrackAction action) = 0;
+    virtual void setHeaderVisible(bool visible)        = 0;
+    virtual void setScrollbarVisible(bool visible)     = 0;
+    virtual void setAlternatingRowColors(bool enabled) = 0;
 };
 } // namespace Fooyin

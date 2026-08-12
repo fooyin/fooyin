@@ -159,11 +159,6 @@ public:
     {
         m_widget->setAlternatingRowColors(enabled);
     }
-    void setMiddleClickAction(TrackAction action) override
-    {
-        m_widget->setMiddleClickAction(action);
-    }
-
     [[nodiscard]] PlaylistWidget* sessionWidget() override
     {
         return m_widget;
@@ -513,18 +508,32 @@ void PlaylistWidget::setReadOnly(bool readOnly, bool allowSorting)
 void PlaylistWidget::doubleClicked(const QModelIndex& index)
 {
     if(index.isValid()) {
-        startPlayback();
-        m_playlistView->clearSelection();
+        executeClickAction(m_doubleClickAction);
+        if(m_doubleClickAction != TrackAction::None) {
+            m_playlistView->clearSelection();
+        }
     }
 }
 
-void PlaylistWidget::middleClicked(const QModelIndex& /*index*/)
+void PlaylistWidget::middleClicked(const QModelIndex& index)
 {
-    if(m_middleClickAction == TrackAction::None) {
+    if(index.isValid()) {
+        executeClickAction(m_middleClickAction);
+    }
+}
+
+void PlaylistWidget::executeClickAction(TrackAction action)
+{
+    if(action == TrackAction::Play) {
+        startPlayback();
         return;
     }
 
-    m_session->queueSelectedTracks(sessionHost(), m_middleClickAction == TrackAction::SendToQueue, false);
+    PlaylistAction::ActionOptions options;
+    if((action == TrackAction::QueueNext || action == TrackAction::SendToQueue) && m_startPlaybackOnSend) {
+        options |= PlaylistAction::StartPlayback;
+    }
+    m_selectionController->executeAction(action, options);
 }
 
 void PlaylistWidget::resetSort(bool force)
@@ -743,11 +752,6 @@ void PlaylistWidget::changePlaylistLayout(Playlist* previousPlaylist, const Play
     applyLayoutState(m_defaultLayoutState);
 }
 
-void PlaylistWidget::setMiddleClickAction(TrackAction action)
-{
-    m_middleClickAction = action;
-}
-
 bool PlaylistWidget::followCurrentTrack()
 {
     const PlaylistTrack playingTrack = m_model->playingTrack();
@@ -958,7 +962,9 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     , m_playlistContext{new WidgetContext(
           this, Context{IdList{Constants::Context::TrackSelection, Id{Constants::Context::Playlist}.append(id())}},
           this)}
+    , m_doubleClickAction{static_cast<TrackAction>(m_settings->value<PlaylistDoubleClick>())}
     , m_middleClickAction{static_cast<TrackAction>(m_settings->value<PlaylistMiddleClick>())}
+    , m_startPlaybackOnSend{m_settings->value<PlaylistStartPlaybackOnSend>()}
     , m_playAction{new QAction(tr("&Play"), this)}
     , m_sortActions{std::make_unique<SortActionHandler>(m_actionManager, m_sortRegistry, m_playlistContext->context(),
                                                         this)}
@@ -1762,6 +1768,11 @@ void PlaylistWidget::setupConnections()
 
         updateMetadataEditTriggers(m_session->hasSearch() || forceSortedAutoPlaylist);
     });
+    m_settings->subscribe<PlaylistDoubleClick>(
+        this, [this](int action) { m_doubleClickAction = static_cast<TrackAction>(action); });
+    m_settings->subscribe<PlaylistMiddleClick>(
+        this, [this](int action) { m_middleClickAction = static_cast<TrackAction>(action); });
+    m_settings->subscribe<PlaylistStartPlaybackOnSend>(this, [this](bool enabled) { m_startPlaybackOnSend = enabled; });
 
     m_settings->subscribe<PlaylistBackgroundImageMode>(this, &PlaylistWidget::applyBackgroundSettings);
     m_settings->subscribe<PlaylistBackgroundCustomImage>(this, &PlaylistWidget::applyBackgroundSettings);
