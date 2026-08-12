@@ -151,7 +151,7 @@ public:
                             const std::optional<UId>& excludedPlaylistId = {}) const;
     void startPlayback(PlaylistAction::ActionOptions options);
     void addToQueue() const;
-    void queueNext() const;
+    void queueNext(PlaylistAction::ActionOptions options = {}) const;
     void openFolder(const TrackSelection& selection) const;
     void copyLocation(const TrackSelection& selection) const;
     void copyDirectoryPath(const TrackSelection& selection) const;
@@ -1155,7 +1155,7 @@ void TrackSelectionControllerPrivate::addToQueue() const
     Q_EMIT m_self->actionExecuted(TrackAction::AddToQueue);
 }
 
-void TrackSelectionControllerPrivate::queueNext() const
+void TrackSelectionControllerPrivate::queueNext(PlaylistAction::ActionOptions options) const
 {
     if(!hasTracks()) {
         return;
@@ -1163,6 +1163,7 @@ void TrackSelectionControllerPrivate::queueNext() const
 
     const auto& selection = m_contextSelection.at(m_activeContext);
     m_playlistController->playerController()->queueTracksNext(queueTracksForSelection(selection));
+    handleActions(options);
     Q_EMIT m_self->actionExecuted(TrackAction::QueueNext);
 }
 
@@ -1724,7 +1725,7 @@ void TrackSelectionController::executeAction(TrackAction action, PlaylistAction:
             p->addToQueue();
             break;
         case TrackAction::QueueNext:
-            p->queueNext();
+            p->queueNext(options);
             break;
         case TrackAction::SendToQueue:
             p->sendToQueue(options);
