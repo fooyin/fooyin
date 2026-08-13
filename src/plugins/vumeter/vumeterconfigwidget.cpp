@@ -41,7 +41,9 @@ constexpr auto DefaultFps = Fooyin::Gui::FrameRate::Preset::Fps40;
 
 namespace Fooyin::VuMeter {
 VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidget* parent)
-    : WidgetConfigDialog{vuMeter, tr("VU Meter Settings"), parent}
+    : WidgetConfigDialog{
+          vuMeter, vuMeter->type() == VuMeterWidget::Type::Peak ? tr("Peak Meter Settings") : tr("VU Meter Settings"),
+          parent}
     , m_peakHold{new QSpinBox(this)}
     , m_falloff{new QSpinBox(this)}
     , m_peakFalloff{new QSpinBox(this)}
