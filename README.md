@@ -27,10 +27,23 @@ fooyin is a customisable desktop music player. It combines flexible playback, li
 
 It's built around extensibility and supports plugins for widgets, decoders, tag readers, DSPs, and integrations, and includes FooScript for advanced display formatting, queries, autoplaylists, and widget behaviour.
 
-| ![Simple layout](https://fooyin.org/assets/images/simple.webp)     | ![Directory browser layout](https://fooyin.org/assets/images/browser.webp) |
-|--------------------------------------------------------------------|----------------------------------------------------------------------------|
-| ![Obsidian layout](https://fooyin.org/assets/images/obsidian.webp) | ![Gallery layout](https://fooyin.org/assets/images/gallery.webp)             |
-| ![Radio layout](https://fooyin.org/assets/images/radio.webp)       | ![Custom layout](https://fooyin.org/assets/images/custom.webp)             |
+<table>
+  <tr>
+    <td><img src="https://fooyin.org/assets/images/simple.webp" alt="Simple layout"></td>
+    <td><img src="https://fooyin.org/assets/images/browser.webp" alt="Directory browser layout"></td>
+  </tr>
+  <tr>
+    <td><img src="https://fooyin.org/assets/images/obsidian.webp" alt="Obsidian layout"></td>
+    <td><img src="https://fooyin.org/assets/images/gallery.webp" alt="Gallery layout"></td>
+  </tr>
+  <tr>
+    <td><img src="https://fooyin.org/assets/images/radio.webp" alt="Radio layout"></td>
+    <td><img src="https://fooyin.org/assets/images/waveform.webp" alt="Waveform layout"></td>
+  </tr>
+  <tr>
+    <td colspan="2"><img src="https://fooyin.org/assets/images/custom.webp" alt="Custom layout"></td>
+  </tr>
+</table>
 
 ## Features
 
