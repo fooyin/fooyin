@@ -24,6 +24,7 @@
 
 #include <core/coresettings.h>
 #include <core/player/playercontroller.h>
+#include <core/playlist/playlist.h>
 #include <gui/guipaths.h>
 #include <gui/windowcontroller.h>
 #include <utils/actions/actioncontainer.h>
@@ -46,11 +47,32 @@ constexpr auto MprisObjectPath = "/org/mpris/MediaPlayer2";
 constexpr auto ServiceName     = "org.mpris.MediaPlayer2.fooyin";
 constexpr auto PlayerEntity    = "org.mpris.MediaPlayer2.Player";
 constexpr auto DbusPath        = "org.freedesktop.DBus.Properties";
+constexpr auto NoTrackPath     = "/org/mpris/MediaPlayer2/TrackList/NoTrack";
 
 namespace {
-QDBusObjectPath formatTrackId(int index)
+QDBusObjectPath formatTrackId(const Fooyin::PlaylistTrack& playlistTrack)
 {
-    const QString trackId = u"/org/fooyin/fooyin/track/%1"_s.arg(index);
+    if(!playlistTrack.isValid()) {
+        return QDBusObjectPath{QString::fromLatin1(NoTrackPath)};
+    }
+
+    if(playlistTrack.hasEntryId() && playlistTrack.playlistId.isValid()) {
+        const QString trackId = u"/org/fooyin/fooyin/track/p%1/e%2"_s.arg(
+            playlistTrack.playlistId.toString(QUuid::Id128), playlistTrack.entryId.toString(QUuid::Id128));
+        return QDBusObjectPath{trackId};
+    }
+
+    if(playlistTrack.track.id() > 0) {
+        const QString trackId = u"/org/fooyin/fooyin/track/t%1"_s.arg(playlistTrack.track.id());
+        return QDBusObjectPath{trackId};
+    }
+
+    if(!playlistTrack.track.hash().isEmpty()) {
+        const QString trackId = u"/org/fooyin/fooyin/track/h%1"_s.arg(playlistTrack.track.hash());
+        return QDBusObjectPath{trackId};
+    }
+
+    const QString trackId = u"/org/fooyin/fooyin/track/%1"_s.arg(std::max(0, playlistTrack.indexInPlaylist));
     return QDBusObjectPath{trackId};
 }
 
@@ -154,6 +176,19 @@ void MprisPlugin::initialise(const CorePluginContext& context)
                 {u"CanSeek"_s, canSeek()}});
     });
     QObject::connect(m_playerController, &PlayerController::playlistTrackUpdated, this, &MprisPlugin::trackChanged);
+    QObject::connect(
+        m_playerController, &PlayerController::playlistTrackChanged, this, [this](const PlaylistTrack& playlistTrack) {
+            if(m_currentMetaData.isEmpty() || !playlistTrack.isValid()) {
+                return;
+            }
+
+            const auto currentTrackId = m_currentMetaData.value(u"mpris:trackid"_s).value<QDBusObjectPath>();
+            const auto newTrackId     = formatTrackId(playlistTrack);
+
+            if(!currentTrackId.path().isEmpty() && currentTrackId == newTrackId) {
+                Q_EMIT Seeked(0);
+            }
+        });
     QObject::connect(m_playerController, &PlayerController::positionMoved, this,
                      [this](uint64_t ms) { Q_EMIT Seeked(static_cast<qlonglong>(ms) * 1000); });
 
@@ -500,7 +535,7 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
             }
         };
 
-        m_currentMetaData[u"mpris:trackid"_s]   = formatTrackId(std::max(0, playlistTrack.indexInPlaylist));
+        m_currentMetaData[u"mpris:trackid"_s]   = formatTrackId(playlistTrack);
         m_currentMetaData[u"mpris:length"_s]    = static_cast<quint64>(track.duration() * 1000);
         m_currentMetaData[u"xesam:url"_s]       = QUrl::fromLocalFile(track.filepath()).toString();
         m_currentMetaData[u"xesam:title"_s]     = track.effectiveTitle();
