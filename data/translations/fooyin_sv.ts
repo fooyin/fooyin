@@ -4819,33 +4819,33 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="543"/>
         <source>%Ln succeeded</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln lyckades</numerusform>
+            <numerusform>%Ln lyckades</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="546"/>
         <source>%Ln failed</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln misslyckades</numerusform>
+            <numerusform>%Ln misslyckades</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="549"/>
         <source>%Ln skipped</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln skippat</numerusform>
+            <numerusform>%Ln skippade</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="552"/>
         <source>%Ln cancelled</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln avbrutet</numerusform>
+            <numerusform>%Ln avbrutna</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -4963,7 +4963,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="124"/>
         <source>Result</source>
-        <translation type="unfinished"></translation>
+        <translation>Resultat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="165"/>
@@ -5019,12 +5019,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="263"/>
         <source>Failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Misslyckade: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="265"/>
         <source>Skipped: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Skippade: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="267"/>
@@ -5111,23 +5111,23 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="274"/>
         <source>Could not create directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte skapa mapp</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="283"/>
         <source>Could not remove directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte ta bort mapp</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="606"/>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="662"/>
         <source>Source file does not exist</source>
-        <translation type="unfinished"></translation>
+        <translation>Källfil existerar inte</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="678"/>
         <source>Could not open archive</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte öppna arkiv</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="684"/>
@@ -7774,7 +7774,7 @@ och senast spelad använder det senare värdet.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="357"/>
         <source>Ratings &amp;&amp; Playcounts</source>
-        <translation type="unfinished"></translation>
+        <translation>Betyg &amp;&amp; antal spelningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="358"/>
@@ -7822,22 +7822,22 @@ och senast spelad använder det senare värdet.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="168"/>
         <source>Read ratings from ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Läs betyg från ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="169"/>
         <source>Write ratings to ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv betyg till ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="176"/>
         <source>Read playcounts from ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Läs antal spelningar från ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="177"/>
         <source>Write playcounts to ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv antal spelningar till ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="197"/>
@@ -7909,7 +7909,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="222"/>
         <source>Playcount Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Antal spelnings-taggar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="226"/>
@@ -7944,12 +7944,12 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="252"/>
         <source>Read playcount from</source>
-        <translation type="unfinished"></translation>
+        <translation>Läs antal spelningar från</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="254"/>
         <source>Write playcount to</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv antal spelningar till</translation>
     </message>
 </context>
 <context>
