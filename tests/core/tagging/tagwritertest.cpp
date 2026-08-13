@@ -61,14 +61,16 @@ protected:
 };
 
 namespace {
-constexpr auto Mp4AlbumGain    = "----:com.apple.iTunes:replaygain_album_gain";
-constexpr auto Mp4AlbumPeak    = "----:com.apple.iTunes:replaygain_album_peak";
-constexpr auto Mp4TrackGain    = "----:com.apple.iTunes:replaygain_track_gain";
-constexpr auto Mp4TrackPeak    = "----:com.apple.iTunes:replaygain_track_peak";
-constexpr auto Mp4AlbumGainAlt = "----:com.apple.iTunes:REPLAYGAIN_ALBUM_GAIN";
-constexpr auto Mp4AlbumPeakAlt = "----:com.apple.iTunes:REPLAYGAIN_ALBUM_PEAK";
-constexpr auto Mp4TrackGainAlt = "----:com.apple.iTunes:REPLAYGAIN_TRACK_GAIN";
-constexpr auto Mp4TrackPeakAlt = "----:com.apple.iTunes:REPLAYGAIN_TRACK_PEAK";
+constexpr auto Mp4AlbumGain      = "----:com.apple.iTunes:replaygain_album_gain";
+constexpr auto Mp4AlbumPeak      = "----:com.apple.iTunes:replaygain_album_peak";
+constexpr auto Mp4TrackGain      = "----:com.apple.iTunes:replaygain_track_gain";
+constexpr auto Mp4TrackPeak      = "----:com.apple.iTunes:replaygain_track_peak";
+constexpr auto Mp4AlbumGainAlt   = "----:com.apple.iTunes:REPLAYGAIN_ALBUM_GAIN";
+constexpr auto Mp4AlbumPeakAlt   = "----:com.apple.iTunes:REPLAYGAIN_ALBUM_PEAK";
+constexpr auto Mp4TrackGainAlt   = "----:com.apple.iTunes:REPLAYGAIN_TRACK_GAIN";
+constexpr auto Mp4TrackPeakAlt   = "----:com.apple.iTunes:REPLAYGAIN_TRACK_PEAK";
+constexpr auto Mp4ReleaseType    = "----:com.apple.iTunes:MusicBrainz Album Type";
+constexpr auto Mp4ReleaseTypeAlt = "----:com.apple.iTunes:RELEASETYPE";
 
 QByteArray createPngCover(const QSize& size)
 {
@@ -389,6 +391,75 @@ TEST_F(TagWriterTest, M4aWriteReplayGain)
         EXPECT_FALSE(items.contains(Mp4AlbumGainAlt));
         EXPECT_FALSE(items.contains(Mp4AlbumPeakAlt));
     }
+}
+
+TEST_F(TagWriterTest, M4aWriteCanonicalisesExtraTagAliases)
+{
+    const QString filepath = u":/audio/audiotest.m4a"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    {
+        TagLib::MP4::File mp4File(file.fileName().toLocal8Bit().constData());
+        ASSERT_TRUE(mp4File.isValid());
+        ASSERT_NE(mp4File.tag(), nullptr);
+
+        mp4File.tag()->setItem(Mp4ReleaseType, {TagLib::String{"Album"}});
+        mp4File.tag()->setItem(Mp4ReleaseTypeAlt, {TagLib::String{"Album"}});
+        ASSERT_TRUE(mp4File.save());
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, track));
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
+    ASSERT_TRUE(file.flush());
+
+    const TagLib::MP4::File mp4File(file.fileName().toLocal8Bit().constData());
+    ASSERT_TRUE(mp4File.isValid());
+    ASSERT_NE(mp4File.tag(), nullptr);
+
+    const auto& items = mp4File.tag()->itemMap();
+    EXPECT_EQ(mp4StringItem(items, Mp4ReleaseType), u"Album"_s);
+    EXPECT_FALSE(items.contains(Mp4ReleaseTypeAlt));
+}
+
+TEST_F(TagWriterTest, M4aRemoveExtraTagRemovesAllAliases)
+{
+    const QString filepath = u":/audio/audiotest.m4a"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    {
+        TagLib::MP4::File mp4File(file.fileName().toLocal8Bit().constData());
+        ASSERT_TRUE(mp4File.isValid());
+        ASSERT_NE(mp4File.tag(), nullptr);
+
+        mp4File.tag()->setItem(Mp4ReleaseType, {TagLib::String{"Album"}});
+        mp4File.tag()->setItem(Mp4ReleaseTypeAlt, {TagLib::String{"Album"}});
+        ASSERT_TRUE(mp4File.save());
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, track));
+    track.removeExtraTag(u"RELEASETYPE"_s);
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
+    ASSERT_TRUE(file.flush());
+
+    const TagLib::MP4::File mp4File(file.fileName().toLocal8Bit().constData());
+    ASSERT_TRUE(mp4File.isValid());
+    ASSERT_NE(mp4File.tag(), nullptr);
+
+    const auto& items = mp4File.tag()->itemMap();
+    EXPECT_FALSE(items.contains(Mp4ReleaseType));
+    EXPECT_FALSE(items.contains(Mp4ReleaseTypeAlt));
 }
 
 TEST_F(TagWriterTest, M4aWriteHonoursTextRatingTagSettings)

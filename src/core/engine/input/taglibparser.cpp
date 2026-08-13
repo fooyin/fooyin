@@ -78,7 +78,9 @@
 #include <cstring>
 #include <limits>
 #include <optional>
+#include <ranges>
 #include <set>
+#include <vector>
 
 Q_LOGGING_CATEGORY(TAGLIB, "fy.taglib")
 
@@ -545,6 +547,20 @@ QStringList convertStringList(const TagLib::StringList& strList)
     }
 
     return list;
+}
+
+void addUniqueExtraTagValues(Track& track, const QString& tag, const QStringList& values)
+{
+    QStringList existing = track.extraTag(tag);
+
+    for(const QString& value : values) {
+        if(value.isEmpty() || existing.contains(value)) {
+            continue;
+        }
+
+        track.addExtraTag(tag, value);
+        existing.emplace_back(value);
+    }
 }
 
 std::optional<TagLib::PropertyMap> latin1FrameProperties(const TagLib::ID3v2::Frame* frame)
@@ -1166,9 +1182,7 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Track& track, bool 
                 if(isId3v23) {
                     values = Id3Utils::splitExtraField(tagEntry, values, policy.splitId3v23SemicolonSeparatedTags);
                 }
-                for(const QString& tagValue : std::as_const(values)) {
-                    track.addExtraTag(tagEntry, tagValue);
-                }
+                addUniqueExtraTagValues(track, tagEntry, values);
             }
         }
     }
@@ -1790,6 +1804,31 @@ QString stripMp4FreeFormName(const TagLib::String& name)
     return freeFormName;
 }
 
+QString mp4TagName(const TagLib::String& name)
+{
+    QString tagName = findMp4Tag(name);
+    if(tagName.isEmpty()) {
+        tagName = stripMp4FreeFormName(name);
+    }
+    return tagName;
+}
+
+void removeMp4TagAliases(TagLib::MP4::Tag* mp4Tags, const QString& tag)
+{
+    std::vector<TagLib::String> aliases;
+
+    const auto items = mp4Tags->itemMap();
+    for(const auto& key : items | std::views::keys) {
+        if(mp4TagName(key).compare(tag, Qt::CaseInsensitive) == 0) {
+            aliases.emplace_back(key);
+        }
+    }
+
+    for(const auto& alias : aliases) {
+        mp4Tags->removeItem(alias);
+    }
+}
+
 void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Track& track, const TagPolicy& policy, bool skipExtra = false)
 {
     if(mp4Tags->isEmpty()) {
@@ -1972,11 +2011,8 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Track& track, const TagPolicy&
 
         for(const auto& [key, item] : items) {
             if(!baseMp4Tags.contains(key)) {
-                QString tagName = findMp4Tag(key);
-                if(tagName.isEmpty()) {
-                    tagName = stripMp4FreeFormName(key);
-                }
-                const auto values = convertStringList(item.toStringList());
+                const QString tagName = mp4TagName(key);
+                const auto values     = convertStringList(item.toStringList());
                 if(policy.playcount.shouldReadTag(tagName, track.playCount() > 0) && !values.isEmpty()) {
                     readPlaycountTag(track, policy.playcount, tagName, values.front());
                 }
@@ -1985,9 +2021,7 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Track& track, const TagPolicy&
                                       useRatingTagFallback(policy.rating));
                 }
                 else {
-                    for(const auto& value : values) {
-                        track.addExtraTag(tagName, value);
-                    }
+                    addUniqueExtraTagValues(track, tagName, values);
                 }
             }
         }
@@ -2196,17 +2230,14 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Track& track, AudioReader::Wr
                 if(tagName.isEmpty()) {
                     tagName = prefixMp4FreeFormName(tag, mp4Tags->itemMap());
                 }
+                removeMp4TagAliases(mp4Tags, tag);
                 mp4Tags->setItem(tagName, convertStringList(values));
             }
         }
 
         const auto removedTags = track.removedTags();
         for(const auto& tag : removedTags) {
-            TagLib::String tagName = findMp4Tag(tag);
-            if(tagName.isEmpty()) {
-                tagName = prefixMp4FreeFormName(tag, mp4Tags->itemMap());
-            }
-            mp4Tags->removeItem(tagName);
+            removeMp4TagAliases(mp4Tags, tag);
         }
     }
 }

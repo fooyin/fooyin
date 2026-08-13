@@ -63,15 +63,17 @@ protected:
 };
 
 namespace {
-constexpr auto Mp4AlbumGain    = "----:com.apple.iTunes:replaygain_album_gain";
-constexpr auto Mp4AlbumGainAlt = "----:com.apple.iTunes:REPLAYGAIN_ALBUM_GAIN";
-constexpr auto Mp4AlbumPeak    = "----:com.apple.iTunes:replaygain_album_peak";
-constexpr auto Mp4AlbumPeakAlt = "----:com.apple.iTunes:REPLAYGAIN_ALBUM_PEAK";
-constexpr auto Mp4TrackGain    = "----:com.apple.iTunes:replaygain_track_gain";
-constexpr auto Mp4TrackGainAlt = "----:com.apple.iTunes:REPLAYGAIN_TRACK_GAIN";
-constexpr auto Mp4TrackPeak    = "----:com.apple.iTunes:replaygain_track_peak";
-constexpr auto Mp4TrackPeakAlt = "----:com.apple.iTunes:REPLAYGAIN_TRACK_PEAK";
-constexpr auto Mp4CustomRating = "----:com.apple.iTunes:MY_RATING";
+constexpr auto Mp4AlbumGain      = "----:com.apple.iTunes:replaygain_album_gain";
+constexpr auto Mp4AlbumGainAlt   = "----:com.apple.iTunes:REPLAYGAIN_ALBUM_GAIN";
+constexpr auto Mp4AlbumPeak      = "----:com.apple.iTunes:replaygain_album_peak";
+constexpr auto Mp4AlbumPeakAlt   = "----:com.apple.iTunes:REPLAYGAIN_ALBUM_PEAK";
+constexpr auto Mp4TrackGain      = "----:com.apple.iTunes:replaygain_track_gain";
+constexpr auto Mp4TrackGainAlt   = "----:com.apple.iTunes:REPLAYGAIN_TRACK_GAIN";
+constexpr auto Mp4TrackPeak      = "----:com.apple.iTunes:replaygain_track_peak";
+constexpr auto Mp4TrackPeakAlt   = "----:com.apple.iTunes:REPLAYGAIN_TRACK_PEAK";
+constexpr auto Mp4CustomRating   = "----:com.apple.iTunes:MY_RATING";
+constexpr auto Mp4ReleaseType    = "----:com.apple.iTunes:MusicBrainz Album Type";
+constexpr auto Mp4ReleaseTypeAlt = "----:com.apple.iTunes:RELEASETYPE";
 
 void clearMp4ReplayGainItems(TagLib::MP4::Tag* tag)
 {
@@ -129,6 +131,14 @@ void setId3TextFrame(TagLib::ID3v2::Tag* tag, const char* id, const QByteArray& 
     tag->removeFrames(id);
     auto* frame = new TagLib::ID3v2::TextIdentificationFrame(id, encoding);
     frame->setText(TagLib::String{value.constData(), encoding});
+    tag->addFrame(frame);
+}
+
+void addId3UserTextFrame(TagLib::ID3v2::Tag* tag, const QString& description, const QString& value)
+{
+    auto* frame = new TagLib::ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
+    frame->setDescription(TagLib::String{description.toUtf8().constData(), TagLib::String::UTF8});
+    frame->setText(TagLib::String{value.toUtf8().constData(), TagLib::String::UTF8});
     tag->addFrame(frame);
 }
 
@@ -301,6 +311,52 @@ TEST_F(TagReaderTest, M4aRead)
     EXPECT_EQ(testTag.front(), u"A custom tag"_s);
 }
 
+TEST_F(TagReaderTest, M4aReadDeduplicatesNormalisedExtraTags)
+{
+    const QString filepath = u":/audio/audiotest.m4a"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    {
+        const QByteArray localPath = file.fileName().toLocal8Bit();
+        TagLib::MP4::File mp4File(localPath.constData());
+        ASSERT_TRUE(mp4File.isValid());
+        ASSERT_NE(mp4File.tag(), nullptr);
+
+        setMp4StringItem(mp4File.tag(), Mp4ReleaseType, u"Album"_s);
+        setMp4StringItem(mp4File.tag(), Mp4ReleaseTypeAlt, u"Album"_s);
+        ASSERT_TRUE(mp4File.save());
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+    EXPECT_EQ(track.extraTag(u"RELEASETYPE"_s), QStringList{u"Album"_s});
+}
+
+TEST_F(TagReaderTest, M4aReadPreservesDistinctNormalisedExtraTags)
+{
+    const QString filepath = u":/audio/audiotest.m4a"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    {
+        const QByteArray localPath = file.fileName().toLocal8Bit();
+        TagLib::MP4::File mp4File(localPath.constData());
+        ASSERT_TRUE(mp4File.isValid());
+        ASSERT_NE(mp4File.tag(), nullptr);
+
+        setMp4StringItem(mp4File.tag(), Mp4ReleaseType, u"Album"_s);
+        setMp4StringItem(mp4File.tag(), Mp4ReleaseTypeAlt, u"Compilation"_s);
+        ASSERT_TRUE(mp4File.save());
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+    EXPECT_EQ(track.extraTag(u"RELEASETYPE"_s), (QStringList{u"Album"_s, u"Compilation"_s}));
+}
+
 TEST_F(TagReaderTest, M4aReadCustomAutomaticRatingScale)
 {
     resetTagReaderRatingSettings();
@@ -434,6 +490,82 @@ TEST_F(TagReaderTest, Mp3Read)
     const auto testTag = track.extraTag(u"TEST"_s);
     ASSERT_TRUE(!testTag.isEmpty());
     EXPECT_EQ(testTag.front(), u"A custom tag"_s);
+}
+
+TEST_F(TagReaderTest, Mp3ReadDeduplicatesNormalisedExtraTags)
+{
+    const QString filepath = u":/audio/audiotest.mp3"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    {
+        const QByteArray localPath = file.fileName().toLocal8Bit();
+        TagLib::MPEG::File mp3File(localPath.constData());
+        ASSERT_TRUE(mp3File.isValid());
+        auto* tag = mp3File.ID3v2Tag(true);
+        ASSERT_NE(tag, nullptr);
+
+        setId3TextFrame(tag, "TPUB", "Example Records", TagLib::String::UTF8);
+        addId3UserTextFrame(tag, u"LABEL"_s, u"Example Records"_s);
+        ASSERT_TRUE(mp3File.save());
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+    EXPECT_EQ(track.extraTag(u"LABEL"_s), QStringList{u"Example Records"_s});
+}
+
+TEST_F(TagReaderTest, Mp3ReadPreservesDistinctNormalisedExtraTags)
+{
+    const QString filepath = u":/audio/audiotest.mp3"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    {
+        const QByteArray localPath = file.fileName().toLocal8Bit();
+        TagLib::MPEG::File mp3File(localPath.constData());
+        ASSERT_TRUE(mp3File.isValid());
+        auto* tag = mp3File.ID3v2Tag(true);
+        ASSERT_NE(tag, nullptr);
+
+        setId3TextFrame(tag, "TPUB", "Example Records", TagLib::String::UTF8);
+        addId3UserTextFrame(tag, u"label"_s, u"Another Label"_s);
+        ASSERT_TRUE(mp3File.save());
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+    const QStringList labels = track.extraTag(u"LABEL"_s);
+    EXPECT_EQ(labels.size(), 2);
+    EXPECT_TRUE(labels.contains(u"Example Records"_s));
+    EXPECT_TRUE(labels.contains(u"Another Label"_s));
+}
+
+TEST_F(TagReaderTest, Mp3ReadDeduplicatesMixedCaseTxxxDescriptions)
+{
+    const QString filepath = u":/audio/audiotest.mp3"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    {
+        const QByteArray localPath = file.fileName().toLocal8Bit();
+        TagLib::MPEG::File mp3File(localPath.constData());
+        ASSERT_TRUE(mp3File.isValid());
+        auto* tag = mp3File.ID3v2Tag(true);
+        ASSERT_NE(tag, nullptr);
+
+        addId3UserTextFrame(tag, u"albumartistsort"_s, u"Artist, The"_s);
+        addId3UserTextFrame(tag, u"ALBUMARTISTSORT"_s, u"Artist, The"_s);
+        addId3UserTextFrame(tag, u"albumARTISTsort"_s, u"Artist, The"_s);
+        ASSERT_TRUE(mp3File.save());
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+    EXPECT_EQ(track.extraTag(u"ALBUMARTISTSORT"_s), QStringList{u"Artist, The"_s});
 }
 
 TEST_F(TagReaderTest, Mp3ReadRepairsLegacyTextInLatin1Id3Frames)
