@@ -42,6 +42,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QComboBox>
+#include <QCoreApplication>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMainWindow>
@@ -412,7 +413,7 @@ void TrackSelectionControllerPrivate::setupBuiltInMenus()
                    [this](QMenu* menu, const TrackSelection&) { menu->addAction(m_copyDirectoryPath); });
 
     registerSubmenu(m_self, TrackContextMenuArea::Track, m_trackRoot.id, Constants::Menus::Context::Artwork,
-                    TrackSelectionController::tr("Artwork"));
+                    QCoreApplication::translate("TrackSelectionController", "Artwork"));
 
     m_searchArtwork->setStatusTip(tr("Search for artwork for the selected tracks"));
     auto* searchArtworkCmd = m_actionManager->registerAction(m_searchArtwork, Constants::Actions::SearchArtwork);
@@ -1673,18 +1674,26 @@ void TrackSelectionController::addAction(QComboBox* box, const QString& text, Tr
 void TrackSelectionController::addStandardActions(QComboBox* box, ActionGroups groups)
 {
     if(groups.testFlag(ActionGroup::Playlist)) {
-        addAction(box, tr("Add to current playlist"), TrackAction::AddCurrentPlaylist);
-        addAction(box, tr("Add to current playlist and play if stopped"),
-                  TrackAction::AddCurrentPlaylistAndPlayIfStopped);
-        addAction(box, tr("Add to active playlist"), TrackAction::AddActivePlaylist);
-        addAction(box, tr("Replace current playlist"), TrackAction::SendCurrentPlaylist);
-        addAction(box, tr("Create new playlist"), TrackAction::SendNewPlaylist);
+        addAction(box, QCoreApplication::translate("TrackSelectionController", "Add to current playlist"),
+                  TrackAction::AddCurrentPlaylist);
+        addAction(
+            box, QCoreApplication::translate("TrackSelectionController", "Add to current playlist and play if stopped"),
+            TrackAction::AddCurrentPlaylistAndPlayIfStopped);
+        addAction(box, QCoreApplication::translate("TrackSelectionController", "Add to active playlist"),
+                  TrackAction::AddActivePlaylist);
+        addAction(box, QCoreApplication::translate("TrackSelectionController", "Replace current playlist"),
+                  TrackAction::SendCurrentPlaylist);
+        addAction(box, QCoreApplication::translate("TrackSelectionController", "Create new playlist"),
+                  TrackAction::SendNewPlaylist);
     }
 
     if(groups.testFlag(ActionGroup::Queue)) {
-        addAction(box, tr("Add to playback queue"), TrackAction::AddToQueue);
-        addAction(box, tr("Add to front of playback queue"), TrackAction::QueueNext);
-        addAction(box, tr("Replace playback queue"), TrackAction::SendToQueue);
+        addAction(box, QCoreApplication::translate("TrackSelectionController", "Add to playback queue"),
+                  TrackAction::AddToQueue);
+        addAction(box, QCoreApplication::translate("TrackSelectionController", "Add to front of playback queue"),
+                  TrackAction::QueueNext);
+        addAction(box, QCoreApplication::translate("TrackSelectionController", "Replace playback queue"),
+                  TrackAction::SendToQueue);
     }
 }
 
