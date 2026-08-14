@@ -25,6 +25,7 @@
 
 #include <QDir>
 #include <QFileInfo>
+#include <QLoggingCategory>
 
 #include <ranges>
 #include <set>
@@ -33,7 +34,8 @@
 constexpr qsizetype WatchBatchSize = 64;
 
 namespace {
-bool addPaths(Fooyin::LibraryWatcher& watcher, const QStringList& paths, const std::stop_token stopToken)
+bool addPaths(Fooyin::LibraryWatcher& watcher, const QStringList& paths, QStringList& failedPaths,
+              const std::stop_token stopToken)
 {
     for(qsizetype offset{0}; offset < paths.size(); offset += WatchBatchSize) {
         if(stopToken.stop_requested()) {
@@ -41,7 +43,7 @@ bool addPaths(Fooyin::LibraryWatcher& watcher, const QStringList& paths, const s
         }
 
         const qsizetype count = std::min(WatchBatchSize, paths.size() - offset);
-        watcher.addPaths(paths.sliced(offset, count));
+        failedPaths.append(watcher.addPaths(paths.sliced(offset, count)));
     }
 
     return !stopToken.stop_requested();
@@ -127,7 +129,25 @@ bool LibraryMonitor::addWatcher(const LibraryInfo& library, const TrackList& tra
         }
 
         dirs.append(path);
-        return addPaths(m_watchers[library.id], dirs, stopToken);
+
+        auto& watcher                  = m_watchers[library.id];
+        const QStringList watchedPaths = watcher.directories();
+        const std::set<QString> watchedSet{watchedPaths.cbegin(), watchedPaths.cend()};
+
+        QStringList newPaths;
+        newPaths.reserve(dirs.size());
+        for(const QString& dir : dirs) {
+            if(!watchedSet.contains(dir)) {
+                newPaths.push_back(dir);
+            }
+        }
+
+        QStringList failedPaths;
+        const bool completed = addPaths(watcher, newPaths, failedPaths, stopToken);
+        if(!failedPaths.isEmpty()) {
+            qCWarning(LIB_WATCHER) << "Failed to monitor library directories for" << library.name << failedPaths;
+        }
+        return completed;
     };
 
     if(!watchPaths(library.path)) {
@@ -185,7 +205,12 @@ bool LibraryMonitor::addWatcher(const LibraryInfo& library, const TrackList& tra
         watchFiles.push_back(file);
     }
 
-    return addPaths(watcher, watchFiles, stopToken);
+    QStringList failedPaths;
+    const bool completed = addPaths(watcher, watchFiles, failedPaths, stopToken);
+    if(!failedPaths.isEmpty()) {
+        qCWarning(LIB_WATCHER) << "Failed to monitor track files for" << library.name << failedPaths;
+    }
+    return completed;
 }
 } // namespace Fooyin
 
