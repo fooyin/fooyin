@@ -58,6 +58,16 @@ void LibraryTreeView::setExpandsOnSingleClick(bool enabled)
 
 void LibraryTreeView::changeEvent(QEvent* event)
 {
+    switch(event->type()) {
+        case QEvent::FontChange:
+        case QEvent::PaletteChange:
+        case QEvent::StyleChange:
+            Q_EMIT displayAboutToChange();
+            break;
+        default:
+            break;
+    }
+
     QTreeView::changeEvent(event);
 
     switch(event->type()) {

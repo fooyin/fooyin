@@ -558,6 +558,9 @@ void LibraryTreeWidget::openConfigDialog()
 void LibraryTreeWidget::setupConnections()
 {
     const auto resetModel = [this]() {
+        if(m_pendingResetState.isEmpty()) {
+            m_pendingResetState = saveState();
+        }
         m_model->reset(m_library->libraryTracks());
     };
 
@@ -565,6 +568,13 @@ void LibraryTreeWidget::setupConnections()
 
     QObject::connect(m_model, &LibraryTreeModel::dataUpdated, m_libraryTree, &QTreeView::dataChanged);
     QObject::connect(m_model, &LibraryTreeModel::modelLoaded, this, [this]() { restoreState(m_pendingState); });
+    QObject::connect(m_model, &LibraryTreeModel::modelResetFinished, this,
+                     [this]() { restoreState(std::exchange(m_pendingResetState, {}), true); });
+    QObject::connect(m_libraryTree, &LibraryTreeView::displayAboutToChange, this, [this]() {
+        if(m_pendingResetState.isEmpty()) {
+            m_pendingResetState = saveState();
+        }
+    });
 
     QObject::connect(m_libraryTree, &LibraryTreeView::doubleClicked, this,
                      [this](const QModelIndex& index) { handleDoubleClick(index); });
@@ -622,7 +632,7 @@ void LibraryTreeWidget::setupConnections()
     m_settings->subscribe<Settings::Gui::RatingEmptyStarSymbol>(this, resetModel);
 }
 
-void LibraryTreeWidget::reset() const
+void LibraryTreeWidget::reset()
 {
     if(!m_styleProvider->isResolved()) {
         return;
@@ -1248,9 +1258,10 @@ void LibraryTreeWidget::handleTracksUpdated(const TrackList& tracks)
     }
 
     std::stack<QModelIndex> checkExpanded;
-    for(const QModelIndex& index : trackParents) {
-        if(index.isValid()) {
-            checkExpanded.emplace(index);
+    for(const QModelIndex& sourceIndex : trackParents) {
+        const QModelIndex proxyIndex = m_sortProxy->mapFromSource(sourceIndex);
+        if(proxyIndex.isValid()) {
+            checkExpanded.emplace(proxyIndex);
         }
     }
 
@@ -1380,9 +1391,9 @@ void LibraryTreeWidget::restoreIndexState(const QByteArray& topKey, const std::v
     }
 }
 
-void LibraryTreeWidget::restoreState(const QByteArray& state)
+void LibraryTreeWidget::restoreState(const QByteArray& state, bool force)
 {
-    if(state.isEmpty() || !m_config.restoreState) {
+    if(state.isEmpty() || (!force && !m_config.restoreState)) {
         return;
     }
 

@@ -124,7 +124,7 @@ protected:
 
 private:
     void setupConnections();
-    void reset() const;
+    void reset();
     void populateContextMenu(QMenu* menu);
 
     void changeGrouping(const LibraryTreeGrouping& newGrouping);
@@ -158,7 +158,7 @@ private:
     void restoreSelection(const std::vector<Md5Hash>& expandedKeys, const std::vector<Md5Hash>& selectedKeys);
     [[nodiscard]] QByteArray saveState() const;
     void restoreIndexState(const QByteArray& topKey, const std::vector<QByteArray>& keys, int currentIndex = 0);
-    void restoreState(const QByteArray& state);
+    void restoreState(const QByteArray& state, bool force = false);
 
     ActionManager* m_actionManager;
     MusicLibrary* m_library;
@@ -194,6 +194,7 @@ private:
 
     bool m_updating;
     QByteArray m_pendingState;
+    QByteArray m_pendingResetState;
     ConfigData m_config;
 
     Playlist* m_playlist;
