@@ -73,6 +73,7 @@
 #include <core/plugins/plugininfo.h>
 #include <core/plugins/pluginmanager.h>
 #include <core/scripting/scriptenvironmenthelpers.h>
+#include <core/scripting/scriptparser.h>
 #include <gui/coverprovider.h>
 #include <gui/coverrepository.h>
 #include <gui/editablelayout.h>
@@ -724,6 +725,7 @@ void GuiApplication::initialise()
     m_actionManager->addContextObject(m_mainContext);
 
     initialisePlugins();
+    ScriptParser::finaliseGlobalProviderRegistration();
 
     m_widgets->registerDspWidgets();
     m_viewMenu->registerDspSettingsActions(m_widgets->dspSettingsRegistry(), m_widgets->dspSettingsController());
