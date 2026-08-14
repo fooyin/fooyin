@@ -1286,7 +1286,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="62"/>
         <source>&amp;Visualisations</source>
-        <translation type="unfinished">&amp;Visualisierungen</translation>
+        <translation>&amp;Visualisierungen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="84"/>
@@ -2475,7 +2475,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="293"/>
         <source>Automatic (preserve source)</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisch (Quelle beibehalten)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="294"/>
@@ -2505,7 +2505,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="300"/>
         <source>Automatic (when reducing bit depth)</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisch (wenn Bittiefe reduziert wird)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="301"/>
@@ -4779,12 +4779,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="458"/>
         <source>Determining operations…</source>
-        <translation>Bestimme Operationen…</translation>
+        <translation>Aktionen ermitteln…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="500"/>
         <source>Finishing operations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktionen abschließen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="509"/>
@@ -4796,64 +4796,64 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="513"/>
         <source>Pending operation(s): %Ln</source>
         <translation>
-            <numerusform>Ausstehender Vorgang: %Ln</numerusform>
-            <numerusform>Ausstehende Vorgänge: %Ln</numerusform>
+            <numerusform>Ausstehende Aktion: %Ln</numerusform>
+            <numerusform>Ausstehende Aktionen: %Ln</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="530"/>
         <source>Aborted: %Ln operation(s) not run</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Abgebrochen: %Ln Aktion nicht ausgeführt</numerusform>
+            <numerusform>Abgebrochen: %Ln Aktionen nicht ausgeführt</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="536"/>
         <source>Completed %Ln operation(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln Aktion abgeschlossen</numerusform>
+            <numerusform>%Ln Aktionen abgeschlossen</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="543"/>
         <source>%Ln succeeded</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln erfolgreich</numerusform>
+            <numerusform>%Ln erfolgreich</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="546"/>
         <source>%Ln failed</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln fehlgeschlagen</numerusform>
+            <numerusform>%Ln fehlgeschlagen</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="549"/>
         <source>%Ln skipped</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln übersprungen</numerusform>
+            <numerusform>%Ln übersprungen</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="552"/>
         <source>%Ln cancelled</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln abgebrochen</numerusform>
+            <numerusform>%Ln abgebrochen</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="557"/>
         <source>Completed %Ln operation(s): %1</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln Aktion abgeschlossen: %1</numerusform>
+            <numerusform>%Ln Aktionen abgeschlossen: %1</numerusform>
         </translation>
     </message>
     <message>
@@ -4864,7 +4864,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="606"/>
         <source>File Operation</source>
-        <translation>Dateioperation</translation>
+        <translation>Dateiaktion</translation>
     </message>
 </context>
 <context>
@@ -4872,7 +4872,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="189"/>
         <source>Operation</source>
-        <translation>Operation</translation>
+        <translation>Aktion</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="191"/>
@@ -4948,7 +4948,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="118"/>
         <source>Operation</source>
-        <translation>Operation</translation>
+        <translation>Aktion</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="120"/>
@@ -4963,12 +4963,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="124"/>
         <source>Result</source>
-        <translation type="unfinished"></translation>
+        <translation>Ergebnis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="165"/>
         <source>Pending</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausstehend</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="238"/>
@@ -5014,27 +5014,27 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="261"/>
         <source>Succeeded</source>
-        <translation type="unfinished"></translation>
+        <translation>Erfolgreich</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="263"/>
         <source>Failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehlgeschlagen: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="265"/>
         <source>Skipped: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Übersprungen: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="267"/>
         <source>Cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Abgebrochen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="267"/>
         <source>Cancelled: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Abgebrochen: %1</translation>
     </message>
 </context>
 <context>
@@ -5044,7 +5044,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="96"/>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="109"/>
         <source>File Operations</source>
-        <translation>Dateioperationen</translation>
+        <translation>Dateiaktionen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="84"/>
@@ -5065,7 +5065,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="127"/>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="181"/>
         <source>File operations</source>
-        <translation>Dateioperationen</translation>
+        <translation>Dateiaktionen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="173"/>
@@ -5111,53 +5111,53 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="274"/>
         <source>Could not create directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte Verzeichnis nicht erstellen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="283"/>
         <source>Could not remove directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte Verzeichnis nicht entfernen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="606"/>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="662"/>
         <source>Source file does not exist</source>
-        <translation type="unfinished"></translation>
+        <translation>Quelldatei existiert nicht</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="678"/>
         <source>Could not open archive</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte Archiv nicht öffnen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="684"/>
         <source>Destination file already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Zieldatei existiert bereits</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="700"/>
         <source>Archive extraction was interrupted</source>
-        <translation type="unfinished"></translation>
+        <translation>Archiv-Entpackung wurde unterbrochen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="702"/>
         <source>Could not extract archive entry</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte Archiveintrag nicht entpacken</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="714"/>
         <source>One or more archive entries could not be extracted</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein oder mehrere Archiveinträge konnten nicht entpackt werden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="719"/>
         <source>No archive entries were extracted</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Archiveinträge wurden entpackt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="727"/>
         <source>Could not delete source archive</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte Quellarchiv nicht löschen</translation>
     </message>
 </context>
 <context>
@@ -5274,27 +5274,27 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="48"/>
         <source>Preserve playback playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Behalte Wiedergabeliste bei</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="56"/>
         <source>Align labels to artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschriftungen am Artwork ausrichten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="71"/>
         <source>Set to &lt;b&gt;Play&lt;/b&gt; to start playback at the first matching track.</source>
-        <translation type="unfinished"></translation>
+        <translation>Auf &lt;b&gt;Abspielen&lt;/b&gt; setzen, um die Wiedergabe beim ersten übereinstimmenden Titel zu starten.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="79"/>
         <source>In current playlist mode, matching tracks are selected directly in the playlist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Im „Aktuelle Wiedergabeliste“-Modus werden Titel direkt in der Wiedergabeliste ausgewählt.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="82"/>
         <source>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenn diese Auswahl-Wiedergabeliste für die Wiedergabe verwendet wird, behalte sie mit einem angehängten „(Wiedergabe)“ bei, anstatt alle Titel zu ersetzen.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="88"/>
@@ -5309,7 +5309,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="96"/>
         <source>Align bottom labels to the horizontal bounds of the artwork in artwork mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Richte die Beschriftungen unten an den horizontalen Begrenzungen des Artworks im Artwork-Modus aus.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="103"/>
@@ -5354,22 +5354,22 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="135"/>
         <source>Library</source>
-        <translation type="unfinished">Bibliothek</translation>
+        <translation>Bibliothek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="136"/>
         <source>Current playlist</source>
-        <translation type="unfinished">Aktuelle Wiedergabeliste</translation>
+        <translation>Aktuelle Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="138"/>
         <source>Source</source>
-        <translation type="unfinished">Quelle</translation>
+        <translation>Quelle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="142"/>
         <source>Current playlist mode uses the displayed playlist as its source and selects the matching tracks in that playlist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der „Aktuelle Wiedergabeliste“-Modus verwendet die angezeigte Wiedergabeliste als Quelle und wählt die übereinstimmenden Titel in der Wiedergabeliste aus.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="160"/>
@@ -5381,7 +5381,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="161"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="165"/>
         <source>Play</source>
-        <translation type="unfinished">Abspielen</translation>
+        <translation>Abspielen</translation>
     </message>
 </context>
 <context>
@@ -5466,17 +5466,17 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="697"/>
         <source>Source</source>
-        <translation type="unfinished">Quelle</translation>
+        <translation>Quelle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="708"/>
         <source>Library</source>
-        <translation type="unfinished">Bibliothek</translation>
+        <translation>Bibliothek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="709"/>
         <source>Current playlist</source>
-        <translation type="unfinished">Aktuelle Wiedergabeliste</translation>
+        <translation>Aktuelle Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="890"/>
@@ -5849,17 +5849,17 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1007"/>
         <source>Lock playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Sperre Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1009"/>
         <source>Prevent changes to the contents of the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Verhindere Änderungen am Inhalt der aktuellen Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1012"/>
         <source>Lock Current Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Sperre aktuelle Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1033"/>
@@ -6184,17 +6184,17 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="170"/>
         <source>&amp;Import…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Importieren…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="171"/>
         <source>E&amp;xport…</source>
-        <translation type="unfinished"></translation>
+        <translation>E&amp;xportieren…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="174"/>
         <source>Theme colours are disabled when using a Windows style. Select Fusion as the interface style to customise colours.</source>
-        <translation type="unfinished"></translation>
+        <translation>Themenfarben sind deaktiviert, wenn ein Windows-Stil verwendet wird. Wähle „Fusion“ als Benutzeroberflächenstil, um die Farben anzupassen.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="207"/>
@@ -6339,7 +6339,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="375"/>
         <source>Custom colours are only supported with the Fusion style on Windows.</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzerdefinierte Farben werden unter Windows nur mit dem „Fusion“-Stil unterstützt.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="540"/>
@@ -6349,38 +6349,38 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="558"/>
         <source>Open Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Thema öffnen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="558"/>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="591"/>
         <source>fooyin Theme (*.fyt)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin Thema (*.fyt)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="566"/>
         <source>Import Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Thema importieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="566"/>
         <source>Could not import theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte Thema nicht importieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="590"/>
         <source>Save Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Thema speichern</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="601"/>
         <source>Export Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Thema exportieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="601"/>
         <source>Could not export theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte Thema nicht exportieren</translation>
     </message>
 </context>
 <context>
@@ -6411,7 +6411,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="117"/>
         <source>Dark mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Dunkler Modus</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="119"/>
@@ -6511,7 +6511,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="332"/>
         <source>Dark mode is not supported by this style.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dunkler Modus wird von diesem Stil nicht unterstützt.</translation>
     </message>
 </context>
 <context>
@@ -7774,7 +7774,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="357"/>
         <source>Ratings &amp;&amp; Playcounts</source>
-        <translation type="unfinished"></translation>
+        <translation>Bewertungen &amp;&amp; Wiedergabezähler</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="358"/>
@@ -7822,27 +7822,27 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="168"/>
         <source>Read ratings from ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Lies Bewertungen aus dem ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="169"/>
         <source>Write ratings to ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Schreib Bewertungen in das ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="176"/>
         <source>Read playcounts from ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Lies Wiedergabezähler aus dem ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="177"/>
         <source>Write playcounts to ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Schreib Wiedergabezähler in das ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="197"/>
         <source>Read ratings from ID3 POPM frames in MP3 files when no text rating was read.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lies Bewertungen aus dem ID3 POPM Frame in MP3-Dateien, wenn keine Textbewertung gelesen wurde.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="199"/>
@@ -7874,22 +7874,22 @@ Diese Einstellung verbessert die Kompatibilität mit anderen Abspielprogrammen, 
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="209"/>
         <source>Tag field to read playcount values from. Automatic detection prefers FMPS_PLAYCOUNT, then PLAYCOUNT.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag-Feld, aus dem Wiedergabezahlen gelesen werden sollen. Die automatische Erkennung nutzt zuerst FMPS_PLAYCOUNT, dann PLAYCOUNT.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="210"/>
         <source>Tag field used when saving playcounts as text metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag-Feld, das zum Speichern von Wiedergabezahlen als Text-Metadaten verwendet werden soll.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="212"/>
         <source>Read playcounts from ID3 POPM frames in MP3 files when no text playcount was read.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lies Wiedergabezahlen aus ID3 POPM Frames in MP3-Dateien, wenn keine Text-Wiedergabezahlen gelesen wurden.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="214"/>
         <source>Additionally save playcounts to ID3 POPM frames when writing MP3 files. Other formats are unaffected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichere Wiedergabezahlen beim Schreiben von MP3-Dateien zusätzlich in das ID3 POPM Frame. Andere Formate sind nicht betroffen.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="216"/>
@@ -7909,7 +7909,7 @@ Diese Einstellung verbessert die Kompatibilität mit anderen Abspielprogrammen, 
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="222"/>
         <source>Playcount Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabezähler-Tags</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="226"/>
@@ -7944,12 +7944,12 @@ Diese Einstellung verbessert die Kompatibilität mit anderen Abspielprogrammen, 
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="252"/>
         <source>Read playcount from</source>
-        <translation type="unfinished"></translation>
+        <translation>Lies Wiedergabezähler aus</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="254"/>
         <source>Write playcount to</source>
-        <translation type="unfinished"></translation>
+        <translation>Schreib Wiedergabezähler nach</translation>
     </message>
 </context>
 <context>
@@ -8132,7 +8132,7 @@ Diese Einstellung verbessert die Kompatibilität mit anderen Abspielprogrammen, 
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="49"/>
         <source>Preserve playback playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Behalte Wiedergabeliste bei</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="81"/>
@@ -8143,7 +8143,7 @@ Diese Einstellung verbessert die Kompatibilität mit anderen Abspielprogrammen, 
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="99"/>
         <source>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenn diese Auswahl-Wiedergabeliste für die Wiedergabe verwendet wird, behalte sie mit einem angehängten „(Wiedergabe)“ bei, anstatt alle Titel zu ersetzen.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="116"/>
@@ -8675,7 +8675,7 @@ Diese Einstellung verbessert die Kompatibilität mit anderen Abspielprogrammen, 
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="184"/>
         <source>Progress highlighting</source>
-        <translation type="unfinished"></translation>
+        <translation>Fortschritts-Hervorhebung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="194"/>
@@ -8764,7 +8764,7 @@ Diese Einstellung verbessert die Kompatibilität mit anderen Abspielprogrammen, 
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="136"/>
         <source>Operation</source>
-        <translation>Operation</translation>
+        <translation>Aktion</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="144"/>
@@ -9769,7 +9769,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="49"/>
         <source>&amp;Oscilloscope</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Oszilloskop</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="50"/>

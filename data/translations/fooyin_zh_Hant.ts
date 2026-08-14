@@ -2867,17 +2867,17 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="422"/>
         <source>Align to centre</source>
-        <translation>置中對齊</translation>
+        <translation>置中</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="423"/>
         <source>Align to left</source>
-        <translation>齊左</translation>
+        <translation>靠左</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="424"/>
         <source>Align to right</source>
-        <translation>齊右</translation>
+        <translation>靠右</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="446"/>
@@ -4770,7 +4770,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="500"/>
         <source>Finishing operations…</source>
-        <translation type="unfinished"></translation>
+        <translation>結束操作…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="509"/>
@@ -4788,50 +4788,50 @@ Effects here process the final combined output.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="530"/>
         <source>Aborted: %Ln operation(s) not run</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>中止： %Ln 操作未予執行</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="536"/>
         <source>Completed %Ln operation(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已經完成 %Ln 操作</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="543"/>
         <source>%Ln succeeded</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 已經成功</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="546"/>
         <source>%Ln failed</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 執行失敗</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="549"/>
         <source>%Ln skipped</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 忽略跳過</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="552"/>
         <source>%Ln cancelled</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 已經取消</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="557"/>
         <source>Completed %Ln operation(s): %1</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已經完成 %Ln 操作： %1</numerusform>
         </translation>
     </message>
     <message>
@@ -4941,12 +4941,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="124"/>
         <source>Result</source>
-        <translation type="unfinished"></translation>
+        <translation>結果</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="165"/>
         <source>Pending</source>
-        <translation type="unfinished"></translation>
+        <translation>待處理</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="238"/>
@@ -4992,27 +4992,27 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="261"/>
         <source>Succeeded</source>
-        <translation type="unfinished"></translation>
+        <translation>已經成功</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="263"/>
         <source>Failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>失敗： %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="265"/>
         <source>Skipped: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>跳過： %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="267"/>
         <source>Cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>已經取消</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="267"/>
         <source>Cancelled: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>取消： %1</translation>
     </message>
 </context>
 <context>
@@ -5088,53 +5088,53 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="274"/>
         <source>Could not create directory</source>
-        <translation type="unfinished"></translation>
+        <translation>無法建立目錄</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="283"/>
         <source>Could not remove directory</source>
-        <translation type="unfinished"></translation>
+        <translation>無法移除目錄</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="606"/>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="662"/>
         <source>Source file does not exist</source>
-        <translation type="unfinished"></translation>
+        <translation>來源檔案不存在</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="678"/>
         <source>Could not open archive</source>
-        <translation type="unfinished"></translation>
+        <translation>無法開啟壓縮封存檔</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="684"/>
         <source>Destination file already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>目的檔案已有存在</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="700"/>
         <source>Archive extraction was interrupted</source>
-        <translation type="unfinished"></translation>
+        <translation>封存檔案解壓縮中斷</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="702"/>
         <source>Could not extract archive entry</source>
-        <translation type="unfinished"></translation>
+        <translation>無法解壓縮封存檔案輸入</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="714"/>
         <source>One or more archive entries could not be extracted</source>
-        <translation type="unfinished"></translation>
+        <translation>無法解壓縮一個或多個封存檔案輸入</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="719"/>
         <source>No archive entries were extracted</source>
-        <translation type="unfinished"></translation>
+        <translation>無封存檔案輸入處理解壓縮</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="727"/>
         <source>Could not delete source archive</source>
-        <translation type="unfinished"></translation>
+        <translation>無法刪除來源壓縮封存檔</translation>
     </message>
 </context>
 <context>
@@ -7748,7 +7748,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="357"/>
         <source>Ratings &amp;&amp; Playcounts</source>
-        <translation type="unfinished"></translation>
+        <translation>評分 &amp;&amp; 播放次數</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="358"/>
@@ -7796,27 +7796,27 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="168"/>
         <source>Read ratings from ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>讀取評分 來自 ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="169"/>
         <source>Write ratings to ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>寫入評分至 ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="176"/>
         <source>Read playcounts from ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>讀取播放次數 來自 ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="177"/>
         <source>Write playcounts to ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>寫入播放次數至 ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="197"/>
         <source>Read ratings from ID3 POPM frames in MP3 files when no text rating was read.</source>
-        <translation type="unfinished"></translation>
+        <translation>讀取評分來自 MP3 檔案中 ID3 POPM，當無文字評分被讀取時。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="199"/>
@@ -7848,22 +7848,22 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="209"/>
         <source>Tag field to read playcount values from. Automatic detection prefers FMPS_PLAYCOUNT, then PLAYCOUNT.</source>
-        <translation type="unfinished"></translation>
+        <translation>標籤欄位用以讀取 playcount 的值。自動偵測偏好的 FMPS_PLAYCOUNT，然後選擇 PLAYCOUNT。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="210"/>
         <source>Tag field used when saving playcounts as text metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用標籤欄位，當儲存播放次數為文字詮釋資料。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="212"/>
         <source>Read playcounts from ID3 POPM frames in MP3 files when no text playcount was read.</source>
-        <translation type="unfinished"></translation>
+        <translation>讀取播放次數來自 MP3 檔案中的 ID3 POPM 格位，當無文字播放次數被讀取時。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="214"/>
         <source>Additionally save playcounts to ID3 POPM frames when writing MP3 files. Other formats are unaffected.</source>
-        <translation type="unfinished"></translation>
+        <translation>此外，儲存播放次數至 ID3 POPM 格位，當寫入 MP3 檔案時。其他格式不受影響。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="216"/>
@@ -7883,7 +7883,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="222"/>
         <source>Playcount Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>播放次數標籤</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="226"/>
@@ -7918,12 +7918,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="252"/>
         <source>Read playcount from</source>
-        <translation type="unfinished"></translation>
+        <translation>讀取播放次數來自</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="254"/>
         <source>Write playcount to</source>
-        <translation type="unfinished"></translation>
+        <translation>寫入播放次數至</translation>
     </message>
 </context>
 <context>
@@ -8649,7 +8649,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="184"/>
         <source>Progress highlighting</source>
-        <translation type="unfinished"></translation>
+        <translation>強調顯示進度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="194"/>
