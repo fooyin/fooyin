@@ -600,6 +600,32 @@ void Widgets::registerAdvancedSettings()
          .normalise   = {},
          .validate    = {}});
     advancedSettingsRegistry->add(
+        Settings::Core::Internal::Id3v2WriteVersion, static_cast<int>(Id3v2WriteVersion::V4),
+        {.category    = {tr("Tagging"), u"MP3"_s},
+         .label       = tr("ID3v2 revision"),
+         .description = tr("ID3v2 revision used when writing MP3 tags"),
+         .editor      = AdvancedSettingRadioButtons{.options = {{.value = static_cast<int>(Id3v2WriteVersion::V3),
+                                                                 .label = tr("Write ID3v2.3 tags")},
+                                                                {.value = static_cast<int>(Id3v2WriteVersion::V4),
+                                                                 .label = tr("Write ID3v2.4 tags")}}},
+         .normalise   = {},
+         .validate    = {}});
+    advancedSettingsRegistry->add(
+        Settings::Core::Internal::Mp3TagWritingScheme, static_cast<int>(Mp3TagWritingScheme::Id3v2AndId3v1),
+        {.category    = {tr("Tagging"), u"MP3"_s},
+         .label       = tr("Tag writing scheme for untagged files"),
+         .description = tr("Tag types created when writing an MP3 file that has no existing tags"),
+         .editor
+         = AdvancedSettingRadioButtons{.options
+                                       = {{.value = static_cast<int>(Mp3TagWritingScheme::Id3v2AndId3v1),
+                                           .label = tr("ID3v2 + ID3v1")},
+                                          {.value = static_cast<int>(Mp3TagWritingScheme::Id3v2), .label = tr("ID3v2")},
+                                          {.value = static_cast<int>(Mp3TagWritingScheme::ApeAndId3v1),
+                                           .label = tr("APE + ID3v1")},
+                                          {.value = static_cast<int>(Mp3TagWritingScheme::Ape), .label = tr("APE")}}},
+         .normalise = {},
+         .validate  = {}});
+    advancedSettingsRegistry->add(
         {.id           = QString::fromLatin1(Settings::Core::Internal::FFmpegAllExtensions),
          .category     = {tr("Playback"), tr("Decoding"), u"FFmpeg"_s},
          .label        = tr("Enable all supported extensions"),

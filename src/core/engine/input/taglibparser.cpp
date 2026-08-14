@@ -26,6 +26,7 @@
 
 #include <core/constants.h>
 #include <core/coresettings.h>
+#include <core/internalcoresettings.h>
 #include <core/track.h>
 #include <utils/helpers.h>
 #include <utils/stringutils.h>
@@ -2615,6 +2616,58 @@ bool saveModifiedFile(auto& file, bool modified, QStringView operation, const QS
     return false;
 }
 
+TagLib::ID3v2::Version id3v2Version(const TagPolicy& policy)
+{
+    return policy.id3v2WriteVersion == Id3v2WriteVersion::V3 ? TagLib::ID3v2::v3 : TagLib::ID3v2::v4;
+}
+
+int mpegTagTypesForWrite(const TagLib::MPEG::File& file, const TagPolicy& policy)
+{
+    int tagTypes{TagLib::MPEG::File::NoTags};
+    if(file.hasID3v1Tag()) {
+        tagTypes |= TagLib::MPEG::File::ID3v1;
+    }
+    if(file.hasID3v2Tag()) {
+        tagTypes |= TagLib::MPEG::File::ID3v2;
+    }
+    if(file.hasAPETag()) {
+        tagTypes |= TagLib::MPEG::File::APE;
+    }
+
+    if(tagTypes != TagLib::MPEG::File::NoTags) {
+        return tagTypes;
+    }
+
+    switch(policy.mp3TagWritingScheme) {
+        case Mp3TagWritingScheme::Id3v2AndId3v1:
+            return TagLib::MPEG::File::ID3v2 | TagLib::MPEG::File::ID3v1;
+        case Mp3TagWritingScheme::Id3v2:
+            return TagLib::MPEG::File::ID3v2;
+        case Mp3TagWritingScheme::ApeAndId3v1:
+            return TagLib::MPEG::File::APE | TagLib::MPEG::File::ID3v1;
+        case Mp3TagWritingScheme::Ape:
+            return TagLib::MPEG::File::APE;
+    }
+
+    return TagLib::MPEG::File::ID3v2 | TagLib::MPEG::File::ID3v1;
+}
+
+bool saveModifiedMpegFile(TagLib::MPEG::File& file, bool modified, int tagTypes, const TagPolicy& policy,
+                          QStringView operation, const QString& filepath, const QString& mimeType, bool& failureLogged)
+{
+    if(!modified) {
+        return true;
+    }
+
+    if(file.save(tagTypes, TagLib::MPEG::File::StripOthers, id3v2Version(policy), TagLib::MPEG::File::DoNotDuplicate)) {
+        return true;
+    }
+
+    logWriteFailure(operation, filepath, mimeType, u"save() returned false"_s);
+    failureLogged = true;
+    return false;
+}
+
 bool isHandledAsfRatingTag(const QString& tag)
 {
     return tag == "FMPS_RATING"_L1 || tag == "RATING"_L1 || tag == "WM/SHAREDUSERRATING"_L1;
@@ -3611,7 +3664,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
     }
 
     const auto writeProperties
-        = [&track, options](TagLib::File& file, bool skipExtra = false, bool useId3PairedTotals = false) {
+        = [&track, options]<typename T>(T& file, bool skipExtra = false, bool useId3PairedTotals = false) {
               auto savedProperties = file.properties();
               writeGenericProperties(savedProperties, track, options, skipExtra, useId3PairedTotals);
               file.setProperties(savedProperties);
@@ -3633,11 +3686,24 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
             TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false, style);
 #endif
             if(file.isValid()) {
-                writeProperties(file, false, true);
-                if(auto* tag = file.ID3v2Tag(true)) {
+                const int tagTypes = mpegTagTypesForWrite(file, policy);
+
+                if(tagTypes & TagLib::MPEG::File::ID3v2) {
+                    auto* tag = file.ID3v2Tag(true);
+                    writeProperties(*tag, false, true);
                     writeID3v2Tags(tag, track, options, policy, true);
                 }
-                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType, failureLogged);
+                if(tagTypes & TagLib::MPEG::File::APE) {
+                    auto* tag = file.APETag(true);
+                    writeProperties(*tag, false, true);
+                    writeApeTags(tag, track, options, policy);
+                }
+                if(tagTypes & TagLib::MPEG::File::ID3v1) {
+                    writeProperties(*file.ID3v1Tag(true), true);
+                }
+
+                success = saveModifiedMpegFile(file, true, tagTypes, policy, u"write metadata"_s, source.filepath,
+                                               mimeType, failureLogged);
             }
             break;
         }
@@ -3872,10 +3938,11 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
         mtime = info.lastModified();
     }
 
-    const auto detected  = detectAudioFileFormat(source);
-    const auto format    = detected.format;
-    const auto& mimeType = detected.mimeType;
-    const auto style     = TagLib::AudioProperties::Average;
+    const auto detected    = detectAudioFileFormat(source);
+    const auto format      = detected.format;
+    const auto& mimeType   = detected.mimeType;
+    const auto style       = TagLib::AudioProperties::Average;
+    const TagPolicy policy = tagPolicy();
     bool success{false};
     bool failureLogged{false};
 
@@ -3887,9 +3954,27 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false, style);
 #endif
             if(file.isValid()) {
-                if(auto* tag = file.ID3v2Tag(true)) {
-                    success = saveModifiedFile(file, writeId3Cover(tag, covers), u"write cover artwork"_s,
-                                               source.filepath, mimeType, failureLogged);
+                const int tagTypes = mpegTagTypesForWrite(file, policy);
+                bool modified{false};
+
+                if(tagTypes & TagLib::MPEG::File::ID3v2) {
+                    modified |= writeId3Cover(file.ID3v2Tag(true), covers);
+                }
+                if(tagTypes & TagLib::MPEG::File::APE) {
+                    modified |= writeApeCover(file.APETag(true), covers);
+                }
+
+                if(modified) {
+                    success = saveModifiedMpegFile(file, true, tagTypes, policy, u"write cover artwork"_s,
+                                                   source.filepath, mimeType, failureLogged);
+                }
+                else if(!(tagTypes & (TagLib::MPEG::File::ID3v2 | TagLib::MPEG::File::APE))) {
+                    logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType,
+                                    u"existing tag scheme cannot store cover artwork"_s);
+                    failureLogged = true;
+                }
+                else {
+                    success = true;
                 }
             }
             break;

@@ -28,6 +28,20 @@
 namespace Fooyin {
 class SettingsManager;
 
+enum class Id3v2WriteVersion : uint8_t
+{
+    V3 = 3,
+    V4 = 4,
+};
+
+enum class Mp3TagWritingScheme : uint8_t
+{
+    Id3v2AndId3v1 = 0,
+    Id3v2,
+    ApeAndId3v1,
+    Ape,
+};
+
 enum class ReplayGainType : uint8_t
 {
     Track = 0,
@@ -58,6 +72,8 @@ constexpr auto FFmpegAllExtensions               = "Engine/FFmpegAllExtensions";
 constexpr auto FFmpegPriorityExtensions          = "Engine/FFmpegPriorityExtensions";
 constexpr auto ReaderProbeAllExtensions          = "Engine/ReaderProbeAllExtensions";
 constexpr auto SplitId3v23SemicolonSeparatedTags = "Tagging/SplitId3v23SemicolonSeparatedTags";
+constexpr auto Id3v2WriteVersion                 = "Tagging/Id3v2WriteVersion";
+constexpr auto Mp3TagWritingScheme               = "Tagging/Mp3TagWritingScheme";
 
 constexpr auto DefaultRemoteReadAheadKb   = 2048;
 constexpr auto DefaultRemotePrebufferMs   = 0;

@@ -25,8 +25,10 @@
 #include <core/engine/input/ratingtagpolicy.h>
 #include <core/engine/input/taglibparser.h>
 #include <core/engine/tagdefs.h>
+#include <core/internalcoresettings.h>
 #include <core/track.h>
 
+#include <taglib/apetag.h>
 #include <taglib/id3v2tag.h>
 #include <taglib/mp4file.h>
 #include <taglib/mpegfile.h>
@@ -560,6 +562,167 @@ TEST_F(TagWriterTest, Mp3Write)
         ASSERT_TRUE(!writeTag.isEmpty());
         EXPECT_EQ(writeTag.front(), u"Success"_s);
     }
+}
+
+TEST_F(TagWriterTest, Mp3WriteUsesConfiguredSchemeForUntaggedFiles)
+{
+    struct TestCase
+    {
+        Mp3TagWritingScheme scheme;
+        bool hasId3v1;
+        bool hasId3v2;
+        bool hasApe;
+    };
+
+    constexpr std::array testCases{
+        TestCase{Mp3TagWritingScheme::Id3v2AndId3v1, true, true, false},
+        TestCase{Mp3TagWritingScheme::Id3v2, false, true, false},
+        TestCase{Mp3TagWritingScheme::ApeAndId3v1, true, false, true},
+        TestCase{Mp3TagWritingScheme::Ape, false, false, true},
+    };
+
+    for(const auto& testCase : testCases) {
+        SCOPED_TRACE(static_cast<int>(testCase.scheme));
+
+        TempResource file{u":/audio/audiotest.mp3"_s};
+        file.checkValid();
+        const QByteArray localPath = file.fileName().toLocal8Bit();
+
+        {
+            TagLib::MPEG::File mp3File{localPath.constData()};
+            ASSERT_TRUE(mp3File.isValid());
+            ASSERT_TRUE(mp3File.strip());
+        }
+
+        {
+            FySettings settings;
+            settings.setValue(Settings::Core::Internal::Mp3TagWritingScheme, static_cast<int>(testCase.scheme));
+            settings.sync();
+        }
+
+        const AudioSource source{.filepath = file.fileName(), .device = &file};
+        Track track{file.fileName()};
+        track.setId(0);
+        track.setTitle(u"Scheme Test"_s);
+        ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
+
+        const QByteArray writtenPath = file.fileName().toLocal8Bit();
+        const TagLib::MPEG::File mp3File{writtenPath.constData()};
+        ASSERT_TRUE(mp3File.isValid());
+        EXPECT_EQ(mp3File.hasID3v1Tag(), testCase.hasId3v1);
+        EXPECT_EQ(mp3File.hasID3v2Tag(), testCase.hasId3v2);
+        EXPECT_EQ(mp3File.hasAPETag(), testCase.hasApe);
+    }
+}
+
+TEST_F(TagWriterTest, Mp3WriteUsesConfiguredId3v2Version)
+{
+    TempResource file{u":/audio/audiotest.mp3"_s};
+    file.checkValid();
+    const QByteArray localPath = file.fileName().toLocal8Bit();
+
+    {
+        TagLib::MPEG::File mp3File{localPath.constData()};
+        ASSERT_TRUE(mp3File.isValid());
+        ASSERT_TRUE(mp3File.strip());
+    }
+
+    const AudioSource source{.filepath = file.fileName(), .device = &file};
+    Track track{file.fileName()};
+    track.setId(0);
+    track.setTitle(u"Version Test"_s);
+
+    for(const auto version : {Id3v2WriteVersion::V3, Id3v2WriteVersion::V4}) {
+        {
+            FySettings settings;
+            settings.setValue(Settings::Core::Internal::Mp3TagWritingScheme,
+                              static_cast<int>(Mp3TagWritingScheme::Id3v2));
+            settings.setValue(Settings::Core::Internal::Id3v2WriteVersion, static_cast<int>(version));
+            settings.sync();
+        }
+
+        ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
+
+        const QByteArray writtenPath = file.fileName().toLocal8Bit();
+        TagLib::MPEG::File mp3File{writtenPath.constData()};
+        ASSERT_TRUE(mp3File.hasID3v2Tag());
+        ASSERT_NE(mp3File.ID3v2Tag(), nullptr);
+        EXPECT_EQ(mp3File.ID3v2Tag()->header()->majorVersion(), static_cast<unsigned int>(version));
+    }
+}
+
+TEST_F(TagWriterTest, Mp3WritePreservesExistingTagScheme)
+{
+    TempResource file{u":/audio/audiotest.mp3"_s};
+    file.checkValid();
+    const QByteArray localPath = file.fileName().toLocal8Bit();
+
+    {
+        TagLib::MPEG::File mp3File{localPath.constData()};
+        ASSERT_TRUE(mp3File.isValid());
+        ASSERT_TRUE(mp3File.strip());
+    }
+
+    const AudioSource source{.filepath = file.fileName(), .device = &file};
+    Track track{file.fileName()};
+    track.setId(0);
+    track.setTitle(u"First Write"_s);
+
+    {
+        FySettings settings;
+        settings.setValue(Settings::Core::Internal::Mp3TagWritingScheme, static_cast<int>(Mp3TagWritingScheme::Ape));
+        settings.sync();
+    }
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
+
+    {
+        FySettings settings;
+        settings.setValue(Settings::Core::Internal::Mp3TagWritingScheme,
+                          static_cast<int>(Mp3TagWritingScheme::Id3v2AndId3v1));
+        settings.sync();
+    }
+    track.setTitle(u"Second Write"_s);
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
+
+    const QByteArray writtenPath = file.fileName().toLocal8Bit();
+    TagLib::MPEG::File mp3File{writtenPath.constData()};
+    EXPECT_FALSE(mp3File.hasID3v1Tag());
+    EXPECT_FALSE(mp3File.hasID3v2Tag());
+    ASSERT_TRUE(mp3File.hasAPETag());
+    EXPECT_EQ(QString::fromUtf8(mp3File.APETag()->title().toCString(true)), u"Second Write"_s);
+}
+
+TEST_F(TagWriterTest, Mp3CoverWriteUsesConfiguredApeScheme)
+{
+    TempResource file{u":/audio/audiotest.mp3"_s};
+    file.checkValid();
+    const QByteArray localPath = file.fileName().toLocal8Bit();
+
+    {
+        TagLib::MPEG::File mp3File{localPath.constData()};
+        ASSERT_TRUE(mp3File.isValid());
+        ASSERT_TRUE(mp3File.strip());
+    }
+    {
+        FySettings settings;
+        settings.setValue(Settings::Core::Internal::Mp3TagWritingScheme, static_cast<int>(Mp3TagWritingScheme::Ape));
+        settings.sync();
+    }
+
+    const QByteArray coverData = createPngCover({32, 32});
+    TrackCovers covers;
+    covers.emplace(Track::Cover::Front, CoverImage{.mimeType = u"image/png"_s, .data = coverData});
+
+    const AudioSource source{.filepath = file.fileName(), .device = &file};
+    const Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.writeCover(source, track, covers, Flags));
+
+    const QByteArray writtenPath = file.fileName().toLocal8Bit();
+    TagLib::MPEG::File mp3File{writtenPath.constData()};
+    EXPECT_FALSE(mp3File.hasID3v1Tag());
+    EXPECT_FALSE(mp3File.hasID3v2Tag());
+    ASSERT_TRUE(mp3File.hasAPETag());
+    EXPECT_TRUE(mp3File.APETag()->itemListMap().contains("COVER ART (FRONT)"));
 }
 
 TEST_F(TagWriterTest, Mp3WriteHonoursPopmSettings)
