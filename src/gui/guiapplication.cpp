@@ -234,7 +234,7 @@ GuiApplication::GuiApplication(Application* core)
     , m_helpMenu{new HelpMenu(m_actionManager, this)}
     , m_propertiesDialog{new PropertiesDialog(m_actionManager, m_settings, this)}
     , m_scriptCommandHandler{std::make_unique<ScriptCommandHandler>(m_actionManager, m_playerController,
-                                                                     m_propertiesDialog)}
+                                                                    m_propertiesDialog)}
     , m_windowController{new WindowController(m_mainWindow.get())}
     , m_themeRegistry{new ThemeRegistry(m_settings, this)}
     , m_styleProvider{new GuiStyleProvider(m_settings, this)}
@@ -243,13 +243,13 @@ GuiApplication::GuiApplication(Application* core)
     , m_guiPluginContext{m_actionManager,
                          m_layoutProvider.get(),
                          m_selectionController.get(),
-                          m_searchController,
-                          m_playlistController.get(),
-                          m_playlistController.get(),
-                          m_propertiesDialog,
-                          m_scriptCommandHandler.get(),
-                          &m_scriptVariableRegistry,
-                          m_widgetProvider.get(),
+                         m_searchController,
+                         m_playlistController.get(),
+                         m_playlistController.get(),
+                         m_propertiesDialog,
+                         m_scriptCommandHandler.get(),
+                         &m_scriptVariableRegistry,
+                         m_widgetProvider.get(),
                          m_editableLayout.get(),
                          m_windowController,
                          m_themeRegistry,
