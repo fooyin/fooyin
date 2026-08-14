@@ -29,6 +29,9 @@ namespace Fooyin {
 class FYGUI_EXPORT ScriptVariableRegistry
 {
 public:
+    /*!
+     * Registers variables during GUI plugin initialisation.
+     */
     void registerProvider(const ScriptVariableProvider& provider);
 
     [[nodiscard]] std::vector<ScriptVariableDescriptor> variables() const;

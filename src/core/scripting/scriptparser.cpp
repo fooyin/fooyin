@@ -110,6 +110,11 @@ void ScriptParser::addGlobalProvider(const ScriptVariableProvider& provider)
     ScriptRegistry::addGlobalProvider(provider);
 }
 
+void ScriptParser::finaliseGlobalProviderRegistration()
+{
+    ScriptRegistry::finaliseGlobalProviderRegistration();
+}
+
 std::vector<ScriptVariableDescriptor> ScriptParser::globalVariables()
 {
     return ScriptRegistry::globalVariables();

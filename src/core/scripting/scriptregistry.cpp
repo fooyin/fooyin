@@ -47,12 +47,12 @@ using namespace Qt::StringLiterals;
 namespace {
 struct GlobalVariableState
 {
-    std::mutex mutex;
+    std::mutex registrationMutex;
     std::unordered_map<QString, Fooyin::VariableKind> customVariableKinds;
     std::unordered_map<QString, Fooyin::ScriptRegistry::VariableInvoker> genericVariableInvokers;
     std::unordered_map<Fooyin::VariableKind, Fooyin::ScriptRegistry::VariableInvoker> customVariables;
     std::vector<Fooyin::ScriptVariableDescriptor> descriptors;
-    uint64_t generation{0};
+    bool registrationFinalised{false};
 };
 
 GlobalVariableState& globalVariableState()
@@ -844,8 +844,7 @@ VariableKind ScriptRegistry::resolveVariableInternal(const QString& var) const
         return it->second;
     }
 
-    auto& state = globalVariableState();
-    const std::lock_guard lock{state.mutex};
+    const auto& state = globalVariableState();
     if(const auto it = state.customVariableKinds.find(var); it != state.customVariableKinds.cend()) {
         return it->second;
     }
@@ -915,8 +914,7 @@ const ScriptRegistry::VariableInvoker* ScriptRegistry::customVariableInvoker(con
             return &it->second;
         }
 
-        auto& state = globalVariableState();
-        const std::lock_guard lock{state.mutex};
+        const auto& state = globalVariableState();
         if(const auto it = state.genericVariableInvokers.find(var); it != state.genericVariableInvokers.cend()) {
             return &it->second;
         }
@@ -927,8 +925,7 @@ const ScriptRegistry::VariableInvoker* ScriptRegistry::customVariableInvoker(con
         return &it->second;
     }
 
-    auto& state = globalVariableState();
-    const std::lock_guard lock{state.mutex};
+    const auto& state = globalVariableState();
     if(const auto it = state.customVariables.find(kind); it != state.customVariables.cend()) {
         return &it->second;
     }
@@ -1070,7 +1067,13 @@ ScriptRegistry::~ScriptRegistry() = default;
 void ScriptRegistry::addGlobalProvider(const ScriptVariableProvider& provider)
 {
     auto& state = globalVariableState();
-    const std::lock_guard lock{state.mutex};
+    const std::lock_guard lock{state.registrationMutex};
+
+    Q_ASSERT_X(!state.registrationFinalised, "ScriptRegistry::addGlobalProvider",
+               "Global script variable providers must be registered during startup");
+    if(state.registrationFinalised) {
+        return;
+    }
 
     for(auto variable : provider.variables()) {
         variable.name = normalisedVariableName(variable.name);
@@ -1094,14 +1097,19 @@ void ScriptRegistry::addGlobalProvider(const ScriptVariableProvider& provider)
             state.descriptors.push_back(std::move(variable));
         }
     }
+}
 
-    ++state.generation;
+void ScriptRegistry::finaliseGlobalProviderRegistration()
+{
+    auto& state = globalVariableState();
+    const std::lock_guard lock{state.registrationMutex};
+    state.registrationFinalised = true;
 }
 
 std::vector<ScriptVariableDescriptor> ScriptRegistry::globalVariables()
 {
     auto& state = globalVariableState();
-    const std::lock_guard lock{state.mutex};
+    const std::lock_guard lock{state.registrationMutex};
     return state.descriptors;
 }
 
@@ -1231,22 +1239,10 @@ ScriptContext ScriptRegistry::currentContext() const
     return m_context;
 }
 
-uint64_t ScriptRegistry::generation() const
-{
-    return (m_generation << 1U) ^ globalVariableGeneration();
-}
-
 void ScriptRegistry::setContext(const ScriptContext& context)
 {
     m_context = context;
     clearTrackListCache();
-}
-
-uint64_t ScriptRegistry::globalVariableGeneration()
-{
-    auto& state = globalVariableState();
-    const std::lock_guard lock{state.mutex};
-    return state.generation;
 }
 
 void ScriptRegistry::registerVariable(VariableKind kind, const QString& name, VariableInvoker invoker)
@@ -1261,8 +1257,6 @@ void ScriptRegistry::registerVariable(VariableKind kind, const QString& name, Va
     else {
         m_customVariables[kind] = invoker;
     }
-
-    ++m_generation;
 }
 
 ScriptFunctionId ScriptRegistry::registerFunction(const QString& name, FunctionInvoker invoker)
@@ -1271,14 +1265,12 @@ ScriptFunctionId ScriptRegistry::registerFunction(const QString& name, FunctionI
 
     if(const auto it = m_functionIds.find(key); it != m_functionIds.cend()) {
         m_functions[static_cast<size_t>(it->second - 1)] = {.name = key, .invoker = invoker};
-        ++m_generation;
         return it->second;
     }
 
     const auto functionId = static_cast<ScriptFunctionId>(m_functions.size() + 1);
     m_functionIds.emplace(key, functionId);
     m_functions.push_back({.name = key, .invoker = invoker});
-    ++m_generation;
 
     return functionId;
 }

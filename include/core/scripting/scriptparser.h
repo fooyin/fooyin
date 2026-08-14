@@ -91,9 +91,13 @@ public:
     void addProvider(const ScriptFunctionProvider& provider);
 
     /*!
-     * Installs variables exported by `provider` into the shared global registry.
+     * Installs variables exported by `provider` into the shared global registry during startup.
      */
     static void addGlobalProvider(const ScriptVariableProvider& provider);
+    /*!
+     * Finalises global provider registration. Providers cannot be added after this call.
+     */
+    static void finaliseGlobalProviderRegistration();
     /*!
      * Returns globally registered provider-defined variable descriptors.
      */

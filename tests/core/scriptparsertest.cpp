@@ -774,12 +774,10 @@ TEST_F(ScriptParserTest, StatefulVariableProvidersInstallIntoRegistry)
     EXPECT_EQ(u"stateful", parser.evaluate(u"%statefulvar%"_s, track, context));
 }
 
-TEST_F(ScriptParserTest, GlobalVariableProvidersInstallIntoExistingParsers)
+TEST_F(ScriptParserTest, GlobalVariableProvidersInstallIntoParsersCreatedBeforeRegistration)
 {
     const Track track;
     const ParsedScript parsed = m_parser.parse(u"%plugin_global_test_variable%"_s);
-
-    EXPECT_EQ(u"", m_parser.evaluate(parsed, track));
 
     ScriptParser::addGlobalProvider(GlobalVariableProvider);
 
