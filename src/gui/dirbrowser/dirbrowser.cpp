@@ -72,6 +72,7 @@ constexpr auto DirBrowserMiddleClickKey     = u"DirectoryBrowser/MiddleClickBeha
 constexpr auto DirBrowserModeKey            = u"DirectoryBrowser/Mode";
 constexpr auto DirBrowserListIndentKey      = u"DirectoryBrowser/IndentList";
 constexpr auto DirBrowserControlsKey        = u"DirectoryBrowser/Controls";
+constexpr auto DirBrowserControlsPosKey     = u"DirectoryBrowser/ControlsPosition";
 constexpr auto DirBrowserLocationKey        = u"DirectoryBrowser/LocationBar";
 constexpr auto DirBrowserShowSymLinksKey    = u"DirectoryBrowser/SymLinks";
 constexpr auto DirBrowserShowHiddenKey      = u"DirectoryBrowser/Hidden";
@@ -176,6 +177,7 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
     , m_playlistInteractor{playlistInteractor}
     , m_playlistHandler{m_playlistInteractor->handler()}
     , m_settings{settings}
+    , m_mainLayout{new QVBoxLayout(this)}
     , m_controlLayout{new QHBoxLayout()}
     , m_setup{false}
     , m_mode{Mode::List}
@@ -215,11 +217,9 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
     Gui::setThemeIcon(m_addQueue, Constants::Icons::Add);
     Gui::setThemeIcon(m_queueNext, Constants::Icons::Next);
 
-    auto* layout = new QVBoxLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
-
-    layout->addLayout(m_controlLayout);
-    layout->addWidget(m_dirTree);
+    m_mainLayout->setContentsMargins({});
+    m_mainLayout->addLayout(m_controlLayout);
+    m_mainLayout->addWidget(m_dirTree);
 
     checkIconProvider();
 
@@ -402,6 +402,7 @@ DirBrowser::ConfigData DirBrowser::factoryConfig() const
         .indentList         = true,
         .showHorizScrollbar = true,
         .mode               = Mode::List,
+        .controlsPosition   = ControlsPosition::Top,
         .showControls       = true,
         .showLocation       = true,
         .showSymLinks       = false,
@@ -421,6 +422,8 @@ DirBrowser::ConfigData DirBrowser::defaultConfig() const
     config.indentList         = m_settings->fileValue(DirBrowserListIndentKey, config.indentList).toBool();
     config.showHorizScrollbar = m_settings->fileValue(DirBrowserShowHorizScrollKey, config.showHorizScrollbar).toBool();
     config.mode = static_cast<Mode>(m_settings->fileValue(DirBrowserModeKey, static_cast<int>(config.mode)).toInt());
+    config.controlsPosition = static_cast<ControlsPosition>(
+        m_settings->fileValue(DirBrowserControlsPosKey, static_cast<int>(config.controlsPosition)).toInt());
     config.showControls = m_settings->fileValue(DirBrowserControlsKey, config.showControls).toBool();
     config.showLocation = m_settings->fileValue(DirBrowserLocationKey, config.showLocation).toBool();
     config.showSymLinks = m_settings->fileValue(DirBrowserShowSymLinksKey, config.showSymLinks).toBool();
@@ -443,6 +446,7 @@ void DirBrowser::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(DirBrowserListIndentKey, config.indentList);
     m_settings->fileSet(DirBrowserShowHorizScrollKey, config.showHorizScrollbar);
     m_settings->fileSet(DirBrowserModeKey, static_cast<int>(config.mode));
+    m_settings->fileSet(DirBrowserControlsPosKey, static_cast<int>(config.controlsPosition));
     m_settings->fileSet(DirBrowserControlsKey, config.showControls);
     m_settings->fileSet(DirBrowserLocationKey, config.showLocation);
     m_settings->fileSet(DirBrowserShowSymLinksKey, config.showSymLinks);
@@ -458,6 +462,7 @@ void DirBrowser::clearSavedDefaults() const
     m_settings->fileRemove(DirBrowserListIndentKey);
     m_settings->fileRemove(DirBrowserShowHorizScrollKey);
     m_settings->fileRemove(DirBrowserModeKey);
+    m_settings->fileRemove(DirBrowserControlsPosKey);
     m_settings->fileRemove(DirBrowserControlsKey);
     m_settings->fileRemove(DirBrowserLocationKey);
     m_settings->fileRemove(DirBrowserShowSymLinksKey);
@@ -475,6 +480,7 @@ void DirBrowser::applyConfig(const ConfigData& config)
     setListIndentEnabled(m_config.indentList);
     setShowHorizontalScrollbar(m_config.showHorizScrollbar);
     changeMode(m_config.mode);
+    setControlsPosition(m_config.controlsPosition);
     setControlsEnabled(m_config.showControls);
     setLocationEnabled(m_config.showLocation);
     setShowSymLinksEnabled(m_config.showSymLinks);
@@ -1007,6 +1013,12 @@ void DirBrowser::updateFilters()
     m_model->setFilter(newFilters);
 }
 
+void DirBrowser::setControlsPosition(ControlsPosition position)
+{
+    m_mainLayout->removeItem(m_controlLayout);
+    m_mainLayout->insertLayout(position == ControlsPosition::Top ? 0 : 1, m_controlLayout);
+}
+
 void DirBrowser::setControlsEnabled(bool enabled)
 {
     if(!enabled) {
@@ -1141,6 +1153,7 @@ void DirBrowser::saveConfigToLayout(const ConfigData& config, QJsonObject& layou
     layout["IndentList"_L1]              = config.indentList;
     layout["ShowHorizontalScrollbar"_L1] = config.showHorizScrollbar;
     layout["Mode"_L1]                    = static_cast<int>(config.mode);
+    layout["ControlsPosition"_L1]        = static_cast<int>(config.controlsPosition);
     layout["ShowControls"_L1]            = config.showControls;
     layout["ShowLocation"_L1]            = config.showLocation;
     layout["ShowSymLinks"_L1]            = config.showSymLinks;
@@ -1174,6 +1187,12 @@ DirBrowser::ConfigData DirBrowser::configFromLayout(const QJsonObject& layout) c
         const int mode = layout.value("Mode"_L1).toInt();
         if(mode == static_cast<int>(Mode::Tree) || mode == static_cast<int>(Mode::List)) {
             config.mode = static_cast<Mode>(mode);
+        }
+    }
+    if(layout.contains("ControlsPosition"_L1)) {
+        const auto position = static_cast<ControlsPosition>(layout.value("ControlsPosition"_L1).toInt());
+        if(position == ControlsPosition::Top || position == ControlsPosition::Bottom) {
+            config.controlsPosition = position;
         }
     }
     if(layout.contains("ShowControls"_L1)) {

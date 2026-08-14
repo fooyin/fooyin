@@ -47,6 +47,7 @@ private:
     QCheckBox* m_showIcons;
     QCheckBox* m_indentList;
     QCheckBox* m_showHorizScrollbar;
+    QComboBox* m_controlsPosition;
     QCheckBox* m_showControls;
     QCheckBox* m_showLocation;
     QCheckBox* m_showSymLinks;

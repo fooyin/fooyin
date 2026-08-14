@@ -39,6 +39,7 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
     , m_showIcons{new QCheckBox(tr("Show icons"), this)}
     , m_indentList{new QCheckBox(tr("Show indent"), this)}
     , m_showHorizScrollbar{new QCheckBox(tr("Show horizontal scrollbar"), this)}
+    , m_controlsPosition{new QComboBox(this)}
     , m_showControls{new QCheckBox(tr("Show controls"), this)}
     , m_showLocation{new QCheckBox(tr("Show location"), this)}
     , m_showSymLinks{new QCheckBox(tr("Show symlinks"), this)}
@@ -71,13 +72,19 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
     browserFiltersLayout->addWidget(m_showSymLinks);
     browserFiltersLayout->addWidget(m_showHidden);
 
+    m_controlsPosition->addItem(tr("Top"), static_cast<int>(DirBrowser::ControlsPosition::Top));
+    m_controlsPosition->addItem(tr("Bottom"), static_cast<int>(DirBrowser::ControlsPosition::Bottom));
+
     auto* displayOptions       = new QGroupBox(tr("Display Options"), this);
     auto* displayOptionsLayout = new QGridLayout(displayOptions);
-    displayOptionsLayout->addWidget(m_showIcons, 0, 0);
-    displayOptionsLayout->addWidget(m_indentList, 1, 0);
-    displayOptionsLayout->addWidget(m_showHorizScrollbar, 2, 0);
-    displayOptionsLayout->addWidget(m_showControls, 3, 0);
-    displayOptionsLayout->addWidget(m_showLocation, 4, 0);
+    displayOptionsLayout->addWidget(m_showIcons, 0, 0, 1, 3);
+    displayOptionsLayout->addWidget(m_indentList, 1, 0, 1, 3);
+    displayOptionsLayout->addWidget(m_showHorizScrollbar, 2, 0, 1, 3);
+    displayOptionsLayout->addWidget(m_showControls, 3, 0, 1, 3);
+    displayOptionsLayout->addWidget(m_showLocation, 4, 0, 1, 3);
+    displayOptionsLayout->addWidget(new QLabel(tr("Path and controls position") + u":"_s, this), 5, 0);
+    displayOptionsLayout->addWidget(m_controlsPosition, 5, 1);
+    displayOptionsLayout->setColumnStretch(2, 1);
 
     auto* mainLayout = contentLayout();
     mainLayout->addWidget(clickBehaviour, 0, 0, 1, 2);
@@ -113,6 +120,7 @@ DirBrowser::ConfigData DirBrowserConfigDialog::config() const
         .indentList         = m_indentList->isChecked(),
         .showHorizScrollbar = m_showHorizScrollbar->isChecked(),
         .mode               = m_listMode->isChecked() ? DirBrowser::Mode::List : DirBrowser::Mode::Tree,
+        .controlsPosition   = static_cast<DirBrowser::ControlsPosition>(m_controlsPosition->currentData().toInt()),
         .showControls       = m_showControls->isChecked(),
         .showLocation       = m_showLocation->isChecked(),
         .showSymLinks       = m_showSymLinks->isChecked(),
@@ -126,6 +134,7 @@ void DirBrowserConfigDialog::setConfig(const DirBrowser::ConfigData& config)
     m_showIcons->setChecked(config.showIcons);
     m_indentList->setChecked(config.indentList);
     m_showHorizScrollbar->setChecked(config.showHorizScrollbar);
+    m_controlsPosition->setCurrentIndex(m_controlsPosition->findData(static_cast<int>(config.controlsPosition)));
     m_showControls->setChecked(config.showControls);
     m_showLocation->setChecked(config.showLocation);
     m_showSymLinks->setChecked(config.showSymLinks);
@@ -146,11 +155,12 @@ void DirBrowserConfigDialog::setConfig(const DirBrowser::ConfigData& config)
 void DirBrowserConfigDialog::mergeExternalConfig(const DirBrowser::ConfigData& previous,
                                                  const DirBrowser::ConfigData& current)
 {
-    mergeExternalFields(
-        previous, current, &DirBrowser::ConfigData::doubleClickAction, &DirBrowser::ConfigData::middleClickAction,
-        &DirBrowser::ConfigData::sendPlayback, &DirBrowser::ConfigData::showIcons, &DirBrowser::ConfigData::indentList,
-        &DirBrowser::ConfigData::showHorizScrollbar, &DirBrowser::ConfigData::mode,
-        &DirBrowser::ConfigData::showControls, &DirBrowser::ConfigData::showLocation,
-        &DirBrowser::ConfigData::showSymLinks, &DirBrowser::ConfigData::showHidden, &DirBrowser::ConfigData::rootPath);
+    mergeExternalFields(previous, current, &DirBrowser::ConfigData::doubleClickAction,
+                        &DirBrowser::ConfigData::middleClickAction, &DirBrowser::ConfigData::sendPlayback,
+                        &DirBrowser::ConfigData::showIcons, &DirBrowser::ConfigData::indentList,
+                        &DirBrowser::ConfigData::showHorizScrollbar, &DirBrowser::ConfigData::mode,
+                        &DirBrowser::ConfigData::controlsPosition, &DirBrowser::ConfigData::showControls,
+                        &DirBrowser::ConfigData::showLocation, &DirBrowser::ConfigData::showSymLinks,
+                        &DirBrowser::ConfigData::showHidden, &DirBrowser::ConfigData::rootPath);
 }
 } // namespace Fooyin
