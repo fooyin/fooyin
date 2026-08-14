@@ -42,7 +42,7 @@
 <context>
     <name>Fooyin::ConversionSession</name>
     <message numerus="yes">
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="185"/>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="193"/>
         <source>Converted: %Ln track(s)</source>
         <translation>
             <numerusform>Converted: %Ln track</numerusform>
@@ -50,7 +50,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="186"/>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="194"/>
         <source>Skipped: %Ln track(s)</source>
         <translation>
             <numerusform>Skipped: %Ln track</numerusform>
@@ -58,7 +58,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="187"/>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="195"/>
         <source>Failed: %Ln track(s)</source>
         <translation>
             <numerusform>Failed: %Ln track</numerusform>
@@ -66,7 +66,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="188"/>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="196"/>
         <source>Cancelled: %Ln track(s)</source>
         <translation>
             <numerusform>Cancelled: %Ln track</numerusform>
@@ -281,7 +281,7 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1685"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1691"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
