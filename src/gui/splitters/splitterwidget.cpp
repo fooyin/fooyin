@@ -160,6 +160,9 @@ public:
     {
         setObjectName(u"Splitter"_s);
         setChildrenCollapsible(false);
+        setLockedWidgetsResizeAdjacentOnly(m_settings->value<Settings::Gui::ResizeLockedAdjacentOnly>());
+        m_settings->subscribe<Settings::Gui::ResizeLockedAdjacentOnly>(this,
+                                                                       &FySplitter::setLockedWidgetsResizeAdjacentOnly);
     }
 
     void setCustomHandleSize(int size);

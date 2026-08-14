@@ -97,6 +97,7 @@ private:
 
     QCheckBox* m_splitterHandles;
     QCheckBox* m_lockSplitters;
+    QCheckBox* m_lockedWidgetsResizeAdjacentOnly;
     QCheckBox* m_overrideSplitterHandle;
     QSpinBox* m_splitterHandleGap;
 
@@ -125,6 +126,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_editableLayoutMargin{new QSpinBox(this)}
     , m_splitterHandles{new QCheckBox(tr("Show splitter handles"), this)}
     , m_lockSplitters{new QCheckBox(tr("Lock splitters"), this)}
+    , m_lockedWidgetsResizeAdjacentOnly{new QCheckBox(tr("Only resize locked widgets using adjacent handles"), this)}
     , m_overrideSplitterHandle{new QCheckBox(tr("Override splitter handle size") + u":"_s, this)}
     , m_splitterHandleGap{new QSpinBox(this)}
     , m_buttonRaise{new QCheckBox(tr("Raise"), this)}
@@ -169,6 +171,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     layoutGroupLayout->addWidget(m_showMenuBar, row++, 0, 1, 3);
     layoutGroupLayout->addWidget(m_splitterHandles, row++, 0, 1, 3);
     layoutGroupLayout->addWidget(m_lockSplitters, row++, 0, 1, 3);
+    layoutGroupLayout->addWidget(m_lockedWidgetsResizeAdjacentOnly, row++, 0, 1, 3);
     layoutGroupLayout->addWidget(m_overrideSplitterHandle, row, 0);
     layoutGroupLayout->addWidget(m_splitterHandleGap, row++, 1);
     layoutGroupLayout->addWidget(m_overrideMargin, row, 0);
@@ -180,6 +183,9 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
 
     m_splitterHandleGap->setRange(0, 20);
     m_splitterHandleGap->setSuffix(u" px"_s);
+
+    m_lockedWidgetsResizeAdjacentOnly->setToolTip(
+        tr("Prevent other splitter handles and parent splitters from changing the size of a locked widget."));
 
     auto* toolButtonGroup       = new QGroupBox(tr("Tool Buttons"), this);
     auto* toolButtonGroupLayout = new QVBoxLayout(toolButtonGroup);
@@ -245,6 +251,7 @@ void GuiGeneralPageWidget::load()
 
     m_splitterHandles->setChecked(m_settings->value<ShowSplitterHandles>());
     m_lockSplitters->setChecked(m_settings->value<LockSplitterHandles>());
+    m_lockedWidgetsResizeAdjacentOnly->setChecked(m_settings->value<ResizeLockedAdjacentOnly>());
 
     m_overrideMargin->setChecked(m_settings->value<EditableLayoutMargin>() >= 0);
     m_editableLayoutMargin->setValue(m_settings->value<EditableLayoutMargin>());
@@ -285,6 +292,7 @@ void GuiGeneralPageWidget::apply()
 
     m_settings->set<ShowSplitterHandles>(m_splitterHandles->isChecked());
     m_settings->set<LockSplitterHandles>(m_lockSplitters->isChecked());
+    m_settings->set<ResizeLockedAdjacentOnly>(m_lockedWidgetsResizeAdjacentOnly->isChecked());
 
     if(m_overrideMargin->isChecked()) {
         m_settings->set<EditableLayoutMargin>(m_editableLayoutMargin->value());
@@ -317,6 +325,7 @@ void GuiGeneralPageWidget::reset()
     m_settings->reset<ShowMenuBar>();
     m_settings->reset<ShowSplitterHandles>();
     m_settings->reset<LockSplitterHandles>();
+    m_settings->reset<ResizeLockedAdjacentOnly>();
     m_settings->reset<EditableLayoutMargin>();
     m_settings->reset<SplitterHandleSize>();
     m_settings->reset<ToolButtonStyle>();

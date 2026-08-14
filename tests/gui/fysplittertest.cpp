@@ -145,7 +145,71 @@ TEST(FySplitterTest, DirectHandleMoveRebasesLockedSize)
     EXPECT_EQ(manuallyResizedSize, splitter.sizes().at(0));
 }
 
-TEST(FySplitterTest, AncestorHandleMoveRebasesNestedLockedSize)
+TEST(FySplitterTest, UnrelatedHandleMovePreservesLockedSize)
+{
+    TestSplitter splitter{Qt::Horizontal};
+    addWidgets(splitter, 4);
+    showAndProcess(splitter, {800, 100});
+    splitter.setSizes({100, 150, 250, 300});
+
+    ASSERT_TRUE(splitter.setLocked(1, true));
+    const int lockedSize = splitter.sizes().at(1);
+
+    splitter.testHandle(3)->moveTo(650);
+    EXPECT_EQ(lockedSize, splitter.sizes().at(1));
+
+    splitter.testHandle(2)->moveTo(400);
+    EXPECT_NE(lockedSize, splitter.sizes().at(1));
+}
+
+TEST(FySplitterTest, UnrelatedEarlierHandlePreservesLockedSize)
+{
+    TestSplitter splitter{Qt::Horizontal};
+    addWidgets(splitter, 4);
+    showAndProcess(splitter, {800, 100});
+    splitter.setSizes({100, 150, 250, 300});
+
+    ASSERT_TRUE(splitter.setLocked(2, true));
+    const int lockedSize = splitter.sizes().at(2);
+
+    splitter.testHandle(1)->moveTo(200);
+    EXPECT_EQ(lockedSize, splitter.sizes().at(2));
+
+    splitter.testHandle(2)->moveTo(400);
+    EXPECT_NE(lockedSize, splitter.sizes().at(2));
+}
+
+TEST(FySplitterTest, UnrelatedHandleKeepsLockedChildCollapsed)
+{
+    TestSplitter splitter{Qt::Horizontal};
+    addWidgets(splitter, 3);
+    showAndProcess(splitter, {600, 100});
+    splitter.setSizes({0, 300, 300});
+
+    ASSERT_TRUE(splitter.setLocked(0, true));
+    ASSERT_EQ(0, splitter.sizes().at(0));
+
+    splitter.testHandle(2)->moveTo(400);
+    EXPECT_EQ(0, splitter.sizes().at(0));
+}
+
+TEST(FySplitterTest, UnrelatedHandleCanResizeLockedChildWhenAdjacentOnlyModeIsDisabled)
+{
+    TestSplitter splitter{Qt::Horizontal};
+    splitter.setChildrenCollapsible(false);
+    addWidgets(splitter, 4);
+    showAndProcess(splitter, {800, 100});
+    splitter.setSizes({100, 150, 250, 300});
+
+    ASSERT_TRUE(splitter.setLocked(1, true));
+    const int lockedSize = splitter.sizes().at(1);
+    splitter.setLockedWidgetsResizeAdjacentOnly(false);
+
+    splitter.testHandle(3)->moveTo(10);
+    EXPECT_NE(lockedSize, splitter.sizes().at(1));
+}
+
+TEST(FySplitterTest, AncestorHandleMovePreservesNestedLockedSize)
 {
     TestSplitter outer{Qt::Horizontal};
     auto* inner = new TestSplitter{Qt::Horizontal};
@@ -162,6 +226,33 @@ TEST(FySplitterTest, AncestorHandleMoveRebasesNestedLockedSize)
     inner->setSizes({120, 280});
     ASSERT_TRUE(inner->setLocked(0, true));
     const int initialLockedSize = inner->sizes().at(0);
+
+    outer.testHandle(1)->moveTo(600);
+    EXPECT_EQ(initialLockedSize, inner->sizes().at(0));
+
+    outer.resize(1000, 100);
+    QApplication::processEvents();
+    EXPECT_EQ(initialLockedSize, inner->sizes().at(0));
+}
+
+TEST(FySplitterTest, AncestorHandleMoveRebasesNestedLockedSizeWhenAdjacentOnlyModeIsDisabled)
+{
+    TestSplitter outer{Qt::Horizontal};
+    auto* inner = new TestSplitter{Qt::Horizontal};
+    addWidgets(*inner, 2);
+    inner->show();
+
+    outer.addWidget(inner);
+    auto* sibling = new QWidget;
+    outer.addWidget(sibling);
+    sibling->show();
+
+    showAndProcess(outer, {800, 100});
+    outer.setSizes({400, 400});
+    inner->setSizes({120, 280});
+    ASSERT_TRUE(inner->setLocked(0, true));
+    const int initialLockedSize = inner->sizes().at(0);
+    inner->setLockedWidgetsResizeAdjacentOnly(false);
 
     outer.testHandle(1)->moveTo(600);
     const int manuallyResizedSize = inner->sizes().at(0);

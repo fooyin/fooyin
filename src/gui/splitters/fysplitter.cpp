@@ -537,13 +537,13 @@ public:
     void doResize();
     void storeSizes();
     void getRange(int index, int* farMin, int* min, int* max, int* farMax) const;
-    void addContribution(int index, int* min, int* max, bool mayCollapse) const;
+    void addContribution(int index, int* min, int* max, bool mayCollapse, bool resizeLockedItem) const;
     int adjustPos(int pos, int index, int* farMin, int* min, int* max, int* farMax) const;
     bool collapsible(SplitterLayoutStruct* s) const;
     bool collapsible(int index) const;
     void setItemGeometry(SplitterLayoutStruct* item, int position, int length, bool updateCollapsedState);
-    void calculateMove(MoveDirection direction, int handlePosition, int itemIndex, bool allowCollapse,
-                       int* itemPositions, int* itemLengths);
+    void calculateMove(MoveDirection direction, int handlePosition, int itemIndex, int resizedItemIndex,
+                       bool allowCollapse, int* itemPositions, int* itemLengths);
     SplitterLayoutStruct* findWidget(QWidget* widget) const;
     void insertWidget(int requestedIndex, QWidget* widget, bool showWidget);
     void insertWidgetItem(int requestedIndex, QWidget* widget);
@@ -588,6 +588,7 @@ public:
     bool m_blockChildAdd{false};
     bool m_opaqueResizeSet{false};
     bool m_rebaseSizesOnNextResize{false};
+    bool m_lockedWidgetsResizeAdjacentOnly{true};
 };
 
 FySplitterPrivate::FySplitterPrivate(FySplitter* self, Qt::Orientation orientation)
@@ -713,8 +714,7 @@ void FySplitterPrivate::doResize()
     const bool hasVisibleWidget
         = std::ranges::any_of(m_list, [](const SplitterLayoutStruct* item) { return !item->widget->isHidden(); });
     const bool shouldRebaseSizes = m_rebaseSizesOnNextResize && hasVisibleWidget;
-    const bool userResizeActive  = isUserResizeActive();
-    const bool resizeLockedItems = userResizeActive || shouldRebaseSizes;
+    const bool resizeLockedItems = shouldRebaseSizes || (isUserResizeActive() && !m_lockedWidgetsResizeAdjacentOnly);
 
     if(shouldRebaseSizes) {
         m_rebaseSizesOnNextResize = false;
@@ -824,13 +824,15 @@ void FySplitterPrivate::getRange(int index, int* farMin, int* min, int* max, int
     int minLengthBefore{0};
     int maxLengthBefore{0};
     for(int itemIndex{0}; itemIndex < index; ++itemIndex) {
-        addContribution(itemIndex, &minLengthBefore, &maxLengthBefore, itemIndex == visibleIndexBefore);
+        const bool mayCollapse = itemIndex == visibleIndexBefore;
+        addContribution(itemIndex, &minLengthBefore, &maxLengthBefore, mayCollapse, mayCollapse);
     }
 
     int minLengthAfter{0};
     int maxLengthAfter{0};
     for(int itemIndex{index}; itemIndex < itemCount; ++itemIndex) {
-        addContribution(itemIndex, &minLengthAfter, &maxLengthAfter, itemIndex == visibleIndexAfter);
+        const bool mayCollapse = itemIndex == visibleIndexAfter;
+        addContribution(itemIndex, &minLengthAfter, &maxLengthAfter, mayCollapse, mayCollapse);
     }
 
     const QRect contentsRect = m_self->contentsRect();
@@ -866,7 +868,7 @@ void FySplitterPrivate::getRange(int index, int* farMin, int* min, int* max, int
     }
 }
 
-void FySplitterPrivate::addContribution(int index, int* min, int* max, bool mayCollapse) const
+void FySplitterPrivate::addContribution(int index, int* min, int* max, bool mayCollapse, bool resizeLockedItem) const
 {
     SplitterLayoutStruct* item = m_list.at(index);
     if(!item->widget->isHidden()) {
@@ -874,10 +876,22 @@ void FySplitterPrivate::addContribution(int index, int* min, int* max, bool mayC
             *min += item->handleSize(m_orientation);
             *max += item->handleSize(m_orientation);
         }
-        if(mayCollapse || !item->collapsed) {
-            *min += axisLength(smartMinSize(item->widget));
+
+        if(m_lockedWidgetsResizeAdjacentOnly && item->locked && !resizeLockedItem) {
+            const int lockedSize = item->collapsed
+                                     ? 0
+                                     : qBound(axisLength(smartMinSize(item->widget)), axisLength(item->rect.size()),
+                                              axisLength(smartMaxSize(item->widget)));
+            *min += lockedSize;
+            *max += lockedSize;
         }
-        *max += axisLength(smartMaxSize(item->widget));
+        else if(mayCollapse || !item->collapsed) {
+            *min += axisLength(smartMinSize(item->widget));
+            *max += axisLength(smartMaxSize(item->widget));
+        }
+        else {
+            *max += axisLength(smartMaxSize(item->widget));
+        }
     }
 }
 
@@ -978,8 +992,8 @@ void FySplitterPrivate::setItemGeometry(SplitterLayoutStruct* item, int position
     }
 }
 
-void FySplitterPrivate::calculateMove(MoveDirection direction, int handlePosition, int itemIndex, bool allowCollapse,
-                                      int* itemPositions, int* itemLengths)
+void FySplitterPrivate::calculateMove(MoveDirection direction, int handlePosition, int itemIndex, int resizedItemIndex,
+                                      bool allowCollapse, int* itemPositions, int* itemLengths)
 {
     if(itemIndex < 0 || itemIndex >= size()) {
         return;
@@ -991,19 +1005,28 @@ void FySplitterPrivate::calculateMove(MoveDirection direction, int handlePositio
 
     const QWidget* widget = item->widget;
     if(widget->isHidden()) {
-        calculateMove(direction, handlePosition, nextIndex, collapsible(nextIndex), itemPositions, itemLengths);
+        calculateMove(direction, handlePosition, nextIndex, resizedItemIndex, collapsible(nextIndex), itemPositions,
+                      itemLengths);
         return;
     }
 
     const int handleLength = item->handle->isHidden() ? 0 : item->handleSize(m_orientation);
 
-    int widgetLength = moveBackward ? handlePosition - axisPosition(item->rect.topLeft())
+    const int maxWidgetLength = axisLength(smartMaxSize(widget));
+    const int minWidgetLength = axisLength(smartMinSize(widget));
+
+    int widgetLength{0};
+    if(m_lockedWidgetsResizeAdjacentOnly && item->locked && itemIndex != resizedItemIndex) {
+        widgetLength = item->collapsed ? 0 : qBound(minWidgetLength, axisLength(item->rect.size()), maxWidgetLength);
+    }
+    else {
+        widgetLength = moveBackward ? handlePosition - axisPosition(item->rect.topLeft())
                                     : axisPosition(item->rect.bottomRight()) - handlePosition - handleLength + 1;
+    }
+
     if(widgetLength > 0 || (!item->collapsed && !allowCollapse)) {
-        const int maxWidgetLength = axisLength(smartMaxSize(widget));
-        const int minWidgetLength = axisLength(smartMinSize(widget));
-        widgetLength              = qMin(widgetLength, maxWidgetLength);
-        widgetLength              = qMax(widgetLength, minWidgetLength);
+        widgetLength = qMin(widgetLength, maxWidgetLength);
+        widgetLength = qMax(widgetLength, minWidgetLength);
     }
     else {
         widgetLength = 0;
@@ -1014,7 +1037,8 @@ void FySplitterPrivate::calculateMove(MoveDirection direction, int handlePositio
 
     const int nextHandlePosition
         = moveBackward ? handlePosition - widgetLength - handleLength : handlePosition + handleLength + widgetLength;
-    calculateMove(direction, nextHandlePosition, nextIndex, collapsible(nextIndex), itemPositions, itemLengths);
+    calculateMove(direction, nextHandlePosition, nextIndex, resizedItemIndex, collapsible(nextIndex), itemPositions,
+                  itemLengths);
 }
 
 SplitterLayoutStruct* FySplitterPrivate::findWidget(QWidget* widget) const
@@ -1308,6 +1332,11 @@ bool FySplitter::setLocked(int index, bool locked)
     item->locked = locked;
     updateGeometry();
     return true;
+}
+
+void FySplitter::setLockedWidgetsResizeAdjacentOnly(bool enabled)
+{
+    p->m_lockedWidgetsResizeAdjacentOnly = enabled;
 }
 
 bool FySplitter::opaqueResize() const
@@ -1611,13 +1640,19 @@ void FySplitter::moveSplitter(int requestedPosition, int handleIndex)
     QVarLengthArray<int, 32> itemPositions(itemCount);
     QVarLengthArray<int, 32> itemLengths(itemCount);
 
+    int unusedCollapsibleLength{0};
+
     const bool allowForwardCollapse = p->collapsible(forwardItem) && position > maxPosition;
-    p->calculateMove(MoveDirection::Forward, position, handleIndex, allowForwardCollapse, itemPositions.data(),
-                     itemLengths.data());
+    const int resizedForwardItem
+        = p->findNearestVisibleItem(handleIndex, MoveDirection::Forward, unusedCollapsibleLength);
+    p->calculateMove(MoveDirection::Forward, position, handleIndex, resizedForwardItem, allowForwardCollapse,
+                     itemPositions.data(), itemLengths.data());
 
     const bool allowBackwardCollapse = p->collapsible(handleIndex - 1) && position < minPosition;
-    p->calculateMove(MoveDirection::Backward, position, handleIndex - 1, allowBackwardCollapse, itemPositions.data(),
-                     itemLengths.data());
+    const int resizedBackwardItem
+        = p->findNearestVisibleItem(handleIndex, MoveDirection::Backward, unusedCollapsibleLength);
+    p->calculateMove(MoveDirection::Backward, position, handleIndex - 1, resizedBackwardItem, allowBackwardCollapse,
+                     itemPositions.data(), itemLengths.data());
 
     const bool moveTowardStart = position < previousPosition;
     int itemIndex              = moveTowardStart ? 0 : itemCount - 1;
