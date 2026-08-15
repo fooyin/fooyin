@@ -5,8 +5,16 @@ on:
 
 jobs:
   flatpak:
-    name: Flatpak (x86_64)
-    runs-on: ubuntu-latest
+    name: Flatpak (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-latest
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:kde-6.10
       options: --privileged
@@ -17,8 +25,8 @@ jobs:
       - name: Build Flatpak
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
-          bundle: fooyin-x86_64.flatpak
+          bundle: fooyin-${{ matrix.arch }}.flatpak
           manifest-path: dist/linux/flatpak/org.fooyin.fooyin.yaml
-          cache-key: flatpak-builder-${{ hashFiles('dist/linux/flatpak/**') }}
-          arch: x86_64
-          artifact-name: flatpak-x86_64
+          cache-key: flatpak-builder-${{ matrix.arch }}-${{ hashFiles('dist/linux/flatpak/**') }}
+          arch: ${{ matrix.arch }}
+          artifact-name: flatpak-${{ matrix.arch }}

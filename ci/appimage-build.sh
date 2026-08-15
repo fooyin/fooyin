@@ -15,6 +15,9 @@ case "$(uname -m)" in
     x86_64)
         APPIMAGE_ARCH=x86_64
         ;;
+    aarch64 | arm64)
+        APPIMAGE_ARCH=aarch64
+        ;;
     *)
         echo "Unsupported AppImage architecture: $(uname -m)" >&2
         exit 1

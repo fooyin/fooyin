@@ -14,8 +14,16 @@ env:
 
 jobs:
   appimage:
-    name: AppImage (x86_64)
-    runs-on: ubuntu-latest
+    name: AppImage (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-latest
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
     container:
       image: debian:bookworm
     steps:
@@ -44,9 +52,9 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ${{ env.CCACHE_DIR }}
-          key: appimage-debian-bookworm-x86_64-ccache-${{ github.sha }}
+          key: appimage-debian-bookworm-${{ matrix.arch }}-ccache-${{ github.sha }}
           restore-keys: |
-            appimage-debian-bookworm-x86_64-ccache-
+            appimage-debian-bookworm-${{ matrix.arch }}-ccache-
 
       - name: Build AppImage
         run: |
@@ -55,7 +63,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: appimage-x86_64
+          name: appimage-${{ matrix.arch }}
           path: build-appimage/output/*.AppImage
           compression-level: 0
           if-no-files-found: error
