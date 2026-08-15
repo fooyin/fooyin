@@ -45,6 +45,7 @@ struct PcmFrame
     uint64_t streamTimeMs{0};
     uint32_t streamId{0};
     std::chrono::steady_clock::time_point presentationTime;
+    bool discontinuityBefore{false};
 
     [[nodiscard]] size_t sampleCount() const
     {

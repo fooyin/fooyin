@@ -282,7 +282,13 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
     const auto reportedNextPresentationTime = frame.presentationTime + presentationDuration;
 
     bool resetBacklog{false};
-    if(m_format.isValid() && m_format != format) {
+    if(frame.discontinuityBefore) {
+        qCDebug(VISUALISATION_BACKEND) << "Resetting visualisation backlog after dropped analysis data:"
+                                       << "streamId=" << sourceKey << "streamTimeMs=" << frame.streamTimeMs
+                                       << "sampleRate=" << sampleRate << "frameCount=" << frameCount;
+        resetBacklog = true;
+    }
+    else if(m_format.isValid() && m_format != format) {
         qCDebug(VISUALISATION_BACKEND) << "Resetting visualisation backlog after format change:"
                                        << "previousSampleRate=" << m_format.sampleRate()
                                        << "previousChannels=" << m_format.channelCount()
@@ -295,14 +301,15 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
         if(const auto it = m_sourceTimelines.find(sourceKey); it != m_sourceTimelines.end()) {
             bool timelineDiscontinuity{false};
             if(hasPresentationTime && it->second.nextPresentationTime != std::chrono::steady_clock::time_point{}) {
-                const auto tolerance  = std::chrono::milliseconds{ContinuityToleranceMs};
-                timelineDiscontinuity = frame.presentationTime + tolerance < it->second.nextPresentationTime
-                                     || frame.presentationTime > it->second.nextPresentationTime + tolerance;
-                if(timelineDiscontinuity) {
+                const auto tolerance = std::chrono::milliseconds{ContinuityToleranceMs};
+                const bool presentationTimeReanchored
+                    = frame.presentationTime + tolerance < it->second.nextPresentationTime
+                   || frame.presentationTime > it->second.nextPresentationTime + tolerance;
+                if(presentationTimeReanchored) {
                     const auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(
                         frame.presentationTime - it->second.nextPresentationTime);
                     qCDebug(VISUALISATION_BACKEND)
-                        << "Resetting visualisation backlog after presentation-time discontinuity:"
+                        << "Reanchoring visualisation after presentation-time discontinuity:"
                         << "deltaMs=" << delta.count() << "toleranceMs=" << ContinuityToleranceMs
                         << "streamId=" << sourceKey << "streamTimeMs=" << frame.streamTimeMs
                         << "sampleRate=" << sampleRate << "frameCount=" << frameCount;

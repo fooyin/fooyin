@@ -195,6 +195,51 @@ TEST(VisualisationBackendTest, DropsOldBacklogWhenScopedStreamGapExceedsToleranc
     EXPECT_EQ(window.frameCount, frameCount);
 }
 
+TEST(VisualisationBackendTest, PresentationTimeReanchorPreservesPcmBacklog)
+{
+    static constexpr auto frameCount = 128;
+    static constexpr auto sampleRate = 1000;
+    const auto start                 = std::chrono::steady_clock::now();
+
+    Fooyin::VisualisationBackend backend;
+    const auto token = backend.registerSession();
+    backend.requestBacklog(token, 1000);
+
+    auto first             = makeStereoSineFrame(frameCount, sampleRate, 7, 19, 0, 1);
+    first.presentationTime = start;
+    backend.appendFrame(first);
+
+    auto reanchored             = makeStereoSineFrame(frameCount, sampleRate, 7, 19, 128, 1);
+    reanchored.presentationTime = start + std::chrono::milliseconds{400};
+    backend.appendFrame(reanchored);
+
+    Fooyin::VisualisationSession::PcmWindow window;
+    ASSERT_TRUE(backend.getPcmWindowEndingAt(window, 256, 200, {}));
+    EXPECT_EQ(window.startTimeMs, 56);
+    EXPECT_EQ(window.frameCount, 200);
+}
+
+TEST(VisualisationBackendTest, DroppedAnalysisDataResetsPcmBacklog)
+{
+    static constexpr auto frameCount = 128;
+    static constexpr auto sampleRate = 1000;
+
+    Fooyin::VisualisationBackend backend;
+    const auto token = backend.registerSession();
+    backend.requestBacklog(token, 1000);
+
+    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, 0, 1));
+
+    auto afterDrop                = makeStereoSineFrame(frameCount, sampleRate, 7, 19, 128, 1);
+    afterDrop.discontinuityBefore = true;
+    backend.appendFrame(afterDrop);
+
+    Fooyin::VisualisationSession::PcmWindow window;
+    ASSERT_TRUE(backend.getPcmWindowEndingAt(window, 128, 200, {}));
+    EXPECT_EQ(window.startTimeMs, 0);
+    EXPECT_EQ(window.frameCount, frameCount);
+}
+
 TEST(VisualisationBackendTest, EndAnchoredPcmWindowDoesNotReadAheadOfRequestedTime)
 {
     static constexpr auto frameCount = 128;
