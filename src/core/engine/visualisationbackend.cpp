@@ -19,6 +19,8 @@
 
 #include "visualisationbackend.h"
 
+#include <QLoggingCategory>
+
 #include <algorithm>
 #include <chrono>
 #include <numbers>
@@ -33,6 +35,8 @@ constexpr uint64_t BacklogPaddingMs       = 100;
 constexpr uint64_t ContinuityToleranceMs  = 100;
 constexpr uint64_t DefaultBacklogDuration = 250;
 constexpr int MinimumSpectrumFrameCount   = 256;
+
+Q_LOGGING_CATEGORY(VISUALISATION_BACKEND, "fy.visualisation.backend")
 
 namespace {
 int64_t steadyClockMs()
@@ -279,6 +283,12 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
 
     bool resetBacklog{false};
     if(m_format.isValid() && m_format != format) {
+        qCDebug(VISUALISATION_BACKEND) << "Resetting visualisation backlog after format change:"
+                                       << "previousSampleRate=" << m_format.sampleRate()
+                                       << "previousChannels=" << m_format.channelCount()
+                                       << "previousFormat=" << m_format.prettyFormat() << "sampleRate=" << sampleRate
+                                       << "channels=" << channelCount << "format=" << format.prettyFormat()
+                                       << "streamId=" << sourceKey;
         resetBacklog = true;
     }
     else if(m_frameCount > 0) {
@@ -288,12 +298,30 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
                 const auto tolerance  = std::chrono::milliseconds{ContinuityToleranceMs};
                 timelineDiscontinuity = frame.presentationTime + tolerance < it->second.nextPresentationTime
                                      || frame.presentationTime > it->second.nextPresentationTime + tolerance;
+                if(timelineDiscontinuity) {
+                    const auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(
+                        frame.presentationTime - it->second.nextPresentationTime);
+                    qCDebug(VISUALISATION_BACKEND)
+                        << "Resetting visualisation backlog after presentation-time discontinuity:"
+                        << "deltaMs=" << delta.count() << "toleranceMs=" << ContinuityToleranceMs
+                        << "streamId=" << sourceKey << "streamTimeMs=" << frame.streamTimeMs
+                        << "sampleRate=" << sampleRate << "frameCount=" << frameCount;
+                }
             }
             else {
                 const uint64_t toleranceFrames   = std::max<uint64_t>(1, msToFrames(ContinuityToleranceMs, sampleRate));
                 const bool sourceTimestampBehind = reportedStartFrame + toleranceFrames < it->second.nextFrame;
                 const bool sourceTimestampAhead  = reportedStartFrame > it->second.nextFrame + toleranceFrames;
                 timelineDiscontinuity            = sourceTimestampBehind || sourceTimestampAhead;
+                if(timelineDiscontinuity) {
+                    qCDebug(VISUALISATION_BACKEND)
+                        << "Resetting visualisation backlog after stream-time discontinuity:"
+                        << "reportedStartFrame=" << reportedStartFrame << "expectedStartFrame=" << it->second.nextFrame
+                        << "toleranceFrames=" << toleranceFrames
+                        << "direction=" << (sourceTimestampBehind ? "behind" : "ahead") << "streamId=" << sourceKey
+                        << "streamTimeMs=" << frame.streamTimeMs << "sampleRate=" << sampleRate
+                        << "frameCount=" << frameCount;
+                }
             }
 
             if(timelineDiscontinuity) {
