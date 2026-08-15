@@ -1,0 +1,120 @@
+# Keep this manifest in sync with https://github.com/flathub/org.fooyin.fooyin
+# The fooyin source is intentionally a local directory so CI builds the commit instead of the pinned release
+
+app-id: org.fooyin.fooyin
+runtime: org.kde.Platform
+runtime-version: '6.11'
+sdk: org.kde.Sdk
+command: fooyin-wrapper
+finish-args:
+  - --device=dri
+  - --filesystem=xdg-download
+  - --filesystem=xdg-music
+  - --filesystem=xdg-run/pipewire-0:ro
+  - --filesystem=xdg-run/discord-ipc-0 # Needed for Discord RPC
+  - --filesystem=xdg-run/app/com.discordapp.Discord:create # Needed for Discord Flatpak RPC
+  - --filesystem=/run/media
+  - --own-name=org.mpris.MediaPlayer2.fooyin
+  - --share=ipc
+  - --share=network
+  - --socket=fallback-x11
+  - --socket=pulseaudio
+  - --socket=wayland
+  - --system-talk-name=org.freedesktop.UDisks2
+  - --talk-name=org.kde.StatusNotifierWatcher # Needed for tray icon
+cleanup:
+  - '*.a'
+  - '*.la'
+  - /include
+  - /lib/cmake
+  - /lib/alsa-lib/pkgconfig
+  - /lib/pkgconfig
+  - /mkspecs
+  - /share/aclocal
+  - /share/doc/KDSingleApplication-qt6
+
+modules:
+  - kdsingleapplication.json
+  - libopenmpt.json
+  - projectm.json
+
+  - name: game-music-emu
+    buildsystem: cmake-ninja
+    cleanup:
+      - /include
+      - /lib/*.so
+      - /lib/pkgconfig
+    sources:
+      - type: git
+        url: https://github.com/libgme/game-music-emu.git
+        tag: 0.6.5
+        commit: 9e23d10f9fd2a6a2f33b10912dd8dc7153258995
+        x-checker-data:
+          type: git
+          tag-pattern: ^([\d.]+)$
+
+  - name: libebur128
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+    sources:
+      - type: git
+        url: https://github.com/jiixyj/libebur128.git
+        tag: v1.2.6
+        commit: 67b33abe1558160ed76ada1322329b0e9e058b02
+        x-checker-data:
+          type: git
+          tag-pattern: v([\d.]+)
+
+  - name: soxr
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+    sources:
+      - type: git
+        url: https://github.com/chirlu/soxr.git
+        tag: 0.1.3
+        commit: 945b592b70470e29f917f4de89b4281fbbd540c0
+        x-checker-data:
+          type: git
+          tag-pattern: ^([\d.]+)$
+
+  - name: soundtouch
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+    sources:
+      - type: git
+        url: https://codeberg.org/soundtouch/soundtouch.git
+        tag: 2.4.1
+        commit: 0047e0b1ecfceb041348579119bf79b73a322a3a
+        x-checker-data:
+          type: git
+          tag-pattern: ^([\d.]+)$
+
+  - name: fooyin
+    buildsystem: cmake-ninja
+    builddir: true
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DBUILD_PCH=ON
+    sources:
+      - type: dir
+        path: ../../..
+        skip:
+          - .git
+          - .ccache
+          - .flatpak-builder
+          - build
+          - build-*
+
+  - name: wrapper
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 fooyin-wrapper /app/bin/fooyin-wrapper
+      - desktop-file-edit --set-key=Exec --set-value='/app/bin/fooyin-wrapper %F'
+        /app/share/applications/org.fooyin.fooyin.desktop
+    sources:
+      - type: file
+        path: fooyin-wrapper

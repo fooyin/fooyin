@@ -39,6 +39,11 @@ jobs:
     uses: ./.github/workflows/build-macos.yml
     secrets: inherit
 
+  flatpak:
+    name: Build Flatpak
+    uses: ./.github/workflows/build-flatpak.yml
+    secrets: inherit
+
   attach:
     name: Attach to release
     if: github.event_name == 'release' && github.event.action == 'published'
@@ -47,6 +52,7 @@ jobs:
       - linux
       - freebsd
       - windows
+      - flatpak
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -85,6 +91,13 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           pattern: windows-*
+          path: ./artifacts
+          merge-multiple: true
+
+      - name: Download Flatpak artifacts
+        uses: actions/download-artifact@v8
+        with:
+          pattern: flatpak-*
           path: ./artifacts
           merge-multiple: true
 

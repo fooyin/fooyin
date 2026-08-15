@@ -1,0 +1,24 @@
+name: Build Flatpak
+
+on:
+  workflow_call:
+
+jobs:
+  flatpak:
+    name: Flatpak (x86_64)
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:kde-6.10
+      options: --privileged
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Build Flatpak
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: fooyin-x86_64.flatpak
+          manifest-path: dist/linux/flatpak/org.fooyin.fooyin.yaml
+          cache-key: flatpak-builder-${{ hashFiles('dist/linux/flatpak/**') }}
+          arch: x86_64
+          artifact-name: flatpak-x86_64
