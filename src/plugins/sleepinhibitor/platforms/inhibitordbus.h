@@ -60,6 +60,7 @@ private:
     void onInhibitCallFinished(QDBusPendingCallWatcher* watcher);
     void onUninhibitCallFinished(QDBusPendingCallWatcher* watcher);
 
+    [[nodiscard]] bool usingScreenSaverInterface() const;
     void inhibitScreenSaver();
     void uninhibitScreenSaver();
     void onScreenSaverInhibitCallFinished(QDBusPendingCallWatcher* watcher);

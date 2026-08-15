@@ -45,6 +45,15 @@ constexpr auto FreedesktopScreenSaverPath      = "/org/freedesktop/ScreenSaver"_
 constexpr auto FreedesktopScreenSaverInterface = "org.freedesktop.ScreenSaver"_L1;
 } // namespace DbusConstants
 
+namespace {
+using namespace Fooyin::SleepInhibitor;
+bool canInhibit(InhibitorPrivate::State state)
+{
+    using enum InhibitorPrivate::State;
+    return state == Initializing || state == Uninhibited;
+}
+} // namespace
+
 namespace Fooyin::SleepInhibitor {
 static const auto Reason = InhibitorDbus::tr("fooyin is running");
 
@@ -85,12 +94,18 @@ InhibitorDbus::InhibitorDbus(QObject* parent)
     qCWarning(SLEEPINHIBITOR) << "Could not get usable D-Bus interface";
 }
 
+bool InhibitorDbus::usingScreenSaverInterface() const
+{
+    return m_interface == Interface::FreedesktopPower
+        && (m_powerState.desiredType == InhibitionType::DisplayAndSystem
+            || m_powerState.currentType == InhibitionType::DisplayAndSystem);
+}
+
 void InhibitorDbus::inhibitScreenSaver()
 {
     m_screenSaverState.desiredState = State::Inhibited;
 
-    if(m_screenSaverState.currentState != State::Initializing
-       && m_screenSaverState.currentState != State::Uninhibited) {
+    if(!canInhibit(m_screenSaverState.currentState)) {
         return;
     }
 
@@ -118,7 +133,7 @@ void InhibitorDbus::uninhibitScreenSaver()
 {
     m_screenSaverState.desiredState = State::Uninhibited;
 
-    if(m_screenSaverState.currentState != State::Uninhibited || !m_screenSaverInhibitCookie) {
+    if(m_screenSaverState.currentState != State::Inhibited || !m_screenSaverInhibitCookie) {
         return;
     }
 
@@ -176,7 +191,11 @@ void InhibitorDbus::inhibitSleep(InhibitionType type)
     m_powerState.desiredState = State::Inhibited;
     m_powerState.desiredType  = type;
 
-    if(state() != State::Initializing && state() != State::Uninhibited) {
+    if(usingScreenSaverInterface()) {
+        inhibitScreenSaver();
+    }
+
+    if(!canInhibit(state())) {
         return;
     }
 
@@ -190,9 +209,6 @@ void InhibitorDbus::inhibitSleep(InhibitionType type)
     auto flags = BlockLogoutFlag | BlockSuspendFlag;
     if(type == InhibitionType::DisplayAndSystem) {
         flags |= BlockIdleFlag;
-        if(m_interface == Interface::FreedesktopPower) {
-            inhibitScreenSaver();
-        }
     }
 
     QList<QVariant> args;
@@ -228,6 +244,10 @@ void InhibitorDbus::uninhibitSleep()
 {
     m_powerState.desiredState = State::Uninhibited;
 
+    if(m_screenSaverState.currentState == State::Inhibited && usingScreenSaverInterface()) {
+        uninhibitScreenSaver();
+    }
+
     if(state() != State::Inhibited) {
         return;
     }
@@ -257,10 +277,6 @@ void InhibitorDbus::uninhibitSleep()
             qCWarning(SLEEPINHIBITOR) << "Cookie is 0?";
             setState(State::Error);
             return;
-        }
-
-        if(m_interface == Interface::FreedesktopPower && m_powerState.currentType == InhibitionType::DisplayAndSystem) {
-            uninhibitScreenSaver();
         }
 
         const auto pendingCall = m_busInterface->asyncCall(
