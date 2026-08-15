@@ -143,6 +143,8 @@ jobs:
             artifacts/**/*.pkg
             artifacts/**/*.exe
             artifacts/**/*.zip
+            artifacts/**/*.flatpak
+            artifacts/**/*.AppImage
 
       - name: Remove older nightly pre-releases
         env:
