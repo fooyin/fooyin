@@ -41,8 +41,10 @@ public:
     {
         Initializing,
         Error,
-        Uninhibited,
+        Inhibiting,
+        Uninhibiting,
         Inhibited,
+        Uninhibited,
     };
 
     explicit InhibitorPrivate(QObject* parent = nullptr);
