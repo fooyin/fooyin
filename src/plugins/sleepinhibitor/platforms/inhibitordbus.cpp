@@ -94,7 +94,7 @@ void InhibitorDbus::inhibitScreenSaver()
     if(!m_screenSaverInterface) {
         m_screenSaverInterface = new QDBusInterface(
             DbusConstants::FreedesktopScreenSaverService, DbusConstants::FreedesktopScreenSaverPath,
-            DbusConstants::FreedesktopScreenSaverInterface, QDBusConnection::sessionBus());
+            DbusConstants::FreedesktopScreenSaverInterface, QDBusConnection::sessionBus(), this);
         if(!m_screenSaverInterface->isValid()) [[unlikely]] {
             m_screenSaverError = true;
             return;
