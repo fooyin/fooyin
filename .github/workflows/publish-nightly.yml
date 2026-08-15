@@ -1,0 +1,160 @@
+name: Publish nightly
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: Optional successful master Build run ID to publish
+        required: false
+        type: string
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: publish-nightly
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish latest successful build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve build run
+        id: build
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUESTED_RUN_ID: ${{ inputs.run_id }}
+        shell: bash
+        run: |
+          workflow_id="$(gh api "/repos/${GITHUB_REPOSITORY}/actions/workflows/build.yml" --jq '.id')"
+
+          if [[ -n "$REQUESTED_RUN_ID" ]]; then
+            if [[ ! "$REQUESTED_RUN_ID" =~ ^[0-9]+$ ]]; then
+              echo "Run ID must contain only digits" >&2
+              exit 1
+            fi
+            run="$(gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${REQUESTED_RUN_ID}")"
+          else
+            run="$(gh api --method GET "/repos/${GITHUB_REPOSITORY}/actions/workflows/build.yml/runs" \
+              -f branch=master \
+              -f event=push \
+              -f status=success \
+              -F per_page=1 \
+              --jq '.workflow_runs[0]')"
+          fi
+
+          if [[ -z "$run" || "$run" == "null" ]]; then
+            echo "No successful master Build run was found" >&2
+            exit 1
+          fi
+
+          run_id="$(jq -r '.id' <<< "$run")"
+          run_workflow_id="$(jq -r '.workflow_id' <<< "$run")"
+          head_branch="$(jq -r '.head_branch' <<< "$run")"
+          head_sha="$(jq -r '.head_sha' <<< "$run")"
+          event="$(jq -r '.event' <<< "$run")"
+          conclusion="$(jq -r '.conclusion' <<< "$run")"
+          completed_at="$(jq -r '.updated_at' <<< "$run")"
+          run_url="$(jq -r '.html_url' <<< "$run")"
+
+          if [[ "$run_workflow_id" != "$workflow_id" || "$head_branch" != "master" || "$event" != "push" || "$conclusion" != "success" ]]; then
+            echo "Build run ${run_id} is not a successful master push run from build.yml" >&2
+            exit 1
+          fi
+
+          {
+            echo "run_id=${run_id}"
+            echo "head_sha=${head_sha}"
+            echo "completed_date=${completed_at%%T*}"
+          } >> "$GITHUB_OUTPUT"
+          echo "Using Build run [${run_id}](${run_url}) at ${head_sha}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Checkout nightly configuration
+        uses: actions/checkout@v7
+        with:
+          ref: master
+
+      - name: Checkout build source
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.build.outputs.head_sha }}
+          path: build-source
+
+      - name: Generate release metadata
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUILD_SHA: ${{ steps.build.outputs.head_sha }}
+          CI_BUILD_DATE: ${{ steps.build.outputs.completed_date }}
+          CI_RUN_ID: ${{ steps.build.outputs.run_id }}
+        shell: bash
+        run: |
+          date="$(date -u +'%Y-%m-%d')"
+          short_sha="${BUILD_SHA:0:8}"
+          tag="nightly-${date}-${short_sha}"
+          version="$(awk '$1 == "VERSION" { print $2; exit }' build-source/CMakeLists.txt)"
+          latest_release_tag="$(gh api "/repos/${GITHUB_REPOSITORY}/releases/latest" --jq '.tag_name')"
+
+          if [[ -z "$version" || -z "$latest_release_tag" ]]; then
+            echo "Unable to determine the fooyin or latest release version" >&2
+            exit 1
+          fi
+
+          sed \
+            -e "s|LATEST_RELEASE_TAG|${latest_release_tag}|g" \
+            -e "s|RELEASE_TAG|${tag}|g" \
+            -e "s|FOOYIN_VERSION|${version}|g" \
+            -e "s|COMMIT_SHA|${BUILD_SHA}|g" \
+            -e "s|SHORT_SHA|${short_sha}|g" \
+            -e "s|CI_BUILD_DATE|${CI_BUILD_DATE}|g" \
+            -e "s|CI_RUN_ID|${CI_RUN_ID}|g" \
+            .github/ci-nightly-body.md > ci-nightly-body.md
+
+          {
+            echo "tag=${tag}"
+            echo "name=Nightly build ${date} (${short_sha})"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ steps.build.outputs.run_id }}
+          path: artifacts
+
+      - name: Create pre-release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ steps.release.outputs.tag }}
+          target_commitish: ${{ steps.build.outputs.head_sha }}
+          name: ${{ steps.release.outputs.name }}
+          prerelease: true
+          make_latest: false
+          fail_on_unmatched_files: true
+          body_path: ci-nightly-body.md
+          files: |
+            artifacts/**/*.deb
+            artifacts/**/*.rpm
+            artifacts/**/*.pkg
+            artifacts/**/*.exe
+            artifacts/**/*.zip
+
+      - name: Remove older nightly pre-releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CURRENT_TAG: ${{ steps.release.outputs.tag }}
+        shell: bash
+        run: |
+          gh api --paginate "/repos/${GITHUB_REPOSITORY}/releases?per_page=100" \
+            --jq '.[] | select(.prerelease == true) | .tag_name | select(startswith("nightly-"))' |
+            while IFS= read -r tag; do
+              if [[ "$tag" != "$CURRENT_TAG" ]]; then
+                echo "Deleting old nightly pre-release: $tag"
+                gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --cleanup-tag --yes
+              fi
+            done

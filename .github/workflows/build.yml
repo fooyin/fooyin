@@ -14,9 +14,6 @@ on:
       - 'data/translations/**'
   release:
     types: [published]
-  schedule:
-    - cron: '0 2 * * *'
-  workflow_dispatch:
 
 permissions:
   contents: write # needed for vcpkg cache and release upload
@@ -102,76 +99,3 @@ jobs:
           file: ./artifacts/*
           overwrite: true
           file_glob: true
-
-  pre-release:
-    name: Create nightly pre-release
-    if: (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    needs:
-      - linux
-      - freebsd
-      - windows
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Generate release metadata
-        id: release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          date="$(date -u +'%Y-%m-%d')"
-          short_sha="${GITHUB_SHA:0:8}"
-          tag="nightly-${date}-${short_sha}"
-          version="$(awk '$1 == "VERSION" { print $2; exit }' CMakeLists.txt)"
-          latest_release_tag="$(gh api "/repos/${GITHUB_REPOSITORY}/releases/latest" --jq '.tag_name')"
-
-          if [[ -z "$version" || -z "$latest_release_tag" ]]; then
-            echo "Unable to determine the fooyin or latest release version" >&2
-            exit 1
-          fi
-
-          sed \
-            -e "s|LATEST_RELEASE_TAG|${latest_release_tag}|g" \
-            -e "s|RELEASE_TAG|${tag}|g" \
-            -e "s|FOOYIN_VERSION|${version}|g" \
-            -e "s|BUILD_DATE|${date}|g" \
-            -e "s|COMMIT_SHA|${GITHUB_SHA}|g" \
-            -e "s|SHORT_SHA|${short_sha}|g" \
-            .github/ci-nightly-body.md > ci-nightly-body.md
-
-          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
-          echo "name=fooyin nightly build ${date} (${short_sha})" >> "$GITHUB_OUTPUT"
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v8
-        with:
-          path: artifacts
-
-      - name: Create pre-release
-        uses: softprops/action-gh-release@v3
-        with:
-          tag_name: ${{ steps.release.outputs.tag }}
-          target_commitish: ${{ github.sha }}
-          name: ${{ steps.release.outputs.name }}
-          prerelease: true
-          make_latest: false
-          fail_on_unmatched_files: true
-          body_path: ci-nightly-body.md
-          files: artifacts/**/*
-
-      - name: Remove older nightly pre-releases
-        env:
-          GH_TOKEN: ${{ github.token }}
-          CURRENT_TAG: ${{ steps.release.outputs.tag }}
-        shell: bash
-        run: |
-          gh api --paginate "/repos/${GITHUB_REPOSITORY}/releases?per_page=100" \
-            --jq '.[] | select(.prerelease == true) | .tag_name | select(startswith("nightly-"))' |
-            while IFS= read -r tag; do
-              if [[ "$tag" != "$CURRENT_TAG" ]]; then
-                echo "Deleting old nightly pre-release: $tag"
-                gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --cleanup-tag --yes
-              fi
-            done
