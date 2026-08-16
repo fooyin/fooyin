@@ -154,6 +154,19 @@ bool PlaylistTrack::sameIdentityAs(const PlaylistTrack& other) const
     return track.sameIdentityAs(other.track);
 }
 
+bool PlaylistTrack::sameOccurrenceAs(const PlaylistTrack& other) const
+{
+    if(!isValid() || !other.isValid()) {
+        return false;
+    }
+
+    if(playlistId.isValid() && entryId.isValid() && other.playlistId.isValid() && other.entryId.isValid()) {
+        return playlistId == other.playlistId && entryId == other.entryId;
+    }
+
+    return !isInPlaylist() && !other.isInPlaylist() && track.sameIdentityAs(other.track);
+}
+
 struct Playlist::PrivateKey
 {
     PrivateKey() { }

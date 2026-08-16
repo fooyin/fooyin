@@ -23,6 +23,7 @@
 #include "mprisroot.h"
 
 #include <core/coresettings.h>
+#include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
 #include <gui/guipaths.h>
 #include <gui/windowcontroller.h>
@@ -47,6 +48,7 @@ constexpr auto ServiceName     = "org.mpris.MediaPlayer2.fooyin";
 constexpr auto PlayerEntity    = "org.mpris.MediaPlayer2.Player";
 constexpr auto DbusPath        = "org.freedesktop.DBus.Properties";
 
+namespace Fooyin::Mpris {
 namespace {
 QDBusObjectPath formatTrackId(int index)
 {
@@ -64,7 +66,7 @@ QString formatDateTime(uint64_t time)
     return dateTime.toOffsetFromUtc(dateTime.offsetFromUtc()).toString(Qt::ISODate);
 }
 
-QString formatContentCreated(const Fooyin::Track& track)
+QString formatContentCreated(const Track& track)
 {
     QString date = track.date().trimmed();
 
@@ -104,7 +106,7 @@ QString formatContentCreated(const Fooyin::Track& track)
     return {};
 }
 
-QString lyricsText(const Fooyin::Track& track)
+QString lyricsText(const Track& track)
 {
     static const QStringList tags{
         u"LYRICS"_s,
@@ -126,9 +128,9 @@ QString lyricsText(const Fooyin::Track& track)
 }
 } // namespace
 
-namespace Fooyin::Mpris {
 MprisPlugin::MprisPlugin()
     : m_registered{false}
+    , m_mprisPausePending{false}
     , m_coverLoadGeneration{0}
     , m_coverProvider{nullptr}
 { }
@@ -145,17 +147,37 @@ void MprisPlugin::initialise(const CorePluginContext& context)
                 {u"CanGoNext"_s, canGoNext()},
                 {u"CanGoPrevious"_s, canGoPrevious()}});
     });
-    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, [this]() {
-        notify({{u"PlaybackStatus"_s, playbackStatus()},
-                {u"CanPause"_s, canPause()},
-                {u"CanPlay"_s, canPlay()},
-                {u"CanGoNext"_s, canGoNext()},
-                {u"CanGoPrevious"_s, canGoPrevious()},
-                {u"CanSeek"_s, canSeek()}});
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, [this](Player::PlayState state) {
+        QVariantMap properties{{u"CanPause"_s, canPause()},
+                               {u"CanPlay"_s, canPlay()},
+                               {u"CanGoNext"_s, canGoNext()},
+                               {u"CanGoPrevious"_s, canGoPrevious()},
+                               {u"CanSeek"_s, canSeek()}};
+
+        m_mprisPausePending = state == Player::PlayState::Paused;
+        if(!m_mprisPausePending) {
+            properties.insert(u"PlaybackStatus"_s, playbackStatus());
+        }
+
+        notify(properties);
     });
     QObject::connect(m_playerController, &PlayerController::playlistTrackUpdated, this, &MprisPlugin::trackChanged);
+    QObject::connect(m_playerController, &PlayerController::playlistTrackChanged, this,
+                     [this](const PlaylistTrack& playlistTrack) {
+                         if(m_currentPlaylistTrack.sameOccurrenceAs(playlistTrack)) {
+                             Q_EMIT Seeked(0);
+                         }
+                     });
     QObject::connect(m_playerController, &PlayerController::positionMoved, this,
                      [this](uint64_t ms) { Q_EMIT Seeked(static_cast<qlonglong>(ms) * 1000); });
+    QObject::connect(context.engine, &EngineController::audiblePauseDrainCompleted, this, [this]() {
+        if(!m_mprisPausePending || m_playerController->playState() != Player::PlayState::Paused) {
+            return;
+        }
+
+        m_mprisPausePending = false;
+        notify(u"PlaybackStatus"_s, playbackStatus());
+    });
 
     m_settings->subscribe<Settings::Core::OutputVolume>(this, [this](double volume) {
         notify(u"Volume"_s, volume);
@@ -301,6 +323,10 @@ void MprisPlugin::setVolume(double volume)
 
 QString MprisPlugin::playbackStatus() const
 {
+    if(m_mprisPausePending) {
+        return Utils::Enum::toString(Player::PlayState::Playing);
+    }
+
     return Utils::Enum::toString(m_playerController->playState());
 }
 
@@ -462,6 +488,7 @@ void MprisPlugin::trackChanged(const PlaylistTrack& playlistTrack)
 
     ++m_coverLoadGeneration;
 
+    m_currentPlaylistTrack = playlistTrack;
     m_currentMetaData.clear();
     m_currCoverKey.clear();
 
