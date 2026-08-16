@@ -1,67 +1,90 @@
 # Contribution Guidelines
 
-fooyin is a free and open-source project. Contributions are encouraged through code, bug reports, documentation, or user support.
+fooyin is a free and open-source project. Contributions through code, bug reports, documentation, testing, translation, and user support are welcome.
+By participating, you agree to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Before You Start
+
+- Search the existing issues and [CHANGELOG.md](CHANGELOG.md) before starting work.
+- Open an issue or discussion before making a significant change so its scope and approach can be agreed upon first.
+- Read [BUILD.md](BUILD.md) for dependencies, build options, and platform-specific instructions.
 
 ## Making Changes
 
 - Keep changes focused and relevant.
 - Avoid mixing unrelated changes in a single pull request.
-- Ensure the project builds successfully before committing.
+- Follow the style and conventions of the surrounding code.
+- Add or update tests when changing behaviour.
+- Update documentation and the changelog when appropriate.
 
-## AI policy
+### Building and testing
 
-We do not accept contributions for which generative AI was used at any stage of the development process. 
-Please do not contribute code, documentation, tests, images, or other project material created or modified with large language models, image diffusion models, or similar tools.
+The `debug` or `debug-clang` CMake presets enable tests and provide the recommended development build:
 
-Once a contribution is merged, its long-term maintenance becomes the responsibility of the maintainer and other core contributors, 
-which is why contributors must understand and take ownership of every part of their submission.
+```
+cmake --preset debug
+cmake --build --preset debug
+ctest --preset debug
+```
 
-This policy operates on trust. We may ask whether AI tools were used when reviewing a contribution, and pull requests that involve their use will not be accepted.
+### Formatting
 
-## Formatting
+All code **must be formatted using Clang-format** with the repository's `.clang-format` configuration:
 
-All code **must be formatted using Clang-format** with the repository’s `.clang-format` configuration.
-
-    clang-format -i <files>
+```
+clang-format -i <files>
+```
 
 Do not submit code that conflicts with the formatting rules.
 
-## Commits
+## Pull Requests
+
+- Explain what changed and why.
+- Link any related issues or discussions.
+- Ensure the project builds successfully and all relevant tests pass.
+- Keep follow-up commits focused on review feedback.
+
+All changes are reviewed before merging. Review will consider technical correctness, maintainability, test coverage, and consistency with the rest of the project. 
+A submission may be declined even if it works as described.
+
+## Commit Messages
 
 - Keep commits small and logically grouped.
-- Use clear, descriptive commit messages.
-
-### Commit message format
-
-- Prefix commits with a component tag in square brackets (e.g. `[core]`, `[gui]`, `[plugin]`).
+- Prefix commits with a component tag in square brackets, such as `[core]`, `[gui]`, or `[plugin]`.
 - Keep the first line concise, with no trailing period.
 - Add a detailed description after a blank line for non-trivial changes.
 
 Format:
 
-    [tag] Short summary
+```
+[tag] Short summary
 
-    Optional detailed explanation of what changed and why.
+Optional detailed explanation of what changed and why.
+```
 
 Example:
 
-    [core] Fix playback state desync
+```
+[core] Fix playback state desync
 
-    Resolves an issue where pausing during buffer underrun caused incorrect state transitions.
+Resolve an issue where pausing during buffer underrun causes incorrect state transitions.
 
-    Fixes #123
+Fixes #123
+```
 
-## Code Review
+## AI Policy
 
-- All changes are reviewed before merging.
-- Address feedback directly in follow-up commits.
-- Keep discussions focused on technical correctness and maintainability.
+We do not accept contributions for which generative AI was used at any stage of the development process. Please do not contribute code, documentation, tests, images, or other project material created or modified with large language models, image diffusion models, or similar tools.
 
-## Issues
+Once a contribution is merged, its long-term maintenance becomes the responsibility of the maintainer and other core contributors, which is why contributors must understand and take ownership of every part of their submission.
 
-- Search existing issues and the CHANGELOG.md before opening a new one.
-- Provide clear steps to reproduce bugs.
-- Include logs, screenshots, or system details when relevant.
+This policy operates on trust. We may ask whether generative AI tools were used when reviewing a contribution, and pull requests that involve their use will not be accepted.
+
+## Issues and Other Contributions
+
+- Use the issue templates and provide clear reproduction steps for bugs.
+- Include relevant logs, screenshots, and system details.
+- Prefer to submit translations through [Hosted Weblate](https://hosted.weblate.org/projects/fooyin/) rather than a pull request.
 
 ## Security
 
