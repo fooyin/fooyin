@@ -58,7 +58,14 @@ public:
     void setCollapsible(int index, bool collapse);
 
     [[nodiscard]] bool isLocked(int index) const;
+    /**
+     * Locks a widget's size against automatic resizing.
+     * By default, moving either adjacent handle can resize the
+     * widget and establish its new locked size, while non-adjacent handles preserve it.
+     */
     bool setLocked(int index, bool locked);
+    /** Controls whether only adjacent handles can resize locked widgets during user-driven splitter resizing. */
+    void setLockedWidgetsResizeAdjacentOnly(bool enabled);
 
     [[nodiscard]] bool opaqueResize() const;
     void setOpaqueResize(bool opaque = true);

@@ -177,6 +177,11 @@ void PlaylistController::changeCurrentPlaylist(const UId& id)
     }
 }
 
+void PlaylistController::selectTracks(const TrackList& tracks)
+{
+    m_uiController->selectPlaylistTracks(tracks);
+}
+
 void PlaylistController::changePlaylistIndex(const UId& playlistId, int index)
 {
     m_handler->changePlaylistIndex(playlistId, index);
@@ -185,7 +190,8 @@ void PlaylistController::changePlaylistIndex(const UId& playlistId, int index)
 bool PlaylistController::canClearCurrentPlaylist() const
 {
     const auto* currentPlaylist = m_workspace->currentPlaylist();
-    return currentPlaylist && !currentPlaylist->isAutoPlaylist() && currentPlaylist->trackCount() > 0;
+    return currentPlaylist && !currentPlaylist->isAutoPlaylist() && !currentPlaylist->isLocked()
+        && currentPlaylist->trackCount() > 0;
 }
 
 void PlaylistController::clearCurrentPlaylist()
@@ -233,12 +239,14 @@ void PlaylistController::addToHistory(QUndoCommand* command)
 
 bool PlaylistController::canUndo() const
 {
-    return m_workspace->canUndo();
+    const auto* playlist = m_workspace->currentPlaylist();
+    return playlist && !playlist->isLocked() && m_workspace->canUndo();
 }
 
 bool PlaylistController::canRedo() const
 {
-    return m_workspace->canRedo();
+    const auto* playlist = m_workspace->currentPlaylist();
+    return playlist && !playlist->isLocked() && m_workspace->canRedo();
 }
 
 void PlaylistController::undoPlaylistChanges()

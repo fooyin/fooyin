@@ -82,6 +82,7 @@ public:
 
     void changeCurrentPlaylist(Playlist* playlist);
     void changeCurrentPlaylist(const UId& id) override;
+    void selectTracks(const TrackList& tracks) override;
     void changePlaylistIndex(const UId& playlistId, int index);
     [[nodiscard]] bool canClearCurrentPlaylist() const;
     void clearCurrentPlaylist();

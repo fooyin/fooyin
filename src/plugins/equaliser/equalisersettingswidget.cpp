@@ -19,19 +19,24 @@
 
 #include "equalisersettingswidget.h"
 
-#include "equaliserdsp.h"
+#include "equaliserpresetstore.h"
+#include "equalisersliderstate.h"
 
 #include <core/coresettings.h>
 #include <gui/widgets/tooltip.h>
 
+#include <QAction>
 #include <QComboBox>
 #include <QCoreApplication>
-#include <QDataStream>
+#include <QCursor>
 #include <QDoubleSpinBox>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QHBoxLayout>
+#include <QInputDialog>
+#include <QJsonObject>
 #include <QLabel>
+#include <QMenu>
 #include <QMessageBox>
 #include <QPainter>
 #include <QPushButton>
@@ -47,15 +52,13 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
-#include <utility>
+#include <vector>
 
 using namespace Qt::StringLiterals;
 
-constexpr auto SliderScale        = 10;
-constexpr auto PresetStoreVersion = 1;
-constexpr auto PresetsSettingKey  = "DSP/EqualiserPresets";
-constexpr auto LastPresetPathKey  = "DSP/EqualiserLastPresetPath";
+constexpr auto LastPresetPathKey = "DSP/EqualiserLastPresetPath";
 
+namespace Fooyin::Equaliser {
 namespace {
 constexpr std::array<const char*, 18> BandLabels = {
     "55",   "77",   "110",  "156",  "220", "311", "440", "622", "880",
@@ -66,7 +69,7 @@ QSlider* makeGainSlider(QWidget* parent)
 {
     auto* slider = new QSlider(Qt::Vertical, parent);
 
-    slider->setRange(-20 * SliderScale, 20 * SliderScale);
+    slider->setRange(-20 * Fooyin::Equaliser::EqualiserSliderScale, 20 * Fooyin::Equaliser::EqualiserSliderScale);
     slider->setSingleStep(1);
     slider->setPageStep(5);
     slider->setTickInterval(50);
@@ -74,6 +77,15 @@ QSlider* makeGainSlider(QWidget* parent)
     slider->setMinimumHeight(220);
     slider->setMaximumHeight(220);
 
+    return slider;
+}
+
+QSlider* makeCompactGainSlider(QWidget* parent)
+{
+    auto* slider = makeGainSlider(parent);
+    slider->setMinimumHeight(80);
+    slider->setMaximumHeight(QWIDGETSIZE_MAX);
+    slider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     return slider;
 }
 
@@ -91,11 +103,53 @@ QLabel* makeValueLabel(QWidget* parent)
 {
     auto* label = new QLabel(parent);
 
-    label->setText(QStringLiteral("-20.0"));
+    label->setText(u"-20.0"_s);
     label->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
     label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
     return label;
+}
+
+QString gainTooltip(const double gainDb)
+{
+    const QString prefix = gainDb >= 0.0 ? u"+"_s : QString{};
+    return prefix + QString::number(gainDb, 'f', 1) + u" dB"_s;
+}
+
+void showSliderToolTip(QWidget* owner, QPointer<ToolTip>& toolTip, QSlider* slider)
+{
+    if(!toolTip) {
+        toolTip = new ToolTip(owner);
+    }
+
+    toolTip->setText(gainTooltip(sliderValueToGain(slider->value())));
+    toolTip->show();
+    toolTip->raise();
+
+    const QPoint cursorPos = slider->mapFromGlobal(QCursor::pos());
+    const int handleY      = std::clamp(cursorPos.y(), slider->rect().top(), slider->rect().bottom());
+    const QPoint handlePos = slider->mapTo(owner, QPoint(slider->rect().center().x(), handleY));
+
+    const int tipHeight = toolTip->height();
+    const int tipWidth  = toolTip->width();
+    const int anchorY   = std::clamp(handlePos.y() + (tipHeight / 2), tipHeight, owner->height());
+
+    const int rightX = slider->mapTo(owner, QPoint{slider->rect().right() + 6, 0}).x();
+    const int leftX  = slider->mapTo(owner, QPoint{slider->rect().left() - 6, 0}).x();
+
+    if(rightX + tipWidth <= owner->width()) {
+        toolTip->setPosition(QPoint{rightX, anchorY}, Qt::AlignLeft);
+    }
+    else {
+        toolTip->setPosition(QPoint{leftX, anchorY}, Qt::AlignRight);
+    }
+}
+
+void hideSliderToolTip(const QPointer<ToolTip>& toolTip)
+{
+    if(toolTip) {
+        toolTip->hide();
+    }
 }
 
 QStyleOptionSlider sliderStyleOption(QSlider* slider)
@@ -140,7 +194,6 @@ int scaleHandleQuarterOffset(QSlider* slider)
 }
 } // namespace
 
-namespace Fooyin::Equaliser {
 class ScaleLabelsWidget : public QWidget
 {
 public:
@@ -208,9 +261,355 @@ private:
     QSlider* m_slider;
 };
 
-EqualiserSettingsWidget::EqualiserSettingsWidget(QWidget* parent)
+EqualiserLayoutEditor::EqualiserLayoutEditor(EqualiserPresetStore& presetStore, QWidget* parent)
+    : DspLayoutEditor{parent}
+    , m_controls{new QWidget(this)}
+    , m_presetStore{presetStore}
+    , m_controlRow{new QWidget(this)}
+    , m_enabledToggle{new QPushButton(tr("Enabled"), m_controlRow)}
+    , m_zeroLevelButton{new QPushButton(tr("Zero level"), m_controlRow)}
+    , m_autoLevelButton{new QPushButton(tr("Auto level"), m_controlRow)}
+    , m_presetBox{new QComboBox(m_controlRow)}
+    , m_savePresetButton{new QPushButton(tr("Save preset"), m_controlRow)}
+    , m_sliders{}
+    , m_valueLabels{}
+    , m_showControls{true}
+{
+    auto* row = new QHBoxLayout(m_controls);
+    row->setContentsMargins(4, 4, 4, 0);
+    row->setSpacing(4);
+
+    const auto addSlider = [this, row](size_t index, const QString& labelText) {
+        auto* column = new QWidget(m_controls);
+        auto* layout = new QVBoxLayout(column);
+        layout->setContentsMargins({});
+        layout->setSpacing(3);
+
+        auto* label      = makeBandLabel(labelText, column);
+        auto* slider     = makeCompactGainSlider(column);
+        auto* valueLabel = makeValueLabel(column);
+
+        layout->addWidget(label);
+        layout->addWidget(slider, 1, Qt::AlignHCenter);
+        layout->addWidget(valueLabel);
+
+        const int columnWidth
+            = std::max({slider->sizeHint().width(), label->sizeHint().width(), valueLabel->sizeHint().width()});
+        column->setMinimumWidth(columnWidth);
+        column->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+        if(index > 0) {
+            row->addStretch();
+        }
+        row->addWidget(column);
+
+        m_sliders[index]     = slider;
+        m_valueLabels[index] = valueLabel;
+
+        QObject::connect(slider, &QSlider::valueChanged, this, [this, index](int value) {
+            m_valueLabels[index]->setText(gainText(value));
+            m_sliders[index]->setToolTip(gainText(value) + tr(" dB"));
+            updatePresetSelection();
+            m_previewTimer.start(PreviewDebounceMs, this);
+            if(m_sliders[index]->isSliderDown()) {
+                showSliderToolTip(this, m_sliderToolTip, m_sliders[index]);
+            }
+        });
+        QObject::connect(slider, &QSlider::sliderPressed, this,
+                         [this, slider]() { showSliderToolTip(this, m_sliderToolTip, slider); });
+        QObject::connect(slider, &QSlider::sliderMoved, this,
+                         [this, slider](int) { showSliderToolTip(this, m_sliderToolTip, slider); });
+        QObject::connect(slider, &QSlider::sliderReleased, this, [this]() { hideSliderToolTip(m_sliderToolTip); });
+    };
+
+    addSlider(0, tr("Preamp"));
+    for(size_t i{0}; i < BandLabels.size(); ++i) {
+        addSlider(i + 1, QString::fromLatin1(BandLabels[i]));
+    }
+    row->addStretch();
+
+    m_controls->setMinimumWidth(row->sizeHint().width());
+
+    auto* controlLayout = new QHBoxLayout(m_controlRow);
+    controlLayout->addWidget(m_enabledToggle);
+    controlLayout->addWidget(m_zeroLevelButton);
+    controlLayout->addWidget(m_autoLevelButton);
+    controlLayout->addWidget(m_presetBox);
+    controlLayout->addWidget(m_savePresetButton);
+    controlLayout->addStretch();
+
+    m_enabledToggle->setCheckable(true);
+    m_presetBox->setMinimumContentsLength(10);
+    m_presetBox->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+    m_presetBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    QObject::connect(&m_presetStore, &EqualiserPresetStore::presetsChanged, this,
+                     &EqualiserLayoutEditor::refreshPresets);
+
+    auto* layout = new QVBoxLayout(this);
+    layout->setContentsMargins({});
+    layout->addWidget(m_controls, 1);
+    layout->addWidget(m_controlRow);
+
+    QObject::connect(m_enabledToggle, &QPushButton::toggled, this, &DspLayoutEditor::enabledStateChangeRequested);
+    QObject::connect(m_zeroLevelButton, &QPushButton::clicked, this, &EqualiserLayoutEditor::zeroLevel);
+    QObject::connect(m_autoLevelButton, &QPushButton::clicked, this, &EqualiserLayoutEditor::autoLevel);
+    QObject::connect(m_presetBox, qOverload<int>(&QComboBox::activated), this, &EqualiserLayoutEditor::loadPreset);
+    QObject::connect(m_savePresetButton, &QPushButton::clicked, this, &EqualiserLayoutEditor::savePreset);
+
+    const int minimumHeight
+        = m_controls->minimumSizeHint().height() + layout->spacing() + m_controlRow->minimumSizeHint().height();
+    setMinimumSize(100, minimumHeight);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    setControlsVisible(m_showControls);
+    refreshPresets();
+    EqualiserLayoutEditor::restoreDefaults();
+}
+
+void EqualiserLayoutEditor::loadSettings(const QByteArray& settings)
+{
+    applySliderState(sliderStateFromSettings(settings).value_or(zeroSliderState()));
+}
+
+QByteArray EqualiserLayoutEditor::saveSettings() const
+{
+    return settingsFromSliderState(sliderState());
+}
+
+EqualiserSliderState EqualiserLayoutEditor::sliderState() const
+{
+    EqualiserSliderState state;
+    state.preamp = m_sliders[0]->value();
+
+    for(size_t i{0}; i < state.bands.size(); ++i) {
+        state.bands[i] = m_sliders[i + 1]->value();
+    }
+
+    return state;
+}
+
+void EqualiserLayoutEditor::applySliderState(const EqualiserSliderState& state)
+{
+    std::vector<QSignalBlocker> blockers;
+    blockers.reserve(m_sliders.size());
+    for(auto* slider : m_sliders) {
+        blockers.emplace_back(slider);
+    }
+
+    m_sliders[0]->setValue(state.preamp);
+    for(size_t i{0}; i < state.bands.size(); ++i) {
+        m_sliders[i + 1]->setValue(state.bands[i]);
+    }
+
+    updateValueLabels();
+    updatePresetSelection();
+}
+
+void EqualiserLayoutEditor::setControlsEnabled(const bool enabled)
+{
+    const QSignalBlocker blocker{m_enabledToggle};
+
+    m_enabledToggle->setChecked(enabled);
+    m_enabledToggle->setEnabled(true);
+    m_zeroLevelButton->setEnabled(enabled);
+    m_autoLevelButton->setEnabled(enabled);
+    m_presetBox->setEnabled(enabled && m_presetBox->count() > 0);
+    m_savePresetButton->setEnabled(enabled);
+
+    const auto labels = m_controls->findChildren<QLabel*>();
+    for(auto* label : labels) {
+        label->setEnabled(enabled);
+        label->setAttribute(Qt::WA_TransparentForMouseEvents, !enabled);
+    }
+    for(auto* slider : m_sliders) {
+        slider->setEnabled(enabled);
+        slider->setAttribute(Qt::WA_TransparentForMouseEvents, !enabled);
+    }
+}
+
+void EqualiserLayoutEditor::restoreDefaults()
+{
+    applySliderState(zeroSliderState());
+}
+
+QString EqualiserLayoutEditor::restoreDefaultsActionText() const
+{
+    return tr("Zero level");
+}
+
+void EqualiserLayoutEditor::populateContextMenu(QMenu* menu)
+{
+    auto* showControls = new QAction(tr("Show controls"), menu);
+    showControls->setCheckable(true);
+    showControls->setChecked(m_showControls);
+    menu->addAction(showControls);
+    QObject::connect(showControls, &QAction::triggered, this, &EqualiserLayoutEditor::setControlsVisible);
+
+    menu->addSeparator();
+
+    auto* autoLevelAction = menu->addAction(tr("Auto level"));
+    autoLevelAction->setEnabled(m_enabledToggle->isChecked());
+    QObject::connect(autoLevelAction, &QAction::triggered, this, &EqualiserLayoutEditor::autoLevel);
+
+    auto* savePresetAction = menu->addAction(tr("Save preset…"));
+    savePresetAction->setEnabled(m_enabledToggle->isChecked());
+    QObject::connect(savePresetAction, &QAction::triggered, this, &EqualiserLayoutEditor::savePreset);
+
+    auto* presetMenu = menu->addMenu(tr("Presets"));
+    presetMenu->setEnabled(m_enabledToggle->isChecked());
+    const auto& presets = m_presetStore.presets();
+    if(presets.empty()) {
+        auto* noPresets = presetMenu->addAction(tr("No presets"));
+        noPresets->setEnabled(false);
+    }
+    else {
+        for(const auto& preset : presets) {
+            auto* action = presetMenu->addAction(preset.name);
+            QObject::connect(action, &QAction::triggered, this, [this, settings = preset.settings]() {
+                loadSettings(settings);
+                m_previewTimer.start(PreviewDebounceMs, this);
+            });
+        }
+    }
+}
+
+void EqualiserLayoutEditor::saveLayoutData(QJsonObject& layout)
+{
+    layout["ShowControls"_L1] = m_showControls;
+}
+
+void EqualiserLayoutEditor::loadLayoutData(const QJsonObject& layout)
+{
+    if(layout.contains("ShowControls"_L1)) {
+        setControlsVisible(layout.value("ShowControls"_L1).toBool());
+    }
+}
+
+void EqualiserLayoutEditor::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_previewTimer.timerId()) {
+        m_previewTimer.stop();
+        Q_EMIT previewSettingsChanged(saveSettings());
+        return;
+    }
+
+    DspLayoutEditor::timerEvent(event);
+}
+
+void EqualiserLayoutEditor::setControlsVisible(const bool visible)
+{
+    m_showControls = visible;
+    m_controlRow->setVisible(visible);
+
+    if(auto* sliderLayout = m_controls->layout()) {
+        auto margins = sliderLayout->contentsMargins();
+        margins.setBottom(visible ? 0 : margins.top());
+        sliderLayout->setContentsMargins(margins);
+    }
+}
+
+void EqualiserLayoutEditor::updateValueLabels()
+{
+    for(size_t i{0}; i < m_sliders.size(); ++i) {
+        const QString value = gainText(m_sliders[i]->value());
+        m_valueLabels[i]->setText(value);
+        m_sliders[i]->setToolTip(value + tr(" dB"));
+    }
+}
+
+void EqualiserLayoutEditor::updatePresetSelection()
+{
+    int matchingIndex{-1};
+    if(m_presetBox->count() > 0) {
+        const QByteArray currentSettings = saveSettings();
+        for(int i{0}; i < m_presetBox->count(); ++i) {
+            if(m_presetBox->itemData(i).toByteArray() == currentSettings) {
+                matchingIndex = i;
+                break;
+            }
+        }
+    }
+
+    const QSignalBlocker blocker{m_presetBox};
+    m_presetBox->setCurrentIndex(matchingIndex);
+}
+
+void EqualiserLayoutEditor::refreshPresets()
+{
+    const QSignalBlocker blocker{m_presetBox};
+    m_presetBox->clear();
+
+    const auto& presets = m_presetStore.presets();
+    if(presets.empty()) {
+        m_presetBox->setPlaceholderText(tr("No presets"));
+    }
+    else {
+        m_presetBox->setPlaceholderText(tr("Load preset…"));
+        for(const auto& preset : presets) {
+            m_presetBox->addItem(preset.name, preset.settings);
+        }
+    }
+
+    m_presetBox->setEnabled(m_enabledToggle->isChecked() && !presets.empty());
+    updatePresetSelection();
+}
+
+void EqualiserLayoutEditor::loadPreset(const int index)
+{
+    if(index < 0) {
+        return;
+    }
+
+    const auto state = sliderStateFromSettings(m_presetBox->itemData(index).toByteArray());
+    if(!state) {
+        return;
+    }
+
+    applySliderState(*state);
+    m_previewTimer.start(PreviewDebounceMs, this);
+}
+
+void EqualiserLayoutEditor::savePreset()
+{
+    bool accepted{false};
+    const QString name
+        = QInputDialog::getText(this, tr("Save preset"), tr("Preset name:"), QLineEdit::Normal, {}, &accepted)
+              .trimmed();
+    if(!accepted || name.isEmpty()) {
+        return;
+    }
+
+    const int existingIndex = m_presetStore.indexByName(name);
+    if(existingIndex >= 0) {
+        const auto answer = QMessageBox::question(this, tr("Preset already exists"),
+                                                  tr("Preset \"%1\" already exists. Overwrite?").arg(name));
+        if(answer != QMessageBox::Yes) {
+            return;
+        }
+    }
+
+    m_presetStore.setPreset(name, saveSettings());
+}
+
+void EqualiserLayoutEditor::zeroLevel()
+{
+    restoreDefaults();
+    m_previewTimer.start(PreviewDebounceMs, this);
+}
+
+void EqualiserLayoutEditor::autoLevel()
+{
+    auto state = sliderState();
+    if(!autoLevelSliderState(state)) {
+        return;
+    }
+    applySliderState(state);
+    m_previewTimer.start(PreviewDebounceMs, this);
+}
+
+EqualiserSettingsWidget::EqualiserSettingsWidget(EqualiserPresetStore& presetStore, QWidget* parent)
     : DspSettingsDialog{parent}
     , m_presetBox{new QComboBox(this)}
+    , m_presetStore{presetStore}
     , m_loadPresetButton{new QPushButton(tr("Load"), this)}
     , m_savePresetButton{new QPushButton(tr("Save"), this)}
     , m_deletePresetButton{new QPushButton(tr("Delete"), this)}
@@ -369,11 +768,13 @@ EqualiserSettingsWidget::EqualiserSettingsWidget(QWidget* parent)
         if(bandIndex < 0 || std::cmp_greater_equal(bandIndex, m_bandSliders.size())) {
             return;
         }
-        m_bandSliders[static_cast<size_t>(bandIndex)]->setValue(gainDbToSliderValue(value));
+        m_bandSliders[static_cast<size_t>(bandIndex)]->setValue(gainToSliderValue(value));
     });
     QObject::connect(m_presetBox, &QComboBox::currentTextChanged, this, [this]() { updatePresetButtons(); });
 
-    loadStoredPresets();
+    QObject::connect(&m_presetStore, &EqualiserPresetStore::presetsChanged, this,
+                     &EqualiserSettingsWidget::refreshPresets);
+
     refreshPresets();
     refreshSelectedBandEditor();
     refreshValueLabels();
@@ -385,26 +786,43 @@ EqualiserSettingsWidget::EqualiserSettingsWidget(QWidget* parent)
 
 void EqualiserSettingsWidget::loadSettings(const QByteArray& settings)
 {
-    EqualiserDsp dsp;
-    dsp.loadSettings(settings);
-
-    std::array<int, EqualiserDsp::BandCount> bandSliderValues{};
-    for(size_t i{0}; i < m_bandSliders.size(); ++i) {
-        bandSliderValues[i] = gainDbToSliderValue(dsp.bandDb(static_cast<int>(i)));
-    }
-
-    applySliderValues(gainDbToSliderValue(dsp.preampDb()), bandSliderValues);
+    applySliderState(sliderStateFromSettings(settings).value_or(zeroSliderState()));
 }
 
 QByteArray EqualiserSettingsWidget::saveSettings() const
 {
-    EqualiserDsp dsp;
-    dsp.setPreampDb(sliderValueToGainDb(m_preampSlider->value()));
-    for(size_t i{0}; i < m_bandSliders.size(); ++i) {
-        dsp.setBandDb(static_cast<int>(i), sliderValueToGainDb(m_bandSliders[i]->value()));
+    return settingsFromSliderState(sliderState());
+}
+
+EqualiserSliderState EqualiserSettingsWidget::sliderState() const
+{
+    EqualiserSliderState state;
+    state.preamp = m_preampSlider->value();
+
+    for(size_t i{0}; i < state.bands.size(); ++i) {
+        state.bands[i] = m_bandSliders[i]->value();
     }
 
-    return dsp.saveSettings();
+    return state;
+}
+
+void EqualiserSettingsWidget::applySliderState(const EqualiserSliderState& state)
+{
+    std::vector<QSignalBlocker> signalBlockers;
+    signalBlockers.reserve(1 + m_bandSliders.size());
+    signalBlockers.emplace_back(m_preampSlider);
+    for(auto* slider : m_bandSliders) {
+        signalBlockers.emplace_back(slider);
+    }
+
+    m_preampSlider->setValue(state.preamp);
+    for(size_t i{0}; i < state.bands.size(); ++i) {
+        m_bandSliders[i]->setValue(state.bands[i]);
+    }
+
+    refreshTooltips();
+    refreshValueLabels();
+    refreshSelectedBandEditor();
 }
 
 void EqualiserSettingsWidget::connectSliderSignals(QSlider* slider, const bool refreshBandEditor)
@@ -421,33 +839,15 @@ void EqualiserSettingsWidget::connectSliderSignals(QSlider* slider, const bool r
         }
         m_previewTimer.start(PreviewDebounceMs, this);
         if(slider->isSliderDown()) {
-            updateSliderToolTip(slider);
+            showSliderToolTip(this, m_sliderToolTip, slider);
         }
     });
 
-    QObject::connect(slider, &QSlider::sliderPressed, this, [this, slider]() { updateSliderToolTip(slider); });
-    QObject::connect(slider, &QSlider::sliderMoved, this, [this, slider](int) { updateSliderToolTip(slider); });
-    QObject::connect(slider, &QSlider::sliderReleased, this, [this]() { hideSliderToolTip(); });
-}
-
-void EqualiserSettingsWidget::applySliderValues(const int preampSliderValue,
-                                                const std::array<int, 18>& bandSliderValues)
-{
-    std::vector<QSignalBlocker> signalBlockers;
-    signalBlockers.reserve(1 + m_bandSliders.size());
-    signalBlockers.emplace_back(m_preampSlider);
-    for(auto* slider : m_bandSliders) {
-        signalBlockers.emplace_back(slider);
-    }
-
-    m_preampSlider->setValue(preampSliderValue);
-    for(size_t i{0}; i < m_bandSliders.size(); ++i) {
-        m_bandSliders[i]->setValue(bandSliderValues[i]);
-    }
-
-    refreshTooltips();
-    refreshValueLabels();
-    refreshSelectedBandEditor();
+    QObject::connect(slider, &QSlider::sliderPressed, this,
+                     [this, slider]() { showSliderToolTip(this, m_sliderToolTip, slider); });
+    QObject::connect(slider, &QSlider::sliderMoved, this,
+                     [this, slider](int) { showSliderToolTip(this, m_sliderToolTip, slider); });
+    QObject::connect(slider, &QSlider::sliderReleased, this, [this]() { hideSliderToolTip(m_sliderToolTip); });
 }
 
 void EqualiserSettingsWidget::restoreDefaults()
@@ -455,95 +855,14 @@ void EqualiserSettingsWidget::restoreDefaults()
     zeroAll();
 }
 
-void EqualiserSettingsWidget::loadStoredPresets()
-{
-    m_presets.clear();
-
-    const FySettings settings;
-    auto serializedData = settings.value(QLatin1String(PresetsSettingKey)).toByteArray();
-    if(serializedData.isEmpty()) {
-        return;
-    }
-
-    serializedData = qUncompress(serializedData);
-    if(serializedData.isEmpty()) {
-        return;
-    }
-
-    QDataStream stream{&serializedData, QIODevice::ReadOnly};
-    stream.setVersion(QDataStream::Qt_6_0);
-
-    quint32 version{0};
-    qint32 presetCount{0};
-    stream >> version;
-    stream >> presetCount;
-
-    if(stream.status() != QDataStream::Ok || version != PresetStoreVersion || presetCount < 0) {
-        return;
-    }
-
-    for(qint32 i{0}; i < presetCount; ++i) {
-        PresetItem preset;
-        stream >> preset.name;
-        stream >> preset.settings;
-
-        preset.name = preset.name.trimmed();
-        if(stream.status() != QDataStream::Ok || preset.name.isEmpty() || preset.settings.isEmpty()) {
-            m_presets.clear();
-            return;
-        }
-
-        if(presetIndexByName(preset.name) < 0) {
-            m_presets.push_back(std::move(preset));
-        }
-    }
-}
-
-void EqualiserSettingsWidget::saveStoredPresets() const
-{
-    FySettings settings;
-
-    if(m_presets.empty()) {
-        settings.remove(QLatin1String(PresetsSettingKey));
-        return;
-    }
-
-    QByteArray serializedData;
-    QDataStream stream{&serializedData, QIODevice::WriteOnly};
-    stream.setVersion(QDataStream::Qt_6_0);
-
-    stream << static_cast<quint32>(PresetStoreVersion);
-    stream << static_cast<qint32>(m_presets.size());
-
-    for(const auto& preset : m_presets) {
-        stream << preset.name;
-        stream << preset.settings;
-    }
-
-    settings.setValue(QLatin1String(PresetsSettingKey), qCompress(serializedData, 9));
-}
-
-int EqualiserSettingsWidget::presetIndexByName(const QString& name) const
-{
-    const QString trimmedName = name.trimmed();
-    if(trimmedName.isEmpty()) {
-        return -1;
-    }
-
-    for(size_t i{0}; i < m_presets.size(); ++i) {
-        if(m_presets[i].name == trimmedName) {
-            return static_cast<int>(i);
-        }
-    }
-    return -1;
-}
-
 void EqualiserSettingsWidget::refreshPresets()
 {
     const QString currentText = m_presetBox->currentText().trimmed();
 
     m_presetBox->clear();
-    for(const auto& preset : m_presets) {
+
+    const auto presets = m_presetStore.presets();
+    for(const auto& preset : presets) {
         m_presetBox->addItem(preset.name);
     }
 
@@ -563,7 +882,7 @@ void EqualiserSettingsWidget::refreshPresets()
 void EqualiserSettingsWidget::updatePresetButtons()
 {
     const QString name   = m_presetBox->currentText().trimmed();
-    const bool hasPreset = presetIndexByName(name) >= 0;
+    const bool hasPreset = m_presetStore.indexByName(name) >= 0;
 
     m_loadPresetButton->setEnabled(hasPreset);
     m_deletePresetButton->setEnabled(hasPreset);
@@ -572,23 +891,18 @@ void EqualiserSettingsWidget::updatePresetButtons()
 
 void EqualiserSettingsWidget::loadPreset()
 {
-    const int presetIndex = presetIndexByName(m_presetBox->currentText());
+    const int presetIndex = m_presetStore.indexByName(m_presetBox->currentText());
     if(presetIndex < 0) {
         return;
     }
 
-    EqualiserDsp dsp;
-    if(!dsp.loadSettings(m_presets.at(static_cast<size_t>(presetIndex)).settings)) {
+    const auto state = sliderStateFromSettings(m_presetStore.presets().at(static_cast<size_t>(presetIndex)).settings);
+    if(!state) {
         QMessageBox::warning(this, tr("Presets"), tr("Unable to load the selected preset."));
         return;
     }
 
-    std::array<int, EqualiserDsp::BandCount> bandSliderValues{};
-    for(size_t i{0}; i < m_bandSliders.size(); ++i) {
-        bandSliderValues[i] = gainDbToSliderValue(dsp.bandDb(static_cast<int>(i)));
-    }
-
-    applySliderValues(gainDbToSliderValue(dsp.preampDb()), bandSliderValues);
+    applySliderState(*state);
     m_previewTimer.start(PreviewDebounceMs, this);
 }
 
@@ -599,47 +913,38 @@ void EqualiserSettingsWidget::savePreset()
         return;
     }
 
-    const int existingIndex = presetIndexByName(name);
+    const int existingIndex = m_presetStore.indexByName(name);
     if(existingIndex >= 0) {
         QMessageBox msg{QMessageBox::Question, tr("Preset already exists"),
                         tr("Preset \"%1\" already exists. Overwrite?").arg(name), QMessageBox::Yes | QMessageBox::No};
         if(msg.exec() != QMessageBox::Yes) {
             return;
         }
-
-        m_presets[static_cast<size_t>(existingIndex)].settings = saveSettings();
-    }
-    else {
-        PresetItem preset;
-        preset.name     = name;
-        preset.settings = saveSettings();
-        m_presets.push_back(std::move(preset));
     }
 
-    saveStoredPresets();
-    refreshPresets();
+    m_presetStore.setPreset(name, saveSettings());
     m_presetBox->setCurrentText(name);
 }
 
 void EqualiserSettingsWidget::deletePreset()
 {
-    const int presetIndex = presetIndexByName(m_presetBox->currentText());
+    const int presetIndex = m_presetStore.indexByName(m_presetBox->currentText());
     if(presetIndex < 0) {
         return;
     }
 
-    m_presets.erase(m_presets.begin() + presetIndex);
+    const auto& presets = m_presetStore.presets();
+
     QString nextPresetName;
-    if(std::cmp_less(presetIndex, m_presets.size())) {
-        nextPresetName = m_presets[static_cast<size_t>(presetIndex)].name;
+    if(std::cmp_less(presetIndex + 1, presets.size())) {
+        nextPresetName = presets[static_cast<size_t>(presetIndex + 1)].name;
     }
-    else if(!m_presets.empty()) {
-        nextPresetName = m_presets.back().name;
+    else if(presets.size() > 1) {
+        nextPresetName = presets[static_cast<size_t>(presetIndex - 1)].name;
     }
 
-    saveStoredPresets();
+    m_presetStore.removePreset(m_presetBox->currentText());
     m_presetBox->setEditText(nextPresetName);
-    refreshPresets();
 }
 
 void EqualiserSettingsWidget::importPreset()
@@ -695,12 +1000,12 @@ void EqualiserSettingsWidget::importPreset()
         return;
     }
 
-    std::array<int, EqualiserDsp::BandCount> bandSliderValues{};
-    for(size_t i{0}; i < bandSliderValues.size(); ++i) {
-        bandSliderValues[i] = gainDbToSliderValue(static_cast<double>(gains[i]));
+    auto state{sliderState()};
+    for(size_t i{0}; i < state.bands.size(); ++i) {
+        state.bands[i] = gainToSliderValue(gains[i]);
     }
 
-    applySliderValues(m_preampSlider->value(), bandSliderValues);
+    applySliderState(state);
     settings.setValue(QLatin1String(LastPresetPathKey), QFileInfo(filePath).absolutePath());
     m_previewTimer.start(PreviewDebounceMs, this);
 }
@@ -742,7 +1047,7 @@ void EqualiserSettingsWidget::exportPreset()
 
     QTextStream stream(&file);
     for(auto* slider : m_bandSliders) {
-        const int value = static_cast<int>(std::lround(sliderValueToGainDb(slider->value())));
+        const int value = static_cast<int>(std::lround(sliderValueToGain(slider->value())));
         stream << value << '\n';
     }
 
@@ -757,113 +1062,36 @@ void EqualiserSettingsWidget::exportPreset()
 
 void EqualiserSettingsWidget::zeroAll()
 {
-    m_preampSlider->setValue(0);
-
-    for(auto* slider : m_bandSliders) {
-        slider->setValue(0);
-    }
-
-    refreshTooltips();
+    applySliderState(zeroSliderState());
+    m_previewTimer.start(PreviewDebounceMs, this);
 }
 
 void EqualiserSettingsWidget::autoLevel()
 {
-    double maxBandDb{0.0};
-
-    for(auto* slider : m_bandSliders) {
-        maxBandDb = std::max(maxBandDb, sliderValueToGainDb(slider->value()));
-    }
-
-    if(maxBandDb <= 0.0) {
-        refreshTooltips();
+    auto state{sliderState()};
+    if(!autoLevelSliderState(state)) {
         return;
     }
 
-    for(auto* slider : m_bandSliders) {
-        const double band = sliderValueToGainDb(slider->value());
-        slider->setValue(gainDbToSliderValue(band - maxBandDb));
-    }
-
-    refreshTooltips();
-}
-
-int EqualiserSettingsWidget::gainDbToSliderValue(const double gainDb)
-{
-    const double clamped = std::clamp(gainDb, -20.0, 20.0);
-    return static_cast<int>(std::lround(clamped * static_cast<double>(SliderScale)));
-}
-
-double EqualiserSettingsWidget::sliderValueToGainDb(const int sliderValue)
-{
-    return std::clamp(static_cast<double>(sliderValue) / static_cast<double>(SliderScale), -20.0, 20.0);
-}
-
-QString EqualiserSettingsWidget::gainTooltip(const double gainDb)
-{
-    const QString prefix = gainDb >= 0.0 ? QStringLiteral("+") : QString{};
-    return prefix + QString::number(gainDb, 'f', 1) + tr(" dB");
-}
-
-QString EqualiserSettingsWidget::gainValueLabel(const int sliderValue)
-{
-    return QString::number(sliderValueToGainDb(sliderValue), 'f', 1);
+    applySliderState(state);
+    m_previewTimer.start(PreviewDebounceMs, this);
 }
 
 void EqualiserSettingsWidget::refreshTooltips()
 {
-    m_preampSlider->setToolTip(gainTooltip(sliderValueToGainDb(m_preampSlider->value())));
+    m_preampSlider->setToolTip(gainTooltip(sliderValueToGain(m_preampSlider->value())));
 
     for(auto* slider : m_bandSliders) {
-        slider->setToolTip(gainTooltip(sliderValueToGainDb(slider->value())));
+        slider->setToolTip(gainTooltip(sliderValueToGain(slider->value())));
     }
 }
 
 void EqualiserSettingsWidget::refreshValueLabels()
 {
-    m_preampValueLabel->setText(gainValueLabel(m_preampSlider->value()));
+    m_preampValueLabel->setText(gainText(m_preampSlider->value()));
 
     for(size_t i{0}; i < m_bandSliders.size(); ++i) {
-        m_bandValueLabels[i]->setText(gainValueLabel(m_bandSliders[i]->value()));
-    }
-}
-
-void EqualiserSettingsWidget::updateSliderToolTip(QSlider* slider)
-{
-    if(!slider) {
-        return;
-    }
-
-    if(!m_sliderToolTip) {
-        m_sliderToolTip = new ToolTip(this);
-    }
-
-    m_sliderToolTip->setText(gainTooltip(sliderValueToGainDb(slider->value())));
-    m_sliderToolTip->show();
-    m_sliderToolTip->raise();
-
-    const QPoint cursorPos = slider->mapFromGlobal(QCursor::pos());
-    const int handleY      = std::clamp(cursorPos.y(), slider->rect().top(), slider->rect().bottom());
-    const QPoint handlePos = slider->mapTo(this, QPoint(slider->rect().center().x(), handleY));
-
-    const int tipHeight = m_sliderToolTip->height();
-    const int tipWidth  = m_sliderToolTip->width();
-    const int anchorY   = std::clamp(handlePos.y() + (tipHeight / 2), tipHeight, height());
-
-    const QPoint rightAnchor = slider->mapTo(this, QPoint(slider->rect().right() + 6, anchorY));
-    const QPoint leftAnchor  = slider->mapTo(this, QPoint(slider->rect().left() - 6, anchorY));
-
-    if(rightAnchor.x() + tipWidth <= width()) {
-        m_sliderToolTip->setPosition(rightAnchor, Qt::AlignLeft);
-    }
-    else {
-        m_sliderToolTip->setPosition(leftAnchor, Qt::AlignRight);
-    }
-}
-
-void EqualiserSettingsWidget::hideSliderToolTip()
-{
-    if(m_sliderToolTip) {
-        m_sliderToolTip->hide();
+        m_bandValueLabels[i]->setText(gainText(m_bandSliders[i]->value()));
     }
 }
 
@@ -879,7 +1107,7 @@ void EqualiserSettingsWidget::refreshSelectedBandEditor()
 
     const int sliderValue = m_bandSliders[static_cast<size_t>(bandIndex)]->value();
     const QSignalBlocker blockSpin(m_selectedBandSpin);
-    m_selectedBandSpin->setValue(sliderValueToGainDb(sliderValue));
+    m_selectedBandSpin->setValue(sliderValueToGain(sliderValue));
 }
 
 void EqualiserSettingsWidget::timerEvent(QTimerEvent* event)
@@ -892,6 +1120,12 @@ void EqualiserSettingsWidget::timerEvent(QTimerEvent* event)
 
     DspSettingsDialog::timerEvent(event);
 }
+
+EqualiserSettingsProvider::EqualiserSettingsProvider()
+    : m_presetStore{std::make_unique<EqualiserPresetStore>()}
+{ }
+
+EqualiserSettingsProvider::~EqualiserSettingsProvider() = default;
 
 QString EqualiserSettingsProvider::id() const
 {
@@ -920,12 +1154,16 @@ bool EqualiserSettingsProvider::showInViewMenu() const
 
 bool EqualiserSettingsProvider::showAsLayoutWidget() const
 {
-    // TODO when the settings UI is more splitter friendly
-    return false;
+    return true;
+}
+
+DspLayoutEditor* EqualiserSettingsProvider::createLayoutEditor(QWidget* parent)
+{
+    return new EqualiserLayoutEditor(*m_presetStore, parent);
 }
 
 DspSettingsDialog* EqualiserSettingsProvider::createSettingsWidget(QWidget* parent)
 {
-    return new EqualiserSettingsWidget(parent);
+    return new EqualiserSettingsWidget(*m_presetStore, parent);
 }
 } // namespace Fooyin::Equaliser

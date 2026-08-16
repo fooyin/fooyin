@@ -139,11 +139,11 @@ public:
     void resetSort(bool force = false);
     void setHeaderVisible(bool visible);
     void setScrollbarVisible(bool visible);
+    void setAlternatingRowColors(bool enabled);
     void selectAll();
 
     void handlePresetChanged(const PlaylistPreset& preset);
     void changePlaylistLayout(Playlist* previousPlaylist, const Playlist* playlist);
-    void setMiddleClickAction(TrackAction action);
     bool followCurrentTrack();
     void sessionHandleRestoredState();
     [[nodiscard]] bool hasDelayedStateLoad() const;
@@ -208,6 +208,7 @@ private:
     void applyBackgroundSettings();
     void reloadBackgroundCover(const Track& track = {});
     void updateVisibleCoverPins();
+    void executeClickAction(TrackAction action);
 
     void handleMetadataWriteRequested(const TrackList& tracks);
     void handleBulkWriteRequested(const TrackList& tracks);
@@ -245,7 +246,9 @@ private:
     QString m_loadedPlaylistLayout;
 
     WidgetContext* m_playlistContext;
+    TrackAction m_doubleClickAction;
     TrackAction m_middleClickAction;
+    bool m_startPlaybackOnSend;
     QAction* m_playAction;
     std::unique_ptr<SortActionHandler> m_sortActions;
 

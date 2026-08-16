@@ -29,6 +29,7 @@
 
 #include <QDateTime>
 #include <QDir>
+#include <QFileInfo>
 
 using namespace Qt::StringLiterals;
 
@@ -381,8 +382,11 @@ TEST_F(ScriptParserTest, BasicLiteral)
 
 TEST_F(ScriptParserTest, EscapeComment)
 {
-    EXPECT_EQ(u"I am a % test.", m_parser.evaluate(uR"("I am a \% test.")"_s));
-    EXPECT_EQ(u"I am an \"escape test.", m_parser.evaluate(uR"("I am an \"escape test.")"_s));
+    const QString escapedPercent = uR"("I am a \% test.")"_s;
+    const QString escapedQuote   = uR"("I am an \"escape test.")"_s;
+
+    EXPECT_EQ(u"I am a % test.", m_parser.evaluate(escapedPercent));
+    EXPECT_EQ(u"I am an \"escape test.", m_parser.evaluate(escapedQuote));
 }
 
 TEST_F(ScriptParserTest, Quote)
@@ -633,6 +637,26 @@ TEST_F(ScriptParserTest, RatingScriptWritesUseExpectedScales)
     EXPECT_FLOAT_EQ(track.rating(), 0.7F);
 }
 
+TEST_F(ScriptParserTest, MultiValueScriptWritesAcceptSingleStrings)
+{
+    Track track;
+
+    setTrackScriptValue(u"artist"_s, u"Artist"_s, track);
+    setTrackScriptValue(u"albumartist"_s, u"Album Artist"_s, track);
+    setTrackScriptValue(u"genre"_s, u"Genre"_s, track);
+    setTrackScriptValue(u"composer"_s, u"Composer"_s, track);
+    setTrackScriptValue(u"performer"_s, u"Performer"_s, track);
+
+    EXPECT_EQ(track.artists(), QStringList{u"Artist"_s});
+    EXPECT_EQ(track.albumArtists(), QStringList{u"Album Artist"_s});
+    EXPECT_EQ(track.genres(), QStringList{u"Genre"_s});
+    EXPECT_EQ(track.composers(), QStringList{u"Composer"_s});
+    EXPECT_EQ(track.performers(), QStringList{u"Performer"_s});
+
+    setTrackScriptValue(u"genre"_s, QString{}, track);
+    EXPECT_FALSE(track.hasGenres());
+}
+
 TEST_F(ScriptParserTest, TrackListTest)
 {
     TrackList tracks;
@@ -828,18 +852,21 @@ TEST_F(ScriptParserTest, ContextEvaluationEnvironmentPreservesPathVariableSepara
 {
     ScriptParser parser;
 
+    const QString libraryPath = QFileInfo{u"/tmp/music"_s}.absoluteFilePath();
+    const QString filePath    = QFileInfo{u"/tmp/music/foo/bar.mp3"_s}.absoluteFilePath();
+
     TestPlaylistEnvironment environment;
     environment.setEvaluationState(TrackListContextPolicy::Unresolved, {}, false, false, {}, {}, {}, true);
-    environment.setLibraryState({}, u"/tmp/music"_s);
+    environment.setLibraryState({}, libraryPath);
 
     ScriptContext context;
     context.environment = &environment;
     Track track;
-    track.setFilePath(u"/tmp/music/foo/bar.mp3"_s);
+    track.setFilePath(filePath);
     track.setTitle(u"foo/bar"_s);
 
-    EXPECT_EQ(u"/tmp/music/foo", parser.evaluate(u"%path%"_s, track, context));
-    EXPECT_EQ(u"/tmp/music/foo/bar.mp3", parser.evaluate(u"%filepath%"_s, track, context));
+    EXPECT_EQ(QFileInfo{filePath}.path(), parser.evaluate(u"%path%"_s, track, context));
+    EXPECT_EQ(filePath, parser.evaluate(u"%filepath%"_s, track, context));
     EXPECT_EQ(u"foo/bar.mp3", parser.evaluate(u"%relativepath%"_s, track, context));
     EXPECT_EQ(u"foo-bar", parser.evaluate(u"%title%"_s, track, context));
 }

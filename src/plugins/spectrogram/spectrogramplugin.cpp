@@ -23,7 +23,13 @@
 
 #include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
+#include <gui/guiconstants.h>
 #include <gui/widgetprovider.h>
+#include <utils/actions/actioncontainer.h>
+#include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
+
+#include <QAction>
 
 using namespace Qt::StringLiterals;
 
@@ -37,6 +43,16 @@ void SpectrogramPlugin::initialise(const CorePluginContext& context)
 
 void SpectrogramPlugin::initialise(const GuiPluginContext& context)
 {
+    auto* showSpectrogram = new QAction(tr("Spectro&gram"), this);
+    showSpectrogram->setStatusTip(tr("Open a spectrogram in a separate window"));
+    auto* showSpectrogramCmd = context.actionManager->registerAction(showSpectrogram, "Spectrogram.ShowWindow");
+    showSpectrogramCmd->setCategories({tr("View"), tr("Visualisations")});
+    context.actionManager->actionContainer(Constants::Menus::Visualisations)->addAction(showSpectrogramCmd);
+    QObject::connect(showSpectrogram, &QAction::triggered, this, [this]() {
+        auto* window = new SpectrogramWidget(m_playerController, m_engine, m_settings);
+        window->showStandaloneWindow(tr("Spectrogram"), u"Spectrogram/WindowState"_s, true);
+    });
+
     context.widgetProvider->registerWidget(
         u"Spectrogram"_s, [this]() { return new SpectrogramWidget(m_playerController, m_engine, m_settings); },
         tr("Spectrogram"));

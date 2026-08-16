@@ -330,9 +330,10 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::defaultConfig() const
     config.sendPlayback      = m_settings->fileValue(LibTreeSendPlaybackKey, config.sendPlayback).toBool();
     config.playlistEnabled   = m_settings->fileValue(LibTreePlaylistEnabledKey, config.playlistEnabled).toBool();
     config.autoSwitch        = m_settings->fileValue(LibTreeAutoSwitchKey, config.autoSwitch).toBool();
-    config.keepAlive         = m_settings->fileValue(LibTreeKeepAliveKey, config.keepAlive).toBool();
-    config.playlistName      = m_settings->fileValue(LibTreeAutoPlaylistKey, config.playlistName).toString();
-    config.restoreState      = m_settings->fileValue(LibTreeRestoreStateKey, config.restoreState).toBool();
+    config.preservePlaybackPlaylist
+        = m_settings->fileValue(LibTreeKeepAliveKey, config.preservePlaybackPlaylist).toBool();
+    config.playlistName = m_settings->fileValue(LibTreeAutoPlaylistKey, config.playlistName).toString();
+    config.restoreState = m_settings->fileValue(LibTreeRestoreStateKey, config.restoreState).toBool();
     config.expandOnSingleClick
         = m_settings->fileValue(LibTreeExpandSingleClickKey, config.expandOnSingleClick).toBool();
     config.autoExpandSearchResultLimit
@@ -361,7 +362,7 @@ void LibraryTreeWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(LibTreeSendPlaybackKey, config.sendPlayback);
     m_settings->fileSet(LibTreePlaylistEnabledKey, config.playlistEnabled);
     m_settings->fileSet(LibTreeAutoSwitchKey, config.autoSwitch);
-    m_settings->fileSet(LibTreeKeepAliveKey, config.keepAlive);
+    m_settings->fileSet(LibTreeKeepAliveKey, config.preservePlaybackPlaylist);
     m_settings->fileSet(LibTreeAutoPlaylistKey, config.playlistName);
     m_settings->fileSet(LibTreeRestoreStateKey, config.restoreState);
     m_settings->fileSet(LibTreeExpandSingleClickKey, config.expandOnSingleClick);
@@ -473,7 +474,7 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::configFromLayout(const QJsonObj
         config.autoSwitch = layout.value("AutoSwitch"_L1).toBool();
     }
     if(layout.contains("KeepAlive"_L1)) {
-        config.keepAlive = layout.value("KeepAlive"_L1).toBool();
+        config.preservePlaybackPlaylist = layout.value("KeepAlive"_L1).toBool();
     }
     if(layout.contains("PlaylistName"_L1)) {
         config.playlistName = layout.value("PlaylistName"_L1).toString();
@@ -533,7 +534,7 @@ void LibraryTreeWidget::saveConfigToLayout(const ConfigData& config, QJsonObject
     layout["SendPlayback"_L1]                = config.sendPlayback;
     layout["PlaylistEnabled"_L1]             = config.playlistEnabled;
     layout["AutoSwitch"_L1]                  = config.autoSwitch;
-    layout["KeepAlive"_L1]                   = config.keepAlive;
+    layout["KeepAlive"_L1]                   = config.preservePlaybackPlaylist;
     layout["PlaylistName"_L1]                = config.playlistName;
     layout["RestoreState"_L1]                = config.restoreState;
     layout["ExpandOnSingleClick"_L1]         = config.expandOnSingleClick;
@@ -557,6 +558,9 @@ void LibraryTreeWidget::openConfigDialog()
 void LibraryTreeWidget::setupConnections()
 {
     const auto resetModel = [this]() {
+        if(m_pendingResetState.isEmpty()) {
+            m_pendingResetState = saveState();
+        }
         m_model->reset(m_library->libraryTracks());
     };
 
@@ -564,6 +568,13 @@ void LibraryTreeWidget::setupConnections()
 
     QObject::connect(m_model, &LibraryTreeModel::dataUpdated, m_libraryTree, &QTreeView::dataChanged);
     QObject::connect(m_model, &LibraryTreeModel::modelLoaded, this, [this]() { restoreState(m_pendingState); });
+    QObject::connect(m_model, &LibraryTreeModel::modelResetFinished, this,
+                     [this]() { restoreState(std::exchange(m_pendingResetState, {}), true); });
+    QObject::connect(m_libraryTree, &LibraryTreeView::displayAboutToChange, this, [this]() {
+        if(m_pendingResetState.isEmpty()) {
+            m_pendingResetState = saveState();
+        }
+    });
 
     QObject::connect(m_libraryTree, &LibraryTreeView::doubleClicked, this,
                      [this](const QModelIndex& index) { handleDoubleClick(index); });
@@ -621,7 +632,7 @@ void LibraryTreeWidget::setupConnections()
     m_settings->subscribe<Settings::Gui::RatingEmptyStarSymbol>(this, resetModel);
 }
 
-void LibraryTreeWidget::reset() const
+void LibraryTreeWidget::reset()
 {
     if(!m_styleProvider->isResolved()) {
         return;
@@ -940,16 +951,16 @@ void LibraryTreeWidget::syncSelectionPlaylist(const TrackList& tracks) const
 
     const QString playlistName{m_config.playlistName};
 
-    if(m_config.keepAlive) {
+    if(m_config.preservePlaybackPlaylist) {
         if(const auto* activePlaylist = m_playlistHandler->activePlaylist();
            activePlaylist && activePlaylist->name() == playlistName) {
-            const QString keepActiveName = playlistName + u" ("_s + tr("Playback") + u")"_s;
+            const QString playbackPlaylistName = playlistName + u" ("_s + tr("Playback") + u")"_s;
 
-            if(auto* keepActivePlaylist = m_playlistHandler->playlistByName(keepActiveName)) {
-                m_playlistHandler->movePlaylistTracks(activePlaylist->id(), keepActivePlaylist->id());
+            if(auto* playbackPlaylist = m_playlistHandler->playlistByName(playbackPlaylistName)) {
+                m_playlistHandler->movePlaylistTracks(activePlaylist->id(), playbackPlaylist->id());
             }
             else {
-                m_playlistHandler->renamePlaylist(activePlaylist->id(), keepActiveName);
+                m_playlistHandler->renamePlaylist(activePlaylist->id(), playbackPlaylistName);
             }
         }
     }
@@ -1247,9 +1258,10 @@ void LibraryTreeWidget::handleTracksUpdated(const TrackList& tracks)
     }
 
     std::stack<QModelIndex> checkExpanded;
-    for(const QModelIndex& index : trackParents) {
-        if(index.isValid()) {
-            checkExpanded.emplace(index);
+    for(const QModelIndex& sourceIndex : trackParents) {
+        const QModelIndex proxyIndex = m_sortProxy->mapFromSource(sourceIndex);
+        if(proxyIndex.isValid()) {
+            checkExpanded.emplace(proxyIndex);
         }
     }
 
@@ -1379,9 +1391,9 @@ void LibraryTreeWidget::restoreIndexState(const QByteArray& topKey, const std::v
     }
 }
 
-void LibraryTreeWidget::restoreState(const QByteArray& state)
+void LibraryTreeWidget::restoreState(const QByteArray& state, bool force)
 {
-    if(state.isEmpty() || !m_config.restoreState) {
+    if(state.isEmpty() || (!force && !m_config.restoreState)) {
         return;
     }
 

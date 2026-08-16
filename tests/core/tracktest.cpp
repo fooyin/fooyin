@@ -87,6 +87,19 @@ TEST(TrackTest, DerivesPathFieldsForRemoteUrls)
     EXPECT_TRUE(track.path().isEmpty());
 }
 
+TEST(TrackTest, PreservesRatingStarSteps)
+{
+    Track track;
+
+    for(int rating{1}; rating <= 10; ++rating) {
+        track.setRatingStars(rating);
+        EXPECT_EQ(track.ratingStars(), rating);
+    }
+
+    track.setRating(0.75F);
+    EXPECT_EQ(track.ratingStars(), 7);
+}
+
 TEST(TrackTest, UsesCompactMetadataAccessors)
 {
     Track track;

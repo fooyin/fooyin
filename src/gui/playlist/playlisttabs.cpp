@@ -38,6 +38,7 @@
 
 #include <QActionGroup>
 #include <QContextMenuEvent>
+#include <QEvent>
 #include <QIcon>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -78,6 +79,7 @@ PlaylistTabs::PlaylistTabs(WidgetProvider* widgetProvider, PlaylistController* p
     , m_currentHoverIndex{-1}
     , m_playIcon{Gui::iconFromTheme(Constants::Icons::Play)}
     , m_pauseIcon{Gui::iconFromTheme(Constants::Icons::Pause)}
+    , m_lockedIcon{Gui::iconFromTheme(Constants::Icons::ReadOnly)}
 {
     QObject::setObjectName(PlaylistTabs::name());
 
@@ -180,6 +182,7 @@ int PlaylistTabs::addPlaylist(const Playlist* playlist)
     const int index = addNewTab(playlist->name());
     if(index >= 0) {
         m_tabs->tabBar()->setTabData(index, QVariant::fromValue(playlist->id()));
+        updateTabIcon(index, Player::PlayState::Stopped);
         if(playlist->id() == m_playlistController->currentPlaylistId()) {
             m_tabs->setCurrentIndex(index);
         }
@@ -249,46 +252,6 @@ void PlaylistTabs::loadLayoutData(const QJsonObject& layout)
         const auto children = layout["Widgets"_L1].toArray();
         WidgetContainer::loadWidgets(children);
     }
-}
-
-PlaylistTabs::ConfigData PlaylistTabs::configFromLayout(const QJsonObject& layout) const
-{
-    ConfigData config{defaultConfig()};
-
-    if(layout.contains("TabPosition"_L1)) {
-        config.position = static_cast<PlaylistTabPosition>(layout.value("TabPosition"_L1).toInt());
-    }
-    if(layout.contains("ExpandTabs"_L1)) {
-        config.expand = layout.value("ExpandTabs"_L1).toBool();
-    }
-    if(layout.contains("ShowAddButton"_L1)) {
-        config.showAddButton = layout.value("ShowAddButton"_L1).toBool();
-    }
-    if(layout.contains("ShowClearButton"_L1)) {
-        config.showClearButton = layout.value("ShowClearButton"_L1).toBool();
-    }
-    if(layout.contains("ShowCloseButton"_L1)) {
-        config.showCloseButton = layout.value("ShowCloseButton"_L1).toBool();
-    }
-    if(layout.contains("CloseOnMiddleClick"_L1)) {
-        config.closeOnMiddleClick = layout.value("CloseOnMiddleClick"_L1).toBool();
-    }
-
-    if(config.position != PlaylistTabPosition::Bottom) {
-        config.position = PlaylistTabPosition::Top;
-    }
-
-    return config;
-}
-
-void PlaylistTabs::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
-{
-    layout["TabPosition"_L1]        = static_cast<int>(config.position);
-    layout["ExpandTabs"_L1]         = config.expand;
-    layout["ShowAddButton"_L1]      = config.showAddButton;
-    layout["ShowClearButton"_L1]    = config.showClearButton;
-    layout["ShowCloseButton"_L1]    = config.showCloseButton;
-    layout["CloseOnMiddleClick"_L1] = config.closeOnMiddleClick;
 }
 
 bool PlaylistTabs::canAddWidget() const
@@ -422,6 +385,21 @@ void PlaylistTabs::replaceWidget(int index, FyWidget* newWidget)
 
 void PlaylistTabs::moveWidget(int /*index*/, int /*newIndex*/) { }
 
+void PlaylistTabs::changeEvent(QEvent* event)
+{
+    WidgetContainer::changeEvent(event);
+
+    switch(event->type()) {
+        case QEvent::PaletteChange:
+        case QEvent::StyleChange:
+        case QEvent::ThemeChange:
+            refreshTabIcons();
+            break;
+        default:
+            break;
+    }
+}
+
 void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
 {
     const QPoint point = event->pos();
@@ -472,6 +450,15 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
         QObject::connect(renameAction, &QAction::triggered, tabBar, [tabBar, index] { tabBar->showEditor(index); });
 
         menu->addAction(renameAction);
+
+        if(!playlist->isAutoPlaylist()) {
+            auto* lockAction = new QAction(m_lockedIcon, tr("Lock playlist"), menu);
+            lockAction->setCheckable(true);
+            lockAction->setChecked(playlist->isLocked());
+            QObject::connect(lockAction, &QAction::toggled, this,
+                             [this, id](bool locked) { m_playlistHandler->setPlaylistLocked(id, locked); });
+            menu->addAction(lockAction);
+        }
         menu->addSeparator();
     }
 
@@ -594,14 +581,14 @@ void PlaylistTabs::dragMoveEvent(QDragMoveEvent* event)
     m_currentHoverIndex = m_tabs->tabBar()->tabAt(event->position().toPoint());
 
     if(m_currentHoverIndex >= 0) {
-        bool isAutoPlaylist{false};
+        bool readOnly{false};
 
         const auto id = m_tabs->tabBar()->tabData(m_currentHoverIndex).value<UId>();
         if(auto* playlist = m_playlistHandler->playlistById(id)) {
-            isAutoPlaylist = playlist->isAutoPlaylist();
+            readOnly = playlist->isAutoPlaylist() || playlist->isLocked();
         }
 
-        if(isAutoPlaylist) {
+        if(readOnly) {
             event->setDropAction(Qt::IgnoreAction);
             event->ignore();
         }
@@ -651,7 +638,7 @@ void PlaylistTabs::dropEvent(QDropEvent* event)
 
     const auto id = tabBar->tabData(index).value<UId>();
     if(auto* playlist = m_playlistHandler->playlistById(id)) {
-        if(playlist->isAutoPlaylist()) {
+        if(playlist->isAutoPlaylist() || playlist->isLocked()) {
             event->ignore();
             return;
         }
@@ -672,6 +659,11 @@ void PlaylistTabs::dropEvent(QDropEvent* event)
     else {
         event->ignore();
     }
+}
+
+void PlaylistTabs::openConfigDialog()
+{
+    showConfigDialog(new PlaylistTabsConfigDialog(this, this), Qt::NonModal);
 }
 
 void PlaylistTabs::setupConnections()
@@ -716,6 +708,7 @@ void PlaylistTabs::setupConnections()
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistAdded, this, &PlaylistTabs::addPlaylist);
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistRemoved, this, &PlaylistTabs::removePlaylist);
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistRenamed, this, &PlaylistTabs::playlistRenamed);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::playlistUpdated, this, &PlaylistTabs::playlistUpdated);
 }
 
 void PlaylistTabs::setupButtons()
@@ -756,6 +749,46 @@ void PlaylistTabs::setupButtons()
                                                  : Qt::BottomLeftCorner);
 }
 
+PlaylistTabs::ConfigData PlaylistTabs::configFromLayout(const QJsonObject& layout) const
+{
+    ConfigData config{defaultConfig()};
+
+    if(layout.contains("TabPosition"_L1)) {
+        config.position = static_cast<PlaylistTabPosition>(layout.value("TabPosition"_L1).toInt());
+    }
+    if(layout.contains("ExpandTabs"_L1)) {
+        config.expand = layout.value("ExpandTabs"_L1).toBool();
+    }
+    if(layout.contains("ShowAddButton"_L1)) {
+        config.showAddButton = layout.value("ShowAddButton"_L1).toBool();
+    }
+    if(layout.contains("ShowClearButton"_L1)) {
+        config.showClearButton = layout.value("ShowClearButton"_L1).toBool();
+    }
+    if(layout.contains("ShowCloseButton"_L1)) {
+        config.showCloseButton = layout.value("ShowCloseButton"_L1).toBool();
+    }
+    if(layout.contains("CloseOnMiddleClick"_L1)) {
+        config.closeOnMiddleClick = layout.value("CloseOnMiddleClick"_L1).toBool();
+    }
+
+    if(config.position != PlaylistTabPosition::Bottom) {
+        config.position = PlaylistTabPosition::Top;
+    }
+
+    return config;
+}
+
+void PlaylistTabs::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
+{
+    layout["TabPosition"_L1]        = static_cast<int>(config.position);
+    layout["ExpandTabs"_L1]         = config.expand;
+    layout["ShowAddButton"_L1]      = config.showAddButton;
+    layout["ShowClearButton"_L1]    = config.showClearButton;
+    layout["ShowCloseButton"_L1]    = config.showCloseButton;
+    layout["CloseOnMiddleClick"_L1] = config.closeOnMiddleClick;
+}
+
 void PlaylistTabs::tabChanged(int index) const
 {
     const auto id = m_tabs->tabBar()->tabData(index).value<UId>();
@@ -783,7 +816,7 @@ void PlaylistTabs::playlistChanged(Playlist* /*oldPlaylist*/, Playlist* playlist
         return;
     }
 
-    setAcceptDrops(!playlist->isAutoPlaylist());
+    setAcceptDrops(!playlist->isAutoPlaylist() && !playlist->isLocked());
 
     const int count = m_tabs->tabBar()->count();
     const UId id    = playlist->id();
@@ -818,23 +851,39 @@ void PlaylistTabs::activePlaylistChanged(Playlist* playlist)
     m_lastActivePlaylist = id;
 }
 
-void PlaylistTabs::updateTabIcon(int i, Player::PlayState state) const
+void PlaylistTabs::playlistRenamed(const Playlist* playlist) const
 {
-    if(state == Player::PlayState::Playing) {
-        m_tabs->tabBar()->setTabIcon(i, m_playIcon);
+    if(!playlist) {
+        return;
     }
-    else if(state == Player::PlayState::Paused) {
-        m_tabs->tabBar()->setTabIcon(i, m_pauseIcon);
-    }
-    else {
-        m_tabs->tabBar()->setTabIcon(i, {});
+
+    const int count = m_tabs->tabBar()->count();
+
+    for(int i{0}; i < count; ++i) {
+        if(m_tabs->tabBar()->tabData(i).value<UId>() == playlist->id()) {
+            m_tabs->tabBar()->setTabText(i, playlist->name());
+        }
     }
 }
 
-void PlaylistTabs::createEmptyPlaylist() const
+void PlaylistTabs::playlistUpdated(const Playlist* playlist)
 {
-    if(auto* playlist = m_playlistHandler->createEmptyPlaylist()) {
-        m_playlistController->changeCurrentPlaylist(playlist);
+    if(!playlist) {
+        return;
+    }
+
+    if(playlist->id() == m_playlistController->currentPlaylistId()) {
+        setAcceptDrops(!playlist->isAutoPlaylist() && !playlist->isLocked());
+    }
+
+    const int count = m_tabs->tabBar()->count();
+    for(int i{0}; i < count; ++i) {
+        if(m_tabs->tabBar()->tabData(i).value<UId>() == playlist->id()) {
+            const auto state = playlist->id() == m_lastActivePlaylist ? m_playlistController->playState()
+                                                                      : Player::PlayState::Stopped;
+            updateTabIcon(i, state);
+            break;
+        }
     }
 }
 
@@ -855,24 +904,43 @@ void PlaylistTabs::playStateChanged(Player::PlayState state) const
     }
 }
 
-void PlaylistTabs::playlistRenamed(const Playlist* playlist) const
+void PlaylistTabs::refreshTabIcons()
 {
-    if(!playlist) {
-        return;
-    }
+    m_playIcon   = Gui::iconFromTheme(Constants::Icons::Play);
+    m_pauseIcon  = Gui::iconFromTheme(Constants::Icons::Pause);
+    m_lockedIcon = Gui::iconFromTheme(Constants::Icons::ReadOnly);
 
-    const int count = m_tabs->tabBar()->count();
+    const auto* activePlaylist = m_playlistHandler->activePlaylist();
+    const auto playState       = m_playlistController->playState();
 
-    for(int i{0}; i < count; ++i) {
-        if(m_tabs->tabBar()->tabData(i).value<UId>() == playlist->id()) {
-            m_tabs->tabBar()->setTabText(i, playlist->name());
-        }
+    for(int i{0}; i < m_tabs->count(); ++i) {
+        const auto id    = m_tabs->tabBar()->tabData(i).value<UId>();
+        const auto state = activePlaylist && activePlaylist->id() == id ? playState : Player::PlayState::Stopped;
+        updateTabIcon(i, state);
     }
 }
 
-void PlaylistTabs::openConfigDialog()
+void PlaylistTabs::updateTabIcon(int i, Player::PlayState state) const
 {
-    showConfigDialog(new PlaylistTabsConfigDialog(this, this), Qt::NonModal);
+    if(state == Player::PlayState::Playing) {
+        m_tabs->tabBar()->setTabIcon(i, m_playIcon);
+    }
+    else if(state == Player::PlayState::Paused) {
+        m_tabs->tabBar()->setTabIcon(i, m_pauseIcon);
+    }
+    else {
+        const auto id            = m_tabs->tabBar()->tabData(i).value<UId>();
+        const auto* playlist     = m_playlistHandler->playlistById(id);
+        const QIcon playlistIcon = playlist && playlist->isLocked() ? m_lockedIcon : QIcon{};
+        m_tabs->tabBar()->setTabIcon(i, playlistIcon);
+    }
+}
+
+void PlaylistTabs::createEmptyPlaylist() const
+{
+    if(auto* playlist = m_playlistHandler->createEmptyPlaylist()) {
+        m_playlistController->changeCurrentPlaylist(playlist);
+    }
 }
 } // namespace Fooyin
 

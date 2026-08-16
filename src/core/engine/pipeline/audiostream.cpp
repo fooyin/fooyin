@@ -173,6 +173,7 @@ void AudioStream::setPosition(uint64_t pos)
 {
     m_position.store(pos, std::memory_order_relaxed);
     clearBitrateSpans();
+    clearTimedTrackChanges();
 }
 
 void AudioStream::setReadLimitSamples(uint64_t samplePosition)
@@ -387,6 +388,35 @@ void AudioStream::clearBitrateSpans()
     m_bitrateSpans.clear();
 }
 
+void AudioStream::appendTimedTrackChange(uint64_t timestampMs, const Track& track)
+{
+    if(!track.isValid()) {
+        return;
+    }
+
+    const std::scoped_lock lock{m_timedMetadataMutex};
+    const auto insertAt
+        = std::ranges::upper_bound(m_timedTrackChanges, timestampMs, {}, &TimedTrackChange::timestampMs);
+    m_timedTrackChanges.insert(insertAt, {.timestampMs = timestampMs, .track = track});
+}
+
+std::optional<Track> AudioStream::takeTimedTrackChange(uint64_t timestampMs)
+{
+    const std::scoped_lock lock{m_timedMetadataMutex};
+    std::optional<Track> latest;
+    while(!m_timedTrackChanges.empty() && m_timedTrackChanges.front().timestampMs <= timestampMs) {
+        latest = std::move(m_timedTrackChanges.front().track);
+        m_timedTrackChanges.pop_front();
+    }
+    return latest;
+}
+
+void AudioStream::clearTimedTrackChanges()
+{
+    const std::scoped_lock lock{m_timedMetadataMutex};
+    m_timedTrackChanges.clear();
+}
+
 void AudioStream::trimConsumedBitrateSpans(uint64_t currentSample) const
 {
     while(!m_bitrateSpans.empty() && m_bitrateSpans.front().endSample <= currentSample) {
@@ -467,6 +497,7 @@ void AudioStream::resetBufferForSeek()
 
     m_endOfInput.store(false, std::memory_order_relaxed);
     clearBitrateSpans();
+    clearTimedTrackChanges();
 }
 
 StreamId StreamRegistry::registerStream(AudioStreamPtr stream)

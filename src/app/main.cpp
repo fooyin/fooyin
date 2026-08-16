@@ -43,10 +43,11 @@ using namespace Qt::StringLiterals;
 namespace {
 void configureOpenGLSurfaceFormat()
 {
-    QSurfaceFormat format;
+    QSurfaceFormat format{QSurfaceFormat::defaultFormat()};
     format.setRenderableType(QSurfaceFormat::OpenGL);
     format.setVersion(3, 3);
     format.setProfile(QSurfaceFormat::CoreProfile);
+    format.setAlphaBufferSize(8);
     format.setDepthBufferSize(24);
     format.setStencilBufferSize(8);
     format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
@@ -55,6 +56,26 @@ void configureOpenGLSurfaceFormat()
 }
 
 #ifdef Q_OS_WIN
+#include <roapi.h>
+#include <windows.h>
+
+struct GuiThreadApartment
+{
+    HRESULT result{E_UNEXPECTED};
+
+    GuiThreadApartment()
+    {
+        result = RoInitialize(RO_INIT_SINGLETHREADED);
+    }
+
+    ~GuiThreadApartment()
+    {
+        if(SUCCEEDED(result)) {
+            RoUninitialize();
+        }
+    }
+};
+
 void configurePluginSearchPaths()
 {
     SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
@@ -109,6 +130,18 @@ void parseCmdOptions(Fooyin::Application& app, Fooyin::GuiApplication& guiApp, C
 
 int main(int argc, char** argv)
 {
+#ifdef Q_OS_WIN
+    const GuiThreadApartment guiThreadApartment;
+    if(FAILED(guiThreadApartment.result)) {
+        QLoggingCategory log{"Main"};
+        qCCritical(log) << "Failed to initialise the GUI thread apartment:"
+                        << u"HRESULT 0x%1"_s.arg(
+                               static_cast<qulonglong>(static_cast<uint32_t>(guiThreadApartment.result)), 8, 16,
+                               QChar{u'0'});
+        return 1;
+    }
+#endif
+
     configureOpenGLSurfaceFormat();
 
     Q_INIT_RESOURCE(data);

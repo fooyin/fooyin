@@ -50,6 +50,19 @@ Fooyin::PcmFrame makeStereoSineFrame(int frameCount, int sampleRate, int leftBin
     return frame;
 }
 
+void appendMonoSilence(Fooyin::VisualisationBackend& backend, int sampleRate, int totalFrames)
+{
+    int startFrame{0};
+    while(startFrame < totalFrames) {
+        Fooyin::PcmFrame frame;
+        frame.format       = Fooyin::AudioFormat{Fooyin::SampleFormat::F32, sampleRate, 1};
+        frame.frameCount   = std::min(Fooyin::PcmFrame::MaxFrames, totalFrames - startFrame);
+        frame.streamTimeMs = (static_cast<uint64_t>(startFrame) * 1000ULL) / static_cast<uint64_t>(sampleRate);
+        backend.appendFrame(frame);
+        startFrame += frame.frameCount;
+    }
+}
+
 TEST(VisualisationBackendTest, ComputesSpectrumForMonoPcmBacklog)
 {
     static constexpr int fftSize    = 1024;
@@ -127,6 +140,28 @@ TEST(VisualisationBackendTest, CompensatesWindowGainForSpectrumMagnitude)
     }
 }
 
+TEST(VisualisationBackendTest, DurationSpectrumKeepsSimilarTimeWindowAcrossSampleRates)
+{
+    static constexpr uint64_t durationMs = 186;
+
+    for(const int sampleRate : {22050, 44100, 48000, 96000, 192000}) {
+        Fooyin::VisualisationBackend backend;
+        const auto token = backend.registerSession();
+        backend.requestBacklog(token, 1000);
+        appendMonoSilence(backend, sampleRate, sampleRate / 4);
+
+        Fooyin::VisualisationSession::SpectrumWindow spectrum;
+        ASSERT_TRUE(backend.getSpectrumWindowEndingAtDuration(
+            spectrum, 250, durationMs, {}, Fooyin::VisualisationSession::SpectrumWindowFunction::Hann));
+        ASSERT_TRUE(spectrum.isValid());
+        EXPECT_EQ(spectrum.sampleRate, sampleRate);
+
+        const double actualDurationMs
+            = (static_cast<double>(spectrum.fftSize) * 1000.0) / static_cast<double>(sampleRate);
+        EXPECT_NEAR(actualDurationMs, static_cast<double>(durationMs), 7.0);
+    }
+}
+
 TEST(VisualisationBackendTest, DropsOldBacklogWhenScopedStreamGapExceedsTolerance)
 {
     static constexpr auto frameCount               = 128;
@@ -156,6 +191,51 @@ TEST(VisualisationBackendTest, DropsOldBacklogWhenScopedStreamGapExceedsToleranc
     EXPECT_EQ(window.frameCount, frameCount);
 
     ASSERT_TRUE(backend.getPcmWindowEndingAt(window, discontinuityStartMs, 200, {}));
+    EXPECT_EQ(window.startTimeMs, 0);
+    EXPECT_EQ(window.frameCount, frameCount);
+}
+
+TEST(VisualisationBackendTest, PresentationTimeReanchorPreservesPcmBacklog)
+{
+    static constexpr auto frameCount = 128;
+    static constexpr auto sampleRate = 1000;
+    const auto start                 = std::chrono::steady_clock::now();
+
+    Fooyin::VisualisationBackend backend;
+    const auto token = backend.registerSession();
+    backend.requestBacklog(token, 1000);
+
+    auto first             = makeStereoSineFrame(frameCount, sampleRate, 7, 19, 0, 1);
+    first.presentationTime = start;
+    backend.appendFrame(first);
+
+    auto reanchored             = makeStereoSineFrame(frameCount, sampleRate, 7, 19, 128, 1);
+    reanchored.presentationTime = start + std::chrono::milliseconds{400};
+    backend.appendFrame(reanchored);
+
+    Fooyin::VisualisationSession::PcmWindow window;
+    ASSERT_TRUE(backend.getPcmWindowEndingAt(window, 256, 200, {}));
+    EXPECT_EQ(window.startTimeMs, 56);
+    EXPECT_EQ(window.frameCount, 200);
+}
+
+TEST(VisualisationBackendTest, DroppedAnalysisDataResetsPcmBacklog)
+{
+    static constexpr auto frameCount = 128;
+    static constexpr auto sampleRate = 1000;
+
+    Fooyin::VisualisationBackend backend;
+    const auto token = backend.registerSession();
+    backend.requestBacklog(token, 1000);
+
+    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, 0, 1));
+
+    auto afterDrop                = makeStereoSineFrame(frameCount, sampleRate, 7, 19, 128, 1);
+    afterDrop.discontinuityBefore = true;
+    backend.appendFrame(afterDrop);
+
+    Fooyin::VisualisationSession::PcmWindow window;
+    ASSERT_TRUE(backend.getPcmWindowEndingAt(window, 128, 200, {}));
     EXPECT_EQ(window.startTimeMs, 0);
     EXPECT_EQ(window.frameCount, frameCount);
 }

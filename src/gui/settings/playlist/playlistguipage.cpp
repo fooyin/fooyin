@@ -25,9 +25,13 @@
 #include <gui/guiconstants.h>
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
+#include <gui/widgets/colourbutton.h>
+#include <gui/widgets/fontbutton.h>
 #include <gui/widgets/slidereditor.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
+#include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDir>
@@ -51,6 +55,14 @@ void addComboItem(QComboBox* combo, const QString& text, int data, const QString
         combo->setItemData(combo->count() - 1, tooltip, Qt::ToolTipRole);
     }
 }
+
+QColor defaultPlayingRowColour()
+{
+    QColor colour = QApplication::palette().color(QPalette::Inactive, QPalette::Highlight);
+    colour        = Utils::isDarkMode() ? colour.lighter(150) : colour.darker(150);
+    colour.setAlpha(110);
+    return colour;
+}
 } // namespace
 
 class PlaylistAppearancePageWidget : public SettingsPageWidget
@@ -73,6 +85,8 @@ private:
     QCheckBox* m_scrollBars;
     QCheckBox* m_header;
     QCheckBox* m_altColours;
+    ColourButton* m_playingRowColour;
+    FontButton* m_playingRowFont;
     QSpinBox* m_imagePadding;
     QSpinBox* m_imagePaddingTop;
     QComboBox* m_backgroundImage;
@@ -93,6 +107,8 @@ PlaylistAppearancePageWidget::PlaylistAppearancePageWidget(SettingsManager* sett
     , m_scrollBars{new QCheckBox(tr("Show scrollbar"), this)}
     , m_header{new QCheckBox(tr("Show header"), this)}
     , m_altColours{new QCheckBox(tr("Alternating row colours"), this)}
+    , m_playingRowColour{new ColourButton(tr("Background colour") + u":"_s, true, this)}
+    , m_playingRowFont{new FontButton(tr("Font") + u":"_s, true, this)}
     , m_imagePadding{new QSpinBox(this)}
     , m_imagePaddingTop{new QSpinBox(this)}
     , m_backgroundImage{new QComboBox(this)}
@@ -169,6 +185,10 @@ PlaylistAppearancePageWidget::PlaylistAppearancePageWidget(SettingsManager* sett
     m_fadeDuration->setSuffix(u" ms"_s);
     m_fadeDuration->addSpecialValue(0, tr("Disabled"));
 
+    m_playingRowColour->setToolTip(
+        tr("Use a custom background colour for the currently playing row; transparency is supported"));
+    m_playingRowFont->setToolTip(tr("Use a custom font for the currently playing row"));
+
     m_customImage->setToolTip(tr("Path to the custom background image"));
     m_backgroundImage->setToolTip(tr("Select which image source to use for the playlist background"));
     m_backgroundCoverType->setToolTip(tr("Select which artwork type to use for current track artwork"));
@@ -193,6 +213,9 @@ PlaylistAppearancePageWidget::PlaylistAppearancePageWidget(SettingsManager* sett
     appearanceLayout->addWidget(m_scrollBars, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_header, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_altColours, row++, 0, 1, 2);
+    appearanceLayout->addWidget(Gui::createSectionHeader(tr("Playing row"), this), row++, 0, 1, 3);
+    appearanceLayout->addWidget(m_playingRowColour, row++, 0, 1, 2);
+    appearanceLayout->addWidget(m_playingRowFont, row++, 0, 1, 2);
     appearanceLayout->addWidget(Gui::createSectionHeader(tr("Image padding"), this), row++, 0, 1, 3);
     appearanceLayout->addWidget(new QLabel(tr("Left/Right") + u":"_s, this), row, 0);
     appearanceLayout->addWidget(m_imagePadding, row++, 1);
@@ -235,6 +258,13 @@ void PlaylistAppearancePageWidget::load()
     m_scrollBars->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistScrollBar>());
     m_header->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistHeader>());
     m_altColours->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistAltColours>());
+    const QVariant playingRowColour = m_settings->value<Settings::Gui::Internal::PlaylistPlayingRowColour>();
+    m_playingRowColour->setChecked(!playingRowColour.isNull());
+    m_playingRowColour->setColour(playingRowColour.isNull() ? defaultPlayingRowColour()
+                                                            : playingRowColour.value<QColor>());
+    const QVariant playingRowFont = m_settings->value<Settings::Gui::Internal::PlaylistPlayingRowFont>();
+    m_playingRowFont->setChecked(!playingRowFont.isNull());
+    m_playingRowFont->setButtonFont(playingRowFont.isNull() ? QApplication::font() : playingRowFont.value<QFont>());
     m_imagePadding->setValue(m_settings->value<Settings::Gui::Internal::PlaylistImagePadding>());
     m_imagePaddingTop->setValue(m_settings->value<Settings::Gui::Internal::PlaylistImagePaddingTop>());
     m_backgroundImage->setCurrentIndex(
@@ -258,6 +288,18 @@ void PlaylistAppearancePageWidget::apply()
     m_settings->set<Settings::Gui::Internal::PlaylistScrollBar>(m_scrollBars->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistHeader>(m_header->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistAltColours>(m_altColours->isChecked());
+    if(m_playingRowColour->isChecked()) {
+        m_settings->set<Settings::Gui::Internal::PlaylistPlayingRowColour>(m_playingRowColour->colour());
+    }
+    else {
+        m_settings->reset<Settings::Gui::Internal::PlaylistPlayingRowColour>();
+    }
+    if(m_playingRowFont->isChecked()) {
+        m_settings->set<Settings::Gui::Internal::PlaylistPlayingRowFont>(m_playingRowFont->buttonFont());
+    }
+    else {
+        m_settings->reset<Settings::Gui::Internal::PlaylistPlayingRowFont>();
+    }
     m_settings->set<Settings::Gui::Internal::PlaylistImagePadding>(m_imagePadding->value());
     m_settings->set<Settings::Gui::Internal::PlaylistImagePaddingTop>(m_imagePaddingTop->value());
     m_settings->set<Settings::Gui::Internal::PlaylistBackgroundImageMode>(m_backgroundImage->currentData().toInt());
@@ -276,6 +318,8 @@ void PlaylistAppearancePageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::PlaylistScrollBar>();
     m_settings->reset<Settings::Gui::Internal::PlaylistHeader>();
     m_settings->reset<Settings::Gui::Internal::PlaylistAltColours>();
+    m_settings->reset<Settings::Gui::Internal::PlaylistPlayingRowColour>();
+    m_settings->reset<Settings::Gui::Internal::PlaylistPlayingRowFont>();
     m_settings->reset<Settings::Gui::Internal::PlaylistImagePadding>();
     m_settings->reset<Settings::Gui::Internal::PlaylistImagePaddingTop>();
     m_settings->reset<Settings::Gui::Internal::PlaylistBackgroundImageMode>();

@@ -24,6 +24,7 @@
 #include <gui/guiutils.h>
 #include <gui/internalguisettings.h>
 #include <gui/theme/fytheme.h>
+#include <gui/theme/fythemefile.h>
 #include <gui/theme/themeregistry.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/fontbutton.h>
@@ -32,10 +33,14 @@
 
 #include <QApplication>
 #include <QCheckBox>
+#include <QFileDialog>
+#include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QListWidget>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QSignalBlocker>
 #include <QTabWidget>
@@ -43,6 +48,8 @@
 #include <optional>
 #include <ranges>
 #include <set>
+
+using namespace Qt::StringLiterals;
 
 constexpr auto ThemeIdRole = Qt::UserRole;
 
@@ -116,6 +123,7 @@ private:
     void addFontOption(QGridLayout* layout, const QString& title, const QString& className);
 
     void updateButtonState() const;
+    void updateColourOptionState() const;
     [[nodiscard]] std::optional<FyTheme> selectedTheme() const;
     [[nodiscard]] FyTheme currentTheme() const;
     void loadDefaults();
@@ -125,6 +133,8 @@ private:
 
     void saveTheme();
     void newTheme();
+    void importTheme();
+    void exportTheme();
     void renameTheme(QListWidgetItem* item);
     void loadTheme();
     void deleteTheme();
@@ -136,6 +146,10 @@ private:
     QPushButton* m_newButton;
     QPushButton* m_saveButton;
     QPushButton* m_deleteButton;
+    QPushButton* m_importButton;
+    QPushButton* m_exportButton;
+    QTabWidget* m_themeDetails;
+    QLabel* m_colourHint;
 
     QString m_defaultTheme;
     std::map<PaletteKey, ColourButton*> m_colourMapping;
@@ -153,6 +167,13 @@ GuiColoursPageWidget::GuiColoursPageWidget(ThemeRegistry* themeRegistry, Setting
     , m_newButton{new QPushButton(tr("&New"), this)}
     , m_saveButton{new QPushButton(tr("&Save"), this)}
     , m_deleteButton{new QPushButton(tr("&Delete"), this)}
+    , m_importButton{new QPushButton(tr("&Import…"), this)}
+    , m_exportButton{new QPushButton(tr("E&xport…"), this)}
+    , m_themeDetails{new QTabWidget(this)}
+    , m_colourHint{new QLabel(u"🛈 "_s
+                                  + tr("Theme colours are disabled when using a Windows style. Select Fusion as the "
+                                       "interface style to customise colours."),
+                              this)}
     , m_defaultTheme{tr("System default")}
 {
     QObject::connect(m_themesList, &QListWidget::currentItemChanged, this, &GuiColoursPageWidget::loadTheme);
@@ -160,8 +181,11 @@ GuiColoursPageWidget::GuiColoursPageWidget(ThemeRegistry* themeRegistry, Setting
     QObject::connect(m_newButton, &QPushButton::clicked, this, &GuiColoursPageWidget::newTheme);
     QObject::connect(m_saveButton, &QPushButton::clicked, this, &GuiColoursPageWidget::saveTheme);
     QObject::connect(m_deleteButton, &QPushButton::clicked, this, &GuiColoursPageWidget::deleteTheme);
+    QObject::connect(m_importButton, &QPushButton::clicked, this, &GuiColoursPageWidget::importTheme);
+    QObject::connect(m_exportButton, &QPushButton::clicked, this, &GuiColoursPageWidget::exportTheme);
 
     m_settings->subscribe<Settings::Gui::CustomTheme>(this, &GuiColoursPageWidget::mergeExternalTheme);
+    m_settings->subscribe<Settings::Gui::Style>(this, &GuiColoursPageWidget::updateColourOptionState);
 
     auto* themesLayout = new QGridLayout();
 
@@ -170,6 +194,12 @@ GuiColoursPageWidget::GuiColoursPageWidget(ThemeRegistry* themeRegistry, Setting
     themesLayout->addWidget(m_saveButton, row, 1);
     themesLayout->addWidget(m_deleteButton, row++, 2);
     themesLayout->addWidget(m_themesList, row++, 0, 1, 3);
+
+    auto* transferLayout = new QHBoxLayout();
+    transferLayout->setContentsMargins({});
+    transferLayout->addWidget(m_importButton, 1);
+    transferLayout->addWidget(m_exportButton, 1);
+    themesLayout->addLayout(transferLayout, row++, 0, 1, 3);
 
     auto* baseColours = new QWidget(this);
     auto* baseLayout  = new QGridLayout(baseColours);
@@ -227,16 +257,19 @@ GuiColoursPageWidget::GuiColoursPageWidget(ThemeRegistry* themeRegistry, Setting
     fontsLayout->setColumnStretch(1, 1);
     fontsLayout->setRowStretch(baseLayout->rowCount(), 1);
 
-    auto* themeDetails = new QTabWidget(this);
-    themeDetails->addTab(baseColours, tr("Basic Colours"));
-    themeDetails->addTab(advancedColours, tr("Advanced Colours"));
-    themeDetails->addTab(fonts, tr("Fonts"));
+    m_themeDetails->addTab(baseColours, tr("Basic Colours"));
+    m_themeDetails->addTab(advancedColours, tr("Advanced Colours"));
+    m_themeDetails->addTab(fonts, tr("Fonts"));
 
     auto* layout = new QGridLayout(this);
 
     layout->addLayout(themesLayout, 0, 0);
-    layout->addWidget(themeDetails, 0, 1);
+    layout->addWidget(m_themeDetails, 0, 1);
+    layout->addWidget(m_colourHint, 1, 0, 1, 2);
     layout->setColumnStretch(1, 1);
+
+    m_colourHint->setWordWrap(true);
+    updateColourOptionState();
 }
 
 void GuiColoursPageWidget::load()
@@ -270,6 +303,7 @@ void GuiColoursPageWidget::load()
     m_themeBaseline = current;
     m_isLoaded      = true;
     updateButtonState();
+    updateColourOptionState();
 }
 
 void GuiColoursPageWidget::apply()
@@ -326,6 +360,24 @@ void GuiColoursPageWidget::updateButtonState() const
 
     m_saveButton->setEnabled(isEditable);
     m_deleteButton->setEnabled(isEditable);
+    m_exportButton->setEnabled(theme.has_value());
+}
+
+void GuiColoursPageWidget::updateColourOptionState() const
+{
+    QString styleName = m_settings->value<Settings::Gui::Style>();
+    if(styleName.isEmpty()) {
+        styleName = m_settings->value<Settings::Gui::Internal::SystemStyle>();
+    }
+
+    const bool enabled = Gui::styleSupportsCustomPalette(styleName);
+    const QString tooltip
+        = enabled ? QString{} : tr("Custom colours are only supported with the Fusion style on Windows.");
+    for(int index : {0, 1}) {
+        m_themeDetails->setTabEnabled(index, enabled);
+        m_themeDetails->setTabToolTip(index, tooltip);
+    }
+    m_colourHint->setVisible(!enabled);
 }
 
 std::optional<FyTheme> GuiColoursPageWidget::selectedTheme() const
@@ -499,6 +551,55 @@ void GuiColoursPageWidget::newTheme()
     m_themesList->editItem(item);
 
     updateButtonState();
+}
+
+void GuiColoursPageWidget::importTheme()
+{
+    const QString path = QFileDialog::getOpenFileName(this, tr("Open Theme"), {}, tr("fooyin Theme (*.fyt)"), nullptr,
+                                                      QFileDialog::DontResolveSymlinks);
+    if(path.isEmpty()) {
+        return;
+    }
+
+    const auto imported = FyThemeFile::read(path);
+    if(!imported) {
+        QMessageBox::warning(this, tr("Import Theme"), tr("Could not import theme") + u": %1"_s.arg(imported.error()));
+        return;
+    }
+
+    FyTheme theme{*imported};
+    theme.id        = 0;
+    theme.index     = 0;
+    theme.isDefault = false;
+    theme           = m_themeRegistry->addItem(theme);
+
+    auto* item = new QListWidgetItem(theme.name, m_themesList);
+    item->setData(ThemeIdRole, theme.id);
+    item->setFlags(item->flags() | Qt::ItemIsEditable);
+    m_themesList->setCurrentItem(item);
+    updateButtonState();
+}
+
+void GuiColoursPageWidget::exportTheme()
+{
+    if(!selectedTheme()) {
+        return;
+    }
+
+    const FyTheme theme = currentTheme();
+    QString path = QFileDialog::getSaveFileName(this, tr("Save Theme"), theme.name + u".fyt"_s,
+                                                tr("fooyin Theme (*.fyt)"), nullptr, QFileDialog::DontResolveSymlinks);
+    if(path.isEmpty()) {
+        return;
+    }
+    if(QFileInfo{path}.suffix().compare(u"fyt"_s, Qt::CaseInsensitive) != 0) {
+        path += u".fyt"_s;
+    }
+
+    const auto result = FyThemeFile::write(theme, path);
+    if(!result) {
+        QMessageBox::warning(this, tr("Export Theme"), tr("Could not export theme") + u": %1"_s.arg(result.error()));
+    }
 }
 
 void GuiColoursPageWidget::renameTheme(QListWidgetItem* item)

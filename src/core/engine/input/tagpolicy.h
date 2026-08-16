@@ -19,15 +19,20 @@
 
 #pragma once
 
+#include "playcounttagpolicy.h"
 #include "ratingtagpolicy.h"
 
 #include "fycore_export.h"
+#include "internalcoresettings.h"
 
 namespace Fooyin {
 struct FYCORE_EXPORT TagPolicy
 {
     RatingTagPolicy rating;
+    PlaycountTagPolicy playcount;
     bool splitId3v23SemicolonSeparatedTags{false};
+    Id3v2WriteVersion id3v2WriteVersion{Id3v2WriteVersion::V4};
+    Mp3TagWritingScheme mp3TagWritingScheme{Mp3TagWritingScheme::Id3v2AndId3v1};
 };
 
 [[nodiscard]] FYCORE_EXPORT TagPolicy tagPolicy();

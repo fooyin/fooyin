@@ -406,19 +406,8 @@ bool EngineHandler::hasDistinctUpcomingTrack() const
         return false;
     }
 
-    const Track currentTrack  = m_playerController->currentTrack();
-    const Track upcomingTrack = m_upcomingTrack.track.track;
-
-    if(samePlaybackItem(makePlaybackItem(upcomingTrack, m_upcomingTrack.itemId),
-                        makePlaybackItem(currentTrack, m_currentTrackItemId))) {
-        return false;
-    }
-
-    if((m_playerController->playMode() & Playlist::RepeatTrack) && sameTrackSegment(upcomingTrack, currentTrack)) {
-        return false;
-    }
-
-    return true;
+    return !samePlaybackItem(makePlaybackItem(m_upcomingTrack.track.track, m_upcomingTrack.itemId),
+                             makePlaybackItem(m_playerController->currentTrack(), m_currentTrackItemId));
 }
 
 void EngineHandler::noteEngineOwnedTransition(const Track& track, uint64_t generation)
@@ -669,7 +658,12 @@ void EngineHandler::handleTrackCommitted(const Engine::TrackCommitContext& conte
 void EngineHandler::handleTrackStatus(Engine::TrackStatus status, const Track& track, uint64_t generation,
                                       bool seekable)
 {
-    m_playerController->setCurrentTrackSeekable(seekable);
+    const bool retainStoppedSeekability = status == Engine::TrackStatus::NoTrack
+                                       && m_playerController->playState() == Player::PlayState::Stopped
+                                       && m_playerController->currentTrack().isValid();
+    if(!retainStoppedSeekability) {
+        m_playerController->setCurrentTrackSeekable(seekable);
+    }
 
     switch(status) {
         case Engine::TrackStatus::NoTrack:
@@ -832,7 +826,7 @@ void EngineHandler::changeOutput(const QString& output)
     }
 
     const QString& newName = newOutput.at(0);
-    const QString& device  = newOutput.at(1);
+    const QString device   = newOutput.sliced(1).join(u'|');
 
     if(m_outputs.empty()) {
         qCWarning(ENG_HANDLER) << "No Outputs have been registered";

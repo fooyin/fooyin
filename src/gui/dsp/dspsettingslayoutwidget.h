@@ -127,5 +127,6 @@ protected:
 private:
     DspLayoutEditor* m_editor;
     QMetaObject::Connection m_previewConnection;
+    QMetaObject::Connection m_enabledConnection;
 };
 } // namespace Fooyin

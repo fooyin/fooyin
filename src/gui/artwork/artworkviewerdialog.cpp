@@ -43,6 +43,9 @@
 
 using namespace Qt::StringLiterals;
 
+constexpr auto MinScale = 0.05;
+constexpr auto MaxScale = 20.0;
+
 namespace Fooyin {
 class ArtworkView : public QGraphicsView
 {
@@ -61,6 +64,7 @@ public:
 
 Q_SIGNALS:
     void manualZoomPerformed();
+    void zoomAvailabilityChanged(bool canZoomIn, bool canZoomOut);
 
 protected:
     void resizeEvent(QResizeEvent* event) override;
@@ -69,6 +73,7 @@ protected:
 private:
     void applyManualScale(double factor);
     void applyFitToWindow();
+    void updateZoomAvailability();
 
     QGraphicsScene m_scene;
     QGraphicsPixmapItem* m_item;
@@ -127,6 +132,7 @@ void ArtworkView::actualSize()
     m_fitToWindowEnabled      = false;
 
     resetTransform();
+    updateZoomAvailability();
 
     if(wasFitToWindow || !qFuzzyCompare(oldScale, transform().m11())) {
         Q_EMIT manualZoomPerformed();
@@ -171,9 +177,18 @@ void ArtworkView::applyManualScale(double factor)
 {
     const double oldScale     = transform().m11();
     const bool wasFitToWindow = m_fitToWindowEnabled;
-    m_fitToWindowEnabled      = false;
 
-    scale(factor, factor);
+    if((factor > 1.0 && (oldScale > MaxScale || qFuzzyCompare(oldScale, MaxScale)))
+       || (factor < 1.0 && (oldScale < MinScale || qFuzzyCompare(oldScale, MinScale)))) {
+        return;
+    }
+
+    m_fitToWindowEnabled = false;
+
+    const double newScale
+        = factor > 1.0 ? std::min(oldScale * factor, MaxScale) : std::max(oldScale * factor, MinScale);
+    scale(newScale / oldScale, newScale / oldScale);
+    updateZoomAvailability();
 
     if(wasFitToWindow || !qFuzzyCompare(oldScale, transform().m11())) {
         Q_EMIT manualZoomPerformed();
@@ -198,6 +213,17 @@ void ArtworkView::applyFitToWindow()
 
     setHorizontalScrollBarPolicy(oldHorizontalPolicy);
     setVerticalScrollBarPolicy(oldVerticalPolicy);
+
+    updateZoomAvailability();
+}
+
+void ArtworkView::updateZoomAvailability()
+{
+    const double currentScale = transform().m11();
+    const bool canZoomIn      = currentScale < MaxScale && !qFuzzyCompare(currentScale, MaxScale);
+    const bool canZoomOut     = currentScale > MinScale && !qFuzzyCompare(currentScale, MinScale);
+
+    Q_EMIT zoomAvailabilityChanged(canZoomIn, canZoomOut);
 }
 
 ArtworkViewerDialog::ArtworkViewerDialog(const Track& track, const QPixmap& cover, QWidget* parent)
@@ -222,6 +248,10 @@ ArtworkViewerDialog::ArtworkViewerDialog(const Track& track, const QPixmap& cove
     QObject::connect(m_actualSizeAction, &QAction::triggered, m_view, &ArtworkView::actualSize);
     QObject::connect(m_zoomInAction, &QAction::triggered, m_view, &ArtworkView::zoomIn);
     QObject::connect(m_zoomOutAction, &QAction::triggered, m_view, &ArtworkView::zoomOut);
+    QObject::connect(m_view, &ArtworkView::zoomAvailabilityChanged, this, [this](bool canZoomIn, bool canZoomOut) {
+        m_zoomInAction->setEnabled(canZoomIn);
+        m_zoomOutAction->setEnabled(canZoomOut);
+    });
 
     QObject::connect(m_view, &ArtworkView::manualZoomPerformed, this, [this] {
         if(m_fitToWindowAction->isChecked()) {

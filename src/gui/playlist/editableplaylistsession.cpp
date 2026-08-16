@@ -65,12 +65,12 @@ EditablePlaylistSessionHost& editableHost(PlaylistWidget* widget)
 
 bool canEditPlaylistTracks(const Playlist* playlist)
 {
-    return playlist && !playlist->isAutoPlaylist();
+    return playlist && !playlist->isAutoPlaylist() && !playlist->isLocked();
 }
 
 bool canReorderPlaylist(const Playlist* playlist)
 {
-    return playlist && (!playlist->isAutoPlaylist() || !playlist->forceSorted());
+    return playlist && !playlist->isLocked() && (!playlist->isAutoPlaylist() || !playlist->forceSorted());
 }
 } // namespace
 
@@ -324,20 +324,20 @@ void EditablePlaylistSession::setupConnections(PlaylistWidgetSessionHost& sessio
                      });
     QObject::connect(widget->playlistController()->uiController(), &PlaylistUiController::selectTracks, widget,
                      [widget, this](const std::vector<int>& ids) { selectTrackIds(widget, ids); });
+    QObject::connect(widget->playlistController()->uiController(), &PlaylistUiController::selectMatchingTracks, widget,
+                     [widget, this](const TrackList& tracks) { selectTracks(widget, tracks); });
     QObject::connect(widget->playlistController()->uiController(), &PlaylistUiController::filterTracks, widget,
                      [widget, this](const PlaylistTrackList& tracks) { filterTracks(widget, tracks); });
     QObject::connect(widget->playlistController()->uiController(), &PlaylistUiController::requestPlaylistFocus,
                      widget->playlistModel(), [widget, this]() { requestPlaylistFocus(widgetSessionHost(widget)); });
     QObject::connect(widget->playlistController()->uiController(), &PlaylistUiController::showCurrentTrack, widget,
                      [widget, this]() { followCurrentTrack(editableHost(widget)); });
-    host.settingsManager()->subscribe<Settings::Gui::Internal::PlaylistMiddleClick>(
-        widget, [widget](int action) { editableHost(widget).setMiddleClickAction(static_cast<TrackAction>(action)); });
     host.settingsManager()->subscribe<Settings::Gui::Internal::PlaylistHeader>(
         widget, [widget](bool show) { editableHost(widget).setHeaderVisible(show); });
     host.settingsManager()->subscribe<Settings::Gui::Internal::PlaylistScrollBar>(
         widget, [widget](bool show) { editableHost(widget).setScrollbarVisible(show); });
     host.settingsManager()->subscribe<Settings::Gui::Internal::PlaylistAltColours>(
-        host.playlistView(), &PlaylistView::setAlternatingRowColors);
+        widget, [widget](bool enabled) { editableHost(widget).setAlternatingRowColors(enabled); });
 }
 
 void EditablePlaylistSession::setupActions(PlaylistWidgetSessionHost& sessionHost, ActionContainer* editMenu,
@@ -1465,13 +1465,44 @@ void EditablePlaylistSession::selectTrackIds(PlaylistWidget* widget, const std::
         }
     }
 
-    if(!selection.empty()) {
-        const QModelIndex firstIndex = selection.indexes().front();
-        host.playlistView()->setCurrentIndex(firstIndex);
-        host.playlistView()->selectionModel()->select(selection,
-                                                      QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
-        host.playlistView()->scrollTo(firstIndex, QAbstractItemView::PositionAtCenter);
+    if(selection.empty()) {
+        host.playlistView()->selectionModel()->clearSelection();
+        return;
     }
+
+    const QModelIndex firstIndex = selection.indexes().front();
+    host.playlistView()->setCurrentIndex(firstIndex);
+    host.playlistView()->selectionModel()->select(selection,
+                                                  QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+    host.playlistView()->scrollTo(firstIndex, QAbstractItemView::PositionAtCenter);
+}
+
+void EditablePlaylistSession::selectTracks(PlaylistWidget* widget, const TrackList& tracks) const
+{
+    auto& host = editableHost(widget);
+    QItemSelection selection;
+
+    const std::set<Track> matchingTracks{tracks.cbegin(), tracks.cend()};
+    QModelIndexList trackIndexes;
+    getAllTrackIndexes(host.playlistModel(), {}, trackIndexes);
+
+    for(const QModelIndex& index : trackIndexes) {
+        const auto playlistTrack = index.data(PlaylistItem::PersistentItemData).value<PlaylistTrack>();
+        if(matchingTracks.contains(playlistTrack.track)) {
+            selection.select(index, index);
+        }
+    }
+
+    if(selection.empty()) {
+        host.playlistView()->selectionModel()->clearSelection();
+        return;
+    }
+
+    const QModelIndex firstIndex = selection.indexes().front();
+    host.playlistView()->setCurrentIndex(firstIndex);
+    host.playlistView()->selectionModel()->select(selection,
+                                                  QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+    host.playlistView()->scrollTo(firstIndex, QAbstractItemView::PositionAtCenter);
 }
 
 void EditablePlaylistSession::filterTracks(PlaylistWidget* widget, const PlaylistTrackList& tracks)

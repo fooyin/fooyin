@@ -12,6 +12,7 @@ env:
   VCPKG_DOWNLOADS: 'C:/v/dl'
   BUILD_CCACHE: OFF
   BUILD_PCH: ON
+  BUILD_TESTS: ON
 
 jobs:
   windows:
@@ -71,7 +72,7 @@ jobs:
           install-deps: 'true'
 
       - name: Setup MSVC Environment
-        uses: ilammy/msvc-dev-cmd@v1
+        uses: TheMrMilchmann/setup-msvc-dev@v4
         with:
           arch: ${{ matrix.msvc-arch }}
 

@@ -132,6 +132,8 @@ public:
     [[nodiscard]] bool isTemporary() const;
     /** Returns @c true if this an autoplaylist (generated from a query). */
     [[nodiscard]] bool isAutoPlaylist() const;
+    /** Returns @c true if changes to this playlist's contents are disabled. */
+    [[nodiscard]] bool isLocked() const;
     /** Returns the query used to generate this autoplaylist, else an empty string. */
     [[nodiscard]] QString query() const;
     /** Returns the optional sort pattern used to order this autoplaylist. */
@@ -205,6 +207,7 @@ private:
     void setQuery(const QString& query);
     void setSortQuery(const QString& query);
     void setForceSorted(bool forceSorted);
+    void setLocked(bool locked);
 
     void setModified(bool modified);
     void setTracksModified(bool modified);

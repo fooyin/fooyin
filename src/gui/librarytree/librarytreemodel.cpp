@@ -291,6 +291,7 @@ public:
     LibraryTreeGrouping m_grouping;
     bool m_loaded{false};
     bool m_resetting{false};
+    bool m_resetPendingFinish{false};
 
     QThread m_populatorThread;
     LibraryTreePopulator m_populator;
@@ -530,7 +531,9 @@ void LibraryTreeModelPrivate::mergeTrackParents(const TrackIdNodeMap& parents)
 
 void LibraryTreeModelPrivate::batchFinished(const PendingTreeDataPtr& data)
 {
-    if(m_resetting) {
+    const bool resetting = m_resetting;
+    if(resetting) {
+        m_resetPendingFinish = true;
         m_self->beginResetModel();
         beginReset();
     }
@@ -542,7 +545,7 @@ void LibraryTreeModelPrivate::batchFinished(const PendingTreeDataPtr& data)
 
     populateModel(*data);
 
-    if(m_resetting) {
+    if(resetting) {
         m_self->endResetModel();
     }
     m_resetting = false;
@@ -878,6 +881,9 @@ LibraryTreeModel::LibraryTreeModel(LibraryManager* libraryManager, const std::sh
         if(!p->m_loaded) {
             p->m_loaded = true;
             Q_EMIT modelLoaded();
+        }
+        if(std::exchange(p->m_resetPendingFinish, false)) {
+            Q_EMIT modelResetFinished();
         }
     });
 
@@ -1332,7 +1338,9 @@ void LibraryTreeModel::reset(const TrackList& tracks)
         beginResetModel();
         p->beginReset();
         endResetModel();
+        p->m_resetPendingFinish = false;
         Q_EMIT modelLoaded();
+        Q_EMIT modelResetFinished();
         return;
     }
 

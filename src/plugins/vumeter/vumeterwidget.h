@@ -56,6 +56,7 @@ public:
 
     void renderLevel(const LevelFrame& frame);
 
+    [[nodiscard]] Type type() const;
     [[nodiscard]] Qt::Orientation orientation() const;
     void setOrientation(Qt::Orientation orientation);
     void setShowLegend(bool show);
@@ -103,6 +104,7 @@ protected:
     void openConfigDialog() override;
 
 private:
+    [[nodiscard]] QString settingsKey(QStringView key) const;
     [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
     void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
 

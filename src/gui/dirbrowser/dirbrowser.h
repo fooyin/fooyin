@@ -38,6 +38,7 @@ class QLineEdit;
 class QModelIndex;
 class QMenu;
 class QUrl;
+class QVBoxLayout;
 
 namespace Fooyin {
 class ActionManager;
@@ -63,6 +64,12 @@ public:
         List,
     };
 
+    enum class ControlsPosition : int
+    {
+        Top,
+        Bottom,
+    };
+
     DirBrowser(const QStringList& supportedExtensions, ActionManager* actionManager,
                PlaylistInteractor* playlistInteractor, SettingsManager* settings, QWidget* parent = nullptr);
     ~DirBrowser() override;
@@ -84,6 +91,7 @@ public:
         bool indentList{true};
         bool showHorizScrollbar{true};
         Mode mode{Mode::List};
+        ControlsPosition controlsPosition{ControlsPosition::Top};
         bool showControls{true};
         bool showLocation{true};
         bool showSymLinks{false};
@@ -141,6 +149,7 @@ private:
     [[nodiscard]] QString rootPath() const;
 
     void updateFilters();
+    void setControlsPosition(ControlsPosition position);
     void setControlsEnabled(bool enabled);
     void setLocationEnabled(bool enabled);
     void setShowSymLinksEnabled(bool enabled);
@@ -162,6 +171,7 @@ private:
 
     std::unique_ptr<QFileIconProvider> m_iconProvider;
 
+    QVBoxLayout* m_mainLayout;
     QHBoxLayout* m_controlLayout;
     QPointer<QLineEdit> m_dirEdit;
     QPointer<ToolButton> m_backDir;

@@ -11,6 +11,8 @@ create_fooyin_plugin_internal(
             ${SDL2_LIBRARIES}
     SOURCES sdloutput.cpp
             sdloutput.h
+            sdlaudiosubsystem.cpp
+            sdlaudiosubsystem.h
             sdlplugin.cpp
             sdlplugin.h
 )

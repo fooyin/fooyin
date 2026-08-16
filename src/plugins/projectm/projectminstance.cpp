@@ -42,6 +42,21 @@ void appendExistingDir(QStringList& dirs, const QString& dir)
         dirs.append(path);
     }
 }
+
+QString normalisePresetPath(const QString& path)
+{
+    return QDir::cleanPath(QFileInfo{QDir::fromNativeSeparators(path)}.absoluteFilePath());
+}
+
+bool presetPathsEqual(const QString& lhs, const QString& rhs)
+{
+#ifdef Q_OS_WIN
+    static constexpr Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive;
+#else
+    static constexpr Qt::CaseSensitivity caseSensitivity = Qt::CaseSensitive;
+#endif
+    return lhs.compare(rhs, caseSensitivity) == 0;
+}
 } // namespace
 
 ProjectMInstance::ProjectMInstance(QString dataDir, QStringList presetDirs, ProjectMSettings settings)
@@ -89,7 +104,6 @@ ProjectMInstance::ProjectMInstance(QString dataDir, QStringList presetDirs, Proj
     }
 
     projectm_playlist_set_retry_count(m_playlist, 0);
-    projectm_playlist_set_shuffle(m_playlist, true);
     projectm_playlist_set_preset_switched_event_callback(m_playlist, &ProjectMInstance::presetSwitched, this);
     projectm_playlist_set_preset_switch_failed_event_callback(m_playlist, &ProjectMInstance::presetSwitchFailed, this);
 
@@ -113,8 +127,6 @@ ProjectMInstance::ProjectMInstance(QString dataDir, QStringList presetDirs, Proj
         m_errorMessage = u"No projectM presets were found in the configured folders"_s;
         return;
     }
-
-    projectm_playlist_set_position(m_playlist, 0, true);
 }
 
 ProjectMInstance::~ProjectMInstance()
@@ -335,11 +347,12 @@ void ProjectMInstance::renderFrame()
 
 int ProjectMInstance::presetIndexForPath(const QString& path) const
 {
-    if(!isReady()) {
+    if(!isReady() || path.isEmpty()) {
         return -1;
     }
 
-    const uint32_t size = projectm_playlist_size(m_playlist);
+    const QString normalisedPath = normalisePresetPath(path);
+    const uint32_t size          = projectm_playlist_size(m_playlist);
     for(uint32_t index{0}; index < size; ++index) {
         char* item = projectm_playlist_item(m_playlist, index);
         if(!item) {
@@ -348,7 +361,7 @@ int ProjectMInstance::presetIndexForPath(const QString& path) const
 
         const QString itemPath = QString::fromUtf8(item);
         projectm_playlist_free_string(item);
-        if(itemPath == path) {
+        if(presetPathsEqual(normalisePresetPath(itemPath), normalisedPath)) {
             return static_cast<int>(index);
         }
     }

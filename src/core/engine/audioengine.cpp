@@ -881,9 +881,12 @@ bool AudioEngine::commitPreparedCrossfadeTransition(const Engine::PlaybackItem& 
 }
 
 bool AudioEngine::shouldEnableTimelineTransitionHints(const Track& track,
-                                                      const AudioDecoder::PlaybackHints playbackHints)
+                                                      const AudioDecoder::PlaybackHints playbackHints,
+                                                      const AudioDecoder::RepeatHandling repeatHandling)
 {
-    return track.duration() > 0 && !playbackHints.testFlag(AudioDecoder::PlaybackHint::RepeatTrackEnabled);
+    const bool decoderOwnsRepeat = playbackHints.testFlag(AudioDecoder::PlaybackHint::RepeatTrackEnabled)
+                                && repeatHandling == AudioDecoder::RepeatHandling::DecoderLoop;
+    return track.duration() > 0 && !decoderOwnsRepeat;
 }
 
 bool AudioEngine::armPreparedGaplessTransition(const Engine::PlaybackItem& item, uint64_t generation)
@@ -1396,7 +1399,10 @@ void AudioEngine::setAudioOutput(const OutputCreator& output, const QString& dev
         const bool initOk = m_outputController.initOutput(m_format, m_volume);
         if(initOk) {
             if(wasPlaying) {
-                play();
+                if(auto stream = m_decoder.activeStream()) {
+                    m_pipeline.sendStreamCommand(stream->id(), AudioStream::Command::Play);
+                }
+                m_pipeline.play();
             }
         }
     }
@@ -1454,7 +1460,10 @@ void AudioEngine::applyOutputProfile(const OutputCreator& output, const QString&
         m_outputController.uninitOutput();
         const bool initOk = m_outputController.initOutput(m_format, m_volume);
         if(initOk && wasPlaying) {
-            play();
+            if(auto stream = m_decoder.activeStream()) {
+                m_pipeline.sendStreamCommand(stream->id(), AudioStream::Command::Play);
+            }
+            m_pipeline.play();
         }
     }
 }
@@ -1483,7 +1492,10 @@ void AudioEngine::setOutputDevice(const QString& device)
     m_outputController.uninitOutput();
     const bool initOk = m_outputController.initOutput(m_format, m_volume);
     if(initOk && wasPlaying) {
-        play();
+        if(auto stream = m_decoder.activeStream()) {
+            m_pipeline.sendStreamCommand(stream->id(), AudioStream::Command::Play);
+        }
+        m_pipeline.play();
     }
 }
 
@@ -2574,6 +2586,22 @@ void AudioEngine::syncDecoderTrackMetadata()
     Q_EMIT trackChanged(changedTrack);
 }
 
+void AudioEngine::syncTimedTrackMetadata(const AudioStreamPtr& stream, uint64_t sourcePositionMs)
+{
+    const auto changed = stream->takeTimedTrackChange(sourcePositionMs);
+    if(!changed || !changed->isValid() || !sameTrackIdentity(m_currentTrack, *changed)
+       || changed->sameDataAs(m_currentTrack)) {
+        return;
+    }
+
+    m_currentTrack = *changed;
+    stream->setTrack(*changed);
+    if(changed->bitrate() >= MinLiveBitrateKbps) {
+        publishBitrate(changed->bitrate());
+    }
+    Q_EMIT trackChanged(*changed);
+}
+
 void AudioEngine::publishBitrate(int bitrate)
 {
     const int clampedBitrate = std::max(0, bitrate);
@@ -3631,6 +3659,14 @@ void AudioEngine::updatePosition()
         return;
     }
 
+    if(pipelineStatus.renderedSegment.valid && pipelineStatus.renderedSegment.streamId == stream->id()) {
+        const uint64_t sourceDelayMs       = scaledDelayMs(pipelineDelayMs, delayToSourceScale);
+        const uint64_t renderedSourceEndMs = pipelineStatus.renderedSegment.sourceEndMs;
+        const uint64_t audibleSourcePositionMs
+            = renderedSourceEndMs > sourceDelayMs ? renderedSourceEndMs - sourceDelayMs : 0;
+        syncTimedTrackMetadata(stream, audibleSourcePositionMs);
+    }
+
     const bool preparedGaplessRendered = m_preparedGaplessTransition.active
                                       && m_preparedGaplessTransition.sourceGeneration == m_trackGeneration
                                       && pipelineStatus.renderedSegment.valid
@@ -4378,16 +4414,17 @@ AudioEngine::TrackEndingResult AudioEngine::checkTrackEnding(const AudioStreamPt
     const bool crossfadeUsesAudibleBoundary = configuredMode == AutoTransitionMode::Crossfade
                                            && m_crossfadeSwitchPolicy != Engine::CrossfadeSwitchPolicy::Boundary;
 
-    input.positionMs                     = crossfadeUsesAudibleBoundary ? audiblePosMs : relativePosMs;
-    input.durationMs                     = m_currentTrack.duration();
-    input.durationBoundaryEnabled        = isBoundedSegmentTrack(m_currentTrack);
-    input.predictiveTimelineHintsEnabled = shouldEnableTimelineTransitionHints(m_currentTrack, m_decoderPlaybackHints);
-    input.timelineDelayMs                = crossfadeUsesAudibleBoundary ? 0 : timelineDelayMs;
-    input.remainingOutputMs              = remainingOutputMs;
-    input.endOfInput                     = stream->endOfInput() || stream->readLimitReached();
-    input.bufferEmpty                    = stream->bufferEmpty() || stream->readLimitReached();
-    input.autoCrossfadeEnabled           = configuredMode == AutoTransitionMode::Crossfade;
-    input.gaplessEnabled                 = configuredMode == AutoTransitionMode::Gapless;
+    input.positionMs              = crossfadeUsesAudibleBoundary ? audiblePosMs : relativePosMs;
+    input.durationMs              = m_currentTrack.duration();
+    input.durationBoundaryEnabled = isBoundedSegmentTrack(m_currentTrack);
+    input.predictiveTimelineHintsEnabled
+        = shouldEnableTimelineTransitionHints(m_currentTrack, m_decoderPlaybackHints, m_decoder.repeatHandling());
+    input.timelineDelayMs        = crossfadeUsesAudibleBoundary ? 0 : timelineDelayMs;
+    input.remainingOutputMs      = remainingOutputMs;
+    input.endOfInput             = stream->endOfInput() || stream->readLimitReached();
+    input.bufferEmpty            = stream->bufferEmpty() || stream->readLimitReached();
+    input.autoCrossfadeEnabled   = configuredMode == AutoTransitionMode::Crossfade;
+    input.gaplessEnabled         = configuredMode == AutoTransitionMode::Gapless;
     input.autoFadeOutMs          = input.autoCrossfadeEnabled ? m_crossfadingValues.autoChange.effectiveOutMs() : 0;
     input.autoFadeInMs           = input.autoCrossfadeEnabled ? m_crossfadingValues.autoChange.effectiveInMs() : 0;
     input.boundaryFadeEnabled    = configuredMode == AutoTransitionMode::BoundaryFade;

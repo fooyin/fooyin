@@ -44,9 +44,9 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
 {
     m_layoutProvider = context.layoutProvider;
 
-    m_filterController
-        = new FilterController(context.actionManager, *m_core, context.trackSelection, context.editableLayout,
-                               context.coverRepository, m_core->settingsManager, context.styleProvider, this);
+    m_filterController = new FilterController(context.actionManager, *m_core, context.playlistSelection,
+                                              context.trackSelection, context.editableLayout, context.coverRepository,
+                                              m_core->settingsManager, context.styleProvider, this);
 
     new StaticContextMenuPage(
         m_core->settingsManager,
@@ -77,31 +77,45 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
 void FiltersPlugin::registerLayouts() const
 {
     m_layoutProvider->registerLayout(
-        R"({"Name":"Obsidian","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAALQAAA3cAAAAcAP////8BAAAAAgA=",
-            "Widgets":[{"StatusBar":{}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAADAAACBwAAA9YAAAGhAP////8BAAAAAQA=",
-            "Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAAAIAAAA6AA/////wEAAAACAA==","Widgets":[{"SearchBar":{
+        R"({"Name":"Obsidian","Widgets":[{"SplitterVertical":{"Locked":[true,false,true],"State":"AAAA/wAAAAEAAAADAAAAGAAAAtwAAAAcAP////8BAAAAAgA=",
+            "Widgets":[{"StatusBar":{}},{"SplitterHorizontal":{"Locked":[true,false,true],"State":"AAAA/wAAAAEAAAADAAABeQAAAskAAAEvAP////8BAAAAAQA=",
+            "Widgets":[{"SplitterVertical":{"Locked":[true,false],"State":"AAAA/wAAAAEAAAACAAAAIAAAArsA/////wEAAAACAA==","Widgets":[{"SearchBar":{
             "ID":"866eee837dee4919bd1d1e7c916e4013","Widgets":"1c827a58f07a4a939b185d9c0285f936|09356ff889694ff7941174448bd67b7a"}},
-            {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAAA5wAAAQ0A/////wEAAAABAA==","Widgets":[{"LibraryFilter":{"Columns":"1",
+            {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAAArgAAAMoA/////wEAAAABAA==","Widgets":[{"LibraryFilter":{"Columns":"1",
             "Group":"Default","ID":"1c827a58f07a4a939b185d9c0285f936","Index":0,"State":"AAAAJXjaY2BgYGRgYOhigNAgwGj/AcqACjAAACPXAb4="}},
             {"LibraryFilter":{"Columns":"3","Group":"Default","ID":"09356ff889694ff7941174448bd67b7a","Index":1,
             "State":"AAAAJXjaY2BgYGRgYFjKAKFBgNH+A5QBFWAAACcBAdk="}}]}}]}},{"PlaylistTabs":{"Widgets":[{"Playlist":{}}]}},
-            {"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAABsQAAAdMA/////wEAAAACAA==","Widgets":[{"ArtworkPanel":{}},{"SelectionInfo":{}}]}}]}},
-            {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAAggAABoIAAAA+AAAAHAD/////AQAAAAEA","Widgets":[{"PlayerControls":{}},
+            {"SplitterVertical":{"Locked":[true,false],"State":"AAAA/wAAAAEAAAACAAABLwAAAc0A/////wEAAAACAA==","Widgets":[{"ArtworkPanel":{}},{"SelectionInfo":{}}]}}]}},
+            {"SplitterHorizontal":{"Locked":[true,false,false,false],"State":"AAAA/wAAAAEAAAAEAAAAggAABoIAAAA+AAAAZwD/////AQAAAAEA","Widgets":[{"PlayerControls":{}},
             {"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}}]}}]})");
 
     m_layoutProvider->registerLayout(
-        R"({"Name":"Ember","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAAEAAAA2QAAABoAAALGAAAAFgD/////AQAAAAIA",
+        R"({"Name":"Ember","Widgets":[{"SplitterVertical":{"Locked":[true,true,false,true],"State":"AAAA/wAAAAEAAAAEAAAA2QAAABoAAALGAAAAFgD/////AQAAAAIA",
             "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAABAAAAAQAAAAEAAAABAAD/////AQAAAAEA",
             "Widgets":[{"LibraryFilter":{"Columns":"0","Group":"Default","ID":"955f29805de446d7a9b6195a94bfd817","Index":0}},
             {"LibraryFilter":{"Columns":"1","Group":"Default","ID":"4fee1a754b3e47ff86f4c711fbf0f0eb","Index":1}},
             {"LibraryFilter":{"Columns":"2","Group":"Default","ID":"3b20c1db282d4bfe9a95c776e6723608","Index":2}},
             {"LibraryFilter":{"Columns":"3","Group":"Default","ID":"34777508a4ae4ec5939620f235e8ec1a","Index":3}}]}},
-            {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAFAAAAcgAABRoAAAA2AAAAGAAAAWQA/////wEAAAABAA==",
+            {"SplitterHorizontal":{"Locked":[true,false,false,false,true],"State":"AAAA/wAAAAEAAAAFAAAAcgAABRoAAAA2AAAAGAAAAWQA/////wEAAAABAA==",
             "Widgets":[{"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}},{"SearchBar":{
-            "Widgets":"955f29805de446d7a9b6195a94bfd817|34777508a4ae4ec5939620f235e8ec1a|4fee1a754b3e47ff86f4c711fbf0f0eb|
-            3b20c1db282d4bfe9a95c776e6723608"}}]}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAADAAABdAAABGgAAAFgAP////8BAAAAAQA=",
-            "Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAABdAAAAU0A/////wEAAAACAA==","Widgets":[{"ArtworkPanel":{}},
+            "Widgets":"955f29805de446d7a9b6195a94bfd817|34777508a4ae4ec5939620f235e8ec1a|4fee1a754b3e47ff86f4c711fbf0f0eb|3b20c1db282d4bfe9a95c776e6723608"}}]}},
+            {"SplitterHorizontal":{"Locked":[true,false,true],"State":"AAAA/wAAAAEAAAADAAABQwAAA0IAAAFgAP////8BAAAAAQA=",
+            "Widgets":[{"SplitterVertical":{"Locked":[true,false],"State":"AAAA/wAAAAEAAAACAAABQwAAAVEA/////wEAAAACAA==","Widgets":[{"ArtworkPanel":{}},
             {"SelectionInfo":{}}]}},{"Playlist":{}},{"PlaylistOrganiser":{}}]}},{"StatusBar":{}}]}}]})");
+
+    m_layoutProvider->registerLayout(
+        R"({"Name":"Gallery","Widgets":[{"SplitterVertical":{"Locked":[true,false,true],"State":"AAAA/wAAAAEAAAADAAAAGgAAA3EAAAAWAP////8BAAAAAgA=",
+            "Widgets":[{"SplitterHorizontal":{"Locked":[true,false,false,false],"State":"AAAA/wAAAAEAAAAEAAAAegAABHkAAAA9AAAAdwD/////AQAAAAEA",
+            "Widgets":[{"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}},
+            {"SplitterHorizontal":{"Locked":[true,false,true],"State":"AAAA/wAAAAEAAAADAAAAsgAAAzgAAAHyAP////8BAAAAAQA=",
+            "Widgets":[{"LibraryFilter":{"AlternatingRows":false,"Artwork":0,"AutoSwitch":true,"Captions":1,"Columns":"1","Display":0,"DoubleClickAction":3,
+            "FilterSource":0,"Group":"Gallery","IconHeight":100,"IconHorizontalGap":-1,"IconVerticalGap":10,"IconWidth":100,"Index":0,"KeepAlive":true,"MiddleClickAction":0,
+            "PlaylistEnabled":true,"PlaylistName":"Filter Results","RowHeight":0,"SendPlayback":true,"ShowHeader":true,"ShowScrollbar":true,"ShowSummary":true,"Source":-1,
+            "State":"AAAAJXjaY2BgYGRgYNjAAKFBgNH+A5QBFWAAAChLAeQ="}},{"LibraryFilter":{"AlternatingRows":false,"Artwork":0,"AutoSwitch":true,"Captions":1,"Columns":"3|1",
+            "Display":1,"DoubleClickAction":3,"FilterSource":0,"Group":"Gallery","IconHeight":160,"IconHorizontalGap":-1,"IconVerticalGap":12,"IconWidth":160,"Index":1,
+            "KeepAlive":true,"MiddleClickAction":0,"PlaylistEnabled":true,"PlaylistName":"Filter Results","RowHeight":0,"SendPlayback":true,"ShowHeader":true,
+            "ShowScrollbar":true,"ShowSummary":false,"Source":-1,"State":"AAAANXjaY2BgYGJgYJwLxEsYwGwwYASx7e9vb1T8XSFk/0DFPp/J+TsjTBIAucsIdg=="}},
+            {"Playlist":{"Preset":1,"SingleMode":true}}]}},{"StatusBar":{}}]}}]})");
 }
 } // namespace Fooyin::Filters
 

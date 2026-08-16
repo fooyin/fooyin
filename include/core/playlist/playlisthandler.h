@@ -93,7 +93,7 @@ public:
     Playlist* createNewAutoPlaylist(const QString& name, const QString& query, const QString& sortQuery = {},
                                     bool forceSorted = true);
 
-    /** Adds @p tracks to the end of the playlist with @p id if found. */
+    /** Adds @p tracks to the end of the writable playlist with @p id if found. */
     void appendToPlaylist(const UId& id, const TrackList& tracks);
     /** Replaces the @p tracks of the playlist with @p id if found. */
     void replacePlaylistTracks(const UId& id, const TrackList& tracks,
@@ -126,6 +126,8 @@ public:
     [[nodiscard]] PlaylistTrack advanceRelativeTrack(Playlist::PlayModes mode, int delta = 1);
 
     void renamePlaylist(const UId& id, const QString& name);
+    /** Enables or disables changes to the contents of the playlist with @p id. */
+    void setPlaylistLocked(const UId& id, bool locked);
     void removePlaylist(const UId& id);
     Playlist* restorePlaylist(const UId& id);
 

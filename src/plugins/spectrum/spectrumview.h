@@ -66,6 +66,7 @@ private:
     {
         size_t startBin{1};
         size_t endBin{1};
+        bool available{false};
     };
 
     void engineStateChanged(Engine::PlaybackState state);

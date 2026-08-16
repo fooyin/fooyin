@@ -76,7 +76,7 @@ private:
     bool handleEnumeratedFile(const QFileInfo& info, EnumeratedFileType type);
     void handleScanWriterFlush(const ScanResult& result);
     void flushTrackResolverWrites();
-    void finaliseMissingTracks();
+    void finaliseUnseenTracks();
 
     LibraryScanHost* m_host;
     LibraryScanConfig m_config;

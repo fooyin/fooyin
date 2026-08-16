@@ -40,7 +40,9 @@
 #include <chrono>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <thread>
+#include <utility>
 #include <vector>
 
 using namespace std::chrono_literals;
@@ -268,6 +270,16 @@ public:
         return m_stats->bitrate.load(std::memory_order_relaxed);
     }
 
+    void setTimedTrackChange(TimedTrackChange change)
+    {
+        m_timedTrackChange = std::move(change);
+    }
+
+    std::optional<TimedTrackChange> takeTimedTrackChange() override
+    {
+        return std::exchange(m_timedTrackChange, std::nullopt);
+    }
+
     std::optional<AudioFormat> init(const AudioSource& source, const Track& track, DecoderOptions options) override
     {
         Q_UNUSED(source)
@@ -345,6 +357,7 @@ private:
     uint64_t m_sourceEnd{0};
     bool m_started{false};
     bool m_initValid{false};
+    std::optional<TimedTrackChange> m_timedTrackChange;
 };
 
 class FakeAudioOutput : public AudioOutput
@@ -759,14 +772,6 @@ public:
     {
         return engine.upcomingTrackCandidateItem();
     }
-
-    static bool activeStreamRendered(const AudioEngine& engine)
-    {
-        const auto stream = engine.m_decoder.activeStream();
-        const auto status = engine.m_pipeline.currentStatus();
-        return stream && status.renderedSegment.valid && status.renderedSegment.streamId == stream->id()
-            && status.renderedSegment.outputFrames > 0;
-    }
 };
 
 FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, LoadTrackFullReinitInitialisesDecoderAndOutput)
@@ -816,6 +821,36 @@ FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, AdoptPreparedDecoderPreservesDe
 
     adoptedContext.stop();
     EXPECT_EQ(1, stats->stopCalls.load());
+}
+
+FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, DecoderContextQueuesTimedTrackChangesOnActiveStream)
+{
+    auto stats   = std::make_shared<DecoderStats>();
+    auto decoder = std::make_unique<FakeDecoder>(stats);
+
+    const Track track = makeTrack(u"timed-metadata.fyt"_s, 0, 1000);
+    Track changed{track};
+    changed.setTitle(u"Now Playing"_s);
+    constexpr uint64_t SourceEpochMs = 66'035'000;
+    decoder->setTimedTrackChange({.timestampMs = SourceEpochMs + 5, .track = changed});
+
+    LoadedDecoder loaded;
+    loaded.format = decoder->init(AudioSource{}, track, AudioDecoder::UpdateTracks);
+    decoder->seek(SourceEpochMs);
+    loaded.decoder = std::move(decoder);
+    ASSERT_TRUE(loaded.format.has_value());
+
+    DecoderContext context;
+    ASSERT_TRUE(context.init(std::move(loaded), track));
+    auto stream = context.createStream(128);
+    context.setActiveStream(stream);
+    context.start();
+
+    ASSERT_GT(context.decodeChunk(10), 0);
+    EXPECT_FALSE(stream->takeTimedTrackChange(4).has_value());
+    const auto due = stream->takeTimedTrackChange(5);
+    ASSERT_TRUE(due.has_value());
+    EXPECT_EQ(due->title(), u"Now Playing"_s);
 }
 
 FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, ContiguousSegmentSwitchDoesNotReinitDecoderOrOutput)
@@ -1290,14 +1325,6 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, PausedSeekRebuildsCurrentTrac
     EXPECT_FALSE(AudioEngineTestAccessor::preparedGaplessActive(harness.engine));
     EXPECT_EQ(harness.engine.playbackState(), Engine::PlaybackState::Paused);
     EXPECT_GE(harness.engine.position(), seekPositionMs);
-
-    const uint64_t positionBeforeResume = harness.engine.position();
-    harness.engine.play();
-    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.playbackState() == Engine::PlaybackState::Playing; }));
-    ASSERT_TRUE(
-        pumpUntil([&harness]() { return AudioEngineTestAccessor::activeStreamRendered(harness.engine); }, 3000ms));
-    EXPECT_TRUE(pumpUntil(
-        [&harness, positionBeforeResume]() { return harness.engine.position() > positionBeforeResume; }, 3000ms));
 }
 
 FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, OverlapMidpointSwitchPolicyCommitsAfterIncomingAnchor)
@@ -1593,7 +1620,7 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SetVolumeClampsAndPropagatesT
     EXPECT_DOUBLE_EQ(harness.outputStats->volume(), 0.0);
 }
 
-FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SetAudioOutputReinitializesLoadedOutput)
+FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SetAudioOutputResumesPlaybackAfterReinitialisingOutput)
 {
     ensureCoreApplication();
     EngineHarness harness{false};
@@ -1603,15 +1630,20 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SetAudioOutputReinitializesLo
     ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.trackStatus() == Engine::TrackStatus::Loaded; }));
     ASSERT_EQ(harness.outputStats->initCalls.load(), 1);
 
+    harness.engine.play();
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.playbackState() == Engine::PlaybackState::Playing; }));
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.outputStats->writeCalls.load() > 0; }, 2000ms));
+
     auto newOutputStats = std::make_shared<OutputStats>();
     harness.engine.setAudioOutput([stats = newOutputStats]() { return std::make_unique<FakeAudioOutput>(stats); },
                                   QString{});
 
     ASSERT_TRUE(pumpUntil([&harness]() { return harness.outputStats->uninitCalls.load() >= 1; }, 2000ms));
     ASSERT_TRUE(pumpUntil([&newOutputStats]() { return newOutputStats->initCalls.load() >= 1; }, 2000ms));
+    EXPECT_TRUE(pumpUntil([&newOutputStats]() { return newOutputStats->writeCalls.load() > 0; }, 2000ms));
 }
 
-FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SetOutputDeviceReinitialisesLoadedOutput)
+FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SetOutputDeviceResumesPlaybackAfterReinitialisingOutput)
 {
     ensureCoreApplication();
     EngineHarness harness{false};
@@ -1621,11 +1653,19 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SetOutputDeviceReinitialisesL
     ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.trackStatus() == Engine::TrackStatus::Loaded; }));
     ASSERT_EQ(harness.outputStats->initCalls.load(), 1);
 
+    harness.engine.play();
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.playbackState() == Engine::PlaybackState::Playing; }));
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.outputStats->writeCalls.load() > 0; }, 2000ms));
+    const int writesBeforeSwitch = harness.outputStats->writeCalls.load();
+
     harness.engine.setOutputDevice(u"hw:test"_s);
 
     ASSERT_TRUE(pumpUntil([&harness]() { return harness.outputStats->uninitCalls.load() >= 1; }, 2000ms));
     ASSERT_TRUE(pumpUntil([&harness]() { return harness.outputStats->initCalls.load() >= 2; }, 2000ms));
     ASSERT_TRUE(pumpUntil([&harness]() { return harness.outputStats->device() == u"hw:test"_s; }, 2000ms));
+    EXPECT_TRUE(pumpUntil(
+        [&harness, writesBeforeSwitch]() { return harness.outputStats->writeCalls.load() > writesBeforeSwitch; },
+        2000ms));
 }
 
 FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, BufferLengthChangeReconfiguresPlaybackWithoutReinitialisingOutput)
@@ -2090,19 +2130,63 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, CuePlaylistRepeatRestartsSame
     EXPECT_LT(harness.engine.position(), firstSegment.duration());
 }
 
-FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, TimelineTransitionHintsAreDisabledForRepeatTrackPlayback)
+FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, FiniteRepeatOccurrenceUsesPreparedGaplessHandoff)
+{
+    ensureCoreApplication();
+    EngineHarness harness{false};
+    AudioEngineTestAccessor::setGaplessEnabled(harness.engine, true);
+    AudioEngineTestAccessor::setPlaybackBufferLengthMs(harness.engine, 1000);
+
+    harness.decoderStats->sourceEndMs.store(20000, std::memory_order_relaxed);
+
+    const Track track      = harness.createTrack(u"finite-repeat.fyt"_s, 0, 20000);
+    const auto currentItem = makePlaybackItem(track, 1);
+    const auto repeatItem  = makePlaybackItem(track, 2);
+
+    harness.engine.loadTrack(currentItem, false);
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.trackStatus() == Engine::TrackStatus::Loaded; }));
+
+    harness.engine.play();
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.playbackState() == Engine::PlaybackState::Playing; }));
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.position() > 0; }, 3000ms));
+
+    ASSERT_TRUE(AudioEngineTestAccessor::prepareNextTrackImmediate(harness.engine, repeatItem, 1200));
+
+    const uint64_t generation    = AudioEngineTestAccessor::trackGeneration(harness.engine);
+    const int outputUninitBefore = harness.outputStats->uninitCalls.load();
+    const int decoderInitBefore  = harness.decoderStats->initCalls.load();
+    AudioEngineTestAccessor::setAutoAdvanceState(harness.engine, generation, AutoTransitionMode::Gapless, false, false,
+                                                 false);
+
+    ASSERT_TRUE(harness.engine.armPreparedGaplessTransition(repeatItem, generation));
+    ASSERT_TRUE(harness.engine.commitPreparedGaplessTransition(repeatItem));
+
+    EXPECT_EQ(AudioEngineTestAccessor::currentTrackItemId(harness.engine), repeatItem.itemId);
+    EXPECT_EQ(harness.outputStats->uninitCalls.load(), outputUninitBefore);
+    EXPECT_EQ(harness.decoderStats->initCalls.load(), decoderInitBefore);
+    EXPECT_EQ(harness.engine.playbackState(), Engine::PlaybackState::Playing);
+}
+
+FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, TimelineTransitionHintsFollowRepeatOwnership)
 {
     Track finiteTrack{u"/music/test.fyt"_s};
     finiteTrack.setDuration(6000);
 
-    EXPECT_TRUE(AudioEngine::shouldEnableTimelineTransitionHints(finiteTrack, AudioDecoder::PlaybackHints{}));
+    EXPECT_TRUE(AudioEngine::shouldEnableTimelineTransitionHints(finiteTrack, AudioDecoder::PlaybackHints{},
+                                                                 AudioDecoder::RepeatHandling::EngineTransition));
 
     AudioDecoder::PlaybackHints repeatHints{};
     repeatHints.setFlag(AudioDecoder::PlaybackHint::RepeatTrackEnabled, true);
-    EXPECT_FALSE(AudioEngine::shouldEnableTimelineTransitionHints(finiteTrack, repeatHints));
+    EXPECT_TRUE(AudioEngine::shouldEnableTimelineTransitionHints(finiteTrack, repeatHints,
+                                                                 AudioDecoder::RepeatHandling::EngineTransition));
+    EXPECT_FALSE(AudioEngine::shouldEnableTimelineTransitionHints(finiteTrack, repeatHints,
+                                                                  AudioDecoder::RepeatHandling::DecoderLoop));
+    EXPECT_TRUE(AudioEngine::shouldEnableTimelineTransitionHints(finiteTrack, AudioDecoder::PlaybackHints{},
+                                                                 AudioDecoder::RepeatHandling::DecoderLoop));
 
     Track unknownDuration{u"/music/test.fyt"_s};
     unknownDuration.setDuration(0);
-    EXPECT_FALSE(AudioEngine::shouldEnableTimelineTransitionHints(unknownDuration, AudioDecoder::PlaybackHints{}));
+    EXPECT_FALSE(AudioEngine::shouldEnableTimelineTransitionHints(unknownDuration, AudioDecoder::PlaybackHints{},
+                                                                  AudioDecoder::RepeatHandling::EngineTransition));
 }
 } // namespace Fooyin::Testing

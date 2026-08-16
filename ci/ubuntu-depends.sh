@@ -29,6 +29,7 @@ $SUDO apt-get install -y \
         libpulse-dev \
         libsdl2-dev \
         qt6-base-dev \
+        libqt6sql6-sqlite \
         libqt6opengl6-dev \
         libqt6svg6-dev \
         qt6-tools-dev \

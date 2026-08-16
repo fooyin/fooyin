@@ -287,7 +287,7 @@ void LibraryScanSession::flushTrackResolverWrites()
     maybeFlushWriter();
 }
 
-void LibraryScanSession::finaliseMissingTracks()
+void LibraryScanSession::finaliseUnseenTracks()
 {
     m_phase = ScanProgress::Phase::Finalising;
     m_state.setProgressPhase(m_phase, 0);
@@ -298,17 +298,11 @@ void LibraryScanSession::finaliseMissingTracks()
             continue;
         }
 
-        bool shouldDisable = !m_state.pathExists(physicalTrackPath(track));
+        // Existing tracks are marked seen whenever their source is still valid, including when
+        // metadata cannot be refreshed. Anything left unseen after a scan is either
+        // gone or no longer accepted by the exclusion filters.
 
-        if(!shouldDisable && track.hasCue() && !track.hasEmbeddedCue()) {
-            shouldDisable = !m_state.pathExists(track.cuePath());
-        }
-
-        if(!shouldDisable) {
-            continue;
-        }
-
-        qCDebug(LIB_SCANNER) << "Track not found:" << track.prettyFilepath();
+        qCDebug(LIB_SCANNER) << "Track no longer in scan scope:" << track.prettyFilepath();
 
         Track disabledTrack{track};
         disabledTrack.setLibraryId(-1);
@@ -353,7 +347,7 @@ bool LibraryScanSession::scanLibrary(const LibraryInfo& library, const TrackList
     m_resolver           = nullptr;
 
     if(completed && m_state.mayRun()) {
-        finaliseMissingTracks();
+        finaliseUnseenTracks();
         flushWriter(true);
     }
 
@@ -396,7 +390,7 @@ bool LibraryScanSession::scanDirectories(const LibraryInfo& library, const QStri
     m_resolver           = nullptr;
 
     if(completed && m_state.mayRun()) {
-        finaliseMissingTracks();
+        finaliseUnseenTracks();
         flushWriter(true);
     }
 

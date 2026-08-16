@@ -39,12 +39,13 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
                                        QWidget* parent)
     : WidgetConfigDialog{filterWidget, tr("Filter Settings"), parent}
     , m_columnRegistry{columnRegistry}
+    , m_source{new QComboBox(this)}
     , m_middleClick{new QComboBox(this)}
     , m_doubleClick{new QComboBox(this)}
     , m_playbackOnSend{new QCheckBox(tr("Start playback immediately"), this)}
     , m_playlistEnabled{new QCheckBox(tr("Enabled"), this)}
     , m_autoSwitch{new QCheckBox(tr("Switch when changed"), this)}
-    , m_keepAlive{new QCheckBox(tr("Keep alive"), this)}
+    , m_preservePlaybackPlaylist{new QCheckBox(tr("Preserve playback playlist"), this)}
     , m_playlistName{new QLineEdit(this)}
     , m_overrideRowHeight{new QCheckBox(tr("Override row height") + u":"_s, this)}
     , m_rowHeight{new QSpinBox(this)}
@@ -52,6 +53,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     , m_iconHeight{new QSpinBox(this)}
     , m_iconHorizontalGap{new QSpinBox(this)}
     , m_iconVerticalGap{new QSpinBox(this)}
+    , m_alignCaptionsToArtwork{new QCheckBox(tr("Align labels to artwork"), this)}
     , m_manageColumns{new QPushButton(tr("Manage columns..."), this)}
 {
     m_playbackOnSend->setToolTip(
@@ -65,16 +67,24 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     clickBehaviourLayout->addWidget(new QLabel(tr("Middle-click") + u":"_s, this), 1, 0);
     clickBehaviourLayout->addWidget(m_middleClick, 1, 1);
     clickBehaviourLayout->addWidget(m_playbackOnSend, 2, 0, 1, 2);
+    auto* playlistClickHint
+        = new QLabel(u"🛈 "_s + tr("Set to <b>Play</b> to start playback at the first matching track."), this);
+    playlistClickHint->setWordWrap(true);
+    clickBehaviourLayout->addWidget(playlistClickHint, 3, 0, 1, 3);
     clickBehaviourLayout->setColumnStretch(2, 1);
 
     auto* selectionPlaylist       = new QGroupBox(tr("Filter Selection Playlist"), this);
     auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
+    selectionPlaylist->setToolTip(
+        tr("In current playlist mode, matching tracks are selected directly in the playlist."));
 
-    m_keepAlive->setToolTip(tr("If this is the active playlist, keep it alive when changing selection"));
+    m_preservePlaybackPlaylist->setToolTip(
+        tr("When this selection playlist is used for playback, preserve it with \"(Playback)\" appended to its "
+           "name instead of replacing its tracks."));
 
     selectionPlaylistLayout->addWidget(m_playlistEnabled, 0, 0, 1, 3);
     selectionPlaylistLayout->addWidget(m_autoSwitch, 1, 0, 1, 3);
-    selectionPlaylistLayout->addWidget(m_keepAlive, 2, 0, 1, 3);
+    selectionPlaylistLayout->addWidget(m_preservePlaybackPlaylist, 2, 0, 1, 3);
     selectionPlaylistLayout->addWidget(new QLabel(tr("Name") + u":"_s, this), 3, 0);
     selectionPlaylistLayout->addWidget(m_playlistName, 3, 1, 1, 2);
     selectionPlaylistLayout->setColumnStretch(2, 1);
@@ -82,8 +92,12 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceLayout = new QGridLayout(appearance);
 
+    m_alignCaptionsToArtwork->setToolTip(
+        tr("Align bottom labels to the horizontal bounds of the artwork in artwork mode."));
+
     appearanceLayout->addWidget(m_overrideRowHeight, 0, 0, 1, 2);
     appearanceLayout->addWidget(m_rowHeight, 0, 2);
+    appearanceLayout->addWidget(m_alignCaptionsToArtwork, 1, 0, 1, 3);
     appearanceLayout->setColumnStretch(3, 1);
 
     auto* artworkMode   = new QGroupBox(tr("Artwork Mode"), this);
@@ -118,7 +132,20 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     auto* generalGroup       = new QGroupBox(tr("General"), this);
     auto* generalGroupLayout = new QGridLayout(generalGroup);
 
-    generalGroupLayout->addWidget(m_manageColumns, 1, 0);
+    m_source->addItem(tr("Library"), static_cast<int>(FilterSource::Library));
+    m_source->addItem(tr("Current playlist"), static_cast<int>(FilterSource::CurrentPlaylist));
+
+    generalGroupLayout->addWidget(new QLabel(tr("Source") + u":"_s, this), 0, 0);
+    generalGroupLayout->addWidget(m_source, 0, 1);
+    auto* playlistSourceHint = new QLabel(
+        u"🛈 "_s
+            + tr("Current playlist mode uses the displayed playlist as its source and selects the matching "
+                 "tracks in that playlist."),
+        this);
+    playlistSourceHint->setWordWrap(true);
+    generalGroupLayout->addWidget(playlistSourceHint, 1, 0, 1, 3);
+    generalGroupLayout->addWidget(m_manageColumns, 2, 0, 1, 3);
+    generalGroupLayout->setColumnStretch(2, 1);
 
     auto* mainLayout = contentLayout();
 
@@ -131,17 +158,27 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
     TrackSelectionController::addAction(m_doubleClick, tr("None"), TrackAction::None);
+    TrackSelectionController::addAction(m_doubleClick, tr("Play"), TrackAction::Play);
     TrackSelectionController::addStandardActions(m_doubleClick);
 
     TrackSelectionController::addAction(m_middleClick, tr("None"), TrackAction::None);
+    TrackSelectionController::addAction(m_middleClick, tr("Play"), TrackAction::Play);
     TrackSelectionController::addStandardActions(m_middleClick);
 
     QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, m_rowHeight, &QWidget::setEnabled);
     QObject::connect(m_playlistEnabled, &QCheckBox::toggled, this, [this](bool checked) {
         m_playlistName->setEnabled(checked);
         m_autoSwitch->setEnabled(checked);
-        m_keepAlive->setEnabled(checked);
+        m_preservePlaybackPlaylist->setEnabled(checked);
     });
+
+    const auto updateSourceModeUi = [this, selectionPlaylist]() {
+        const bool playlistSource = m_source->currentData().toInt() == static_cast<int>(FilterSource::CurrentPlaylist);
+        selectionPlaylist->setEnabled(!playlistSource);
+    };
+    QObject::connect(m_source, &QComboBox::currentIndexChanged, selectionPlaylist, updateSourceModeUi);
+    updateSourceModeUi();
+
     QObject::connect(m_manageColumns, &QPushButton::clicked, this, [this]() {
         auto* dialog = new FilterColumnEditorDialog(m_columnRegistry, this);
         dialog->open();
@@ -155,17 +192,19 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
 FilterWidget::ConfigData FilterConfigDialog::config() const
 {
     return {
-        .doubleClickAction = m_doubleClick->currentData().toInt(),
-        .middleClickAction = m_middleClick->currentData().toInt(),
-        .sendPlayback      = m_playbackOnSend->isChecked(),
-        .playlistEnabled   = m_playlistEnabled->isChecked(),
-        .autoSwitch        = m_autoSwitch->isChecked(),
-        .keepAlive         = m_keepAlive->isChecked(),
-        .playlistName      = m_playlistName->text(),
-        .rowHeight         = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0,
-        .iconSize          = {m_iconWidth->value(), m_iconHeight->value()},
-        .iconHorizontalGap = m_iconHorizontalGap->value(),
-        .iconVerticalGap   = m_iconVerticalGap->value(),
+        .doubleClickAction        = m_doubleClick->currentData().toInt(),
+        .middleClickAction        = m_middleClick->currentData().toInt(),
+        .sendPlayback             = m_playbackOnSend->isChecked(),
+        .source                   = static_cast<FilterSource>(m_source->currentData().toInt()),
+        .playlistEnabled          = m_playlistEnabled->isChecked(),
+        .autoSwitch               = m_autoSwitch->isChecked(),
+        .preservePlaybackPlaylist = m_preservePlaybackPlaylist->isChecked(),
+        .playlistName             = m_playlistName->text(),
+        .rowHeight                = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0,
+        .iconSize                 = {m_iconWidth->value(), m_iconHeight->value()},
+        .iconHorizontalGap        = m_iconHorizontalGap->value(),
+        .iconVerticalGap          = m_iconVerticalGap->value(),
+        .alignCaptionsToArtwork   = m_alignCaptionsToArtwork->isChecked(),
     };
 }
 
@@ -175,9 +214,10 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
     TrackSelectionController::setCurrentAction(m_middleClick, config.middleClickAction);
 
     m_playbackOnSend->setChecked(config.sendPlayback);
+    m_source->setCurrentIndex(m_source->findData(static_cast<int>(config.source)));
     m_playlistEnabled->setChecked(config.playlistEnabled);
     m_autoSwitch->setChecked(config.autoSwitch);
-    m_keepAlive->setChecked(config.keepAlive);
+    m_preservePlaybackPlaylist->setChecked(config.preservePlaybackPlaylist);
     m_playlistName->setText(config.playlistName);
     m_overrideRowHeight->setChecked(config.rowHeight > 0);
     m_rowHeight->setValue(config.rowHeight > 0 ? config.rowHeight : 1);
@@ -186,9 +226,10 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
     m_iconHeight->setValue(config.iconSize.height());
     m_iconHorizontalGap->setValue(config.iconHorizontalGap);
     m_iconVerticalGap->setValue(config.iconVerticalGap);
+    m_alignCaptionsToArtwork->setChecked(config.alignCaptionsToArtwork);
     m_playlistName->setEnabled(m_playlistEnabled->isChecked());
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
-    m_keepAlive->setEnabled(m_playlistEnabled->isChecked());
+    m_preservePlaybackPlaylist->setEnabled(m_playlistEnabled->isChecked());
 }
 
 void FilterConfigDialog::mergeExternalConfig(const FilterWidget::ConfigData& previous,
@@ -196,9 +237,10 @@ void FilterConfigDialog::mergeExternalConfig(const FilterWidget::ConfigData& pre
 {
     mergeExternalFields(previous, current, &FilterWidget::ConfigData::doubleClickAction,
                         &FilterWidget::ConfigData::middleClickAction, &FilterWidget::ConfigData::sendPlayback,
-                        &FilterWidget::ConfigData::playlistEnabled, &FilterWidget::ConfigData::autoSwitch,
-                        &FilterWidget::ConfigData::keepAlive, &FilterWidget::ConfigData::playlistName,
-                        &FilterWidget::ConfigData::rowHeight, &FilterWidget::ConfigData::iconSize,
-                        &FilterWidget::ConfigData::iconHorizontalGap, &FilterWidget::ConfigData::iconVerticalGap);
+                        &FilterWidget::ConfigData::source, &FilterWidget::ConfigData::playlistEnabled,
+                        &FilterWidget::ConfigData::autoSwitch, &FilterWidget::ConfigData::preservePlaybackPlaylist,
+                        &FilterWidget::ConfigData::playlistName, &FilterWidget::ConfigData::rowHeight,
+                        &FilterWidget::ConfigData::iconSize, &FilterWidget::ConfigData::iconHorizontalGap,
+                        &FilterWidget::ConfigData::iconVerticalGap, &FilterWidget::ConfigData::alignCaptionsToArtwork);
 }
 } // namespace Fooyin::Filters

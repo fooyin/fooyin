@@ -40,11 +40,13 @@ public:
 
     virtual void setControlsEnabled(bool enabled);
     virtual void restoreDefaults();
+    [[nodiscard]] virtual QString restoreDefaultsActionText() const;
     virtual void populateContextMenu(QMenu* menu);
     virtual void saveLayoutData(QJsonObject& layout);
     virtual void loadLayoutData(const QJsonObject& layout);
 
 Q_SIGNALS:
     void previewSettingsChanged(const QByteArray& settings);
+    void enabledStateChangeRequested(bool enabled);
 };
 } // namespace Fooyin

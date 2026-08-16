@@ -19,6 +19,7 @@
 
 #include "libraryratingspage.h"
 
+#include <core/engine/input/playcounttagpolicy.h>
 #include <core/engine/input/ratingtagpolicy.h>
 #include <gui/guiconstants.h>
 #include <utils/settings/settingsmanager.h>
@@ -47,6 +48,19 @@ void addRatingTagItems(QComboBox* combo, bool includeAutomatic)
     }
     combo->addItem(u"FMPS_RATING"_s, u"FMPS_RATING"_s);
     combo->addItem(u"RATING"_s, u"RATING"_s);
+    combo->setEditable(true);
+
+    QObject::connect(combo->lineEdit(), &QLineEdit::textEdited, combo,
+                     [combo](const QString& text) { combo->lineEdit()->setText(text.toUpper()); });
+}
+
+void addPlaycountTagItems(QComboBox* combo, bool includeAutomatic)
+{
+    if(includeAutomatic) {
+        combo->addItem(QObject::tr("Automatic detection"), u"Automatic"_s);
+    }
+    combo->addItem(u"FMPS_PLAYCOUNT"_s, u"FMPS_PLAYCOUNT"_s);
+    combo->addItem(u"PLAYCOUNT"_s, u"PLAYCOUNT"_s);
     combo->setEditable(true);
 
     QObject::connect(combo->lineEdit(), &QLineEdit::textEdited, combo,
@@ -139,6 +153,10 @@ private:
     QComboBox* m_ratingPopmMapping;
     QCheckBox* m_ratingReadAsfSharedRating;
     QCheckBox* m_ratingWriteAsfSharedRating;
+    QComboBox* m_playcountReadTag;
+    QComboBox* m_playcountWriteTag;
+    QCheckBox* m_playcountReadPopm;
+    QCheckBox* m_playcountWritePopm;
 };
 
 LibraryRatingsPageWidget::LibraryRatingsPageWidget(SettingsManager* settings)
@@ -147,18 +165,24 @@ LibraryRatingsPageWidget::LibraryRatingsPageWidget(SettingsManager* settings)
     , m_ratingReadScale{new QComboBox(this)}
     , m_ratingWriteTag{new QComboBox(this)}
     , m_ratingWriteScale{new QComboBox(this)}
-    , m_ratingReadPopm{new QCheckBox(tr("Read ID3 POPM"), this)}
-    , m_ratingWritePopm{new QCheckBox(tr("Write ID3 POPM"), this)}
+    , m_ratingReadPopm{new QCheckBox(tr("Read ratings from ID3 POPM"), this)}
+    , m_ratingWritePopm{new QCheckBox(tr("Write ratings to ID3 POPM"), this)}
     , m_ratingPopmOwner{new QLineEdit(this)}
     , m_ratingPopmMapping{new QComboBox(this)}
     , m_ratingReadAsfSharedRating{new QCheckBox(tr("Read WM/SharedUserRating"), this)}
     , m_ratingWriteAsfSharedRating{new QCheckBox(tr("Write WM/SharedUserRating"), this)}
+    , m_playcountReadTag{new QComboBox(this)}
+    , m_playcountWriteTag{new QComboBox(this)}
+    , m_playcountReadPopm{new QCheckBox(tr("Read playcounts from ID3 POPM"), this)}
+    , m_playcountWritePopm{new QCheckBox(tr("Write playcounts to ID3 POPM"), this)}
 {
     addRatingTagItems(m_ratingReadTag, true);
     addRatingTagItems(m_ratingWriteTag, false);
     addRatingScaleItems(m_ratingReadScale, RatingScaleUsage::Read);
     addRatingScaleItems(m_ratingWriteScale, RatingScaleUsage::Write);
     addPopmMappingItems(m_ratingPopmMapping);
+    addPlaycountTagItems(m_playcountReadTag, true);
+    addPlaycountTagItems(m_playcountWriteTag, false);
 
     m_ratingReadTag->setToolTip(
         tr("Tag field to read rating values from. Automatic detection prefers FMPS_RATING, then RATING."));
@@ -170,7 +194,7 @@ LibraryRatingsPageWidget::LibraryRatingsPageWidget(SettingsManager* settings)
     m_ratingWriteScale->setToolTip(tr(
         "Value range used when saving rated values as text metadata. Unrated tracks remove the rating tag instead of "
         "writing zero."));
-    m_ratingReadPopm->setToolTip(tr("Read ratings from ID3 POPM frames in MP3 files before text rating tags."));
+    m_ratingReadPopm->setToolTip(tr("Read ratings from ID3 POPM frames in MP3 files when no text rating was read."));
     m_ratingWritePopm->setToolTip(
         tr("Additionally save ratings to ID3 POPM frames when writing MP3 files. Other formats are unaffected."));
     m_ratingPopmOwner->setToolTip(
@@ -181,13 +205,22 @@ LibraryRatingsPageWidget::LibraryRatingsPageWidget(SettingsManager* settings)
     m_ratingWriteAsfSharedRating->setToolTip(
         tr("Additionally save ratings to WM/SharedUserRating attributes when writing ASF/WMA files.\n"
            "This improves compatibility with other players, but stores whole-star values only."));
+    m_playcountReadTag->setToolTip(
+        tr("Tag field to read playcount values from. Automatic detection prefers FMPS_PLAYCOUNT, then PLAYCOUNT."));
+    m_playcountWriteTag->setToolTip(tr("Tag field used when saving playcounts as text metadata."));
+    m_playcountReadPopm->setToolTip(
+        tr("Read playcounts from ID3 POPM frames in MP3 files when no text playcount was read."));
+    m_playcountWritePopm->setToolTip(
+        tr("Additionally save playcounts to ID3 POPM frames when writing MP3 files. Other formats are unaffected."));
 
-    auto* ratingTagsGroup  = new QGroupBox(tr("Rating Tags"), this);
-    auto* ratingTagsLayout = new QGridLayout(ratingTagsGroup);
-    auto* popmGroup        = new QGroupBox(tr("ID3 POPM"), ratingTagsGroup);
-    auto* popmLayout       = new QGridLayout(popmGroup);
-    auto* asfGroup         = new QGroupBox(tr("ASF/WMA"), ratingTagsGroup);
-    auto* asfLayout        = new QGridLayout(asfGroup);
+    auto* ratingTagsGroup     = new QGroupBox(tr("Rating Tags"), this);
+    auto* ratingTagsLayout    = new QGridLayout(ratingTagsGroup);
+    auto* popmGroup           = new QGroupBox(tr("ID3 POPM"), ratingTagsGroup);
+    auto* popmLayout          = new QGridLayout(popmGroup);
+    auto* asfGroup            = new QGroupBox(tr("ASF/WMA"), ratingTagsGroup);
+    auto* asfLayout           = new QGridLayout(asfGroup);
+    auto* playcountTagsGroup  = new QGroupBox(tr("Playcount Tags"), this);
+    auto* playcountTagsLayout = new QGridLayout(playcountTagsGroup);
 
     int row{0};
     ratingTagsLayout->addWidget(new QLabel(tr("Read text rating from") + ":"_L1, this), row, 0);
@@ -203,6 +236,8 @@ LibraryRatingsPageWidget::LibraryRatingsPageWidget(SettingsManager* settings)
     row = 0;
     popmLayout->addWidget(m_ratingReadPopm, row++, 0, 1, 2);
     popmLayout->addWidget(m_ratingWritePopm, row++, 0, 1, 2);
+    popmLayout->addWidget(m_playcountReadPopm, row++, 0, 1, 2);
+    popmLayout->addWidget(m_playcountWritePopm, row++, 0, 1, 2);
     popmLayout->addWidget(new QLabel(tr("Owner") + ":"_L1, this), row, 0);
     popmLayout->addWidget(m_ratingPopmOwner, row++, 1);
     popmLayout->addWidget(new QLabel(tr("Mapping") + ":"_L1, this), row, 0);
@@ -213,9 +248,17 @@ LibraryRatingsPageWidget::LibraryRatingsPageWidget(SettingsManager* settings)
     asfLayout->addWidget(m_ratingReadAsfSharedRating, row++, 0);
     asfLayout->addWidget(m_ratingWriteAsfSharedRating, row++, 0);
 
+    row = 0;
+    playcountTagsLayout->addWidget(new QLabel(tr("Read playcount from") + ":"_L1, this), row, 0);
+    playcountTagsLayout->addWidget(m_playcountReadTag, row++, 1);
+    playcountTagsLayout->addWidget(new QLabel(tr("Write playcount to") + ":"_L1, this), row, 0);
+    playcountTagsLayout->addWidget(m_playcountWriteTag, row++, 1);
+    playcountTagsLayout->setColumnStretch(1, 1);
+
     auto* mainLayout = new QGridLayout(this);
     row              = 0;
     mainLayout->addWidget(ratingTagsGroup, row++, 0);
+    mainLayout->addWidget(playcountTagsGroup, row++, 0);
     mainLayout->addWidget(popmGroup, row++, 0);
     mainLayout->addWidget(asfGroup, row++, 0);
     mainLayout->setRowStretch(row, 1);
@@ -254,6 +297,21 @@ void LibraryRatingsPageWidget::load()
     m_ratingWriteAsfSharedRating->setChecked(
         m_settings->fileValue(RatingSettings::WriteAsfSharedRating, RatingSettings::DefaultWriteAsfSharedRating)
             .toBool());
+    setComboSettingValue(
+        m_playcountReadTag,
+        m_settings->fileValue(PlaycountSettings::ReadTag, QLatin1StringView{PlaycountSettings::DefaultAutomatic})
+            .toString());
+    setComboSettingValue(
+        m_playcountWriteTag,
+        m_settings->fileValue(PlaycountSettings::WriteTag, QLatin1StringView{PlaycountSettings::DefaultFmpsTag})
+            .toString());
+    const bool readPlaycountPopm
+        = m_settings->fileContains(PlaycountSettings::ReadId3Popm)
+            ? m_settings->fileValue(PlaycountSettings::ReadId3Popm, PlaycountSettings::DefaultReadId3Popm).toBool()
+            : m_settings->fileValue(RatingSettings::ReadId3Popm, RatingSettings::DefaultReadId3Popm).toBool();
+    m_playcountReadPopm->setChecked(readPlaycountPopm);
+    m_playcountWritePopm->setChecked(
+        m_settings->fileValue(PlaycountSettings::WriteId3Popm, PlaycountSettings::DefaultWriteId3Popm).toBool());
 }
 
 void LibraryRatingsPageWidget::apply()
@@ -268,6 +326,10 @@ void LibraryRatingsPageWidget::apply()
     m_settings->fileSet(RatingSettings::PopmMapping, comboSettingValue(m_ratingPopmMapping));
     m_settings->fileSet(RatingSettings::ReadAsfSharedRating, m_ratingReadAsfSharedRating->isChecked());
     m_settings->fileSet(RatingSettings::WriteAsfSharedRating, m_ratingWriteAsfSharedRating->isChecked());
+    m_settings->fileSet(PlaycountSettings::ReadTag, comboSettingValue(m_playcountReadTag));
+    m_settings->fileSet(PlaycountSettings::WriteTag, comboSettingValue(m_playcountWriteTag));
+    m_settings->fileSet(PlaycountSettings::ReadId3Popm, m_playcountReadPopm->isChecked());
+    m_settings->fileSet(PlaycountSettings::WriteId3Popm, m_playcountWritePopm->isChecked());
 }
 
 void LibraryRatingsPageWidget::reset()
@@ -282,13 +344,17 @@ void LibraryRatingsPageWidget::reset()
     m_settings->fileRemove(RatingSettings::PopmMapping);
     m_settings->fileRemove(RatingSettings::ReadAsfSharedRating);
     m_settings->fileRemove(RatingSettings::WriteAsfSharedRating);
+    m_settings->fileRemove(PlaycountSettings::ReadTag);
+    m_settings->fileRemove(PlaycountSettings::WriteTag);
+    m_settings->fileRemove(PlaycountSettings::ReadId3Popm);
+    m_settings->fileRemove(PlaycountSettings::WriteId3Popm);
 }
 
 LibraryRatingsPage::LibraryRatingsPage(SettingsManager* settings, QObject* parent)
     : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::LibraryRatings);
-    setName(tr("Ratings"));
+    setName(tr("Ratings && Playcounts"));
     setCategory({tr("Library"), tr("Metadata")});
     setWidgetCreator([settings] { return new LibraryRatingsPageWidget(settings); });
 }

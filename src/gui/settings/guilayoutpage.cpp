@@ -544,6 +544,8 @@ void GuiLayoutPageWidget::apply()
 {
     saveDisplayedDraft();
 
+    const TreeSelectionGuard selectionGuard{m_layoutTree, m_model};
+
     const QString currentName = m_layoutProvider->currentLayout().name();
 
     std::vector<FyLayout> layouts;
@@ -571,7 +573,6 @@ void GuiLayoutPageWidget::apply()
         }
     }
     if(const auto current = std::ranges::find(layouts, currentName, &FyLayout::name); current != layouts.end()) {
-        const TreeSelectionGuard selectionGuard{m_layoutTree, m_model};
         m_editableLayout->changeLayout(*current);
         m_layoutProvider->saveCurrentLayout();
     }

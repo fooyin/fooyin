@@ -1,0 +1,69 @@
+name: Build AppImage
+
+on:
+  workflow_call:
+
+env:
+  BUILD_CCACHE: ON
+  BUILD_PCH: ON
+  CCACHE_DIR: ${{ github.workspace }}/.ccache
+  CCACHE_BASEDIR: ${{ github.workspace }}
+  CCACHE_MAXSIZE: 1G
+  CCACHE_COMPILERCHECK: content
+  CCACHE_SLOPPINESS: pch_defines,time_macros
+
+jobs:
+  appimage:
+    name: AppImage (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-latest
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    container:
+      image: debian:bookworm
+    steps:
+      - name: Install git
+        run: |
+          apt-get update -qq
+          apt-get install -qq --yes ca-certificates git
+
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Install build dependencies
+        run: |
+          ./ci/ubuntu-depends.sh
+          apt-get install -y \
+            curl \
+            file \
+            patchelf \
+            qt6-wayland
+
+      - name: Cache ccache
+        if: env.BUILD_CCACHE == 'ON'
+        uses: actions/cache@v6
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: appimage-debian-bookworm-${{ matrix.arch }}-ccache-${{ github.sha }}
+          restore-keys: |
+            appimage-debian-bookworm-${{ matrix.arch }}-ccache-
+
+      - name: Build AppImage
+        run: |
+          ./ci/appimage-build.sh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: appimage-${{ matrix.arch }}
+          path: build-appimage/output/*.AppImage
+          compression-level: 0
+          if-no-files-found: error

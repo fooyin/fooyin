@@ -103,11 +103,14 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QAbstractItemView>
+#include <QAbstractSpinBox>
 #include <QAction>
 #include <QApplication>
 #include <QCheckBox>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QGuiApplication>
 #include <QImageReader>
 #include <QInputDialog>
 #include <QJsonArray>
@@ -119,8 +122,10 @@
 #include <QPixmapCache>
 #include <QPointer>
 #include <QPushButton>
+#include <QSignalBlocker>
 #include <QStyle>
 #include <QStyleFactory>
+#include <QStyleHints>
 #include <QTimer>
 #include <QUrl>
 
@@ -527,6 +532,31 @@ CoverRepository* GuiApplication::coverRepository() const
 
 bool GuiApplication::eventFilter(QObject* watched, QEvent* event)
 {
+    if(event->type() == QEvent::Polish) {
+        if(auto* editor = qobject_cast<QWidget*>(watched);
+           qobject_cast<QLineEdit*>(editor) || qobject_cast<QAbstractSpinBox*>(editor)) {
+            QWidget* editorParent = editor->parentWidget();
+            for(QWidget* ancestor = editorParent; ancestor; ancestor = ancestor->parentWidget()) {
+                if(auto* view = qobject_cast<QAbstractItemView*>(ancestor); view && view->viewport() == editorParent) {
+                    // Some styles leave item view editors transparent, allowing the cell text painted underneath
+                    // to show through while editing
+                    QPalette palette{editor->palette()};
+                    const auto makeBaseOpaque = [&palette](QPalette::ColorGroup group) {
+                        QColor base = palette.color(group, QPalette::Base);
+                        base.setAlpha(255);
+                        palette.setColor(group, QPalette::Base, base);
+                    };
+                    makeBaseOpaque(QPalette::Active);
+                    makeBaseOpaque(QPalette::Inactive);
+                    makeBaseOpaque(QPalette::Disabled);
+                    editor->setPalette(palette);
+                    editor->setAutoFillBackground(true);
+                    break;
+                }
+            }
+        }
+    }
+
     if(watched == qApp) {
         switch(event->type()) {
             case QEvent::ApplicationFontChange:
@@ -583,6 +613,7 @@ void GuiApplication::initialise()
     setupConvertMenu();
     setupUtilitiesMenu();
     setStyle();
+    updateColourScheme();
     setIconTheme();
     registerLayouts();
 
@@ -735,8 +766,17 @@ void GuiApplication::setupConnections()
             m_settings->refresh<Settings::Gui::IconTheme>();
         }
     });
+    m_settings->subscribe<Settings::Gui::DarkMode>(this, [this]() {
+        updateColourScheme();
+        scheduleThemeUpdate(true);
+        if(setIconTheme()) {
+            QPixmapCache::clear();
+            m_settings->refresh<Settings::Gui::IconTheme>();
+        }
+    });
     m_settings->subscribe<Settings::Gui::Style>(this, [this]() {
         setStyle();
+        updateColourScheme();
         scheduleThemeUpdate(true);
         if(setIconTheme()) {
             QPixmapCache::clear();
@@ -794,6 +834,16 @@ void GuiApplication::showPluginsNotFoundMessage()
     if(message.clickedButton() == quitButton) {
         Application::quit();
     }
+}
+
+void GuiApplication::updateColourScheme() const
+{
+#ifdef Q_OS_WIN
+    const auto* style = QApplication::style();
+    const bool useDarkMode
+        = style && Gui::styleSupportsDarkMode(style->name()) && m_settings->value<Settings::Gui::DarkMode>();
+    QGuiApplication::styleHints()->setColorScheme(useDarkMode ? Qt::ColorScheme::Dark : Qt::ColorScheme::Unknown);
+#endif
 }
 
 void GuiApplication::initialiseTray()
@@ -952,6 +1002,33 @@ void GuiApplication::registerActions()
     QObject::connect(m_playlistController.get(), &PlaylistController::currentPlaylistTracksRemoved, m_mainWindow.get(),
                      updateClearPlaylistState);
     updateClearPlaylistState();
+
+    auto* lockPlaylistAction
+        = new QAction(Gui::iconFromTheme(Constants::Icons::ReadOnly), tr("Lock playlist"), m_mainWindow.get());
+    lockPlaylistAction->setCheckable(true);
+    lockPlaylistAction->setStatusTip(tr("Prevent changes to the contents of the current playlist"));
+    auto* lockPlaylistCmd = m_actionManager->registerAction(lockPlaylistAction, Constants::Actions::LockPlaylist);
+    lockPlaylistCmd->setCategories({tr("Playlist")});
+    lockPlaylistCmd->setDescription(tr("Lock Current Playlist"));
+    QObject::connect(lockPlaylistAction, &QAction::triggered, m_mainWindow.get(), [this](bool locked) {
+        if(const auto* playlist = m_playlistController->currentPlaylist()) {
+            m_playlistController->playlistHandler()->setPlaylistLocked(playlist->id(), locked);
+        }
+    });
+
+    const auto updateLockPlaylistState = [this, lockPlaylistAction]() {
+        const auto* playlist = m_playlistController->currentPlaylist();
+        const QSignalBlocker blocker{lockPlaylistAction};
+        lockPlaylistAction->setEnabled(playlist && !playlist->isAutoPlaylist());
+        lockPlaylistAction->setChecked(playlist && playlist->isLocked());
+    };
+    QObject::connect(m_playlistController.get(), &PlaylistController::playlistsLoaded, m_mainWindow.get(),
+                     updateLockPlaylistState);
+    QObject::connect(m_playlistController.get(), &PlaylistController::currentPlaylistChanged, m_mainWindow.get(),
+                     updateLockPlaylistState);
+    QObject::connect(m_playlistController.get(), &PlaylistController::currentPlaylistUpdated, m_mainWindow.get(),
+                     updateLockPlaylistState);
+    updateLockPlaylistState();
 
     const QStringList seekCategory = {tr("Playback"), tr("Seek")};
 
@@ -1394,8 +1471,10 @@ void GuiApplication::applyTheme()
         m_settings->set<Settings::Gui::Internal::SystemPalette>(systemPalette);
 
         auto newPalette{systemPalette};
-        for(const auto& [key, colour] : Utils::asRange(currTheme.colours)) {
-            newPalette.setColor(key.group, key.role, colour);
+        if(const auto* style = QApplication::style(); style && Gui::styleSupportsCustomPalette(style->name())) {
+            for(const auto& [key, colour] : Utils::asRange(currTheme.colours)) {
+                newPalette.setColor(key.group, key.role, colour);
+            }
         }
 
         QApplication::setPalette(newPalette);
@@ -1472,16 +1551,16 @@ void GuiApplication::refreshAutoDetectedIconTheme() const
 void GuiApplication::registerLayouts()
 {
     m_layoutProvider->registerLayout(
-        R"({"Name":"Simple","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAHAAAAn0AAAAXAP////8BAAAAAgA=",
-            "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAAggAABqEAAAA+AAAAHAD/////AQAAAAEA","Widgets":[
-            {"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}},{"SplitterHorizontal":{
-            "State":"AAAA/wAAAAEAAAACAAAA9QAABAoA/////wEAAAABAA==","Widgets":[{"SplitterVertical":{
+        R"({"Name":"Simple","Widgets":[{"SplitterVertical":{"Locked":[true,false,true],"State":"AAAA/wAAAAEAAAADAAAAHAAAAn0AAAAXAP////8BAAAAAgA=",
+            "Widgets":[{"SplitterHorizontal":{"Locked":[true,false,false,false],"State":"AAAA/wAAAAEAAAAEAAAAggAABqEAAAA+AAAAHAD/////AQAAAAEA","Widgets":[
+            {"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}},{"SplitterHorizontal":{"Locked":[true,false],
+            "State":"AAAA/wAAAAEAAAACAAAA9QAABAoA/////wEAAAABAA==","Widgets":[{"SplitterVertical":{"Locked":[false,true],
             "State":"AAAA/wAAAAEAAAACAAABfQAAAPEA/////wEAAAACAA==","Widgets":[{"LibraryTree":{}},{"ArtworkPanel":{}}]}},
             {"PlaylistTabs":{"Widgets":[{"Playlist":{}}]}}]}},{"StatusBar":{}}]}}]})");
 
     m_layoutProvider->registerLayout(
-        R"({"Name":"Vision","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAHAAAA6EAAAAWAP////8BAAAAAgA=",
-            "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAAiQAABk8AAABHAAAAIwD/////AQAAAAEA",
+        R"({"Name":"Vision","Widgets":[{"SplitterVertical":{"Locked":[true,false,true],"State":"AAAA/wAAAAEAAAADAAAAHAAAA6EAAAAWAP////8BAAAAAgA=",
+            "Widgets":[{"SplitterHorizontal":{"Locked":[true,false,false,false],"State":"AAAA/wAAAAEAAAAEAAAAiQAABk8AAABHAAAAIwD/////AQAAAAEA",
             "Widgets":[{"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}},
             {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAADuwAAA48A/////wEAAAABAA==","Widgets":[
             {"TabStack":{"Position":"West","State":"Artwork\u001fInfo\u001fLibrary Tree\u001fPlaylist Organiser",
@@ -1489,10 +1568,10 @@ void GuiApplication::registerLayouts()
             {"PlaylistOrganiser":{}}]}},{"Playlist":{}}]}},{"StatusBar":{}}]}}]})");
 
     m_layoutProvider->registerLayout(
-        R"({"Name":"Browser","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAFwAAA6YAAAAWAP////8BAAAAAgA=",
-            "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAAcgAABRoAAAA2AAAAGAD/////AQAAAAEA",
+        R"({"Name":"Browser","Widgets":[{"SplitterVertical":{"Locked":[true,false,true],"State":"AAAA/wAAAAEAAAADAAAAFwAAA6YAAAAWAP////8BAAAAAgA=",
+            "Widgets":[{"SplitterHorizontal":{"Locked":[true,false,false,false],"State":"AAAA/wAAAAEAAAAEAAAAcgAABRoAAAA2AAAAGAD/////AQAAAAEA",
             "Widgets":[{"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}},
-            {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAACeAAAAnoA/////wEAAAABAA==x","Widgets":[{"DirectoryBrowser":{}},
+            {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAACeAAAAnoA/////wEAAAABAA==","Widgets":[{"DirectoryBrowser":{}},
             {"ArtworkPanel":{}}]}},{"StatusBar":{}}]}}]})");
 }
 

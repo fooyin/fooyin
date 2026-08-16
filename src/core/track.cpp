@@ -1025,7 +1025,9 @@ float Track::rating() const
 
 int Track::ratingStars() const
 {
-    return static_cast<int>(std::floor(p->rating * MaxStarCount));
+    // Round the product to binary32 before flooring, otherwise x87 may retain excess precision
+    const float scaledRating = std::fma(p->rating, static_cast<float>(MaxStarCount), 0.0F);
+    return static_cast<int>(std::floor(scaledRating));
 }
 
 QString Track::ratingStarsText() const

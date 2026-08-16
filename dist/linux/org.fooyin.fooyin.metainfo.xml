@@ -1,171 +1,319 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2022-2026 Luke Taylor -->
 <component type="desktop-application">
     <id>org.fooyin.fooyin</id>
     <launchable type="desktop-id">org.fooyin.fooyin.desktop</launchable>
     <metadata_license>CC0-1.0</metadata_license>
-    <project_license>GPL-3.0</project_license>
+    <project_license>GPL-3.0-or-later</project_license>
     <name>fooyin</name>
-    <summary>A customisable music player</summary>
+    <summary>Play your music your way</summary>
     <developer id="org.fooyin.luketaylor">
         <name>Luke Taylor</name>
     </developer>
+    <branding>
+        <color type="primary" scheme_preference="light">#90bcd5</color>
+        <color type="primary" scheme_preference="dark">#2a566f</color>
+    </branding>
     <description>
         <p>
-            fooyin is a music player built around customisation.
-            It combines flexible playback, library management, playlists, and scripting tools
-            in an interface that can be rearranged from a blank canvas or adapted from preset layouts.
+            fooyin is a music player built around customisation. Arrange its interface from a blank
+            canvas, start with a preset layout, and tailor its widgets and shortcuts to suit you.
         </p>
         <p>
-            The player is highly extensible with a plugin system and includes FooScript
-            for advanced display formatting, autoplaylists, and widget behaviour.
-            The playback engine also supports DSP chains, fading and crossfading.
+            Browse and filter your library, edit tags and artwork, and organise tracks in playlists
+            or autoplaylists. Enjoy gapless playback of local music, archives, and remote radio, with
+            ReplayGain, audio conversion, fading, and DSP chains for shaping the sound.
         </p>
-        <p>Key features:</p>
-        <ul>
-            <li>Fully customisable layouts and widgets, with per-widget settings and configurable shortcuts</li>
-            <li>Support for major audio formats, including archives, CUE sheets, VGM, and tracker formats</li>
-            <li>Internet radio discovery and remote audio stream playback</li>
-            <li>Gapless playback, ReplayGain, and configurable fade and crossfade settings</li>
-            <li>DSP plugin support with built-in effects such as equaliser, resampling, tempo and pitch adjustment,
-                and silence skipping</li>
-            <li>Audio output and device configuration</li>
-            <li>Advanced library browsing with filters, tree views, and an integrated directory browser</li>
-            <li>Playlist management with autoplaylists and M3U/M3U8 import and export</li>
-            <li>Built-in tag editing and metadata management, including artwork embedding</li>
-            <li>Artwork tools for finding, viewing, exporting, extracting, and downloading covers</li>
-            <li>Visualisations including a waveform seekbar, spectrum, and VU meter</li>
-            <li>Lyrics search, editing, syncing, and display, with configurable presentation for synced lyrics panels</li>
-            <li>FooScript-powered scripting and display tools for rich formatting throughout the interface</li>
-            <li>Plugin-based extensibility for widgets, decoders, tag readers, DSPs, and others</li>
-            <li>Desktop integration with MPRIS, scrobbling services, and Discord Rich Presence</li>
-        </ul>
+        <p>
+            Extend the player with plugins for audio formats, widgets, visualisations, lyrics,
+            scrobbling, and other integrations. FooScript provides advanced display formatting,
+            library queries, autoplaylists, and custom widget behaviour.
+        </p>
     </description>
-    <launchable type="desktop-id">org.fooyin.fooyin.desktop</launchable>
     <provides>
-      <binary>fooyin</binary>
+        <binary>fooyin</binary>
     </provides>
     <content_rating type="oars-1.1" />
     <url type="homepage">https://fooyin.org</url>
     <url type="bugtracker">https://github.com/fooyin/fooyin/issues</url>
     <url type="vcs-browser">https://github.com/fooyin/fooyin</url>
-    <url type="donation">https://github.com/sponsors/ludouzi</url>
+    <url type="donation">https://fooyin.org/donate</url>
     <screenshots>
         <screenshot type="default">
-            <image>https://github.com/user-attachments/assets/8e8732a7-a7e5-4542-87b4-7d0a7b5e8fa0</image>
-            <caption>Simple layout</caption>
+            <image>https://fooyin.org/assets/images/simple.webp</image>
+            <caption>Library and playlist in the Simple layout</caption>
         </screenshot>
-        <screenshot type="default">
-            <image>https://github.com/user-attachments/assets/7dcc92be-04ea-402f-9cbb-a92ee855b893</image>
-            <caption>Obsidian layout</caption>
+        <screenshot>
+            <image>https://fooyin.org/assets/images/gallery.webp</image>
+            <caption>Browse albums with artwork in the Gallery layout</caption>
         </screenshot>
-        <screenshot type="default">
-            <image>https://github.com/user-attachments/assets/d9f4ed62-e50a-419c-aa26-8801a76a6597</image>
-            <caption>Directory browser layout with Breeze dark</caption>
+        <screenshot>
+            <image>https://fooyin.org/assets/images/radio.webp</image>
+            <caption>Discover and play internet radio stations</caption>
         </screenshot>
-        <screenshot type="default">
-            <image>https://github.com/user-attachments/assets/de5b4b3a-cd9d-4520-a975-e268e472e0f9</image>
-            <caption>Custom layout with Breeze dark</caption>
+        <screenshot>
+            <image>https://fooyin.org/assets/images/browser.webp</image>
+            <caption>Browse music folders alongside large artwork</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://fooyin.org/assets/images/obsidian.webp</image>
+            <caption>Explore albums and tracks in the Obsidian layout</caption>
         </screenshot>
     </screenshots>
     <releases>
+        <release version="0.12.4" date="2026-08-12">
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.12.4</url>
+            <description>
+                <p>Adds configurable playlist double-click actions, optional immediate playback for queue actions, and improved fullscreen handling for standalone projectM visualisers.</p>
+                <p>This release also fixes configuration and state paths in Flatpak and unintended transparency in some visualisation windows.</p>
+            </description>
+        </release>
+        <release version="0.12.3" date="2026-08-11">
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.12.3</url>
+            <description>
+                <p>Adds a built-in Gallery layout, configurable artwork captions, and support for reading and writing playcounts with custom tags.</p>
+                <p>Repeat Track transitions are now gapless, HLS streams can expose timed metadata, and visualisations gain smoother playback and transparent standalone windows.</p>
+                <p>Library rescans, locked playlists, playlist colours, file operations, and several visualisations also receive fixes.</p>
+            </description>
+        </release>
+        <release version="0.12.2" date="2026-08-07">
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.12.2</url>
+            <description>
+                <p>Adds playlist locking, theme import and export, standalone visualisation windows, and a WASAPI output plugin for Windows.</p>
+                <p>Filters can now use the current playlist as their source, while playback selection, spectrum analysis, and Windows appearance receive improvements.</p>
+                <p>This release also fixes output switching, metadata writing, artwork zooming, projectM setup, and a range of interface issues.</p>
+            </description>
+        </release>
         <release version="0.12.1" date="2026-07-31">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.12.1</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.12.1</url>
+            <description>
+                <p>Adds per-widget splitter locking, configurable playlist tabs, and timed metadata for HLS streams. Audio conversion presets and configuration dialogs are also improved.</p>
+                <p>This release also fixes gapless playback, remote streams, playlist search actions, autoplaylists, and playback of segmented tracks.</p>
+            </description>
         </release>
         <release version="0.12.0" date="2026-07-27">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.12.0</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.12.0</url>
+            <description>
+                <p>Introduces audio conversion with reusable presets and adds PulseAudio output support.</p>
+                <p>New spectrogram, oscilloscope, and projectM plugins greatly expand the available visualisations. Playback also gains optional automatic resampling for unsupported device rates.</p>
+                <p>Browsing, tagging, playlists, metadata handling, remote streams, and the interface receive numerous performance improvements and fixes.</p>
+            </description>
         </release>
         <release version="0.11.1" date="2026-06-22">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.11.1</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.11.1</url>
+            <description>
+                <p>Adds a DSP chain selector widget, sorts DSP presets, reorganises the layout editing menu, and fixes legacy layouts overriding saved configuration.</p>
+            </description>
         </release>
         <release version="0.11.0" date="2026-06-22">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.11.0</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.11.0</url>
+            <description>
+                <p>Introduces remote stream playback and internet radio discovery through the new Radio Browser.</p>
+                <p>A new spectrum visualiser and sleep inhibitor arrive alongside major layout controls, per-playlist views, playlist restoration, and integrated playlist search.</p>
+                <p>Large playlists, library updates, lyrics searches, playback transitions, themes, and many interface interactions are now faster and more reliable.</p>
+            </description>
         </release>
         <release version="0.10.8" date="2026-05-21">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.10.8</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.10.8</url>
+            <description>
+                <p>Adds Now Playing output, playlist backgrounds, custom placeholder artwork, and improved TAK and ID3 tag support.</p>
+                <p>Artwork loading and caching are now shared across the player, while playback, metadata, playlists, scripting, and PipeWire receive reliability fixes.</p>
+            </description>
         </release>
         <release version="0.10.7" date="2026-05-15">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.10.7</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.10.7</url>
+            <description>
+                <p>Introduces a Quick Tagger plugin and adds track selection to the queue viewer, broader playlist actions, and new waveform display controls.</p>
+                <p>Queue navigation, library filtering, ratings, settings, and PipeWire volume synchronisation also receive fixes.</p>
+            </description>
         </release>
         <release version="0.10.6" date="2026-05-11">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.10.6</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.10.6</url>
+            <description>
+                <p>Adds a Tag Editor layout widget, configurable rating tags, and support for multi-chapter files.</p>
+                <p>New metadata, date, and time functions expand FooScript, while settings and layout editing become easier to navigate.</p>
+                <p>Restored queues, metadata decoding, lyrics timing, searching, and playback controls also receive fixes.</p>
+            </description>
         </release>
         <release version="0.10.5" date="2026-05-04">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.10.5</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.10.5</url>
+            <description>
+                <p>Adds Directory Browser search, wildcard artwork paths, configurable browser actions, and richer Library Tree summaries.</p>
+                <p>ReplayGain updates, metadata dates, autoplaylist refreshes, and lyrics editing also receive fixes.</p>
+            </description>
         </release>
         <release version="0.10.4" date="2026-05-02">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.10.4</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.10.4</url>
+            <description>
+                <p>Introduces the Playlist Manager, inline metadata editing, a standalone playback queue, configurable context menus, and automatic tag filling.</p>
+                <p>Artwork and lyrics tools gain new search and editing options, while large libraries and playlists load and update more efficiently.</p>
+                <p>Playback state, playlist consistency, ReplayGain metadata, and scrobbling services also receive substantial reliability fixes.</p>
+            </description>
         </release>
         <release version="0.10.3" date="2026-04-02">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.10.3</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.10.3</url>
+            <description>
+                <p>Adds playback controls to desktop notifications and an option for tab stacks to restore their last selected tab.</p>
+                <p>Device disconnection, shuffle history, library scanning, artwork caching, waveform layouts, and several playback issues also receive fixes.</p>
+            </description>
         </release>
         <release version="0.10.2" date="2026-03-30">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.10.2</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.10.2</url>
+            <description>
+                <p>Adds per-device output profiles, track-change notifications, and an action for deleting tracks.</p>
+                <p>Playback statistics, artwork extraction, waveform rendering, ReplayGain handling, and library scan feedback are also improved.</p>
+                <p>Audio output, playlists, tagging, and desktop integration receive a broad set of reliability fixes.</p>
+            </description>
         </release>
         <release version="0.10.1" date="2026-03-27">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.10.1</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.10.1</url>
+            <description>
+                <p>Fixes an equaliser build failure on Fedora.</p>
+            </description>
         </release>
         <release version="0.10.0" date="2026-03-27">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.10.0</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.10.0</url>
+            <description>
+                <p>Introduces DSP chains with a built-in effect suite and equaliser, plus configurable fading and crossfading for seeking and track changes.</p>
+                <p>Discord Rich Presence, per-widget settings, persistent playback queues, richer scripting, and expanded artwork tools offer much greater control over the player.</p>
+                <p>The playback engine, metadata handling, lyrics, playlists, scrobbling, and interface also receive extensive improvements and fixes.</p>
+            </description>
         </release>
         <release version="0.9.2" date="2025-09-21">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.9.2</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.9.2</url>
+            <description>
+                <p>Adds file timestamp preservation, FileOps presets, custom scrobbling services, and more tools for editing and synchronising lyrics.</p>
+                <p>Multi-track playback, CUE parsing, playlists, scrobbling, and looping game-music formats also receive fixes.</p>
+            </description>
         </release>
         <release version="0.9.1" date="2025-08-17">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.9.1</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.9.1</url>
+            <description>
+                <p>Fixes silent playback, archive playback and waveform seeking crashes, and several Directory Browser, scrobbler, seekbar, and status bar issues.</p>
+            </description>
         </release>
         <release version="0.9.0" date="2025-08-17">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.9.0</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.9.0</url>
+            <description>
+                <p>Introduces artwork downloading and editing, lyrics search and editing, and automatically updating playlists.</p>
+                <p>Playback queues, playlist searches, scripting, and scrobbling gain new controls and integrations.</p>
+                <p>Gapless playback, CUE handling, library updates, playlist management, and the interface also receive extensive fixes.</p>
+            </description>
         </release>
         <release version="0.8.1" date="2024-10-15">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.8.1</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.8.1</url>
+            <description>
+                <p>Improves progress reporting for library scans and waveform generation, adds a ReplayGain removal dialog, and fixes WavPack playback and scanner completion.</p>
+            </description>
         </release>
         <release version="0.8.0" date="2024-10-14">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.8.0</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.8.0</url>
+            <description>
+                <p>Introduces ReplayGain scanning, quick library search with query syntax, and a VU and peak meter.</p>
+                <p>DSD playback and artwork in the Library Tree expand format and browsing support, while search and scripting gain new options.</p>
+                <p>Gapless playback, playlists, ReplayGain editing, and library scanning also receive performance and reliability fixes.</p>
+            </description>
         </release>
         <release version="0.7.3" date="2024-09-28">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.7.3</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.7.3</url>
+            <description>
+                <p>Adds vgm7z decoding and fixes crashes when restarting some decoders or leaving layout editing mode.</p>
+            </description>
         </release>
         <release version="0.7.2" date="2024-09-26">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.7.2</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.7.2</url>
+            <description>
+                <p>Adds full-library search, command-line playback controls, album shuffle and repeat modes, ASF playback, and volume shortcuts.</p>
+                <p>The Directory Browser also gains new navigation options, while decoders, playlists, scripting, and settings receive fixes.</p>
+            </description>
         </release>
         <release version="0.7.1" date="2024-09-21">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.7.1</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.7.1</url>
+            <description>
+                <p>Adds splitter locking and OpenMPT configuration, improves the Script Editor, and fixes metadata script parsing, ratings, and Selection Info.</p>
+            </description>
         </release>
         <release version="0.7.0" date="2024-09-19">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.7.0</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.7.0</url>
+            <description>
+                <p>Introduces ReplayGain playback and scrobbling with Last.fm and ListenBrainz.</p>
+                <p>Metadata, scripting, tagging, and playback information gain new controls, while layouts, playlists, the Library Tree, and playback restoration receive fixes.</p>
+            </description>
         </release>
         <release version="0.6.2" date="2024-08-31">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.6.2</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.6.2</url>
+            <description>
+                <p>Introduces theme support with custom palettes, fonts, a dark theme, and the option to include themes in exported layouts.</p>
+                <p>Decoder and tag reader ordering becomes configurable, while playlists, archive playback, filtering, and volume controls receive fixes.</p>
+            </description>
         </release>
         <release version="0.6.1" date="2024-08-27">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.6.1</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.6.1</url>
+            <description>
+                <p>Adds an option to save all playlists, improves dialog menu labels, and fixes playlist file extensions and a waveform generation memory leak.</p>
+            </description>
         </release>
         <release version="0.6.0" date="2024-08-27">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.6.0</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.6.0</url>
+            <description>
+                <p>Introduces playback directly from archives, file renaming and moving tools, and plugins for tracker, game-music, raw audio, and additional common formats.</p>
+                <p>Playlist search, automatic playlist export, inline ratings, expanded tagging tools, and many new layout and scripting controls provide more ways to manage a music collection.</p>
+                <p>Playback, library scanning, playlists, metadata editing, audio output, and the interface also receive extensive reliability fixes.</p>
+            </description>
         </release>
         <release version="0.5.3" date="2024-07-07">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.5.3</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.5.3</url>
+            <description>
+                <p>Fixes file properties for external tracks, CUE track durations, and starting playback when sending tracks to a new playlist.</p>
+            </description>
         </release>
         <release version="0.5.2" date="2024-07-07">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.5.2</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.5.2</url>
+            <description>
+                <p>Introduces a playback queue viewer and editor, adds playlist cut, copy, paste, and crop actions, and improves performance with large playlists.</p>
+                <p>Playlist tabs, artwork, search, and layout editing gain new controls, while playback, scripting, and several interface crashes receive fixes.</p>
+            </description>
         </release>
         <release version="0.5.1" date="2024-06-29">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.5.1</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.5.1</url>
+            <description>
+                <p>Adds a volume slider mode and options for unavailable tracks and Library Tree animation.</p>
+                <p>Playback after fading, playlist scrolling, filter selection, and custom tag scripting also receive fixes.</p>
+            </description>
         </release>
         <release version="0.5.0" date="2024-06-28">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.5.0</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.5.0</url>
+            <description>
+                <p>Introduces CUE sheet support, M3U playlist import and export, artwork browsing, and audio decoder and tag reader plugins.</p>
+                <p>Layout switching, playlist tabs, ratings, and metadata editing gain new controls, while playback, library scanning, MPRIS artwork, and playlist restoration receive fixes.</p>
+            </description>
         </release>
         <release version="0.4.5" date="2024-06-05">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.4.5</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.4.5</url>
+            <description>
+                <p>Fixes startup playback when the saved output is unavailable and keeps the playback position paused correctly.</p>
+            </description>
         </release>
         <release version="0.4.4" date="2024-06-04">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.4.4</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.4.4</url>
+            <description>
+                <p>Adds an optional tray icon, periodic saving, hardware device selection, pause and stop fading, and a lyrics widget.</p>
+                <p>New scripting and playlist controls provide more display and playback options, while output device loss, artwork, sorting, and interface scaling receive fixes.</p>
+            </description>
         </release>
         <release version="0.4.3" date="2024-05-23">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.4.3</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.4.3</url>
+            <description>
+                <p>Expands tool button, layout, playlist, and waveform controls and improves playback statistics performance.</p>
+                <p>Translations, layout editing, artwork, multichannel playback, metadata saving, audio output recovery, and several crashes also receive fixes.</p>
+            </description>
         </release>
         <release version="0.4.2" date="2024-05-16">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.4.2</url>
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.4.2</url>
+            <description>
+                <p>Introduces playlist artwork columns and improves artwork caching, playlist performance, tabs, waveform controls, layouts, and natural sorting.</p>
+                <p>Playlist crashes, high-resolution audio playback, library monitoring, startup state, and tag editing also receive fixes.</p>
+            </description>
         </release>
     </releases>
     <translation type="qt">fooyin</translation>

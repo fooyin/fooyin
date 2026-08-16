@@ -52,6 +52,11 @@ bool AudioDecoder::needsMoreInput() const
     return false;
 }
 
+AudioDecoder::RepeatHandling AudioDecoder::repeatHandling() const
+{
+    return RepeatHandling::EngineTransition;
+}
+
 AudioDecoder::PlaybackHints AudioDecoder::playbackHints() const
 {
     return p->playbackHints;
@@ -59,8 +64,13 @@ AudioDecoder::PlaybackHints AudioDecoder::playbackHints() const
 
 void AudioDecoder::setPlaybackHints(PlaybackHints hints)
 {
-    p->playbackHints = hints;
+    if(std::exchange(p->playbackHints, hints) == hints) {
+        return;
+    }
+    playbackHintsChanged(hints);
 }
+
+void AudioDecoder::playbackHintsChanged(PlaybackHints /*hints*/) { }
 
 bool AudioDecoder::isRepeatingTrack() const
 {
@@ -73,6 +83,11 @@ bool AudioDecoder::trackHasChanged() const
 }
 
 Track AudioDecoder::changedTrack() const
+{
+    return {};
+}
+
+std::optional<AudioDecoder::TimedTrackChange> AudioDecoder::takeTimedTrackChange()
 {
     return {};
 }

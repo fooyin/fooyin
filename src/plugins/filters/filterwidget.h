@@ -44,9 +44,16 @@ enum class TrackAction;
 
 namespace Filters {
 class FilterColumnRegistry;
+class FilterDelegate;
 class FilterModel;
 class FilterSortModel;
 class FilterView;
+
+enum class FilterSource : uint8_t
+{
+    Library = 0,
+    CurrentPlaylist,
+};
 
 class FilterWidget : public FyWidget
 {
@@ -75,9 +82,10 @@ public:
     [[nodiscard]] TrackAction doubleClickAction() const;
     [[nodiscard]] TrackAction middleClickAction() const;
     [[nodiscard]] bool sendPlayback() const;
+    [[nodiscard]] FilterSource source() const;
     [[nodiscard]] bool playlistEnabled() const;
     [[nodiscard]] bool autoSwitch() const;
-    [[nodiscard]] bool keepAlive() const;
+    [[nodiscard]] bool preservePlaybackPlaylist() const;
     [[nodiscard]] QString playlistName() const;
     [[nodiscard]] bool hasSelection() const;
     void openConfigDialog() override;
@@ -100,14 +108,16 @@ public:
         int doubleClickAction{1};
         int middleClickAction{0};
         bool sendPlayback{true};
+        FilterSource source{FilterSource::Library};
         bool playlistEnabled{true};
         bool autoSwitch{true};
-        bool keepAlive{false};
+        bool preservePlaybackPlaylist{true};
         QString playlistName;
         int rowHeight{0};
         QSize iconSize{100, 100};
         int iconHorizontalGap{-1};
         int iconVerticalGap{10};
+        bool alignCaptionsToArtwork{true};
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;
@@ -162,6 +172,7 @@ private:
     SettingsManager* m_settings;
 
     FilterView* m_view;
+    FilterDelegate* m_delegate;
     AutoHeaderView* m_header;
     FilterModel* m_model;
     FilterSortModel* m_sortProxy;

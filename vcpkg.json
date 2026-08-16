@@ -8,6 +8,7 @@
     "glm",
     "sdl2",
     "getopt",
+    "libebur128",
     "libopenmpt",
     "libsndfile",
     "libarchive",

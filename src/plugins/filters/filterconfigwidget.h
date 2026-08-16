@@ -49,13 +49,14 @@ protected:
 private:
     FilterColumnRegistry* m_columnRegistry;
 
+    QComboBox* m_source;
     QComboBox* m_middleClick;
     QComboBox* m_doubleClick;
     QCheckBox* m_playbackOnSend;
 
     QCheckBox* m_playlistEnabled;
     QCheckBox* m_autoSwitch;
-    QCheckBox* m_keepAlive;
+    QCheckBox* m_preservePlaybackPlaylist;
     QLineEdit* m_playlistName;
 
     QCheckBox* m_overrideRowHeight;
@@ -64,6 +65,7 @@ private:
     QSpinBox* m_iconHeight;
     QSpinBox* m_iconHorizontalGap;
     QSpinBox* m_iconVerticalGap;
+    QCheckBox* m_alignCaptionsToArtwork;
     QPushButton* m_manageColumns;
 };
 } // namespace Fooyin::Filters

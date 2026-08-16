@@ -28,6 +28,7 @@
 #include <core/engine/audioloader.h>
 #include <core/track.h>
 
+#include <deque>
 #include <memory>
 #include <optional>
 #include <vector>
@@ -61,6 +62,7 @@ public:
     [[nodiscard]] bool isValid() const;
     [[nodiscard]] bool isDecoding() const;
     [[nodiscard]] bool isSeekable() const;
+    [[nodiscard]] AudioDecoder::RepeatHandling repeatHandling() const;
     [[nodiscard]] AudioStreamPtr activeStream() const;
     [[nodiscard]] StreamId activeStreamId() const;
     [[nodiscard]] const Track& track() const;
@@ -143,6 +145,10 @@ private:
     std::optional<uint64_t> m_windowEndPos;
     EndPolicy m_endPolicy;
     AudioDecoder::PlaybackHints m_playbackHints;
+
+    std::deque<AudioDecoder::TimedTrackChange> m_pendingTimedTrackChanges;
+    std::optional<uint64_t> m_timedMetadataSourceAnchorMs;
+    uint64_t m_timedMetadataStreamAnchorMs{0};
 
     bool m_isDecoding;
     bool m_lastDecodeNeededMoreInput;

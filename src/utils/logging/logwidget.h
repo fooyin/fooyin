@@ -34,6 +34,7 @@ class QTreeView;
 namespace Fooyin {
 class LogModel;
 class SettingsManager;
+class SignalThrottler;
 
 class FYUTILS_EXPORT LogWidget : public QWidget
 {
@@ -47,6 +48,7 @@ public:
     [[nodiscard]] QSize sizeHint() const override;
 
 protected:
+    void changeEvent(QEvent* event) override;
     void timerEvent(QTimerEvent* event) override;
 
 private:
@@ -60,6 +62,7 @@ private:
     QTreeView* m_view;
     LogModel* m_model;
     QComboBox* m_level;
+    SignalThrottler* m_scrollThrottler;
 
     bool m_scrollIsAtBottom;
 

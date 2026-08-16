@@ -17,6 +17,12 @@
  *
  */
 
+#include <QtGlobal>
+
+#ifdef Q_OS_WIN
+#include <GL/glew.h>
+#endif
+
 #include "projectmview.h"
 
 #include "projectminstance.h"
@@ -29,8 +35,6 @@
 #include <QMouseEvent>
 #include <QOpenGLContext>
 #include <QOpenGLDebugLogger>
-#include <QtGlobal>
-
 #include <algorithm>
 
 Q_LOGGING_CATEGORY(PROJECTM_GL, "fooyin.projectm")
@@ -97,6 +101,7 @@ ProjectMView::ProjectMView()
     , m_lastPcmTimeMs{0}
     , m_ready{false}
     , m_initialised{false}
+    , m_openGLReady{false}
     , m_recreateProjectM{false}
     , m_hasPcmCursor{false}
     , m_playbackIdle{false}
@@ -396,7 +401,28 @@ std::vector<ProjectMPreset> ProjectMView::presets()
 void ProjectMView::initializeGL()
 {
     m_initialised = true;
+    m_openGLReady = false;
     initializeOpenGLFunctions();
+
+#ifdef Q_OS_WIN
+    glewExperimental       = GL_TRUE;
+    const GLenum glewError = glewInit();
+    // glewInit() may leave GL_INVALID_ENUM set when using a core profile context
+    glGetError();
+    if(glewError != GLEW_OK) {
+        const QString error = QString::fromUtf8(reinterpret_cast<const char*>(glewGetErrorString(glewError)));
+        qCWarning(PROJECTM_GL) << "Failed to initialise GLEW:" << error;
+        setUnavailable(tr("Could not initialise OpenGL: %1").arg(error));
+        return;
+    }
+    if(!GLEW_VERSION_3_3) {
+        qCWarning(PROJECTM_GL) << "GLEW reports that OpenGL 3.3 is unavailable";
+        setUnavailable(tr("projectM requires OpenGL 3.3 or newer."));
+        return;
+    }
+#endif
+    m_openGLReady = true;
+
     initialiseOpenGLDebugLogger();
 
     logOpenGLContext();
@@ -518,6 +544,11 @@ void ProjectMView::createProjectM()
     m_ready = false;
     resetPcmCursor();
 
+    if(!m_openGLReady) {
+        setUnavailable(tr("projectM requires an initialised OpenGL 3.3 context."));
+        return;
+    }
+
     if(m_presetDirs.empty()) {
         setUnavailable(tr("No projectM preset folders are configured."));
         return;
@@ -572,6 +603,9 @@ void ProjectMView::createProjectM()
 
     if(!m_pendingPresetPath.isEmpty()) {
         m_projectM->selectPreset(m_pendingPresetPath, true);
+    }
+    else {
+        m_projectM->selectRandom(true);
     }
 
     resizeRenderer(width(), height(), true);

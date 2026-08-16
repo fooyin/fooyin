@@ -62,6 +62,8 @@ public:
         int peakGravity{DefaultPeakGravity};
         int updateFps{DefaultUpdateFps};
         int fftSize{DefaultFftSize};
+        int fftDurationMs{DefaultFftDurationMs};
+        FftSizingMode fftSizingMode{FftSizingMode::Duration};
         WindowFunction windowFunction{WindowFunction::BlackmanHarris};
         GradientOrientation gradientOrientation{GradientOrientation::Vertical};
         LabelMode labelMode{LabelMode::Frequency};

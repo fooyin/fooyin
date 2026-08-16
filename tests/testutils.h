@@ -21,7 +21,8 @@
 
 #include <core/track.h>
 
-#include <QTemporaryFile>
+#include <QFile>
+#include <QTemporaryDir>
 
 #include <memory>
 
@@ -34,14 +35,18 @@ namespace Fooyin::Testing {
 [[nodiscard]] QString testFilePath(const QString& relativePath);
 void resetRatingSettings();
 
-class TempResource : public QTemporaryFile
+class TempResource : public QFile
 {
 public:
     explicit TempResource(const QString& filename, QObject* parent = nullptr);
+    ~TempResource() override;
 
+    [[nodiscard]] QString fileName();
+    bool seek(qint64 position) override;
     void checkValid() const;
 
 private:
+    QTemporaryDir m_tempDir;
     QString m_file;
 };
 

@@ -251,6 +251,10 @@ enum GuiInternalSettings : uint32_t
     NowPlayingOutputOptions                  = 69 | Type::Int,
     NowPlayingOutputAppendLineLimit          = 70 | Type::Int,
     OutputDeviceRefreshMs                    = 71 | Type::Int,
+    PlaylistPlayingRowColour                 = 72 | Type::Variant,
+    PlaylistPlayingRowFont                   = 73 | Type::Variant,
+    PlaylistDoubleClick                      = 74 | Type::Int,
+    PlaylistStartPlaybackOnSend              = 75 | Type::Bool,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

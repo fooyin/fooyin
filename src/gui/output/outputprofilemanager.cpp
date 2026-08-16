@@ -44,6 +44,16 @@ bool devicesEqual(const Fooyin::OutputDevices& lhs, const Fooyin::OutputDevices&
         return left.name == right.name && left.desc == right.desc;
     });
 }
+
+std::pair<QString, QString> parseOutputSetting(const QString& value)
+{
+    const QStringList parts = value.split(u'|');
+    if(parts.size() < 2) {
+        return {};
+    }
+
+    return {parts.front(), parts.sliced(1).join(u'|')};
+}
 } // namespace
 
 namespace Fooyin {
@@ -57,9 +67,9 @@ OutputProfileManager::OutputProfileManager(EngineController* engine, DspChainSto
     , m_settings{settings}
 {
     m_settings->subscribe<Settings::Core::AudioOutput>(this, [this](const QString& value) {
-        const QStringList parts = value.split(u'|');
-        if(!parts.empty() && parts.size() >= 2) {
-            Q_EMIT currentOutputChanged(parts.value(0), parts.value(1));
+        const auto [output, device] = parseOutputSetting(value);
+        if(!output.isEmpty() && !device.isEmpty()) {
+            Q_EMIT currentOutputChanged(output, device);
             reapplyCurrentProfile();
         }
     });
@@ -305,9 +315,9 @@ Engine::DspChains OutputProfileManager::resolveChain(int dspPresetId) const
 
 std::pair<QString, QString> OutputProfileManager::parseCurrentOutput() const
 {
-    const QStringList parts = m_settings->value<Settings::Core::AudioOutput>().split(u'|');
-    if(!parts.empty() && parts.size() >= 2) {
-        return {parts.value(0), parts.value(1)};
+    const auto current = parseOutputSetting(m_settings->value<Settings::Core::AudioOutput>());
+    if(!current.first.isEmpty() && !current.second.isEmpty()) {
+        return current;
     }
 
     const auto outputs = m_engine->getAllOutputs();

@@ -46,7 +46,7 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     , m_playbackOnSend{new QCheckBox(tr("Start playback immediately"), this)}
     , m_playlistEnabled{new QCheckBox(tr("Enabled"), this)}
     , m_autoSwitch{new QCheckBox(tr("Switch when changed"), this)}
-    , m_keepAlive{new QCheckBox(tr("Keep alive"), this)}
+    , m_preservePlaybackPlaylist{new QCheckBox(tr("Preserve playback playlist"), this)}
     , m_playlistName{new QLineEdit(this)}
     , m_restoreState{new QCheckBox(tr("Restore state on startup"), this)}
     , m_expandOnSingleClick{new QCheckBox(tr("Single-click expands/collapses nodes"), this)}
@@ -95,12 +95,14 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     auto* selectionPlaylist       = new QGroupBox(tr("Library Selection Playlist"), generalTab);
     auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
 
-    m_keepAlive->setToolTip(tr("If this is the active playlist, keep it alive when changing selection"));
+    m_preservePlaybackPlaylist->setToolTip(
+        tr("When this selection playlist is used for playback, preserve it with \"(Playback)\" appended to its "
+           "name instead of replacing its tracks."));
 
     row = 0;
     selectionPlaylistLayout->addWidget(m_playlistEnabled, row++, 0, 1, 3);
     selectionPlaylistLayout->addWidget(m_autoSwitch, row++, 0, 1, 3);
-    selectionPlaylistLayout->addWidget(m_keepAlive, row++, 0, 1, 3);
+    selectionPlaylistLayout->addWidget(m_preservePlaybackPlaylist, row++, 0, 1, 3);
     selectionPlaylistLayout->addWidget(new QLabel(tr("Name") + u":"_s, this), row, 0);
     selectionPlaylistLayout->addWidget(m_playlistName, row++, 1, 1, 2);
     selectionPlaylistLayout->setColumnStretch(2, 1);
@@ -198,7 +200,7 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     QObject::connect(m_playlistEnabled, &QCheckBox::toggled, this, [this](bool checked) {
         m_playlistName->setEnabled(checked);
         m_autoSwitch->setEnabled(checked);
-        m_keepAlive->setEnabled(checked);
+        m_preservePlaybackPlaylist->setEnabled(checked);
     });
     QObject::connect(m_manageGroupings, &QPushButton::clicked, this, [this]() {
         auto* dialog = new LibraryTreeGroupEditorDialog(m_groupsRegistry, this);
@@ -218,7 +220,7 @@ LibraryTreeWidget::ConfigData LibraryTreeConfigDialog::config() const
         .sendPlayback                = m_playbackOnSend->isChecked(),
         .playlistEnabled             = m_playlistEnabled->isChecked(),
         .autoSwitch                  = m_autoSwitch->isChecked(),
-        .keepAlive                   = m_keepAlive->isChecked(),
+        .preservePlaybackPlaylist    = m_preservePlaybackPlaylist->isChecked(),
         .playlistName                = m_playlistName->text(),
         .restoreState                = m_restoreState->isChecked(),
         .expandOnSingleClick         = m_expandOnSingleClick->isChecked(),
@@ -242,7 +244,7 @@ void LibraryTreeConfigDialog::setConfig(const LibraryTreeWidget::ConfigData& con
     m_playbackOnSend->setChecked(config.sendPlayback);
     m_playlistEnabled->setChecked(config.playlistEnabled);
     m_autoSwitch->setChecked(config.autoSwitch);
-    m_keepAlive->setChecked(config.keepAlive);
+    m_preservePlaybackPlaylist->setChecked(config.preservePlaybackPlaylist);
     m_playlistName->setText(config.playlistName);
     m_restoreState->setChecked(config.restoreState);
     m_expandOnSingleClick->setChecked(config.expandOnSingleClick);
@@ -261,7 +263,7 @@ void LibraryTreeConfigDialog::setConfig(const LibraryTreeWidget::ConfigData& con
     m_iconHeight->setValue(config.iconSize.height());
     m_playlistName->setEnabled(m_playlistEnabled->isChecked());
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
-    m_keepAlive->setEnabled(m_playlistEnabled->isChecked());
+    m_preservePlaybackPlaylist->setEnabled(m_playlistEnabled->isChecked());
 }
 
 void LibraryTreeConfigDialog::mergeExternalConfig(const LibraryTreeWidget::ConfigData& previous,
@@ -271,7 +273,7 @@ void LibraryTreeConfigDialog::mergeExternalConfig(const LibraryTreeWidget::Confi
         previous, current, &LibraryTreeWidget::ConfigData::doubleClickAction,
         &LibraryTreeWidget::ConfigData::middleClickAction, &LibraryTreeWidget::ConfigData::sendPlayback,
         &LibraryTreeWidget::ConfigData::playlistEnabled, &LibraryTreeWidget::ConfigData::autoSwitch,
-        &LibraryTreeWidget::ConfigData::keepAlive, &LibraryTreeWidget::ConfigData::playlistName,
+        &LibraryTreeWidget::ConfigData::preservePlaybackPlaylist, &LibraryTreeWidget::ConfigData::playlistName,
         &LibraryTreeWidget::ConfigData::restoreState, &LibraryTreeWidget::ConfigData::expandOnSingleClick,
         &LibraryTreeWidget::ConfigData::autoExpandSearchResultLimit, &LibraryTreeWidget::ConfigData::animated,
         &LibraryTreeWidget::ConfigData::showHeader, &LibraryTreeWidget::ConfigData::showScrollbar,

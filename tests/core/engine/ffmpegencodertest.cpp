@@ -19,9 +19,11 @@
 
 #include <core/engine/audioconverter.h>
 #include <core/engine/input/ffmpeg/ffmpegencoder.h>
+#include <core/engine/input/ffmpeg/ffmpeginput.h>
 
 #include <gtest/gtest.h>
 
+#include <QBuffer>
 #include <QDir>
 #include <QFileInfo>
 #include <QScopeGuard>
@@ -36,6 +38,7 @@ extern "C"
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstring>
 #include <optional>
 #include <set>
 #include <vector>
@@ -49,11 +52,149 @@ namespace {
 bool hasEncoder(const QStringList& codecNames)
 {
     for(const QString& codecName : codecNames) {
-        if(avcodec_find_encoder_by_name(codecName.toUtf8().constData())) {
+        const AVCodec* codec = avcodec_find_encoder_by_name(codecName.toUtf8().constData());
+        if(codec && !(codec->capabilities & AV_CODEC_CAP_EXPERIMENTAL)) {
             return true;
         }
     }
     return false;
+}
+
+void appendSynchsafe32(QByteArray& data, quint32 value)
+{
+    data.append(static_cast<char>((value >> 21U) & 0x7FU));
+    data.append(static_cast<char>((value >> 14U) & 0x7FU));
+    data.append(static_cast<char>((value >> 7U) & 0x7FU));
+    data.append(static_cast<char>(value & 0x7FU));
+}
+
+QByteArray id3TextFrame(QByteArrayView id, QByteArrayView value)
+{
+    QByteArray payload;
+    payload.append(char{3});
+    payload.append(value);
+
+    QByteArray frame{id.data(), id.size()};
+    const quint32 size = static_cast<quint32>(payload.size());
+    frame.append(static_cast<char>((size >> 24U) & 0xFFU));
+    frame.append(static_cast<char>((size >> 16U) & 0xFFU));
+    frame.append(static_cast<char>((size >> 8U) & 0xFFU));
+    frame.append(static_cast<char>(size & 0xFFU));
+    frame.append(QByteArray{2, '\0'});
+    frame.append(payload);
+    return frame;
+}
+
+QByteArray timedId3Tag()
+{
+    QByteArray frames;
+    frames.append(id3TextFrame("TIT2", "Test Title"));
+    frames.append(id3TextFrame("TPE1", "Test Artist"));
+
+    QByteArray tag{"ID3\x03\x00\x00", 6};
+    appendSynchsafe32(tag, static_cast<quint32>(frames.size()));
+    tag.append(frames);
+    return tag;
+}
+
+QByteArray makeTimedId3TransportStream()
+{
+    AVFormatContext* context{nullptr};
+    if(avformat_alloc_output_context2(&context, nullptr, "mpegts", nullptr) < 0 || !context) {
+        return {};
+    }
+    const auto freeContext = qScopeGuard([&context] { avformat_free_context(context); });
+
+    AVStream* audio = avformat_new_stream(context, nullptr);
+    AVStream* id3   = avformat_new_stream(context, nullptr);
+    if(!audio || !id3) {
+        return {};
+    }
+
+    audio->time_base             = {1, 44'100};
+    audio->codecpar->codec_type  = AVMEDIA_TYPE_AUDIO;
+    audio->codecpar->codec_id    = AV_CODEC_ID_AAC;
+    audio->codecpar->sample_rate = 44'100;
+    audio->codecpar->bit_rate    = 64'000;
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(59, 24, 100)
+    audio->codecpar->channels       = 2;
+    audio->codecpar->channel_layout = AV_CH_LAYOUT_STEREO;
+#else
+    av_channel_layout_default(&audio->codecpar->ch_layout, 2);
+#endif
+    audio->codecpar->extradata = static_cast<uint8_t*>(av_mallocz(2 + AV_INPUT_BUFFER_PADDING_SIZE));
+    if(!audio->codecpar->extradata) {
+        return {};
+    }
+    audio->codecpar->extradata_size = 2;
+    audio->codecpar->extradata[0]   = 0x12;
+    audio->codecpar->extradata[1]   = 0x10;
+
+    id3->time_base            = {1, 1000};
+    id3->codecpar->codec_type = AVMEDIA_TYPE_DATA;
+    id3->codecpar->codec_id   = AV_CODEC_ID_TIMED_ID3;
+
+    if(avio_open_dyn_buf(&context->pb) < 0 || avformat_write_header(context, nullptr) < 0) {
+        return {};
+    }
+
+    const QByteArray tag = timedId3Tag();
+    AVPacket* packet     = av_packet_alloc();
+    if(!packet) {
+        return {};
+    }
+    const auto freePacket = qScopeGuard([&packet] { av_packet_free(&packet); });
+
+    const auto writePacket = [context, packet](AVStream* stream, QByteArrayView data, int64_t pts, int64_t duration,
+                                               AVRational sourceTimeBase) {
+        av_packet_unref(packet);
+        if(av_new_packet(packet, data.size()) < 0) {
+            return false;
+        }
+        std::memcpy(packet->data, data.data(), static_cast<size_t>(data.size()));
+        packet->stream_index = stream->index;
+        packet->pts          = pts;
+        packet->dts          = pts;
+        packet->duration     = duration;
+        packet->flags        = AV_PKT_FLAG_KEY;
+        av_packet_rescale_ts(packet, sourceTimeBase, stream->time_base);
+        return av_interleaved_write_frame(context, packet) >= 0;
+    };
+
+    static constexpr std::array<unsigned char, 21> FirstAacFrame{
+        0xdc, 0x00, 0x4c, 0x61, 0x76, 0x63, 0x36, 0x33, 0x2e, 0x31, 0x2e,
+        0x31, 0x30, 0x30, 0x00, 0x42, 0x20, 0x08, 0xc1, 0x18, 0x38,
+    };
+    static constexpr std::array<unsigned char, 6> SubsequentAacFrame{0x21, 0x10, 0x04, 0x60, 0x8c, 0x1c};
+    const QByteArrayView firstAudio{reinterpret_cast<const char*>(FirstAacFrame.data()), FirstAacFrame.size()};
+    const QByteArrayView nextAudio{reinterpret_cast<const char*>(SubsequentAacFrame.data()), SubsequentAacFrame.size()};
+
+    if(!writePacket(audio, firstAudio, 0, 1024, AVRational{1, 44'100})) {
+        return {};
+    }
+    for(int frame{1}; frame < 20; ++frame) {
+        if(frame == 3 && !writePacket(id3, tag, 50, 0, AVRational{1, 1000})) {
+            return {};
+        }
+        if(!writePacket(audio, nextAudio, frame * 1024, 1024, AVRational{1, 44'100})) {
+            return {};
+        }
+    }
+    if(av_write_trailer(context) < 0) {
+        return {};
+    }
+
+    uint8_t* output{nullptr};
+    const int outputSize = avio_close_dyn_buf(context->pb, &output);
+    context->pb          = nullptr;
+    if(outputSize <= 0 || !output) {
+        av_free(output);
+        return {};
+    }
+
+    QByteArray result{reinterpret_cast<const char*>(output), outputSize};
+    av_free(output);
+    return result;
 }
 
 bool hasMuxer(const QString& containerName, const QString& extension)
@@ -366,8 +507,37 @@ TEST(FFmpegEncoderTest, EncodesOpusInAdvertisedBitrateModes)
 
     for(const EncoderMode mode : profile->capabilities.modes) {
         SCOPED_TRACE(static_cast<int>(mode));
-        encodeSmokeTest(u"ffmpeg-opus"_s, AV_CODEC_ID_OPUS, 160, -1, 48000, SampleFormat::S16, 0, mode);
+        encodeSmokeTest(u"ffmpeg-opus"_s, AV_CODEC_ID_OPUS, 160, -1, 48000, SampleFormat::Unknown, 0, mode);
     }
+}
+
+TEST(FFmpegInputTest, ReadsTimedId3FromMpegTsDataStream)
+{
+    QByteArray transportStream = makeTimedId3TransportStream();
+    ASSERT_FALSE(transportStream.isEmpty());
+
+    QBuffer input{&transportStream};
+    ASSERT_TRUE(input.open(QIODevice::ReadOnly));
+
+    const Track track{u"timed-id3.ts"_s};
+    const AudioSource source{.filepath = track.filepath(), .device = &input};
+    FFmpegDecoder decoder;
+    ASSERT_TRUE(decoder.init(source, track, AudioDecoder::UpdateTracks).has_value());
+    decoder.start();
+
+    std::optional<AudioDecoder::TimedTrackChange> change;
+    for(int attempt{0}; attempt < 64 && !change; ++attempt) {
+        const auto read = decoder.readAudio(4096);
+        change          = decoder.takeTimedTrackChange();
+        if(read.status == AudioDecoder::ReadStatus::EndOfStream || read.status == AudioDecoder::ReadStatus::Error) {
+            break;
+        }
+    }
+
+    ASSERT_TRUE(change.has_value());
+    EXPECT_GT(change->timestampMs, 0);
+    EXPECT_EQ(change->track.title(), u"Test Title"_s);
+    EXPECT_EQ(change->track.artist(), u"Test Artist"_s);
 }
 
 } // namespace Fooyin::Testing

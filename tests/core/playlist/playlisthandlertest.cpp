@@ -409,6 +409,65 @@ TEST(PlaylistHandlerTest, RestoreRemovedPlaylistReaddsSameObjectWithFreshDatabas
     EXPECT_EQ(harness.handler.playlistById(playlistId), restored);
 }
 
+TEST(PlaylistHandlerTest, LockedPlaylistRejectsContentChangesAndPersistsState)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_locked_test.ini"_s};
+    registerCoreSettings(settings);
+    PlaylistHandlerHarness harness{settings};
+    ASSERT_TRUE(harness.dbInitialised);
+
+    const Track original = makeTrack(u"/tmp/original.flac"_s, 1);
+    auto* playlist       = harness.handler.createPlaylist(u"Locked"_s, {original});
+    ASSERT_NE(playlist, nullptr);
+
+    harness.handler.setPlaylistLocked(playlist->id(), true);
+    EXPECT_TRUE(playlist->isLocked());
+    EXPECT_TRUE(playlist->hasExtraProperty(u"core/locked"_s));
+
+    auto* restoredProperties = harness.handler.createNewPlaylist(u"Restored properties"_s);
+    restoredProperties->storeExtraProperties(playlist->serialiseExtraProperties());
+    EXPECT_TRUE(restoredProperties->isLocked());
+
+    harness.handler.appendToPlaylist(playlist->id(), {makeTrack(u"/tmp/appended.flac"_s, 2)});
+    harness.handler.replacePlaylistTracks(playlist->id(), {makeTrack(u"/tmp/replaced.flac"_s, 3)});
+    harness.handler.createPlaylist(playlist->name(), {makeTrack(u"/tmp/recreated.flac"_s, 4)});
+    harness.handler.removePlaylistTracks(playlist->id(), {0});
+    harness.handler.clearPlaylistTracks(playlist->id());
+
+    ASSERT_EQ(playlist->trackCount(), 1);
+    EXPECT_EQ(playlist->track(0)->filepath(), original.filepath());
+
+    harness.handler.setPlaylistLocked(playlist->id(), false);
+    EXPECT_FALSE(playlist->isLocked());
+    EXPECT_FALSE(playlist->hasExtraProperty(u"core/locked"_s));
+
+    harness.handler.clearPlaylistTracks(playlist->id());
+    EXPECT_EQ(playlist->trackCount(), 0);
+}
+
+TEST(PlaylistHandlerTest, AutoPlaylistRejectsAppendedTracks)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_auto_append_test.ini"_s};
+    registerCoreSettings(settings);
+    PlaylistHandlerHarness harness{settings};
+    ASSERT_TRUE(harness.dbInitialised);
+
+    const Track libraryTrack = makeTrack(u"/music/library.flac"_s, 1);
+    harness.library.setTracks({libraryTrack});
+    harness.library.setLibraryTracks({libraryTrack});
+
+    auto* playlist = harness.handler.createNewAutoPlaylist(u"Read only"_s, u"title PRESENT"_s);
+    ASSERT_NE(playlist, nullptr);
+    ASSERT_EQ(playlist->trackCount(), 1);
+
+    harness.handler.appendToPlaylist(playlist->id(), {makeTrack(u"/music/appended.flac"_s, 2)});
+
+    ASSERT_EQ(playlist->trackCount(), 1);
+    EXPECT_EQ(playlist->tracks().front().filepath(), libraryTrack.filepath());
+}
+
 TEST(PlaylistHandlerTest, TracksMetadataChangedUpdatesPlaylistTrackWhenFilepathChanges)
 {
     ensureCoreApplication();

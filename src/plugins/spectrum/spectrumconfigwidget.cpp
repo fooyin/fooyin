@@ -161,7 +161,9 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     , m_peakHoldTime{new QSpinBox(this)}
     , m_peakGravity{new QSpinBox(this)}
     , m_updateFps{new QComboBox(this)}
+    , m_fftSizingMode{new QComboBox(this)}
     , m_fftSize{new QComboBox(this)}
+    , m_fftDuration{new QSpinBox(this)}
     , m_windowFunction{new QComboBox(this)}
     , m_drawStyle{new QComboBox(this)}
     , m_showTopLabels{new QCheckBox(tr("Top labels"), this)}
@@ -234,6 +236,8 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     m_peakGravity->setRange(MinPeakGravity, MaxPeakGravity);
     m_peakGravity->setSingleStep(10);
     m_peakGravity->setSuffix(u" dB/s"_s);
+    m_fftDuration->setRange(MinFftDurationMs, MaxFftDurationMs);
+    m_fftDuration->setSuffix(u" ms"_s);
 
     for(const auto preset : Gui::FrameRate::Presets) {
         const int fps = Gui::FrameRate::toFps(preset);
@@ -243,6 +247,9 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     for(const int fftSize : {256, 512, 1024, 2048, 4096, 8192, 16384}) {
         m_fftSize->addItem(QString::number(fftSize), fftSize);
     }
+
+    m_fftSizingMode->addItem(tr("Duration (sample-rate based)"), static_cast<int>(FftSizingMode::Duration));
+    m_fftSizingMode->addItem(tr("Fixed samples"), static_cast<int>(FftSizingMode::Samples));
 
     m_windowFunction->addItem(tr("Blackman-Harris"), static_cast<int>(WindowFunction::BlackmanHarris));
     m_windowFunction->addItem(tr("Hann"), static_cast<int>(WindowFunction::Hann));
@@ -263,6 +270,10 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     m_bandCount->setToolTip(tr("Number of frequency bands to draw"));
     m_fftSize->setToolTip(tr("Number of samples analysed per spectrum frame; higher values improve frequency "
                              "detail but respond more slowly"));
+    m_fftDuration->setToolTip(
+        tr("Length of audio analysed per spectrum frame; the FFT size adapts to the sample rate"));
+    m_fftSizingMode->setToolTip(
+        tr("Keep the analysis duration consistent across sample rates, or use a fixed number of samples"));
     m_windowFunction->setToolTip(tr("Window applied before FFT analysis"));
     m_pitchHz->setToolTip(tr("Reference frequency for A4"));
     m_transpose->setToolTip(tr("Shift note labels and note-based bands by semitones"));
@@ -336,7 +347,9 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     addGridRow(spectrumLayout, row, tr("Bands") + ":"_L1, m_bandCount, this);
 
     row = 0;
-    addGridRow(analysisLayout, row, tr("FFT size") + ":"_L1, m_fftSize, this);
+    addGridRow(analysisLayout, row, tr("FFT sizing") + ":"_L1, m_fftSizingMode, this);
+    auto* fftSizeLabel     = addGridRow(analysisLayout, row, tr("FFT size") + ":"_L1, m_fftSize, this);
+    auto* fftDurationLabel = addGridRow(analysisLayout, row, tr("Duration") + ":"_L1, m_fftDuration, this);
     addGridRow(analysisLayout, row, tr("Window") + ":"_L1, m_windowFunction, this);
     addGridRow(analysisLayout, row, tr("Pitch (A4)") + ":"_L1, m_pitchHz, this);
     addGridRow(analysisLayout, row, tr("Transpose") + ":"_L1, m_transpose, this);
@@ -353,6 +366,19 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     };
 
     QObject::connect(m_labelMode, &QComboBox::currentIndexChanged, this, updateScaleControls);
+
+    const auto updateFftControls = [this, fftSizeLabel, fftDurationLabel]() {
+        const auto mode     = static_cast<FftSizingMode>(m_fftSizingMode->currentData().toInt());
+        const bool duration = mode == FftSizingMode::Duration;
+        fftSizeLabel->setVisible(!duration);
+        m_fftSize->setVisible(!duration);
+        fftDurationLabel->setVisible(duration);
+        m_fftDuration->setVisible(duration);
+    };
+
+    updateFftControls();
+    QObject::connect(m_fftSizingMode, &QComboBox::currentIndexChanged, this, updateFftControls);
+
     QObject::connect(m_minNote, qOverload<int>(&QSpinBox::valueChanged), this,
                      [this](int value) { m_maxNote->setMinimum(std::min(MaxNote, value + 12)); });
     QObject::connect(m_maxNote, qOverload<int>(&QSpinBox::valueChanged), this,
@@ -508,6 +534,8 @@ SpectrumWidget::ConfigData SpectrumConfigDialog::config() const
         .peakGravity         = m_peakGravity->value(),
         .updateFps           = m_updateFps->currentData().toInt(),
         .fftSize             = m_fftSize->currentData().toInt(),
+        .fftDurationMs       = m_fftDuration->value(),
+        .fftSizingMode       = static_cast<FftSizingMode>(m_fftSizingMode->currentData().toInt()),
         .windowFunction      = static_cast<WindowFunction>(m_windowFunction->currentData().toInt()),
         .gradientOrientation = m_barGradient->orientation() == Qt::Vertical ? GradientOrientation::Vertical
                                                                             : GradientOrientation::Horizontal,
@@ -589,6 +617,13 @@ void SpectrumConfigDialog::setConfig(const SpectrumWidget::ConfigData& config)
         fftIndex = m_fftSize->findData(DefaultFftSize);
     }
     m_fftSize->setCurrentIndex(fftIndex);
+    m_fftDuration->setValue(config.fftDurationMs);
+
+    int sizingIndex = m_fftSizingMode->findData(static_cast<int>(config.fftSizingMode));
+    if(sizingIndex < 0) {
+        sizingIndex = m_fftSizingMode->findData(static_cast<int>(FftSizingMode::Duration));
+    }
+    m_fftSizingMode->setCurrentIndex(sizingIndex);
 
     int windowIndex = m_windowFunction->findData(static_cast<int>(config.windowFunction));
     if(windowIndex < 0) {
@@ -666,7 +701,8 @@ void SpectrumConfigDialog::mergeExternalConfig(const SpectrumWidget::ConfigData&
                         &SpectrumWidget::ConfigData::amplitudeHoldTimeMs, &SpectrumWidget::ConfigData::amplitudeGravity,
                         &SpectrumWidget::ConfigData::peaksEnabled, &SpectrumWidget::ConfigData::peakHoldTimeMs,
                         &SpectrumWidget::ConfigData::peakGravity, &SpectrumWidget::ConfigData::updateFps,
-                        &SpectrumWidget::ConfigData::fftSize, &SpectrumWidget::ConfigData::windowFunction,
+                        &SpectrumWidget::ConfigData::fftSize, &SpectrumWidget::ConfigData::fftDurationMs,
+                        &SpectrumWidget::ConfigData::fftSizingMode, &SpectrumWidget::ConfigData::windowFunction,
                         &SpectrumWidget::ConfigData::gradientOrientation, &SpectrumWidget::ConfigData::labelMode,
                         &SpectrumWidget::ConfigData::drawStyle, &SpectrumWidget::ConfigData::showTopLabels,
                         &SpectrumWidget::ConfigData::showBottomLabels, &SpectrumWidget::ConfigData::showLeftLabels,

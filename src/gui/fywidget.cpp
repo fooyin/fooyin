@@ -19,9 +19,11 @@
 
 #include <gui/fywidget.h>
 
+#include <core/coresettings.h>
 #include <utils/crypto.h>
 
 #include <QAction>
+#include <QCloseEvent>
 #include <QDialog>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -61,6 +63,7 @@ public:
     Id m_id{Utils::generateUniqueHash()};
     FyWidget::Features m_features;
     bool m_hasCustomMargins{false};
+    QString m_standaloneStateKey;
     QPointer<QDialog> m_configDialog;
 };
 
@@ -201,6 +204,50 @@ void FyWidget::saveCopyLayoutData(QJsonObject& layout, LayoutCopyContext& /*cont
 void FyWidget::loadLayoutData(const QJsonObject& /*object*/) { }
 
 void FyWidget::finalise() { }
+
+void FyWidget::showStandaloneWindow(const QString& title, const QString& stateKey, const QSize& defaultSize)
+{
+    showStandaloneWindow(title, stateKey, false, defaultSize);
+}
+
+void FyWidget::showStandaloneWindow(const QString& title, const QString& stateKey, bool translucentBackground,
+                                    const QSize& defaultSize)
+{
+    Q_ASSERT(!parentWidget());
+
+    p->m_standaloneStateKey = stateKey;
+
+    setAttribute(Qt::WA_DeleteOnClose);
+    setAttribute(Qt::WA_TranslucentBackground, translucentBackground);
+    setWindowTitle(title);
+    resize(defaultSize);
+
+    const FyStateSettings settings;
+    const QJsonObject state = settings.value(stateKey).toJsonObject();
+    if(!state.isEmpty()) {
+        loadLayoutData(state);
+        if(const QByteArray geometry = QByteArray::fromBase64(state.value("Geometry"_L1).toString().toUtf8());
+           !geometry.isEmpty()) {
+            restoreGeometry(geometry);
+        }
+    }
+
+    show();
+}
+
+void FyWidget::closeEvent(QCloseEvent* event)
+{
+    if(!p->m_standaloneStateKey.isEmpty()) {
+        QJsonObject state;
+        saveLayoutData(state);
+        state["Geometry"_L1] = QString::fromUtf8(saveGeometry().toBase64());
+
+        FyStateSettings settings;
+        settings.setValue(p->m_standaloneStateKey, state);
+    }
+
+    QWidget::closeEvent(event);
+}
 
 void FyWidget::openConfigDialog() { }
 

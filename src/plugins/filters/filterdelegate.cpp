@@ -21,6 +21,7 @@
 
 #include "filteritem.h"
 
+#include <gui/guiutils.h>
 #include <gui/scripting/richtext.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/widgets/expandedtreeview.h>
@@ -169,17 +170,20 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     if(!richText.empty()) {
         painter->save();
 
-        if(opt.backgroundBrush.style() != Qt::NoBrush) {
+        QStyleOptionViewItem backgroundOpt{opt};
+        if(opt.state & QStyle::State_Selected) {
+            backgroundOpt.state &= ~QStyle::State_Selected;
+            backgroundOpt.backgroundBrush = Qt::NoBrush;
+        }
+        else if(opt.backgroundBrush.style() != Qt::NoBrush) {
             painter->fillRect(option.rect, opt.backgroundBrush);
-            opt.backgroundBrush = Qt::NoBrush;
+            backgroundOpt.backgroundBrush = Qt::NoBrush;
         }
 
-        opt.text.clear();
-        style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+        backgroundOpt.text.clear();
+        style->drawControl(QStyle::CE_ItemViewItem, &backgroundOpt, painter, backgroundOpt.widget);
 
-        QRect textRect       = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
-        const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) * 2;
-        textRect.adjust(textMargin, 0, -textMargin, 0);
+        const QRect textRect = Gui::itemViewTextRect(opt);
         drawTextBlocks(painter, opt, textRect, richText.blocks);
 
         painter->restore();
@@ -189,19 +193,18 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     if(!richLines.empty()) {
         painter->save();
 
-        const bool selected = opt.state & QStyle::State_Selected;
-        if(selected) {
-            painter->fillRect(option.rect, opt.palette.brush(QPalette::Highlight));
-            opt.state &= ~QStyle::State_Selected;
-            opt.backgroundBrush = Qt::NoBrush;
+        QStyleOptionViewItem backgroundOpt{opt};
+        if(opt.state & QStyle::State_Selected) {
+            backgroundOpt.state &= ~QStyle::State_Selected;
+            backgroundOpt.backgroundBrush = Qt::NoBrush;
         }
         else if(opt.backgroundBrush.style() != Qt::NoBrush) {
             painter->fillRect(option.rect, opt.backgroundBrush);
-            opt.backgroundBrush = Qt::NoBrush;
+            backgroundOpt.backgroundBrush = Qt::NoBrush;
         }
 
-        opt.text.clear();
-        style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+        backgroundOpt.text.clear();
+        style->drawControl(QStyle::CE_ItemViewItem, &backgroundOpt, painter, backgroundOpt.widget);
 
         const QRect textRect = iconTextRect(opt);
         drawRichTextLines(painter, opt, textRect, richLines);
@@ -263,7 +266,12 @@ RichText FilterDelegate::recolourRichText(RichText richText, const QColor& colou
     return richText;
 }
 
-QRect FilterDelegate::iconTextRect(const QStyleOptionViewItem& option)
+void FilterDelegate::setAlignCaptionsToArtwork(bool align)
+{
+    m_alignCaptionsToArtwork = align;
+}
+
+QRect FilterDelegate::iconTextRect(const QStyleOptionViewItem& option) const
 {
     const auto* view = qobject_cast<const ExpandedTreeView*>(option.widget);
     if(!view) {
@@ -272,7 +280,7 @@ QRect FilterDelegate::iconTextRect(const QStyleOptionViewItem& option)
 
     const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
     QRect rect          = option.rect;
-    const int margin    = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &option, option.widget);
+    const int margin    = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &option, option.widget) + 1;
 
     switch(view->captionDisplay()) {
         case ExpandedTreeView::CaptionDisplay::Right: {
@@ -280,10 +288,19 @@ QRect FilterDelegate::iconTextRect(const QStyleOptionViewItem& option)
             rect.adjust(margin, 0, -margin, 0);
             break;
         }
-        case ExpandedTreeView::CaptionDisplay::Bottom:
+        case ExpandedTreeView::CaptionDisplay::Bottom: {
+            const QRect decorationRect
+                = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &option, option.widget);
             rect.setTop(rect.top() + option.decorationSize.height() + (IconCaptionMargin / 2));
-            rect.adjust(margin, 0, -margin, 0);
+            if(m_alignCaptionsToArtwork && decorationRect.isValid()) {
+                rect.setLeft(decorationRect.left());
+                rect.setRight(decorationRect.right());
+            }
+            else {
+                rect.adjust(margin, 0, -margin, 0);
+            }
             break;
+        }
         case ExpandedTreeView::CaptionDisplay::None:
             break;
     }
@@ -291,7 +308,7 @@ QRect FilterDelegate::iconTextRect(const QStyleOptionViewItem& option)
     return rect;
 }
 
-int FilterDelegate::iconTextWidth(const QStyleOptionViewItem& option)
+int FilterDelegate::iconTextWidth(const QStyleOptionViewItem& option) const
 {
     const auto* view = qobject_cast<const ExpandedTreeView*>(option.widget);
     if(!view) {

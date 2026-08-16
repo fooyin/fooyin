@@ -1,9 +1,20 @@
-enable_testing(true)
-
 include(GoogleTest)
+
+if(WIN32)
+    add_custom_target(
+        fooyin_test_runtime
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:Qt6::Test>" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
+        COMMENT "Deploying the Qt Test runtime"
+    )
+endif()
 
 function(fooyin_add_test name)
     add_executable(${name} ${ARGN} testutils.cpp)
+    set_property(GLOBAL APPEND PROPERTY FOOYIN_TEST_TARGETS ${name})
+    if(WIN32)
+        add_dependencies(${name} fooyin_test_runtime)
+    endif()
     fooyin_set_rpath(${name} ${LIB_INSTALL_DIR})
     target_include_directories(${name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     target_include_directories(${name} SYSTEM PRIVATE ${FFMPEG_INCLUDE_DIRS})
@@ -75,6 +86,7 @@ fooyin_add_test(test_ratingtagpolicy core/tagging/ratingtagpolicytest.cpp)
 fooyin_add_test(test_tagwriter core/tagging/tagwritertest.cpp data/audio.qrc)
 
 fooyin_add_test(test_guiutils gui/guiutilstest.cpp)
+fooyin_add_test(test_fythemefile gui/fythemefiletest.cpp)
 fooyin_add_test(test_fysplitter gui/fysplittertest.cpp)
 fooyin_add_test(test_scriptformatter gui/scriptformattertest.cpp)
 

@@ -115,6 +115,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<ShowSplitterHandles>(false, u"Interface/SplitterHandles"_s);
     m_settings->createSetting<LockSplitterHandles>(false, u"Interface/LockSplitterHandles"_s);
     m_settings->createSetting<SplitterHandleSize>(-1, u"Interface/SplitterHandleSize"_s);
+    m_settings->createSetting<ResizeLockedAdjacentOnly>(true, u"Interface/ResizeLockedAdjacentOnly"_s);
     m_settings->createSetting<VolumeStep>(0.05, u"Controls/VolumeStep"_s);
     m_settings->createSetting<SearchSuccessClear>(true, u"Searching/ClearOnSuccess"_s);
     m_settings->createSetting<SearchAutoDelay>(1, u"Searching/AutoDelay"_s);
@@ -129,6 +130,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                                                   u"Playlist/SearchMode"_s);
     m_settings->createSetting<PlaylistSearchScript>(u"[%artist%] [%title%] [%album%]"_s, u"Playlist/SearchScript"_s);
     m_settings->createSetting<ShowMenuBar>(true, u"Interface/ShowMenuBar"_s);
+    m_settings->createSetting<DarkMode>(false, u"Interface/DarkMode"_s);
     m_settings->createSetting<RatingFullStarSymbol>(defaultRatingFullStarSymbol(), u"Interface/RatingFullStarSymbol"_s);
     m_settings->createSetting<RatingHalfStarSymbol>(defaultRatingHalfStarSymbol(), u"Interface/RatingHalfStarSymbol"_s);
     m_settings->createSetting<RatingEmptyStarSymbol>(defaultRatingEmptyStarSymbol(),
@@ -179,11 +181,15 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::PlaylistBackgroundFadeDuration>(0, u"PlaylistWidget/BackgroundFadeDuration"_s);
     m_settings->createSetting<Internal::PlaylistBackgroundCoverType>(static_cast<int>(Track::Cover::Front),
                                                                      u"PlaylistWidget/BackgroundCoverType"_s);
+    m_settings->createSetting<Internal::PlaylistPlayingRowColour>(QVariant{}, u"PlaylistWidget/PlayingRowColour"_s);
+    m_settings->createSetting<Internal::PlaylistPlayingRowFont>(QVariant{}, u"PlaylistWidget/PlayingRowFont"_s);
     m_settings->createSetting<Internal::PixmapCacheSize>(PixmapCacheSize, u"Interface/PixmapCacheSize"_s);
     m_settings->createSetting<Internal::EditableLayoutMargin>(-1, u"Interface/EditableLayoutMargin"_s);
     m_settings->createSetting<Internal::ShowTrayIcon>(false, u"Interface/ShowTrayIcon"_s);
-    m_settings->createSetting<Internal::TrayOnClose>(true, u"Interface/TrayOnClose"_s);
+    m_settings->createSetting<Internal::TrayOnClose>(false, u"Interface/TrayOnClose"_s);
     m_settings->createSetting<Internal::PlaylistMiddleClick>(0, u"PlaylistWidget/MiddleClickBehaviour"_s);
+    m_settings->createSetting<Internal::PlaylistDoubleClick>(5, u"PlaylistWidget/DoubleClickBehaviour"_s);
+    m_settings->createSetting<Internal::PlaylistStartPlaybackOnSend>(false, u"PlaylistWidget/StartPlaybackOnSend"_s);
     m_settings->createSetting<Internal::InfoDisplayPrefer>(0, u"SelectionInfo/PreferDisplay"_s);
     m_settings->createSetting<Internal::LibTreeIconSize>(QSize{36, 36}, u"LibraryTree/IconSize"_s);
     m_settings->createSetting<Internal::ArtworkSaveMethods>(QVariant::fromValue(defaultArtworkSaveMethods()),

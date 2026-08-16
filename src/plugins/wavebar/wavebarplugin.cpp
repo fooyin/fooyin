@@ -27,10 +27,13 @@
 #include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
 #include <gui/guiconstants.h>
+#include <gui/layoutprovider.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
 #include <gui/widgets/elapsedprogressdialog.h>
+#include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/async.h>
 #include <utils/utils.h>
 
@@ -40,19 +43,33 @@
 using namespace std::chrono_literals;
 using namespace Qt::StringLiterals;
 
+namespace Fooyin::WaveBar {
 namespace {
-Fooyin::DbConnection::DbParams dbConnectionParams()
+DbConnection::DbParams dbConnectionParams()
 {
-    Fooyin::DbConnection::DbParams params;
+    DbConnection::DbParams params;
     params.type           = u"QSQLITE"_s;
     params.connectOptions = u"QSQLITE_OPEN_URI"_s;
-    params.filePath       = Fooyin::WaveBar::cachePath();
+    params.filePath       = cachePath();
 
     return params;
 }
+
+void registerLayouts(LayoutProvider& layoutProvider)
+{
+    layoutProvider.registerLayout(
+        R"({"Name":"Waveform","Widgets":[{"SplitterVertical":{"Locked":[true,true,false,false],
+                "State":"AAAA/wAAAAEAAAAEAAABFQAAACAAAAHpAAAAEgD/////AQAAAAIA","Widgets":[{"SplitterHorizontal":{"Locked":[true,false],
+                "State":"AAAA/wAAAAEAAAACAAABFQAAAo4A/////wEAAAABAA==","Widgets":[{"ArtworkPanel":{}},
+                {"WaveBar":{"NormaliseToPeak":true,"PeakDisplayMode":2,"ShowCursor":false,"SupersampleFactor":2}}]}},
+                {"SplitterHorizontal":{"Locked":[true,false,true,true],"State":"AAAA/wAAAAEAAAAEAAABFQAAAhkAAABGAAAAcQD/////AQAAAAEA",
+                "Widgets":[{"PlayerControls":{}},{"OutputSelector":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}},
+                {"Playlist":{"Columns":"8:132|0:2|1|7:2|9:4|12:4|11:4|16:4",
+                "HeaderState":"AAAAlXjaY2Bg4GBgYLAEYl0GBsYzQNoJiBOBOAtKuzFA1IAAIxAzATELELMBMSsQswMxM0iN/Vp9qfn7yk7aL+eyLVh8ncv+bqnfy7t30+w3iv1c/ecIn/1O4VNruo/F2O9WuvA0wbHTfseVv5+3uS6y3/i6VW5H4BuQ4Qz/////DwDmjylf"}},
+                {"StatusBar":{}}]}}]})");
+}
 } // namespace
 
-namespace Fooyin::WaveBar {
 WaveBarPlugin::WaveBarPlugin()
     : m_dbPool{DbConnectionPool::create(dbConnectionParams(), u"wavebar"_s)}
 { }
@@ -85,6 +102,18 @@ void WaveBarPlugin::initialise(const GuiPluginContext& context)
 
     m_widgetProvider->registerWidget(u"WaveBar"_s, [this]() { return createWavebar(); }, tr("Waveform Seekbar"));
     m_widgetProvider->setSubMenus(u"WaveBar"_s, {tr("Visualisations")});
+
+    registerLayouts(*context.layoutProvider);
+
+    auto* showWaveBar = new QAction(tr("&Waveform Seekbar"), this);
+    showWaveBar->setStatusTip(tr("Open a waveform seekbar in a separate window"));
+    auto* showWaveBarCmd = m_actionManager->registerAction(showWaveBar, "WaveBar.ShowWindow");
+    showWaveBarCmd->setCategories({tr("View"), tr("Visualisations")});
+    m_actionManager->actionContainer(::Fooyin::Constants::Menus::Visualisations)->addAction(showWaveBarCmd);
+    QObject::connect(showWaveBar, &QAction::triggered, this, [this]() {
+        auto* window = createWavebar();
+        window->showStandaloneWindow(tr("Waveform Seekbar"), u"WaveBar/WindowState"_s, true);
+    });
 
     m_trackSelection->registerTrackContextSubmenu(this, TrackContextMenuArea::Track,
                                                   ::Fooyin::Constants::Menus::Context::TrackSelection,

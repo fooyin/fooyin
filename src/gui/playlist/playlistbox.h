@@ -52,6 +52,7 @@ public:
     void addPlaylist(const Playlist* playlist);
     void removePlaylist(const Playlist* playlist);
     void playlistRenamed(const Playlist* playlist) const;
+    void playlistUpdated(const Playlist* playlist) const;
     void currentPlaylistChanged(const Playlist* playlist) const;
     void changePlaylist(int index);
 
@@ -63,6 +64,7 @@ public:
     [[nodiscard]] Playlist* currentPlaylist() const;
 
 private:
+    void refreshPlaylistIcons() const;
     void setupActions();
     void updateActionState();
     void editCurrentAutoPlaylist();

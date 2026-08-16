@@ -86,6 +86,9 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     viewMenu->addAction(showPlaybackQueueCmd);
     QObject::connect(showPlaybackQueue, &QAction::triggered, this, &ViewMenu::openPlaybackQueue);
 
+    viewMenu->addSeparator(Actions::Groups::Three);
+    viewMenu->addMenu(m_actionManager->actionContainer(Constants::Menus::Visualisations), Actions::Groups::Three);
+
     auto* separator   = viewMenu->addSeparator(Actions::Groups::Three);
     m_dspInsertBefore = separator->action();
 

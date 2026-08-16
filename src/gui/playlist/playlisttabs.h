@@ -28,6 +28,7 @@
 #include <QPointer>
 
 class QHBoxLayout;
+class QEvent;
 class QVBoxLayout;
 
 namespace Fooyin {
@@ -106,6 +107,7 @@ Q_SIGNALS:
     void savePlaylistRequested(const Fooyin::UId& playlistId);
 
 protected:
+    void changeEvent(QEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
     void dragEnterEvent(QDragEnterEvent* event) override;
     void dragMoveEvent(QDragMoveEvent* event) override;
@@ -127,8 +129,10 @@ private:
     void playlistChanged(Playlist* oldPlaylist, Playlist* playlist);
     void activePlaylistChanged(Playlist* playlist);
     void playlistRenamed(const Playlist* playlist) const;
+    void playlistUpdated(const Playlist* playlist);
 
     void playStateChanged(Player::PlayState state) const;
+    void refreshTabIcons();
     void updateTabIcon(int i, Player::PlayState state) const;
     void createEmptyPlaylist() const;
 
@@ -149,6 +153,7 @@ private:
 
     QIcon m_playIcon;
     QIcon m_pauseIcon;
+    QIcon m_lockedIcon;
 
     UId m_lastActivePlaylist;
 };

@@ -23,8 +23,14 @@
 #include "spectrumwidget.h"
 
 #include <core/engine/enginecontroller.h>
+#include <gui/guiconstants.h>
 #include <gui/theme/themeregistry.h>
 #include <gui/widgetprovider.h>
+#include <utils/actions/actioncontainer.h>
+#include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
+
+#include <QAction>
 
 using namespace Qt::StringLiterals;
 
@@ -40,6 +46,16 @@ void SpectrumPlugin::initialise(const GuiPluginContext& context)
     m_widgetProvider = context.widgetProvider;
 
     qRegisterMetaType<Colours>("Fooyin::Spectrum::Colours");
+
+    auto* showSpectrum = new QAction(tr("&Spectrum"), this);
+    showSpectrum->setStatusTip(tr("Open a spectrum in a separate window"));
+    auto* showSpectrumCmd = context.actionManager->registerAction(showSpectrum, "Spectrum.ShowWindow");
+    showSpectrumCmd->setCategories({tr("View"), tr("Visualisations")});
+    context.actionManager->actionContainer(Constants::Menus::Visualisations)->addAction(showSpectrumCmd);
+    QObject::connect(showSpectrum, &QAction::triggered, this, [this]() {
+        auto* window = new SpectrumWidget(m_engine, m_settings);
+        window->showStandaloneWindow(tr("Spectrum"), u"Spectrum/WindowState"_s, true);
+    });
 
     m_widgetProvider->registerWidget(
         u"Spectrum"_s, [this]() { return new SpectrumWidget(m_engine, m_settings); }, tr("Spectrum"));

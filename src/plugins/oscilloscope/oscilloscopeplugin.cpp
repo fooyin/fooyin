@@ -24,7 +24,13 @@
 
 #include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
+#include <gui/guiconstants.h>
 #include <gui/widgetprovider.h>
+#include <utils/actions/actioncontainer.h>
+#include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
+
+#include <QAction>
 
 using namespace Qt::StringLiterals;
 
@@ -39,6 +45,16 @@ void OscilloscopePlugin::initialise(const CorePluginContext& context)
 void OscilloscopePlugin::initialise(const GuiPluginContext& context)
 {
     qRegisterMetaType<Colours>("Fooyin::Oscilloscope::Colours");
+
+    auto* showOscilloscope = new QAction(tr("&Oscilloscope"), this);
+    showOscilloscope->setStatusTip(tr("Open an oscilloscope in a separate window"));
+    auto* showOscilloscopeCmd = context.actionManager->registerAction(showOscilloscope, "Oscilloscope.ShowWindow");
+    showOscilloscopeCmd->setCategories({tr("View"), tr("Visualisations")});
+    context.actionManager->actionContainer(Constants::Menus::Visualisations)->addAction(showOscilloscopeCmd);
+    QObject::connect(showOscilloscope, &QAction::triggered, this, [this]() {
+        auto* window = new OscilloscopeWidget(m_engine, m_playerController, m_settings);
+        window->showStandaloneWindow(tr("Oscilloscope"), u"Oscilloscope/WindowState"_s, true);
+    });
 
     context.widgetProvider->registerWidget(
         u"Oscilloscope"_s, [this]() { return new OscilloscopeWidget(m_engine, m_playerController, m_settings); },

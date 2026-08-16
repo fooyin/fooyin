@@ -42,7 +42,7 @@
 <context>
     <name>Fooyin::ConversionSession</name>
     <message numerus="yes">
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="185"/>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="193"/>
         <source>Converted: %Ln track(s)</source>
         <translation>
             <numerusform>Converted: %Ln track</numerusform>
@@ -50,7 +50,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="186"/>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="194"/>
         <source>Skipped: %Ln track(s)</source>
         <translation>
             <numerusform>Skipped: %Ln track</numerusform>
@@ -58,7 +58,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="187"/>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="195"/>
         <source>Failed: %Ln track(s)</source>
         <translation>
             <numerusform>Failed: %Ln track</numerusform>
@@ -66,7 +66,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="188"/>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="196"/>
         <source>Cancelled: %Ln track(s)</source>
         <translation>
             <numerusform>Cancelled: %Ln track</numerusform>
@@ -77,7 +77,7 @@
 <context>
     <name>Fooyin::ConverterSetupDialog</name>
     <message numerus="yes">
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1203"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1211"/>
         <source>%Ln DSP(s)</source>
         <translation>
             <numerusform>%Ln DSP</numerusform>
@@ -134,11 +134,68 @@
 <context>
     <name>Fooyin::FileOps::FileOpsDialog</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="475"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="497"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="513"/>
         <source>Pending operation(s): %Ln</source>
         <translation>
             <numerusform>Pending operation: %Ln</numerusform>
             <numerusform>Pending operations: %Ln</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="530"/>
+        <source>Aborted: %Ln operation(s) not run</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="536"/>
+        <source>Completed %Ln operation(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="543"/>
+        <source>%Ln succeeded</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="546"/>
+        <source>%Ln failed</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="549"/>
+        <source>%Ln skipped</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="552"/>
+        <source>%Ln cancelled</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="557"/>
+        <source>Completed %Ln operation(s): %1</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
 </context>
@@ -213,7 +270,7 @@
 <context>
     <name>Fooyin::PlaylistModel</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1524"/>
+        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1517"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln track</numerusform>
@@ -224,7 +281,7 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1670"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1691"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
@@ -246,7 +303,7 @@
 <context>
     <name>Fooyin::ProjectM::ProjectMView</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="584"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="618"/>
         <source>Using presets from %Ln folder(s)</source>
         <translation>
             <numerusform>Using presets from %Ln folder</numerusform>

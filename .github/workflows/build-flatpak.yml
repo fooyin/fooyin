@@ -1,0 +1,38 @@
+name: Build Flatpak
+
+on:
+  workflow_call:
+
+jobs:
+  flatpak:
+    name: Flatpak (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-latest
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:kde-6.10
+      options: --privileged
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Build Flatpak
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: fooyin-${{ matrix.arch }}.flatpak
+          manifest-path: dist/linux/flatpak/org.fooyin.fooyin.yaml
+          cache-key: flatpak-builder-${{ matrix.arch }}-${{ hashFiles('dist/linux/flatpak/**') }}
+          arch: ${{ matrix.arch }}
+          upload-artifact: false
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: flatpak-${{ matrix.arch }}
+          path: fooyin-${{ matrix.arch }}.flatpak

@@ -143,15 +143,15 @@ void RadioBrowserPlugin::initialise(const GuiPluginContext& context)
 void RadioBrowserPlugin::registerLayouts(LayoutProvider& layoutProvider)
 {
     static const QString jsonStart
-        = uR"json({"Name":"Radio","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAAFFgAAABYA/////wEAAAACAA==",
-                "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAAA1gAABRoA/////wEAAAABAA==",
-                "Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAAEAAABugAAANUAAABWAAAAGgD/////AQAAAAIA",
+        = uR"json({"Name":"Radio","Widgets":[{"SplitterVertical":{"Locked":[false,true],"State":"AAAA/wAAAAEAAAACAAAFFgAAABYA/////wEAAAACAA==",
+                "Widgets":[{"SplitterHorizontal":{"Locked":[true,false],"State":"AAAA/wAAAAEAAAACAAAA1gAABRoA/////wEAAAABAA==",
+                "Widgets":[{"SplitterVertical":{"Locked":[false,true,true,true,true],"State":"AAAA/wAAAAEAAAAFAAABpwAAANgAAABvAAAAHQAAABwA/////wEAAAACAA==",
                 "Widgets":[{"RadioGuide":{}},{"ArtworkPanel":{}},{"ScriptDisplay":{"HorizontalAlignment": 4,"Script":"$if(%isstopped%,\n<b>)json"_s;
     const QString playbackStopped = tr("Playback stopped");
     static const QString jsonEnd
         = uR"json(</b>,\n<sized=1><b>$if2(%station%,$if(%streamtitle%,,%title%))</b></size>\n$crlf()\n$if2(%streamtitle%,[$join( - ,%artist%,%title%)])\n)"}},
             {"PlayerControls":{"ShowNext":false,"ShowPrevious":false}},{"VolumeControls":{}}]}},
-            {"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAAAHAAABOIA/////wEAAAACAA==","Widgets":[{"RadioSearch":{}},{"RadioBrowser":{}}]}}]}},{"StatusBar":{}}]}}]})json"_s;
+            {"SplitterVertical":{"Locked":[true,false],"State":"AAAA/wAAAAEAAAACAAAAHAAABOIA/////wEAAAACAA==","Widgets":[{"RadioSearch":{}},{"RadioBrowser":{}}]}}]}},{"StatusBar":{}}]}}]})json"_s;
 
     const QString fullJson = jsonStart + playbackStopped + jsonEnd;
     layoutProvider.registerLayout(fullJson.toUtf8());

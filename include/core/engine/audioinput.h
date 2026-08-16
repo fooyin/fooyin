@@ -29,6 +29,7 @@
 
 #include <chrono>
 #include <memory>
+#include <optional>
 #include <stop_token>
 #include <utility>
 
@@ -119,6 +120,15 @@ public:
     Q_DECLARE_FLAGS(PlaybackHints, PlaybackHint)
     Q_FLAG(PlaybackHints)
 
+    enum class RepeatHandling : uint8_t
+    {
+        //! Repeat-track playback is performed by transitioning to a new playback occurrence.
+        EngineTransition = 0,
+        //! The decoder loops its current input indefinitely while repeat-track is enabled.
+        DecoderLoop,
+    };
+    Q_ENUM(RepeatHandling)
+
     enum class ReadStatus : uint8_t
     {
         DecodedAudio = 0,
@@ -162,6 +172,12 @@ public:
         }
     };
 
+    struct TimedTrackChange
+    {
+        uint64_t timestampMs{0};
+        Track track;
+    };
+
     AudioDecoder();
     virtual ~AudioDecoder();
 
@@ -193,6 +209,11 @@ public:
      */
     [[nodiscard]] virtual bool isSeekable() const = 0;
     /*!
+     * Returns which component owns repeat-track playback for this decoder.
+     * Base implementation returns EngineTransition.
+     */
+    [[nodiscard]] virtual RepeatHandling repeatHandling() const;
+    /*!
      * Returns @c true if the current track is being repeated/looped forever.
      * @note Called only after `init()` succeeds.
      */
@@ -208,6 +229,8 @@ public:
      * @note Called only when `trackHasChanged()` returns true.
      */
     [[nodiscard]] virtual Track changedTrack() const;
+    /*! Returns and removes the next timestamped metadata change reported by the demuxer. */
+    [[nodiscard]] virtual std::optional<TimedTrackChange> takeTimedTrackChange();
     /*!
      * Returns the current variable/dynamic bitrate.
      * @note this should return 0 if the file isn't encoded with VBR.
@@ -275,6 +298,8 @@ public:
     virtual AudioBuffer readBuffer(size_t bytes) = 0;
 
 protected:
+    //! Called on the decoder worker thread when runtime playback policy changes.
+    virtual void playbackHintsChanged(PlaybackHints hints);
     //! Shared cancellation token for decoder backends and blocking input devices.
     [[nodiscard]] std::stop_token abortToken() const noexcept;
 

@@ -68,7 +68,9 @@ private:
     QSpinBox* m_peakHoldTime;
     QSpinBox* m_peakGravity;
     QComboBox* m_updateFps;
+    QComboBox* m_fftSizingMode;
     QComboBox* m_fftSize;
+    QSpinBox* m_fftDuration;
     QComboBox* m_windowFunction;
     QComboBox* m_drawStyle;
     QCheckBox* m_showTopLabels;

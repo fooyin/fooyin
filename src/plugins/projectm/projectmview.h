@@ -148,6 +148,7 @@ private:
     uint64_t m_lastPcmTimeMs;
     bool m_ready;
     bool m_initialised;
+    bool m_openGLReady;
     bool m_recreateProjectM;
     bool m_hasPcmCursor;
     bool m_playbackIdle;

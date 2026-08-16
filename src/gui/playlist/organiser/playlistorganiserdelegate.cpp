@@ -19,6 +19,7 @@
 
 #include "playlistorganiserdelegate.h"
 
+#include <gui/guiutils.h>
 #include <gui/scripting/richtext.h>
 #include <gui/scripting/richtextutils.h>
 
@@ -66,7 +67,7 @@ PreparedTextLines prepareTextLines(const QStyleOptionViewItem& option, int maxWi
         return result;
     }
 
-    const QColor selectedColour = option.palette.color(QPalette::HighlightedText);
+    const QColor selectedColour = option.palette.color(Gui::itemViewSelectionTextRole(option));
     const QColor defaultColour  = option.palette.color(QPalette::Text);
     const QColor linkColour     = option.palette.color(QPalette::Link);
     const int defaultHeight     = QFontMetrics{option.font}.height();
@@ -99,7 +100,7 @@ PreparedTextLines prepareTextLines(const QStyleOptionViewItem& option, int maxWi
             prepared.text   = text;
             prepared.font   = font;
             prepared.colour = colour;
-            prepared.width  = metrics.boundingRect(text).width();
+            prepared.width  = metrics.horizontalAdvance(text);
             prepared.height = metrics.height();
 
             line.totalWidth += prepared.width;
@@ -142,7 +143,7 @@ QSize richTextNaturalSize(const QStyleOptionViewItem& option, const RichText& ri
             const QFont font = resolvedRichTextFont(block.format, option.font);
             const QFontMetrics metrics{font};
 
-            lineWidth += metrics.boundingRect(block.text).width();
+            lineWidth += metrics.horizontalAdvance(block.text);
             lineHeight = std::max(lineHeight, metrics.height());
         }
 
@@ -160,8 +161,9 @@ void drawPreparedTextLines(QPainter* painter, const QStyleOptionViewItem& option
         return;
     }
 
-    const QStyle* style   = option.widget ? option.widget->style() : QApplication::style();
-    const auto colourRole = option.state & QStyle::State_Selected ? QPalette::HighlightedText : QPalette::NoRole;
+    const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
+    const auto colourRole
+        = option.state & QStyle::State_Selected ? Gui::itemViewSelectionTextRole(option) : QPalette::NoRole;
 
     int totalHeight{0};
     for(const auto& line : lines) {
@@ -193,6 +195,7 @@ void PlaylistOrganiserDelegate::paint(QPainter* painter, const QStyleOptionViewI
 {
     QStyleOptionViewItem opt{option};
     initStyleOption(&opt, index);
+    opt.decorationSize = option.decorationSize;
 
     QStyle* style = option.widget ? option.widget->style() : QApplication::style();
     opt.text.clear();
@@ -209,9 +212,7 @@ void PlaylistOrganiserDelegate::paint(QPainter* painter, const QStyleOptionViewI
     }
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, option.widget);
 
-    const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, opt.widget) * 2;
-    QRect textRect       = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
-    textRect.adjust(textMargin, 0, -textMargin, 0);
+    const QRect textRect = Gui::itemViewTextRect(opt);
 
     const QSize rightSize = richTextNaturalSize(opt, rightRichText);
 
@@ -246,6 +247,7 @@ QSize PlaylistOrganiserDelegate::sizeHint(const QStyleOptionViewItem& option, co
 {
     QStyleOptionViewItem opt{option};
     initStyleOption(&opt, index);
+    opt.decorationSize = option.decorationSize;
     opt.text.clear();
 
     const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();

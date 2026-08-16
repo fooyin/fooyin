@@ -91,6 +91,8 @@ enum GuiSettings : uint32_t
     PlaylistSearchMode         = 34 | Type::Int,
     PlaylistSearchScript       = 35 | Type::String,
     DragOnlyAfterSelect        = 36 | Type::Bool,
+    DarkMode                   = 37 | Type::Bool,
+    ResizeLockedAdjacentOnly   = 38 | Type::Bool,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Settings::Gui

@@ -768,6 +768,9 @@ Playlist* PlaylistHandler::createPlaylist(const QString& name, const TrackList& 
     auto* playlist   = p->addNewPlaylist(name);
 
     if(playlist) {
+        if(!isNew && playlist->isLocked()) {
+            return playlist;
+        }
         p->replacePlaylistTracks(playlist, rebuildPlaylistTracks(playlist, tracks));
         if(isNew) {
             Q_EMIT playlistAdded(playlist);
@@ -880,6 +883,9 @@ Playlist* PlaylistHandler::createNewAutoPlaylist(const QString& name, const QStr
 void PlaylistHandler::appendToPlaylist(const UId& id, const TrackList& tracks)
 {
     if(auto* playlist = playlistById(id)) {
+        if(playlist->isAutoPlaylist() || playlist->isLocked()) {
+            return;
+        }
         auto playlistTracks       = playlist->playlistTracks();
         const auto appendedTracks = PlaylistTrack::fromTracks(tracks, id);
         playlistTracks.insert(playlistTracks.end(), appendedTracks.cbegin(), appendedTracks.cend());
@@ -890,6 +896,9 @@ void PlaylistHandler::appendToPlaylist(const UId& id, const TrackList& tracks)
 void PlaylistHandler::replacePlaylistTracks(const UId& id, const TrackList& tracks, PlaylistTrackChangeSource source)
 {
     if(auto* playlist = playlistById(id)) {
+        if(playlist->isLocked()) {
+            return;
+        }
         p->replacePlaylistTracks(playlist, rebuildPlaylistTracks(playlist, tracks), source);
     }
 }
@@ -898,6 +907,9 @@ void PlaylistHandler::replacePlaylistTracks(const UId& id, const PlaylistTrackLi
                                             PlaylistTrackChangeSource source)
 {
     if(auto* playlist = playlistById(id)) {
+        if(playlist->isLocked()) {
+            return;
+        }
         p->replacePlaylistTracks(playlist, tracks, source);
     }
 }
@@ -906,6 +918,9 @@ void PlaylistHandler::movePlaylistTracks(const UId& id, const UId& replaceId)
 {
     if(auto* playlist = playlistById(id)) {
         if(auto* replacePlaylist = playlistById(replaceId)) {
+            if(replacePlaylist->isLocked()) {
+                return;
+            }
             createPlaylist(replacePlaylist->name(), playlist->tracks());
             replacePlaylist->changeCurrentIndex(playlist->currentTrackIndex());
 
@@ -920,6 +935,9 @@ void PlaylistHandler::movePlaylistTracks(const UId& id, const UId& replaceId)
 void PlaylistHandler::removePlaylistTracks(const UId& id, const std::vector<int>& indexes)
 {
     if(auto* playlist = playlistById(id)) {
+        if(playlist->isLocked()) {
+            return;
+        }
         auto playlistTracks = playlist->playlistTracks();
         std::set<int> indexesToRemove{indexes.cbegin(), indexes.cend()};
         for(const int index : indexesToRemove | std::views::reverse) {
@@ -1059,6 +1077,17 @@ void PlaylistHandler::renamePlaylist(const UId& id, const QString& name)
     p->cancelPendingRemovedPlaylist(newName);
 
     Q_EMIT playlistRenamed(playlist);
+}
+
+void PlaylistHandler::setPlaylistLocked(const UId& id, bool locked)
+{
+    auto* playlist = playlistById(id);
+    if(!playlist || playlist->isAutoPlaylist() || playlist->isLocked() == locked) {
+        return;
+    }
+
+    playlist->setLocked(locked);
+    Q_EMIT playlistUpdated(playlist);
 }
 
 void PlaylistHandler::removePlaylist(const UId& id)

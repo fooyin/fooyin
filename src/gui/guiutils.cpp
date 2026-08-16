@@ -41,6 +41,8 @@
 #include <QTreeView>
 #include <QUrl>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Gui {
 namespace {
 QHeaderView* itemViewHeader(QAbstractItemView* view)
@@ -54,6 +56,70 @@ QHeaderView* itemViewHeader(QAbstractItemView* view)
     return nullptr;
 }
 } // namespace
+
+bool styleSupportsCustomPalette(const QString& styleName)
+{
+#ifdef Q_OS_WIN
+    return styleName.compare("windows11"_L1, Qt::CaseInsensitive) != 0
+        && styleName.compare("windowsvista"_L1, Qt::CaseInsensitive) != 0
+        && styleName.compare("windows"_L1, Qt::CaseInsensitive) != 0;
+#else
+    Q_UNUSED(styleName)
+    return true;
+#endif
+}
+
+bool styleSupportsDarkMode(const QString& styleName)
+{
+#ifdef Q_OS_WIN
+    return styleName.compare("windows11"_L1, Qt::CaseInsensitive) == 0
+        || styleName.compare("windows"_L1, Qt::CaseInsensitive) == 0;
+#else
+    Q_UNUSED(styleName)
+    return false;
+#endif
+}
+
+bool styleUsesNormalItemViewSelectionText(const QString& styleName, bool alternatingRows)
+{
+    if(styleName.compare("windows11"_L1, Qt::CaseInsensitive) == 0) {
+        // Windows 11 uses an accent selection with contrasting text for alternating rows
+        return !alternatingRows;
+    }
+    return styleName.compare("windowsvista"_L1, Qt::CaseInsensitive) == 0;
+}
+
+QPalette::ColorRole itemViewSelectionTextRole(const QStyleOptionViewItem& option)
+{
+    const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
+    const auto* view    = qobject_cast<const QAbstractItemView*>(option.widget);
+    const bool normalSelectionText
+        = style && styleUsesNormalItemViewSelectionText(style->name(), view && view->alternatingRowColors());
+
+    return normalSelectionText ? QPalette::Text : QPalette::HighlightedText;
+}
+
+QRect itemViewTextRect(const QStyleOptionViewItem& option)
+{
+    const QStyle* style     = option.widget ? option.widget->style() : QApplication::style();
+    QRect textRect          = style->subElementRect(QStyle::SE_ItemViewItemText, &option, option.widget);
+    const int textMargin    = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &option, option.widget) + 1;
+    const int frameWidth    = style->pixelMetric(QStyle::PM_DefaultFrameWidth, &option, option.widget);
+    const int leadingInset  = textMargin + frameWidth + 1;
+    const bool leadingCell  = option.viewItemPosition == QStyleOptionViewItem::Beginning
+                           || option.viewItemPosition == QStyleOptionViewItem::OnlyOne
+                           || option.viewItemPosition == QStyleOptionViewItem::Invalid;
+    const int leadingMargin = leadingCell ? leadingInset : textMargin;
+
+    if(option.direction == Qt::RightToLeft) {
+        textRect.adjust(textMargin, 0, -leadingMargin, 0);
+    }
+    else {
+        textRect.adjust(leadingMargin, 0, -textMargin, 0);
+    }
+
+    return textRect;
+}
 
 TrackList tracksFromMimeData(MusicLibrary* library, QByteArray data)
 {
@@ -242,12 +308,20 @@ void refreshItemViewPalette(QAbstractItemView* view, const QPalette& palette)
         return;
     }
 
-    view->setPalette(palette);
+    QPalette itemViewPalette{palette};
+    if(const auto* style = view->style();
+       style && styleUsesNormalItemViewSelectionText(style->name(), view->alternatingRowColors())) {
+        for(const auto group : {QPalette::Active, QPalette::Disabled, QPalette::Inactive}) {
+            itemViewPalette.setBrush(group, QPalette::HighlightedText, itemViewPalette.brush(group, QPalette::Text));
+        }
+    }
+
+    view->setPalette(itemViewPalette);
     if(view->viewport()) {
-        view->viewport()->setPalette(palette);
+        view->viewport()->setPalette(itemViewPalette);
     }
     if(auto* header = itemViewHeader(view)) {
-        header->setPalette(palette);
+        header->setPalette(itemViewPalette);
     }
 }
 

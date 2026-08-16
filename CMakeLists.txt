@@ -6,9 +6,14 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 include(CheckBuildDir)
 include(CheckLevel)
 
+if(BUILD_TESTING)
+    list(APPEND VCPKG_MANIFEST_FEATURES fooyin-tests)
+    list(REMOVE_DUPLICATES VCPKG_MANIFEST_FEATURES)
+endif()
+
 project(
     fooyin
-    VERSION 0.12.1
+    VERSION 0.12.4
     DESCRIPTION "A customisable music player"
     HOMEPAGE_URL "https://www.fooyin.org"
     LANGUAGES CXX
@@ -124,8 +129,14 @@ list(
 
 # ---- Dependencies ----
 
+if(WIN32)
+    set(FOOYIN_QT_MIN_VERSION 6.8)
+else()
+    set(FOOYIN_QT_MIN_VERSION 6.4)
+endif()
+
 find_package(
-    Qt6 REQUIRED
+    Qt6 ${FOOYIN_QT_MIN_VERSION} REQUIRED
     COMPONENTS Core
                Widgets
                Gui
@@ -133,6 +144,7 @@ find_package(
                Concurrent
                Network
                Svg
+    OPTIONAL_COMPONENTS OpenGL
 )
 set_package_properties(Qt6Core PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Widgets PROPERTIES TYPE REQUIRED)
@@ -393,6 +405,7 @@ endif()
 # ---- Fooyin testing ----
 
 if(BUILD_TESTING)
+    enable_testing()
     find_package(Qt6 REQUIRED COMPONENTS Test)
     set_package_properties(Qt6Test PROPERTIES TYPE REQUIRED)
     find_package(GTest)
@@ -432,8 +445,8 @@ target_link_libraries(
 )
 
 if(WIN32)
-    target_include_directories(fooyin PRIVATE ${GETOPT_INCLUDE_DIR})
-    target_link_libraries(fooyin PRIVATE ${GETOPT_LIBRARY})
+	target_include_directories(fooyin PRIVATE ${GETOPT_INCLUDE_DIR})
+	target_link_libraries(fooyin PRIVATE ${GETOPT_LIBRARY} RuntimeObject)
     configure_file(data/win_version.rc.in win_version.rc @ONLY)
     target_sources(fooyin PRIVATE win_version.rc)
 endif()

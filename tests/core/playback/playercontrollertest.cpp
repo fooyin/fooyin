@@ -52,6 +52,8 @@ constexpr auto LastPlaybackState        = "Player/LastState"_L1;
 
 QCoreApplication* ensureCoreApplication()
 {
+    static QTemporaryDir stateDir{QDir::tempPath() + u"/fooyin-playercontroller-state-XXXXXX"_s};
+    qputenv("XDG_STATE_HOME", stateDir.path().toUtf8());
     QStandardPaths::setTestModeEnabled(true);
 
     if(auto* app = QCoreApplication::instance()) {
@@ -426,6 +428,30 @@ TEST(PlayerControllerTest, RestartingCurrentTrackAfterStoppedCountsListenedTime)
     EXPECT_EQ(playedSpy.count(), 1);
 }
 
+TEST(PlayerControllerTest, StoppedTrackRemainsSeekable)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_stopped_seek_test.ini"_s};
+    registerControllerSettings(settings);
+    PlayerController controller{&settings, nullptr};
+
+    controller.commitCurrentTrack(makeTrack(u"/tmp/stopped-seek.flac"_s, 24, 10000));
+    controller.setCurrentTrackSeekable(true);
+    controller.syncPlayStateFromEngine(Player::PlayState::Playing);
+    controller.syncPlayStateFromEngine(Player::PlayState::Stopped);
+
+    EXPECT_TRUE(controller.currentTrackSeekable());
+
+    const QSignalSpy positionMovedSpy{&controller, &PlayerController::positionMoved};
+    controller.seek(5000);
+
+    ASSERT_EQ(positionMovedSpy.count(), 1);
+    EXPECT_EQ(positionMovedSpy.constFirst().constFirst().toULongLong(), 5000U);
+
+    controller.reset();
+    EXPECT_FALSE(controller.currentTrackSeekable());
+}
+
 TEST(PlayerControllerTest, RestartingCurrentTrackWithPendingRequestCountsListenedTime)
 {
     ensureCoreApplication();
@@ -643,6 +669,56 @@ TEST(PlayerControllerTest, RandomTrackRequestsDifferentTrackWhenPossible)
     EXPECT_EQ(request.track.indexInPlaylist, 1);
     EXPECT_EQ(request.context.reason, Player::AdvanceReason::ManualSelection);
     EXPECT_TRUE(request.context.userInitiated);
+}
+
+TEST(PlayerControllerTest, RepeatTrackPublishesFreshUpcomingOccurrenceAfterEachCommit)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_repeat_occurrence_test.ini"_s};
+    registerControllerSettings(settings);
+    settings.set<Settings::Core::PlayMode>(static_cast<int>(Playlist::RepeatTrack));
+
+    PlaylistHandlerHarness harness{settings};
+    ASSERT_TRUE(harness.dbInitialised);
+
+    auto* playlist = harness.handler.createPlaylist(u"RepeatOccurrence"_s,
+                                                    {makeTrack(u"/tmp/repeat-occurrence.flac"_s, 35, 1000)});
+    ASSERT_NE(playlist, nullptr);
+
+    harness.handler.changeActivePlaylist(playlist);
+    playlist->changeCurrentIndex(0);
+
+    PlayerController controller{&settings, &harness.handler};
+    const auto track = playlist->playlistTrack(0);
+    ASSERT_TRUE(track.has_value());
+
+    QSignalSpy upcomingSpy{&controller, &PlayerController::upcomingTrackChanged};
+
+    controller.commitCurrentTrack(Player::TrackChangeRequest{
+        .track        = *track,
+        .context      = {.reason = Player::AdvanceReason::ManualSelection, .userInitiated = true},
+        .isQueueTrack = false,
+        .itemId       = 101,
+    });
+
+    ASSERT_EQ(upcomingSpy.count(), 1);
+    const auto firstUpcoming = upcomingSpy.takeFirst().front().value<Player::UpcomingTrack>();
+    EXPECT_EQ(firstUpcoming.track, *track);
+    EXPECT_NE(firstUpcoming.itemId, 0);
+    EXPECT_NE(firstUpcoming.itemId, 101);
+
+    controller.commitCurrentTrack(Player::TrackChangeRequest{
+        .track        = firstUpcoming.track,
+        .context      = {.reason = Player::AdvanceReason::NaturalEnd, .userInitiated = false},
+        .isQueueTrack = false,
+        .itemId       = firstUpcoming.itemId,
+    });
+
+    ASSERT_EQ(upcomingSpy.count(), 1);
+    const auto secondUpcoming = upcomingSpy.takeFirst().front().value<Player::UpcomingTrack>();
+    EXPECT_EQ(secondUpcoming.track, *track);
+    EXPECT_NE(secondUpcoming.itemId, 0);
+    EXPECT_NE(secondUpcoming.itemId, firstUpcoming.itemId);
 }
 
 TEST(PlayerControllerTest, RandomAlbumRequestsDifferentAlbumWhenPossible)

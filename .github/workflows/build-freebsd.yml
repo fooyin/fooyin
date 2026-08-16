@@ -32,7 +32,7 @@ jobs:
           restore-keys: |
             freebsd-${{ env.FREEBSD_VERSION }}-ccache-
 
-      - name: run VM
+      - name: Start FreeBSD VM
         uses: cross-platform-actions/action@v1.3.0
         with:
           operating_system: freebsd
@@ -40,12 +40,16 @@ jobs:
           cpu_count: 4
           shell: bash
           version: ${{ env.FREEBSD_VERSION }}
-          run: |
-            ./ci/freebsd-depends.sh
-            ./ci/freebsd-build.sh
-            if [ "${{ env.BUILD_TESTS }}" = "ON" ]; then
-              ./ci/tests.sh
-            fi
+          environment_variables: BUILD_TESTS CCACHE_DIR CCACHE_BASEDIR CCACHE_MAXSIZE CCACHE_COMPILERCHECK CCACHE_SLOPPINESS
+
+      - name: Build and test
+        shell: cpa.sh {0}
+        run: |
+          ./ci/freebsd-depends.sh
+          ./ci/freebsd-build.sh
+          if [ "$BUILD_TESTS" = "ON" ]; then
+            ./ci/tests.sh
+          fi
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
