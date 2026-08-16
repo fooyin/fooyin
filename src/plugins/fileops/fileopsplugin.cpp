@@ -273,8 +273,7 @@ void FileOpsPlugin::refreshPresetActions()
         const bool removed = std::ranges::none_of(
             presets, [&presetAction](const FileOpPreset& preset) { return preset.name == presetAction.presetName; });
         if(removed && presetAction.action) {
-            m_actionManager->unregisterAction(presetAction.action, presetActionId(presetAction.presetName),
-                                              Context{Constants::Context::TrackSelection});
+            m_actionManager->unregisterAction(presetAction.action, presetActionId(presetAction.presetName));
             presetAction.action->deleteLater();
         }
         return removed;
@@ -293,8 +292,7 @@ void FileOpsPlugin::refreshPresetActions()
         }
 
         auto* action  = new QAction(preset.name, this);
-        auto* command = m_actionManager->registerAction(action, presetActionId(preset.name),
-                                                        Context{Constants::Context::TrackSelection});
+        auto* command = m_actionManager->registerAction(action, presetActionId(preset.name));
         command->setCategories(categoriesForOperation(preset.op));
         command->setAttribute(ProxyAction::UpdateText);
         command->action()->setShortcutVisibleInContextMenu(true);
@@ -303,6 +301,9 @@ void FileOpsPlugin::refreshPresetActions()
             const auto currentPresets = getPresets();
             const auto current        = std::ranges::find(currentPresets, presetName, &FileOpPreset::name);
             const auto* selection     = m_trackSelectionController->selectedSelection();
+            if(!selection) {
+                selection = m_trackSelectionController->displaySelection();
+            }
             if(current != currentPresets.cend() && selection && canUsePreset(current->op, selection->tracks)) {
                 openDialog(*selection, current->op, current->name);
             }
