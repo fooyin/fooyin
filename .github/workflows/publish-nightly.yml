@@ -97,6 +97,7 @@ jobs:
           short_sha="${BUILD_SHA:0:8}"
           tag="nightly-${date}-${short_sha}"
           version="$(awk '$1 == "VERSION" { print $2; exit }' build-source/CMakeLists.txt)"
+          nightly_version="${version}-g${short_sha}"
           latest_release_tag="$(gh api "/repos/${GITHUB_REPOSITORY}/releases/latest" --jq '.tag_name')"
 
           if [[ -z "$version" || -z "$latest_release_tag" ]]; then
@@ -107,7 +108,7 @@ jobs:
           sed \
             -e "s|LATEST_RELEASE_TAG|${latest_release_tag}|g" \
             -e "s|RELEASE_TAG|${tag}|g" \
-            -e "s|FOOYIN_VERSION|${version}|g" \
+            -e "s|FOOYIN_VERSION|${nightly_version}|g" \
             -e "s|COMMIT_SHA|${BUILD_SHA}|g" \
             -e "s|SHORT_SHA|${short_sha}|g" \
             -e "s|CI_BUILD_DATE|${CI_BUILD_DATE}|g" \
@@ -117,6 +118,8 @@ jobs:
           {
             echo "tag=${tag}"
             echo "name=Nightly build ${date} (${short_sha})"
+            echo "version=${version}"
+            echo "nightly_version=${nightly_version}"
           } >> "$GITHUB_OUTPUT"
 
       - name: Download build artifacts
@@ -126,6 +129,28 @@ jobs:
           repository: ${{ github.repository }}
           run-id: ${{ steps.build.outputs.run_id }}
           path: artifacts
+
+      - name: Add commit to package filenames
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+          NIGHTLY_VERSION: ${{ steps.release.outputs.nightly_version }}
+        shell: bash
+        run: |
+          while IFS= read -r -d '' file; do
+            directory="$(dirname "$file")"
+            filename="$(basename "$file")"
+
+            if [[ "$filename" == *"$VERSION"* ]]; then
+              nightly_filename="${filename/"$VERSION"/"$NIGHTLY_VERSION"}"
+            elif [[ "$filename" == fooyin-* ]]; then
+              nightly_filename="fooyin-${NIGHTLY_VERSION}-${filename#fooyin-}"
+            else
+              echo "Cannot add nightly version to unexpected artifact: $filename" >&2
+              exit 1
+            fi
+
+            mv -- "$file" "$directory/$nightly_filename"
+          done < <(find artifacts -type f -print0)
 
       - name: Create pre-release
         uses: softprops/action-gh-release@v3
