@@ -867,7 +867,12 @@ bool PlaylistModel::setData(const QModelIndex& index, const QVariant& value, int
         return false;
     }
 
-    Q_EMIT metadataWriteRequested({*updatedTrack});
+    if(context->ratingField) {
+        Q_EMIT tracksRated({*updatedTrack});
+    }
+    else {
+        Q_EMIT metadataWriteRequested({*updatedTrack});
+    }
 
     Q_EMIT dataChanged(index, index, {Qt::EditRole});
     return true;
@@ -1017,8 +1022,8 @@ bool PlaylistModel::shouldShowLoadingText() const
     return m_loadingTextPending || std::cmp_less(m_trackIndexes.size(), clearTrackCount);
 }
 
-std::expected<TrackList, PlaylistModel::BulkEditError> PlaylistModel::setBulkData(const QModelIndexList& indexes,
-                                                                                  const QVariant& value)
+std::expected<PlaylistModel::BulkEditResult, PlaylistModel::BulkEditError>
+PlaylistModel::setBulkData(const QModelIndexList& indexes, const QVariant& value)
 {
     if(indexes.empty()) {
         return std::unexpected{BulkEditError::InvalidRequest};
@@ -1062,7 +1067,7 @@ std::expected<TrackList, PlaylistModel::BulkEditError> PlaylistModel::setBulkDat
         Q_EMIT dataChanged(changedIndex, changedIndex, {Qt::EditRole});
     }
 
-    return tracksToWrite;
+    return BulkEditResult{.tracks = std::move(tracksToWrite), .ratingField = bulkEditContext->ratingField};
 }
 
 MoveOperation PlaylistModel::moveTracks(const MoveOperation& operation)
