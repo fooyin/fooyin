@@ -29,4 +29,10 @@ jobs:
           manifest-path: dist/linux/flatpak/org.fooyin.fooyin.yaml
           cache-key: flatpak-builder-${{ matrix.arch }}-${{ hashFiles('dist/linux/flatpak/**') }}
           arch: ${{ matrix.arch }}
-          artifact-name: flatpak-${{ matrix.arch }}
+          upload-artifact: false
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: flatpak-${{ matrix.arch }}
+          path: fooyin-${{ matrix.arch }}.flatpak
