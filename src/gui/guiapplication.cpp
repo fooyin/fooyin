@@ -722,7 +722,11 @@ void GuiApplication::setupConnections()
     QObject::connect(m_viewMenu, &ViewMenu::openPlaybackQueue, this, &GuiApplication::showPlaybackQueue);
     QObject::connect(m_viewMenu, &ViewMenu::openPlaylistManager, this, &GuiApplication::showPlaylistManager);
     QObject::connect(m_viewMenu, &ViewMenu::focusSearchBar, this, &GuiApplication::focusSearchBar);
-    QObject::connect(m_viewMenu, &ViewMenu::openLog, m_logWidget.get(), &LogWidget::show);
+    QObject::connect(m_viewMenu, &ViewMenu::openLog, this, [this]() {
+        m_logWidget->show();
+        m_logWidget->raise();
+        m_logWidget->activateWindow();
+    });
     QObject::connect(m_viewMenu, &ViewMenu::openScriptEditor, this, &GuiApplication::showScriptEditor);
     QObject::connect(m_viewMenu, &ViewMenu::showNowPlaying, this, [this]() {
         if(auto* activePlaylist = m_playlistHandler->activePlaylist()) {
@@ -1632,7 +1636,7 @@ void GuiApplication::showSearchPlaylistDialog()
 
     auto* coverProvider = new CoverProvider(m_coverRepository, this);
     auto* search = new SearchDialog(m_actionManager, &m_playlistInteractor, coverProvider, m_core, m_styleProvider,
-                                    m_selectionController.get(), SearchDialog::Target::Playlist);
+                                    m_selectionController.get(), SearchDialog::Target::Playlist, m_mainWindow.get());
     search->setAttribute(Qt::WA_DeleteOnClose);
     coverProvider->setParent(search);
 
@@ -1643,7 +1647,7 @@ void GuiApplication::showSearchLibraryDialog(const QString& searchText)
 {
     auto* coverProvider = new CoverProvider(m_coverRepository, this);
     auto* search = new SearchDialog(m_actionManager, &m_playlistInteractor, coverProvider, m_core, m_styleProvider,
-                                    m_selectionController.get(), SearchDialog::Target::Library);
+                                    m_selectionController.get(), SearchDialog::Target::Library, m_mainWindow.get());
     search->setAttribute(Qt::WA_DeleteOnClose);
     coverProvider->setParent(search);
 
@@ -1669,6 +1673,8 @@ void GuiApplication::showPlaybackQueue()
     m_playbackQueueWidget->finalise();
 
     m_playbackQueueWidget->show();
+    m_playbackQueueWidget->raise();
+    m_playbackQueueWidget->activateWindow();
 }
 
 void GuiApplication::showPlaylistManager()
@@ -1686,6 +1692,8 @@ void GuiApplication::showPlaylistManager()
     m_playlistManagerWidget->finalise();
 
     m_playlistManagerWidget->show();
+    m_playlistManagerWidget->raise();
+    m_playlistManagerWidget->activateWindow();
 }
 
 void GuiApplication::showQuickSetup()

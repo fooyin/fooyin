@@ -38,8 +38,10 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/fypaths.h>
+#include <utils/utils.h>
 
 #include <QAction>
+#include <QMainWindow>
 
 using namespace Qt::StringLiterals;
 
@@ -182,7 +184,7 @@ void RadioBrowserPlugin::relinkRadioWidgets()
 void RadioBrowserPlugin::showRadioBrowserDialog()
 {
     auto* dialog = new RadioBrowserDialog(m_network, m_playlistLoader, m_settings, m_playerController, m_store,
-                                          m_actionManager, m_trackSelection);
+                                          m_actionManager, m_trackSelection, Utils::getMainWindow());
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->show();
 }

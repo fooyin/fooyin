@@ -1002,9 +1002,9 @@ ScriptEditor::~ScriptEditor()
 }
 
 void ScriptEditor::openEditor(const QString& script, const std::function<void(const QString&)>& callback,
-                              const Track& track)
+                              const Track& track, QWidget* parent)
 {
-    auto* editor = new ScriptEditor(script, track);
+    auto* editor = new ScriptEditor(script, track, parent);
     editor->setAttribute(Qt::WA_DeleteOnClose);
     editor->setModal(true);
 
