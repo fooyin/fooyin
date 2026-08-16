@@ -8,7 +8,17 @@ fooyin is a free and open-source project. Contributions are encouraged through c
 - Avoid mixing unrelated changes in a single pull request.
 - Ensure the project builds successfully before committing.
 
-### Formatting
+## AI policy
+
+We do not accept contributions for which generative AI was used at any stage of the development process. 
+Please do not contribute code, documentation, tests, images, or other project material created or modified with large language models, image diffusion models, or similar tools.
+
+Once a contribution is merged, its long-term maintenance becomes the responsibility of the maintainer and other core contributors, 
+which is why contributors must understand and take ownership of every part of their submission.
+
+This policy operates on trust. We may ask whether AI tools were used when reviewing a contribution, and pull requests that involve their use will not be accepted.
+
+## Formatting
 
 All code **must be formatted using Clang-format** with the repository’s `.clang-format` configuration.
 
