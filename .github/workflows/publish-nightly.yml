@@ -21,6 +21,7 @@ concurrency:
 jobs:
   publish:
     name: Publish latest successful build
+    if: github.repository == 'fooyin/fooyin'
     runs-on: ubuntu-latest
     steps:
       - name: Resolve build run
