@@ -10056,7 +10056,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="130"/>
         <source>Override the output sample format. Devices may choose a compatible format.</source>
-        <translation>Переопределить формат сэмплов на выходе. Устройства могут выбрать совместимый формат.</translation>
+        <translation>Переопределить формат сэмплов на выходе. Устройства могут выбирать совместимый формат.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="144"/>
