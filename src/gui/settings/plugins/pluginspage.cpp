@@ -248,12 +248,28 @@ void PluginPageWidget::installPlugin()
         return;
     }
 
-    if(PluginManager::installPlugin(filepath)) {
-        QMessageBox msg{QMessageBox::Question, tr("Plugin Installed"),
+    bool updating{false};
+    auto installResult = PluginManager::installPlugin(filepath);
+    if(installResult == PluginManager::InstallResult::AlreadyInstalled) {
+        QMessageBox msg{QMessageBox::Question, tr("Plugin Already Installed"),
+                        tr("This plugin is already installed. Update it?"), QMessageBox::Yes | QMessageBox::No};
+        msg.button(QMessageBox::Yes)->setText(tr("Update"));
+        if(msg.exec() != QMessageBox::Yes) {
+            return;
+        }
+        updating      = true;
+        installResult = PluginManager::installPlugin(filepath, true);
+    }
+
+    if(installResult == PluginManager::InstallResult::Installed) {
+        QMessageBox msg{QMessageBox::Question, updating ? tr("Plugin Updated") : tr("Plugin Installed"),
                         tr("Restart for changes to take effect. Restart now?"), QMessageBox::Yes | QMessageBox::No};
         if(msg.exec() == QMessageBox::Yes) {
             Application::restart();
         }
+    }
+    else {
+        QMessageBox::critical(this, tr("Plugin Installation Failed"), tr("The plugin could not be installed."));
     }
 }
 
