@@ -22,6 +22,7 @@
 #include "pipewirecontext.h"
 #include "pipewirecore.h"
 #include "pipewireregistry.h"
+#include "pipewiresettings.h"
 #include "pipewirestream.h"
 #include "pipewirethreadloop.h"
 #include "pipewireutils.h"
@@ -34,7 +35,6 @@
 #include <QDebug>
 
 #include <algorithm>
-#include <atomic>
 #include <cstddef>
 #include <cstring>
 #include <ctime>
@@ -70,15 +70,6 @@ int64_t monotonicNsec()
     }
 
     return (ts.tv_sec * 1000000000LL) + ts.tv_nsec;
-}
-
-int64_t framesToMs(const uint64_t frames, const int sampleRate)
-{
-    if(sampleRate <= 0) {
-        return 0;
-    }
-
-    return static_cast<int64_t>(frames) * 1000LL / static_cast<int64_t>(sampleRate);
 }
 
 void ensurePipeWireInitialised()
@@ -304,7 +295,6 @@ bool supportsPipewireLayout(const Fooyin::AudioFormat& format)
 namespace Fooyin::Pipewire {
 PipeWireOutput::PipeWireOutput()
     : m_volume{1.0}
-    , m_lastPwWriteBytes{0}
     , m_targetBufferFrames{0}
     , m_loopStarted{false}
 { }
@@ -325,7 +315,6 @@ bool PipeWireOutput::init(const AudioFormat& format)
     static constexpr auto maxCapacity = std::numeric_limits<size_t>::max() - 1;
     const size_t targetBytes = std::clamp<uint64_t>(targetBytes64, static_cast<uint64_t>(bytesPerFrame), maxCapacity);
     m_buffer                 = std::make_unique<LockFreeRingBuffer<std::byte>>(targetBytes);
-    m_lastPwWriteBytes.store(0, std::memory_order_relaxed);
 
     ensurePipeWireInitialised();
 
@@ -346,7 +335,6 @@ void PipeWireOutput::reset()
         if(m_buffer) {
             m_buffer->requestReset();
         }
-        m_lastPwWriteBytes.store(0, std::memory_order_relaxed);
         return;
     }
 
@@ -355,7 +343,6 @@ void PipeWireOutput::reset()
     if(m_buffer) {
         m_buffer->requestReset();
     }
-    m_lastPwWriteBytes.store(0, std::memory_order_relaxed);
 }
 
 void PipeWireOutput::start()
@@ -446,29 +433,26 @@ OutputState PipeWireOutput::currentState()
     state.queuedFrames             = softwareQueuedFrames;
 
     if(const auto time = m_stream->time()) {
-        const int64_t softQueuedMs = framesToMs(static_cast<uint64_t>(std::max(0, softwareQueuedFrames)), sampleRate);
-        const size_t lastPwWriteBytes = m_lastPwWriteBytes.load(std::memory_order_relaxed);
-        const int64_t pwBufferMs      = framesToMs(lastPwWriteBytes / static_cast<size_t>(bytesPerFrame), sampleRate);
-        const int64_t nowNsec         = monotonicNsec();
-
-        int64_t timeDiffMs{0};
-        if(time->now > 0 && nowNsec > time->now) {
-            timeDiffMs = (nowNsec - time->now) / 1000000LL;
-        }
-        timeDiffMs = std::clamp<int64_t>(timeDiffMs, 0, std::max<int64_t>(0, pwBufferMs));
-
-        int64_t addDelayMs{0};
-        addDelayMs += framesToMs(time->queued, sampleRate);
-        addDelayMs += framesToMs(time->buffered, sampleRate);
-
+        double graphDelay{0.0};
         if(time->rate.denom > 0 && time->rate.num > 0) {
-            addDelayMs += static_cast<int64_t>((time->delay * 1000LL * time->rate.num) / time->rate.denom);
+            const double delay = static_cast<double>(time->delay) * static_cast<double>(time->rate.num)
+                               / static_cast<double>(time->rate.denom);
+
+            double elapsed{0.0};
+            const int64_t nowNsec = monotonicNsec();
+            if(time->now > 0 && nowNsec > time->now) {
+                elapsed = static_cast<double>(nowNsec - time->now) / 1000000000.0;
+            }
+
+            graphDelay = std::max(0.0, delay - elapsed);
         }
 
-        const int64_t totalDelayMs = std::max<int64_t>(0, softQueuedMs + pwBufferMs - timeDiffMs + addDelayMs);
-        state.delay                = static_cast<double>(totalDelayMs) / 1000.0;
-        state.queuedFrames
-            = std::max(state.queuedFrames, clampToInt((static_cast<uint64_t>(totalDelayMs) * sampleRate) / 1000ULL));
+        const double pipewireDelay
+            = (static_cast<double>(time->queued) + static_cast<double>(time->buffered)) / sampleRate;
+        state.delay = (static_cast<double>(softwareQueuedFrames) / sampleRate) + pipewireDelay + graphDelay;
+        const double totalQueuedFrames = std::clamp(state.delay * static_cast<double>(sampleRate), 0.0,
+                                                    static_cast<double>(std::numeric_limits<int>::max()));
+        state.queuedFrames             = static_cast<int>(totalQueuedFrames);
     }
     else {
         // Fallback when the stream timing API has no data yet
@@ -644,11 +628,13 @@ bool PipeWireOutput::initStream()
 
     const auto dev = m_device != "default"_L1 ? m_device : QString{};
 
-    m_stream = std::make_unique<PipewireStream>(m_core.get(), m_format, m_targetBufferFrames, dev);
+    const int latencyMs     = std::clamp(m_settings.value(LatencySetting, DefaultLatency).toInt(), 0, MaximumLatency);
+    const int latencyFrames = m_format.framesForDuration(latencyMs);
+
+    m_stream = std::make_unique<PipewireStream>(m_core.get(), m_format, latencyFrames, dev);
     m_stream->addListener(streamEvents, this);
 
-    qCDebug(PIPEWIRE) << "Requesting stream latency:" << m_targetBufferFrames << "/" << m_format.sampleRate()
-                      << "frames/rate";
+    qCDebug(PIPEWIRE) << "Requesting stream latency:" << latencyFrames << "/" << m_format.sampleRate() << "frames/rate";
 
     const spa_audio_format spaFormat = findSpaFormat(m_format.sampleFormat());
     if(spaFormat == SPA_AUDIO_FORMAT_UNKNOWN) {
@@ -716,7 +702,6 @@ void PipeWireOutput::uninitCore()
     }
 
     m_buffer.reset();
-    m_lastPwWriteBytes.store(0, std::memory_order_relaxed);
     m_targetBufferFrames = 0;
 }
 
@@ -725,14 +710,12 @@ void PipeWireOutput::process(void* userData)
     auto* self = static_cast<PipeWireOutput*>(userData);
 
     if(!self->m_buffer) {
-        self->m_lastPwWriteBytes.store(0, std::memory_order_relaxed);
         self->m_loop->signal(false);
         return;
     }
 
     const size_t queuedBytes = self->m_buffer->readAvailable();
     if(queuedBytes == 0) {
-        self->m_lastPwWriteBytes.store(0, std::memory_order_relaxed);
         self->m_loop->signal(false);
         return;
     }
@@ -749,6 +732,7 @@ void PipeWireOutput::process(void* userData)
         qCWarning(PIPEWIRE) << "No available output buffers (queuedBytes=" << queuedBytes << ")";
         return;
     }
+    pwBuffer->size = 0;
 
     const spa_data& data = pwBuffer->buffer->datas[0];
     if(!data.data || data.maxsize == 0) {
@@ -758,16 +742,19 @@ void PipeWireOutput::process(void* userData)
         return;
     }
 
-    const size_t maxWritableBytes = std::min(static_cast<size_t>(data.maxsize), queuedBytes);
-    const size_t writeBytes
-        = (maxWritableBytes / static_cast<size_t>(bytesPerFrame)) * static_cast<size_t>(bytesPerFrame);
+    const size_t frameSize         = static_cast<size_t>(bytesPerFrame);
+    const size_t maxWritableFrames = static_cast<size_t>(data.maxsize) / frameSize;
+    const size_t requestedFrames   = pwBuffer->requested > 0
+                                       ? static_cast<size_t>(std::min<uint64_t>(pwBuffer->requested, maxWritableFrames))
+                                       : maxWritableFrames;
+    const size_t writeFrames       = std::min(requestedFrames, queuedBytes / frameSize);
+    const size_t writeBytes        = writeFrames * frameSize;
 
     if(writeBytes == 0) {
         data.chunk->offset = 0;
         data.chunk->stride = bytesPerFrame;
         data.chunk->size   = 0;
         self->m_stream->queueBuffer(pwBuffer);
-        self->m_lastPwWriteBytes.store(0, std::memory_order_relaxed);
         self->m_loop->signal(false);
         return;
     }
@@ -776,18 +763,16 @@ void PipeWireOutput::process(void* userData)
     auto reader            = self->m_buffer->reader();
     const size_t readBytes = reader.read(dst, writeBytes);
 
-    size_t commitBytes = (readBytes / static_cast<size_t>(bytesPerFrame)) * static_cast<size_t>(bytesPerFrame);
+    size_t commitBytes = (readBytes / frameSize) * frameSize;
     if(commitBytes == 0) {
         const size_t queuedAfterRead = self->m_buffer->readAvailable();
         if(queuedAfterRead > 0) {
-            const size_t retryBytes
-                = (std::min(static_cast<size_t>(data.maxsize), queuedAfterRead) / static_cast<size_t>(bytesPerFrame))
-                * static_cast<size_t>(bytesPerFrame);
+            const size_t retryFrames = std::min(requestedFrames, queuedAfterRead / frameSize);
+            const size_t retryBytes  = retryFrames * frameSize;
 
             if(retryBytes > 0) {
                 const size_t retryReadBytes = reader.read(dst, retryBytes);
-                commitBytes
-                    = (retryReadBytes / static_cast<size_t>(bytesPerFrame)) * static_cast<size_t>(bytesPerFrame);
+                commitBytes                 = (retryReadBytes / frameSize) * frameSize;
             }
         }
 
@@ -796,7 +781,6 @@ void PipeWireOutput::process(void* userData)
             data.chunk->stride = bytesPerFrame;
             data.chunk->size   = 0;
             self->m_stream->queueBuffer(pwBuffer);
-            self->m_lastPwWriteBytes.store(0, std::memory_order_relaxed);
             self->m_loop->signal(false);
             return;
         }
@@ -805,7 +789,7 @@ void PipeWireOutput::process(void* userData)
     data.chunk->offset = 0;
     data.chunk->stride = bytesPerFrame;
     data.chunk->size   = static_cast<uint32_t>(commitBytes);
-    self->m_lastPwWriteBytes.store(commitBytes, std::memory_order_relaxed);
+    pwBuffer->size     = commitBytes / frameSize;
 
     self->m_stream->queueBuffer(pwBuffer);
     self->m_loop->signal(false);

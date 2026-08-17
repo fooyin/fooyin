@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <core/coresettings.h>
 #include <core/engine/audiooutput.h>
 #include <utils/lockfreeringbuffer.h>
 
@@ -28,7 +29,6 @@
 #include "pipewirestream.h"
 #include "pipewirethreadloop.h"
 
-#include <atomic>
 #include <cstddef>
 #include <memory>
 
@@ -72,9 +72,9 @@ private:
     QString m_device;
     float m_volume;
     AudioFormat m_format;
+    FySettings m_settings;
 
     std::unique_ptr<LockFreeRingBuffer<std::byte>> m_buffer;
-    std::atomic_size_t m_lastPwWriteBytes;
     int m_targetBufferFrames;
 
     bool m_loopStarted;
