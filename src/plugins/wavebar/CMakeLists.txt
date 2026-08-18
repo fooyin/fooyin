@@ -16,6 +16,8 @@ create_fooyin_plugin_internal(
             wavebarconfigwidget.h
             waveformbuilder.cpp
             waveformbuilder.h
+            waveformaccumulator.cpp
+            waveformaccumulator.h
             waveformdata.h
             waveformgenerator.cpp
             waveformgenerator.h
