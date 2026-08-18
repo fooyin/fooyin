@@ -21,6 +21,7 @@
 
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
+#include <gui/widgets/autoheaderview.h>
 #include <utils/modelutils.h>
 #include <utils/utils.h>
 
@@ -41,6 +42,7 @@ DirProxyModel::DirProxyModel(bool flat, QObject* parent)
     , m_playingState{Player::PlayState::Stopped}
     , m_showIcons{true}
     , m_playingColour{QApplication::palette().highlight().color()}
+    , m_columnAlignments{Qt::AlignLeft, Qt::AlignRight, Qt::AlignLeft, Qt::AlignLeft}
 {
     m_playingColour.setAlpha(90);
     setRecursiveFilteringEnabled(true);
@@ -119,7 +121,24 @@ QVariant DirProxyModel::headerData(int section, Qt::Orientation orientation, int
         return Qt::AlignCenter;
     }
 
+    if(role == AutoHeaderView::SectionAlignment) {
+        return columnAlignment(section).toInt();
+    }
+
     return sourceModel()->headerData(section, orientation, role);
+}
+
+bool DirProxyModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant& value, int role)
+{
+    if(role != AutoHeaderView::SectionAlignment || section < 0
+       || std::cmp_greater_equal(section, m_columnAlignments.size())) {
+        return QSortFilterProxyModel::setHeaderData(section, orientation, value, role);
+    }
+
+    m_columnAlignments.at(section) = value.value<Qt::Alignment>();
+    Q_EMIT headerDataChanged(orientation, section, section);
+    Utils::recursiveDataChanged(this, {}, {Qt::TextAlignmentRole});
+    return true;
 }
 
 QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
@@ -159,6 +178,10 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
         sourcePath = QSortFilterProxyModel::data(proxyIndex, QFileSystemModel::FilePathRole).toString();
     }
 
+    if(role == Qt::TextAlignmentRole) {
+        return QVariant::fromValue(Qt::AlignVCenter | columnAlignment(proxyIndex.column()));
+    }
+
     const bool isPlayingTrack = m_playingState != Player::PlayState::Stopped && !m_playingTrackPath.isEmpty()
                              && sourcePath == m_playingTrackPath;
 
@@ -187,6 +210,14 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
     }
 
     return QSortFilterProxyModel::data(proxyIndex, role);
+}
+
+Qt::Alignment DirProxyModel::columnAlignment(int column) const
+{
+    if(column < 0 || std::cmp_greater_equal(column, m_columnAlignments.size())) {
+        return Qt::AlignLeft;
+    }
+    return m_columnAlignments.at(column);
 }
 
 QModelIndex DirProxyModel::parent(const QModelIndex& child) const
@@ -250,9 +281,14 @@ int DirProxyModel::rowCount(const QModelIndex& index) const
     return index.isValid() ? 0 : nodeCount();
 }
 
-int DirProxyModel::columnCount(const QModelIndex& /*index*/) const
+int DirProxyModel::columnCount(const QModelIndex& index) const
 {
-    return 1;
+    if(m_flat && index.isValid()) {
+        return 0;
+    }
+
+    const QModelIndex sourceParent = m_flat ? QModelIndex{m_sourceRoot} : mapToSource(index);
+    return sourceModel()->columnCount(sourceParent);
 }
 
 QModelIndex DirProxyModel::mapFromSource(const QModelIndex& index) const
@@ -265,11 +301,12 @@ QModelIndex DirProxyModel::mapFromSource(const QModelIndex& index) const
         return {};
     }
 
-    const auto indexIt
-        = std::ranges::find_if(m_nodes, [&index](const auto& node) { return node->sourceIndex == index; });
+    const QModelIndex firstColumnIndex = index.siblingAtColumn(0);
+    const auto indexIt                 = std::ranges::find_if(
+        m_nodes, [&firstColumnIndex](const auto& node) { return node->sourceIndex == firstColumnIndex; });
     if(indexIt != m_nodes.cend()) {
         const auto row = static_cast<int>(std::distance(m_nodes.begin(), indexIt));
-        return createIndex(row, 0, indexIt->get());
+        return createIndex(row, index.column(), indexIt->get());
     }
 
     return {};
@@ -286,10 +323,15 @@ QModelIndex DirProxyModel::mapToSource(const QModelIndex& index) const
     }
 
     if(auto* node = static_cast<DirNode*>(index.internalPointer())) {
-        return node->sourceIndex;
+        return QModelIndex{node->sourceIndex}.siblingAtColumn(index.column());
     }
 
     return {};
+}
+
+void DirProxyModel::sort(int column, Qt::SortOrder order)
+{
+    sourceModel()->sort(column, order);
 }
 
 bool DirProxyModel::canGoUp() const

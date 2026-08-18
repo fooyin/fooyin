@@ -25,6 +25,8 @@
 #include <QSortFilterProxyModel>
 #include <QString>
 
+#include <array>
+
 class QAbstractFileIconProvider;
 class QDir;
 
@@ -57,6 +59,7 @@ public:
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+    bool setHeaderData(int section, Qt::Orientation orientation, const QVariant& value, int role) override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     [[nodiscard]] QModelIndex parent(const QModelIndex& index) const override;
     [[nodiscard]] QModelIndex sibling(int row, int column, const QModelIndex& index) const override;
@@ -66,6 +69,7 @@ public:
     [[nodiscard]] int columnCount(const QModelIndex& index) const override;
     [[nodiscard]] QModelIndex mapFromSource(const QModelIndex& index) const override;
     [[nodiscard]] QModelIndex mapToSource(const QModelIndex& index) const override;
+    void sort(int column, Qt::SortOrder order) override;
 
     [[nodiscard]] bool canGoUp() const;
 
@@ -79,6 +83,7 @@ protected:
     [[nodiscard]] bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;
 
 private:
+    [[nodiscard]] Qt::Alignment columnAlignment(int column) const;
     [[nodiscard]] bool matchesSearch(const QModelIndex& sourceIndex) const;
     void populate();
     [[nodiscard]] int nodeCount() const;
@@ -98,5 +103,6 @@ private:
 
     bool m_showIcons;
     QColor m_playingColour;
+    std::array<Qt::Alignment, 4> m_columnAlignments;
 };
 } // namespace Fooyin
