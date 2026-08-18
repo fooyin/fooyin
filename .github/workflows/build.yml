@@ -1,6 +1,13 @@
 name: Build
 
 on:
+  workflow_call:
+    inputs:
+      version_suffix:
+        description: Optional suffix appended to the application and package version
+        required: false
+        type: string
+        default: ''
   push:
     branches-ignore:
       - update-translations
@@ -22,31 +29,43 @@ jobs:
   linux:
     name: Build Linux
     uses: ./.github/workflows/build-linux.yml
+    with:
+      version_suffix: ${{ inputs.version_suffix || '' }}
     secrets: inherit
 
   freebsd:
     name: Build FreeBSD
     uses: ./.github/workflows/build-freebsd.yml
+    with:
+      version_suffix: ${{ inputs.version_suffix || '' }}
     secrets: inherit
 
   windows:
     name: Build Windows
     uses: ./.github/workflows/build-windows.yml
+    with:
+      version_suffix: ${{ inputs.version_suffix || '' }}
     secrets: inherit
 
   macos:
     name: Build macOS
     uses: ./.github/workflows/build-macos.yml
+    with:
+      version_suffix: ${{ inputs.version_suffix || '' }}
     secrets: inherit
 
   flatpak:
     name: Build Flatpak
     uses: ./.github/workflows/build-flatpak.yml
+    with:
+      version_suffix: ${{ inputs.version_suffix || '' }}
     secrets: inherit
 
   appimage:
     name: Build AppImage
     uses: ./.github/workflows/build-appimage.yml
+    with:
+      version_suffix: ${{ inputs.version_suffix || '' }}
     secrets: inherit
 
   attach:

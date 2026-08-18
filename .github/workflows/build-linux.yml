@@ -2,8 +2,14 @@ name: Build Linux
 
 on:
   workflow_call:
+    inputs:
+      version_suffix:
+        required: false
+        type: string
+        default: ''
 
 env:
+  FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
   BUILD_TESTS: ON
   BUILD_CCACHE: ON
   BUILD_PCH: ON

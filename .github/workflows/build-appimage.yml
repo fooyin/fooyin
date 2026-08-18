@@ -2,8 +2,14 @@ name: Build AppImage
 
 on:
   workflow_call:
+    inputs:
+      version_suffix:
+        required: false
+        type: string
+        default: ''
 
 env:
+  FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
   BUILD_CCACHE: ON
   BUILD_PCH: ON
   CCACHE_DIR: ${{ github.workspace }}/.ccache

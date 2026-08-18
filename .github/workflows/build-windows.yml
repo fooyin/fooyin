@@ -2,8 +2,14 @@ name: Build Windows
 
 on:
   workflow_call:
+    inputs:
+      version_suffix:
+        required: false
+        type: string
+        default: ''
 
 env:
+  FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
   QT_VERSION: '6.8.3'
   VCPKG_DISABLE_METRICS: true
   VCPKG_ROOT_DIR: 'C:/vcpkg'
