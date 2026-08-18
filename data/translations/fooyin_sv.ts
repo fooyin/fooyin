@@ -5294,7 +5294,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="56"/>
         <source>Align labels to artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Positionera etiketter till konstverk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="71"/>
@@ -5304,7 +5304,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="79"/>
         <source>In current playlist mode, matching tracks are selected directly in the playlist.</source>
-        <translation type="unfinished"></translation>
+        <translation>I det aktuella spellistsläget är matchande spår valda direkt i spellistan.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="82"/>
@@ -5324,7 +5324,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="96"/>
         <source>Align bottom labels to the horizontal bounds of the artwork in artwork mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Positionera bottenetiketter till konstverkets horisontella gränser i konstverksläge.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="103"/>
@@ -5384,7 +5384,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="142"/>
         <source>Current playlist mode uses the displayed playlist as its source and selects the matching tracks in that playlist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuella spellistsläget använder den visade spellistan som dess källa och väljer de matchande spåren i den spellistan.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="160"/>
@@ -6521,7 +6521,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="188"/>
         <source>Prevent other splitter handles and parent splitters from changing the size of a locked widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hindra andra splittrarhandtag och föräldrarsplittrare från att ändra storleken på en låst widget.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="190"/>
@@ -7867,7 +7867,7 @@ och senast spelad använder det senare värdet.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="197"/>
         <source>Read ratings from ID3 POPM frames in MP3 files when no text rating was read.</source>
-        <translation type="unfinished"></translation>
+        <translation>Läs betyg från ID3 POPM-ramar i MP3-filer när inget textbetyg var läst.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="199"/>
@@ -7899,22 +7899,22 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="209"/>
         <source>Tag field to read playcount values from. Automatic detection prefers FMPS_PLAYCOUNT, then PLAYCOUNT.</source>
-        <translation type="unfinished"></translation>
+        <translation>Taggfält att läsa antal spelningar-värden från. Automatisk detektion föredrar FMPS_PLAYCOUNT, sedan PLAYCOUNT.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="210"/>
         <source>Tag field used when saving playcounts as text metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>Taggfält som används när antal spelningar sparas som textmetadata.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="212"/>
         <source>Read playcounts from ID3 POPM frames in MP3 files when no text playcount was read.</source>
-        <translation type="unfinished"></translation>
+        <translation>Läs antal spelningar från ID3 POPM-ramar i MP3-filer när ingen text-antal spelningar var läst.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="214"/>
         <source>Additionally save playcounts to ID3 POPM frames when writing MP3 files. Other formats are unaffected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara dessutom antal spelningar till ID3 POPM-ramar vid skrivning av MP3-filer. Andra format är opåverkade.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="216"/>
