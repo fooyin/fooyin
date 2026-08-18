@@ -4027,6 +4027,7 @@ void ExpandedTreeView::scrollContentsBy(int dx, int dy)
 
     const int itemHeight = p->m_defaultItemHeight <= 0 ? sizeHintForRow(0) : p->m_defaultItemHeight;
     if(p->m_viewItems.empty() || itemHeight == 0) {
+        updateEditorGeometries();
         return;
     }
 
@@ -4037,6 +4038,7 @@ void ExpandedTreeView::scrollContentsBy(int dx, int dy)
     if(std::abs(dy) > std::abs(maxDeltaY)) {
         verticalScrollBar()->update();
         viewport()->update();
+        updateEditorGeometries();
         return;
     }
 
@@ -4066,6 +4068,7 @@ void ExpandedTreeView::scrollContentsBy(int dx, int dy)
     p->m_scrollDelayOffset = {-dx, -dy};
     viewport()->update();
     p->m_scrollDelayOffset = {0, 0};
+    updateEditorGeometries();
 }
 
 void ExpandedTreeView::rowsInserted(const QModelIndex& parent, int start, int end)
