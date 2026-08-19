@@ -32,6 +32,7 @@
 #include <utils/utils.h>
 
 #include <QAction>
+#include <QMainWindow>
 #include <QMenu>
 
 using namespace Qt::StringLiterals;
@@ -140,7 +141,7 @@ void ViewMenu::registerDspSettingsActions(DspSettingsRegistry* registry, DspSett
 
         QObject::connect(action, &QAction::triggered, this, [controller, dspId]() {
             if(controller->hasDsp(dspId)) {
-                controller->showDialog(dspId);
+                controller->showDialog(dspId, Utils::getMainWindow());
             }
         });
 

@@ -326,7 +326,7 @@ void PlaylistView::mousePressEvent(QMouseEvent* event)
 
                 const auto bulkEdit = playlistModel->setBulkData(ratingIndexes, QVariant::fromValue(modelRating));
                 if(bulkEdit.has_value()) {
-                    Q_EMIT bulkWriteRequested(*bulkEdit);
+                    Q_EMIT tracksRated(bulkEdit->tracks);
                 }
                 else {
                     for(const QModelIndex& ratingIndex : std::as_const(ratingIndexes)) {
@@ -868,7 +868,12 @@ bool PlaylistView::commitBulkEdit(int columnIndex)
         return false;
     }
 
-    Q_EMIT bulkWriteRequested(*bulkEdit);
+    if(bulkEdit->ratingField) {
+        Q_EMIT tracksRated(bulkEdit->tracks);
+    }
+    else {
+        Q_EMIT bulkWriteRequested(bulkEdit->tracks);
+    }
     return true;
 }
 

@@ -129,8 +129,13 @@ public:
         InvalidRequest = 0,
         NoChanges,
     };
-    [[nodiscard]] std::expected<TrackList, BulkEditError> setBulkData(const QModelIndexList& indexes,
-                                                                      const QVariant& value);
+    struct BulkEditResult
+    {
+        TrackList tracks;
+        bool ratingField{false};
+    };
+    [[nodiscard]] std::expected<BulkEditResult, BulkEditError> setBulkData(const QModelIndexList& indexes,
+                                                                           const QVariant& value);
 
     MoveOperation moveTracks(const MoveOperation& operation);
 
@@ -173,6 +178,7 @@ public:
 
 Q_SIGNALS:
     void metadataWriteRequested(const Fooyin::TrackList& tracks);
+    void tracksRated(const Fooyin::TrackList& tracks);
     void loadingStateChanged();
     void playlistLoaded();
     void filesDropped(const QList<QUrl>& urls, int index);

@@ -39,6 +39,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QListWidget>
+#include <QMainWindow>
 #include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
@@ -459,7 +460,8 @@ PropertiesDialogWidget* activePropertiesDialogWidget()
 
 PropertiesDialogWidget::PropertiesDialogWidget(ActionManager* actionManager, SettingsManager* settings,
                                                const TrackList& tracks, PropertiesDialog::TabList tabs)
-    : m_actionManager{actionManager}
+    : QDialog{Utils::getMainWindow()}
+    , m_actionManager{actionManager}
     , m_settings{settings}
     , m_context{new WidgetContext(this, Context{PropertiesDialogContext}, this)}
     , m_tabWidget(new QTabWidget(this))

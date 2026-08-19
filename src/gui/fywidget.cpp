@@ -233,6 +233,8 @@ void FyWidget::showStandaloneWindow(const QString& title, const QString& stateKe
     }
 
     show();
+    raise();
+    activateWindow();
 }
 
 void FyWidget::closeEvent(QCloseEvent* event)

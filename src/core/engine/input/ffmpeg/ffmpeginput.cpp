@@ -738,7 +738,7 @@ void parseTagValues(Track& track, TagType tagType, const QString& rawKey, const 
         track.setRating(firstValue.toFloat());
     }
     else {
-        addExtraTagValues(track, tagType, policy, key, values);
+        addExtraTagValues(track, tagType, policy, rawKey, values);
     }
 }
 

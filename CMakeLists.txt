@@ -22,7 +22,13 @@ project(
 set(FOOYIN_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
 set(FOOYIN_VERSION_MINOR ${PROJECT_VERSION_MINOR})
 set(FOOYIN_VERSION_PATCH ${PROJECT_VERSION_PATCH})
-set(FOOYIN_VERSION ${PROJECT_VERSION})
+
+set(FOOYIN_VERSION_SUFFIX
+    "$ENV{FOOYIN_VERSION_SUFFIX}"
+    CACHE STRING "Suffix appended to the fooyin version (e.g. .g01234567)"
+)
+
+set(FOOYIN_VERSION "${PROJECT_VERSION}${FOOYIN_VERSION_SUFFIX}")
 set(FOOYIN_SOVERSION "0.0.0")
 set(FOOYIN_PLUGIN_VERSION "0.0")
 
@@ -445,8 +451,12 @@ target_link_libraries(
 )
 
 if(WIN32)
-	target_include_directories(fooyin PRIVATE ${GETOPT_INCLUDE_DIR})
-	target_link_libraries(fooyin PRIVATE ${GETOPT_LIBRARY} RuntimeObject)
+    target_include_directories(fooyin PRIVATE ${GETOPT_INCLUDE_DIR})
+    target_link_libraries(
+        fooyin
+        PRIVATE ${GETOPT_LIBRARY}
+                RuntimeObject
+    )
     configure_file(data/win_version.rc.in win_version.rc @ONLY)
     target_sources(fooyin PRIVATE win_version.rc)
 endif()

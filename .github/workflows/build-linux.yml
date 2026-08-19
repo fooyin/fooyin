@@ -2,8 +2,14 @@ name: Build Linux
 
 on:
   workflow_call:
+    inputs:
+      version_suffix:
+        required: false
+        type: string
+        default: ''
 
 env:
+  FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
   BUILD_TESTS: ON
   BUILD_CCACHE: ON
   BUILD_PCH: ON
@@ -135,7 +141,7 @@ jobs:
         runner:
           - { os: ubuntu-latest, arch: amd64 }
           - { os: ubuntu-24.04-arm, arch: arm64 }
-        ubuntu_version: ['noble', 'questing', 'resolute']
+        ubuntu_version: ['noble', 'resolute']
     container:
       image: ubuntu:${{matrix.ubuntu_version}}
     steps:

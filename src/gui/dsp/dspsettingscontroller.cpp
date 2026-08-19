@@ -134,6 +134,8 @@ void DspSettingsDialogSession::open()
     QObject::connect(m_editor, &QDialog::finished, this, &DspSettingsDialogSession::finish);
     m_editor->setWindowModality(Qt::NonModal);
     m_editor->show();
+    m_editor->raise();
+    m_editor->activateWindow();
 }
 
 void DspSettingsDialogSession::finish(int result)

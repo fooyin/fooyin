@@ -74,9 +74,13 @@ void FreedesktopNotificationBackend::sendNotification(const NotificationRequest&
 
     QVariantMap hints;
     if(!request.cover.isNull()) {
-        const QImage image = request.cover.toImage()
-                                 .scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation)
-                                 .convertToFormat(QImage::Format_RGBA8888);
+        QImage image = request.cover.toImage();
+        if(request.maxAlbumArtSize > 0
+           && (image.width() > request.maxAlbumArtSize || image.height() > request.maxAlbumArtSize)) {
+            image = image.scaled(request.maxAlbumArtSize, request.maxAlbumArtSize, Qt::KeepAspectRatio,
+                                 Qt::SmoothTransformation);
+        }
+        image = image.convertToFormat(QImage::Format_RGBA8888);
 
         const QByteArray imageBytes{reinterpret_cast<const char*>(image.constBits()),
                                     static_cast<int>(image.sizeInBytes())};

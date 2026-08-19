@@ -19,6 +19,8 @@
 
 #include "waveformgenerator.h"
 
+#include "waveformaccumulator.h"
+
 #include <core/engine/audioconverter.h>
 #include <core/engine/audioloader.h>
 #include <utils/fymath.h>
@@ -28,7 +30,6 @@
 #include <QFile>
 
 #include <cfenv>
-#include <cstring>
 #include <limits>
 #include <utility>
 
@@ -168,15 +169,32 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
         return;
     }
 
-    const int safeSamplesPerChannel  = std::max(1, samplesPerChannel);
+    const int safeSamplesPerChannel = std::clamp(samplesPerChannel, 1, WaveformAccumulator::MaxTargetSampleCount);
+    const uint64_t endBytes         = m_format.bytesForDuration(track.duration());
+    const uint64_t totalFrames      = endBytes / static_cast<uint64_t>(bpf);
+    if(totalFrames == 0) {
+        qCWarning(WAVEBAR) << "Unable to determine frame count while generating waveform for track:"
+                           << track.filepath();
+        setState(Idle);
+        Q_EMIT waveformGenerated(track, {});
+        return;
+    }
+
+    WaveformAccumulator accumulator{&m_data, totalFrames, safeSamplesPerChannel};
+    if(!accumulator.isValid()) {
+        qCWarning(WAVEBAR) << "Unable to initialise waveform accumulator for track:" << track.filepath();
+        setState(Idle);
+        Q_EMIT waveformGenerated(track, {});
+        return;
+    }
+
     const uint64_t durationSecs      = m_data.duration / 1000;
     const uint64_t updatesByDuration = std::max<uint64_t>(1, durationSecs / 5);
     const int numOfUpdates           = static_cast<int>(
         std::min<uint64_t>(updatesByDuration, static_cast<uint64_t>(std::numeric_limits<int>::max())));
     const int updateThreshold = std::max(1, safeSamplesPerChannel / numOfUpdates);
 
-    const uint64_t endBytes = m_format.bytesForDuration(track.duration());
-    const auto bpfU64       = static_cast<uint64_t>(bpf);
+    const auto bpfU64 = static_cast<uint64_t>(bpf);
 
     uint64_t bufferSize
         = endBytes > 0 ? std::max<uint64_t>(bpfU64, endBytes / static_cast<uint64_t>(safeSamplesPerChannel)) : bpfU64;
@@ -191,13 +209,14 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
         bufferSize = std::max<uint64_t>(bufferSize, bpfU64);
     }
 
-    int processedCount{0};
+    int nextUpdateSample{updateThreshold};
     uint64_t processedBytes{0};
+    bool generationFailed{false};
 
     m_loadedDecoder.decoder->start();
     m_loadedDecoder.decoder->seek(track.offset());
 
-    while(true) {
+    while(!accumulator.complete()) {
         if(!mayRun()) {
             m_loadedDecoder.decoder->stop();
             return;
@@ -217,12 +236,10 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
 
         auto buffer = m_loadedDecoder.decoder->readBuffer(bytesToRead);
         if(!buffer.isValid()) {
-            m_data.complete = true;
             break;
         }
 
         if(buffer.byteCount() == 0) {
-            m_data.complete = true;
             break;
         }
 
@@ -234,18 +251,41 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
             processedBytes += decodedBytes;
         }
 
-        buffer = Audio::convert(buffer, m_requiredFormat);
-        processBuffer(buffer);
+        buffer            = Audio::convert(buffer, m_requiredFormat);
+        const auto result = accumulator.process(buffer, stopToken());
+        if(result == WaveformAccumulator::ProcessResult::Cancelled) {
+            m_loadedDecoder.decoder->stop();
+            return;
+        }
 
-        if(render && processedCount++ == updateThreshold) {
-            processedCount = 0;
+        if(result == WaveformAccumulator::ProcessResult::Invalid) {
+            qCWarning(WAVEBAR) << "Aborting waveform generation after invalid or excessive sample data for track:"
+                               << track.filepath();
+            generationFailed = true;
+            break;
+        }
+
+        if(render && result != WaveformAccumulator::ProcessResult::Complete
+           && m_data.sampleCount() >= nextUpdateSample) {
+            nextUpdateSample = m_data.sampleCount() + updateThreshold;
             Q_EMIT waveformGenerated(track, m_data);
         }
     }
 
     m_loadedDecoder.decoder->stop();
 
-    if(!m_waveDb.storeInCache(trackKey, convertCache<int16_t>(m_data))) {
+    if(generationFailed || !accumulator.finish() || m_data.sampleCount() > accumulator.targetSampleCount()) {
+        m_data = {};
+        if(!closing()) {
+            setState(Idle);
+        }
+        Q_EMIT waveformGenerated(track, {});
+        return;
+    }
+
+    m_data.complete = true;
+
+    if(m_data.sampleCount() > 0 && !m_waveDb.storeInCache(trackKey, convertCache<int16_t>(m_data))) {
         qCWarning(WAVEBAR) << "Unable to store waveform for track:" << m_track.filepath();
     }
 
@@ -265,6 +305,11 @@ QString WaveformGenerator::setup(const Track& track, int samplesPerChannel)
     m_data = {};
 
     if(!track.isValid()) {
+        return {};
+    }
+
+    if(track.duration() == 0) {
+        qCWarning(WAVEBAR) << "Unable to generate waveform for track with unknown duration:" << track.filepath();
         return {};
     }
 
@@ -290,54 +335,8 @@ QString WaveformGenerator::setup(const Track& track, int samplesPerChannel)
     m_data.duration = track.duration();
     m_data.channels = m_format.channelCount();
     m_data.channelData.resize(m_data.channels);
-    m_data.samplesPerChannel = samplesPerChannel;
+    m_data.samplesPerChannel = std::clamp(samplesPerChannel, 1, WaveformAccumulator::MaxTargetSampleCount);
 
     return WaveBarDatabase::cacheKey(m_track, m_data.channels);
-}
-
-void WaveformGenerator::processBuffer(const AudioBuffer& buffer)
-{
-    const int channels   = m_data.channels;
-    const int frameCount = buffer.frameCount();
-    if(channels <= 0 || frameCount <= 0) {
-        return;
-    }
-
-    if(buffer.format().bytesPerSample() != static_cast<int>(sizeof(float))) {
-        qCWarning(WAVEBAR) << "Unexpected non-float waveform buffer format:" << buffer.format().prettyFormat();
-        return;
-    }
-
-    const auto sampleCount = static_cast<uint64_t>(frameCount) * static_cast<uint64_t>(channels);
-    std::vector<float> samples(sampleCount);
-    std::memcpy(samples.data(), buffer.data(), sampleCount * sizeof(float));
-
-    std::vector channelMax(static_cast<size_t>(channels), -1.0F);
-    std::vector channelMin(static_cast<size_t>(channels), 1.0F);
-    std::vector channelRms(static_cast<size_t>(channels), 0.0F);
-
-    static constexpr int CancellationCheckInterval = 2048;
-
-    for(int i{0}; i < frameCount; ++i) {
-        if((i % CancellationCheckInterval) == 0 && !mayRun()) {
-            return;
-        }
-
-        const int frameOffset = i * channels;
-        for(int ch{0}; ch < channels; ++ch) {
-            const float sample                  = samples[static_cast<size_t>(frameOffset + ch)];
-            channelMax[static_cast<size_t>(ch)] = std::max(channelMax[static_cast<size_t>(ch)], sample);
-            channelMin[static_cast<size_t>(ch)] = std::min(channelMin[static_cast<size_t>(ch)], sample);
-            channelRms[static_cast<size_t>(ch)] += sample * sample;
-        }
-    }
-
-    const float normalise = 1.0F / static_cast<float>(frameCount);
-    for(int ch{0}; ch < channels; ++ch) {
-        auto& [cMax, cMin, cRms] = m_data.channelData.at(ch);
-        cMax.emplace_back(channelMax[static_cast<size_t>(ch)]);
-        cMin.emplace_back(channelMin[static_cast<size_t>(ch)]);
-        cRms.emplace_back(std::sqrt(channelRms[static_cast<size_t>(ch)] * normalise));
-    }
 }
 } // namespace Fooyin::WaveBar

@@ -89,7 +89,7 @@ public:
         bool sendPlayback{true};
         bool showIcons{true};
         bool indentList{true};
-        bool showHorizScrollbar{true};
+        bool showHeader{true};
         Mode mode{Mode::List};
         ControlsPosition controlsPosition{ControlsPosition::Top};
         bool showControls{true};
@@ -144,7 +144,6 @@ private:
     void setSendPlayback(bool enabled);
     void setShowIconsEnabled(bool enabled);
     void setListIndentEnabled(bool enabled);
-    void setShowHorizontalScrollbar(bool enabled);
     void setRootPath(const QString& rootPath);
     [[nodiscard]] QString rootPath() const;
 

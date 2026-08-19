@@ -52,7 +52,7 @@ ScriptLineEdit::ScriptLineEdit(const QString& script, const Track& track, QWidge
                     setText(editedScript);
                 }
             },
-            track);
+            track, this);
     });
     addAction(openEditor, TrailingPosition);
 }
@@ -78,7 +78,7 @@ ScriptTextEdit::ScriptTextEdit(const QString& script, const Track& track, QWidge
                     setText(editedScript);
                 }
             },
-            track);
+            track, this);
     });
 }
 

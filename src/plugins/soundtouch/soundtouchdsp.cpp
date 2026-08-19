@@ -24,6 +24,7 @@
 
 #include <QDataStream>
 #include <QIODevice>
+#include <QLoggingCategory>
 
 #include <algorithm>
 #include <cmath>
@@ -36,10 +37,14 @@ constexpr auto PitchMax      = 24.0;
 constexpr auto RateMin       = 0.25;
 constexpr auto RateMax       = 4.0;
 constexpr auto MinRateScale  = 0.01;
+constexpr auto MaxSampleRate = 192000;
+
+Q_LOGGING_CATEGORY(SOUNDTOUCH, "fy.soundtouch")
 
 namespace Fooyin {
 SoundTouchDsp::SoundTouchDsp(const Parameter parameter)
     : m_parameter{parameter}
+    , m_bypassProcessor{false}
     , m_hasOutputCursor{false}
     , m_outputCursorNs{0}
     , m_outputCursorFracNs{0.0}
@@ -98,7 +103,7 @@ void SoundTouchDsp::process(ProcessingBufferList& chunks)
     ProcessingBufferList output;
     output.clear();
 
-    if(!m_processor || !m_format.isValid()) {
+    if(!m_format.isValid()) {
         chunks.clear();
         return;
     }
@@ -313,9 +318,21 @@ double SoundTouchDsp::rate() const
 
 void SoundTouchDsp::recreateProcessor(const AudioFormat& format)
 {
-    m_processor = std::make_unique<soundtouch::SoundTouch>();
-    m_processor->setSampleRate(static_cast<uint>(std::max(1, format.sampleRate())));
-    m_processor->setChannels(static_cast<uint>(std::max(1, format.channelCount())));
+    m_processor.reset();
+    m_bypassProcessor = false;
+
+    if(!format.isValid()) {
+        reset();
+        return;
+    }
+
+    if(format.sampleRate() > MaxSampleRate) {
+        qCWarning(SOUNDTOUCH) << "Bypassing SoundTouch for unsupported sample rate:"
+                              << "sampleRate=" << format.sampleRate() << "maximum=" << MaxSampleRate;
+        m_bypassProcessor = true;
+        reset();
+        return;
+    }
 
     configureProcessor();
 
@@ -359,10 +376,16 @@ void SoundTouchDsp::processBuffer(const ProcessingBuffer& buffer, ProcessingBuff
         return;
     }
 
-    if(!m_processor || format.sampleRate() != m_format.sampleRate()
-       || format.channelCount() != m_format.channelCount()) {
+    const bool formatChanged
+        = format.sampleRate() != m_format.sampleRate() || format.channelCount() != m_format.channelCount();
+    if(formatChanged || (!m_processor && !m_bypassProcessor)) {
         m_format = format;
         recreateProcessor(m_format);
+    }
+
+    if(m_bypassProcessor || !m_processor) {
+        output.addChunk(buffer);
+        return;
     }
 
     const int channels = std::max(1, m_format.channelCount());

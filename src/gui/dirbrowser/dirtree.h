@@ -19,9 +19,12 @@
 
 #pragma once
 
+#include <QByteArray>
 #include <QTreeView>
 
 namespace Fooyin {
+class AutoHeaderView;
+
 class DirTree : public QTreeView
 {
     Q_OBJECT
@@ -29,12 +32,22 @@ class DirTree : public QTreeView
 public:
     explicit DirTree(QWidget* parent = nullptr);
 
+    void setModel(QAbstractItemModel* model) override;
+
+    void initialiseHeader();
     void resizeView();
-    void setShowHorizontalScrollbar(bool enabled);
+
+    [[nodiscard]] bool showHeader() const;
+    void setShowHeader(bool show);
+
+    [[nodiscard]] QByteArray saveHeaderState() const;
+    void restoreHeaderState(const QByteArray& state);
+    void preserveHeaderState();
 
 Q_SIGNALS:
     void backClicked();
     void forwardClicked();
+    void headerVisibilityChanged(bool visible);
     void middleClicked();
 
 protected:
@@ -43,6 +56,11 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent* event) override;
 
 private:
-    bool m_showHorizontalScrollbar;
+    void restoreHeaderAfterModelReset();
+    void setColumnVisible(int column, bool visible);
+    void showHeaderContextMenu(const QPoint& pos);
+
+    AutoHeaderView* m_header;
+    QByteArray m_pendingHeaderState;
 };
 } // namespace Fooyin

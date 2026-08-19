@@ -544,8 +544,7 @@ void PlayerControllerPrivate::syncPlaylistTrackState(const UId& playlistId)
             syncCurrentTrack(*remappedTrack);
 
             const auto& detachedTrack = m_session.detachedCurrentPlaylistTrack();
-            if(detachedTrack.has_value() && detachedTrack->entryId == remappedTrack->entryId
-               && detachedTrack->playlistId == remappedTrack->playlistId) {
+            if(detachedTrack.has_value() && detachedTrack->sameOccurrenceAs(*remappedTrack)) {
                 m_session.clearDetachedCurrentPlaylistTrack();
             }
         }

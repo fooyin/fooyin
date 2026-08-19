@@ -27,6 +27,7 @@ function(fooyin_add_test name)
                 Fooyin::GuiPrivate
                 Fooyin::Utils
                 Qt6::Test
+                Taglib::Taglib
                 ${FFMPEG_LIBRARIES}
                 GTest::gtest_main
     )

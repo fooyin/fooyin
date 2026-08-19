@@ -80,9 +80,9 @@ FilterColumnEditorWidget::FilterColumnEditorWidget(FilterColumnRegistry* columnR
     QObject::connect(m_openEditor, &QToolButton::clicked, this, [this]() {
         const auto selection    = m_columnList->selectionModel()->selectedIndexes();
         const QModelIndex index = selection.front();
-        ScriptEditor::openEditor(index.data(Qt::EditRole).toString(), [this, index](const QString& script) {
-            m_model->setData(index, script, Qt::EditRole);
-        });
+        ScriptEditor::openEditor(
+            index.data(Qt::EditRole).toString(),
+            [this, index](const QString& script) { m_model->setData(index, script, Qt::EditRole); }, {}, this);
     });
 
     m_model->populate();

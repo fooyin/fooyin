@@ -2,8 +2,14 @@ name: Build FreeBSD
 
 on:
   workflow_call:
+    inputs:
+      version_suffix:
+        required: false
+        type: string
+        default: ''
 
 env:
+  FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
   BUILD_TESTS: ON
   CCACHE_DIR: ${{ github.workspace }}/.ccache
   CCACHE_BASEDIR: ${{ github.workspace }}
@@ -33,14 +39,14 @@ jobs:
             freebsd-${{ env.FREEBSD_VERSION }}-ccache-
 
       - name: Start FreeBSD VM
-        uses: cross-platform-actions/action@v1.3.0
+        uses: cross-platform-actions/action@v1.4.0
         with:
           operating_system: freebsd
           architecture: x86-64
           cpu_count: 4
           shell: bash
           version: ${{ env.FREEBSD_VERSION }}
-          environment_variables: BUILD_TESTS CCACHE_DIR CCACHE_BASEDIR CCACHE_MAXSIZE CCACHE_COMPILERCHECK CCACHE_SLOPPINESS
+          environment_variables: BUILD_TESTS FOOYIN_VERSION_SUFFIX CCACHE_DIR CCACHE_BASEDIR CCACHE_MAXSIZE CCACHE_COMPILERCHECK CCACHE_SLOPPINESS
 
       - name: Build and test
         shell: cpa.sh {0}

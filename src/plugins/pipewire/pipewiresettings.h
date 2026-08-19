@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <luket@pm.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,24 +19,28 @@
 
 #pragma once
 
-#include <core/engine/outputplugin.h>
-#include <core/plugins/plugin.h>
-#include <gui/plugins/pluginconfigguiplugin.h>
-#include <gui/plugins/pluginsettingsprovider.h>
+#include <core/coresettings.h>
+
+#include <QDialog>
+
+class QSpinBox;
 
 namespace Fooyin::Pipewire {
-class PipeWirePlugin : public QObject,
-                       public Plugin,
-                       public OutputPlugin,
-                       public PluginConfigGuiPlugin
+constexpr auto LatencySetting = "PipeWire/LatencyMs";
+constexpr auto DefaultLatency = 20;
+constexpr auto MaximumLatency = 200;
+
+class PipewireSettings : public QDialog
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "pipewire.json")
-    Q_INTERFACES(Fooyin::Plugin Fooyin::OutputPlugin Fooyin::PluginConfigGuiPlugin)
 
 public:
-    [[nodiscard]] QString name() const override;
-    [[nodiscard]] OutputCreator creator() const override;
-    [[nodiscard]] std::unique_ptr<PluginSettingsProvider> settingsProvider() const override;
+    explicit PipewireSettings(QWidget* parent = nullptr);
+
+    void accept() override;
+
+private:
+    FySettings m_settings;
+    QSpinBox* m_latency;
 };
 } // namespace Fooyin::Pipewire

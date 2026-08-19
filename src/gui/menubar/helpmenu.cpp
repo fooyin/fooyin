@@ -30,6 +30,7 @@
 #include <QAction>
 #include <QDesktopServices>
 #include <QIcon>
+#include <QMainWindow>
 #include <QUrl>
 
 using namespace Qt::StringLiterals;
@@ -37,7 +38,7 @@ using namespace Qt::StringLiterals;
 namespace {
 void showAboutDialog()
 {
-    auto* aboutDialog = new Fooyin::AboutDialog();
+    auto* aboutDialog = new Fooyin::AboutDialog(Fooyin::Utils::getMainWindow());
     aboutDialog->setAttribute(Qt::WA_DeleteOnClose);
     aboutDialog->show();
 }

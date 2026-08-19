@@ -204,7 +204,6 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, AudioReader
         }
 
         Track updatedTrack{track};
-        bool success{true};
         bool needsTrackUpdate{false};
 
         if(updatedTrack.hash().isEmpty()) {
@@ -212,14 +211,19 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, AudioReader
         }
 
         if(!track.isInArchive() && !isDbOnlyMetadataTrack(updatedTrack) && writeOptions != AudioReader::None) {
-            success                        = m_audioLoader->writeTrackMetadata(updatedTrack, writeOptions);
-            const QDateTime modifiedTime   = QFileInfo{updatedTrack.filepath()}.lastModified();
-            const uint64_t newModifiedTime = modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0;
-            updatedTrack.setModifiedTime(newModifiedTime);
-            updatedTrack.normaliseExtraProperties();
-            needsTrackUpdate = newModifiedTime != track.modifiedTime();
+            if(m_audioLoader->writeTrackMetadata(updatedTrack, writeOptions)) {
+                const QDateTime modifiedTime   = QFileInfo{updatedTrack.filepath()}.lastModified();
+                const uint64_t newModifiedTime = modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0;
+                updatedTrack.setModifiedTime(newModifiedTime);
+                updatedTrack.normaliseExtraProperties();
+                needsTrackUpdate = newModifiedTime != track.modifiedTime();
+            }
+            else {
+                qCWarning(TRK_DBMAN) << "Failed to write track playback statistics to file:" << updatedTrack.filepath();
+            }
         }
-        if(success && (!needsTrackUpdate || m_trackDatabase.updateTrack(updatedTrack))
+
+        if((!needsTrackUpdate || m_trackDatabase.updateTrack(updatedTrack))
            && m_trackDatabase.updateTrackStats(updatedTrack)) {
             tracksUpdated.push_back(updatedTrack);
         }

@@ -27,6 +27,7 @@
 
 #include <QDir>
 #include <QLibrary>
+#include <QSaveFile>
 
 using namespace Qt::StringLiterals;
 
@@ -89,18 +90,45 @@ void PluginManager::loadPlugins()
     }
 }
 
-bool PluginManager::installPlugin(const QString& filepath)
+PluginManager::InstallResult PluginManager::installPlugin(const QString& filepath, bool overwrite)
 {
     QFile pluginFile{filepath};
     const QFileInfo fileInfo{filepath};
 
     const QString newPlugin = Core::userPluginsPath() + u"/"_s + fileInfo.fileName();
-    return pluginFile.copy(newPlugin);
+    if(QFileInfo::exists(newPlugin) && !overwrite) {
+        return InstallResult::AlreadyInstalled;
+    }
+
+    if(!pluginFile.open(QIODevice::ReadOnly)) {
+        return InstallResult::Failed;
+    }
+
+    QSaveFile newPluginFile{newPlugin};
+    if(!newPluginFile.open(QIODevice::WriteOnly)) {
+        return InstallResult::Failed;
+    }
+
+    while(!pluginFile.atEnd()) {
+        const QByteArray data = pluginFile.read(1024LL * 1024);
+        if(data.isEmpty() || newPluginFile.write(data) != data.size()) {
+            newPluginFile.cancelWriting();
+            return InstallResult::Failed;
+        }
+    }
+
+    if(pluginFile.error() != QFileDevice::NoError) {
+        newPluginFile.cancelWriting();
+        return InstallResult::Failed;
+    }
+
+    newPluginFile.setPermissions(pluginFile.permissions());
+    return newPluginFile.commit() ? InstallResult::Installed : InstallResult::Failed;
 }
 
 void PluginManager::unloadPlugins()
 {
-    for(const auto& [name, plugin] : m_plugins) {
+    for(const auto& plugin : m_plugins | std::views::values) {
         plugin->unload();
     }
     m_plugins.clear();

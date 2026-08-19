@@ -1739,6 +1739,7 @@ void PlaylistWidget::setupConnections()
         }
     });
     QObject::connect(m_model, &PlaylistModel::metadataWriteRequested, this, &PlaylistWidget::handleMetadataWriteRequested);
+    QObject::connect(m_model, &PlaylistModel::tracksRated, m_library, qOverload<const TrackList&>(&MusicLibrary::updateTrackStats));
     QObject::connect(m_playlistView, &PlaylistView::bulkWriteRequested, this, &PlaylistWidget::handleBulkWriteRequested);
     QObject::connect(m_playlistController, &PlaylistController::currentPlaylistTracksUpdated, m_model, [this](const std::vector<int>& indexes) { m_model->refreshTracks(indexes); });
     QObject::connect(m_playlistController, &PlaylistController::currentPlaylistUpdated, this, &PlaylistWidget::resetModelThrottled);

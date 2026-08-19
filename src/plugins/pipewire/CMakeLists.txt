@@ -24,4 +24,6 @@ create_fooyin_plugin_internal(
             pipewirestream.h
             pipewirethreadloop.cpp
             pipewirethreadloop.h
+            pipewiresettings.cpp
+            pipewiresettings.h
 )

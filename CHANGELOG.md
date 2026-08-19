@@ -1,5 +1,56 @@
 # Changelog
 
+## Unreleased
+
+### Improvements
+
+* Directory Browser
+  - Add configurable columns ([#1502](https://github.com/fooyin/fooyin/issues/1502))
+  - Add configurable controls position
+* Equaliser: Add embeddable layout widget
+* FileOps: Add preset commands with shortcut support
+* Interface
+  - Add an option to restrict resizing locked widgets to adjacent handles
+  - Disable minimise to tray on close by default
+* Library: Log filesystem watcher failures
+* Library Tree: Preserve state across model resets
+* Metadata: Add configurable ID3v2 revisions and tag schemes for MP3 files
+* Notifications: Add configurable album art size ([#1507](https://github.com/fooyin/fooyin/issues/1507))
+* PipeWire: Add configurable output latency ([#1496](https://github.com/fooyin/fooyin/issues/1496))
+* Plugins: Support updating installed plugins
+* WaveBar: Add a new built-in Waveform layout
+
+### Fixes
+
+* Interface
+  - Ensure dialogs and standalone windows open in the foreground
+  - Fix Apply on the Layout settings page losing the current selection
+  - Fix track action translation contexts ([#1494](https://github.com/fooyin/fooyin/issues/1494))
+* Library/Metadata
+  - Deduplicate normalised metadata tag values ([#1470](https://github.com/fooyin/fooyin/issues/1470), [#1490](https://github.com/fooyin/fooyin/issues/1490))
+  - Fix rating star conversion on i686 ([#1492](https://github.com/fooyin/fooyin/issues/1492))
+  - Preserve ratings and playcounts when tag writes fail ([#1505](https://github.com/fooyin/fooyin/issues/1505))
+  - Preserve whitespace in FFmpeg extra tag names ([#1508](https://github.com/fooyin/fooyin/issues/1508))
+* MPRIS
+  - Synchronise repeat and audible pause state ([#1330](https://github.com/fooyin/fooyin/issues/1330))
+  - Use stable playlist entry track IDs and reject stale seek requests
+* PipeWire: Fix output buffer scheduling ([#1496](https://github.com/fooyin/fooyin/issues/1496))
+* Playlist: Fix inline editor positioning when scrolling
+* Plugins: Fix plugin installation from Settings
+* SoundTouch: Bypass processing for unsupported sample rates
+* Tag Editor: Fix auto fill values in the embedded widget
+* VU Meter: Keep saved defaults separate for each meter type ([#1495](https://github.com/fooyin/fooyin/issues/1495))
+* WaveBar: Prevent unbounded waveform generation ([#1511](https://github.com/fooyin/fooyin/issues/1511))
+
+### Build/System
+
+* CI
+  - Build nightly packages with commit versions
+  - Add nightly pre-releases with AppImage and Flatpak packages
+  - Drop Ubuntu 25.10 (Questing) support
+* Translations: Update translations and translation sources ([#1497](https://github.com/fooyin/fooyin/pull/1497), [#1498](https://github.com/fooyin/fooyin/pull/1498), [#1500](https://github.com/fooyin/fooyin/pull/1500))
+
+
 ## [0.12.4](https://github.com/fooyin/fooyin/releases/tag/v0.12.4) (2026-08-12)
 
 ### Improvements

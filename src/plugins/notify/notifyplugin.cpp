@@ -170,11 +170,12 @@ void NotifyPlugin::sendPendingNotification()
     }
 
     const NotificationRequest request{
-        .title     = notification.title,
-        .body      = notification.body,
-        .cover     = notification.cover,
-        .actions   = notificationActions(),
-        .timeoutMs = m_settings->value<Settings::Notify::Timeout>(),
+        .title           = notification.title,
+        .body            = notification.body,
+        .cover           = notification.cover,
+        .actions         = notificationActions(),
+        .timeoutMs       = m_settings->value<Settings::Notify::Timeout>(),
+        .maxAlbumArtSize = m_settings->value<Settings::Notify::MaxAlbumArtSize>(),
     };
 
     m_activeBackend->sendNotification(request);

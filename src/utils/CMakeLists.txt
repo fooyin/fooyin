@@ -108,12 +108,12 @@ create_fooyin_library(
 
 target_link_libraries(
     fooyin_utils
+    PRIVATE ICU::uc
+            ICU::i18n
     PUBLIC Qt6::Core
            Qt6::Widgets
            Qt6::Sql
            Qt6::Concurrent
-    PRIVATE ICU::uc
-            ICU::i18n
 )
 
 target_include_directories(fooyin_utils PUBLIC ${ICU_INCLUDE_DIRS})

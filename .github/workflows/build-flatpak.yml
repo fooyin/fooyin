@@ -2,6 +2,11 @@ name: Build Flatpak
 
 on:
   workflow_call:
+    inputs:
+      version_suffix:
+        required: false
+        type: string
+        default: ''
 
 jobs:
   flatpak:
@@ -21,6 +26,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+
+      - name: Set version suffix
+        if: inputs.version_suffix != ''
+        env:
+          FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
+        shell: bash
+        run: |
+          sed -i "/- -DBUILD_PCH=ON/a\\      - -DFOOYIN_VERSION_SUFFIX=${FOOYIN_VERSION_SUFFIX}" \
+            dist/linux/flatpak/org.fooyin.fooyin.yaml
 
       - name: Build Flatpak
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6

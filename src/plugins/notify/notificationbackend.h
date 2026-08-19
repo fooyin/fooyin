@@ -49,6 +49,7 @@ struct NotificationRequest
     QPixmap cover;
     QList<NotificationAction> actions;
     int timeoutMs{0};
+    int maxAlbumArtSize{128};
 };
 
 struct ImageData
