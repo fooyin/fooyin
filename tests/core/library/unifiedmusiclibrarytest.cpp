@@ -458,12 +458,13 @@ protected:
         return libraryInfo.value_or(LibraryInfo{});
     }
 
-    void waitForSuccessfulScan(const std::function<ScanRequest()>& startScan)
+    void waitForSuccessfulScan(const std::function<ScanRequest()>& startScan,
+                               ScanRequest::Type type = ScanRequest::Library)
     {
         QSignalSpy finishedSpy{&context().library, &MusicLibrary::scanFinished};
 
         const ScanRequest request = startScan();
-        expectFinishedSignal(waitForSignal(finishedSpy), request.id, ScanRequest::Library);
+        expectFinishedSignal(waitForSignal(finishedSpy), request.id, type);
     }
 
 private:
@@ -786,5 +787,64 @@ TEST_F(UnifiedMusicLibraryTest, ReaddingLibraryUpdatesExistingPlaylistTracksAndE
     EXPECT_TRUE(context().library.trackForId(originalTrack.id()).isInLibrary());
     ASSERT_EQ(playlist->trackCount(), 1);
     EXPECT_TRUE(playlist->tracks().front().isInLibrary());
+}
+
+TEST_F(UnifiedMusicLibraryTest, RestoresStatsWhenUnmanagedTrackIsReadded)
+{
+    const QString path = createTrackFile(u"external.mp3"_s, u"External Track"_s);
+
+    QSignalSpy scannedSpy{&context().library, &MusicLibrary::tracksScanned};
+    ScanRequest firstRequest = context().library.scanFiles({QUrl::fromLocalFile(path)});
+    waitForSuccessfulScan([&firstRequest]() { return firstRequest; }, ScanRequest::Files);
+
+    ASSERT_FALSE(scannedSpy.isEmpty());
+    auto tracks = scannedSpy.takeLast().at(1).value<TrackList>();
+    ASSERT_EQ(tracks.size(), 1);
+
+    Track track = tracks.front();
+    ASSERT_GE(track.id(), 0);
+
+    {
+        const DbConnectionProvider dbProvider{context().dbPool};
+
+        DbQuery query{
+            dbProvider.db(),
+            u"UPDATE TrackStats "
+            "SET PlayCount = 5, FirstPlayed = 100, LastPlayed = 500 "
+            "WHERE TrackHash = :hash;"_s,
+        };
+        query.bindValue(u":hash"_s, track.hash());
+
+        ASSERT_TRUE(query.exec()) << query.lastError().text().toStdString();
+        ASSERT_EQ(query.numRowsAffected(), 1);
+    }
+
+    {
+        const DbConnectionProvider dbProvider{context().dbPool};
+
+        DbQuery query{
+            dbProvider.db(),
+            u"DELETE FROM Tracks WHERE TrackID = :id;"_s,
+        };
+        query.bindValue(u":id"_s, track.id());
+
+        ASSERT_TRUE(query.exec()) << query.lastError().text().toStdString();
+    }
+
+    context().library.loadAllTracks();
+    ASSERT_TRUE(waitForCondition([&]() { return context().library.tracks().empty(); }));
+
+    scannedSpy.clear();
+
+    ScanRequest secondRequest = context().library.scanFiles({QUrl::fromLocalFile(path)});
+    waitForSuccessfulScan([&secondRequest]() { return secondRequest; }, ScanRequest::Files);
+
+    ASSERT_FALSE(scannedSpy.isEmpty());
+    tracks = scannedSpy.takeLast().at(1).value<TrackList>();
+
+    ASSERT_EQ(tracks.size(), 1);
+    EXPECT_EQ(tracks.front().playCount(), 5);
+    EXPECT_EQ(tracks.front().firstPlayed(), 100);
+    EXPECT_EQ(tracks.front().lastPlayed(), 500);
 }
 } // namespace Fooyin::Testing
