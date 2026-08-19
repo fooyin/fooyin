@@ -334,17 +334,16 @@ target_link_libraries(
     fooyin_core
     PRIVATE fooyin_version
             fooyin_config
+            Taglib::Taglib
             QCoro6::Core
             ${FFMPEG_LIBRARIES}
             PFFFT::PFFFT
             ZLIB::ZLIB
-    PUBLIC Qt6::Core
-           Qt6::Widgets
+    PUBLIC Fooyin::Utils
+           Qt6::Core
            Qt6::Sql
            Qt6::Concurrent
            Qt6::Network
-           Taglib::Taglib
-           Fooyin::Utils
 )
 
 target_include_directories(
