@@ -147,8 +147,6 @@ if(INSTALL_HEADERS)
         COMPONENT fooyin_development
     )
 
-    install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/modules/" DESTINATION ${CMAKECONFIG_INSTALL_DIR}/modules)
-
     # ---- Fooyin public headers ----
 
     install(
