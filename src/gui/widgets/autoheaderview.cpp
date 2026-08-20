@@ -80,6 +80,7 @@ public:
 
     int m_pendingColumns{0};
     QByteArray m_pendingState;
+    bool m_pendingRestoreSort{true};
 };
 
 void AutoHeaderViewPrivate::calculateSectionWidths()
@@ -286,7 +287,7 @@ void AutoHeaderViewPrivate::columnsAboutToBeRemoved(int first, int last)
 void AutoHeaderViewPrivate::sectionCountChanged(int oldCount, int newCount)
 {
     if(m_pendingColumns > 0 && !m_pendingState.isEmpty() && newCount == m_pendingColumns) {
-        m_self->restoreHeaderState(m_pendingState);
+        m_self->restoreHeaderState(m_pendingState, m_pendingRestoreSort);
         return;
     }
 
@@ -631,6 +632,14 @@ QByteArray AutoHeaderView::saveHeaderState() const
 
 void AutoHeaderView::restoreHeaderState(const QByteArray& state)
 {
+    restoreHeaderState(state, true);
+}
+
+void AutoHeaderView::restoreHeaderState(const QByteArray& state, bool restoreSort)
+{
+    const auto currentSortOrder  = sortIndicatorOrder();
+    const int currentSortSection = sortIndicatorSection();
+
     Qt::SortOrder sortOrder{Qt::AscendingOrder};
     int sortSection{0};
 
@@ -644,8 +653,9 @@ void AutoHeaderView::restoreHeaderState(const QByteArray& state)
         stream >> pixelWidths;
 
         if(std::cmp_not_equal(pixelWidths.size(), count())) {
-            p->m_pendingColumns = static_cast<int>(pixelWidths.size());
-            p->m_pendingState   = state;
+            p->m_pendingColumns     = static_cast<int>(pixelWidths.size());
+            p->m_pendingState       = state;
+            p->m_pendingRestoreSort = restoreSort;
             return;
         }
 
@@ -679,7 +689,12 @@ void AutoHeaderView::restoreHeaderState(const QByteArray& state)
         qCDebug(AUTO_HEADER) << "Header state empty";
     }
 
-    setSortIndicator(sortSection, sortOrder);
+    if(restoreSort) {
+        setSortIndicator(sortSection, sortOrder);
+    }
+    else {
+        setSortIndicator(currentSortSection, currentSortOrder);
+    }
 
     const int sectionCount = count();
     if(sectionCount > 0) {
@@ -695,6 +710,7 @@ void AutoHeaderView::restoreHeaderState(const QByteArray& state)
 
     p->m_pendingColumns = 0;
     p->m_pendingState.clear();
+    p->m_pendingRestoreSort = true;
 
     Q_EMIT stateRestored();
 }

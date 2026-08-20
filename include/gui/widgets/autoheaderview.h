@@ -62,6 +62,7 @@ public:
 
     [[nodiscard]] QByteArray saveHeaderState() const;
     void restoreHeaderState(const QByteArray& data);
+    void restoreHeaderState(const QByteArray& data, bool restoreSort);
 
 Q_SIGNALS:
     void stretchChanged(bool enabled);
