@@ -44,6 +44,12 @@ struct ColumnData
     std::vector<RichText> richColumns;
 };
 
+struct CachedColumnData
+{
+    ColumnData columns;
+    RowKey key;
+};
+
 RichText placeholderRichText()
 {
     RichText richText;
@@ -142,7 +148,7 @@ FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumn
     scriptContext.environment = &scriptEnvironment;
 
     std::map<RowKey, FilterRow> items;
-    std::unordered_map<QString, ColumnData> columnDataCache;
+    std::unordered_map<QString, CachedColumnData> columnDataCache;
 
     const ParsedScript sortScript = hasCustomSortField
                                       ? parser.parse(sortFields.join(QLatin1StringView{Constants::RecordSeparator}))
@@ -166,11 +172,13 @@ FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumn
             const QString cacheKey             = rowColumnValues.join(QLatin1StringView{Constants::RecordSeparator});
             auto [columnDataIt, cacheInserted] = columnDataCache.try_emplace(cacheKey);
             if(cacheInserted) {
-                columnDataIt->second = buildColumnData(rowColumnValues, formatter);
+                columnDataIt->second.columns = buildColumnData(rowColumnValues, formatter);
+                columnDataIt->second.key
+                    = Utils::generateMd5Hash(columnDataIt->second.columns.plainColumns.join(QString{}));
             }
 
-            const ColumnData& columnData = columnDataIt->second;
-            const RowKey key             = Utils::generateMd5Hash(columnData.plainColumns.join(QString{}));
+            const ColumnData& columnData = columnDataIt->second.columns;
+            const RowKey& key            = columnDataIt->second.key;
 
             auto [it, inserted] = items.try_emplace(key);
             FilterRow& row      = it->second;

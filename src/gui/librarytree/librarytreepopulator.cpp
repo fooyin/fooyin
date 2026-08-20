@@ -61,6 +61,7 @@ public:
 
     LibraryTreeItem* getOrInsertItem(const Md5Hash& key, const LibraryTreeItem* parent, const QString& title,
                                      const RichText& richTitle, const QString& sortTitle, int level);
+    Md5Hash nodeKey(const Md5Hash& parentKey, const QString& title);
     void updateRichTitle(LibraryTreeItem& item);
     PendingTreeData buildBatchData();
     void clearBatchData();
@@ -86,6 +87,7 @@ public:
     std::unordered_set<Md5Hash> m_touchedItems;
     std::unordered_set<Md5Hash> m_emittedItems;
     std::unordered_map<Md5Hash, std::unordered_set<Md5Hash>> m_childKeys;
+    std::unordered_map<Md5Hash, std::unordered_map<QString, Md5Hash>> m_nodeKeyCache;
     TrackList m_pendingTracks;
     size_t m_pendingTrackIndex{0};
 };
@@ -113,6 +115,16 @@ LibraryTreeItem* LibraryTreePopulatorPrivate::getOrInsertItem(const Md5Hash& key
         m_data.nodes[parent->key()].push_back(key);
     }
     return child;
+}
+
+Md5Hash LibraryTreePopulatorPrivate::nodeKey(const Md5Hash& parentKey, const QString& title)
+{
+    auto& childKeys      = m_nodeKeyCache[parentKey];
+    auto [key, inserted] = childKeys.try_emplace(title);
+    if(inserted) {
+        key->second = Utils::generateMd5Hash(parentKey, title);
+    }
+    return key->second;
 }
 
 void LibraryTreePopulatorPrivate::updateRichTitle(LibraryTreeItem& item)
@@ -188,7 +200,7 @@ void LibraryTreePopulatorPrivate::iterateTrack(const Track& track)
             const RichText richTitle   = trimRichText(m_formatter.evaluate(identityItem));
             QString title              = identityText(richTitle);
 
-            const auto key          = Utils::generateMd5Hash(parent->key(), title);
+            const auto key          = nodeKey(parent->key(), title);
             const QString sortTitle = [&] {
                 if(!pairSortItems) {
                     return title;
@@ -274,6 +286,7 @@ void LibraryTreePopulator::run(const LibraryTreeGrouping& grouping, const TrackL
     p->m_touchedItems.clear();
     p->m_emittedItems.clear();
     p->m_childKeys.clear();
+    p->m_nodeKeyCache.clear();
 
     p->m_scriptEnvironment.setRatingStarSymbols(Gui::ratingStarSymbols(*p->m_settings));
     p->m_scriptEnvironment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, true, useVarious);
