@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "gui/trackselectioncontroller.h"
+
 #include <core/player/playbackqueue.h>
 #include <core/player/playerdefs.h>
 #include <gui/fywidget.h>
@@ -84,19 +86,22 @@ public:
 
     struct ConfigData
     {
-        int doubleClickAction{0};
-        int middleClickAction{0};
+        int doubleClickAction{static_cast<int>(TrackAction::Play)};
+        int middleClickAction{static_cast<int>(TrackAction::None)};
         bool sendPlayback{true};
         bool showIcons{true};
         bool indentList{true};
         bool showHeader{true};
+        bool restoreSort{false};
         Mode mode{Mode::List};
         ControlsPosition controlsPosition{ControlsPosition::Top};
         bool showControls{true};
         bool showLocation{true};
         bool showSymLinks{false};
         bool showHidden{false};
-        QString rootPath;
+        QString rootPath{
+            QDir::homePath(),
+        };
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;

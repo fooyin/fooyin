@@ -43,6 +43,7 @@ public:
     [[nodiscard]] QByteArray saveHeaderState() const;
     void restoreHeaderState(const QByteArray& state);
     void preserveHeaderState();
+    void setRestoreSortEnabled(bool enabled);
 
 Q_SIGNALS:
     void backClicked();
@@ -62,5 +63,6 @@ private:
 
     AutoHeaderView* m_header;
     QByteArray m_pendingHeaderState;
+    bool m_restoreSort;
 };
 } // namespace Fooyin

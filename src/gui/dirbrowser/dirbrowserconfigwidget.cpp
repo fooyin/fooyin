@@ -39,6 +39,7 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
     , m_showIcons{new QCheckBox(tr("Show icons"), this)}
     , m_indentList{new QCheckBox(tr("Show indent"), this)}
     , m_showHeader{new QCheckBox(tr("Show header"), this)}
+    , m_restoreSort{new QCheckBox(tr("Remember sort column"), this)}
     , m_controlsPosition{new QComboBox(this)}
     , m_showControls{new QCheckBox(tr("Show controls"), this)}
     , m_showLocation{new QCheckBox(tr("Show location"), this)}
@@ -50,6 +51,7 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
 {
     m_playbackOnSend->setToolTip(
         tr("For \"Replace current playlist\" and \"Create new playlist\", start playback immediately."));
+    m_restoreSort->setToolTip(tr("Restore the sort column on startup and when changing directories."));
 
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
@@ -84,6 +86,7 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
     displayOptionsLayout->addWidget(m_showLocation, 2, 0, 1, 2);
     displayOptionsLayout->addWidget(new QLabel(tr("Path and controls position") + u":"_s, this), 2, 2);
     displayOptionsLayout->addWidget(m_controlsPosition, 2, 3);
+    displayOptionsLayout->addWidget(m_restoreSort, 3, 0, 1, 4);
     displayOptionsLayout->setColumnStretch(1, 1);
     displayOptionsLayout->setColumnStretch(3, 1);
 
@@ -120,6 +123,7 @@ DirBrowser::ConfigData DirBrowserConfigDialog::config() const
         .showIcons         = m_showIcons->isChecked(),
         .indentList        = m_indentList->isChecked(),
         .showHeader        = m_showHeader->isChecked(),
+        .restoreSort       = m_restoreSort->isChecked(),
         .mode              = m_listMode->isChecked() ? DirBrowser::Mode::List : DirBrowser::Mode::Tree,
         .controlsPosition  = static_cast<DirBrowser::ControlsPosition>(m_controlsPosition->currentData().toInt()),
         .showControls      = m_showControls->isChecked(),
@@ -135,6 +139,7 @@ void DirBrowserConfigDialog::setConfig(const DirBrowser::ConfigData& config)
     m_showIcons->setChecked(config.showIcons);
     m_indentList->setChecked(config.indentList);
     m_showHeader->setChecked(config.showHeader);
+    m_restoreSort->setChecked(config.restoreSort);
     m_controlsPosition->setCurrentIndex(m_controlsPosition->findData(static_cast<int>(config.controlsPosition)));
     m_showControls->setChecked(config.showControls);
     m_showLocation->setChecked(config.showLocation);
@@ -159,8 +164,9 @@ void DirBrowserConfigDialog::mergeExternalConfig(const DirBrowser::ConfigData& p
     mergeExternalFields(
         previous, current, &DirBrowser::ConfigData::doubleClickAction, &DirBrowser::ConfigData::middleClickAction,
         &DirBrowser::ConfigData::sendPlayback, &DirBrowser::ConfigData::showIcons, &DirBrowser::ConfigData::indentList,
-        &DirBrowser::ConfigData::showHeader, &DirBrowser::ConfigData::mode, &DirBrowser::ConfigData::controlsPosition,
-        &DirBrowser::ConfigData::showControls, &DirBrowser::ConfigData::showLocation,
-        &DirBrowser::ConfigData::showSymLinks, &DirBrowser::ConfigData::showHidden, &DirBrowser::ConfigData::rootPath);
+        &DirBrowser::ConfigData::showHeader, &DirBrowser::ConfigData::restoreSort, &DirBrowser::ConfigData::mode,
+        &DirBrowser::ConfigData::controlsPosition, &DirBrowser::ConfigData::showControls,
+        &DirBrowser::ConfigData::showLocation, &DirBrowser::ConfigData::showSymLinks,
+        &DirBrowser::ConfigData::showHidden, &DirBrowser::ConfigData::rootPath);
 }
 } // namespace Fooyin

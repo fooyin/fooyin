@@ -33,6 +33,7 @@ namespace Fooyin {
 DirTree::DirTree(QWidget* parent)
     : QTreeView{parent}
     , m_header{new AutoHeaderView(Qt::Horizontal, this)}
+    , m_restoreSort{false}
 {
     setHeader(m_header);
     setUniformRowHeights(true);
@@ -124,7 +125,7 @@ void DirTree::restoreHeaderState(const QByteArray& state)
 {
     // Restored layout state supersedes state captured for a model reset
     m_pendingHeaderState.clear();
-    m_header->restoreHeaderState(state);
+    m_header->restoreHeaderState(state, m_restoreSort);
 }
 
 void DirTree::preserveHeaderState()
@@ -134,11 +135,16 @@ void DirTree::preserveHeaderState()
     }
 }
 
+void DirTree::setRestoreSortEnabled(bool enabled)
+{
+    m_restoreSort = enabled;
+}
+
 void DirTree::restoreHeaderAfterModelReset()
 {
     if(!m_pendingHeaderState.isEmpty()) {
         const QByteArray state = std::exchange(m_pendingHeaderState, {});
-        m_header->restoreHeaderState(state);
+        restoreHeaderState(state);
     }
 }
 

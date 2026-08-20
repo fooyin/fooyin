@@ -80,6 +80,7 @@ constexpr auto DirBrowserShowSymLinksKey = u"DirectoryBrowser/SymLinks";
 constexpr auto DirBrowserShowHiddenKey   = u"DirectoryBrowser/Hidden";
 constexpr auto DirBrowserSendPlaybackKey = u"DirectoryBrowser/StartPlaybackOnSend";
 constexpr auto DirBrowserShowHeaderKey   = u"DirectoryBrowser/ShowHeader";
+constexpr auto DirBrowserRestoreSortKey  = u"DirectoryBrowser/RestoreSort";
 
 namespace {
 class DirChange : public QUndoCommand
@@ -423,21 +424,7 @@ void DirBrowser::updateDir(const QString& dir)
 
 DirBrowser::ConfigData DirBrowser::factoryConfig() const
 {
-    return {
-        .doubleClickAction = 5,
-        .middleClickAction = 0,
-        .sendPlayback      = true,
-        .showIcons         = true,
-        .indentList        = true,
-        .showHeader        = true,
-        .mode              = Mode::List,
-        .controlsPosition  = ControlsPosition::Top,
-        .showControls      = true,
-        .showLocation      = true,
-        .showSymLinks      = false,
-        .showHidden        = false,
-        .rootPath          = QDir::homePath(),
-    };
+    return {};
 }
 
 DirBrowser::ConfigData DirBrowser::defaultConfig() const
@@ -450,6 +437,7 @@ DirBrowser::ConfigData DirBrowser::defaultConfig() const
     config.showIcons         = m_settings->fileValue(DirBrowserIconsKey, config.showIcons).toBool();
     config.indentList        = m_settings->fileValue(DirBrowserListIndentKey, config.indentList).toBool();
     config.showHeader        = m_settings->fileValue(DirBrowserShowHeaderKey, config.showHeader).toBool();
+    config.restoreSort       = m_settings->fileValue(DirBrowserRestoreSortKey, config.restoreSort).toBool();
     config.mode = static_cast<Mode>(m_settings->fileValue(DirBrowserModeKey, static_cast<int>(config.mode)).toInt());
     config.controlsPosition = static_cast<ControlsPosition>(
         m_settings->fileValue(DirBrowserControlsPosKey, static_cast<int>(config.controlsPosition)).toInt());
@@ -474,6 +462,7 @@ void DirBrowser::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(DirBrowserIconsKey, config.showIcons);
     m_settings->fileSet(DirBrowserListIndentKey, config.indentList);
     m_settings->fileSet(DirBrowserShowHeaderKey, config.showHeader);
+    m_settings->fileSet(DirBrowserRestoreSortKey, config.restoreSort);
     m_settings->fileSet(DirBrowserModeKey, static_cast<int>(config.mode));
     m_settings->fileSet(DirBrowserControlsPosKey, static_cast<int>(config.controlsPosition));
     m_settings->fileSet(DirBrowserControlsKey, config.showControls);
@@ -490,6 +479,7 @@ void DirBrowser::clearSavedDefaults() const
     m_settings->fileRemove(DirBrowserIconsKey);
     m_settings->fileRemove(DirBrowserListIndentKey);
     m_settings->fileRemove(DirBrowserShowHeaderKey);
+    m_settings->fileRemove(DirBrowserRestoreSortKey);
     m_settings->fileRemove(DirBrowserModeKey);
     m_settings->fileRemove(DirBrowserControlsPosKey);
     m_settings->fileRemove(DirBrowserControlsKey);
@@ -508,6 +498,7 @@ void DirBrowser::applyConfig(const ConfigData& config)
     setShowIconsEnabled(m_config.showIcons);
     setListIndentEnabled(m_config.indentList);
     m_dirTree->setShowHeader(m_config.showHeader);
+    m_dirTree->setRestoreSortEnabled(m_config.restoreSort);
     changeMode(m_config.mode);
     setControlsPosition(m_config.controlsPosition);
     setControlsEnabled(m_config.showControls);
@@ -1187,6 +1178,7 @@ void DirBrowser::saveConfigToLayout(const ConfigData& config, QJsonObject& layou
     layout["ShowIcons"_L1]         = config.showIcons;
     layout["IndentList"_L1]        = config.indentList;
     layout["ShowHeader"_L1]        = config.showHeader;
+    layout["RestoreSort"_L1]       = config.restoreSort;
     layout["Mode"_L1]              = static_cast<int>(config.mode);
     layout["ControlsPosition"_L1]  = static_cast<int>(config.controlsPosition);
     layout["ShowControls"_L1]      = config.showControls;
@@ -1217,6 +1209,9 @@ DirBrowser::ConfigData DirBrowser::configFromLayout(const QJsonObject& layout) c
     }
     if(layout.contains("ShowHeader"_L1)) {
         config.showHeader = layout.value("ShowHeader"_L1).toBool();
+    }
+    if(layout.contains("RestoreSort"_L1)) {
+        config.restoreSort = layout.value("RestoreSort"_L1).toBool();
     }
     if(layout.contains("Mode"_L1)) {
         const int mode = layout.value("Mode"_L1).toInt();
