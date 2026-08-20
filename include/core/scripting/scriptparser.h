@@ -25,6 +25,7 @@
 #include "scripttypes.h"
 
 #include <core/playlist/playlist.h>
+#include <core/scripting/scriptproviders.h>
 
 #include <cstdint>
 
@@ -88,6 +89,19 @@ public:
      * Installs all functions exported by `provider`.
      */
     void addProvider(const ScriptFunctionProvider& provider);
+
+    /*!
+     * Installs variables exported by `provider` into the shared global registry during startup.
+     */
+    static void addGlobalProvider(const ScriptVariableProvider& provider);
+    /*!
+     * Finalises global provider registration. Providers cannot be added after this call.
+     */
+    static void finaliseGlobalProviderRegistration();
+    /*!
+     * Returns globally registered provider-defined variable descriptors.
+     */
+    [[nodiscard]] static std::vector<ScriptVariableDescriptor> globalVariables();
 
     ParsedScript parse(const QString& input);
     ParsedScript parseQuery(const QString& input);

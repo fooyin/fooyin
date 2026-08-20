@@ -39,9 +39,33 @@
 #include <QDir>
 #include <QRegularExpression>
 
+#include <algorithm>
+#include <mutex>
+
 using namespace Qt::StringLiterals;
 
 namespace {
+struct GlobalVariableState
+{
+    std::mutex registrationMutex;
+    std::unordered_map<QString, Fooyin::VariableKind> customVariableKinds;
+    std::unordered_map<QString, Fooyin::ScriptRegistry::VariableInvoker> genericVariableInvokers;
+    std::unordered_map<Fooyin::VariableKind, Fooyin::ScriptRegistry::VariableInvoker> customVariables;
+    std::vector<Fooyin::ScriptVariableDescriptor> descriptors;
+    bool registrationFinalised{false};
+};
+
+GlobalVariableState& globalVariableState()
+{
+    static GlobalVariableState state;
+    return state;
+}
+
+QString normalisedVariableName(const QString& name)
+{
+    return name.toUpper();
+}
+
 Fooyin::RatingStarSymbols ratingStarSymbols(const Fooyin::ScriptContext& context)
 {
     const auto* environment = context.environment ? context.environment->evaluationEnvironment() : nullptr;
@@ -820,6 +844,11 @@ VariableKind ScriptRegistry::resolveVariableInternal(const QString& var) const
         return it->second;
     }
 
+    const auto& state = globalVariableState();
+    if(const auto it = state.customVariableKinds.find(var); it != state.customVariableKinds.cend()) {
+        return it->second;
+    }
+
     return resolveBuiltInVariableKind(var);
 }
 
@@ -884,10 +913,20 @@ const ScriptRegistry::VariableInvoker* ScriptRegistry::customVariableInvoker(con
         if(const auto it = m_genericVariableInvokers.find(var); it != m_genericVariableInvokers.cend()) {
             return &it->second;
         }
+
+        const auto& state = globalVariableState();
+        if(const auto it = state.genericVariableInvokers.find(var); it != state.genericVariableInvokers.cend()) {
+            return &it->second;
+        }
         return nullptr;
     }
 
     if(const auto it = m_customVariables.find(kind); it != m_customVariables.cend()) {
+        return &it->second;
+    }
+
+    const auto& state = globalVariableState();
+    if(const auto it = state.customVariables.find(kind); it != state.customVariables.cend()) {
         return &it->second;
     }
 
@@ -1025,6 +1064,55 @@ ScriptRegistry::ScriptRegistry()
 
 ScriptRegistry::~ScriptRegistry() = default;
 
+void ScriptRegistry::addGlobalProvider(const ScriptVariableProvider& provider)
+{
+    auto& state = globalVariableState();
+    const std::lock_guard lock{state.registrationMutex};
+
+    Q_ASSERT_X(!state.registrationFinalised, "ScriptRegistry::addGlobalProvider",
+               "Global script variable providers must be registered during startup");
+    if(state.registrationFinalised) {
+        return;
+    }
+
+    for(auto variable : provider.variables()) {
+        variable.name = normalisedVariableName(variable.name);
+
+        state.customVariableKinds[variable.name] = variable.kind;
+        if(variable.kind == VariableKind::Generic) {
+            state.genericVariableInvokers[variable.name] = variable.invoker;
+        }
+        else {
+            state.customVariables[variable.kind] = variable.invoker;
+        }
+
+        const auto it
+            = std::ranges::find_if(state.descriptors, [&variable](const ScriptVariableDescriptor& descriptor) {
+                  return descriptor.name == variable.name;
+              });
+        if(it != state.descriptors.end()) {
+            *it = std::move(variable);
+        }
+        else {
+            state.descriptors.push_back(std::move(variable));
+        }
+    }
+}
+
+void ScriptRegistry::finaliseGlobalProviderRegistration()
+{
+    auto& state = globalVariableState();
+    const std::lock_guard lock{state.registrationMutex};
+    state.registrationFinalised = true;
+}
+
+std::vector<ScriptVariableDescriptor> ScriptRegistry::globalVariables()
+{
+    auto& state = globalVariableState();
+    const std::lock_guard lock{state.registrationMutex};
+    return state.descriptors;
+}
+
 void ScriptRegistry::addProvider(const ScriptVariableProvider& provider)
 {
     for(const auto& variable : provider.variables()) {
@@ -1055,11 +1143,17 @@ ScriptFunctionId ScriptRegistry::resolveFunctionId(const QString& func) const
 
 bool ScriptRegistry::isVariable(const QString& var, const Track& track) const
 {
-    if(resolveBuiltInVariableKind(var) != VariableKind::Generic) {
+    const QString normalisedVar = normalisedVariableName(var);
+
+    if(resolveVariableInternal(normalisedVar) != VariableKind::Generic) {
         return true;
     }
 
-    return track.hasExtraTag(var);
+    if(customVariableInvoker(VariableKind::Generic, normalisedVar) != nullptr) {
+        return true;
+    }
+
+    return track.hasExtraTag(normalisedVar);
 }
 
 bool ScriptRegistry::isVariable(const QString& var, const TrackList& tracks) const
@@ -1153,7 +1247,7 @@ void ScriptRegistry::setContext(const ScriptContext& context)
 
 void ScriptRegistry::registerVariable(VariableKind kind, const QString& name, VariableInvoker invoker)
 {
-    const QString upperName = name.toUpper();
+    const QString upperName = normalisedVariableName(name);
 
     m_customVariableKinds[upperName] = kind;
 

@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2026, Luke Taylor <luket@pm.me>
+ * Copyright © 2026, Piotr Wicijowski <piotr@wicijowski.pl>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,29 +19,18 @@
 
 #pragma once
 
-#include <QString>
+#include <utils/id.h>
 
-#include <cstdint>
-#include <vector>
+#include <span>
 
 namespace Fooyin {
-enum class ScriptReferenceKind : uint8_t
+/*! Refreshes playlist row rendering for plugin-owned transient state. */
+class PlaylistViewRefresher
 {
-    Variable = 0,
-    Function,
-    Formatting,
-    CommandAlias,
-};
+public:
+    virtual ~PlaylistViewRefresher() = default;
 
-struct ScriptReferenceEntry
-{
-    ScriptReferenceKind kind{ScriptReferenceKind::Variable};
-    QString label;
-    QString insertText;
-    QString category;
-    QString description;
-    int cursorOffset{0};
+    virtual void refreshPlaylist(const UId& playlistId)                               = 0;
+    virtual void refreshEntries(const UId& playlistId, std::span<const UId> entryIds) = 0;
 };
-
-std::vector<ScriptReferenceEntry> scriptReferenceEntries();
 } // namespace Fooyin

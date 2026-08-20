@@ -90,6 +90,7 @@ fooyin_add_test(test_guiutils gui/guiutilstest.cpp)
 fooyin_add_test(test_fythemefile gui/fythemefiletest.cpp)
 fooyin_add_test(test_fysplitter gui/fysplittertest.cpp)
 fooyin_add_test(test_scriptformatter gui/scriptformattertest.cpp)
+fooyin_add_test(test_scriptreferenceentries gui/scriptreferenceentriestest.cpp)
 
 fooyin_add_test(test_helpers utils/helperstest.cpp)
 

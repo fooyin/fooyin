@@ -29,9 +29,11 @@ class CurrentPlaylistController;
 class EditableLayout;
 class GuiStyleProvider;
 class LayoutProvider;
+class PlaylistViewRefresher;
 class PropertiesDialog;
 class SearchController;
 class ScriptCommandHandler;
+class ScriptVariableRegistry;
 class ThemeRegistry;
 class TrackSelectionController;
 class WidgetProvider;
@@ -44,8 +46,9 @@ struct FYGUI_EXPORT GuiPluginContext
 {
     GuiPluginContext(ActionManager* actionManager_, LayoutProvider* layoutProvider_,
                      TrackSelectionController* trackSelection_, SearchController* searchController_,
-                     CurrentPlaylistController* playlistSelection_, PropertiesDialog* propertiesDialog_,
-                     ScriptCommandHandler* scriptCommandHandler_, WidgetProvider* widgetProvider_,
+                     CurrentPlaylistController* playlistSelection_, PlaylistViewRefresher* playlistViewRefresher_,
+                     PropertiesDialog* propertiesDialog_, ScriptCommandHandler* scriptCommandHandler_,
+                     ScriptVariableRegistry* scriptVariableRegistry_, WidgetProvider* widgetProvider_,
                      EditableLayout* editableLayout_, WindowController* windowController_,
                      ThemeRegistry* themeRegistry_, GuiStyleProvider* styleProvider_,
                      AdvancedSettingsRegistry* advancedSettingsRegistry_, CoverRepository* coverRepository_)
@@ -54,8 +57,10 @@ struct FYGUI_EXPORT GuiPluginContext
         , trackSelection{trackSelection_}
         , searchController{searchController_}
         , playlistSelection{playlistSelection_}
+        , playlistViewRefresher{playlistViewRefresher_}
         , propertiesDialog{propertiesDialog_}
         , scriptCommandHandler{scriptCommandHandler_}
+        , scriptVariableRegistry{scriptVariableRegistry_}
         , widgetProvider{widgetProvider_}
         , editableLayout{editableLayout_}
         , windowController{windowController_}
@@ -70,8 +75,10 @@ struct FYGUI_EXPORT GuiPluginContext
     TrackSelectionController* trackSelection;
     SearchController* searchController;
     CurrentPlaylistController* playlistSelection;
+    PlaylistViewRefresher* playlistViewRefresher;
     PropertiesDialog* propertiesDialog;
     ScriptCommandHandler* scriptCommandHandler;
+    ScriptVariableRegistry* scriptVariableRegistry;
     WidgetProvider* widgetProvider;
     EditableLayout* editableLayout;
     WindowController* windowController;

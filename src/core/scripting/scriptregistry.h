@@ -40,6 +40,10 @@ public:
     ScriptRegistry();
     ~ScriptRegistry();
 
+    static void addGlobalProvider(const ScriptVariableProvider& provider);
+    static void finaliseGlobalProviderRegistration();
+    [[nodiscard]] static std::vector<ScriptVariableDescriptor> globalVariables();
+
     void addProvider(const ScriptVariableProvider& provider);
     void addProvider(const ScriptFunctionProvider& provider);
 
