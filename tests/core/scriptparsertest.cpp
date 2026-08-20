@@ -917,6 +917,25 @@ TEST_F(ScriptParserTest, ContextPlaybackEnvironmentProvidesPlaybackVariables)
     EXPECT_EQ(u"320", parser.evaluate(u"%bitrate%"_s, track, context));
 }
 
+TEST_F(ScriptParserTest, PlaybackTimeRemainingFollowsElapsedSecondBoundaries)
+{
+    ScriptParser parser;
+
+    TestPlaylistEnvironment environment;
+    ScriptContext context;
+    context.environment = &environment;
+
+    const Track track;
+
+    environment.setPlaybackState(1005, 254013, 320, Player::PlayState::Playing);
+    EXPECT_EQ(u"04:13", parser.evaluate(u"%playback_time_remaining%"_s, track, context));
+    EXPECT_EQ(u"253", parser.evaluate(u"%playback_time_remaining_s%"_s, track, context));
+
+    environment.setPlaybackState(2015, 254013, 320, Player::PlayState::Playing);
+    EXPECT_EQ(u"04:12", parser.evaluate(u"%playback_time_remaining%"_s, track, context));
+    EXPECT_EQ(u"252", parser.evaluate(u"%playback_time_remaining_s%"_s, track, context));
+}
+
 TEST_F(ScriptParserTest, ContextLibraryEnvironmentProvidesLibraryVariables)
 {
     ScriptParser parser;

@@ -42,6 +42,11 @@
 using namespace Qt::StringLiterals;
 
 namespace {
+uint64_t remainingPlaybackSeconds(uint64_t duration, uint64_t position)
+{
+    return (duration / 1000) - (position / 1000);
+}
+
 Fooyin::RatingStarSymbols ratingStarSymbols(const Fooyin::ScriptContext& context)
 {
     const auto* environment = context.environment ? context.environment->evaluationEnvironment() : nullptr;
@@ -591,7 +596,9 @@ QString ScriptRegistry::playbackTimeRemaining() const
            || environment->currentPosition() >= environment->currentTrackDuration()) {
             return {};
         }
-        return Utils::msToString(environment->currentTrackDuration() - environment->currentPosition());
+        const auto remaining
+            = remainingPlaybackSeconds(environment->currentTrackDuration(), environment->currentPosition());
+        return Utils::msToString(remaining * 1000);
     }
     return {};
 }
@@ -606,7 +613,8 @@ QString ScriptRegistry::playbackTimeRemainingSeconds() const
            || environment->currentPosition() >= environment->currentTrackDuration()) {
             return {};
         }
-        return QString::number((environment->currentTrackDuration() - environment->currentPosition()) / 1000);
+        return QString::number(
+            remainingPlaybackSeconds(environment->currentTrackDuration(), environment->currentPosition()));
     }
     return {};
 }
