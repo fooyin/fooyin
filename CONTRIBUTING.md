@@ -76,9 +76,11 @@ Fixes #123
 
 We do not accept contributions for which generative AI was used at any stage of the development process. Please do not contribute code, documentation, tests, images, or other project material created or modified with large language models, image diffusion models, or similar tools.
 
+This policy applies to contributions to this repository and other repositories under the [fooyin](https://github.com/fooyin) organisation. It does not apply to independently developed third-party plugins.
+
 Once a contribution is merged, its long-term maintenance becomes the responsibility of the maintainer and other core contributors, which is why contributors must understand and take ownership of every part of their submission.
 
-This policy operates on trust. We may ask whether generative AI tools were used when reviewing a contribution, and pull requests that involve their use will not be accepted.
+We rely on contributors to follow this policy in good faith. We may ask whether generative AI tools were used when reviewing a contribution, and pull requests that involve their use will not be accepted.
 
 ## Issues and Other Contributions
 
