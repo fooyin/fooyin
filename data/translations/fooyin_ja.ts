@@ -1588,16 +1588,20 @@
         <source>No embedded artwork found to export</source>
         <translation>エクスポートする埋め込みアートワークが見つかりません</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="328"/>
         <source>Exported artwork to %Ln file(s)</source>
-        <translation>%Ln 個のファイルにアートワークをエクスポートしました
+        <translation type="unfinished">
+            <numerusform>%Ln 個のファイルにアートワークをエクスポートしました
+        </numerusform>
         </translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="336"/>
         <source>Exported artwork to %Ln file(s); some exports failed</source>
-        <translation>%Ln 個のファイルにアートワークをエクスポートしました(一部失敗)
+        <translation type="unfinished">
+            <numerusform>%Ln 個のファイルにアートワークをエクスポートしました(一部失敗)
+        </numerusform>
         </translation>
     </message>
     <message>
@@ -1656,16 +1660,20 @@
         <source>Multiple images</source>
         <translation>複数の画像</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="197"/>
         <source>Artwork found in %Ln file(s)</source>
-        <translation>%Ln 個のファイルにアートワークが見つかりました
+        <translation type="unfinished">
+            <numerusform>%Ln 個のファイルにアートワークが見つかりました
+        </numerusform>
         </translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="198"/>
         <source>%Ln file(s) selected</source>
-        <translation>%Ln 個のファイルを選択中
+        <translation type="unfinished">
+            <numerusform>%Ln 個のファイルを選択中
+        </numerusform>
         </translation>
     </message>
     <message>
@@ -1882,37 +1890,37 @@
 <context>
     <name>Fooyin::AutoHeaderView</name>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="513"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="514"/>
         <source>Auto-size sections</source>
         <translation>自動サイズセクション</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="521"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="522"/>
         <source>Show hidden</source>
         <translation>再表示</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="530"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="531"/>
         <source>Hide %1</source>
         <translation>隠す %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="554"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="555"/>
         <source>Alignment</source>
         <translation>配置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="564"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="565"/>
         <source>&amp;Left</source>
         <translation>左寄せ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="565"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="566"/>
         <source>&amp;Centre</source>
         <translation>中央(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="566"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="567"/>
         <source>&amp;Right</source>
         <translation>右寄せ(&amp;R)</translation>
     </message>
@@ -2261,59 +2269,67 @@ When disabled, existing track order is preserved and only newly added matching t
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="64"/>
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="190"/>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="198"/>
         <source>Audio Conversion</source>
         <translation>オーディオ変換</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="99"/>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="100"/>
         <source>Current file</source>
         <translation>現在のファイル</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="121"/>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="124"/>
         <source>File already exists</source>
         <translation>ファイルは既に存在します</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="122"/>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="125"/>
         <source>The file already exists:
 %1</source>
         <translation>ファイルは既に存在します :
 %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="125"/>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="129"/>
         <source>Overwrite</source>
         <translation>上書き</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="126"/>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="130"/>
         <source>Skip</source>
         <translation>スキップ</translation>
     </message>
-    <message>
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="185"/>
+    <message numerus="yes">
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="193"/>
         <source>Converted: %Ln track(s)</source>
-        <translation>変換済み : %Ln 個のトラック
+        <translation type="unfinished">
+            <numerusform>変換済み : %Ln 個のトラック
+        </numerusform>
         </translation>
     </message>
-    <message>
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="186"/>
+    <message numerus="yes">
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="194"/>
         <source>Skipped: %Ln track(s)</source>
-        <translation>スキップ : %Ln 個のトラック
+        <translation type="unfinished">
+            <numerusform>スキップ : %Ln 個のトラック
+        </numerusform>
         </translation>
     </message>
-    <message>
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="187"/>
+    <message numerus="yes">
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="195"/>
         <source>Failed: %Ln track(s)</source>
-        <translation>失敗 : %Ln 個のトラック
+        <translation type="unfinished">
+            <numerusform>失敗 : %Ln 個のトラック
+        </numerusform>
         </translation>
     </message>
-    <message>
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="188"/>
+    <message numerus="yes">
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="196"/>
         <source>Cancelled: %Ln track(s)</source>
-        <translation>キャンセル : %Ln 個のトラック
+        <translation type="unfinished">
+            <numerusform>キャンセル : %Ln 個のトラック
+        </numerusform>
         </translation>
     </message>
 </context>
@@ -2811,10 +2827,12 @@ When disabled, existing track order is preserved and only newly added matching t
         <source>ReplayGain (album)</source>
         <translation>ReplayGain(アルバム)</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1211"/>
         <source>%Ln DSP(s)</source>
-        <translation>%Ln 個の DSP
+        <translation type="unfinished">
+            <numerusform>%Ln 個の DSP
+        </numerusform>
         </translation>
     </message>
     <message>
@@ -3134,154 +3152,159 @@ When disabled, existing track order is preserved and only newly added matching t
 <context>
     <name>Fooyin::DirBrowser</name>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="198"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="203"/>
         <source>&amp;Play</source>
         <translation>再生(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="199"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="204"/>
         <source>Add to &amp;current playlist</source>
         <translation>現在のプレイリストに追加(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="200"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="205"/>
         <source>Add to &amp;active playlist</source>
         <translation>アクティブなプレイリストに追加(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="203"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="208"/>
         <source>Add to playback &amp;queue</source>
         <translation>キューに追加(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="204"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="209"/>
         <source>Queue to play next</source>
         <translation>次の再生キューへ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="244"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="252"/>
         <source>Go up to the parent directory</source>
         <translation>親ディレクトリへ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="249"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="257"/>
         <source>Return to the previous directory</source>
         <translation>直前のディレクトリへ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="258"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="266"/>
         <source>Undo a Go-&gt;Back action</source>
         <translation>「戻る」の操作を取り消す</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="268"/>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="269"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="276"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="277"/>
         <source>Tracks</source>
         <translation>トラック</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="269"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="277"/>
         <source>Queue</source>
         <translation>キュー</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="274"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="282"/>
         <source>Append selected tracks to the current playlist</source>
         <translation>選択中トラックを現在のプレイリストに追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="281"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="289"/>
         <source>Append selected tracks to the active playlist</source>
         <translation>選択中トラックをアクティブなプレイリストに追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="288"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="296"/>
         <source>Replace contents of the current playlist with the selected tracks</source>
         <translation>現在のプレイリストを選択中のトラックに置換</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="295"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="303"/>
         <source>Create a new playlist containing the selected tracks</source>
         <translation>選択中のトラックを含む新たなプレイリストを作成</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="301"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="309"/>
         <source>Add the selected tracks to the playback queue</source>
         <translation>選択中のトラックを再生キューに追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="307"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="315"/>
         <source>Add the selected tracks to the front of the playback queue</source>
         <translation>選択中のトラックを再生キューの前面に追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="313"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="321"/>
         <source>Replace the playback queue with the selected tracks</source>
         <translation>再生キューを選択中のトラックに置換</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="595"/>
-        <source>View mode</source>
-        <translation>表示モード</translation>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="621"/>
+        <source>Display</source>
+        <translation type="unfinished">表示</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="598"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="624"/>
         <source>List</source>
         <translation>リストモード</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="607"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="633"/>
         <source>Tree</source>
         <translation>ツリーモード</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="741"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="646"/>
+        <source>Show header</source>
+        <translation type="unfinished">ヘッダーを表示</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="774"/>
         <source>Add to playlist</source>
         <translation>プレイリストに追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="195"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="200"/>
         <source>Go up</source>
         <translation>上へ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="196"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="201"/>
         <source>Go back</source>
         <translation>戻る</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="197"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="202"/>
         <source>Go forwards</source>
         <translation>次へ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="201"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="206"/>
         <source>&amp;Replace current playlist</source>
         <translation>現在のプレイリストを置き換える(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="202"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="207"/>
         <source>Create &amp;new playlist</source>
         <translation>新しいプレイリストを作成(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="205"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="210"/>
         <source>Replace playback q&amp;ueue</source>
         <translation>再生キューを置き換える(&amp;U)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="271"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="279"/>
         <source>Start playback of the selected files</source>
         <translation>選択中ファイルを再生開始</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="242"/>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="353"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="250"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="361"/>
         <source>Directory Browser</source>
         <translation>ディレクトリブラウザ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="587"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="613"/>
         <source>Set as root</source>
         <translation>ルートとして設定</translation>
     </message>
@@ -3315,83 +3338,126 @@ When disabled, existing track order is preserved and only newly added matching t
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="41"/>
-        <source>Show horizontal scrollbar</source>
-        <translation>水平バーを表示</translation>
+        <source>Show header</source>
+        <translation type="unfinished">ヘッダーを表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="42"/>
+        <source>Remember sort column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="44"/>
         <source>Show controls</source>
         <translation>コントロールを表示</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="43"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="45"/>
         <source>Show location</source>
         <translation>場所を表示</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="44"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="46"/>
         <source>Show symlinks</source>
         <translation>シンボリックリンクを表示</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="45"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="47"/>
         <source>Show hidden</source>
         <translation>再表示</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="48"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="50"/>
         <source>Start playback immediately</source>
         <translation>すぐに再生を開始</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="51"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="53"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
         <translation>「現在のプレイリストを置き換える」および「新しいプレイリストを作成」の実行時に、すぐに再生を開始。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="53"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="54"/>
+        <source>Restore the sort column on startup and when changing directories.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="56"/>
         <source>Click Behaviour</source>
         <translation>クリック時の動作</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="56"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="59"/>
         <source>Double-click</source>
         <translation>ダブルクリック</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="58"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="61"/>
         <source>Middle-click</source>
         <translation>中クリック</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="63"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="66"/>
         <source>Browser Mode</source>
         <translation>ブラウザモード</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="69"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="72"/>
         <source>Browser Filters</source>
         <translation>ブラウザフィルター</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="74"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="77"/>
+        <source>Top</source>
+        <translation type="unfinished">上</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="78"/>
+        <source>Bottom</source>
+        <translation type="unfinished">下</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="80"/>
         <source>Display Options</source>
         <translation>表示オプション</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="91"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="87"/>
+        <source>Path and controls position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="102"/>
         <source>Expand/collapse</source>
         <translation>展開/折りたたみ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="92"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="103"/>
         <source>Expand/collapse or play</source>
         <translation>展開/折りたたみまたは再生</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="95"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="106"/>
         <source>None</source>
         <translation>なし</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::DirTree</name>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="196"/>
+        <source>Columns</source>
+        <translation type="unfinished">カラム</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="207"/>
+        <source>Show header</source>
+        <translation type="unfinished">ヘッダーを表示</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="212"/>
+        <source>Auto-size sections</source>
+        <translation type="unfinished">自動サイズセクション</translation>
     </message>
 </context>
 <context>
@@ -3496,11 +3562,6 @@ When disabled, existing track order is preserved and only newly added matching t
 <context>
     <name>Fooyin::DspCompactLayoutWidget</name>
     <message>
-        <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="394"/>
-        <source>Restore Defaults</source>
-        <translation>初期値に戻す</translation>
-    </message>
-    <message>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="410"/>
         <source>Configure…</source>
         <translation>設定…</translation>
@@ -3522,6 +3583,14 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="46"/>
         <source>Configure</source>
         <translation>設定</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::DspLayoutEditor</name>
+    <message>
+        <location filename="../../src/gui/dsp/dsplayouteditor.cpp" line="42"/>
+        <source>Restore Defaults</source>
+        <translation type="unfinished">初期値に戻す</translation>
     </message>
 </context>
 <context>
@@ -3696,28 +3765,28 @@ Effects here process the final combined output.</source>
         <translation>トラックごと</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="405"/>
-        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="412"/>
+        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="407"/>
+        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="414"/>
         <source>DSP Settings</source>
         <translation>DSP の設定</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="405"/>
+        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="407"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
         <translation>DSP「%1」の設定を開けません。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="412"/>
+        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="414"/>
         <source>Unable to find DSP &quot;%1&quot;.</source>
         <translation>DSP「%1」が見つかりません。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="455"/>
+        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="457"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="456"/>
+        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="458"/>
         <source>%1: %2 (%3)</source>
         <translation>%1: %2 (%3)</translation>
     </message>
@@ -4160,15 +4229,93 @@ Effects here process the final combined output.</source>
     </message>
 </context>
 <context>
+    <name>Fooyin::Equaliser::EqualiserLayoutEditor</name>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="269"/>
+        <source>Enabled</source>
+        <translation type="unfinished">有効にする</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="270"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="436"/>
+        <source>Zero level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="271"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="449"/>
+        <source>Auto level</source>
+        <translation type="unfinished">自動レベル調整</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="273"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
+        <source>Save preset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="310"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="515"/>
+        <source> dB</source>
+        <translation type="unfinished"> dB</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="324"/>
+        <source>Preamp</source>
+        <translation type="unfinished">プリアンプ</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="441"/>
+        <source>Show controls</source>
+        <translation type="unfinished">コントロールを表示</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="453"/>
+        <source>Save preset…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="457"/>
+        <source>Presets</source>
+        <translation type="unfinished">プリセット</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="461"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="543"/>
+        <source>No presets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="546"/>
+        <source>Load preset…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
+        <source>Preset name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="583"/>
+        <source>Preset already exists</source>
+        <translation type="unfinished">既存のプリセットです</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="584"/>
+        <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
+        <translation type="unfinished">プリセット「%1」は既に存在します。上書きしますか?</translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::Equaliser::EqualiserSettingsProvider</name>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="903"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="908"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1137"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1142"/>
         <source>Equaliser</source>
         <translation>イコライザー</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="913"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1147"/>
         <source>Open Equaliser settings</source>
         <translation>イコライザーの設定を開く</translation>
     </message>
@@ -4176,142 +4323,147 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::Equaliser::EqualiserSettingsWidget</name>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="214"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="613"/>
         <source>Load</source>
         <translation>読み込み</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="215"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="614"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="216"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="615"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="217"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="616"/>
         <source>Import</source>
         <translation>インポート</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="218"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="617"/>
         <source>Export</source>
         <translation>エクスポート</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="227"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="626"/>
         <source>Equaliser Settings</source>
         <translation>イコライザーの設定</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="267"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="666"/>
         <source>Preamp</source>
         <translation>プリアンプ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="319"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="718"/>
         <source>Zero all</source>
         <translation>すべてゼロにする</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="320"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="719"/>
         <source>Auto level</source>
         <translation>自動レベル調整</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="321"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="720"/>
         <source>Band:</source>
         <translation>バンド:</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="322"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="721"/>
         <source>Presets:</source>
         <translation>プリセット :</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="334"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="804"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="733"/>
         <source> dB</source>
         <translation> dB</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="582"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="901"/>
         <source>Presets</source>
         <translation>プリセット</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="582"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="901"/>
         <source>Unable to load the selected preset.</source>
         <translation>選択したプリセットを読み込めません。</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="604"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="918"/>
         <source>Preset already exists</source>
         <translation>既存のプリセットです</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="605"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="919"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
         <translation>プリセット「%1」は既に存在します。上書きしますか?</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="650"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="658"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="680"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="692"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="955"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="963"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="985"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="997"/>
         <source>Import Equaliser Preset</source>
         <translation>イコライザープリセットをインポート</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="651"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="713"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="956"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1018"/>
         <source>Equaliser Preset (*.feq)</source>
         <translation>イコライザープリセット (*.feq)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="659"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="964"/>
         <source>Unable to open &quot;%1&quot; for reading.</source>
         <translation>「%1」を読み取り用に開けません。</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="681"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="986"/>
         <source>Invalid value on line %L1.</source>
         <translation>%L1 行目の値が無効です。</translation>
     </message>
-    <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="682"/>
+    <message numerus="yes">
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="987"/>
         <source>The first %Ln non-empty line(s) must contain integer values.</source>
-        <translation>最初の %Ln 行(空でない行)には整数値を含める必要があります。
+        <translation type="unfinished">
+            <numerusform>最初の %Ln 行(空でない行)には整数値を含める必要があります。
+        </numerusform>
         </translation>
     </message>
-    <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="693"/>
+    <message numerus="yes">
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="998"/>
         <source>The preset file contains %Ln band value(s).</source>
-        <translation>プリセットファイルには %Ln 個のバンド値が含まれています。
+        <translation type="unfinished">
+            <numerusform>プリセットファイルには %Ln 個のバンド値が含まれています。
+        </numerusform>
         </translation>
     </message>
-    <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="694"/>
+    <message numerus="yes">
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="999"/>
         <source>Expected %Ln band value(s).</source>
-        <translation>%Ln 個のバンド値が必要です。
+        <translation type="unfinished">
+            <numerusform>%Ln 個のバンド値が必要です。
+        </numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="713"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="738"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="750"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1018"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1043"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1055"/>
         <source>Export Equaliser Preset</source>
         <translation>イコライザープリセットをエクスポート</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="739"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1044"/>
         <source>Unable to open &quot;%1&quot; for writing.</source>
         <translation>「%1」を書き込み用に開けません。</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="751"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1056"/>
         <source>An error occurred while writing &quot;%1&quot;.</source>
         <translation>「%1」の書き込み中にエラーが発生しました。</translation>
     </message>
@@ -4678,16 +4830,20 @@ Effects here process the final combined output.</source>
         <source>Are you sure you want to delete &quot;%1&quot;?</source>
         <translation>「%1」を削除してもよろしいですか?</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="51"/>
         <source>Are you sure you want to permanently delete %Ln track(s)?</source>
-        <translation>%Ln 個のトラックを完全に削除してもよろしいですか?
+        <translation type="unfinished">
+            <numerusform>%Ln 個のトラックを完全に削除してもよろしいですか?
+        </numerusform>
         </translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="52"/>
         <source>Are you sure you want to delete %Ln track(s)?</source>
-        <translation>%Ln 個のトラックを削除してもよろしいですか?
+        <translation type="unfinished">
+            <numerusform>%Ln 個のトラックを削除してもよろしいですか?
+        </numerusform>
         </translation>
     </message>
     <message>
@@ -4763,53 +4919,69 @@ Effects here process the final combined output.</source>
         <source>Nothing to do</source>
         <translation>実行する操作はありません</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="497"/>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="513"/>
         <source>Pending operation(s): %Ln</source>
-        <translation>保留中の操作 : %Ln件
+        <translation type="unfinished">
+            <numerusform>保留中の操作 : %Ln件
+        </numerusform>
         </translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="530"/>
         <source>Aborted: %Ln operation(s) not run</source>
-        <translation>中止 : %Ln 件の操作が実行されませんでした
+        <translation type="unfinished">
+            <numerusform>中止 : %Ln 件の操作が実行されませんでした
+        </numerusform>
         </translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="536"/>
         <source>Completed %Ln operation(s)</source>
-        <translation>%Ln 件の操作が完了しました
+        <translation type="unfinished">
+            <numerusform>%Ln 件の操作が完了しました
+        </numerusform>
         </translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="543"/>
         <source>%Ln succeeded</source>
-        <translation>%Ln 件が成功
+        <translation type="unfinished">
+            <numerusform>%Ln 件が成功
+        </numerusform>
         </translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="546"/>
         <source>%Ln failed</source>
-        <translation>%Ln 件が失敗
+        <translation type="unfinished">
+            <numerusform>%Ln 件が失敗
+        </numerusform>
         </translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="549"/>
         <source>%Ln skipped</source>
-        <translation>%Ln 件がスキップ
+        <translation type="unfinished">
+            <numerusform>%Ln 件がスキップ
+        </numerusform>
         </translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="552"/>
         <source>%Ln cancelled</source>
-        <translation>%Ln 件がキャンセル
+        <translation type="unfinished">
+            <numerusform>%Ln 件がキャンセル
+        </numerusform>
         </translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="557"/>
         <source>Completed %Ln operation(s): %1</source>
-        <translation>%Ln 件の操作が完了しました : %1
+        <translation type="unfinished">
+            <numerusform>%Ln 件の操作が完了しました : %1
+        </numerusform>
         </translation>
     </message>
     <message>
@@ -4996,68 +5168,102 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::FileOps::FileOpsPlugin</name>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="83"/>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="96"/>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="109"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="92"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="105"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="118"/>
         <source>File Operations</source>
         <translation>ファイル操作</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="84"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="93"/>
         <source>Confirm before deleting tracks</source>
         <translation>トラックを削除する前に確認する</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="97"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="106"/>
         <source>Immediately delete tracks (bypass trash)</source>
         <translation>トラックをすぐ削除する(bypass trash)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="110"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="119"/>
         <source>Delete empty folders</source>
         <translation>空のフォルダーを削除</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="127"/>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="181"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="136"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="186"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="269"/>
         <source>File operations</source>
         <translation>ファイル操作</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="173"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="176"/>
         <source>&amp;Copy to…</source>
         <translation>コピー…(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="174"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="177"/>
         <source>&amp;Move to…</source>
         <translation>移動…(&amp;M)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="175"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="178"/>
         <source>&amp;Rename to…</source>
         <translation>名前の変更…(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="176"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="179"/>
         <source>&amp;Extract to…</source>
         <translation>展開…(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="178"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="183"/>
         <source>&amp;Delete</source>
         <translation>削除(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="196"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="186"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="269"/>
+        <source>Tracks</source>
+        <translation type="unfinished">トラック</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="201"/>
         <source>No tracks deleted</source>
         <translation>削除されたトラックはありません</translation>
     </message>
-    <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="197"/>
+    <message numerus="yes">
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="202"/>
         <source>Deleted %Ln track(s)</source>
-        <translation>%Ln 個のトラックを削除しました
+        <translation type="unfinished">
+            <numerusform>%Ln 個のトラックを削除しました
+        </numerusform>
         </translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="254"/>
+        <source>Copy</source>
+        <translation type="unfinished">コピー</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="257"/>
+        <source>Move</source>
+        <translation type="unfinished">移動</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="260"/>
+        <source>Rename</source>
+        <translation type="unfinished">名前の変更</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="263"/>
+        <source>Extract</source>
+        <translation type="unfinished">展開</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="266"/>
+        <source>Other</source>
+        <translation type="unfinished">その他</translation>
     </message>
 </context>
 <context>
@@ -5586,7 +5792,7 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::FyWidget</name>
     <message>
-        <location filename="../../src/gui/fywidget.cpp" line="258"/>
+        <location filename="../../src/gui/fywidget.cpp" line="266"/>
         <source>Configure…</source>
         <translation>設定…</translation>
     </message>
@@ -5747,17 +5953,17 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::GuiApplication</name>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="823"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="827"/>
         <source>Plugins not found</source>
         <translation>プラグインが見つかりません</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="824"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="828"/>
         <source>Some plugins are required for full functionality.</source>
         <translation>すべての機能を利用するには一部のプラグインが必要です。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="825"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="829"/>
         <source>Plugin search locations:
 
 </source>
@@ -5766,231 +5972,231 @@ Effects here process the final combined output.</source>
 </translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="828"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="832"/>
         <source>Quit</source>
         <translation>終了</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="954"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="958"/>
         <source>Volume</source>
         <translation>音量</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="956"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="960"/>
         <source>Volume up</source>
         <translation>音量を上げる</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="963"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="967"/>
         <source>Volume down</source>
         <translation>音量を下げる</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="970"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="974"/>
         <source>Mute</source>
         <translation>ミュート</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="980"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="984"/>
         <source>Clear Current Playlist</source>
         <translation>現在のプレイリストをクリア</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="981"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="985"/>
         <source>Remove all tracks from the current playlist</source>
         <translation>現在のプレイリストからすべてのトラックを削除</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1007"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1011"/>
         <source>Lock playlist</source>
         <translation>プレイリストをロック</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1009"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1013"/>
         <source>Prevent changes to the contents of the current playlist</source>
         <translation>現在のプレイリストの内容の変更を防止する</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1012"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1016"/>
         <source>Lock Current Playlist</source>
         <translation>現在のプレイリストをロック</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1033"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1037"/>
         <source>Playback</source>
         <translation>再生</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1033"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1037"/>
         <source>Seek</source>
         <translation>シーク</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1035"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1039"/>
         <source>Seek forward (small step)</source>
         <translation>早送り(小刻み)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1042"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1046"/>
         <source>Seek forward (large step)</source>
         <translation>早送り(大きく)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1049"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1053"/>
         <source>Seek backward (small step)</source>
         <translation>早戻し(小刻み)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1057"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1061"/>
         <source>Seek backward (large step)</source>
         <translation>早戻し(大きく)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1082"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1086"/>
         <source>Remove Playlist</source>
         <translation>プレイリストを削除</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1093"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1097"/>
         <source>Toggle Menubar</source>
         <translation>メニューバーの表示切り替え</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1097"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1101"/>
         <source>View</source>
         <translation>表示</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1107"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1111"/>
         <source>Reading tracks…</source>
         <translation>トラックを読み込んでいます…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1107"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1111"/>
         <source>Abort</source>
         <translation>無視</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1135"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1139"/>
         <source>Current file</source>
         <translation>現在のファイル</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1148"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1184"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1152"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1188"/>
         <source>Tagging</source>
         <translation>タグ付け</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1150"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1154"/>
         <source>Reload tags from files</source>
         <translation>ファイルからタグをリロード</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1151"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1155"/>
         <source>Reload tags from modified files</source>
         <translation>修正されたファイルからタグをリロード</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1153"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1157"/>
         <source>Replace tags in selected tracks with tags from the files</source>
         <translation>ファイルからのタグで選択したトラックのタグを置き換える</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1154"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1158"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
         <translation>変更されている場合、選択したトラックのタグをファイルのタグで置き換えます</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1195"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1199"/>
         <source>Choose destination</source>
         <translation>出力先を選択</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1276"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1284"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1280"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1288"/>
         <source>Convert using preset %1</source>
         <translation>プリセット「%1」を使用して変換</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1283"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1316"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1326"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1335"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1287"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1320"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1330"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1339"/>
         <source>Tracks</source>
         <translation>トラック</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1283"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1316"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1326"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1335"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1346"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1287"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1320"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1330"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1339"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1350"/>
         <source>Convert</source>
         <translation>変換</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1314"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1318"/>
         <source>Converter setup…</source>
         <translation>コンバーターの設定…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1323"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1327"/>
         <source>Using default settings</source>
         <translation>既定の設定を使用</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1327"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1331"/>
         <source>Convert using default settings</source>
         <translation>既定の設定を使用して変換</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1332"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1336"/>
         <source>Repeat last conversion</source>
         <translation>前回の変換を繰り返す</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1363"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1367"/>
         <source>Custom conversion…</source>
         <translation>カスタム変換…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1600"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1604"/>
         <source>Reload Required</source>
         <translation>リロードが必要</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1602"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1606"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
         <translation>データベースの変更に伴い、保存済みのメタデータを更新するためにディスクからトラックを再読み込みする必要があります。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1606"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1610"/>
         <source>Reload Now</source>
         <translation>今すぐリロード</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1609"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1613"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1747"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1755"/>
         <source>Playback Error</source>
         <translation>再生エラー</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1800"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1808"/>
         <source>Track Not Found</source>
         <translation>トラックが見つかりません</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1873"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1881"/>
         <source>Add Stream URL</source>
         <translation>ストリーム URL を追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1873"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1881"/>
         <source>Stream URL:</source>
         <translation>ストリーム URL :</translation>
     </message>
@@ -6015,14 +6221,14 @@ Effects here process the final combined output.</source>
         <translation>アートワークファイルが空です</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1772"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1780"/>
         <source>Continue</source>
         <translation>続行</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="984"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1011"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1084"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="988"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1015"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1088"/>
         <source>Playlist</source>
         <translation>プレイリスト</translation>
     </message>
@@ -6038,72 +6244,72 @@ Effects here process the final combined output.</source>
         <translation>レイアウト名</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1085"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1089"/>
         <source>Remove Current Playlist</source>
         <translation>現在のプレイリストを削除</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1375"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1379"/>
         <source>Utilities</source>
         <translation>ユーティリティ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1774"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1782"/>
         <source>Stop</source>
         <translation>停止</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1778"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1786"/>
         <source>Always continue playing if a track is unavailable</source>
         <translation>トラックが利用できない場合は常に再生を続行する</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1805"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1813"/>
         <source>No Decoder Available</source>
         <translation>使用可能なデコーダーがありません</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1835"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1843"/>
         <source>All Supported Media Files (%1)</source>
         <translation>サポートされているすべてのメディアファイル (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1836"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1844"/>
         <source>Audio Files (%1)</source>
         <translation>オーディオファイル (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1847"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1855"/>
         <source>Add Files</source>
         <translation>ファイルを追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1861"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1869"/>
         <source>Add Folders</source>
         <translation>フォルダーを追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1875"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1883"/>
         <source>&amp;Add</source>
         <translation>追加(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1879"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1887"/>
         <source>Enter a valid http:// or https:// URL.</source>
         <translation>有効な http:// または https:// の URL を入力してください。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1940"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1948"/>
         <source>All Supported Playlists (%1)</source>
         <translation>サポートされているすべてのプレイリスト (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1950"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1958"/>
         <source>Load Playlist</source>
         <translation>プレイリストをロード</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1987"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1995"/>
         <source>Save Playlist</source>
         <translation>プレイリストを保存</translation>
     </message>
@@ -6340,12 +6546,12 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::GuiGeneralPage</name>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="360"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="369"/>
         <source>General</source>
         <translation>全般</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="361"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="370"/>
         <source>Interface</source>
         <translation>インターフェース</translation>
     </message>
@@ -6353,117 +6559,127 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::GuiGeneralPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="126"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="127"/>
         <source>Show splitter handles</source>
         <translation>スプリッターハンドルを表示</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="124"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="125"/>
         <source>Override root margin</source>
         <translation>ルートの余白を上書き</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="117"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="118"/>
         <source>Dark mode</source>
         <translation>ダークモード</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="119"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="120"/>
         <source>Auto-detect theme</source>
         <translation>テーマを自動検出</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="120"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="121"/>
         <source>Light</source>
         <translation>ライト</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="121"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="122"/>
         <source>Dark</source>
         <translation>ダーク</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="122"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="123"/>
         <source>Use system icons</source>
         <translation>システムアイコンを使用</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="123"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="124"/>
         <source>Show menu bar</source>
         <translation>メニューバーを表示</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="127"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="128"/>
         <source>Lock splitters</source>
         <translation>スプリッターをロック</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="128"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="129"/>
+        <source>Only resize locked widgets using adjacent handles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="130"/>
         <source>Override splitter handle size</source>
         <translation>スプリッターハンドルのサイズを上書き</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="130"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="132"/>
         <source>Raise</source>
         <translation>前面に表示</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="131"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="133"/>
         <source>Stretch</source>
         <translation>伸縮</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="133"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="135"/>
         <source>Setup</source>
         <translation>セットアップ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="135"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="137"/>
         <source>Quick Setup</source>
         <translation>クイックセットアップ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="136"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="138"/>
         <source>Import Layout</source>
         <translation>レイアウトをインポート</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="137"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="139"/>
         <source>Export Layout</source>
         <translation>レイアウトをエクスポート</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="143"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="145"/>
         <source>Appearance</source>
         <translation>外観</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="146"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="148"/>
         <source>Icons</source>
         <translation>アイコン</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="157"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="159"/>
         <source>Style</source>
         <translation>スタイル</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="165"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="167"/>
         <source>Layout</source>
         <translation>レイアウト</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="184"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="188"/>
+        <source>Prevent other splitter handles and parent splitters from changing the size of a locked widget.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="190"/>
         <source>Tool Buttons</source>
         <translation>ツールボタン</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="217"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="223"/>
         <source>System default</source>
         <translation>システムデフォルト</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="332"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="341"/>
         <source>Dark mode is not supported by this style.</source>
         <translation>このスタイルではダークモードはサポートされていません。</translation>
     </message>
@@ -6471,13 +6687,13 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::GuiLayoutPage</name>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="943"/>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="944"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="945"/>
         <source>Layout</source>
         <translation>レイアウト</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="944"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="945"/>
         <source>Interface</source>
         <translation>インターフェース</translation>
     </message>
@@ -6560,100 +6776,100 @@ Effects here process the final combined output.</source>
         <translation>複製</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="596"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="597"/>
         <source>Move up</source>
         <translation>上へ移動</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="601"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="602"/>
         <source>Move down</source>
         <translation>下へ移動</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="606"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="607"/>
         <source>Remove</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="614"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="615"/>
         <source>Cut</source>
         <translation>切り取り</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="619"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="620"/>
         <source>Copy</source>
         <translation>コピー</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="625"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="626"/>
         <source>Paste</source>
         <translation>貼り付け</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="738"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="739"/>
         <source>Lock width</source>
         <translation>幅を固定</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="738"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="739"/>
         <source>Lock height</source>
         <translation>高さを固定</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="741"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="742"/>
         <source>Keep the width unchanged during automatic resizing; splitter handles can still resize it</source>
         <translation>自動リサイズ時に幅を変更しないようにします。スプリッターハンドルによるリサイズは可能です</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="742"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="743"/>
         <source>Keep the height unchanged during automatic resizing; splitter handles can still resize it</source>
         <translation>自動リサイズ時に高さを変更しないようにします。スプリッターハンドルによるリサイズは可能です</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="788"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="789"/>
         <source>Reset</source>
         <translation>リセット</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="788"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="789"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="835"/>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="837"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="836"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="838"/>
         <source>New Layout</source>
         <translation>新しいレイアウト</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="837"/>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="893"/>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="924"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="838"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="894"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="925"/>
         <source>Layout Name</source>
         <translation>レイアウト名</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="868"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="869"/>
         <source>Delete Layout</source>
         <translation>レイアウトを削除</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="868"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="869"/>
         <source>Delete layout &quot;%1&quot;?</source>
         <translation>レイアウト「%1」を削除しますか?</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="893"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="894"/>
         <source>Rename Layout</source>
         <translation>レイアウトの名前を変更</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="922"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="923"/>
         <source>%1 Copy</source>
         <translation>%1 のコピー</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="924"/>
+        <location filename="../../src/gui/settings/guilayoutpage.cpp" line="925"/>
         <source>Duplicate Layout</source>
         <translation>レイアウトを複製</translation>
     </message>
@@ -6797,52 +7013,52 @@ If the default half-star does not render correctly with your system font, choose
 <context>
     <name>Fooyin::HelpMenu</name>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="53"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="54"/>
         <source>&amp;Quick start</source>
         <translation>クイックスタート(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="54"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="55"/>
         <source>Open the quick start guide</source>
         <translation>クイックスタートのガイドを開く</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="59"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="60"/>
         <source>&amp;Scripting help</source>
         <translation>スクリプトのヘルプ(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="60"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="61"/>
         <source>Open the scripting documentation</source>
         <translation>スクリプトのドキュメントを開きます</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="64"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="65"/>
         <source>S&amp;earching help</source>
         <translation>検索のヘルプ(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="65"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="66"/>
         <source>Open the search documentation</source>
         <translation>検索のドキュメントを開く</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="69"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="70"/>
         <source>&amp;Frequently asked questions</source>
         <translation>よくある質問(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="70"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="71"/>
         <source>Open the FAQ</source>
         <translation>よくある質問を開く</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="74"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="75"/>
         <source>&amp;About</source>
         <translation>fooyin について(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="76"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="77"/>
         <source>Open the about dialog</source>
         <translation>「fooyin について」ダイアログを開く</translation>
     </message>
@@ -7566,22 +7782,28 @@ If the default half-star does not render correctly with your system font, choose
         <source>Library scan finished: %1, %2, %3</source>
         <translation>ライブラリスキャンが完了しました : %1、%2、%3</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="156"/>
         <source>%Ln track(s) added</source>
-        <translation>&gt;%Ln 個のトラックを追加しました
+        <translation type="unfinished">
+            <numerusform>&gt;%Ln 個のトラックを追加しました
+        </numerusform>
         </translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="157"/>
         <source>%Ln track(s) updated</source>
-        <translation>%Ln 個のトラックを更新しました
+        <translation type="unfinished">
+            <numerusform>%Ln 個のトラックを更新しました
+        </numerusform>
         </translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="158"/>
         <source>%Ln track(s) removed</source>
-        <translation>%Ln 個のトラックを削除しました
+        <translation type="unfinished">
+            <numerusform>%Ln 個のトラックを削除しました
+        </numerusform>
         </translation>
     </message>
     <message>
@@ -8242,12 +8464,12 @@ This improves compatibility with other players, but stores whole-star values onl
 <context>
     <name>Fooyin::LibraryTreeModel</name>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="847"/>
+        <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="850"/>
         <source>All Music</source>
         <translation>すべての音楽</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="981"/>
+        <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="987"/>
         <source>Library Tree</source>
         <translation>ライブラリツリー</translation>
     </message>
@@ -8255,7 +8477,7 @@ This improves compatibility with other players, but stores whole-star values onl
 <context>
     <name>Fooyin::LibraryTreeView</name>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeview.cpp" line="168"/>
+        <location filename="../../src/gui/librarytree/librarytreeview.cpp" line="178"/>
         <source>Loading Library…</source>
         <translation>ライブラリをロード中…</translation>
     </message>
@@ -8263,7 +8485,7 @@ This improves compatibility with other players, but stores whole-star values onl
 <context>
     <name>Fooyin::LibraryTreeWidget</name>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="673"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="683"/>
         <source>Grouping</source>
         <translation>グループ</translation>
     </message>
@@ -8293,22 +8515,22 @@ This improves compatibility with other players, but stores whole-star values onl
         <translation>選択したトラックの再生を開始</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="689"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="699"/>
         <source>Manage groupings...</source>
         <translation>グループ化を管理...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="734"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="744"/>
         <source>Open folder</source>
         <translation>フォルダーを開く</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="812"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="822"/>
         <source>Add to playlist</source>
         <translation>プレイリストに追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="947"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="957"/>
         <source>Playback</source>
         <translation>再生</translation>
     </message>
@@ -8945,10 +9167,12 @@ Remove original: deletes the previous file or tag after saving.</source>
         <source>Searching…</source>
         <translation>検索中…</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="238"/>
         <source>%Ln result(s)</source>
-        <translation>%Ln 件の結果
+        <translation type="unfinished">
+            <numerusform>%Ln 件の結果
+        </numerusform>
         </translation>
     </message>
     <message>
@@ -9309,17 +9533,17 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::Notify::NotifyPage</name>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="232"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="256"/>
         <source>General</source>
         <translation>全般</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="233"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="257"/>
         <source>Notifications</source>
         <translation>通知</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="233"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="257"/>
         <source>Integrations</source>
         <translation>連携機能</translation>
     </message>
@@ -9327,83 +9551,94 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::Notify::NotifyPageWidget</name>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="80"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="82"/>
         <source>Show album art</source>
         <translation>アルバムアートを表示</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="84"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="88"/>
         <source>Timeout</source>
         <translation>タイムアウト</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="75"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="77"/>
         <source>Enable notifications</source>
         <translation>通知を有効にする</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="76"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="78"/>
         <source>Title</source>
         <translation>タイトル</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="78"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="80"/>
         <source>Body</source>
         <translation>本文</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="81"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="83"/>
+        <source>Maximum album art size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="85"/>
         <source>Show previous</source>
         <translation>「前へ」を表示</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="82"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="86"/>
         <source>Show play/pause</source>
         <translation>「再生/一時停止」を表示</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="83"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="87"/>
         <source>Show next</source>
         <translation>「次へ」を表示</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="87"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="91"/>
         <source>General</source>
         <translation>全般</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="89"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="93"/>
         <source>Content</source>
         <translation>内容</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="91"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="95"/>
         <source>Playback Controls</source>
         <translation>再生コントロール</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="108"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="104"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="202"/>
+        <source>Maximum width or height of album art sent with notifications</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="123"/>
         <source>System default</source>
         <translation>システムデフォルト</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="111"/>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="173"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="126"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="189"/>
         <source>Notification display time in milliseconds</source>
         <translation>通知の表示時間（ミリ秒）</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="169"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="185"/>
         <source>Album art is not available for the active notification backend</source>
         <translation>有効な通知バックエンドではアルバムアートを利用できません</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="171"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="187"/>
         <source>Playback controls are not available for the active notification backend</source>
         <translation>有効な通知バックエンドでは再生コントロールを利用できません</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="174"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="190"/>
         <source>Notification timeout is not available for the active notification backend</source>
         <translation>有効な通知バックエンドでは通知タイムアウトを利用できません</translation>
     </message>
@@ -9411,22 +9646,22 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::Notify::NotifyPlugin</name>
     <message>
-        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="229"/>
+        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="230"/>
         <source>Pause</source>
         <translation>一時停止</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="229"/>
+        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="230"/>
         <source>Play</source>
         <translation>再生</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="236"/>
+        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="237"/>
         <source>Previous</source>
         <translation>前へ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="250"/>
+        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="251"/>
         <source>Next</source>
         <translation>次へ</translation>
     </message>
@@ -9434,13 +9669,13 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::NowPlayingOutputPage</name>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="347"/>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="348"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="356"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="357"/>
         <source>Now Playing</source>
         <translation>再生中</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="348"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="357"/>
         <source>Playback</source>
         <translation>再生</translation>
     </message>
@@ -9448,97 +9683,102 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::NowPlayingOutputPageWidget</name>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="94"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="95"/>
         <source>Enabled</source>
         <translation>有効にする</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="97"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="98"/>
         <source>Track changes</source>
         <translation>トラックの変更時</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="98"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="99"/>
         <source>Play and pause</source>
         <translation>再生と一時停止</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="99"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="100"/>
         <source>Stop</source>
         <translation>停止</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="100"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="101"/>
         <source>Every second</source>
         <translation>毎秒</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="101"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="102"/>
+        <source>Played threshold reached</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="103"/>
         <source>Clipboard</source>
         <translation>クリップボード</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="102"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="104"/>
         <source>File</source>
         <translation>ファイル</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="103"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="105"/>
         <source>Path</source>
         <translation>パス</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="105"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="107"/>
         <source>Append instead of overwrite</source>
         <translation>上書きせずに追記する</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="106"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="108"/>
         <source>Maximum lines</source>
         <translation>最大行数</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="109"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="111"/>
         <source>General</source>
         <translation>全般</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="115"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="117"/>
         <source>Format</source>
         <translation>形式</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="122"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="123"/>
         <source>No current track</source>
         <translation>現在のトラックはありません</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="129"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="132"/>
         <source>Update events</source>
         <translation>更新イベント</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="138"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="142"/>
         <source>Output</source>
         <translation>出力</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="142"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="146"/>
         <source>Unlimited</source>
         <translation>無制限</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="146"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="150"/>
         <source>Browse to an output file</source>
         <translation>出力ファイルを参照</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="330"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="339"/>
         <source>Now Playing</source>
         <translation>再生中</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="330"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="339"/>
         <source>Text Files (*.txt);;All Files (*)</source>
         <translation>テキストファイル (*.txt);;すべてのファイル (*)</translation>
     </message>
@@ -9967,16 +10207,20 @@ Remove original: deletes the previous file or tag after saving.</source>
         <source>High watermark</source>
         <translation>上限しきい値</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="177"/>
         <source>Resume decoding below %Ln ms</source>
-        <translation>%Ln ms未満でデコードを再開
+        <translation type="unfinished">
+            <numerusform>%Ln ms未満でデコードを再開
+        </numerusform>
         </translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="178"/>
         <source>Pause decoding at %Ln ms</source>
-        <translation>%Ln msでデコードを一時停止
+        <translation type="unfinished">
+            <numerusform>%Ln msでデコードを一時停止
+        </numerusform>
         </translation>
     </message>
     <message>
@@ -10006,6 +10250,31 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/controls/outputselector.cpp" line="154"/>
         <source>Configure listed devices…</source>
         <translation>一覧のデバイスを構成…</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Pipewire::PipewireSettings</name>
+    <message>
+        <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="34"/>
+        <source>PipeWire Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="40"/>
+        <source>Latency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="44"/>
+        <source>Automatic</source>
+        <translation type="unfinished">自動</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="47"/>
+        <source>Lower values provide more frequent audio processing but may increase underrun risk.
+Higher values improve stability but increase latency and may reduce visualisation smoothness.
+Changes take effect the next time the PipeWire output is initialised.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11129,12 +11398,12 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::PlaylistGeneralPage</name>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="192"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="235"/>
         <source>General</source>
         <translation>全般</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="193"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="236"/>
         <source>Playlist</source>
         <translation>プレイリスト</translation>
     </message>
@@ -11142,112 +11411,132 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::PlaylistGeneralPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="71"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="77"/>
         <source>Skip missing tracks</source>
         <translation>見つからないトラックをスキップ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="70"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="76"/>
         <source>Enable inline tag editing</source>
         <translation>インラインタグ編集を有効にする</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="72"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="75"/>
+        <source>Start playback immediately</source>
+        <translation type="unfinished">すぐに再生を開始</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="78"/>
         <source>Ignore playlist files when adding folders</source>
         <translation>フォルダー追加時にプレイリストファイルを無視する</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="73"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="79"/>
         <source>Prevent duplicate tracks when loading playlists</source>
         <translation>プレイリスト読み込み時に重複トラックを防止する</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="74"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="80"/>
         <source>Open search bar instead of pop-up playlist search</source>
         <translation>ポップアップのプレイリスト検索の代わりに検索バーを開く</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="78"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="84"/>
         <source>Behaviour</source>
         <translation>動作</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="83"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="89"/>
         <source>Number of tracks used to preload the playlist before loading the rest of the playlist</source>
         <translation>プレイリストの残りを読み込む前にプリロードするトラック数</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="89"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="95"/>
         <source>Allow editing writable track tag columns directly from the playlist</source>
         <translation>プレイリストから直接、書き込み可能なトラックのタグ列を編集できるようにする</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="94"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="100"/>
         <source>Set to &apos;0&apos; to disable preloading.</source>
         <translation>プリロードを無効にするには「0」を設定してください。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="98"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="104"/>
         <source>Click Behaviour</source>
         <translation>クリック時の動作</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="102"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="108"/>
+        <source>Double-click</source>
+        <translation type="unfinished">ダブルクリック</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="110"/>
         <source>Middle-click</source>
         <translation>中クリック</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="106"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="116"/>
+        <source>After adding tracks to the front of or replacing the playback queue, start playback immediately</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
         <source>Skip unavailable tracks when loading playlists</source>
         <translation>プレイリスト読み込み時に利用できないトラックをスキップする</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="108"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="124"/>
         <source>Only add media files from folders, without loading playlist files found inside</source>
         <translation>フォルダー内のプレイリストファイルを読み込まず、メディアファイルのみを追加する</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="109"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="125"/>
         <source>Skip playlist entries that are already present in the target playlist</source>
         <translation>対象のプレイリストに既に存在するエントリをスキップする</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="111"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="127"/>
         <source>Loading</source>
         <translation>読み込み</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="119"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="135"/>
         <source>Search</source>
         <translation>検索</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="138"/>
         <source>Match beginnings of words</source>
         <translation>単語の先頭に一致</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="123"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="139"/>
         <source>Match anywhere</source>
         <translation>どこでも一致</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="127"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="143"/>
         <source>Search mode</source>
         <translation>検索モード</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="129"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="145"/>
         <source>Search script</source>
         <translation>検索スクリプト</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="149"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="166"/>
         <source>None</source>
         <translation>なし</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="81"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="167"/>
+        <source>Play</source>
+        <translation type="unfinished">再生</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="87"/>
         <source>Tracks to preload</source>
         <translation>プリロードするトラック数</translation>
     </message>
@@ -11441,10 +11730,12 @@ Remove original: deletes the previous file or tag after saving.</source>
 </context>
 <context>
     <name>Fooyin::PlaylistModel</name>
-    <message>
-        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1517"/>
+    <message numerus="yes">
+        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1522"/>
         <source>%Ln track(s)</source>
-        <translation>%Ln 個のトラック
+        <translation type="unfinished">
+            <numerusform>%Ln 個のトラック
+        </numerusform>
         </translation>
     </message>
 </context>
@@ -12021,114 +12312,116 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="962"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="971"/>
         <source>&amp;Play</source>
         <translation>再生(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1073"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1082"/>
         <source>Add to another playlist</source>
         <translation>他のプレイリストに追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1225"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1234"/>
         <source>Use custom layout for this playlist</source>
         <translation>このプレイリストにカスタムレイアウトを使用する</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1226"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1235"/>
         <source>Use a separate view layout instead of the default</source>
         <translation>既定の代わりに個別の表示レイアウトを使用する</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1678"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1687"/>
         <source>Writing metadata…</source>
         <translation>メタデータを書き込んでいます…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1678"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1687"/>
         <source>Abort</source>
         <translation>無視</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1684"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1693"/>
         <source>Writing Metadata</source>
         <translation>メタデータの書き込み</translation>
     </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1685"/>
+    <message numerus="yes">
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1694"/>
         <source>Writing metadata to %Ln track(s)…</source>
-        <translation>%Ln 個のトラックにメタデータを書き込んでいます…
+        <translation type="unfinished">
+            <numerusform>%Ln 個のトラックにメタデータを書き込んでいます…
+        </numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1779"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1794"/>
         <source>Start playback of the selected track</source>
         <translation>選択したトラックの再生を開始</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1788"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1803"/>
         <source>Edit</source>
         <translation>編集</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1792"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1807"/>
         <source>Randomise the current playlist</source>
         <translation>現在のプレイリストをランダム化</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1795"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1810"/>
         <source>Reverse the current playlist</source>
         <translation>現在のプレイリストを逆順にする</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1813"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1828"/>
         <source>Select &amp;all</source>
         <translation>すべて選択</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1814"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1829"/>
         <source>Select all tracks in the current playlist</source>
         <translation>現在のプレイリスト内のすべてのトラックを選択</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1147"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1156"/>
         <source>Reset columns to default</source>
         <translation>列を既定にリセット</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1173"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1182"/>
         <source>Sort the current playlist using this preset</source>
         <translation>このプリセットを使用して現在のプレイリストを並べ替え</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1213"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1222"/>
         <source>Single-column mode</source>
         <translation>単一列モード</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1326"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1335"/>
         <source>Playlist settings…</source>
         <translation>プレイリストの設定…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1254"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1263"/>
         <source>Presets</source>
         <translation>プリセット</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1285"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1294"/>
         <source>Columns</source>
         <translation>カラム</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1273"/>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1311"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1282"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1320"/>
         <source>More…</source>
         <translation>その他…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="322"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="317"/>
         <source>Playlist</source>
         <translation>プレイリスト</translation>
     </message>
@@ -12233,72 +12526,72 @@ Remove original: deletes the previous file or tag after saving.</source>
         <translation>逆順</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="353"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="351"/>
         <source>Remove all tracks from the playlist except for the selected tracks</source>
         <translation>選択したトラックを除くすべてのトラックをプレイリストから削除</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="357"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="355"/>
         <source>Stop playback at the end of the selected track</source>
         <translation>選択したトラックの終わりで再生を停止</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="364"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="362"/>
         <source>Undo the previous playlist change</source>
         <translation>直前のプレイリストの変更を元に戻す</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="374"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="372"/>
         <source>Redo the previous playlist change</source>
         <translation>直前のプレイリストの変更をやり直し</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="386"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="384"/>
         <source>Cut the selected tracks</source>
         <translation>選択したトラックを切り取り</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="394"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="392"/>
         <source>Copy the selected tracks</source>
         <translation>選択したトラックをコピー</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="403"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="401"/>
         <source>Paste the selected tracks</source>
         <translation>選択したトラックを貼り付け</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="415"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="413"/>
         <source>Remove all tracks from the current playlist</source>
         <translation>現在のプレイリストからすべてのトラックを削除</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="423"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="421"/>
         <source>Remove the selected tracks from the current playlist</source>
         <translation>選択したトラックを現在のプレイリストから削除</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="437"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="435"/>
         <source>Add the selected tracks to the playback queue</source>
         <translation>選択中のトラックを再生キューに追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="443"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="441"/>
         <source>Add the selected tracks to the front of the playback queue</source>
         <translation>選択中のトラックを再生キューの前面に追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="449"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="447"/>
         <source>Remove the selected tracks from the playback queue</source>
         <translation>選択したトラックを再生キューから削除</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="457"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="455"/>
         <source>Remove duplicate tracks from the playlist</source>
         <translation>プレイリストから重複するトラックを削除</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="462"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="460"/>
         <source>Remove dead (non-existant) tracks from the playlist</source>
         <translation>存在しないトラックをプレイリストから削除</translation>
     </message>
@@ -12349,12 +12642,12 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::PluginPage</name>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="260"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="281"/>
         <source>General</source>
         <translation>全般</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="261"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="282"/>
         <source>Plugins</source>
         <translation>プラグイン</translation>
     </message>
@@ -12382,23 +12675,58 @@ Remove original: deletes the previous file or tag after saving.</source>
         <translation>プラグインが変更されました</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="239"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="240"/>
+        <source>fooyin Plugin (*.dll)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="242"/>
+        <source>fooyin Plugin (*.so)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="244"/>
         <source>Install Plugin</source>
         <translation>プラグインをインストール</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="239"/>
-        <source>fooyin Plugin (*.fyl)</source>
-        <translation>fooyin プラグイン (*.fyl)</translation>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="254"/>
+        <source>Plugin Already Installed</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="247"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="255"/>
+        <source>This plugin is already installed. Update it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="256"/>
+        <source>Update</source>
+        <translation type="unfinished">更新</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="265"/>
+        <source>Plugin Updated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="272"/>
+        <source>Plugin Installation Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="272"/>
+        <source>The plugin could not be installed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="265"/>
         <source>Plugin Installed</source>
         <translation>プラグインがインストールされました</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="178"/>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="248"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="266"/>
         <source>Restart for changes to take effect. Restart now?</source>
         <translation>変更を有効にするために、再起動しますか?</translation>
     </message>
@@ -12644,10 +12972,12 @@ Remove original: deletes the previous file or tag after saving.</source>
         <source>Folder does not exist.</source>
         <translation>フォルダーが存在しません。</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="279"/>
         <source>%Ln preset(s) found.</source>
-        <translation>%Ln 件のプリセットが見つかりました。
+        <translation type="unfinished">
+            <numerusform>%Ln 件のプリセットが見つかりました。
+        </numerusform>
         </translation>
     </message>
 </context>
@@ -12734,10 +13064,12 @@ Remove original: deletes the previous file or tag after saving.</source>
         <source>Using presets from %1</source>
         <translation>%1 のプリセットを使用しています</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="618"/>
         <source>Using presets from %Ln folder(s)</source>
-        <translation>%Ln 個のフォルダーのプリセットを使用しています
+        <translation type="unfinished">
+            <numerusform>%Ln 個のフォルダーのプリセットを使用しています
+        </numerusform>
         </translation>
     </message>
 </context>
@@ -12745,7 +13077,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <name>Fooyin::ProjectM::ProjectMWidget</name>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="147"/>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="552"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="572"/>
         <source>&amp;Full Screen</source>
         <translation>全画面表示(&amp;F)</translation>
     </message>
@@ -12785,73 +13117,73 @@ Remove original: deletes the previous file or tag after saving.</source>
         <translation>現在のプリセットを記憶する(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="201"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="203"/>
         <source>No projectM presets were found in the configured location.</source>
         <translation>設定した場所に projectM のプリセットが見つかりませんでした。</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="203"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="205"/>
         <source>Right-click to configure presets.</source>
         <translation>右クリックでプリセットを設定。</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="245"/>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="662"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="247"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="690"/>
         <source>projectM</source>
         <translation>projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="507"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="526"/>
         <source>Toggle projectM full screen</source>
         <translation>projectM の全画面表示を切り替え</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="511"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="530"/>
         <source>Select a projectM preset</source>
         <translation>projectM のプリセットを選択</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="515"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="534"/>
         <source>Switch to the previous projectM preset</source>
         <translation>前の projectM プリセットに切り替え</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="521"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="540"/>
         <source>Switch to the next projectM preset</source>
         <translation>次の projectM プリセットに切り替え</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="528"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="547"/>
         <source>Switch to a random projectM preset</source>
         <translation>ランダムな projectM プリセットに切り替え</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="532"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="551"/>
         <source>Lock the current projectM preset</source>
         <translation>現在の projectM プリセットをロック</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="536"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="555"/>
         <source>Shuffle projectM presets</source>
         <translation>projectM のプリセットをシャッフル</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="540"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="559"/>
         <source>Remember the current projectM preset</source>
         <translation>現在の projectM プリセットを記憶する</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="552"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="572"/>
         <source>E&amp;xit Full Screen</source>
         <translation>全画面表示を終了(&amp;X)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="583"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="603"/>
         <source>Preset &amp;Duration</source>
         <translation>プリセットの表示時間(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="587"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="607"/>
         <source>%1 seconds</source>
         <translation>%1 秒</translation>
     </message>
@@ -12859,30 +13191,30 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::PropertiesDialog</name>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1055"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1075"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1057"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1077"/>
         <source>Toggle Sidebar</source>
         <translation>サイドバーの切替</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1056"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1086"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1058"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1088"/>
         <source>Previous Track</source>
         <translation>前のトラック</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1057"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1096"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1059"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1098"/>
         <source>Next Track</source>
         <translation>次のトラック</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1059"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1061"/>
         <source>Tracks</source>
         <translation>トラック</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1059"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1061"/>
         <source>Properties</source>
         <translation>プロパティ</translation>
     </message>
@@ -12890,34 +13222,36 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::PropertiesDialogWidget</name>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="473"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="475"/>
         <source>Selection</source>
         <translation>選択</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="477"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="652"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="479"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="654"/>
         <source>Properties</source>
         <translation>プロパティ</translation>
     </message>
-    <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="656"/>
+    <message numerus="yes">
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="658"/>
         <source>%Ln track(s)</source>
-        <translation>%Ln 個のトラック
+        <translation type="unfinished">
+            <numerusform>%Ln 個のトラック
+        </numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1001"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1003"/>
         <source>Pending Changes</source>
         <translation>保留中の変更点</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1002"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1004"/>
         <source>Apply or clear the current tab&apos;s pending changes before switching tracks or tabs.</source>
         <translation>トラックまたはタブを切り替える前に、未変更の現在のタブの変更点を適用またはクリアしてください</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1019"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1021"/>
         <source>All Tracks (%1)</source>
         <translation>すべてのトラック (%1)</translation>
     </message>
@@ -13233,11 +13567,13 @@ Remove original: deletes the previous file or tag after saving.</source>
         <extracomment>%1 represents the name or field e.g. Set Rating to</extracomment>
         <translation>%1 の設定先</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="290"/>
         <source>Set &quot;%1&quot; on %Ln track(s)?</source>
         <extracomment>%1 is the Quick Tagger entry name, for example &quot;Rating&quot;.</extracomment>
-        <translation>%Ln 個のトラックに「%1」を設定しますか?
+        <translation type="unfinished">
+            <numerusform>%Ln 個のトラックに「%1」を設定しますか?
+        </numerusform>
         </translation>
     </message>
 </context>
@@ -13752,45 +14088,45 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::RadioBrowser::RadioBrowserPlugin</name>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="98"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="100"/>
         <source>Radio &amp;Browser</source>
         <translation>ラジオブラウザ(&amp;B)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="99"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="101"/>
         <source>Open the Radio Browser window</source>
         <translation>ラジオブラウザウィンドウを開きます</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="102"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="104"/>
         <source>View</source>
         <translation>表示</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="116"/>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="134"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="118"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="136"/>
         <source>Radio Browser</source>
         <translation>ラジオブラウザ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="117"/>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="128"/>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="132"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="119"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="130"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="134"/>
         <source>Internet</source>
         <translation>インターネット</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="127"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="129"/>
         <source>Radio Search</source>
         <translation>ラジオ検索</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="131"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="133"/>
         <source>Radio Guide</source>
         <translation>ラジオガイド</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="150"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="152"/>
         <source>Playback stopped</source>
         <translation>再生を停止しました</translation>
     </message>
@@ -14879,10 +15215,12 @@ Remove original: deletes the previous file or tag after saving.</source>
         <extracomment>%1 is the number of active search filters</extracomment>
         <translation>フィルター (%1)</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="827"/>
         <source>%Ln active filter(s)</source>
-        <translation>%Ln 件の有効なフィルター
+        <translation type="unfinished">
+            <numerusform>%Ln 件の有効なフィルター
+        </numerusform>
         </translation>
     </message>
     <message>
@@ -15043,10 +15381,12 @@ Remove original: deletes the previous file or tag after saving.</source>
         <source>Export Radio Stations</source>
         <translation>ラジオ局をエクスポート</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="77"/>
         <source>Exported %n radio station(s).</source>
-        <translation>%n 件のラジオ局をエクスポートしました。
+        <translation type="unfinished">
+            <numerusform>%n 件のラジオ局をエクスポートしました。
+        </numerusform>
         </translation>
     </message>
     <message>
@@ -15076,16 +15416,20 @@ Remove original: deletes the previous file or tag after saving.</source>
         <source>Importing radio stations…</source>
         <translation>ラジオ局をインポートしています…</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="150"/>
         <source>Imported %Ln radio station(s), skipped %Ln duplicate(s).</source>
-        <translation>%Ln 件のラジオ局をインポートしました(%Ln 件の重複をスキップ)。
+        <translation type="unfinished">
+            <numerusform>%Ln 件のラジオ局をインポートしました(%Ln 件の重複をスキップ)。
+        </numerusform>
         </translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="154"/>
         <source>Imported %Ln radio station(s).</source>
-        <translation>%Ln 件のラジオ局をインポートしました。
+        <translation type="unfinished">
+            <numerusform>%Ln 件のラジオ局をインポートしました。
+        </numerusform>
         </translation>
     </message>
     <message>
@@ -15972,10 +16316,12 @@ Remove original: deletes the previous file or tag after saving.</source>
         <source>Start typing to search</source>
         <translation>入力を開始して検索</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="148"/>
         <source>%Ln result(s)</source>
-        <translation>%Ln 件の結果
+        <translation type="unfinished">
+            <numerusform>%Ln 件の結果
+        </numerusform>
         </translation>
     </message>
     <message>
@@ -16230,7 +16576,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <translation>ヘルプ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1728"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1736"/>
         <source>Quick Search</source>
         <translation>クイック検索</translation>
     </message>
@@ -17616,22 +17962,22 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::SplitterWidget</name>
     <message>
-        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="438"/>
+        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="441"/>
         <source>Splitter (Top/Bottom)</source>
         <translation>スプリッター(上/下)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="440"/>
+        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="443"/>
         <source>Splitter (Left/Right)</source>
         <translation>スプリッター(左/右)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="450"/>
+        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="453"/>
         <source>Switch orientation</source>
         <translation>向きを切り替え</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="453"/>
+        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="456"/>
         <source>Splitter</source>
         <translation>スプリッター</translation>
     </message>
@@ -18126,32 +18472,32 @@ This does not support full scripting.</source>
 <context>
     <name>Fooyin::TagEditor::TagEditorPanel</name>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="63"/>
+        <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="64"/>
         <source>Apply</source>
         <translation>適用</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="119"/>
+        <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="121"/>
         <source>Unsaved Changes</source>
         <translation>未保存の変更</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="120"/>
+        <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="122"/>
         <source>There are unsaved tag changes. Save before switching tracks?</source>
         <translation>未保存のタグの変更があります。トラックを切り替える前に保存しますか?</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="141"/>
+        <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="143"/>
         <source>Are you sure?</source>
         <translation>よろしいですか？</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="142"/>
+        <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="144"/>
         <source>Metadata in the associated files will be overwritten.</source>
         <translation>関連するファイル内のメタデータは上書きされます。</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="144"/>
+        <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="146"/>
         <source>Don&apos;t ask again</source>
         <translation>次回から確認しない</translation>
     </message>
@@ -18288,208 +18634,208 @@ This does not support full scripting.</source>
 <context>
     <name>Fooyin::TrackSelectionControllerPrivate</name>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="252"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="253"/>
         <source>Add to current playlist</source>
         <translation>現在のプレイリストに追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="253"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="254"/>
         <source>Add to active playlist</source>
         <translation>アクティブなプレイリストに追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="254"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="255"/>
         <source>Replace current playlist</source>
         <translation>現在のプレイリストを置き換える</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="255"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="256"/>
         <source>Create new playlist</source>
         <translation>新しいプレイリストを作成</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="256"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="257"/>
         <source>Add to playback queue</source>
         <translation>再生キューに追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="257"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="258"/>
         <source>Queue to play next</source>
         <translation>次の再生キューへ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="258"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="259"/>
         <source>Remove from playback queue</source>
         <translation>再生キューから削除</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="259"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="260"/>
         <source>Open containing folder</source>
         <translation>含まれるフォルダーを開く</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="262"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="263"/>
         <source>Search for artwork…</source>
         <translation>アートワークを検索…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="231"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="232"/>
         <source>Track actions</source>
         <translation>トラックの操作</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="239"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="240"/>
         <source>Playback queue</source>
         <translation>再生キュー</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="247"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="248"/>
         <source>Playlist actions</source>
         <translation>プレイリストの操作</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="260"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="261"/>
         <source>Copy file path</source>
         <translation>ファイルパスをコピー</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="261"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="262"/>
         <source>Copy directory path</source>
         <translation>フォルダーパスをコピー</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="263"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="264"/>
         <source>Auto-extract artwork to files</source>
         <translation>アートワークをファイルへ自動抽出</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="264"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="265"/>
         <source>Front cover…</source>
         <translation>フロントカバー…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="265"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="266"/>
         <source>Back cover…</source>
         <translation>バックカバー…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="266"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="267"/>
         <source>Artist picture…</source>
         <translation>アーティスト画像…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="267"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="268"/>
         <source>Remove all artwork</source>
         <translation>すべてのアートワークを削除</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="268"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="269"/>
         <source>Properties</source>
         <translation>プロパティ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="294"/>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="295"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="296"/>
         <source>Tracks</source>
         <translation>トラック</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="295"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="296"/>
         <source>Queue</source>
         <translation>キュー</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="297"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="298"/>
         <source>Append selected tracks to the current playlist</source>
         <translation>選択中トラックを現在のプレイリストに追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="304"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="305"/>
         <source>Append selected tracks to the active playlist</source>
         <translation>選択中トラックをアクティブなプレイリストに追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="311"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="312"/>
         <source>Replace contents of the current playlist with the selected tracks</source>
         <translation>現在のプレイリストを選択中のトラックに置換</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="324"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="325"/>
         <source>Create a new playlist containing the selected tracks</source>
         <translation>選択中のトラックを含む新たなプレイリストを作成</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="338"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="339"/>
         <source>Add the selected tracks to the playback queue</source>
         <translation>選択中のトラックを再生キューに追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="350"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="351"/>
         <source>Add the selected tracks to the front of the playback queue</source>
         <translation>選択中のトラックを再生キューの前面に追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="362"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="363"/>
         <source>Remove the selected tracks from the playback queue</source>
         <translation>選択したトラックを再生キューから削除</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="378"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="379"/>
         <source>Open the directory containing the selected tracks</source>
         <translation>選択したトラックを含むフォルダーを開く</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="389"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="390"/>
         <source>Copy the file paths of the selected tracks</source>
         <translation>選択したトラックのファイルパスをコピー</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="401"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="402"/>
         <source>Copy the containing directories of the selected tracks</source>
         <translation>選択したトラックの格納フォルダーをコピー</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="417"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="418"/>
         <source>Search for artwork for the selected tracks</source>
         <translation>選択したトラックのアートワークを検索</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="433"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="434"/>
         <source>Extract embedded artwork for the selected tracks to files in their directories without prompting</source>
         <translation>確認なしで、選択したトラックの埋め込みアートワークをそれぞれのフォルダー内にファイルとして抽出</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="446"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="447"/>
         <source>Attach image</source>
         <translation>画像を添付</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="448"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="449"/>
         <source>Attach an image file as the front cover for the selected tracks</source>
         <translation>選択したトラックのフロントカバーとして画像ファイルを添付</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="461"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="462"/>
         <source>Attach an image file as the back cover for the selected tracks</source>
         <translation>選択したトラックのバックカバーとして画像ファイルを添付</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="474"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="475"/>
         <source>Attach an image file as the artist picture for the selected tracks</source>
         <translation>選択したトラックのアーティスト画像として画像ファイルを添付</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="490"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="491"/>
         <source>Remove all artwork associated with the selected tracks (embedded, directory)</source>
         <translation>選択したトラックに関連するすべてのアートワーク(埋め込み、フォルダー内)を削除</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="504"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="505"/>
         <source>Open the properties dialog</source>
         <translation>プロパティダイアログを開く</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1002"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1003"/>
         <source>Playback</source>
         <translation>再生</translation>
     </message>
@@ -18497,83 +18843,83 @@ This does not support full scripting.</source>
 <context>
     <name>Fooyin::ViewMenu</name>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="48"/>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="121"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="49"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="122"/>
         <source>View</source>
         <translation>表示</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="50"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="51"/>
         <source>Quick &amp;setup</source>
         <translation>クイックセットアップ(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="52"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="53"/>
         <source>Open the quick setup dialog</source>
         <translation>クイックセットアップダイアログを開く</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="58"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="59"/>
         <source>&amp;Log</source>
         <translation>ログ(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="60"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="61"/>
         <source>Open the log dialog</source>
         <translation>ログダイアログを開く</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="66"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="67"/>
         <source>&amp;Script editor</source>
         <translation>スクリプトエディタ(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="68"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="69"/>
         <source>Open the script editor dialog</source>
         <translation>スクリプトエディタダイアログを開く</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="74"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="75"/>
         <source>&amp;Playlist Manager</source>
         <translation>プレイリストマネージャー(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="75"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="76"/>
         <source>Open the playlist manager window</source>
         <translation>プレイリストマネージャーウィンドウを開く</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="82"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="83"/>
         <source>Playback &amp;Queue</source>
         <translation>再生キュー(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="83"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="84"/>
         <source>Open the playback queue window</source>
         <translation>再生キューウィンドウを開く</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="95"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="96"/>
         <source>Focus Search &amp;Bar</source>
         <translation>検索バーにフォーカス(&amp;B)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="96"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="97"/>
         <source>Focus the first Search Bar found in the current layout</source>
         <translation>現在のレイアウト内で最初に見つかった検索バーにフォーカス</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="102"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="103"/>
         <source>Show playing &amp;track</source>
         <translation>再生中のトラックを表示(&amp;T)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="103"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="104"/>
         <source>Show the currently playing track in the playlist</source>
         <translation>プレイリスト内の現在再生中のトラックを表示</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="121"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="122"/>
         <source>DSP</source>
         <translation>DSP</translation>
     </message>
@@ -18604,108 +18950,113 @@ This does not support full scripting.</source>
 <context>
     <name>Fooyin::VuMeter::VuMeterConfigDialog</name>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="56"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="58"/>
         <source>Custom colours</source>
         <translation>カスタムカラー</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="79"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="81"/>
         <source>Display</source>
         <translation>表示</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="84"/>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="97"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="86"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="99"/>
         <source>Falloff</source>
         <translation>低下速度</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="57"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="59"/>
         <source>Bar gradient</source>
         <translation>バーのグラデーション</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="161"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="163"/>
         <source>General</source>
         <translation>全般</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="44"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="45"/>
         <source>VU Meter Settings</source>
         <translation>VU メーターの設定</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="49"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="45"/>
+        <source>Peak Meter Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="51"/>
         <source>Legend</source>
         <translation>凡例</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="50"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="52"/>
         <source>Peaks</source>
         <translation>ピーク</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="77"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="79"/>
         <source>%1 fps</source>
         <translation>%1 fps</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="86"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="88"/>
         <source>Refresh rate</source>
         <translation>更新頻度</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="95"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="97"/>
         <source>Hold time</source>
         <translation>保持時間</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="101"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="103"/>
         <source>Dimension</source>
         <translation>寸法</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="115"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="117"/>
         <source>Channel spacing</source>
         <translation>チャンネル間隔</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="117"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="119"/>
         <source>Bar size</source>
         <translation>バーサイズ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="119"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="121"/>
         <source>Bar spacing</source>
         <translation>バーの間隔</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="122"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="124"/>
         <source>Sections</source>
         <translation>セグメント</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="124"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="126"/>
         <source>Section spacing</source>
         <translation>セグメント間隔</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="58"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="60"/>
         <source>Background colour</source>
         <translation>背景色</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="59"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="61"/>
         <source>Peak colour</source>
         <translation>ピークの色</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="60"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="62"/>
         <source>Legend colour</source>
         <translation>凡例の色</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="162"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="164"/>
         <source>Colours</source>
         <translation>色</translation>
     </message>
@@ -18768,27 +19119,27 @@ This does not support full scripting.</source>
         <translation>VU メーター</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1281"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1129"/>
         <source>Show peaks</source>
         <translation>ピークを表示</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1292"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1140"/>
         <source>Show legend</source>
         <translation>凡例を表示</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1297"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1145"/>
         <source>Orientation</source>
         <translation>向き</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1300"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1148"/>
         <source>Horizontal</source>
         <translation>水平</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1301"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1149"/>
         <source>Vertical</source>
         <translation>垂直</translation>
     </message>
@@ -19082,74 +19433,74 @@ Higher supersampling values work best with higher sample counts.</source>
 <context>
     <name>Fooyin::WaveBar::WaveBarPlugin</name>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="88"/>
-        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="98"/>
+        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="103"/>
+        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="115"/>
         <source>Waveform Seekbar</source>
         <translation>波形シークバー</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="89"/>
-        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="94"/>
+        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="104"/>
+        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="111"/>
         <source>Visualisations</source>
         <translation>ビジュアライゼーション</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="91"/>
+        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="108"/>
         <source>&amp;Waveform Seekbar</source>
         <translation>波形シークバー(&amp;W)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="92"/>
+        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="109"/>
         <source>Open a waveform seekbar in a separate window</source>
         <translation>波形シークバーを別ウィンドウで開きます</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="94"/>
+        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="111"/>
         <source>View</source>
         <translation>表示</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="103"/>
+        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="120"/>
         <source>Utilities</source>
         <translation>ユーティリティ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="107"/>
+        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="124"/>
         <source>Regenerate waveform data</source>
         <translation>wavデータを再度生成する</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="108"/>
+        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="125"/>
         <source>Regenerate waveform data for the selected tracks</source>
         <translation>選択したトラックの wavデータを再生成する</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="114"/>
+        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="131"/>
         <source>Generate missing waveform data</source>
         <translation>失われた wavデータを生成する</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="115"/>
+        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="132"/>
         <source>Generate waveform data for the selected tracks if missing</source>
         <translation>選択したトラックの波形データがない場合に生成する</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="122"/>
+        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="139"/>
         <source>Remove waveform data</source>
         <translation>wavデータを削除する</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="123"/>
+        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="140"/>
         <source>Remove any existing waveform data for the selected tracks</source>
         <translation>選択したトラックの既存の波形データを削除</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="196"/>
+        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="213"/>
         <source>Generating waveform data…</source>
         <translation>wavデータを生成しています…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="196"/>
+        <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="213"/>
         <source>Abort</source>
         <translation>無視</translation>
     </message>
@@ -19298,7 +19649,7 @@ Higher supersampling values work best with higher sample counts.</source>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="245"/>
-        <location filename="../../src/gui/widgets.cpp" line="712"/>
+        <location filename="../../src/gui/widgets.cpp" line="738"/>
         <source>Library Tree</source>
         <translation>ライブラリツリー</translation>
     </message>
@@ -19365,7 +19716,7 @@ Higher supersampling values work best with higher sample counts.</source>
         <location filename="../../src/gui/widgets.cpp" line="223"/>
         <location filename="../../src/gui/widgets.cpp" line="320"/>
         <location filename="../../src/gui/widgets.cpp" line="321"/>
-        <location filename="../../src/gui/widgets.cpp" line="713"/>
+        <location filename="../../src/gui/widgets.cpp" line="739"/>
         <source>Playlist</source>
         <translation>プレイリスト</translation>
     </message>
@@ -19396,7 +19747,7 @@ Higher supersampling values work best with higher sample counts.</source>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="354"/>
-        <location filename="../../src/gui/widgets.cpp" line="714"/>
+        <location filename="../../src/gui/widgets.cpp" line="740"/>
         <source>Script Display</source>
         <translation>スクリプト表示</translation>
     </message>
@@ -19447,16 +19798,16 @@ Higher supersampling values work best with higher sample counts.</source>
         <location filename="../../src/gui/widgets.cpp" line="539"/>
         <location filename="../../src/gui/widgets.cpp" line="554"/>
         <location filename="../../src/gui/widgets.cpp" line="561"/>
-        <location filename="../../src/gui/widgets.cpp" line="604"/>
-        <location filename="../../src/gui/widgets.cpp" line="622"/>
-        <location filename="../../src/gui/widgets.cpp" line="642"/>
+        <location filename="../../src/gui/widgets.cpp" line="630"/>
+        <location filename="../../src/gui/widgets.cpp" line="648"/>
+        <location filename="../../src/gui/widgets.cpp" line="668"/>
         <source>Playback</source>
         <translation>再生</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="482"/>
-        <location filename="../../src/gui/widgets.cpp" line="604"/>
-        <location filename="../../src/gui/widgets.cpp" line="622"/>
+        <location filename="../../src/gui/widgets.cpp" line="630"/>
+        <location filename="../../src/gui/widgets.cpp" line="648"/>
         <source>Decoding</source>
         <translation>デコード</translation>
     </message>
@@ -19556,6 +19907,8 @@ Set to 0 to choose automatically from the remote buffer length.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="579"/>
         <location filename="../../src/gui/widgets.cpp" line="596"/>
+        <location filename="../../src/gui/widgets.cpp" line="604"/>
+        <location filename="../../src/gui/widgets.cpp" line="615"/>
         <source>Tagging</source>
         <translation>タグ付け</translation>
     </message>
@@ -19576,42 +19929,92 @@ Set to 0 to choose automatically from the remote buffer length.</source>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="605"/>
+        <source>ID3v2 revision</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="606"/>
+        <source>ID3v2 revision used when writing MP3 tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="608"/>
+        <source>Write ID3v2.3 tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="610"/>
+        <source>Write ID3v2.4 tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="616"/>
+        <source>Tag writing scheme for untagged files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="617"/>
+        <source>Tag types created when writing an MP3 file that has no existing tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="621"/>
+        <source>ID3v2 + ID3v1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="622"/>
+        <source>ID3v2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="624"/>
+        <source>APE + ID3v1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="625"/>
+        <source>APE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="631"/>
         <source>Enable all supported extensions</source>
         <translation>すべてのサポートされる拡張機能を利用可能にする</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="643"/>
+        <location filename="../../src/gui/widgets.cpp" line="669"/>
         <source>Opus header gain</source>
         <translation>Opus ヘッダーゲイン</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="646"/>
+        <location filename="../../src/gui/widgets.cpp" line="672"/>
         <source>Use Track Gain</source>
         <translation>トラックゲインを使用</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="648"/>
+        <location filename="../../src/gui/widgets.cpp" line="674"/>
         <source>Use Album Gain</source>
         <translation>アルバムゲインを使用</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="650"/>
+        <location filename="../../src/gui/widgets.cpp" line="676"/>
         <source>Leave null</source>
         <translation>空のままにする</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="680"/>
+        <location filename="../../src/gui/widgets.cpp" line="706"/>
         <source>DSP</source>
         <translation>DSP</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="687"/>
+        <location filename="../../src/gui/widgets.cpp" line="713"/>
         <source>Details</source>
         <translation>詳細</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="642"/>
-        <location filename="../../src/gui/widgets.cpp" line="691"/>
+        <location filename="../../src/gui/widgets.cpp" line="668"/>
+        <location filename="../../src/gui/widgets.cpp" line="717"/>
         <source>ReplayGain</source>
         <translation>ReplayGain</translation>
     </message>
@@ -19683,47 +20086,47 @@ Changes apply to newly opened streams.</source>
         <translation>自動検出で最適な一致がラテン系互換のシングルバイトテキストである場合に優先するエンコーディング</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="606"/>
+        <location filename="../../src/gui/widgets.cpp" line="632"/>
         <source>Enabled all extensions supported by the FFmpeg input</source>
         <translation>FFmpeg入力でサポートされているすべての拡張子を有効にする</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="623"/>
+        <location filename="../../src/gui/widgets.cpp" line="649"/>
         <source>Probe all readers for extensions</source>
         <translation>拡張子に対してすべてのリーダーをプローブする</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="624"/>
+        <location filename="../../src/gui/widgets.cpp" line="650"/>
         <source>Semicolon-separated extensions where all readers are tried and the reader with the most subsongs or chapters is used.</source>
         <translation>セミコロン区切りの拡張子です。指定した拡張子ではすべてのリーダーが試行され、サブソングまたはチャプター数が最も多いリーダーが使用されます。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="644"/>
+        <location filename="../../src/gui/widgets.cpp" line="670"/>
         <source>ReplayGain value written to the Opus header when updating metadata</source>
         <translation>メタデータ更新時にOpusヘッダーへ書き込むReplayGain値</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="697"/>
+        <location filename="../../src/gui/widgets.cpp" line="723"/>
         <source>Artwork</source>
         <translation>アートワーク</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="710"/>
+        <location filename="../../src/gui/widgets.cpp" line="736"/>
         <source>Default</source>
         <translation>既定</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="716"/>
+        <location filename="../../src/gui/widgets.cpp" line="742"/>
         <source>Tabs</source>
         <translation>タブ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="711"/>
+        <location filename="../../src/gui/widgets.cpp" line="737"/>
         <source>Lists</source>
         <translation>リスト</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="715"/>
+        <location filename="../../src/gui/widgets.cpp" line="741"/>
         <source>Status bar</source>
         <translation>ステータスバー</translation>
     </message>
@@ -20099,16 +20502,20 @@ Changes apply to newly opened streams.</source>
         <source>No embedded artwork found to extract</source>
         <translation>抽出する埋め込みアートワークが見つかりません</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="265"/>
         <source>Extracted artwork to %Ln file(s)</source>
-        <translation>%Ln 個のファイルにアートワークを抽出しました
+        <translation type="unfinished">
+            <numerusform>%Ln 個のファイルにアートワークを抽出しました
+        </numerusform>
         </translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="270"/>
         <source>Extracted artwork to %Ln file(s); some extractions failed</source>
-        <translation>%Ln 個のファイルにアートワークを抽出しました(一部失敗)
+        <translation type="unfinished">
+            <numerusform>%Ln 個のファイルにアートワークを抽出しました(一部失敗)
+        </numerusform>
         </translation>
     </message>
     <message>
@@ -20117,12 +20524,12 @@ Changes apply to newly opened streams.</source>
         <translation>アートワークの抽出に失敗しました</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="92"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="93"/>
         <source>Images</source>
         <translation>画像</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="93"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="94"/>
         <source>Open Image</source>
         <translation>画像を開く</translation>
     </message>
@@ -20324,12 +20731,12 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
         <translation>設定</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="84"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="86"/>
         <source>Radio Browser</source>
         <translation>ラジオブラウザ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="86"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="88"/>
         <source>Unchecked items will be hidden from the radio browser context menu.</source>
         <translation>チェックを外した項目は、ラジオブラウザのコンテキストメニューから非表示になります。</translation>
     </message>
@@ -20337,47 +20744,47 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
 <context>
     <name>TrackSelectionController</name>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="415"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="416"/>
         <source>Artwork</source>
         <translation>アートワーク</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1675"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1677"/>
         <source>Add to current playlist</source>
         <translation>現在のプレイリストに追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1676"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1680"/>
         <source>Add to current playlist and play if stopped</source>
         <translation>現在のプレイリストに追加し、停止中の場合は再生する</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1678"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1682"/>
         <source>Add to active playlist</source>
         <translation>アクティブなプレイリストに追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1679"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1684"/>
         <source>Replace current playlist</source>
         <translation>現在のプレイリストを置き換える</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1680"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1686"/>
         <source>Create new playlist</source>
         <translation>新しいプレイリストを作成</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1684"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1691"/>
         <source>Add to playback queue</source>
         <translation>再生キューに追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1685"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1693"/>
         <source>Add to front of playback queue</source>
         <translation>再生キューの前面に追加</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1686"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1695"/>
         <source>Replace playback queue</source>
         <translation>再生キューを置き換える</translation>
     </message>

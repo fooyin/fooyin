@@ -1894,37 +1894,37 @@
 <context>
     <name>Fooyin::AutoHeaderView</name>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="513"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="514"/>
         <source>Auto-size sections</source>
         <translation>Автоматический размер секций</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="521"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="522"/>
         <source>Show hidden</source>
         <translation>Скрывать</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="530"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="531"/>
         <source>Hide %1</source>
         <translation>Скрыть %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="554"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="555"/>
         <source>Alignment</source>
         <translation>Выравнивание</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="564"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="565"/>
         <source>&amp;Left</source>
         <translation>&amp;Слева</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="565"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="566"/>
         <source>&amp;Centre</source>
         <translation>&amp;По центру</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="566"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="567"/>
         <source>&amp;Right</source>
         <translation>&amp;Справа</translation>
     </message>
@@ -3161,154 +3161,159 @@ When disabled, existing track order is preserved and only newly added matching t
 <context>
     <name>Fooyin::DirBrowser</name>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="200"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="203"/>
         <source>&amp;Play</source>
         <translation>&amp;Играть</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="201"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="204"/>
         <source>Add to &amp;current playlist</source>
         <translation>Добавить в &amp;текущий плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="202"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="205"/>
         <source>Add to &amp;active playlist</source>
         <translation>Добавить в &amp;активный плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="205"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="208"/>
         <source>Add to playback &amp;queue</source>
         <translation>&amp;Добавить в очередь воспроизведения</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="206"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="209"/>
         <source>Queue to play next</source>
         <translation>Поставить следующим в очереди</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="244"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="252"/>
         <source>Go up to the parent directory</source>
         <translation>Перейти выше в родительский каталог</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="249"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="257"/>
         <source>Return to the previous directory</source>
         <translation>Вернуться в предыдущий каталог</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="258"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="266"/>
         <source>Undo a Go-&gt;Back action</source>
         <translation>Отменить переход</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="268"/>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="269"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="276"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="277"/>
         <source>Tracks</source>
         <translation>Треки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="269"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="277"/>
         <source>Queue</source>
         <translation>Очередь</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="274"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="282"/>
         <source>Append selected tracks to the current playlist</source>
         <translation>Добавить выбранные треки в текущий плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="281"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="289"/>
         <source>Append selected tracks to the active playlist</source>
         <translation>Добавить выбранные треки в активный плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="288"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="296"/>
         <source>Replace contents of the current playlist with the selected tracks</source>
         <translation>Заменить содержимое текущего плейлиста на выбранные треки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="295"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="303"/>
         <source>Create a new playlist containing the selected tracks</source>
         <translation>Создать новый плейлист из выбранных треков</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="301"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="309"/>
         <source>Add the selected tracks to the playback queue</source>
         <translation>Добавить выбранные треки в очередь воспроизведения</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="307"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="315"/>
         <source>Add the selected tracks to the front of the playback queue</source>
         <translation>Поставить выделенные треки в начало очереди воспроизведения</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="313"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="321"/>
         <source>Replace the playback queue with the selected tracks</source>
         <translation>Заменить очередь воспроизведения выбранными треками</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="601"/>
-        <source>View mode</source>
-        <translation>Режим просмотра</translation>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="621"/>
+        <source>Display</source>
+        <translation type="unfinished">Отображение</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="604"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="624"/>
         <source>List</source>
         <translation>Список</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="613"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="633"/>
         <source>Tree</source>
         <translation>Дерево</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="747"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="646"/>
+        <source>Show header</source>
+        <translation type="unfinished">Показывать заголовок</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="774"/>
         <source>Add to playlist</source>
         <translation>Добавить в плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="197"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="200"/>
         <source>Go up</source>
         <translation>Наверх</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="198"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="201"/>
         <source>Go back</source>
         <translation>Назад</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="199"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="202"/>
         <source>Go forwards</source>
         <translation>Вперёд</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="203"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="206"/>
         <source>&amp;Replace current playlist</source>
         <translation>&amp;Заменить текущий плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="204"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="207"/>
         <source>Create &amp;new playlist</source>
         <translation>Создать &amp;новый плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="207"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="210"/>
         <source>Replace playback q&amp;ueue</source>
         <translation>Заменить оч&amp;ередь воспроизведения</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="271"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="279"/>
         <source>Start playback of the selected files</source>
         <translation>Начать воспроизведение выбранных файлов</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="242"/>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="353"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="250"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="361"/>
         <source>Directory Browser</source>
         <translation>Обзор каталогов</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="593"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="613"/>
         <source>Set as root</source>
         <translation>Выбрать корневой папкой</translation>
     </message>
@@ -3342,98 +3347,126 @@ When disabled, existing track order is preserved and only newly added matching t
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="41"/>
-        <source>Show horizontal scrollbar</source>
-        <translation>Показать горизонтальную полосу прокрутки</translation>
+        <source>Show header</source>
+        <translation type="unfinished">Показывать заголовок</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="43"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="42"/>
+        <source>Remember sort column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="44"/>
         <source>Show controls</source>
         <translation>Показать элементы управления</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="44"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="45"/>
         <source>Show location</source>
         <translation>Показать расположение</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="45"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="46"/>
         <source>Show symlinks</source>
         <translation>Показать символьные ссылки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="46"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="47"/>
         <source>Show hidden</source>
         <translation>Показывать скрытые</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="49"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="50"/>
         <source>Start playback immediately</source>
         <translation>Начинать воспроизведение немедленно</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="52"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="53"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
         <translation>Для «Заменить текущий плейлист» и «Создать новый плейлист» начинать воспроизведение немедленно.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="54"/>
+        <source>Restore the sort column on startup and when changing directories.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="56"/>
         <source>Click Behaviour</source>
         <translation>Поведение щелчка мыши</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="57"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="59"/>
         <source>Double-click</source>
         <translation>Двойной щелчок</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="59"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="61"/>
         <source>Middle-click</source>
         <translation>Щелчок средней кнопкой</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="64"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="66"/>
         <source>Browser Mode</source>
         <translation>Режим просмотра</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="70"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="72"/>
         <source>Browser Filters</source>
         <translation>Фильтры браузера</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="75"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="77"/>
         <source>Top</source>
         <translation>Сверху</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="76"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="78"/>
         <source>Bottom</source>
         <translation>Снизу</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="78"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="80"/>
         <source>Display Options</source>
         <translation>Параметры отображения</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="85"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="87"/>
         <source>Path and controls position</source>
         <translation>Положение пути и элементов управления</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="98"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="102"/>
         <source>Expand/collapse</source>
         <translation>Развернуть/свернуть</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="99"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="103"/>
         <source>Expand/collapse or play</source>
         <translation>Развернуть/свернуть или воспроизвести</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="102"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="106"/>
         <source>None</source>
         <translation>Нет</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::DirTree</name>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="196"/>
+        <source>Columns</source>
+        <translation type="unfinished">Столбцы</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="207"/>
+        <source>Show header</source>
+        <translation type="unfinished">Показывать заголовок</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="212"/>
+        <source>Auto-size sections</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3538,11 +3571,6 @@ When disabled, existing track order is preserved and only newly added matching t
 <context>
     <name>Fooyin::DspCompactLayoutWidget</name>
     <message>
-        <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="394"/>
-        <source>Restore Defaults</source>
-        <translation>Восстановить значения по умолчанию</translation>
-    </message>
-    <message>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="410"/>
         <source>Configure…</source>
         <translation>Настроить…</translation>
@@ -3564,6 +3592,14 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="46"/>
         <source>Configure</source>
         <translation>Настроить</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::DspLayoutEditor</name>
+    <message>
+        <location filename="../../src/gui/dsp/dsplayouteditor.cpp" line="42"/>
+        <source>Restore Defaults</source>
+        <translation type="unfinished">Восстановить значения по умолчанию</translation>
     </message>
 </context>
 <context>
@@ -3738,28 +3774,28 @@ Effects here process the final combined output.</source>
         <translation>На дорожку</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="405"/>
-        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="412"/>
+        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="407"/>
+        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="414"/>
         <source>DSP Settings</source>
         <translation>Параметры DSP</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="405"/>
+        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="407"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
         <translation>Не удалось открыть параметры для модуля DSP «%1».</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="412"/>
+        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="414"/>
         <source>Unable to find DSP &quot;%1&quot;.</source>
         <translation>Не удалось найти модуль DSP «%1».</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="455"/>
+        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="457"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="456"/>
+        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="458"/>
         <source>%1: %2 (%3)</source>
         <translation>%1: %2 (%3)</translation>
     </message>
@@ -4202,15 +4238,93 @@ Effects here process the final combined output.</source>
     </message>
 </context>
 <context>
+    <name>Fooyin::Equaliser::EqualiserLayoutEditor</name>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="269"/>
+        <source>Enabled</source>
+        <translation type="unfinished">Включено</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="270"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="436"/>
+        <source>Zero level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="271"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="449"/>
+        <source>Auto level</source>
+        <translation type="unfinished">Автоуровень</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="273"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
+        <source>Save preset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="310"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="515"/>
+        <source> dB</source>
+        <translation type="unfinished"> дБ</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="324"/>
+        <source>Preamp</source>
+        <translation type="unfinished">Предусиление</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="441"/>
+        <source>Show controls</source>
+        <translation type="unfinished">Показать элементы управления</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="453"/>
+        <source>Save preset…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="457"/>
+        <source>Presets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="461"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="543"/>
+        <source>No presets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="546"/>
+        <source>Load preset…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
+        <source>Preset name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="583"/>
+        <source>Preset already exists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="584"/>
+        <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
+        <translation type="unfinished">Предустановка «%1» уже существует. Перезаписать?</translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::Equaliser::EqualiserSettingsProvider</name>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="903"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="908"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1137"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1142"/>
         <source>Equaliser</source>
         <translation>Эквалайзер</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="913"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1147"/>
         <source>Open Equaliser settings</source>
         <translation>Открыть настройки эквалайзера</translation>
     </message>
@@ -4218,112 +4332,111 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::Equaliser::EqualiserSettingsWidget</name>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="214"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="613"/>
         <source>Load</source>
         <translation>Загрузить</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="215"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="614"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="216"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="615"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="217"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="616"/>
         <source>Import</source>
         <translation>Импорт</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="218"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="617"/>
         <source>Export</source>
         <translation>Экспорт</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="227"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="626"/>
         <source>Equaliser Settings</source>
         <translation>Настройки эквалайзера</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="267"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="666"/>
         <source>Preamp</source>
         <translation>Предусиление</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="319"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="718"/>
         <source>Zero all</source>
         <translation>Обнулить всё</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="320"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="719"/>
         <source>Auto level</source>
         <translation>Автоуровень</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="321"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="720"/>
         <source>Band:</source>
         <translation>Полоса:</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="322"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="721"/>
         <source>Presets:</source>
         <translation>Предустановки:</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="334"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="804"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="733"/>
         <source> dB</source>
         <translation> дБ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="582"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="901"/>
         <source>Presets</source>
         <translation>Предустановки</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="582"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="901"/>
         <source>Unable to load the selected preset.</source>
         <translation>Не удалось загрузить выбранную предустановку.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="604"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="918"/>
         <source>Preset already exists</source>
         <translation>Предустановка уже существует</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="605"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="919"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
         <translation>Предустановка «%1» уже существует. Перезаписать?</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="650"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="658"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="680"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="692"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="955"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="963"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="985"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="997"/>
         <source>Import Equaliser Preset</source>
         <translation>Импорт предустановки эквалайзера</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="651"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="713"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="956"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1018"/>
         <source>Equaliser Preset (*.feq)</source>
         <translation>Предустановка эквалайзера (*.feq)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="659"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="964"/>
         <source>Unable to open &quot;%1&quot; for reading.</source>
         <translation>Не удалось открыть «%1» для чтения.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="681"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="986"/>
         <source>Invalid value on line %L1.</source>
         <translation>Недопустимое значение на строке %L1.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="682"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="987"/>
         <source>The first %Ln non-empty line(s) must contain integer values.</source>
         <translation>
             <numerusform>Первая непустая строка должна содержать целые числа.</numerusform>
@@ -4332,7 +4445,7 @@ Effects here process the final combined output.</source>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="693"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="998"/>
         <source>The preset file contains %Ln band value(s).</source>
         <translation>
             <numerusform>Файл предустановок содержит %Ln значение полосы.</numerusform>
@@ -4341,7 +4454,7 @@ Effects here process the final combined output.</source>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="694"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="999"/>
         <source>Expected %Ln band value(s).</source>
         <translation>
             <numerusform>Ожидалось %Ln значение полосы.</numerusform>
@@ -4350,19 +4463,19 @@ Effects here process the final combined output.</source>
         </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="713"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="738"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="750"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1018"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1043"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1055"/>
         <source>Export Equaliser Preset</source>
         <translation>Экспорт предустановки эквалайзера</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="739"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1044"/>
         <source>Unable to open &quot;%1&quot; for writing.</source>
         <translation>Не удалось открыть «%1» для записи.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="751"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1056"/>
         <source>An error occurred while writing &quot;%1&quot;.</source>
         <translation>Произошла ошибка при записи «%1».</translation>
     </message>
@@ -5077,71 +5190,103 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::FileOps::FileOpsPlugin</name>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="83"/>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="96"/>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="109"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="92"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="105"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="118"/>
         <source>File Operations</source>
         <translation>Операции с файлами</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="84"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="93"/>
         <source>Confirm before deleting tracks</source>
         <translation>Подтверждать перед удалением дорожек</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="97"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="106"/>
         <source>Immediately delete tracks (bypass trash)</source>
         <translation>Немедленно удалять треки (минуя корзину)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="110"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="119"/>
         <source>Delete empty folders</source>
         <translation>Удалять пустые папки</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="127"/>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="181"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="136"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="186"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="269"/>
         <source>File operations</source>
         <translation>Операции с файлами</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="173"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="176"/>
         <source>&amp;Copy to…</source>
         <translation>&amp;Копировать в…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="174"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="177"/>
         <source>&amp;Move to…</source>
         <translation>&amp;Переместить в…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="175"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="178"/>
         <source>&amp;Rename to…</source>
         <translation>&amp;Переименовать в…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="176"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="179"/>
         <source>&amp;Extract to…</source>
         <translation>Из&amp;влечь в…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="178"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="183"/>
         <source>&amp;Delete</source>
         <translation>&amp;Удалить</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="196"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="186"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="269"/>
+        <source>Tracks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="201"/>
         <source>No tracks deleted</source>
         <translation>Никакие дорожки не удалены</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="197"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="202"/>
         <source>Deleted %Ln track(s)</source>
         <translation>
             <numerusform>Удалена %Ln дорожка</numerusform>
             <numerusform>Удалено %Ln дорожки</numerusform>
             <numerusform>Удалено %Ln дорожек</numerusform>
         </translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="254"/>
+        <source>Copy</source>
+        <translation type="unfinished">Копировать</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="257"/>
+        <source>Move</source>
+        <translation type="unfinished">Переместить</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="260"/>
+        <source>Rename</source>
+        <translation type="unfinished">Переименовать</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="263"/>
+        <source>Extract</source>
+        <translation type="unfinished">Извлечь</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="266"/>
+        <source>Other</source>
+        <translation type="unfinished">Другое</translation>
     </message>
 </context>
 <context>
@@ -5670,7 +5815,7 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::FyWidget</name>
     <message>
-        <location filename="../../src/gui/fywidget.cpp" line="264"/>
+        <location filename="../../src/gui/fywidget.cpp" line="266"/>
         <source>Configure…</source>
         <translation>Настроить…</translation>
     </message>
@@ -5831,17 +5976,17 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::GuiApplication</name>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="823"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="827"/>
         <source>Plugins not found</source>
         <translation>Модули не найдены</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="824"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="828"/>
         <source>Some plugins are required for full functionality.</source>
         <translation>Без некоторых модулей функциональность будет ограничена.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="825"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="829"/>
         <source>Plugin search locations:
 
 </source>
@@ -5850,231 +5995,231 @@ Effects here process the final combined output.</source>
 </translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="828"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="832"/>
         <source>Quit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="954"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="958"/>
         <source>Volume</source>
         <translation>Громкость</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="956"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="960"/>
         <source>Volume up</source>
         <translation>Увеличить громкость</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="963"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="967"/>
         <source>Volume down</source>
         <translation>Уменьшить громкость</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="970"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="974"/>
         <source>Mute</source>
         <translation>Приглушить звук</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="980"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="984"/>
         <source>Clear Current Playlist</source>
         <translation>Очистить текущий плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="981"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="985"/>
         <source>Remove all tracks from the current playlist</source>
         <translation>Удалить все дорожки из текущего плейлиста</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1007"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1011"/>
         <source>Lock playlist</source>
         <translation>Блокировать плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1009"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1013"/>
         <source>Prevent changes to the contents of the current playlist</source>
         <translation>Предотвращать изменения содержимого текущего плейлиста</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1012"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1016"/>
         <source>Lock Current Playlist</source>
         <translation>Блокировать текущий плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1033"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1037"/>
         <source>Playback</source>
         <translation>Воспроизведение</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1033"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1037"/>
         <source>Seek</source>
         <translation>Перемотка</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1035"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1039"/>
         <source>Seek forward (small step)</source>
         <translation>Перемотать вперёд (малый шаг)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1042"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1046"/>
         <source>Seek forward (large step)</source>
         <translation>Перемотать вперёд (большой шаг)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1049"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1053"/>
         <source>Seek backward (small step)</source>
         <translation>Перемотать назад (малый шаг)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1057"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1061"/>
         <source>Seek backward (large step)</source>
         <translation>Перемотать назад (большой шаг)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1082"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1086"/>
         <source>Remove Playlist</source>
         <translation>Удалить плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1093"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1097"/>
         <source>Toggle Menubar</source>
         <translation>Переключить панель меню</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1097"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1101"/>
         <source>View</source>
         <translation>Вид</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1107"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1111"/>
         <source>Reading tracks…</source>
         <translation>Чтение треков…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1107"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1111"/>
         <source>Abort</source>
         <translation>Прервать</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1135"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1139"/>
         <source>Current file</source>
         <translation>Текущий файл</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1148"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1184"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1152"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1188"/>
         <source>Tagging</source>
         <translation>Теги</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1150"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1154"/>
         <source>Reload tags from files</source>
         <translation>Перезагрузить теги из файлов</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1151"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1155"/>
         <source>Reload tags from modified files</source>
         <translation>Перезагрузить теги из изменённых файлов</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1153"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1157"/>
         <source>Replace tags in selected tracks with tags from the files</source>
         <translation>Заменить теги в выбранных треках на теги из файлов</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1154"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1158"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
         <translation>Заменить теги в выбранных треках тегами из файлов, если они были изменены</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1195"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1199"/>
         <source>Choose destination</source>
         <translation>Выбрать папку назначения</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1276"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1284"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1280"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1288"/>
         <source>Convert using preset %1</source>
         <translation>Преобразовать с предустановкой %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1283"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1316"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1326"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1335"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1287"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1320"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1330"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1339"/>
         <source>Tracks</source>
         <translation>Дорожки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1283"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1316"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1326"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1335"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1346"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1287"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1320"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1330"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1339"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1350"/>
         <source>Convert</source>
         <translation>Преобразовать</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1314"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1318"/>
         <source>Converter setup…</source>
         <translation>Настройка преобразователя…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1323"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1327"/>
         <source>Using default settings</source>
         <translation>Использовать настройки по умолчанию</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1327"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1331"/>
         <source>Convert using default settings</source>
         <translation>Преобразовать с настройками по умолчанию</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1332"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1336"/>
         <source>Repeat last conversion</source>
         <translation>Повторить последнее преобразование</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1363"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1367"/>
         <source>Custom conversion…</source>
         <translation>Пользовательское преобразование…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1600"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1604"/>
         <source>Reload Required</source>
         <translation>Необходима перезагрузка</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1602"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1606"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
         <translation>Из-за изменения базы данных треки необходимо перезагрузить с диска, чтобы обновить сохранённые метаданные.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1606"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1610"/>
         <source>Reload Now</source>
         <translation>Перезагрузить сейчас</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1609"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1613"/>
         <source>OK</source>
         <translation>ОК</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1747"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1755"/>
         <source>Playback Error</source>
         <translation>Ошибка воспроизведения</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1800"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1808"/>
         <source>Track Not Found</source>
         <translation>Трек не найден</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1873"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1881"/>
         <source>Add Stream URL</source>
         <translation>Добавить адрес потока</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1873"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1881"/>
         <source>Stream URL:</source>
         <translation>Адрес потока:</translation>
     </message>
@@ -6099,14 +6244,14 @@ Effects here process the final combined output.</source>
         <translation>Файл изображения пуст</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1772"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1780"/>
         <source>Continue</source>
         <translation>Продолжить</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="984"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1011"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1084"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="988"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1015"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1088"/>
         <source>Playlist</source>
         <translation>Плейлист</translation>
     </message>
@@ -6122,72 +6267,72 @@ Effects here process the final combined output.</source>
         <translation>Название макета</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1085"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1089"/>
         <source>Remove Current Playlist</source>
         <translation>Удалить текущий плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1375"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1379"/>
         <source>Utilities</source>
         <translation>Утилиты</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1774"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1782"/>
         <source>Stop</source>
         <translation>Стоп</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1778"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1786"/>
         <source>Always continue playing if a track is unavailable</source>
         <translation>Всегда продолжать проигрывание, если трек недоступен</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1805"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1813"/>
         <source>No Decoder Available</source>
         <translation>Не удалось декодировать файл</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1835"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1843"/>
         <source>All Supported Media Files (%1)</source>
         <translation>Все поддерживаемые медиафайлы (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1836"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1844"/>
         <source>Audio Files (%1)</source>
         <translation>Аудиофайлы (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1847"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1855"/>
         <source>Add Files</source>
         <translation>Добавить файлы</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1861"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1869"/>
         <source>Add Folders</source>
         <translation>Добавить папки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1875"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1883"/>
         <source>&amp;Add</source>
         <translation>&amp;Добавить</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1879"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1887"/>
         <source>Enter a valid http:// or https:// URL.</source>
         <translation>Введите верный http:// или https:// URL-адрес.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1940"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1948"/>
         <source>All Supported Playlists (%1)</source>
         <translation>Все поддерживаемые плейлисты (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1950"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1958"/>
         <source>Load Playlist</source>
         <translation>Загрузить плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1987"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1995"/>
         <source>Save Playlist</source>
         <translation>Сохранить плейлист</translation>
     </message>
@@ -6891,52 +7036,52 @@ If the default half-star does not render correctly with your system font, choose
 <context>
     <name>Fooyin::HelpMenu</name>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="53"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="54"/>
         <source>&amp;Quick start</source>
         <translation>&amp;Знакомство с программой</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="54"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="55"/>
         <source>Open the quick start guide</source>
         <translation>Открыть ознакомительное руководство</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="59"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="60"/>
         <source>&amp;Scripting help</source>
         <translation>Спра&amp;вка по скриптам</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="60"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="61"/>
         <source>Open the scripting documentation</source>
         <translation>Открыть документацию по написанию скриптов</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="64"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="65"/>
         <source>S&amp;earching help</source>
         <translation>Справка по п&amp;оиску</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="65"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="66"/>
         <source>Open the search documentation</source>
         <translation>Открыть документацию по поиску</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="69"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="70"/>
         <source>&amp;Frequently asked questions</source>
         <translation>&amp;Часто задаваемые вопросы</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="70"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="71"/>
         <source>Open the FAQ</source>
         <translation>Открыть часто задаваемые вопросы</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="74"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="75"/>
         <source>&amp;About</source>
         <translation>&amp;О программе</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="76"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="77"/>
         <source>Open the about dialog</source>
         <translation>О программе</translation>
     </message>
@@ -9415,17 +9560,17 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::Notify::NotifyPage</name>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="232"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="256"/>
         <source>General</source>
         <translation>Общие</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="233"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="257"/>
         <source>Notifications</source>
         <translation>Уведомления</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="233"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="257"/>
         <source>Integrations</source>
         <translation>Интеграции</translation>
     </message>
@@ -9433,83 +9578,94 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::Notify::NotifyPageWidget</name>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="80"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="82"/>
         <source>Show album art</source>
         <translation>Показывать обложку альбома</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="84"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="88"/>
         <source>Timeout</source>
         <translation>Тайм-аут</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="75"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="77"/>
         <source>Enable notifications</source>
         <translation>Включить уведомления</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="76"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="78"/>
         <source>Title</source>
         <translation>Заголовок</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="78"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="80"/>
         <source>Body</source>
         <translation>Тело</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="81"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="83"/>
+        <source>Maximum album art size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="85"/>
         <source>Show previous</source>
         <translation>Показать предыдущий</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="82"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="86"/>
         <source>Show play/pause</source>
         <translation>Показать воспроизведение/паузу</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="83"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="87"/>
         <source>Show next</source>
         <translation>Показать следующий</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="87"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="91"/>
         <source>General</source>
         <translation>Общие</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="89"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="93"/>
         <source>Content</source>
         <translation>Содержимое</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="91"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="95"/>
         <source>Playback Controls</source>
         <translation>Управление воспроизведением</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="108"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="104"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="202"/>
+        <source>Maximum width or height of album art sent with notifications</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="123"/>
         <source>System default</source>
         <translation>По умолчанию для системы</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="111"/>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="173"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="126"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="189"/>
         <source>Notification display time in milliseconds</source>
         <translation>Время отображения уведомления в миллисекундах</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="169"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="185"/>
         <source>Album art is not available for the active notification backend</source>
         <translation>Обложка альбома недоступна для активного бэкенда уведомлений</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="171"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="187"/>
         <source>Playback controls are not available for the active notification backend</source>
         <translation>Элементы управления воспроизведением недоступны для активного бэкенда уведомлений</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="174"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="190"/>
         <source>Notification timeout is not available for the active notification backend</source>
         <translation>Тайм-аут уведомлений недоступен для активного бэкенда уведомлений</translation>
     </message>
@@ -9517,22 +9673,22 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::Notify::NotifyPlugin</name>
     <message>
-        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="229"/>
+        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="230"/>
         <source>Pause</source>
         <translation>Пауза</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="229"/>
+        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="230"/>
         <source>Play</source>
         <translation>Играть</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="236"/>
+        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="237"/>
         <source>Previous</source>
         <translation>Предыдущий</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="250"/>
+        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="251"/>
         <source>Next</source>
         <translation>Следующий</translation>
     </message>
@@ -9540,13 +9696,13 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::NowPlayingOutputPage</name>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="347"/>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="348"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="356"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="357"/>
         <source>Now Playing</source>
         <translation>Сейчас играет</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="348"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="357"/>
         <source>Playback</source>
         <translation>Воспроизведение</translation>
     </message>
@@ -9554,97 +9710,102 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::NowPlayingOutputPageWidget</name>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="94"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="95"/>
         <source>Enabled</source>
         <translation>Включено</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="97"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="98"/>
         <source>Track changes</source>
         <translation>Изменение дорожек</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="98"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="99"/>
         <source>Play and pause</source>
         <translation>Воспроизведение и пауза</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="99"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="100"/>
         <source>Stop</source>
         <translation>Стоп</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="100"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="101"/>
         <source>Every second</source>
         <translation>Каждую секунду</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="101"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="102"/>
+        <source>Played threshold reached</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="103"/>
         <source>Clipboard</source>
         <translation>Буфер обмена</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="102"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="104"/>
         <source>File</source>
         <translation>Файл</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="103"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="105"/>
         <source>Path</source>
         <translation>Путь</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="105"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="107"/>
         <source>Append instead of overwrite</source>
         <translation>Добавлять вместо перезаписи</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="106"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="108"/>
         <source>Maximum lines</source>
         <translation>Максимум строк</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="109"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="111"/>
         <source>General</source>
         <translation>Общие</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="115"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="117"/>
         <source>Format</source>
         <translation>Формат</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="122"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="123"/>
         <source>No current track</source>
         <translation>Нет текущей дорожки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="129"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="132"/>
         <source>Update events</source>
         <translation>События обновления</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="138"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="142"/>
         <source>Output</source>
         <translation>Вывод</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="142"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="146"/>
         <source>Unlimited</source>
         <translation>Без ограничений</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="146"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="150"/>
         <source>Browse to an output file</source>
         <translation>Выберите выходной файл</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="330"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="339"/>
         <source>Now Playing</source>
         <translation>Сейчас играет</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="330"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="339"/>
         <source>Text Files (*.txt);;All Files (*)</source>
         <translation>Текстовые файлы (*.txt);;Все файлы (*)</translation>
     </message>
@@ -10118,6 +10279,31 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/controls/outputselector.cpp" line="154"/>
         <source>Configure listed devices…</source>
         <translation>Настроить перечисленные устройства…</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Pipewire::PipewireSettings</name>
+    <message>
+        <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="34"/>
+        <source>PipeWire Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="40"/>
+        <source>Latency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="44"/>
+        <source>Automatic</source>
+        <translation type="unfinished">Автоматически</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="47"/>
+        <source>Lower values provide more frequent audio processing but may increase underrun risk.
+Higher values improve stability but increase latency and may reduce visualisation smoothness.
+Changes take effect the next time the PipeWire output is initialised.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11574,7 +11760,7 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::PlaylistModel</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1517"/>
+        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1522"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln дорожка</numerusform>
@@ -12156,42 +12342,42 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="968"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="971"/>
         <source>&amp;Play</source>
         <translation>&amp;Играть</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1079"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1082"/>
         <source>Add to another playlist</source>
         <translation>Добавить в другой плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1231"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1234"/>
         <source>Use custom layout for this playlist</source>
         <translation>Применять свой макет для этого плейлиста</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1232"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1235"/>
         <source>Use a separate view layout instead of the default</source>
         <translation>Использовать отдельный макет вместо стандартного</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1684"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1687"/>
         <source>Writing metadata…</source>
         <translation>Запись метаданных…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1684"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1687"/>
         <source>Abort</source>
         <translation>Прервать</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1690"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1693"/>
         <source>Writing Metadata</source>
         <translation>Запись метаданных</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1691"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1694"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Запись метаданных в %Ln дорожку…</numerusform>
@@ -12200,68 +12386,68 @@ Remove original: deletes the previous file or tag after saving.</source>
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1790"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1794"/>
         <source>Start playback of the selected track</source>
         <translation>Воспроизвести выбранную дорожку</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1799"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1803"/>
         <source>Edit</source>
         <translation>Правка</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1803"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1807"/>
         <source>Randomise the current playlist</source>
         <translation>Перемешать текущий плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1806"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1810"/>
         <source>Reverse the current playlist</source>
         <translation>Обратить текущий плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1824"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1828"/>
         <source>Select &amp;all</source>
         <translation>Выделить в&amp;се</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1825"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1829"/>
         <source>Select all tracks in the current playlist</source>
         <translation>Выделить все дорожки в текущем плейлисте</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1153"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1156"/>
         <source>Reset columns to default</source>
         <translation>Сбросить столбцы на стандартные</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1179"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1182"/>
         <source>Sort the current playlist using this preset</source>
         <translation>Сортировать текущий плейлист с использованием этой предустановки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1219"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1222"/>
         <source>Single-column mode</source>
         <translation>Режим одного столбца</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1332"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1335"/>
         <source>Playlist settings…</source>
         <translation>Настройки плейлиста…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1260"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1263"/>
         <source>Presets</source>
         <translation>Шаблоны</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1291"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1294"/>
         <source>Columns</source>
         <translation>Столбцы</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1279"/>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1317"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1282"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1320"/>
         <source>More…</source>
         <translation>Больше…</translation>
     </message>
@@ -12487,12 +12673,12 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::PluginPage</name>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="260"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="281"/>
         <source>General</source>
         <translation>Общие</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="261"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="282"/>
         <source>Plugins</source>
         <translation>Модули</translation>
     </message>
@@ -12520,23 +12706,58 @@ Remove original: deletes the previous file or tag after saving.</source>
         <translation>Модули изменены</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="239"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="240"/>
+        <source>fooyin Plugin (*.dll)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="242"/>
+        <source>fooyin Plugin (*.so)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="244"/>
         <source>Install Plugin</source>
         <translation>Установить модуль</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="239"/>
-        <source>fooyin Plugin (*.fyl)</source>
-        <translation>Модуль fooyin(*.fyl)</translation>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="254"/>
+        <source>Plugin Already Installed</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="247"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="255"/>
+        <source>This plugin is already installed. Update it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="256"/>
+        <source>Update</source>
+        <translation type="unfinished">Обновить</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="265"/>
+        <source>Plugin Updated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="272"/>
+        <source>Plugin Installation Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="272"/>
+        <source>The plugin could not be installed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="265"/>
         <source>Plugin Installed</source>
         <translation>Модуль установлен</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="178"/>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="248"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="266"/>
         <source>Restart for changes to take effect. Restart now?</source>
         <translation>Для применения изменений требуется перезапуск. Перезапустить сейчас?</translation>
     </message>
@@ -13003,30 +13224,30 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::PropertiesDialog</name>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1055"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1075"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1057"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1077"/>
         <source>Toggle Sidebar</source>
         <translation>Переключить боковую панель</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1056"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1086"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1058"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1088"/>
         <source>Previous Track</source>
         <translation>Предыдущая дорожка</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1057"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1096"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1059"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1098"/>
         <source>Next Track</source>
         <translation>Следующая дорожка</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1059"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1061"/>
         <source>Tracks</source>
         <translation>Дорожки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1059"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1061"/>
         <source>Properties</source>
         <translation>Свойства</translation>
     </message>
@@ -13034,18 +13255,18 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::PropertiesDialogWidget</name>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="473"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="475"/>
         <source>Selection</source>
         <translation>Выбор</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="477"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="652"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="479"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="654"/>
         <source>Properties</source>
         <translation>Свойства</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="656"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="658"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln дорожка</numerusform>
@@ -13054,17 +13275,17 @@ Remove original: deletes the previous file or tag after saving.</source>
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1001"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1003"/>
         <source>Pending Changes</source>
         <translation>Ожидающие изменения</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1002"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1004"/>
         <source>Apply or clear the current tab&apos;s pending changes before switching tracks or tabs.</source>
         <translation>Применить или очистить ожидающие изменения текущей вкладки до переключения дорожек или вкладок.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1019"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1021"/>
         <source>All Tracks (%1)</source>
         <translation>Все дорожки (% 1)</translation>
     </message>
@@ -13902,45 +14123,45 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::RadioBrowser::RadioBrowserPlugin</name>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="98"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="100"/>
         <source>Radio &amp;Browser</source>
         <translation>Обозреватель рад&amp;ио</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="99"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="101"/>
         <source>Open the Radio Browser window</source>
         <translation>Открыть окно «Обозревателя радио»</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="102"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="104"/>
         <source>View</source>
         <translation>Вид</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="116"/>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="134"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="118"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="136"/>
         <source>Radio Browser</source>
         <translation>Обозреватель радио</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="117"/>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="128"/>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="132"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="119"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="130"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="134"/>
         <source>Internet</source>
         <translation>Интернет</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="127"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="129"/>
         <source>Radio Search</source>
         <translation>Поиск радио</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="131"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="133"/>
         <source>Radio Guide</source>
         <translation>Гид по радио</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="150"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="152"/>
         <source>Playback stopped</source>
         <translation>Воспроизведение остановлено</translation>
     </message>
@@ -16395,7 +16616,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <translation>Справка</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1728"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1736"/>
         <source>Quick Search</source>
         <translation>Быстрый поиск</translation>
     </message>
@@ -18662,83 +18883,83 @@ This does not support full scripting.</source>
 <context>
     <name>Fooyin::ViewMenu</name>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="48"/>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="121"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="49"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="122"/>
         <source>View</source>
         <translation>Вид</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="50"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="51"/>
         <source>Quick &amp;setup</source>
         <translation>Б&amp;ыстрая настройка</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="52"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="53"/>
         <source>Open the quick setup dialog</source>
         <translation>Открыть диалог быстрой настройки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="58"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="59"/>
         <source>&amp;Log</source>
         <translation>&amp;Журнал</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="60"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="61"/>
         <source>Open the log dialog</source>
         <translation>Открыть окно журнала</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="66"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="67"/>
         <source>&amp;Script editor</source>
         <translation>&amp;Редактор скриптов</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="68"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="69"/>
         <source>Open the script editor dialog</source>
         <translation>Открыть окно редактора скриптов</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="74"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="75"/>
         <source>&amp;Playlist Manager</source>
         <translation>&amp;Менеджер плейлистов</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="75"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="76"/>
         <source>Open the playlist manager window</source>
         <translation>Открыть окно менеджера плейлистов</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="82"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="83"/>
         <source>Playback &amp;Queue</source>
         <translation>Очередь &amp;воспроизведения</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="83"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="84"/>
         <source>Open the playback queue window</source>
         <translation>Открыть окно очереди воспроизведения</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="95"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="96"/>
         <source>Focus Search &amp;Bar</source>
         <translation>Фокус на строку &amp;поиска</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="96"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="97"/>
         <source>Focus the first Search Bar found in the current layout</source>
         <translation>Переместить фокус на первую строку поиска в текущем макете</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="102"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="103"/>
         <source>Show playing &amp;track</source>
         <translation>Показать проигрываемый &amp;трек</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="103"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="104"/>
         <source>Show the currently playing track in the playlist</source>
         <translation>Показать проигрываемый трек в плейлисте</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="121"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="122"/>
         <source>DSP</source>
         <translation>DSP</translation>
     </message>
@@ -20552,12 +20773,12 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
         <translation>Настроить</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="84"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="86"/>
         <source>Radio Browser</source>
         <translation>Обозреватель радио</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="86"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="88"/>
         <source>Unchecked items will be hidden from the radio browser context menu.</source>
         <translation>Элементы без отметок будут скрыты из контекстного меню обозревателя радиостанций.</translation>
     </message>

@@ -1886,37 +1886,37 @@
 <context>
     <name>Fooyin::AutoHeaderView</name>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="513"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="514"/>
         <source>Auto-size sections</source>
         <translation>自动调整大小</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="521"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="522"/>
         <source>Show hidden</source>
         <translation>显示隐藏</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="530"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="531"/>
         <source>Hide %1</source>
         <translation>隐藏 %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="554"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="555"/>
         <source>Alignment</source>
         <translation>对齐</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="564"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="565"/>
         <source>&amp;Left</source>
         <translation>左对齐(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="565"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="566"/>
         <source>&amp;Centre</source>
         <translation>居中(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="566"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="567"/>
         <source>&amp;Right</source>
         <translation>右对齐(&amp;R)</translation>
     </message>
@@ -3143,154 +3143,159 @@ When disabled, existing track order is preserved and only newly added matching t
 <context>
     <name>Fooyin::DirBrowser</name>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="200"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="203"/>
         <source>&amp;Play</source>
         <translation>播放(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="201"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="204"/>
         <source>Add to &amp;current playlist</source>
         <translation>添加到当前播放列表(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="202"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="205"/>
         <source>Add to &amp;active playlist</source>
         <translation>添加到活动播放列表(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="205"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="208"/>
         <source>Add to playback &amp;queue</source>
         <translation>添加到播放队列(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="206"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="209"/>
         <source>Queue to play next</source>
         <translation>添加到播放队列</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="244"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="252"/>
         <source>Go up to the parent directory</source>
         <translation>返回父级目录</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="249"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="257"/>
         <source>Return to the previous directory</source>
         <translation>返回前一个目录</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="258"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="266"/>
         <source>Undo a Go-&gt;Back action</source>
         <translation>撤销一次返回动作</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="268"/>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="269"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="276"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="277"/>
         <source>Tracks</source>
         <translation>音轨</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="269"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="277"/>
         <source>Queue</source>
         <translation>队列</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="274"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="282"/>
         <source>Append selected tracks to the current playlist</source>
         <translation>追加选中的音轨到当前播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="281"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="289"/>
         <source>Append selected tracks to the active playlist</source>
         <translation>追加选中的音轨到活动播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="288"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="296"/>
         <source>Replace contents of the current playlist with the selected tracks</source>
         <translation>用选中的音轨替换当前播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="295"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="303"/>
         <source>Create a new playlist containing the selected tracks</source>
         <translation>用选中的音轨新建播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="301"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="309"/>
         <source>Add the selected tracks to the playback queue</source>
         <translation>添加选中的音轨到播放队列</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="307"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="315"/>
         <source>Add the selected tracks to the front of the playback queue</source>
         <translation>把选择的音轨添加到播放队列的头部</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="313"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="321"/>
         <source>Replace the playback queue with the selected tracks</source>
         <translation>用选中的音轨替换播放队列</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="601"/>
-        <source>View mode</source>
-        <translation>查看模式</translation>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="621"/>
+        <source>Display</source>
+        <translation type="unfinished">显示</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="604"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="624"/>
         <source>List</source>
         <translation>列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="613"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="633"/>
         <source>Tree</source>
         <translation>树</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="747"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="646"/>
+        <source>Show header</source>
+        <translation type="unfinished">显示标题</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="774"/>
         <source>Add to playlist</source>
         <translation>添加到播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="197"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="200"/>
         <source>Go up</source>
         <translation>向上</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="198"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="201"/>
         <source>Go back</source>
         <translation>后退</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="199"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="202"/>
         <source>Go forwards</source>
         <translation>前进</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="203"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="206"/>
         <source>&amp;Replace current playlist</source>
         <translation>替换当前播放列表(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="204"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="207"/>
         <source>Create &amp;new playlist</source>
         <translation>创建新的播放列表(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="207"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="210"/>
         <source>Replace playback q&amp;ueue</source>
         <translation>替换播放队列(&amp;U)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="271"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="279"/>
         <source>Start playback of the selected files</source>
         <translation>开始播放所选文件</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="242"/>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="353"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="250"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="361"/>
         <source>Directory Browser</source>
         <translation>目录浏览器</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="593"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="613"/>
         <source>Set as root</source>
         <translation>设为根目录</translation>
     </message>
@@ -3324,98 +3329,126 @@ When disabled, existing track order is preserved and only newly added matching t
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="41"/>
-        <source>Show horizontal scrollbar</source>
-        <translation>显示水平滚动条</translation>
+        <source>Show header</source>
+        <translation type="unfinished">显示标题</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="43"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="42"/>
+        <source>Remember sort column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="44"/>
         <source>Show controls</source>
         <translation>显示控件</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="44"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="45"/>
         <source>Show location</source>
         <translation>显示位置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="45"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="46"/>
         <source>Show symlinks</source>
         <translation>显示符号链接</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="46"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="47"/>
         <source>Show hidden</source>
         <translation>显示隐藏</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="49"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="50"/>
         <source>Start playback immediately</source>
         <translation>立即开始播放</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="52"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="53"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
         <translation>对于“替换当前播放列表”和“创建新播放列表”，立即开始播放。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="54"/>
+        <source>Restore the sort column on startup and when changing directories.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="56"/>
         <source>Click Behaviour</source>
         <translation>点击行为</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="57"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="59"/>
         <source>Double-click</source>
         <translation>双击</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="59"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="61"/>
         <source>Middle-click</source>
         <translation>单击中键</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="64"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="66"/>
         <source>Browser Mode</source>
         <translation>浏览模式</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="70"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="72"/>
         <source>Browser Filters</source>
         <translation>浏览器筛选器</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="75"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="77"/>
         <source>Top</source>
         <translation>顶部</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="76"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="78"/>
         <source>Bottom</source>
         <translation>底部</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="78"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="80"/>
         <source>Display Options</source>
         <translation>显示选项</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="85"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="87"/>
         <source>Path and controls position</source>
         <translation>路径和控件位置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="98"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="102"/>
         <source>Expand/collapse</source>
         <translation>展开/收起</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="99"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="103"/>
         <source>Expand/collapse or play</source>
         <translation>展开/收起或播放</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="102"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="106"/>
         <source>None</source>
         <translation>无</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::DirTree</name>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="196"/>
+        <source>Columns</source>
+        <translation type="unfinished">列</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="207"/>
+        <source>Show header</source>
+        <translation type="unfinished">显示标题</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="212"/>
+        <source>Auto-size sections</source>
+        <translation type="unfinished">自动调整大小</translation>
     </message>
 </context>
 <context>
@@ -3520,11 +3553,6 @@ When disabled, existing track order is preserved and only newly added matching t
 <context>
     <name>Fooyin::DspCompactLayoutWidget</name>
     <message>
-        <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="394"/>
-        <source>Restore Defaults</source>
-        <translation>恢复默认</translation>
-    </message>
-    <message>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="410"/>
         <source>Configure…</source>
         <translation>配置…</translation>
@@ -3546,6 +3574,14 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="46"/>
         <source>Configure</source>
         <translation>配置</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::DspLayoutEditor</name>
+    <message>
+        <location filename="../../src/gui/dsp/dsplayouteditor.cpp" line="42"/>
+        <source>Restore Defaults</source>
+        <translation type="unfinished">恢复默认</translation>
     </message>
 </context>
 <context>
@@ -3720,28 +3756,28 @@ Effects here process the final combined output.</source>
         <translation>每首曲目</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="405"/>
-        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="412"/>
+        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="407"/>
+        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="414"/>
         <source>DSP Settings</source>
         <translation>DSP 设置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="405"/>
+        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="407"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
         <translation>无法打开 DSP“%1”的设置。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="412"/>
+        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="414"/>
         <source>Unable to find DSP &quot;%1&quot;.</source>
         <translation>找不到 DSP“%1”。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="455"/>
+        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="457"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="456"/>
+        <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="458"/>
         <source>%1: %2 (%3)</source>
         <translation>%1: %2 (%3)</translation>
     </message>
@@ -4184,15 +4220,93 @@ Effects here process the final combined output.</source>
     </message>
 </context>
 <context>
+    <name>Fooyin::Equaliser::EqualiserLayoutEditor</name>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="269"/>
+        <source>Enabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="270"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="436"/>
+        <source>Zero level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="271"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="449"/>
+        <source>Auto level</source>
+        <translation type="unfinished">自动水平调节</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="273"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
+        <source>Save preset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="310"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="515"/>
+        <source> dB</source>
+        <translation type="unfinished"> 分贝</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="324"/>
+        <source>Preamp</source>
+        <translation type="unfinished">前置放大器</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="441"/>
+        <source>Show controls</source>
+        <translation type="unfinished">显示控件</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="453"/>
+        <source>Save preset…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="457"/>
+        <source>Presets</source>
+        <translation type="unfinished">预设</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="461"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="543"/>
+        <source>No presets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="546"/>
+        <source>Load preset…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
+        <source>Preset name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="583"/>
+        <source>Preset already exists</source>
+        <translation type="unfinished">预设已存在</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="584"/>
+        <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
+        <translation type="unfinished">预设“%1”已存在。是否覆盖？</translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::Equaliser::EqualiserSettingsProvider</name>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="903"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="908"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1137"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1142"/>
         <source>Equaliser</source>
         <translation>均衡器</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="913"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1147"/>
         <source>Open Equaliser settings</source>
         <translation>打开均衡器设置</translation>
     </message>
@@ -4200,145 +4314,144 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::Equaliser::EqualiserSettingsWidget</name>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="214"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="613"/>
         <source>Load</source>
         <translation>加载</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="215"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="614"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="216"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="615"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="217"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="616"/>
         <source>Import</source>
         <translation>导入</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="218"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="617"/>
         <source>Export</source>
         <translation>导出</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="227"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="626"/>
         <source>Equaliser Settings</source>
         <translation>均衡器设置</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="267"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="666"/>
         <source>Preamp</source>
         <translation>前置放大器</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="319"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="718"/>
         <source>Zero all</source>
         <translation>全部为零</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="320"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="719"/>
         <source>Auto level</source>
         <translation>自动水平调节</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="321"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="720"/>
         <source>Band:</source>
         <translation>乐队：</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="322"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="721"/>
         <source>Presets:</source>
         <translation>预设：</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="334"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="804"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="733"/>
         <source> dB</source>
         <translation> 分贝</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="582"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="901"/>
         <source>Presets</source>
         <translation>预设</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="582"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="901"/>
         <source>Unable to load the selected preset.</source>
         <translation>无法加载所选预设。</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="604"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="918"/>
         <source>Preset already exists</source>
         <translation>预设已存在</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="605"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="919"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
         <translation>预设“%1”已存在。是否覆盖？</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="650"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="658"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="680"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="692"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="955"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="963"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="985"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="997"/>
         <source>Import Equaliser Preset</source>
         <translation>导入均衡器预设</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="651"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="713"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="956"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1018"/>
         <source>Equaliser Preset (*.feq)</source>
         <translation>均衡器预设 (*.feq)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="659"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="964"/>
         <source>Unable to open &quot;%1&quot; for reading.</source>
         <translation>无法打开“%1”进行读取。</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="681"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="986"/>
         <source>Invalid value on line %L1.</source>
         <translation>%L1 行的值无效。</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="682"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="987"/>
         <source>The first %Ln non-empty line(s) must contain integer values.</source>
         <translation>
             <numerusform>第一个非空的 %Ln 行必须包含整数值。</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="693"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="998"/>
         <source>The preset file contains %Ln band value(s).</source>
         <translation>
             <numerusform>预设文件包含 %Ln 波段值。</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="694"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="999"/>
         <source>Expected %Ln band value(s).</source>
         <translation>
             <numerusform>预期 %Ln 带值。</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="713"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="738"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="750"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1018"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1043"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1055"/>
         <source>Export Equaliser Preset</source>
         <translation>导出均衡器预设</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="739"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1044"/>
         <source>Unable to open &quot;%1&quot; for writing.</source>
         <translation>无法打开“%1”进行写入。</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="751"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1056"/>
         <source>An error occurred while writing &quot;%1&quot;.</source>
         <translation>写入“%1”时发生错误。</translation>
     </message>
@@ -5033,69 +5146,101 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::FileOps::FileOpsPlugin</name>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="83"/>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="96"/>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="109"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="92"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="105"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="118"/>
         <source>File Operations</source>
         <translation>文件操作</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="84"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="93"/>
         <source>Confirm before deleting tracks</source>
         <translation>删除曲目前请确认</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="97"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="106"/>
         <source>Immediately delete tracks (bypass trash)</source>
         <translation>立即删除曲目（绕过回收站）</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="110"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="119"/>
         <source>Delete empty folders</source>
         <translation>删除空文件夹</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="127"/>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="181"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="136"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="186"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="269"/>
         <source>File operations</source>
         <translation>文件操作</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="173"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="176"/>
         <source>&amp;Copy to…</source>
         <translation>复制到(&amp;C)…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="174"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="177"/>
         <source>&amp;Move to…</source>
         <translation>移动到(&amp;M)…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="175"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="178"/>
         <source>&amp;Rename to…</source>
         <translation>重命名为(&amp;R)…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="176"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="179"/>
         <source>&amp;Extract to…</source>
         <translation>提取到(&amp;E)…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="178"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="183"/>
         <source>&amp;Delete</source>
         <translation>删除(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="196"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="186"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="269"/>
+        <source>Tracks</source>
+        <translation type="unfinished">音轨</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="201"/>
         <source>No tracks deleted</source>
         <translation>未删除任何曲目</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="197"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="202"/>
         <source>Deleted %Ln track(s)</source>
         <translation>
             <numerusform>已删除 %Ln 曲目</numerusform>
         </translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="254"/>
+        <source>Copy</source>
+        <translation type="unfinished">复制</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="257"/>
+        <source>Move</source>
+        <translation type="unfinished">移动</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="260"/>
+        <source>Rename</source>
+        <translation type="unfinished">重命名</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="263"/>
+        <source>Extract</source>
+        <translation type="unfinished">提取</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="266"/>
+        <source>Other</source>
+        <translation type="unfinished">其他</translation>
     </message>
 </context>
 <context>
@@ -5624,7 +5769,7 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::FyWidget</name>
     <message>
-        <location filename="../../src/gui/fywidget.cpp" line="264"/>
+        <location filename="../../src/gui/fywidget.cpp" line="266"/>
         <source>Configure…</source>
         <translation>配置…</translation>
     </message>
@@ -5785,17 +5930,17 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::GuiApplication</name>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="823"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="827"/>
         <source>Plugins not found</source>
         <translation>找不到插件</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="824"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="828"/>
         <source>Some plugins are required for full functionality.</source>
         <translation>一些插件是必需的。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="825"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="829"/>
         <source>Plugin search locations:
 
 </source>
@@ -5804,231 +5949,231 @@ Effects here process the final combined output.</source>
 </translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="828"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="832"/>
         <source>Quit</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="954"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="958"/>
         <source>Volume</source>
         <translation>音量</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="956"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="960"/>
         <source>Volume up</source>
         <translation>增大音量</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="963"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="967"/>
         <source>Volume down</source>
         <translation>减少音量</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="970"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="974"/>
         <source>Mute</source>
         <translation>静音</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="980"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="984"/>
         <source>Clear Current Playlist</source>
         <translation>清除当前播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="981"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="985"/>
         <source>Remove all tracks from the current playlist</source>
         <translation>清空当前播放列表所有音轨</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1007"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1011"/>
         <source>Lock playlist</source>
         <translation>锁定播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1009"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1013"/>
         <source>Prevent changes to the contents of the current playlist</source>
         <translation>防止更改当前播放列表的内容</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1012"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1016"/>
         <source>Lock Current Playlist</source>
         <translation>锁定当前播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1033"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1037"/>
         <source>Playback</source>
         <translation>播放</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1033"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1037"/>
         <source>Seek</source>
         <translation>定位</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1035"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1039"/>
         <source>Seek forward (small step)</source>
         <translation>前进（一小步）</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1042"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1046"/>
         <source>Seek forward (large step)</source>
         <translation>前进（一大步）</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1049"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1053"/>
         <source>Seek backward (small step)</source>
         <translation>后退（一小步）</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1057"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1061"/>
         <source>Seek backward (large step)</source>
         <translation>后退（一大步）</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1082"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1086"/>
         <source>Remove Playlist</source>
         <translation>删除播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1093"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1097"/>
         <source>Toggle Menubar</source>
         <translation>切换菜单条显示</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1097"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1101"/>
         <source>View</source>
         <translation>视图</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1107"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1111"/>
         <source>Reading tracks…</source>
         <translation>正在读取音轨…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1107"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1111"/>
         <source>Abort</source>
         <translation>放弃</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1135"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1139"/>
         <source>Current file</source>
         <translation>当前文件</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1148"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1184"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1152"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1188"/>
         <source>Tagging</source>
         <translation>标签</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1150"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1154"/>
         <source>Reload tags from files</source>
         <translation>从文件中重新加载标签</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1151"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1155"/>
         <source>Reload tags from modified files</source>
         <translation>从已修改的文件中重新加载标签</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1153"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1157"/>
         <source>Replace tags in selected tracks with tags from the files</source>
         <translation>重新加载选中音轨的标签</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1154"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1158"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
         <translation>重新加载选中音轨中已修改的标签</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1195"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1199"/>
         <source>Choose destination</source>
         <translation>选择目标</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1276"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1284"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1280"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1288"/>
         <source>Convert using preset %1</source>
         <translation>使用预设值 %1 进行转换</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1283"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1316"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1326"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1335"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1287"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1320"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1330"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1339"/>
         <source>Tracks</source>
         <translation>音轨</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1283"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1316"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1326"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1335"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1346"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1287"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1320"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1330"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1339"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1350"/>
         <source>Convert</source>
         <translation>转换</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1314"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1318"/>
         <source>Converter setup…</source>
         <translation>转换器设置…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1323"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1327"/>
         <source>Using default settings</source>
         <translation>使用默认设置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1327"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1331"/>
         <source>Convert using default settings</source>
         <translation>使用默认设置进行转换</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1332"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1336"/>
         <source>Repeat last conversion</source>
         <translation>重复上次转换</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1363"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1367"/>
         <source>Custom conversion…</source>
         <translation>自定义转换…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1600"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1604"/>
         <source>Reload Required</source>
         <translation>需要重新加载</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1602"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1606"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
         <translation>由于数据库改变，音轨需要重新加载以更新其保存的元数据。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1606"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1610"/>
         <source>Reload Now</source>
         <translation>现在就重新加载</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1609"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1613"/>
         <source>OK</source>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1747"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1755"/>
         <source>Playback Error</source>
         <translation>播放错误</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1800"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1808"/>
         <source>Track Not Found</source>
         <translation>未找到音轨</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1873"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1881"/>
         <source>Add Stream URL</source>
         <translation>添加流媒体 URL</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1873"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1881"/>
         <source>Stream URL:</source>
         <translation>流媒体 URL：</translation>
     </message>
@@ -6053,14 +6198,14 @@ Effects here process the final combined output.</source>
         <translation>插图作品文件为空</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1772"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1780"/>
         <source>Continue</source>
         <translation>继续</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="984"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1011"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1084"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="988"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1015"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1088"/>
         <source>Playlist</source>
         <translation>播放列表</translation>
     </message>
@@ -6076,72 +6221,72 @@ Effects here process the final combined output.</source>
         <translation>布局名称</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1085"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1089"/>
         <source>Remove Current Playlist</source>
         <translation>移除当前播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1375"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1379"/>
         <source>Utilities</source>
         <translation>实用工具</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1774"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1782"/>
         <source>Stop</source>
         <translation>停止</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1778"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1786"/>
         <source>Always continue playing if a track is unavailable</source>
         <translation>如果有音轨不可用则继续播放下一首</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1805"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1813"/>
         <source>No Decoder Available</source>
         <translation>解码器不可用</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1835"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1843"/>
         <source>All Supported Media Files (%1)</source>
         <translation>所有支持的媒体文件 (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1836"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1844"/>
         <source>Audio Files (%1)</source>
         <translation>音频文件 (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1847"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1855"/>
         <source>Add Files</source>
         <translation>添加文件</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1861"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1869"/>
         <source>Add Folders</source>
         <translation>添加目录</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1875"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1883"/>
         <source>&amp;Add</source>
         <translation>添加(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1879"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1887"/>
         <source>Enter a valid http:// or https:// URL.</source>
         <translation>请输入有效的 http:// 或 https:// URL。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1940"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1948"/>
         <source>All Supported Playlists (%1)</source>
         <translation>所有支持的播放列表 (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1950"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1958"/>
         <source>Load Playlist</source>
         <translation>加载播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1987"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1995"/>
         <source>Save Playlist</source>
         <translation>保存播放列表</translation>
     </message>
@@ -6845,52 +6990,52 @@ If the default half-star does not render correctly with your system font, choose
 <context>
     <name>Fooyin::HelpMenu</name>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="53"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="54"/>
         <source>&amp;Quick start</source>
         <translation>快速入门(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="54"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="55"/>
         <source>Open the quick start guide</source>
         <translation>开始快速入门向导</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="59"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="60"/>
         <source>&amp;Scripting help</source>
         <translation>脚本帮助(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="60"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="61"/>
         <source>Open the scripting documentation</source>
         <translation>打开脚本帮助文档</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="64"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="65"/>
         <source>S&amp;earching help</source>
         <translation>搜索帮助</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="65"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="66"/>
         <source>Open the search documentation</source>
         <translation>打开搜索文档</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="69"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="70"/>
         <source>&amp;Frequently asked questions</source>
         <translation>常见问题(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="70"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="71"/>
         <source>Open the FAQ</source>
         <translation>打开常见问题</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="74"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="75"/>
         <source>&amp;About</source>
         <translation>关于(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="76"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="77"/>
         <source>Open the about dialog</source>
         <translation>打开关于对话框</translation>
     </message>
@@ -9361,17 +9506,17 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::Notify::NotifyPage</name>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="232"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="256"/>
         <source>General</source>
         <translation>常规</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="233"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="257"/>
         <source>Notifications</source>
         <translation>通知</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="233"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="257"/>
         <source>Integrations</source>
         <translation>集成</translation>
     </message>
@@ -9379,83 +9524,94 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::Notify::NotifyPageWidget</name>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="80"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="82"/>
         <source>Show album art</source>
         <translation>显示专辑封面</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="84"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="88"/>
         <source>Timeout</source>
         <translation>超时</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="75"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="77"/>
         <source>Enable notifications</source>
         <translation>启用通知</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="76"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="78"/>
         <source>Title</source>
         <translation>标题</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="78"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="80"/>
         <source>Body</source>
         <translation>厚度</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="81"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="83"/>
+        <source>Maximum album art size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="85"/>
         <source>Show previous</source>
         <translation>显示上一个</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="82"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="86"/>
         <source>Show play/pause</source>
         <translation>显示播放/暂停</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="83"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="87"/>
         <source>Show next</source>
         <translation>显示下一个</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="87"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="91"/>
         <source>General</source>
         <translation>常规</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="89"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="93"/>
         <source>Content</source>
         <translation>内容</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="91"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="95"/>
         <source>Playback Controls</source>
         <translation>播放控制</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="108"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="104"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="202"/>
+        <source>Maximum width or height of album art sent with notifications</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="123"/>
         <source>System default</source>
         <translation>系统默认</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="111"/>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="173"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="126"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="189"/>
         <source>Notification display time in milliseconds</source>
         <translation>通知显示时间（毫秒）</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="169"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="185"/>
         <source>Album art is not available for the active notification backend</source>
         <translation>专辑封面在活动通知后端不可用</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="171"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="187"/>
         <source>Playback controls are not available for the active notification backend</source>
         <translation>活动通知后端不支持播放控制</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="174"/>
+        <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="190"/>
         <source>Notification timeout is not available for the active notification backend</source>
         <translation>活动通知后端不支持通知超时功能</translation>
     </message>
@@ -9463,22 +9619,22 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::Notify::NotifyPlugin</name>
     <message>
-        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="229"/>
+        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="230"/>
         <source>Pause</source>
         <translation>暂停</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="229"/>
+        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="230"/>
         <source>Play</source>
         <translation>播放</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="236"/>
+        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="237"/>
         <source>Previous</source>
         <translation>上一首</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="250"/>
+        <location filename="../../src/plugins/notify/notifyplugin.cpp" line="251"/>
         <source>Next</source>
         <translation>下一首</translation>
     </message>
@@ -9486,13 +9642,13 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::NowPlayingOutputPage</name>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="347"/>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="348"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="356"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="357"/>
         <source>Now Playing</source>
         <translation>正在播放</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="348"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="357"/>
         <source>Playback</source>
         <translation>播放</translation>
     </message>
@@ -9500,97 +9656,102 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::NowPlayingOutputPageWidget</name>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="94"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="95"/>
         <source>Enabled</source>
         <translation>已启用</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="97"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="98"/>
         <source>Track changes</source>
         <translation>曲目更改</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="98"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="99"/>
         <source>Play and pause</source>
         <translation>播放和暂停</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="99"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="100"/>
         <source>Stop</source>
         <translation>停止</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="100"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="101"/>
         <source>Every second</source>
         <translation>每秒钟</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="101"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="102"/>
+        <source>Played threshold reached</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="103"/>
         <source>Clipboard</source>
         <translation>剪贴板</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="102"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="104"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="103"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="105"/>
         <source>Path</source>
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="105"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="107"/>
         <source>Append instead of overwrite</source>
         <translation>追加而非覆盖</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="106"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="108"/>
         <source>Maximum lines</source>
         <translation>最大行</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="109"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="111"/>
         <source>General</source>
         <translation>常规</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="115"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="117"/>
         <source>Format</source>
         <translation>格式</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="122"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="123"/>
         <source>No current track</source>
         <translation>当前无曲目</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="129"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="132"/>
         <source>Update events</source>
         <translation>更新事件</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="138"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="142"/>
         <source>Output</source>
         <translation>输出</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="142"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="146"/>
         <source>Unlimited</source>
         <translation>无限制</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="146"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="150"/>
         <source>Browse to an output file</source>
         <translation>浏览到输出文件</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="330"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="339"/>
         <source>Now Playing</source>
         <translation>正在播放</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="330"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="339"/>
         <source>Text Files (*.txt);;All Files (*)</source>
         <translation>文本文件（*.txt）；所有文件（*）</translation>
     </message>
@@ -10060,6 +10221,31 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/controls/outputselector.cpp" line="154"/>
         <source>Configure listed devices…</source>
         <translation>配置已列出的设备…</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Pipewire::PipewireSettings</name>
+    <message>
+        <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="34"/>
+        <source>PipeWire Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="40"/>
+        <source>Latency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="44"/>
+        <source>Automatic</source>
+        <translation type="unfinished">自动</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="47"/>
+        <source>Lower values provide more frequent audio processing but may increase underrun risk.
+Higher values improve stability but increase latency and may reduce visualisation smoothness.
+Changes take effect the next time the PipeWire output is initialised.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11516,7 +11702,7 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::PlaylistModel</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1517"/>
+        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1522"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln 个曲目</numerusform>
@@ -12096,110 +12282,110 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="968"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="971"/>
         <source>&amp;Play</source>
         <translation>播放(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1079"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1082"/>
         <source>Add to another playlist</source>
         <translation>添加到其他播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1231"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1234"/>
         <source>Use custom layout for this playlist</source>
         <translation>为该播放列表使用自定义布局</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1232"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1235"/>
         <source>Use a separate view layout instead of the default</source>
         <translation>使用单独的视图布局而不是默认布局</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1684"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1687"/>
         <source>Writing metadata…</source>
         <translation>正在写入元数据…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1684"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1687"/>
         <source>Abort</source>
         <translation>中止</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1690"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1693"/>
         <source>Writing Metadata</source>
         <translation>正在写入元数据</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1691"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1694"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>正在将元数据写入 %Ln 音轨…</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1790"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1794"/>
         <source>Start playback of the selected track</source>
         <translation>开始播放所选曲目</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1799"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1803"/>
         <source>Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1803"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1807"/>
         <source>Randomise the current playlist</source>
         <translation>随机播放当前播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1806"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1810"/>
         <source>Reverse the current playlist</source>
         <translation>反转当前播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1824"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1828"/>
         <source>Select &amp;all</source>
         <translation>全选(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1825"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1829"/>
         <source>Select all tracks in the current playlist</source>
         <translation>选择当前播放列表中的所有曲目</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1153"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1156"/>
         <source>Reset columns to default</source>
         <translation>重置列为默认</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1179"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1182"/>
         <source>Sort the current playlist using this preset</source>
         <translation>使用此预设对当前播放列表进行排序</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1219"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1222"/>
         <source>Single-column mode</source>
         <translation>单列模式</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1332"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1335"/>
         <source>Playlist settings…</source>
         <translation>播放列表设置…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1260"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1263"/>
         <source>Presets</source>
         <translation>预设</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1291"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1294"/>
         <source>Columns</source>
         <translation>列</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1279"/>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1317"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1282"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1320"/>
         <source>More…</source>
         <translation>更多…</translation>
     </message>
@@ -12425,12 +12611,12 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::PluginPage</name>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="260"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="281"/>
         <source>General</source>
         <translation>常规</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="261"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="282"/>
         <source>Plugins</source>
         <translation>插件</translation>
     </message>
@@ -12458,23 +12644,58 @@ Remove original: deletes the previous file or tag after saving.</source>
         <translation>插件已更改</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="239"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="240"/>
+        <source>fooyin Plugin (*.dll)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="242"/>
+        <source>fooyin Plugin (*.so)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="244"/>
         <source>Install Plugin</source>
         <translation>安装插件</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="239"/>
-        <source>fooyin Plugin (*.fyl)</source>
-        <translation>fooyin 插件 (*.fyl)</translation>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="254"/>
+        <source>Plugin Already Installed</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="247"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="255"/>
+        <source>This plugin is already installed. Update it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="256"/>
+        <source>Update</source>
+        <translation type="unfinished">更新</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="265"/>
+        <source>Plugin Updated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="272"/>
+        <source>Plugin Installation Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="272"/>
+        <source>The plugin could not be installed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="265"/>
         <source>Plugin Installed</source>
         <translation>插件已安装</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="178"/>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="248"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="266"/>
         <source>Restart for changes to take effect. Restart now?</source>
         <translation>需要重启以使更改生效。现在重启吗？</translation>
     </message>
@@ -12937,30 +13158,30 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::PropertiesDialog</name>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1055"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1075"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1057"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1077"/>
         <source>Toggle Sidebar</source>
         <translation>切换侧边栏</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1056"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1086"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1058"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1088"/>
         <source>Previous Track</source>
         <translation>上一个曲目</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1057"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1096"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1059"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1098"/>
         <source>Next Track</source>
         <translation>下一个曲目</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1059"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1061"/>
         <source>Tracks</source>
         <translation>音轨</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1059"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1061"/>
         <source>Properties</source>
         <translation>属性</translation>
     </message>
@@ -12968,35 +13189,35 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::PropertiesDialogWidget</name>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="473"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="475"/>
         <source>Selection</source>
         <translation>选择</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="477"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="652"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="479"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="654"/>
         <source>Properties</source>
         <translation>属性</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="656"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="658"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln 曲目</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1001"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1003"/>
         <source>Pending Changes</source>
         <translation>待处理的变更</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1002"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1004"/>
         <source>Apply or clear the current tab&apos;s pending changes before switching tracks or tabs.</source>
         <translation>切换曲目或标签页之前，请先应用或清除当前标签页的待处理更改。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1019"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1021"/>
         <source>All Tracks (%1)</source>
         <translation>所有曲目 (%1)</translation>
     </message>
@@ -13832,45 +14053,45 @@ Remove original: deletes the previous file or tag after saving.</source>
 <context>
     <name>Fooyin::RadioBrowser::RadioBrowserPlugin</name>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="98"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="100"/>
         <source>Radio &amp;Browser</source>
         <translation>电台浏览器(&amp;B)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="99"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="101"/>
         <source>Open the Radio Browser window</source>
         <translation>打开电台浏览器窗口</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="102"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="104"/>
         <source>View</source>
         <translation>视图</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="116"/>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="134"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="118"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="136"/>
         <source>Radio Browser</source>
         <translation>电台浏览器</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="117"/>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="128"/>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="132"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="119"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="130"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="134"/>
         <source>Internet</source>
         <translation>互联网</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="127"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="129"/>
         <source>Radio Search</source>
         <translation>电台搜索</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="131"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="133"/>
         <source>Radio Guide</source>
         <translation>电台指南</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="150"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="152"/>
         <source>Playback stopped</source>
         <translation>播放已停止</translation>
     </message>
@@ -16315,7 +16536,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1728"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1736"/>
         <source>Quick Search</source>
         <translation>快速搜索</translation>
     </message>
@@ -18582,83 +18803,83 @@ This does not support full scripting.</source>
 <context>
     <name>Fooyin::ViewMenu</name>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="48"/>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="121"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="49"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="122"/>
         <source>View</source>
         <translation>视图</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="50"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="51"/>
         <source>Quick &amp;setup</source>
         <translation>快速设置(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="52"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="53"/>
         <source>Open the quick setup dialog</source>
         <translation>打开快速设置对话框</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="58"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="59"/>
         <source>&amp;Log</source>
         <translation>日志(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="60"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="61"/>
         <source>Open the log dialog</source>
         <translation>打开日志对话框</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="66"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="67"/>
         <source>&amp;Script editor</source>
         <translation>脚本编辑器(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="68"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="69"/>
         <source>Open the script editor dialog</source>
         <translation>打开脚本编辑器对话框</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="74"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="75"/>
         <source>&amp;Playlist Manager</source>
         <translation>播放列表管理器(P)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="75"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="76"/>
         <source>Open the playlist manager window</source>
         <translation>打开播放列表管理器窗口</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="82"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="83"/>
         <source>Playback &amp;Queue</source>
         <translation>播放队列(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="83"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="84"/>
         <source>Open the playback queue window</source>
         <translation>打开播放队列窗口</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="95"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="96"/>
         <source>Focus Search &amp;Bar</source>
         <translation>焦点搜索栏(&amp;B)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="96"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="97"/>
         <source>Focus the first Search Bar found in the current layout</source>
         <translation>将焦点放在当前布局中的第一个搜索栏上</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="102"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="103"/>
         <source>Show playing &amp;track</source>
         <translation>显示播放中的曲目(&amp;T)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="103"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="104"/>
         <source>Show the currently playing track in the playlist</source>
         <translation>在播放列表中高亮选中当前播放中的曲目</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="121"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="122"/>
         <source>DSP</source>
         <translation>数字信号处理</translation>
     </message>
@@ -20468,12 +20689,12 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
         <translation>配置</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="84"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="86"/>
         <source>Radio Browser</source>
         <translation>电台浏览器</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="86"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="88"/>
         <source>Unchecked items will be hidden from the radio browser context menu.</source>
         <translation>未选中的项目将从单选按钮浏览器上下文菜单中隐藏。</translation>
     </message>

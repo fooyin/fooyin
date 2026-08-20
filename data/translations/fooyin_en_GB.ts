@@ -88,7 +88,7 @@
 <context>
     <name>Fooyin::Equaliser::EqualiserSettingsWidget</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="682"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="987"/>
         <source>The first %Ln non-empty line(s) must contain integer values.</source>
         <translation>
             <numerusform>The first %Ln non-empty line must contain integer values.</numerusform>
@@ -96,7 +96,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="693"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="998"/>
         <source>The preset file contains %Ln band value(s).</source>
         <translation>
             <numerusform>The preset file contains %Ln band value.</numerusform>
@@ -104,7 +104,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="694"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="999"/>
         <source>Expected %Ln band value(s).</source>
         <translation>
             <numerusform>Expected %Ln band value.</numerusform>
@@ -202,7 +202,7 @@
 <context>
     <name>Fooyin::FileOps::FileOpsPlugin</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="197"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="202"/>
         <source>Deleted %Ln track(s)</source>
         <translation>
             <numerusform>Deleted %Ln track</numerusform>
@@ -270,7 +270,7 @@
 <context>
     <name>Fooyin::PlaylistModel</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1517"/>
+        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1522"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln track</numerusform>
@@ -281,7 +281,7 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1691"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1694"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
@@ -314,7 +314,7 @@
 <context>
     <name>Fooyin::PropertiesDialogWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="656"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="658"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln track</numerusform>
