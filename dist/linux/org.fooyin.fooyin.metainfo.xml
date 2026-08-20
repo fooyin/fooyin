@@ -61,6 +61,14 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="0.12.5" date="2026-08-21">
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.12.5</url>
+            <description>
+                <p>Adds configurable Directory Browser columns and sorting, embeddable Equaliser widget, new built-in Waveform layout, FileOps preset shortcuts, and support for updating installed plugins.</p>
+                <p>MP3 tag writing, notification artwork, Now Playing updates, splitter resizing, and PipeWire latency also gain new configuration options.</p>
+                <p>This release also fixes metadata and playback statistics, MPRIS state handling, PipeWire scheduling, playlist and plugin behaviour, waveform generation, and improves hashing performance.</p>
+            </description>
+        </release>
         <release version="0.12.4" date="2026-08-12">
             <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.12.4</url>
             <description>

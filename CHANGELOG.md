@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [0.12.5](https://github.com/fooyin/fooyin/releases/tag/v0.12.5) (2026-08-21)
 
 ### Improvements
 
@@ -55,7 +55,7 @@
   - Build nightly packages with commit versions
   - Add nightly pre-releases with AppImage and Flatpak packages
   - Drop Ubuntu 25.10 (Questing) support
-* Translations: Update translations and translation sources ([#1497](https://github.com/fooyin/fooyin/pull/1497), [#1498](https://github.com/fooyin/fooyin/pull/1498), [#1500](https://github.com/fooyin/fooyin/pull/1500))
+* Translations: Update translations and translation sources ([#1497](https://github.com/fooyin/fooyin/pull/1497), [#1498](https://github.com/fooyin/fooyin/pull/1498), [#1500](https://github.com/fooyin/fooyin/pull/1500)), [#1526](https://github.com/fooyin/fooyin/pull/1526), [#1527](https://github.com/fooyin/fooyin/pull/1527))
 
 
 ## [0.12.4](https://github.com/fooyin/fooyin/releases/tag/v0.12.4) (2026-08-12)
