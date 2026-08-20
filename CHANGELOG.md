@@ -5,7 +5,7 @@
 ### Improvements
 
 * Directory Browser
-  - Add configurable columns ([#1502](https://github.com/fooyin/fooyin/issues/1502))
+  - Add configurable columns and sorting ([#1502](https://github.com/fooyin/fooyin/issues/1502))
   - Add configurable controls position
 * Equaliser: Add embeddable layout widget
 * FileOps: Add preset commands with shortcut support
@@ -16,6 +16,9 @@
 * Library Tree: Preserve state across model resets
 * Metadata: Add configurable ID3v2 revisions and tag schemes for MP3 files
 * Notifications: Add configurable album art size ([#1507](https://github.com/fooyin/fooyin/issues/1507))
+* Now Playing
+  - Add a "Played threshold reached" update trigger ([#1523](https://github.com/fooyin/fooyin/issues/1523))
+  - Improve output preview sizing
 * PipeWire: Add configurable output latency ([#1496](https://github.com/fooyin/fooyin/issues/1496))
 * Plugins: Support updating installed plugins
 * WaveBar: Add a new built-in Waveform layout
@@ -31,12 +34,16 @@
   - Fix rating star conversion on i686 ([#1492](https://github.com/fooyin/fooyin/issues/1492))
   - Preserve ratings and playcounts when tag writes fail ([#1505](https://github.com/fooyin/fooyin/issues/1505))
   - Preserve whitespace in FFmpeg extra tag names ([#1508](https://github.com/fooyin/fooyin/issues/1508))
+  - Restore playback statistics for re-added tracks ([#550](https://github.com/fooyin/fooyin/issues/550))
 * MPRIS
   - Synchronise repeat and audible pause state ([#1330](https://github.com/fooyin/fooyin/issues/1330))
   - Use stable playlist entry track IDs and reject stale seek requests
 * PipeWire: Fix output buffer scheduling ([#1496](https://github.com/fooyin/fooyin/issues/1496))
-* Playlist: Fix inline editor positioning when scrolling
+* Playlist
+  - Always show the loading state on startup
+  - Fix inline editor positioning when scrolling
 * Plugins: Fix plugin installation from Settings
+* Scripting: Fix `%playback_time_remaining_s%` stuttering ([#1523](https://github.com/fooyin/fooyin/issues/1523))
 * SoundTouch: Bypass processing for unsupported sample rates
 * Tag Editor: Fix auto fill values in the embedded widget
 * VU Meter: Keep saved defaults separate for each meter type ([#1495](https://github.com/fooyin/fooyin/issues/1495))
