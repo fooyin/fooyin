@@ -79,6 +79,7 @@ private:
     QCheckBox* m_updateOnPlayPause;
     QCheckBox* m_updateOnStop;
     QCheckBox* m_updateEverySecond;
+    QCheckBox* m_updateOnPlayed;
     QCheckBox* m_copyToClipboard;
     QCheckBox* m_writeToFile;
     QLabel* m_outputFilePathLabel;
@@ -98,6 +99,7 @@ NowPlayingOutputPageWidget::NowPlayingOutputPageWidget(PlayerController* playerC
     , m_updateOnPlayPause{new QCheckBox(tr("Play and pause"), this)}
     , m_updateOnStop{new QCheckBox(tr("Stop"), this)}
     , m_updateEverySecond{new QCheckBox(tr("Every second"), this)}
+    , m_updateOnPlayed{new QCheckBox(tr("Played threshold reached"), this)}
     , m_copyToClipboard{new QCheckBox(tr("Clipboard"), this)}
     , m_writeToFile{new QCheckBox(tr("File"), this)}
     , m_outputFilePathLabel{new QLabel(tr("Path") + ":"_L1, this)}
@@ -134,6 +136,7 @@ NowPlayingOutputPageWidget::NowPlayingOutputPageWidget(PlayerController* playerC
     eventsLayout->addWidget(m_updateOnPlayPause, row++, 1);
     eventsLayout->addWidget(m_updateOnStop, row, 0);
     eventsLayout->addWidget(m_updateEverySecond, row++, 1);
+    eventsLayout->addWidget(m_updateOnPlayed, row++, 0, 1, 2);
 
     auto* outputGroup  = new QGroupBox(tr("Output"), this);
     auto* outputLayout = new QGridLayout(outputGroup);
@@ -245,6 +248,7 @@ void NowPlayingOutputPageWidget::updateWidgetState()
     m_updateOnPlayPause->setEnabled(enabled);
     m_updateOnStop->setEnabled(enabled);
     m_updateEverySecond->setEnabled(enabled);
+    m_updateOnPlayed->setEnabled(enabled);
     m_copyToClipboard->setEnabled(enabled);
     m_writeToFile->setEnabled(enabled);
     m_outputFilePathLabel->setEnabled(writeToFile);
@@ -282,6 +286,9 @@ NowPlayingOutputService::UpdateEvents NowPlayingOutputPageWidget::updateEvents()
     if(m_updateEverySecond->isChecked()) {
         events.setFlag(NowPlayingOutputService::UpdateSecond);
     }
+    if(m_updateOnPlayed->isChecked()) {
+        events.setFlag(NowPlayingOutputService::UpdatePlayed);
+    }
     return events;
 }
 
@@ -291,6 +298,7 @@ void NowPlayingOutputPageWidget::setUpdateEvents(NowPlayingOutputService::Update
     m_updateOnPlayPause->setChecked(events.testFlag(NowPlayingOutputService::UpdatePlayPause));
     m_updateOnStop->setChecked(events.testFlag(NowPlayingOutputService::UpdateStop));
     m_updateEverySecond->setChecked(events.testFlag(NowPlayingOutputService::UpdateSecond));
+    m_updateOnPlayed->setChecked(events.testFlag(NowPlayingOutputService::UpdatePlayed));
 }
 
 NowPlayingOutputService::OutputTargets NowPlayingOutputPageWidget::outputTargets() const

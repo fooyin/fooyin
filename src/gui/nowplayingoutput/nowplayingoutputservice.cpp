@@ -115,6 +115,8 @@ NowPlayingOutputService::NowPlayingOutputService(PlayerController* playerControl
                      });
     QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this,
                      [updateIf]() { updateIf(UpdateSecond); });
+    QObject::connect(m_playerController, &PlayerController::trackPlayed, this,
+                     [updateIf]() { updateIf(UpdatePlayed); });
 
     m_settings->subscribe<Settings::Gui::Internal::NowPlayingOutputEnabled>(this, [this](bool enabled) {
         if(std::exchange(m_enabled, enabled) != enabled) {
