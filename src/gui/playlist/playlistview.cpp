@@ -165,11 +165,13 @@ void PlaylistView::playlistAboutToBeReset()
     m_playlistLoaded = false;
     cancelPendingEditor();
     endBulkEditSession(false);
+    viewport()->update();
 }
 
 void PlaylistView::playlistReset()
 {
     m_playlistLoaded = true;
+    viewport()->update();
 }
 
 bool PlaylistView::playlistLoaded() const
@@ -445,14 +447,12 @@ void PlaylistView::paintEvent(QPaintEvent* event)
     };
 
     if(auto* playlistModel = qobject_cast<PlaylistModel*>(model())) {
-        if(playlistModel->haveTracks()) {
-            if(playlistModel->shouldShowLoadingText()) {
-                drawCentreText(m_loadingText);
-            }
-            else {
-                drawBackground(painter);
-                ExpandedTreeView::paintEvent(event);
-            }
+        if(!m_playlistLoaded || playlistModel->shouldShowLoadingText()) {
+            drawCentreText(m_loadingText);
+        }
+        else if(playlistModel->haveTracks()) {
+            drawBackground(painter);
+            ExpandedTreeView::paintEvent(event);
         }
         else {
             drawCentreText(m_emptyText);

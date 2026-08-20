@@ -476,6 +476,9 @@ void PlaylistWidget::resetModel()
                        layoutState().singleMode ? PlaylistColumnList{} : layoutState().columns,
                        m_session->modelPlaylist(currentPlaylist), m_session->modelTracks(currentPlaylist));
     }
+    else if(m_playlistController->playlistsHaveLoaded()) {
+        m_playlistView->playlistReset();
+    }
 }
 
 void PlaylistWidget::resetModelThrottled() const
