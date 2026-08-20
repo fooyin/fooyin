@@ -122,6 +122,8 @@ QByteArray DirTree::saveHeaderState() const
 
 void DirTree::restoreHeaderState(const QByteArray& state)
 {
+    // Restored layout state supersedes state captured for a model reset
+    m_pendingHeaderState.clear();
     m_header->restoreHeaderState(state);
 }
 
