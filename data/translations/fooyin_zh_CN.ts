@@ -3385,12 +3385,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="75"/>
         <source>Top</source>
-        <translation type="unfinished">顶部</translation>
+        <translation>顶部</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="76"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="78"/>
@@ -3400,7 +3400,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="85"/>
         <source>Path and controls position</source>
-        <translation type="unfinished"></translation>
+        <translation>路径和控件位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="98"/>
@@ -6438,7 +6438,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="129"/>
         <source>Only resize locked widgets using adjacent handles</source>
-        <translation type="unfinished"></translation>
+        <translation>仅可使用相邻的手柄调整锁定小部件的大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="130"/>
@@ -6498,7 +6498,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="188"/>
         <source>Prevent other splitter handles and parent splitters from changing the size of a locked widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>防止其他分隔器手柄和父级分隔器更改锁定小部件的大小。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="190"/>
@@ -11208,7 +11208,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="75"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished">立即开始播放</translation>
+        <translation>立即开始播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="78"/>
@@ -11253,7 +11253,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="108"/>
         <source>Double-click</source>
-        <translation type="unfinished">双击</translation>
+        <translation>双击</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="110"/>
@@ -11263,7 +11263,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="116"/>
         <source>After adding tracks to the front of or replacing the playback queue, start playback immediately</source>
-        <translation type="unfinished"></translation>
+        <translation>添加轨道到前面或替换播放队列后，立即开始播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
@@ -11318,7 +11318,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="167"/>
         <source>Play</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="87"/>
@@ -18722,7 +18722,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="45"/>
         <source>Peak Meter Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>峰值电表设置</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="51"/>
@@ -19669,52 +19669,52 @@ Set to 0 to choose automatically from the remote buffer length.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="605"/>
         <source>ID3v2 revision</source>
-        <translation type="unfinished"></translation>
+        <translation>ID3v2 版本</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="606"/>
         <source>ID3v2 revision used when writing MP3 tags</source>
-        <translation type="unfinished"></translation>
+        <translation>写入 MP3 标签时使用 ID3v2 版本</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="608"/>
         <source>Write ID3v2.3 tags</source>
-        <translation type="unfinished"></translation>
+        <translation>写入 ID3v2.3 标签</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="610"/>
         <source>Write ID3v2.4 tags</source>
-        <translation type="unfinished"></translation>
+        <translation>写入 ID3v2.4 标签</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="616"/>
         <source>Tag writing scheme for untagged files</source>
-        <translation type="unfinished"></translation>
+        <translation>为未标记文件设置标签写入方案</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="617"/>
         <source>Tag types created when writing an MP3 file that has no existing tags</source>
-        <translation type="unfinished"></translation>
+        <translation>在创建一个没有现有标签的 MP3 文件时生成的标签类型</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="621"/>
         <source>ID3v2 + ID3v1</source>
-        <translation type="unfinished"></translation>
+        <translation>ID3v2 + ID3v1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="622"/>
         <source>ID3v2</source>
-        <translation type="unfinished"></translation>
+        <translation>ID3v2</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="624"/>
         <source>APE + ID3v1</source>
-        <translation type="unfinished"></translation>
+        <translation>APE + ID3v1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="625"/>
         <source>APE</source>
-        <translation type="unfinished"></translation>
+        <translation>APE</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="631"/>
