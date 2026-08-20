@@ -119,7 +119,6 @@ NowPlayingOutputPageWidget::NowPlayingOutputPageWidget(PlayerController* playerC
 
     m_script->setMinimumHeight(120);
     m_preview->setReadOnly(true);
-    m_preview->setMaximumHeight(56);
     m_preview->setWordWrapMode(QTextOption::NoWrap);
     m_preview->setPlaceholderText(tr("No current track"));
 
@@ -127,6 +126,8 @@ NowPlayingOutputPageWidget::NowPlayingOutputPageWidget(PlayerController* playerC
     scriptLayout->addWidget(m_script, row++, 0);
     scriptLayout->addWidget(m_preview, row++, 0);
     scriptLayout->setColumnStretch(0, 1);
+    scriptLayout->setRowStretch(0, 2);
+    scriptLayout->setRowStretch(1, 1);
 
     auto* eventsGroup  = new QGroupBox(tr("Update events"), this);
     auto* eventsLayout = new QGridLayout(eventsGroup);
@@ -174,10 +175,10 @@ NowPlayingOutputPageWidget::NowPlayingOutputPageWidget(PlayerController* playerC
 
     row = 0;
     layout->addWidget(generalGroup, row++, 0);
+    layout->setRowStretch(row, 1);
     layout->addWidget(scriptGroup, row++, 0);
     layout->addWidget(eventsGroup, row++, 0);
     layout->addWidget(outputGroup, row++, 0);
-    layout->setRowStretch(row, 1);
 
     QObject::connect(m_enabled, &QCheckBox::toggled, this, &NowPlayingOutputPageWidget::updateWidgetState);
     QObject::connect(m_writeToFile, &QCheckBox::toggled, this, &NowPlayingOutputPageWidget::updateWidgetState);
