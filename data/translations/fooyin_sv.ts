@@ -3394,12 +3394,12 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="75"/>
         <source>Top</source>
-        <translation type="unfinished">Topp</translation>
+        <translation>Topp</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="76"/>
         <source>Bottom</source>
-        <translation type="unfinished">Botten</translation>
+        <translation>Botten</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="78"/>
@@ -4799,7 +4799,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="500"/>
         <source>Finishing operations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Slutför åtgärder…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="509"/>
@@ -4818,17 +4818,17 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="530"/>
         <source>Aborted: %Ln operation(s) not run</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Stoppad: %Ln åtgärd kördes inte</numerusform>
+            <numerusform>Aborted: %Ln åtgärder kördes inte</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="536"/>
         <source>Completed %Ln operation(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Genomförde %Ln åtgärd</numerusform>
+            <numerusform>Genomförde %Ln åtgärder</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -4866,9 +4866,9 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="557"/>
         <source>Completed %Ln operation(s): %1</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Genomförde %Ln åtgärd: %1</numerusform>
+            <numerusform>Genomförde %Ln åtgärder: %1</numerusform>
         </translation>
     </message>
     <message>
@@ -4983,7 +4983,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="165"/>
         <source>Pending</source>
-        <translation type="unfinished"></translation>
+        <translation>Väntar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="238"/>
@@ -5029,7 +5029,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="261"/>
         <source>Succeeded</source>
-        <translation type="unfinished"></translation>
+        <translation>Lyckades</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="263"/>
@@ -5147,12 +5147,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="684"/>
         <source>Destination file already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Destinationsfilen existerar redan</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="700"/>
         <source>Archive extraction was interrupted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Arkivextrahering blev avbrutet</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="702"/>
@@ -5172,7 +5172,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="727"/>
         <source>Could not delete source archive</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte radera källarkiv</translation>
     </message>
 </context>
 <context>
@@ -5294,7 +5294,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="56"/>
         <source>Align labels to artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Positionera etiketter till konstverk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="71"/>
@@ -5304,7 +5304,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="79"/>
         <source>In current playlist mode, matching tracks are selected directly in the playlist.</source>
-        <translation type="unfinished"></translation>
+        <translation>I det aktuella spellistsläget är matchande spår valda direkt i spellistan.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="82"/>
@@ -5324,7 +5324,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="96"/>
         <source>Align bottom labels to the horizontal bounds of the artwork in artwork mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Positionera bottenetiketter till konstverkets horisontella gränser i konstverksläge.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="103"/>
@@ -5369,22 +5369,22 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="135"/>
         <source>Library</source>
-        <translation type="unfinished">Bibliotek</translation>
+        <translation>Bibliotek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="136"/>
         <source>Current playlist</source>
-        <translation type="unfinished">Aktuell spellista</translation>
+        <translation>Aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="138"/>
         <source>Source</source>
-        <translation type="unfinished">Källa</translation>
+        <translation>Källa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="142"/>
         <source>Current playlist mode uses the displayed playlist as its source and selects the matching tracks in that playlist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuella spellistsläget använder den visade spellistan som dess källa och väljer de matchande spåren i den spellistan.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="160"/>
@@ -5396,7 +5396,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="161"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="165"/>
         <source>Play</source>
-        <translation type="unfinished">Spela</translation>
+        <translation>Spela</translation>
     </message>
 </context>
 <context>
@@ -5481,17 +5481,17 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="697"/>
         <source>Source</source>
-        <translation type="unfinished">Källa</translation>
+        <translation>Källa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="708"/>
         <source>Library</source>
-        <translation type="unfinished">Bibliotek</translation>
+        <translation>Bibliotek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="709"/>
         <source>Current playlist</source>
-        <translation type="unfinished">Aktuell spellista</translation>
+        <translation>Aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="890"/>
@@ -6521,7 +6521,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="188"/>
         <source>Prevent other splitter handles and parent splitters from changing the size of a locked widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hindra andra splittrarhandtag och föräldrarsplittrare från att ändra storleken på en låst widget.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="190"/>
@@ -7867,7 +7867,7 @@ och senast spelad använder det senare värdet.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="197"/>
         <source>Read ratings from ID3 POPM frames in MP3 files when no text rating was read.</source>
-        <translation type="unfinished"></translation>
+        <translation>Läs betyg från ID3 POPM-ramar i MP3-filer när inget textbetyg var läst.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="199"/>
@@ -7899,22 +7899,22 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="209"/>
         <source>Tag field to read playcount values from. Automatic detection prefers FMPS_PLAYCOUNT, then PLAYCOUNT.</source>
-        <translation type="unfinished"></translation>
+        <translation>Taggfält att läsa antal spelningar-värden från. Automatisk detektion föredrar FMPS_PLAYCOUNT, sedan PLAYCOUNT.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="210"/>
         <source>Tag field used when saving playcounts as text metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>Taggfält som används när antal spelningar sparas som textmetadata.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="212"/>
         <source>Read playcounts from ID3 POPM frames in MP3 files when no text playcount was read.</source>
-        <translation type="unfinished"></translation>
+        <translation>Läs antal spelningar från ID3 POPM-ramar i MP3-filer när ingen text-antal spelningar var läst.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="214"/>
         <source>Additionally save playcounts to ID3 POPM frames when writing MP3 files. Other formats are unaffected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara dessutom antal spelningar till ID3 POPM-ramar vid skrivning av MP3-filer. Andra format är opåverkade.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="216"/>
@@ -10581,12 +10581,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="110"/>
         <source>Background colour</source>
-        <translation type="unfinished">Bakgrundsfärg</translation>
+        <translation>Bakgrundsfärg</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="111"/>
         <source>Font</source>
-        <translation type="unfinished">Typsnitt</translation>
+        <translation>Typsnitt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="115"/>
@@ -11237,7 +11237,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="75"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished">Starta uppspelning omedelbart</translation>
+        <translation>Starta uppspelning omedelbart</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="78"/>
@@ -11282,7 +11282,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="108"/>
         <source>Double-click</source>
-        <translation type="unfinished">Dubbelklick</translation>
+        <translation>Dubbelklick</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="110"/>
@@ -11347,7 +11347,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="167"/>
         <source>Play</source>
-        <translation type="unfinished">Spela</translation>
+        <translation>Spela</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="87"/>
@@ -13222,12 +13222,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="126"/>
         <source>Disabled</source>
-        <translation type="unfinished">Av</translation>
+        <translation>Av</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="129"/>
         <source>Enabled</source>
-        <translation type="unfinished">På</translation>
+        <translation>På</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="135"/>
@@ -13813,7 +13813,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserdialog.cpp" line="77"/>
         <source>Search</source>
-        <translation type="unfinished">Sök</translation>
+        <translation>Sök</translation>
     </message>
 </context>
 <context>
@@ -14319,7 +14319,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="251"/>
         <source>Now Listening</source>
-        <translation type="unfinished"></translation>
+        <translation>Lyssnas på nu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="252"/>
@@ -14460,7 +14460,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="101"/>
         <source>More Genres</source>
-        <translation>Mer genrer</translation>
+        <translation>Fler genrer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="102"/>
@@ -14657,7 +14657,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="173"/>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="201"/>
         <source>Now Listening</source>
-        <translation type="unfinished"></translation>
+        <translation>Lyssnas på nu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="174"/>
@@ -16139,7 +16139,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="227"/>
         <source>Searching</source>
-        <translation type="unfinished">Sökning</translation>
+        <translation>Sökning</translation>
     </message>
 </context>
 <context>
@@ -17053,7 +17053,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="49"/>
         <source>View</source>
-        <translation type="unfinished">Visa</translation>
+        <translation>Visa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="53"/>
@@ -18761,7 +18761,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="45"/>
         <source>Peak Meter Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Peak-meter-inställningar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="51"/>
@@ -19708,22 +19708,22 @@ Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</transla
     <message>
         <location filename="../../src/gui/widgets.cpp" line="605"/>
         <source>ID3v2 revision</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID3v2-revision</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="606"/>
         <source>ID3v2 revision used when writing MP3 tags</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID3v2-revision använt för skrivning av MP3-taggar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="608"/>
         <source>Write ID3v2.3 tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv ID3v2.3-taggar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="610"/>
         <source>Write ID3v2.4 tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv ID3v2.4-taggar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="616"/>
@@ -19733,27 +19733,27 @@ Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</transla
     <message>
         <location filename="../../src/gui/widgets.cpp" line="617"/>
         <source>Tag types created when writing an MP3 file that has no existing tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Taggtyper som skapas vid skrivning till en MP3-fil som inte har existerande taggar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="621"/>
         <source>ID3v2 + ID3v1</source>
-        <translation type="unfinished"></translation>
+        <translation>ID3v2 + ID3v1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="622"/>
         <source>ID3v2</source>
-        <translation type="unfinished"></translation>
+        <translation>ID3v2</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="624"/>
         <source>APE + ID3v1</source>
-        <translation type="unfinished"></translation>
+        <translation>APE + ID3v1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="625"/>
         <source>APE</source>
-        <translation type="unfinished"></translation>
+        <translation>APE</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="631"/>

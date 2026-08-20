@@ -3403,12 +3403,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="75"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahoře</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="76"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Dole</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="78"/>
@@ -3418,7 +3418,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="85"/>
         <source>Path and controls position</source>
-        <translation type="unfinished"></translation>
+        <translation>Poloha cesty a ovládacích prvků</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="98"/>
@@ -6484,7 +6484,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="129"/>
         <source>Only resize locked widgets using adjacent handles</source>
-        <translation type="unfinished"></translation>
+        <translation>U uzamčených widgetů měnit velikost pouze pomocí přilehlých rozdělovačů</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="130"/>
@@ -6544,7 +6544,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="188"/>
         <source>Prevent other splitter handles and parent splitters from changing the size of a locked widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zabránit nadřazeným a ostatním rozdělovačům měnit velikost uzamčených widgetů.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="190"/>
@@ -11266,7 +11266,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="75"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished">Ihned spustit přehrávání</translation>
+        <translation>Ihned spustit přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="78"/>
@@ -11311,7 +11311,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="108"/>
         <source>Double-click</source>
-        <translation type="unfinished">Dvojklik</translation>
+        <translation>Dvojklik</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="110"/>
@@ -11321,7 +11321,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="116"/>
         <source>After adding tracks to the front of or replacing the playback queue, start playback immediately</source>
-        <translation type="unfinished"></translation>
+        <translation>Po přidání skladeb na začátek, nebo nahrazení fronty ihned spustit přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
@@ -11376,7 +11376,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="167"/>
         <source>Play</source>
-        <translation type="unfinished">Přehrát</translation>
+        <translation>Přehrát</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="87"/>
@@ -18802,7 +18802,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="45"/>
         <source>Peak Meter Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení indikátoru špiček</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="51"/>
@@ -19749,52 +19749,52 @@ Nastav na 0 pro automatický výběr podle délky vyrovnávací paměti.</transl
     <message>
         <location filename="../../src/gui/widgets.cpp" line="605"/>
         <source>ID3v2 revision</source>
-        <translation type="unfinished"></translation>
+        <translation>Revize ID3v2</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="606"/>
         <source>ID3v2 revision used when writing MP3 tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Revize ID3v2 použitá při zápisu MP3 tagů</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="608"/>
         <source>Write ID3v2.3 tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapsat ID3v2.3 tagy</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="610"/>
         <source>Write ID3v2.4 tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapsat ID3v2.4 tagy</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="616"/>
         <source>Tag writing scheme for untagged files</source>
-        <translation type="unfinished"></translation>
+        <translation>Schéma zápisu tagů pro soubory bez tagů</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="617"/>
         <source>Tag types created when writing an MP3 file that has no existing tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Typ tagů zapsaných do MP3 souborů, které nemají žádné existující tagy</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="621"/>
         <source>ID3v2 + ID3v1</source>
-        <translation type="unfinished"></translation>
+        <translation>ID3v2 + ID3v1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="622"/>
         <source>ID3v2</source>
-        <translation type="unfinished"></translation>
+        <translation>ID3v2</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="624"/>
         <source>APE + ID3v1</source>
-        <translation type="unfinished"></translation>
+        <translation>APE + ID3v1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="625"/>
         <source>APE</source>
-        <translation type="unfinished"></translation>
+        <translation>APE</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="631"/>

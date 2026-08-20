@@ -3394,12 +3394,12 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="75"/>
         <source>Top</source>
-        <translation type="unfinished">Oben</translation>
+        <translation>Oben</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="76"/>
         <source>Bottom</source>
-        <translation type="unfinished">Unten</translation>
+        <translation>Unten</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="78"/>
@@ -3409,7 +3409,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="85"/>
         <source>Path and controls position</source>
-        <translation type="unfinished"></translation>
+        <translation>Position von Pfad und Bedienelementen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="98"/>
@@ -6461,7 +6461,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="129"/>
         <source>Only resize locked widgets using adjacent handles</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändere die Größe von gesperrten Widgets nur mithilfe von benachbarten Griffen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="130"/>
@@ -6521,7 +6521,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="188"/>
         <source>Prevent other splitter handles and parent splitters from changing the size of a locked widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verhindere, dass andere Teilergriffe und die Teiler eines übergeordneten Widgets die Größe eines gesperrten Widgets verändern.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="190"/>
@@ -7867,7 +7867,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="197"/>
         <source>Read ratings from ID3 POPM frames in MP3 files when no text rating was read.</source>
-        <translation>Lies Bewertungen aus dem ID3 POPM Frame in MP3-Dateien, wenn keine Textbewertung gelesen wurde.</translation>
+        <translation>Lies Bewertungen aus dem ID3-POPM-Frame in MP3-Dateien, wenn keine Textbewertung gelesen wurde.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="199"/>
@@ -7909,12 +7909,12 @@ Diese Einstellung verbessert die Kompatibilität mit anderen Abspielprogrammen, 
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="212"/>
         <source>Read playcounts from ID3 POPM frames in MP3 files when no text playcount was read.</source>
-        <translation>Lies Wiedergabezahlen aus ID3 POPM Frames in MP3-Dateien, wenn keine Text-Wiedergabezahlen gelesen wurden.</translation>
+        <translation>Lies Wiedergabezahlen aus ID3-POPM-Frames in MP3-Dateien, wenn keine Text-Wiedergabezahlen gelesen wurden.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="214"/>
         <source>Additionally save playcounts to ID3 POPM frames when writing MP3 files. Other formats are unaffected.</source>
-        <translation>Speichere Wiedergabezahlen beim Schreiben von MP3-Dateien zusätzlich in das ID3 POPM Frame. Andere Formate sind nicht betroffen.</translation>
+        <translation>Speichere Wiedergabezahlen beim Schreiben von MP3-Dateien zusätzlich in das ID3-POPM-Frame. Andere Formate sind nicht betroffen.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="216"/>
@@ -9799,12 +9799,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="50"/>
         <source>Open an oscilloscope in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne ein Oszilloskop in einem separaten Fenster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="52"/>
         <source>View</source>
-        <translation type="unfinished">Ansicht</translation>
+        <translation>Ansicht</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="56"/>
@@ -10547,7 +10547,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="153"/>
         <source>Show Random Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige zufälligen Titel</translation>
     </message>
 </context>
 <context>
@@ -10581,12 +10581,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="110"/>
         <source>Background colour</source>
-        <translation type="unfinished">Hintergrundfarbe</translation>
+        <translation>Hintergrundfarbe</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="111"/>
         <source>Font</source>
-        <translation type="unfinished">Schriftart</translation>
+        <translation>Schriftart</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="115"/>
@@ -10762,12 +10762,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="189"/>
         <source>Use a custom background colour for the currently playing row; transparency is supported</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende eine benutzerdefinierte Hintergrundfarbe für die gerade spielende Zeile; Transparenz wird unterstützt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="190"/>
         <source>Use a custom font for the currently playing row</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende eine benutzerdefinierte Schriftart für die aktuell spielende Zeile</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="192"/>
@@ -10822,7 +10822,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="216"/>
         <source>Playing row</source>
-        <translation type="unfinished"></translation>
+        <translation>Spielende Zeile</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="219"/>
@@ -11237,7 +11237,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="75"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished">Wiedergabe sofort starten</translation>
+        <translation>Wiedergabe sofort starten</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="78"/>
@@ -11282,7 +11282,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="108"/>
         <source>Double-click</source>
-        <translation type="unfinished">Doppelklick</translation>
+        <translation>Doppelklick</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="110"/>
@@ -11292,7 +11292,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="116"/>
         <source>After adding tracks to the front of or replacing the playback queue, start playback immediately</source>
-        <translation type="unfinished"></translation>
+        <translation>Starte die Wiedergabe sofort, nachdem die Wiedergabewarteschlange ersetzt oder Titel an ihrem Anfang hinzugefügt wurden</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
@@ -11347,7 +11347,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="167"/>
         <source>Play</source>
-        <translation type="unfinished">Abspielen</translation>
+        <translation>Abspielen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="87"/>
@@ -11519,7 +11519,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="500"/>
         <source>Lock playlist</source>
-        <translation type="unfinished">Sperre Wiedergabeliste</translation>
+        <translation>Sperre Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="519"/>
@@ -11638,7 +11638,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="509"/>
         <source>Lock playlist</source>
-        <translation type="unfinished">Sperre Wiedergabeliste</translation>
+        <translation>Sperre Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="451"/>
@@ -11998,7 +11998,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="455"/>
         <source>Lock playlist</source>
-        <translation type="unfinished">Sperre Wiedergabeliste</translation>
+        <translation>Sperre Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="470"/>
@@ -12033,17 +12033,17 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="545"/>
         <source>Tab position</source>
-        <translation type="unfinished"></translation>
+        <translation>Reiterposition</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="562"/>
         <source>Top</source>
-        <translation type="unfinished">Oben</translation>
+        <translation>Oben</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="563"/>
         <source>Bottom</source>
-        <translation type="unfinished">Unten</translation>
+        <translation>Unten</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="731"/>
@@ -12072,47 +12072,47 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="32"/>
         <source>Playlist Tabs Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen: Wiedergabelisten-Reiter</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="34"/>
         <source>Expand tabs to fill empty space</source>
-        <translation type="unfinished">Erweitere Reiter, um leeren Raum zu füllen</translation>
+        <translation>Erweitere Reiter, um leeren Raum zu füllen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="35"/>
         <source>Show add button</source>
-        <translation type="unfinished">Zeige „Hinzufügen“-Knopf</translation>
+        <translation>Zeige „Hinzufügen“-Knopf</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="36"/>
         <source>Show clear button</source>
-        <translation type="unfinished">Zeige „Leeren“-Knopf</translation>
+        <translation>Zeige „Leeren“-Knopf</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="37"/>
         <source>Show delete button on tabs</source>
-        <translation type="unfinished">Zeige „Löschen“-Knopf auf Reitern</translation>
+        <translation>Zeige „Löschen“-Knopf auf Reitern</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="38"/>
         <source>Delete playlists on middle click</source>
-        <translation type="unfinished">Lösche Wiedergabelisten bei Mittelklick</translation>
+        <translation>Lösche Wiedergabelisten bei Mittelklick</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="40"/>
         <source>Top</source>
-        <translation type="unfinished">Oben</translation>
+        <translation>Oben</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="41"/>
         <source>Bottom</source>
-        <translation type="unfinished">Unten</translation>
+        <translation>Unten</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="46"/>
         <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation>Position</translation>
     </message>
 </context>
 <context>
@@ -12770,7 +12770,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="51"/>
         <source>Open projectM in a separate window</source>
-        <translation>Öffne projectM in einem eigenen Fenster</translation>
+        <translation>Öffne projectM in einem separaten Fenster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="53"/>
@@ -12806,17 +12806,17 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="415"/>
         <source>Could not initialise OpenGL: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte OpenGL nicht initialisieren: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="420"/>
         <source>projectM requires OpenGL 3.3 or newer.</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM benötigt OpenGL 3.3 oder neuer.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="548"/>
         <source>projectM requires an initialised OpenGL 3.3 context.</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM benötigt einen initialisierten OpenGL-3.3-Kontext.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="553"/>
@@ -12898,12 +12898,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="203"/>
         <source>No projectM presets were found in the configured location.</source>
-        <translation type="unfinished"></translation>
+        <translation>Im angegebenen Verzeichnis wurden keine projectM-Voreinstellungen gefunden.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="205"/>
         <source>Right-click to configure presets.</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechtsklick, um Voreinstellungen zu bearbeiten.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="247"/>
@@ -13217,22 +13217,22 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="70"/>
         <source>Dark mode</source>
-        <translation type="unfinished">Dunkler Modus</translation>
+        <translation>Dunkler Modus</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="126"/>
         <source>Disabled</source>
-        <translation type="unfinished">Deaktiviert</translation>
+        <translation>Deaktiviert</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="129"/>
         <source>Enabled</source>
-        <translation type="unfinished">Aktiviert</translation>
+        <translation>Aktiviert</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="135"/>
         <source>Dark mode is not supported by the current style.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der dunkle Modus wird vom aktuellen Stil nicht unterstützt.</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="142"/>
@@ -13650,7 +13650,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="73"/>
         <source>Remember display mode and columns separately when browsing My Stations</source>
-        <translation>Merke den Anzeige-Modus und anzuzeigende Spalten separat beim Durchschauen von „Meine Stationen“</translation>
+        <translation>Merke den Anzeige-Modus und anzuzeigende Spalten beim Durchschauen von „Meine Stationen“ separat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="81"/>
@@ -17043,17 +17043,17 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="46"/>
         <source>Spectro&amp;gram</source>
-        <translation type="unfinished"></translation>
+        <translation>Spektro&amp;gramm</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="47"/>
         <source>Open a spectrogram in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne ein Spektrogramm in einem separaten Fenster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="49"/>
         <source>View</source>
-        <translation type="unfinished">Ansicht</translation>
+        <translation>Ansicht</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="53"/>
@@ -17231,12 +17231,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="251"/>
         <source>Duration (sample-rate based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Dauer (basierend auf der Abtastrate)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="252"/>
         <source>Fixed samples</source>
-        <translation type="unfinished"></translation>
+        <translation>Feste Samples</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="254"/>
@@ -17322,12 +17322,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="274"/>
         <source>Length of audio analysed per spectrum frame; the FFT size adapts to the sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Audiolänge, die pro Spektrum-Frame analysiert wird; die FFT-Größe passt sich an die Abtastrate an</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="276"/>
         <source>Keep the analysis duration consistent across sample rates, or use a fixed number of samples</source>
-        <translation type="unfinished"></translation>
+        <translation>Halte die Analysedauer über verschiedene Abtastraten einheitlich oder verwende eine festgelegte Anzahl an Samples</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="277"/>
@@ -17477,7 +17477,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="350"/>
         <source>FFT sizing</source>
-        <translation type="unfinished"></translation>
+        <translation>FFT-Größenbestimmung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="351"/>
@@ -17487,7 +17487,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="352"/>
         <source>Duration</source>
-        <translation type="unfinished">Dauer</translation>
+        <translation>Dauer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="353"/>
@@ -17599,17 +17599,17 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="50"/>
         <source>&amp;Spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Spektrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="51"/>
         <source>Open a spectrum in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne ein Spektrum in einem separaten Fenster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="53"/>
         <source>View</source>
-        <translation type="unfinished">Ansicht</translation>
+        <translation>Ansicht</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="57"/>
@@ -17665,12 +17665,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="716"/>
         <source>FFT window</source>
-        <translation type="unfinished"></translation>
+        <translation>FFT-Fenster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="719"/>
         <source>Sample rate based (%1 ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Basierend auf der Abtastrate (%1 ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="745"/>
@@ -18762,7 +18762,7 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="45"/>
         <source>Peak Meter Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen: Spitzenpegelmesser</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="51"/>
@@ -18772,7 +18772,7 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="52"/>
         <source>Peaks</source>
-        <translation>Spitzenwerte</translation>
+        <translation>Spitzenpegel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="79"/>
@@ -18827,7 +18827,7 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="61"/>
         <source>Peak colour</source>
-        <translation>Spitzenwertfarbe</translation>
+        <translation>Spitzenpegelfarbe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="62"/>
@@ -18852,37 +18852,37 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="58"/>
         <source>View</source>
-        <translation type="unfinished">Ansicht</translation>
+        <translation>Ansicht</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="67"/>
         <source>&amp;VU Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;vu-Meter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="67"/>
         <source>Open a VU meter in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne ein vu-Meter in einem separaten Fenster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="68"/>
         <source>VU Meter</source>
-        <translation type="unfinished">vu-Meter</translation>
+        <translation>vu-Meter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="69"/>
         <source>&amp;Peak Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>S&amp;pitzenpegelmesser</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="69"/>
         <source>Open a peak meter in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne ein Spitzenpegelmesser in einem separaten Fenster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="70"/>
         <source>Peak Meter</source>
-        <translation type="unfinished">Spitzenwert-Meter</translation>
+        <translation>Spitzenpegelmesser</translation>
     </message>
 </context>
 <context>
@@ -18890,7 +18890,7 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="794"/>
         <source>Peak Meter</source>
-        <translation>Spitzenwert-Meter</translation>
+        <translation>Spitzenpegelmesser</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="794"/>
@@ -18900,7 +18900,7 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1129"/>
         <source>Show peaks</source>
-        <translation>Zeige Spitzenwerte</translation>
+        <translation>Zeige Spitzenpegel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1140"/>
@@ -19226,17 +19226,17 @@ Höhere Supersampling-Werte funktionieren am besten mit höherer Sampleanzahl.</
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="108"/>
         <source>&amp;Waveform Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Wellenform-Fortschrittsleiste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="109"/>
         <source>Open a waveform seekbar in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne eine Wellenform-Fortschrittsleiste in einem separaten Fenster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="111"/>
         <source>View</source>
-        <translation type="unfinished">Ansicht</translation>
+        <translation>Ansicht</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="120"/>
@@ -19709,52 +19709,52 @@ Setze auf 0 damit es automatisch anhand der entfernten Puffergröße eingestellt
     <message>
         <location filename="../../src/gui/widgets.cpp" line="605"/>
         <source>ID3v2 revision</source>
-        <translation type="unfinished"></translation>
+        <translation>ID3v2-Revision</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="606"/>
         <source>ID3v2 revision used when writing MP3 tags</source>
-        <translation type="unfinished"></translation>
+        <translation>ID3v2-Revision, die beim Schreiben von MP3-Tags verwendet wird</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="608"/>
         <source>Write ID3v2.3 tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Schreibe ID3v2.3-Tags</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="610"/>
         <source>Write ID3v2.4 tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Schreibe ID3v2.4-Tags</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="616"/>
         <source>Tag writing scheme for untagged files</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag-Schreibschema für nicht getaggte Dateien</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="617"/>
         <source>Tag types created when writing an MP3 file that has no existing tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag-Typen, die erstellt werden, wenn eine MP3-Datei ohne existierende Tags geschrieben wird</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="621"/>
         <source>ID3v2 + ID3v1</source>
-        <translation type="unfinished"></translation>
+        <translation>ID3v2 + ID3v1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="622"/>
         <source>ID3v2</source>
-        <translation type="unfinished"></translation>
+        <translation>ID3v2</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="624"/>
         <source>APE + ID3v1</source>
-        <translation type="unfinished"></translation>
+        <translation>APE + ID3v1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="625"/>
         <source>APE</source>
-        <translation type="unfinished"></translation>
+        <translation>APE</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="631"/>
