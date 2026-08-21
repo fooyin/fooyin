@@ -185,7 +185,7 @@ QByteArray SoundTouchDsp::saveSettings() const
     QDataStream stream{&data, QIODevice::WriteOnly};
     stream.setVersion(QDataStream::Qt_6_0);
 
-    stream << quint32(PresetVersion);
+    stream << static_cast<quint32>(PresetVersion);
     stream << parameterValue();
 
     return data;
@@ -333,6 +333,10 @@ void SoundTouchDsp::recreateProcessor(const AudioFormat& format)
         reset();
         return;
     }
+
+    m_processor = std::make_unique<soundtouch::SoundTouch>();
+    m_processor->setSampleRate(static_cast<uint>(std::max(1, format.sampleRate())));
+    m_processor->setChannels(static_cast<uint>(std::max(1, format.channelCount())));
 
     configureProcessor();
 
