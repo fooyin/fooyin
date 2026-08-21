@@ -36,6 +36,7 @@ public:
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     void setAlignCaptionsToArtwork(bool align);
+    void setArtworkCornerRadius(int radius);
 
 private:
     static RichText recolourRichText(RichText richText, const QColor& colour);
@@ -60,5 +61,6 @@ private:
                                const std::vector<RichTextBlock>& blocks);
 
     bool m_alignCaptionsToArtwork{true};
+    int m_artworkCornerRadius{0};
 };
 } // namespace Fooyin::Filters

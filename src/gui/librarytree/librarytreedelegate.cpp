@@ -21,6 +21,7 @@
 
 #include "librarytreeitem.h"
 
+#include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/scripting/richtext.h>
 #include <gui/scripting/richtextutils.h>
@@ -222,9 +223,10 @@ void LibraryTreeDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     const QStyle* style     = option.widget ? option.widget->style() : QApplication::style();
     const auto richText     = fallbackRichText(opt, index);
     const auto rightText    = rightRichText(index);
-    const QIcon playingIcon = isPlaying ? opt.icon : QIcon{};
+    const bool roundArtwork = !isPlaying && m_artworkCornerRadius > 0 && !opt.icon.isNull();
+    const QIcon itemIcon    = (isPlaying || roundArtwork) ? opt.icon : QIcon{};
     const QRect iconRect
-        = isPlaying ? style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, option.widget) : QRect{};
+        = !itemIcon.isNull() ? style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, option.widget) : QRect{};
 
     painter->save();
 
@@ -234,14 +236,19 @@ void LibraryTreeDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     }
 
     opt.text.clear();
-    if(isPlaying) {
+    if(isPlaying || roundArtwork) {
         opt.icon = {};
     }
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, option.widget);
 
     if(isPlaying) {
-        opt.icon = playingIcon;
-        Gui::drawItemViewIcon(painter, opt, playingIcon, iconRect);
+        opt.icon = itemIcon;
+        Gui::drawItemViewIcon(painter, opt, itemIcon, iconRect);
+    }
+    else if(roundArtwork) {
+        const double dpr = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
+        Gui::drawRoundedPixmap(*painter, iconRect, opt.decorationAlignment, itemIcon.pixmap(iconRect.size(), dpr),
+                               m_artworkCornerRadius);
     }
 
     if(!richText.empty()) {
@@ -282,6 +289,11 @@ void LibraryTreeDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     }
 
     painter->restore();
+}
+
+void LibraryTreeDelegate::setArtworkCornerRadius(int radius)
+{
+    m_artworkCornerRadius = std::max(radius, 0);
 }
 
 QSize LibraryTreeDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const

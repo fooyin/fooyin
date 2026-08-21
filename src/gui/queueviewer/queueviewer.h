@@ -43,6 +43,7 @@ class PlayerController;
 class PlaylistInteractor;
 class CoverRepository;
 class QueueViewerModel;
+class QueueViewerDelegate;
 class QueueViewerView;
 class SettingsManager;
 class SortingRegistry;
@@ -74,6 +75,7 @@ public:
         bool showCurrent{true};
         bool showIcon{true};
         QSize iconSize{36, 36};
+        int artworkCornerRadius{0};
         bool showHeader{true};
         bool showScrollBar{true};
         bool alternatingRows{false};
@@ -167,6 +169,7 @@ private:
     SettingsManager* m_settings;
 
     QueueViewerView* m_view;
+    QueueViewerDelegate* m_delegate;
     QueueViewerModel* m_model;
     WidgetContext* m_context;
     ConfigData m_config;

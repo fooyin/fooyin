@@ -94,6 +94,7 @@ constexpr auto LibTreeAnimatedKey              = u"LibraryTree/Animated";
 constexpr auto LibTreeHeaderKey                = u"LibraryTree/Header";
 constexpr auto LibTreeShowSummaryNodeKey       = u"LibraryTree/ShowSummaryNode";
 constexpr auto LibTreeSummaryNodeTitleKey      = u"LibraryTree/SummaryNodeTitle";
+constexpr auto LibTreeArtworkRadiusKey         = u"LibraryTree/ArtworkCornerRadius";
 
 namespace Fooyin {
 using namespace Settings::Gui::Internal;
@@ -204,6 +205,7 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
     , m_resetThrottler{new SignalThrottler(this)}
     , m_layout{new QVBoxLayout(this)}
     , m_libraryTree{new LibraryTreeView(this)}
+    , m_delegate{new LibraryTreeDelegate(this)}
     , m_model{new LibraryTreeModel(core->libraryManager(), core->audioLoader(), coverRepository, m_settings,
                                    styleProvider, this)}
     , m_sortProxy{new LibraryTreeSortModel(this)}
@@ -226,7 +228,7 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
 
     m_sortProxy->setSourceModel(m_model);
     m_libraryTree->setModel(m_sortProxy);
-    m_libraryTree->setItemDelegate(new LibraryTreeDelegate(this));
+    m_libraryTree->setItemDelegate(m_delegate);
     m_libraryTree->viewport()->installEventFilter(new ToolTipFilter(this));
     QObject::connect(m_libraryTree, &LibraryTreeView::displayChanged, m_model, &LibraryTreeModel::resetPalette);
 
@@ -338,14 +340,15 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::defaultConfig() const
         = m_settings->fileValue(LibTreeExpandSingleClickKey, config.expandOnSingleClick).toBool();
     config.autoExpandSearchResultLimit
         = m_settings->fileValue(LibTreeAutoExpandSearchLimitKey, config.autoExpandSearchResultLimit).toInt();
-    config.animated         = m_settings->fileValue(LibTreeAnimatedKey, config.animated).toBool();
-    config.showHeader       = m_settings->fileValue(LibTreeHeaderKey, config.showHeader).toBool();
-    config.showScrollbar    = m_settings->fileValue(LibTreeScrollBarKey, config.showScrollbar).toBool();
-    config.alternatingRows  = m_settings->fileValue(LibTreeAltColoursKey, config.alternatingRows).toBool();
-    config.showSummaryNode  = m_settings->fileValue(LibTreeShowSummaryNodeKey, config.showSummaryNode).toBool();
-    config.summaryNodeTitle = m_settings->fileValue(LibTreeSummaryNodeTitleKey, config.summaryNodeTitle).toString();
-    config.rowHeight        = m_settings->fileValue(LibTreeRowHeightKey, config.rowHeight).toInt();
-    config.iconSize         = m_settings->value<LibTreeIconSize>().toSize();
+    config.animated            = m_settings->fileValue(LibTreeAnimatedKey, config.animated).toBool();
+    config.showHeader          = m_settings->fileValue(LibTreeHeaderKey, config.showHeader).toBool();
+    config.showScrollbar       = m_settings->fileValue(LibTreeScrollBarKey, config.showScrollbar).toBool();
+    config.alternatingRows     = m_settings->fileValue(LibTreeAltColoursKey, config.alternatingRows).toBool();
+    config.showSummaryNode     = m_settings->fileValue(LibTreeShowSummaryNodeKey, config.showSummaryNode).toBool();
+    config.summaryNodeTitle    = m_settings->fileValue(LibTreeSummaryNodeTitleKey, config.summaryNodeTitle).toString();
+    config.rowHeight           = m_settings->fileValue(LibTreeRowHeightKey, config.rowHeight).toInt();
+    config.iconSize            = m_settings->value<LibTreeIconSize>().toSize();
+    config.artworkCornerRadius = m_settings->fileValue(LibTreeArtworkRadiusKey, config.artworkCornerRadius).toInt();
 
     return config;
 }
@@ -375,6 +378,7 @@ void LibraryTreeWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(LibTreeSummaryNodeTitleKey, config.summaryNodeTitle);
     m_settings->fileSet(LibTreeRowHeightKey, config.rowHeight);
     m_settings->set<LibTreeIconSize>(config.iconSize);
+    m_settings->fileSet(LibTreeArtworkRadiusKey, config.artworkCornerRadius);
 }
 
 void LibraryTreeWidget::clearSavedDefaults() const
@@ -397,6 +401,7 @@ void LibraryTreeWidget::clearSavedDefaults() const
     m_settings->fileRemove(LibTreeSummaryNodeTitleKey);
     m_settings->fileRemove(LibTreeRowHeightKey);
     m_settings->reset<LibTreeIconSize>();
+    m_settings->fileRemove(LibTreeArtworkRadiusKey);
 }
 
 void LibraryTreeWidget::applyConfig(const ConfigData& config)
@@ -409,6 +414,7 @@ void LibraryTreeWidget::applyConfig(const ConfigData& config)
 
     m_config.rowHeight                   = std::max(m_config.rowHeight, 0);
     m_config.autoExpandSearchResultLimit = std::max(m_config.autoExpandSearchResultLimit, 0);
+    m_config.artworkCornerRadius         = std::max(m_config.artworkCornerRadius, 0);
 
     if(m_config.summaryNodeTitle.isEmpty()) {
         m_config.summaryNodeTitle = factoryConfig().summaryNodeTitle;
@@ -428,6 +434,8 @@ void LibraryTreeWidget::applyConfig(const ConfigData& config)
     m_model->setRowHeight(m_config.rowHeight);
     m_model->setSummaryNodeConfig(m_config.showSummaryNode, m_config.summaryNodeTitle);
     m_libraryTree->setIconSize(m_config.iconSize);
+    m_delegate->setArtworkCornerRadius(m_config.artworkCornerRadius);
+    m_libraryTree->viewport()->update();
 
     QMetaObject::invokeMethod(m_libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
 
@@ -512,6 +520,9 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::configFromLayout(const QJsonObj
     if(layout.contains("IconWidth"_L1) && layout.contains("IconHeight"_L1)) {
         config.iconSize = {layout.value("IconWidth"_L1).toInt(), layout.value("IconHeight"_L1).toInt()};
     }
+    if(layout.contains("ArtworkCornerRadius"_L1)) {
+        config.artworkCornerRadius = layout.value("ArtworkCornerRadius"_L1).toInt();
+    }
 
     if(!config.iconSize.isValid()) {
         config.iconSize = factoryConfig().iconSize;
@@ -519,6 +530,7 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::configFromLayout(const QJsonObj
 
     config.rowHeight                   = std::max(config.rowHeight, 0);
     config.autoExpandSearchResultLimit = std::max(config.autoExpandSearchResultLimit, 0);
+    config.artworkCornerRadius         = std::max(config.artworkCornerRadius, 0);
 
     if(config.summaryNodeTitle.isEmpty()) {
         config.summaryNodeTitle = factoryConfig().summaryNodeTitle;
@@ -548,6 +560,7 @@ void LibraryTreeWidget::saveConfigToLayout(const ConfigData& config, QJsonObject
     layout["RowHeight"_L1]                   = config.rowHeight;
     layout["IconWidth"_L1]                   = config.iconSize.width();
     layout["IconHeight"_L1]                  = config.iconSize.height();
+    layout["ArtworkCornerRadius"_L1]         = config.artworkCornerRadius;
 }
 
 void LibraryTreeWidget::openConfigDialog()

@@ -167,6 +167,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
         u"[%date%|][%albumartist%|][%artist%|]$if2(%album%,%path%)"_s, u"Artwork/ThumbnailGroupScript"_s);
     m_settings->createSetting<Internal::PlaylistImagePadding>(5, u"PlaylistWidget/ImagePadding"_s);
     m_settings->createSetting<Internal::PlaylistImagePaddingTop>(0, u"PlaylistWidget/ImagePaddingTop"_s);
+    m_settings->createSetting<Internal::PlaylistArtworkCornerRadius>(0, u"PlaylistWidget/ArtworkCornerRadius"_s);
     m_settings->createSetting<Internal::PlaylistBackgroundImageMode>(static_cast<int>(PlaylistBgImage::None),
                                                                      u"PlaylistWidget/BackgroundImage"_s);
     m_settings->createSetting<Internal::PlaylistBackgroundCustomImage>(QString{},

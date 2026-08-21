@@ -228,7 +228,7 @@ QRect subheaderContentRect(const QStyleOptionViewItem& option, const QModelIndex
     return rect;
 }
 
-void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
+void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, int cornerRadius)
 {
     QStyleOptionViewItem opt{option};
     opt.text.clear();
@@ -308,10 +308,11 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
         coverPen.setWidth(coverFrameWidth);
 
         painter->setRenderHint(QPainter::Antialiasing);
-        painter->drawRect(coverFrameRect);
+        painter->drawRoundedRect(coverFrameRect, cornerRadius, cornerRadius);
 
-        const double pixelRatio = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
-        painter->drawPixmap(coverRect, Utils::scalePixmap(cover, coverSize, pixelRatio, true));
+        const double dpr = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
+        Gui::drawRoundedPixmap(*painter, coverRect, Qt::AlignCenter, Utils::scalePixmap(cover, coverSize, dpr, true),
+                               cornerRadius);
     }
 }
 
@@ -403,7 +404,7 @@ void paintSubheader(QPainter* painter, const QStyleOptionViewItem& opt, const QM
     painter->drawLine(titleLine);
 }
 
-void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
+void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, int cornerRadius)
 {
     QStyleOptionViewItem opt{option};
 
@@ -443,9 +444,15 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 
                 opt.rect.adjust(imagePadding, imagePaddingTop, -imagePadding, imagePaddingTop);
 
-                style->drawItemPixmap(
-                    painter, opt.rect, Qt::AlignHCenter | Qt::AlignTop,
-                    Utils::scalePixmap(image, opt.rect.width(), opt.widget->devicePixelRatioF(), true));
+                const QPixmap scaledImage
+                    = Utils::scalePixmap(image, opt.rect.width(), opt.widget->devicePixelRatioF(), true);
+                if(cornerRadius > 0) {
+                    Gui::drawRoundedPixmap(*painter, opt.rect, Qt::AlignHCenter | Qt::AlignTop, scaledImage,
+                                           cornerRadius);
+                }
+                else {
+                    style->drawItemPixmap(painter, opt.rect, Qt::AlignHCenter | Qt::AlignTop, scaledImage);
+                }
             }
         }
         else {
@@ -506,11 +513,11 @@ void PlaylistDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
     const auto type = index.data(PlaylistItem::Type).toInt();
     switch(type) {
         case PlaylistItem::Track:
-            paintTrack(painter, opt, index);
+            paintTrack(painter, opt, index, m_artworkCornerRadius);
             break;
         case PlaylistItem::Header: {
             const auto simple = index.data(PlaylistItem::Simple).toBool();
-            simple ? paintSimpleHeader(painter, opt, index) : paintHeader(painter, opt, index);
+            simple ? paintSimpleHeader(painter, opt, index) : paintHeader(painter, opt, index, m_artworkCornerRadius);
             break;
         }
         case PlaylistItem::Subheader:
@@ -561,6 +568,11 @@ QSize PlaylistDelegate::sizeHint(const QStyleOptionViewItem& option, const QMode
     size.setWidth(size.width() + margin);
 
     return size;
+}
+
+void PlaylistDelegate::setArtworkCornerRadius(int radius)
+{
+    m_artworkCornerRadius = std::max(radius, 0);
 }
 } // namespace Fooyin
 

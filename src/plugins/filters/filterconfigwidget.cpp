@@ -53,6 +53,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     , m_iconHeight{new QSpinBox(this)}
     , m_iconHorizontalGap{new QSpinBox(this)}
     , m_iconVerticalGap{new QSpinBox(this)}
+    , m_artworkCornerRadius{new QSpinBox(this)}
     , m_alignCaptionsToArtwork{new QCheckBox(tr("Align labels to artwork"), this)}
     , m_manageColumns{new QPushButton(tr("Manage columns..."), this)}
 {
@@ -114,6 +115,9 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     m_iconHorizontalGap->setSuffix(u" px"_s);
     m_iconVerticalGap->setRange(0, 256);
     m_iconVerticalGap->setSuffix(u" px"_s);
+    m_artworkCornerRadius->setRange(0, 256);
+    m_artworkCornerRadius->setSuffix(u" px"_s);
+    m_artworkCornerRadius->setSpecialValueText(tr("Square"));
 
     auto* iconSizeHint = new QLabel(u"🛈 "_s + tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this);
 
@@ -127,6 +131,8 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     artworkLayout->addWidget(m_iconHorizontalGap, row, 1);
     artworkLayout->addWidget(new QLabel(tr("Vertical gap") + u":"_s, this), row, 2);
     artworkLayout->addWidget(m_iconVerticalGap, row++, 3);
+    artworkLayout->addWidget(new QLabel(tr("Corner radius") + u":"_s, this), row, 0);
+    artworkLayout->addWidget(m_artworkCornerRadius, row++, 1);
     artworkLayout->setColumnStretch(4, 1);
 
     auto* generalGroup       = new QGroupBox(tr("General"), this);
@@ -204,6 +210,7 @@ FilterWidget::ConfigData FilterConfigDialog::config() const
         .iconSize                 = {m_iconWidth->value(), m_iconHeight->value()},
         .iconHorizontalGap        = m_iconHorizontalGap->value(),
         .iconVerticalGap          = m_iconVerticalGap->value(),
+        .artworkCornerRadius      = m_artworkCornerRadius->value(),
         .alignCaptionsToArtwork   = m_alignCaptionsToArtwork->isChecked(),
     };
 }
@@ -226,6 +233,7 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
     m_iconHeight->setValue(config.iconSize.height());
     m_iconHorizontalGap->setValue(config.iconHorizontalGap);
     m_iconVerticalGap->setValue(config.iconVerticalGap);
+    m_artworkCornerRadius->setValue(config.artworkCornerRadius);
     m_alignCaptionsToArtwork->setChecked(config.alignCaptionsToArtwork);
     m_playlistName->setEnabled(m_playlistEnabled->isChecked());
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
@@ -241,6 +249,7 @@ void FilterConfigDialog::mergeExternalConfig(const FilterWidget::ConfigData& pre
                         &FilterWidget::ConfigData::autoSwitch, &FilterWidget::ConfigData::preservePlaybackPlaylist,
                         &FilterWidget::ConfigData::playlistName, &FilterWidget::ConfigData::rowHeight,
                         &FilterWidget::ConfigData::iconSize, &FilterWidget::ConfigData::iconHorizontalGap,
-                        &FilterWidget::ConfigData::iconVerticalGap, &FilterWidget::ConfigData::alignCaptionsToArtwork);
+                        &FilterWidget::ConfigData::iconVerticalGap, &FilterWidget::ConfigData::artworkCornerRadius,
+                        &FilterWidget::ConfigData::alignCaptionsToArtwork);
 }
 } // namespace Fooyin::Filters

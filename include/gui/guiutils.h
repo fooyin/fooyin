@@ -34,6 +34,8 @@ class QMimeData;
 class QLabel;
 class QAbstractItemView;
 class QPalette;
+class QPainter;
+class QPixmap;
 
 namespace Fooyin {
 class MusicLibrary;
@@ -59,6 +61,9 @@ FYGUI_EXPORT QPalette::ColorRole itemViewSelectionTextRole(const QStyleOptionVie
 
 /*! Returns the style-provided item text rectangle with spacing for leading row decorations. */
 FYGUI_EXPORT QRect itemViewTextRect(const QStyleOptionViewItem& option);
+
+FYGUI_EXPORT void drawRoundedPixmap(QPainter& painter, const QRect& rect, Qt::Alignment alignment,
+                                    const QPixmap& pixmap, int radius);
 
 FYGUI_EXPORT void refreshItemViewPalette(QAbstractItemView* view);
 FYGUI_EXPORT void refreshItemViewPalette(QAbstractItemView* view, const QPalette& palette);

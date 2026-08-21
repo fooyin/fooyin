@@ -61,6 +61,7 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     , m_rowHeight{new QSpinBox(this)}
     , m_iconWidth{new QSpinBox(this)}
     , m_iconHeight{new QSpinBox(this)}
+    , m_artworkCornerRadius{new QSpinBox(this)}
     , m_manageGroupings{new QPushButton(tr("Manage groupings..."), this)}
 {
     m_playbackOnSend->setToolTip(
@@ -139,6 +140,9 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     m_iconHeight->setMaximum(512);
     m_iconWidth->setSingleStep(5);
     m_iconHeight->setSingleStep(5);
+    m_artworkCornerRadius->setRange(0, 256);
+    m_artworkCornerRadius->setSuffix(u" px"_s);
+    m_artworkCornerRadius->setSpecialValueText(tr("Square"));
 
     auto* iconSizeHint = new QLabel(u"🛈 "_s + tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this);
     iconSizeHint->setTextFormat(Qt::RichText);
@@ -148,6 +152,8 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     iconGroupLayout->addWidget(m_iconWidth, row++, 1);
     iconGroupLayout->addWidget(new QLabel(tr("Height") + u":"_s, this), row, 0);
     iconGroupLayout->addWidget(m_iconHeight, row++, 1);
+    iconGroupLayout->addWidget(new QLabel(tr("Corner radius") + u":"_s, this), row, 0);
+    iconGroupLayout->addWidget(m_artworkCornerRadius, row++, 1);
     iconGroupLayout->addWidget(iconSizeHint, row, 0, 1, 4);
     iconGroupLayout->setColumnStretch(2, 1);
 
@@ -233,6 +239,7 @@ LibraryTreeWidget::ConfigData LibraryTreeConfigDialog::config() const
         .summaryNodeTitle            = m_summaryNodeTitle->text(),
         .rowHeight                   = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0,
         .iconSize                    = {m_iconWidth->value(), m_iconHeight->value()},
+        .artworkCornerRadius         = m_artworkCornerRadius->value(),
     };
 }
 
@@ -261,6 +268,7 @@ void LibraryTreeConfigDialog::setConfig(const LibraryTreeWidget::ConfigData& con
     m_rowHeight->setEnabled(m_overrideRowHeight->isChecked());
     m_iconWidth->setValue(config.iconSize.width());
     m_iconHeight->setValue(config.iconSize.height());
+    m_artworkCornerRadius->setValue(config.artworkCornerRadius);
     m_playlistName->setEnabled(m_playlistEnabled->isChecked());
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
     m_preservePlaybackPlaylist->setEnabled(m_playlistEnabled->isChecked());
@@ -279,6 +287,6 @@ void LibraryTreeConfigDialog::mergeExternalConfig(const LibraryTreeWidget::Confi
         &LibraryTreeWidget::ConfigData::showHeader, &LibraryTreeWidget::ConfigData::showScrollbar,
         &LibraryTreeWidget::ConfigData::alternatingRows, &LibraryTreeWidget::ConfigData::showSummaryNode,
         &LibraryTreeWidget::ConfigData::summaryNodeTitle, &LibraryTreeWidget::ConfigData::rowHeight,
-        &LibraryTreeWidget::ConfigData::iconSize);
+        &LibraryTreeWidget::ConfigData::iconSize, &LibraryTreeWidget::ConfigData::artworkCornerRadius);
 }
 } // namespace Fooyin

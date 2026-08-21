@@ -41,6 +41,7 @@ QueueViewerConfigDialog::QueueViewerConfigDialog(QueueViewer* queueViewer, QWidg
     , m_showIcon{new QGroupBox(tr("Icon"), this)}
     , m_iconWidth{new QSpinBox(this)}
     , m_iconHeight{new QSpinBox(this)}
+    , m_artworkCornerRadius{new QSpinBox(this)}
 {
     auto* general       = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(general);
@@ -63,6 +64,9 @@ QueueViewerConfigDialog::QueueViewerConfigDialog(QueueViewer* queueViewer, QWidg
     m_iconHeight->setMaximum(512);
     m_iconWidth->setSingleStep(5);
     m_iconHeight->setSingleStep(5);
+    m_artworkCornerRadius->setRange(0, 256);
+    m_artworkCornerRadius->setSuffix(u" px"_s);
+    m_artworkCornerRadius->setSpecialValueText(tr("Square"));
 
     auto* iconSizeHint = new QLabel(u"🛈 "_s + tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this);
     iconSizeHint->setTextFormat(Qt::RichText);
@@ -72,6 +76,8 @@ QueueViewerConfigDialog::QueueViewerConfigDialog(QueueViewer* queueViewer, QWidg
     iconGroupLayout->addWidget(m_iconWidth, row++, 1);
     iconGroupLayout->addWidget(new QLabel(tr("Height") + u":"_s, this), row, 0);
     iconGroupLayout->addWidget(m_iconHeight, row++, 1);
+    iconGroupLayout->addWidget(new QLabel(tr("Corner radius") + u":"_s, this), row, 0);
+    iconGroupLayout->addWidget(m_artworkCornerRadius, row++, 1);
     iconGroupLayout->addWidget(iconSizeHint, row, 0, 1, 4);
     iconGroupLayout->setColumnStretch(2, 1);
 
@@ -109,19 +115,21 @@ void QueueViewerConfigDialog::setConfig(const QueueViewer::ConfigData& config)
     m_showIcon->setChecked(config.showIcon);
     m_iconWidth->setValue(config.iconSize.width());
     m_iconHeight->setValue(config.iconSize.height());
+    m_artworkCornerRadius->setValue(config.artworkCornerRadius);
 }
 
 QueueViewer::ConfigData QueueViewerConfigDialog::config() const
 {
     return {
-        .leftScript      = m_titleScript->text(),
-        .rightScript     = m_subtitleScript->text(),
-        .showCurrent     = m_showCurrent->isChecked(),
-        .showIcon        = m_showIcon->isChecked(),
-        .iconSize        = {m_iconWidth->value(), m_iconHeight->value()},
-        .showHeader      = m_headers->isChecked(),
-        .showScrollBar   = m_scrollBars->isChecked(),
-        .alternatingRows = m_altRowColours->isChecked(),
+        .leftScript          = m_titleScript->text(),
+        .rightScript         = m_subtitleScript->text(),
+        .showCurrent         = m_showCurrent->isChecked(),
+        .showIcon            = m_showIcon->isChecked(),
+        .iconSize            = {m_iconWidth->value(), m_iconHeight->value()},
+        .artworkCornerRadius = m_artworkCornerRadius->value(),
+        .showHeader          = m_headers->isChecked(),
+        .showScrollBar       = m_scrollBars->isChecked(),
+        .alternatingRows     = m_altRowColours->isChecked(),
     };
 }
 
@@ -130,7 +138,8 @@ void QueueViewerConfigDialog::mergeExternalConfig(const QueueViewer::ConfigData&
 {
     mergeExternalFields(previous, current, &QueueViewer::ConfigData::leftScript, &QueueViewer::ConfigData::rightScript,
                         &QueueViewer::ConfigData::showCurrent, &QueueViewer::ConfigData::showIcon,
-                        &QueueViewer::ConfigData::iconSize, &QueueViewer::ConfigData::showHeader,
-                        &QueueViewer::ConfigData::showScrollBar, &QueueViewer::ConfigData::alternatingRows);
+                        &QueueViewer::ConfigData::iconSize, &QueueViewer::ConfigData::artworkCornerRadius,
+                        &QueueViewer::ConfigData::showHeader, &QueueViewer::ConfigData::showScrollBar,
+                        &QueueViewer::ConfigData::alternatingRows);
 }
 } // namespace Fooyin

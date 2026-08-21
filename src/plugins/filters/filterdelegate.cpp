@@ -150,6 +150,18 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
 
     const auto* view        = qobject_cast<const ExpandedTreeView*>(opt.widget);
+    const bool roundArtwork = view && view->viewMode() == ExpandedTreeView::ViewMode::Icon && m_artworkCornerRadius > 0
+                           && !opt.icon.isNull();
+
+    const auto drawArtwork = [&]() {
+        if(roundArtwork) {
+            const QRect decorationRect  = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
+            const double dpr            = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
+            const QPixmap scaledArtwork = opt.icon.pixmap(decorationRect.size(), dpr);
+            Gui::drawRoundedPixmap(*painter, decorationRect, Qt::AlignCenter, scaledArtwork, m_artworkCornerRadius);
+        }
+    };
+
     const bool richTreeMode = view && view->viewMode() == ExpandedTreeView::ViewMode::Tree;
     const auto richText     = richTreeMode ? fallbackRichText(opt, index) : RichText{};
 
@@ -172,7 +184,11 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
         }
 
         backgroundOpt.text.clear();
+        if(roundArtwork) {
+            backgroundOpt.icon = {};
+        }
         style->drawControl(QStyle::CE_ItemViewItem, &backgroundOpt, painter, backgroundOpt.widget);
+        drawArtwork();
 
         const QRect textRect = Gui::itemViewTextRect(opt);
         drawTextBlocks(painter, opt, textRect, richText.blocks);
@@ -195,7 +211,11 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
         }
 
         backgroundOpt.text.clear();
+        if(roundArtwork) {
+            backgroundOpt.icon = {};
+        }
         style->drawControl(QStyle::CE_ItemViewItem, &backgroundOpt, painter, backgroundOpt.widget);
+        drawArtwork();
 
         const QRect textRect = iconTextRect(opt);
         drawRichTextLines(painter, opt, textRect, richLines);
@@ -204,7 +224,11 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
         return;
     }
 
+    if(roundArtwork) {
+        opt.icon = {};
+    }
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+    drawArtwork();
 }
 
 QSize FilterDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
@@ -260,6 +284,11 @@ RichText FilterDelegate::recolourRichText(RichText richText, const QColor& colou
 void FilterDelegate::setAlignCaptionsToArtwork(bool align)
 {
     m_alignCaptionsToArtwork = align;
+}
+
+void FilterDelegate::setArtworkCornerRadius(int radius)
+{
+    m_artworkCornerRadius = std::max(radius, 0);
 }
 
 QRect FilterDelegate::iconTextRect(const QStyleOptionViewItem& option) const

@@ -995,6 +995,9 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     m_playlistView->setModel(m_model);
     m_playlistView->setHeader(m_header);
     m_playlistView->setItemDelegate(m_delgate);
+
+    m_delgate->setArtworkCornerRadius(m_settings->value<PlaylistArtworkCornerRadius>());
+
     m_playlistView->viewport()->setAcceptDrops(modeCaps.editablePlaylist);
     m_playlistView->viewport()->installEventFilter(new ToolTipFilter(this));
     m_playlistView->setSelectBeforeDrag(m_settings->value<Settings::Gui::DragOnlyAfterSelect>());
@@ -1777,6 +1780,10 @@ void PlaylistWidget::setupConnections()
     m_settings->subscribe<PlaylistMiddleClick>(
         this, [this](int action) { m_middleClickAction = static_cast<TrackAction>(action); });
     m_settings->subscribe<PlaylistStartPlaybackOnSend>(this, [this](bool enabled) { m_startPlaybackOnSend = enabled; });
+    m_settings->subscribe<PlaylistArtworkCornerRadius>(this, [this](int radius) {
+        m_delgate->setArtworkCornerRadius(radius);
+        m_playlistView->viewport()->update();
+    });
 
     m_settings->subscribe<PlaylistBackgroundImageMode>(this, &PlaylistWidget::applyBackgroundSettings);
     m_settings->subscribe<PlaylistBackgroundCustomImage>(this, &PlaylistWidget::applyBackgroundSettings);

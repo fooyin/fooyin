@@ -89,6 +89,7 @@ private:
     FontButton* m_playingRowFont;
     QSpinBox* m_imagePadding;
     QSpinBox* m_imagePaddingTop;
+    QSpinBox* m_artworkCornerRadius;
     QComboBox* m_backgroundImage;
     QLabel* m_backgroundCoverTypeLabel;
     QComboBox* m_backgroundCoverType;
@@ -111,6 +112,7 @@ PlaylistAppearancePageWidget::PlaylistAppearancePageWidget(SettingsManager* sett
     , m_playingRowFont{new FontButton(tr("Font") + u":"_s, true, this)}
     , m_imagePadding{new QSpinBox(this)}
     , m_imagePaddingTop{new QSpinBox(this)}
+    , m_artworkCornerRadius{new QSpinBox(this)}
     , m_backgroundImage{new QComboBox(this)}
     , m_backgroundCoverTypeLabel{new QLabel(tr("Artwork type") + u":"_s, this)}
     , m_backgroundCoverType{new QComboBox(this)}
@@ -136,6 +138,10 @@ PlaylistAppearancePageWidget::PlaylistAppearancePageWidget(SettingsManager* sett
     m_imagePaddingTop->setMinimum(0);
     m_imagePaddingTop->setMaximum(100);
     m_imagePaddingTop->setSuffix(u" px"_s);
+
+    m_artworkCornerRadius->setRange(0, 256);
+    m_artworkCornerRadius->setSuffix(u" px"_s);
+    m_artworkCornerRadius->setSpecialValueText(tr("Square"));
 
     addComboItem(m_backgroundImage, tr("No background image"), static_cast<int>(PlaylistBgImage::None));
     addComboItem(m_backgroundImage, tr("Current track artwork"), static_cast<int>(PlaylistBgImage::AlbumCover),
@@ -216,11 +222,13 @@ PlaylistAppearancePageWidget::PlaylistAppearancePageWidget(SettingsManager* sett
     appearanceLayout->addWidget(Gui::createSectionHeader(tr("Playing row"), this), row++, 0, 1, 3);
     appearanceLayout->addWidget(m_playingRowColour, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_playingRowFont, row++, 0, 1, 2);
-    appearanceLayout->addWidget(Gui::createSectionHeader(tr("Image padding"), this), row++, 0, 1, 3);
+    appearanceLayout->addWidget(Gui::createSectionHeader(tr("Artwork"), this), row++, 0, 1, 3);
     appearanceLayout->addWidget(new QLabel(tr("Left/Right") + u":"_s, this), row, 0);
     appearanceLayout->addWidget(m_imagePadding, row++, 1);
     appearanceLayout->addWidget(new QLabel(tr("Top") + u":"_s, this), row, 0);
     appearanceLayout->addWidget(m_imagePaddingTop, row++, 1);
+    appearanceLayout->addWidget(new QLabel(tr("Corner radius") + u":"_s, this), row, 0);
+    appearanceLayout->addWidget(m_artworkCornerRadius, row++, 1);
     appearanceLayout->setColumnStretch(2, 1);
 
     auto* background       = new QGroupBox(tr("Background Image"), this);
@@ -267,6 +275,7 @@ void PlaylistAppearancePageWidget::load()
     m_playingRowFont->setButtonFont(playingRowFont.isNull() ? QApplication::font() : playingRowFont.value<QFont>());
     m_imagePadding->setValue(m_settings->value<Settings::Gui::Internal::PlaylistImagePadding>());
     m_imagePaddingTop->setValue(m_settings->value<Settings::Gui::Internal::PlaylistImagePaddingTop>());
+    m_artworkCornerRadius->setValue(m_settings->value<Settings::Gui::Internal::PlaylistArtworkCornerRadius>());
     m_backgroundImage->setCurrentIndex(
         m_backgroundImage->findData(m_settings->value<Settings::Gui::Internal::PlaylistBackgroundImageMode>()));
     m_backgroundCoverType->setCurrentIndex(
@@ -302,6 +311,7 @@ void PlaylistAppearancePageWidget::apply()
     }
     m_settings->set<Settings::Gui::Internal::PlaylistImagePadding>(m_imagePadding->value());
     m_settings->set<Settings::Gui::Internal::PlaylistImagePaddingTop>(m_imagePaddingTop->value());
+    m_settings->set<Settings::Gui::Internal::PlaylistArtworkCornerRadius>(m_artworkCornerRadius->value());
     m_settings->set<Settings::Gui::Internal::PlaylistBackgroundImageMode>(m_backgroundImage->currentData().toInt());
     m_settings->set<Settings::Gui::Internal::PlaylistBackgroundCoverType>(m_backgroundCoverType->currentData().toInt());
     m_settings->set<Settings::Gui::Internal::PlaylistBackgroundCustomImage>(m_customImage->text());
@@ -322,6 +332,7 @@ void PlaylistAppearancePageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::PlaylistPlayingRowFont>();
     m_settings->reset<Settings::Gui::Internal::PlaylistImagePadding>();
     m_settings->reset<Settings::Gui::Internal::PlaylistImagePaddingTop>();
+    m_settings->reset<Settings::Gui::Internal::PlaylistArtworkCornerRadius>();
     m_settings->reset<Settings::Gui::Internal::PlaylistBackgroundImageMode>();
     m_settings->reset<Settings::Gui::Internal::PlaylistBackgroundCoverType>();
     m_settings->reset<Settings::Gui::Internal::PlaylistBackgroundCustomImage>();

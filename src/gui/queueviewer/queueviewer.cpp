@@ -67,15 +67,16 @@
 using namespace Qt::StringLiterals;
 
 // Settings
-constexpr auto QueueViewerShowIconKey    = u"PlaybackQueue/ShowIcon";
-constexpr auto QueueViewerIconSizeKey    = u"PlaybackQueue/IconSize";
-constexpr auto QueueViewerHeaderKey      = u"PlaybackQueue/Header";
-constexpr auto QueueViewerScrollBarKey   = u"PlaybackQueue/Scrollbar";
-constexpr auto QueueViewerAltColoursKey  = u"PlaybackQueue/AlternatingColours";
-constexpr auto QueueViewerLeftScriptKey  = u"PlaybackQueue/LeftScript";
-constexpr auto QueueViewerRightScriptKey = u"PlaybackQueue/RightScript";
-constexpr auto QueueViewerShowCurrentKey = u"PlaybackQueue/ShowCurrent";
-constexpr auto QueueViewerStateKey       = "PlaybackQueue/State"_L1;
+constexpr auto QueueViewerShowIconKey      = u"PlaybackQueue/ShowIcon";
+constexpr auto QueueViewerIconSizeKey      = u"PlaybackQueue/IconSize";
+constexpr auto QueueViewerArtworkRadiusKey = u"PlaybackQueue/ArtworkCornerRadius";
+constexpr auto QueueViewerHeaderKey        = u"PlaybackQueue/Header";
+constexpr auto QueueViewerScrollBarKey     = u"PlaybackQueue/Scrollbar";
+constexpr auto QueueViewerAltColoursKey    = u"PlaybackQueue/AlternatingColours";
+constexpr auto QueueViewerLeftScriptKey    = u"PlaybackQueue/LeftScript";
+constexpr auto QueueViewerRightScriptKey   = u"PlaybackQueue/RightScript";
+constexpr auto QueueViewerShowCurrentKey   = u"PlaybackQueue/ShowCurrent";
+constexpr auto QueueViewerStateKey         = "PlaybackQueue/State"_L1;
 
 namespace Fooyin {
 
@@ -90,6 +91,7 @@ QueueViewer::QueueViewer(ActionManager* actionManager, PlaylistInteractor* playl
     , m_sortingRegistry{sortingRegistry}
     , m_settings{settings}
     , m_view{new QueueViewerView(this)}
+    , m_delegate{new QueueViewerDelegate(this)}
     , m_model{new QueueViewerModel(coverRepository, m_playerController, settings, this)}
     , m_context{new WidgetContext(
           this, Context{IdList{Constants::Context::TrackSelection, Id{"Context.QueueViewer."}.append(id())}}, this)}
@@ -110,7 +112,7 @@ QueueViewer::QueueViewer(ActionManager* actionManager, PlaylistInteractor* playl
     layout->addWidget(m_view);
 
     m_view->setModel(m_model);
-    m_view->setItemDelegate(new QueueViewerDelegate(this));
+    m_view->setItemDelegate(m_delegate);
 
     m_config = defaultConfig();
     applyConfig(m_config);
@@ -762,14 +764,15 @@ QueueViewer::ConfigData QueueViewer::defaultConfig() const
 {
     auto config{factoryConfig()};
 
-    config.leftScript      = m_settings->fileValue(QueueViewerLeftScriptKey, config.leftScript).toString();
-    config.rightScript     = m_settings->fileValue(QueueViewerRightScriptKey, config.rightScript).toString();
-    config.showCurrent     = m_settings->fileValue(QueueViewerShowCurrentKey, config.showCurrent).toBool();
-    config.showIcon        = m_settings->fileValue(QueueViewerShowIconKey, config.showIcon).toBool();
-    config.iconSize        = m_settings->fileValue(QueueViewerIconSizeKey, config.iconSize).toSize();
-    config.showHeader      = m_settings->fileValue(QueueViewerHeaderKey, config.showHeader).toBool();
-    config.showScrollBar   = m_settings->fileValue(QueueViewerScrollBarKey, config.showScrollBar).toBool();
-    config.alternatingRows = m_settings->fileValue(QueueViewerAltColoursKey, config.alternatingRows).toBool();
+    config.leftScript          = m_settings->fileValue(QueueViewerLeftScriptKey, config.leftScript).toString();
+    config.rightScript         = m_settings->fileValue(QueueViewerRightScriptKey, config.rightScript).toString();
+    config.showCurrent         = m_settings->fileValue(QueueViewerShowCurrentKey, config.showCurrent).toBool();
+    config.showIcon            = m_settings->fileValue(QueueViewerShowIconKey, config.showIcon).toBool();
+    config.iconSize            = m_settings->fileValue(QueueViewerIconSizeKey, config.iconSize).toSize();
+    config.artworkCornerRadius = m_settings->fileValue(QueueViewerArtworkRadiusKey, config.artworkCornerRadius).toInt();
+    config.showHeader          = m_settings->fileValue(QueueViewerHeaderKey, config.showHeader).toBool();
+    config.showScrollBar       = m_settings->fileValue(QueueViewerScrollBarKey, config.showScrollBar).toBool();
+    config.alternatingRows     = m_settings->fileValue(QueueViewerAltColoursKey, config.alternatingRows).toBool();
 
     return config;
 }
@@ -777,14 +780,15 @@ QueueViewer::ConfigData QueueViewer::defaultConfig() const
 QueueViewer::ConfigData QueueViewer::factoryConfig() const
 {
     return {
-        .leftScript      = u"%title%$crlf()%album%"_s,
-        .rightScript     = u"%duration%"_s,
-        .showCurrent     = true,
-        .showIcon        = true,
-        .iconSize        = QSize{36, 36},
-        .showHeader      = true,
-        .showScrollBar   = true,
-        .alternatingRows = false,
+        .leftScript          = u"%title%$crlf()%album%"_s,
+        .rightScript         = u"%duration%"_s,
+        .showCurrent         = true,
+        .showIcon            = true,
+        .iconSize            = QSize{36, 36},
+        .artworkCornerRadius = 0,
+        .showHeader          = true,
+        .showScrollBar       = true,
+        .alternatingRows     = false,
     };
 }
 
@@ -800,6 +804,7 @@ void QueueViewer::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(QueueViewerShowCurrentKey, config.showCurrent);
     m_settings->fileSet(QueueViewerShowIconKey, config.showIcon);
     m_settings->fileSet(QueueViewerIconSizeKey, config.iconSize);
+    m_settings->fileSet(QueueViewerArtworkRadiusKey, config.artworkCornerRadius);
     m_settings->fileSet(QueueViewerHeaderKey, config.showHeader);
     m_settings->fileSet(QueueViewerScrollBarKey, config.showScrollBar);
     m_settings->fileSet(QueueViewerAltColoursKey, config.alternatingRows);
@@ -812,6 +817,7 @@ void QueueViewer::clearSavedDefaults() const
     m_settings->fileRemove(QueueViewerShowCurrentKey);
     m_settings->fileRemove(QueueViewerShowIconKey);
     m_settings->fileRemove(QueueViewerIconSizeKey);
+    m_settings->fileRemove(QueueViewerArtworkRadiusKey);
     m_settings->fileRemove(QueueViewerHeaderKey);
     m_settings->fileRemove(QueueViewerScrollBarKey);
     m_settings->fileRemove(QueueViewerAltColoursKey);
@@ -819,7 +825,8 @@ void QueueViewer::clearSavedDefaults() const
 
 void QueueViewer::applyConfig(const ConfigData& config)
 {
-    m_config = config;
+    m_config                     = config;
+    m_config.artworkCornerRadius = std::max(m_config.artworkCornerRadius, 0);
 
     if(isWindowWidget()) {
         m_config.showHeader = false;
@@ -831,6 +838,7 @@ void QueueViewer::applyConfig(const ConfigData& config)
     m_model->setIconSize(m_config.iconSize);
 
     m_view->changeIconSize(m_config.iconSize);
+    m_delegate->setArtworkCornerRadius(m_config.artworkCornerRadius);
     m_view->header()->setHidden(!m_config.showHeader);
     m_view->setVerticalScrollBarPolicy(m_config.showScrollBar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
     m_view->setAlternatingRowColors(m_config.alternatingRows);
@@ -838,6 +846,7 @@ void QueueViewer::applyConfig(const ConfigData& config)
     const QVariant resolvedStyleValue = m_settings->value<Settings::Gui::ResolvedAppStyle>();
     Gui::refreshItemViewPalette(m_view, resolvedStyleValue.value<ResolvedAppStyle>().palette);
 
+    m_view->viewport()->update();
     QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
 
     Q_EMIT configChanged();
@@ -862,6 +871,9 @@ QueueViewer::ConfigData QueueViewer::configFromLayout(const QJsonObject& layout)
     if(layout.contains("IconWidth"_L1) && layout.contains("IconHeight"_L1)) {
         config.iconSize = {layout.value("IconWidth"_L1).toInt(), layout.value("IconHeight"_L1).toInt()};
     }
+    if(layout.contains("ArtworkCornerRadius"_L1)) {
+        config.artworkCornerRadius = layout.value("ArtworkCornerRadius"_L1).toInt();
+    }
     if(layout.contains("ShowHeader"_L1)) {
         config.showHeader = layout.value("ShowHeader"_L1).toBool();
     }
@@ -875,21 +887,23 @@ QueueViewer::ConfigData QueueViewer::configFromLayout(const QJsonObject& layout)
     if(!config.iconSize.isValid()) {
         config.iconSize = factoryConfig().iconSize;
     }
+    config.artworkCornerRadius = std::max(config.artworkCornerRadius, 0);
 
     return config;
 }
 
 void QueueViewer::saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const
 {
-    layout["LeftScript"_L1]      = config.leftScript;
-    layout["RightScript"_L1]     = config.rightScript;
-    layout["ShowCurrent"_L1]     = config.showCurrent;
-    layout["ShowIcon"_L1]        = config.showIcon;
-    layout["IconWidth"_L1]       = config.iconSize.width();
-    layout["IconHeight"_L1]      = config.iconSize.height();
-    layout["ShowHeader"_L1]      = config.showHeader;
-    layout["ShowScrollbar"_L1]   = config.showScrollBar;
-    layout["AlternatingRows"_L1] = config.alternatingRows;
+    layout["LeftScript"_L1]          = config.leftScript;
+    layout["RightScript"_L1]         = config.rightScript;
+    layout["ShowCurrent"_L1]         = config.showCurrent;
+    layout["ShowIcon"_L1]            = config.showIcon;
+    layout["IconWidth"_L1]           = config.iconSize.width();
+    layout["IconHeight"_L1]          = config.iconSize.height();
+    layout["ArtworkCornerRadius"_L1] = config.artworkCornerRadius;
+    layout["ShowHeader"_L1]          = config.showHeader;
+    layout["ShowScrollbar"_L1]       = config.showScrollBar;
+    layout["AlternatingRows"_L1]     = config.alternatingRows;
 }
 
 void QueueViewer::saveTopLevelState()

@@ -36,6 +36,8 @@
 #include <QIODevice>
 #include <QLabel>
 #include <QMimeData>
+#include <QPainter>
+#include <QPainterPath>
 #include <QSet>
 #include <QStyle>
 #include <QTreeView>
@@ -119,6 +121,26 @@ QRect itemViewTextRect(const QStyleOptionViewItem& option)
     }
 
     return textRect;
+}
+
+void drawRoundedPixmap(QPainter& painter, const QRect& rect, Qt::Alignment alignment, const QPixmap& pixmap, int radius)
+{
+    if(pixmap.isNull() || rect.isEmpty()) {
+        return;
+    }
+
+    const QSize pixmapSize = pixmap.deviceIndependentSize().toSize();
+    const QRect pixmapRect = QStyle::alignedRect(Qt::LeftToRight, alignment, pixmapSize, rect);
+
+    painter.save();
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    QPainterPath clipPath;
+    clipPath.addRoundedRect(pixmapRect, radius, radius);
+    painter.setClipPath(clipPath, Qt::IntersectClip);
+    painter.drawPixmap(pixmapRect.topLeft(), pixmap);
+
+    painter.restore();
 }
 
 TrackList tracksFromMimeData(MusicLibrary* library, QByteArray data)

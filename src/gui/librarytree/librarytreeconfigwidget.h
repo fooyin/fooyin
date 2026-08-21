@@ -72,6 +72,7 @@ private:
     QSpinBox* m_rowHeight;
     QSpinBox* m_iconWidth;
     QSpinBox* m_iconHeight;
+    QSpinBox* m_artworkCornerRadius;
     QPushButton* m_manageGroupings;
 };
 } // namespace Fooyin

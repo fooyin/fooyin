@@ -255,6 +255,7 @@ enum GuiInternalSettings : uint32_t
     PlaylistPlayingRowFont                   = 73 | Type::Variant,
     PlaylistDoubleClick                      = 74 | Type::Int,
     PlaylistStartPlaybackOnSend              = 75 | Type::Bool,
+    PlaylistArtworkCornerRadius              = 76 | Type::Int,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

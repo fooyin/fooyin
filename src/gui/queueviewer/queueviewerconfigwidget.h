@@ -53,5 +53,6 @@ private:
     QGroupBox* m_showIcon;
     QSpinBox* m_iconWidth;
     QSpinBox* m_iconHeight;
+    QSpinBox* m_artworkCornerRadius;
 };
 } // namespace Fooyin

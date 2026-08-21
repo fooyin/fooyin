@@ -48,6 +48,7 @@ class Application;
 class CoverRepository;
 class LibraryTreeController;
 class LibraryTreeGroupRegistry;
+class LibraryTreeDelegate;
 class LibraryTreeModel;
 class LibraryTreeSortModel;
 class LibraryTreeView;
@@ -102,6 +103,7 @@ public:
         QString summaryNodeTitle{defaultLibraryTreeSummaryTitle()};
         int rowHeight{0};
         QSize iconSize{36, 36};
+        int artworkCornerRadius{0};
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;
@@ -175,6 +177,7 @@ private:
 
     QVBoxLayout* m_layout;
     LibraryTreeView* m_libraryTree;
+    LibraryTreeDelegate* m_delegate;
     LibraryTreeModel* m_model;
     LibraryTreeSortModel* m_sortProxy;
 

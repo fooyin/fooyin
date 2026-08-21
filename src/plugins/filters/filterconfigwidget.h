@@ -65,6 +65,7 @@ private:
     QSpinBox* m_iconHeight;
     QSpinBox* m_iconHorizontalGap;
     QSpinBox* m_iconVerticalGap;
+    QSpinBox* m_artworkCornerRadius;
     QCheckBox* m_alignCaptionsToArtwork;
     QPushButton* m_manageColumns;
 };

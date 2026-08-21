@@ -216,16 +216,26 @@ void QueueViewerDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     const auto leftLines  = prepareTextLines(opt, leftRect.width(), leftRichText);
     const auto rightLines = prepareTextLines(opt, rightRect.width(), rightRichText);
 
-    QIcon playbackIcon;
-    QRect playbackIconRect;
-    if(index.data(QueueViewerItem::IsPlaybackIcon).toBool()) {
-        playbackIcon     = opt.icon;
-        playbackIconRect = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
-        opt.icon         = {};
+    const bool isPlaybackIcon = index.data(QueueViewerItem::IsPlaybackIcon).toBool();
+    const bool roundArtwork   = !isPlaybackIcon && m_artworkCornerRadius > 0 && !opt.icon.isNull();
+    const QIcon itemIcon      = (isPlaybackIcon || roundArtwork) ? opt.icon : QIcon{};
+    const QRect itemIconRect
+        = !itemIcon.isNull() ? style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget) : QRect{};
+    if(isPlaybackIcon || roundArtwork) {
+        opt.icon = {};
     }
 
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, option.widget);
-    Gui::drawItemViewIcon(painter, opt, playbackIcon, playbackIconRect, opt.decorationAlignment);
+
+    if(isPlaybackIcon) {
+        Gui::drawItemViewIcon(painter, opt, itemIcon, itemIconRect, opt.decorationAlignment);
+    }
+    else if(roundArtwork) {
+        const double dpr = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
+        Gui::drawRoundedPixmap(*painter, itemIconRect, opt.decorationAlignment,
+                               itemIcon.pixmap(itemIconRect.size(), dpr), m_artworkCornerRadius);
+    }
+
     drawPreparedTextLines(painter, leftRect, leftLines, Qt::AlignLeft);
     drawPreparedTextLines(painter, rightRect, rightLines, Qt::AlignRight);
 }
@@ -248,5 +258,10 @@ QSize QueueViewerDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
     QSize size = style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, textSize, opt.widget);
 
     return size;
+}
+
+void QueueViewerDelegate::setArtworkCornerRadius(int radius)
+{
+    m_artworkCornerRadius = std::max(radius, 0);
 }
 } // namespace Fooyin
