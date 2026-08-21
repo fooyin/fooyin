@@ -479,7 +479,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="199"/>
         <source>Subsong index</source>
-        <translation>Sublåtsindex</translation>
+        <translation>Sublåts-index</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="201"/>
@@ -560,7 +560,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="320"/>
         <source>Returns one split segment (1-based index)</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar ett splittat segment (1-baserat index)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="452"/>
@@ -570,7 +570,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="225"/>
         <source>First playback queue index for the specified item</source>
-        <translation type="unfinished"></translation>
+        <translation>Första uppspelningskö-index för det specificerade föremålet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="58"/>
@@ -613,7 +613,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="227"/>
         <source>Playback queue indexes for the specified item</source>
-        <translation type="unfinished"></translation>
+        <translation>Uppspelningskö-index för det specificerade föremålet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="229"/>
@@ -943,7 +943,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="335"/>
         <source>Returns the unit separator character</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar enhets-separerar-karaktären</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="337"/>
@@ -958,12 +958,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="342"/>
         <source>Moves leading articles to the end</source>
-        <translation type="unfinished"></translation>
+        <translation>Flyttar ledande artiklar till slutet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="344"/>
         <source>Removes leading articles</source>
-        <translation type="unfinished"></translation>
+        <translation>Tar bort ledande artiklar</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="346"/>
@@ -1054,7 +1054,7 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="385"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="388"/>
         <source>Utility</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Utilitet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="381"/>
@@ -1235,12 +1235,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="464"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with sep.</source>
-        <translation type="unfinished"></translation>
+        <translation>Söker upp ett rått taggfält efter namn. Flera värden är ihopsatta med sep.</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="468"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with sep, using lastsep between the final two values.</source>
-        <translation type="unfinished"></translation>
+        <translation>Söker upp ett rått taggfält efter namn. Flera värden är ihopsatta med sep, med lastsep mellan de sista två värdena.</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="473"/>
@@ -1553,7 +1553,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="117"/>
         <source>Pixmap cache size</source>
-        <translation>Pixmap cachestorlek</translation>
+        <translation>Pixmap-cachestorlek</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="123"/>
@@ -1765,7 +1765,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="84"/>
         <source>Finder thumbnail size</source>
-        <translation type="unfinished"></translation>
+        <translation>Hittar-minibild-storlek</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="90"/>
@@ -1892,7 +1892,7 @@
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="514"/>
         <source>Auto-size sections</source>
-        <translation type="unfinished"></translation>
+        <translation>Autojustera sektionsstorlekar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="522"/>
@@ -2547,7 +2547,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="339"/>
         <source>Specified folder</source>
-        <translation>Specifierad mapp</translation>
+        <translation>Specificerad mapp</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="340"/>
@@ -2780,7 +2780,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1165"/>
         <source>No folder specified</source>
-        <translation>Ingen mapp specifierad</translation>
+        <translation>Ingen mapp specificerad</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1173"/>
@@ -3068,7 +3068,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/settings/playback/decodermodel.cpp" line="135"/>
         <source>Supported extensions</source>
-        <translation>Stödda tillägg</translation>
+        <translation>Stödda ändelser</translation>
     </message>
 </context>
 <context>
@@ -3200,7 +3200,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="277"/>
         <source>Queue</source>
-        <translation type="unfinished">Kö</translation>
+        <translation>Kö</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="282"/>
@@ -3255,7 +3255,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="646"/>
         <source>Show header</source>
-        <translation type="unfinished">Visa rubrik</translation>
+        <translation>Visa rubrik</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="774"/>
@@ -3339,7 +3339,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="41"/>
         <source>Show header</source>
-        <translation type="unfinished">Visa rubrik</translation>
+        <translation>Visa rubrik</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="42"/>
@@ -3424,7 +3424,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="87"/>
         <source>Path and controls position</source>
-        <translation type="unfinished"></translation>
+        <translation>Sökvägs och kontrollers position</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="102"/>
@@ -3447,17 +3447,17 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="196"/>
         <source>Columns</source>
-        <translation type="unfinished">Kolumner</translation>
+        <translation>Kolumner</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="207"/>
         <source>Show header</source>
-        <translation type="unfinished">Visa rubrik</translation>
+        <translation>Visa rubrik</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="212"/>
         <source>Auto-size sections</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Autojustera sektioner</translation>
     </message>
 </context>
 <context>
@@ -3590,7 +3590,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/dsp/dsplayouteditor.cpp" line="42"/>
         <source>Restore Defaults</source>
-        <translation type="unfinished">Återställ defaulter</translation>
+        <translation>Återställ defaulter</translation>
     </message>
 </context>
 <context>
@@ -4233,77 +4233,77 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="269"/>
         <source>Enabled</source>
-        <translation type="unfinished">På</translation>
+        <translation>På</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="270"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="436"/>
         <source>Zero level</source>
-        <translation type="unfinished"></translation>
+        <translation>Nollnivå</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="271"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="449"/>
         <source>Auto level</source>
-        <translation type="unfinished">Autonivå</translation>
+        <translation>Autonivå</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="273"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
         <source>Save preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara förinställning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="310"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="515"/>
         <source> dB</source>
-        <translation type="unfinished"> dB</translation>
+        <translation> dB</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="324"/>
         <source>Preamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Förförstärkning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="441"/>
         <source>Show controls</source>
-        <translation type="unfinished">Visa kontroller</translation>
+        <translation>Visa kontroller</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="453"/>
         <source>Save preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara förinställning…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="457"/>
         <source>Presets</source>
-        <translation type="unfinished">Förinställningar</translation>
+        <translation>Förinställningar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="461"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="543"/>
         <source>No presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Inga förinställningar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="546"/>
         <source>Load preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>Läs in förinställning…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
         <source>Preset name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Förinställningsnamn:</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="583"/>
         <source>Preset already exists</source>
-        <translation type="unfinished">Förinställning existerar redan</translation>
+        <translation>Förinställning existerar redan</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="584"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
-        <translation type="unfinished">Förinställning ”%1” existerar redan. Överskriv?</translation>
+        <translation>Förinställning ”%1” existerar redan. Överskriv?</translation>
     </message>
 </context>
 <context>
@@ -4725,7 +4725,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="45"/>
         <source>Add the specified files to the current playlist</source>
-        <translation>Lägg till specifierade filer i den aktuella spellistan</translation>
+        <translation>Lägg till specificerade filer i den aktuella spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="51"/>
@@ -4735,7 +4735,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="52"/>
         <source>Add the contents of the specified directory to the current playlist</source>
-        <translation>Lägg till innehållet av den specifierade mappen i den aktuella spellistan</translation>
+        <translation>Lägg till innehållet av den specificerade mappen i den aktuella spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="58"/>
@@ -4745,7 +4745,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="59"/>
         <source>Add the specified stream URL to the current playlist</source>
-        <translation>Lägg till den specifierade ström-URL:n i den aktuella spellistan</translation>
+        <translation>Lägg till den specificerade ström-URL:n i den aktuella spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="67"/>
@@ -4790,7 +4790,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="84"/>
         <source>Load the playlist from the specified file</source>
-        <translation>Läs in spellistan från specifierade filen</translation>
+        <translation>Läs in spellistan från den specificerade filen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="42"/>
@@ -4800,7 +4800,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="91"/>
         <source>Save the current playlist to the specified file</source>
-        <translation>Spara den aktuella spellistan i den specifierade filen</translation>
+        <translation>Spara den aktuella spellistan till den specificerade filen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="97"/>
@@ -4810,7 +4810,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="98"/>
         <source>Save all playlists to the specified location</source>
-        <translation>Spara alla spellistor till den specifierade sökvägen</translation>
+        <translation>Spara alla spellistor till den specificerade platsen</translation>
     </message>
 </context>
 <context>
@@ -5157,12 +5157,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="267"/>
         <source>Cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Avbrutet</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="267"/>
         <source>Cancelled: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Avbrutet: %1</translation>
     </message>
 </context>
 <context>
@@ -5225,7 +5225,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="186"/>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="269"/>
         <source>Tracks</source>
-        <translation type="unfinished">Spår</translation>
+        <translation>Spår</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="201"/>
@@ -5243,27 +5243,27 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="254"/>
         <source>Copy</source>
-        <translation type="unfinished">Kopiera</translation>
+        <translation>Kopiera</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="257"/>
         <source>Move</source>
-        <translation type="unfinished">Flytta</translation>
+        <translation>Flytta</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="260"/>
         <source>Rename</source>
-        <translation type="unfinished">Döp om</translation>
+        <translation>Döp om</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="263"/>
         <source>Extract</source>
-        <translation type="unfinished">Extrahera</translation>
+        <translation>Extrahera</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="266"/>
         <source>Other</source>
-        <translation type="unfinished">Övrigt</translation>
+        <translation>Övrigt</translation>
     </message>
 </context>
 <context>
@@ -5297,22 +5297,22 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="700"/>
         <source>Archive extraction was interrupted</source>
-        <translation type="unfinished">Arkivextrahering blev avbrutet</translation>
+        <translation>Arkivextrahering blev avbrutet</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="702"/>
         <source>Could not extract archive entry</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte extrahera arkivpost</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="714"/>
         <source>One or more archive entries could not be extracted</source>
-        <translation type="unfinished"></translation>
+        <translation>En eller fler arkivposter kunde inte extraheras</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="719"/>
         <source>No archive entries were extracted</source>
-        <translation type="unfinished"></translation>
+        <translation>Inga arkivposter extraherades</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="727"/>
@@ -5589,7 +5589,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="332"/>
         <source>Back</source>
-        <translation type="unfinished">Bak</translation>
+        <translation>Bakåt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="349"/>
@@ -6064,7 +6064,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1101"/>
         <source>View</source>
-        <translation type="unfinished">Visa</translation>
+        <translation>Visa</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1111"/>
@@ -6291,7 +6291,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1883"/>
         <source>&amp;Add</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">L&amp;ägg till</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1887"/>
@@ -6606,7 +6606,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="129"/>
         <source>Only resize locked widgets using adjacent handles</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändra storlek på låsta widgetar endast med intilliggande handtag</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="130"/>
@@ -6718,7 +6718,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="238"/>
         <source>Use custom spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd eget mellanrum</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="242"/>
@@ -6758,7 +6758,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="239"/>
         <source>Spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Mellanrum</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="283"/>
@@ -7473,7 +7473,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="91"/>
         <source>Add the layout from the specified file</source>
-        <translation>Lägg till layouten från den specifierade filen</translation>
+        <translation>Lägg till layouten från den specificerade filen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="93"/>
@@ -7483,7 +7483,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="94"/>
         <source>Save the current layout to the specified file</source>
-        <translation>Spara den aktuella layouten till den specifierade filen</translation>
+        <translation>Spara den aktuella layouten till den specificerade filen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="98"/>
@@ -8604,7 +8604,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="49"/>
         <source>Synced scroll duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Synkad skrollängd</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="51"/>
@@ -8845,7 +8845,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="184"/>
         <source>Progress highlighting</source>
-        <translation type="unfinished"></translation>
+        <translation>Förloppsmarkering</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="194"/>
@@ -8871,7 +8871,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="218"/>
         <source>Controls whether playback progress is shown for line-synced lyrics, word-synced lyrics, or both.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrollerar om uppspelningsförlopp visas för radsynkade låttexter, ordsynkade låttexter eller båda.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="252"/>
@@ -9578,7 +9578,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="83"/>
         <source>Maximum album art size</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximal albumomslagsstorlek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="85"/>
@@ -9614,7 +9614,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="104"/>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="202"/>
         <source>Maximum width or height of album art sent with notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximal bredd eller höjd på albumomslag som skickas med notiser</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="123"/>
@@ -9710,7 +9710,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="102"/>
         <source>Played threshold reached</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelad-gräns nådd</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="103"/>
@@ -10257,24 +10257,26 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="34"/>
         <source>PipeWire Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>PipeWire-inställningar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="40"/>
         <source>Latency</source>
-        <translation type="unfinished"></translation>
+        <translation>Latens</translation>
     </message>
     <message>
         <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="44"/>
         <source>Automatic</source>
-        <translation type="unfinished">Automatisk</translation>
+        <translation>Automatisk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="47"/>
         <source>Lower values provide more frequent audio processing but may increase underrun risk.
 Higher values improve stability but increase latency and may reduce visualisation smoothness.
 Changes take effect the next time the PipeWire output is initialised.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägre värden tillbringar mer frekvent ljudbearbetning men må öka risken för underfyllning.
+Högre värden förbättrar stabilitet men ökar latens och må göra visualiseringar mindre utjämnade .
+Ändringar träder i kraft nästa gång PipeWire-utmatning är initierad.</translation>
     </message>
 </context>
 <context>
@@ -10488,7 +10490,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="224"/>
         <source>Select the currently playing track when changed</source>
-        <translation>Välj det aktuellt spelande spåret när ändrad</translation>
+        <translation>Selektionen följer det spelande spåret vid spårbyte</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="229"/>
@@ -10529,7 +10531,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="230"/>
         <source>Start playback of the currently selected track on next</source>
-        <translation>Starta uppspelning av det aktuellt valda spåret på nästa</translation>
+        <translation>Börja spela det valda spåret när det spelande spåret tar slut</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="235"/>
@@ -11372,7 +11374,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="126"/>
         <source>Shuffle off</source>
-        <translation>Blanda av</translation>
+        <translation>Blandning av</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="127"/>
@@ -11448,7 +11450,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="89"/>
         <source>Number of tracks used to preload the playlist before loading the rest of the playlist</source>
-        <translation>Antal spår som förladdar spellistan innan resten av spellistan laddas</translation>
+        <translation>Antal spår som förladdar spellistan innan resten av spellistan läses in</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="95"/>
@@ -11478,7 +11480,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="116"/>
         <source>After adding tracks to the front of or replacing the playback queue, start playback immediately</source>
-        <translation type="unfinished"></translation>
+        <translation>Efter att ha lagt till spår längst fram eller ersatt uppspelningskön, starta uppspelning omedelbart</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
@@ -11503,7 +11505,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="135"/>
         <source>Search</source>
-        <translation type="unfinished">Sök</translation>
+        <translation>Sökning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="138"/>
@@ -12082,7 +12084,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="93"/>
         <source>Export and synchronise playlists in the specified format and location</source>
-        <translation>Exportera och synkronisera spellistor i det specifierade formatet och platsen</translation>
+        <translation>Exportera och synkronisera spellistor i det specificerade formatet och platsen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="104"/>
@@ -12357,7 +12359,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1794"/>
         <source>Start playback of the selected track</source>
-        <translation>Starta uppspelning på det valda spåret</translation>
+        <translation>Starta uppspelning av det valda spåret</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1803"/>
@@ -12448,7 +12450,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="204"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished">&amp;Ångra</translation>
+        <translation>&amp;Ångra</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="207"/>
@@ -12458,7 +12460,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="210"/>
         <source>&amp;Crop</source>
-        <translation type="unfinished">S&amp;kär</translation>
+        <translation>Sk&amp;är</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="213"/>
@@ -12468,22 +12470,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="217"/>
         <source>Cu&amp;t</source>
-        <translation type="unfinished">K&amp;lipp</translation>
+        <translation>K&amp;lipp</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="220"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished">&amp;Kopiera</translation>
+        <translation>&amp;Kopiera</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="223"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished">&amp;Klistra in</translation>
+        <translation>Kl&amp;istra in</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="226"/>
         <source>C&amp;lear</source>
-        <translation type="unfinished">R&amp;ensa</translation>
+        <translation>R&amp;ensa</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="229"/>
@@ -12508,7 +12510,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="243"/>
         <source>&amp;Queue to play next</source>
-        <translation>&amp;Köa till nästa spelning</translation>
+        <translation>K&amp;öa till nästa spelning</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="247"/>
@@ -12677,12 +12679,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="240"/>
         <source>fooyin Plugin (*.dll)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin-tillägg (*.dll)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="242"/>
         <source>fooyin Plugin (*.so)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin-tillägg (*.so)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="244"/>
@@ -12692,32 +12694,32 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="254"/>
         <source>Plugin Already Installed</source>
-        <translation type="unfinished"></translation>
+        <translation>Tillägg redan installerat</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="255"/>
         <source>This plugin is already installed. Update it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Detta tillägg är redan installerat. Uppdatera den?</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="256"/>
         <source>Update</source>
-        <translation type="unfinished">Uppdatera</translation>
+        <translation>Uppdatera</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="265"/>
         <source>Plugin Updated</source>
-        <translation type="unfinished"></translation>
+        <translation>Tillägg uppdaterat</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="272"/>
         <source>Plugin Installation Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Tilläggsinitiering misslyckades</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="272"/>
         <source>The plugin could not be installed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tillägget kunde inte initieras.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="265"/>
@@ -12930,7 +12932,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="168"/>
         <source>Auto preset blend time</source>
-        <translation type="unfinished"></translation>
+        <translation>Auto-förinställnings-blandningstid</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="172"/>
@@ -13438,7 +13440,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="70"/>
         <source>Dark mode</source>
-        <translation type="unfinished">Mörkt läge</translation>
+        <translation>Mörkt läge</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="126"/>
@@ -13486,7 +13488,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="155"/>
         <source>Display name shown in menus and shortcut actions.</source>
-        <translation type="unfinished"></translation>
+        <translation>Visningsnamn som visas i menyer och genvägshandlingar.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="157"/>
@@ -13818,7 +13820,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="52"/>
         <source>Use uniform station icon frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd uniforma stationsikonramar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="54"/>
@@ -13871,12 +13873,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="73"/>
         <source>Remember display mode and columns separately when browsing My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Kom ihåg visningsläge och kolumner separat vid bläddring av mina stationer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="81"/>
         <source>Size of the border around each station icon in icon display mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Storlek på bården runt varje stationsikon i ikonvisningsläge.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="88"/>
@@ -13941,7 +13943,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="142"/>
         <source>Item border</source>
-        <translation type="unfinished"></translation>
+        <translation>Föremålsbård</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="144"/>
@@ -14406,12 +14408,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1708"/>
         <source>Auto-size sections</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Autojustera sektioner</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1709"/>
         <source>Automatically size columns to fill the available width</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandera automatiskt kolumner för att fylla den tillgängliga bredden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1716"/>
@@ -17830,7 +17832,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="53"/>
         <source>View</source>
-        <translation type="unfinished">Visa</translation>
+        <translation>Vy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="57"/>
@@ -17891,7 +17893,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="719"/>
         <source>Sample rate based (%1 ms)</source>
-        <translation>Samplingsfrekvensbaserad (%1&#xa0;ms)</translation>
+        <translation>Samplingsfrekvensbaserat (%1&#xa0;ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="745"/>
@@ -18204,13 +18206,14 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="157"/>
         <source>Other…</source>
-        <translation>Övrigt…</translation>
+        <translation>Annat…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="161"/>
         <source>Patterns use literal text and %field% captures.
 This does not support full scripting.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mönster använder litteral text och %field%-fångster.
+Detta stödjer inte fullständig skriptning.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="167"/>
@@ -19831,7 +19834,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/widgets.cpp" line="494"/>
         <source>Read-ahead for remote streams</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Förhandsläsning för fjärrströmmar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="506"/>
@@ -19859,7 +19862,7 @@ Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</transla
     <message>
         <location filename="../../src/gui/widgets.cpp" line="529"/>
         <source>Open timeout for remote streams</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppningstimeout för fjärrströmmar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="539"/>
@@ -19929,12 +19932,12 @@ Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</transla
     <message>
         <location filename="../../src/gui/widgets.cpp" line="605"/>
         <source>ID3v2 revision</source>
-        <translation type="unfinished">ID3v2-revision</translation>
+        <translation>ID3v2-version</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="606"/>
         <source>ID3v2 revision used when writing MP3 tags</source>
-        <translation type="unfinished">ID3v2-revision använt för skrivning av MP3-taggar</translation>
+        <translation>ID3v2-version använt för skrivning av MP3-taggar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="608"/>
@@ -19949,7 +19952,7 @@ Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</transla
     <message>
         <location filename="../../src/gui/widgets.cpp" line="616"/>
         <source>Tag writing scheme for untagged files</source>
-        <translation type="unfinished"></translation>
+        <translation>Taggskrivningsplan för otaggade filer</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="617"/>
@@ -20097,7 +20100,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="650"/>
         <source>Semicolon-separated extensions where all readers are tried and the reader with the most subsongs or chapters is used.</source>
-        <translation type="unfinished"></translation>
+        <translation>Semikolonseparerade ändelser där alla läsare prövas och den med mest sublåtar eller kapitel används.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="670"/>
