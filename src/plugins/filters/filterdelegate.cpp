@@ -150,14 +150,14 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
 
     const auto* view        = qobject_cast<const ExpandedTreeView*>(opt.widget);
-    const bool roundArtwork = view && view->viewMode() == ExpandedTreeView::ViewMode::Icon && m_artworkCornerRadius > 0
-                           && !opt.icon.isNull();
+    const bool hasArtwork   = view && view->viewMode() == ExpandedTreeView::ViewMode::Icon && !opt.icon.isNull();
+    const QIcon artworkIcon = hasArtwork ? opt.icon : QIcon{};
 
     const auto drawArtwork = [&]() {
-        if(roundArtwork) {
+        if(hasArtwork) {
             const QRect decorationRect  = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
             const double dpr            = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
-            const QPixmap scaledArtwork = opt.icon.pixmap(decorationRect.size(), dpr);
+            const QPixmap scaledArtwork = artworkIcon.pixmap(decorationRect.size(), dpr, Gui::itemViewIconMode(opt));
             Gui::drawRoundedPixmap(*painter, decorationRect, Qt::AlignCenter, scaledArtwork, m_artworkCornerRadius);
         }
     };
@@ -184,7 +184,7 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
         }
 
         backgroundOpt.text.clear();
-        if(roundArtwork) {
+        if(hasArtwork) {
             backgroundOpt.icon = {};
         }
         style->drawControl(QStyle::CE_ItemViewItem, &backgroundOpt, painter, backgroundOpt.widget);
@@ -211,7 +211,7 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
         }
 
         backgroundOpt.text.clear();
-        if(roundArtwork) {
+        if(hasArtwork) {
             backgroundOpt.icon = {};
         }
         style->drawControl(QStyle::CE_ItemViewItem, &backgroundOpt, painter, backgroundOpt.widget);
@@ -224,7 +224,7 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
         return;
     }
 
-    if(roundArtwork) {
+    if(hasArtwork) {
         opt.icon = {};
     }
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
@@ -288,7 +288,7 @@ void FilterDelegate::setAlignCaptionsToArtwork(bool align)
 
 void FilterDelegate::setArtworkCornerRadius(int radius)
 {
-    m_artworkCornerRadius = std::max(radius, 0);
+    m_artworkCornerRadius = std::clamp(radius, 0, 100);
 }
 
 QRect FilterDelegate::iconTextRect(const QStyleOptionViewItem& option) const

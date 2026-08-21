@@ -217,11 +217,11 @@ void QueueViewerDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     const auto rightLines = prepareTextLines(opt, rightRect.width(), rightRichText);
 
     const bool isPlaybackIcon = index.data(QueueViewerItem::IsPlaybackIcon).toBool();
-    const bool roundArtwork   = !isPlaybackIcon && m_artworkCornerRadius > 0 && !opt.icon.isNull();
-    const QIcon itemIcon      = (isPlaybackIcon || roundArtwork) ? opt.icon : QIcon{};
+    const bool hasArtwork     = !isPlaybackIcon && !opt.icon.isNull();
+    const QIcon itemIcon      = (isPlaybackIcon || hasArtwork) ? opt.icon : QIcon{};
     const QRect itemIconRect
         = !itemIcon.isNull() ? style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget) : QRect{};
-    if(isPlaybackIcon || roundArtwork) {
+    if(isPlaybackIcon || hasArtwork) {
         opt.icon = {};
     }
 
@@ -230,10 +230,11 @@ void QueueViewerDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     if(isPlaybackIcon) {
         Gui::drawItemViewIcon(painter, opt, itemIcon, itemIconRect, opt.decorationAlignment);
     }
-    else if(roundArtwork) {
+    else if(hasArtwork) {
         const double dpr = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
         Gui::drawRoundedPixmap(*painter, itemIconRect, opt.decorationAlignment,
-                               itemIcon.pixmap(itemIconRect.size(), dpr), m_artworkCornerRadius);
+                               itemIcon.pixmap(itemIconRect.size(), dpr, Gui::itemViewIconMode(opt)),
+                               m_artworkCornerRadius);
     }
 
     drawPreparedTextLines(painter, leftRect, leftLines, Qt::AlignLeft);
@@ -262,6 +263,6 @@ QSize QueueViewerDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
 
 void QueueViewerDelegate::setArtworkCornerRadius(int radius)
 {
-    m_artworkCornerRadius = std::max(radius, 0);
+    m_artworkCornerRadius = std::clamp(radius, 0, 100);
 }
 } // namespace Fooyin

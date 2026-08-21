@@ -598,7 +598,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
     validated.rowHeight           = std::max(validated.rowHeight, 0);
     validated.iconHorizontalGap   = std::max(validated.iconHorizontalGap, -1);
     validated.iconVerticalGap     = std::max(validated.iconVerticalGap, 0);
-    validated.artworkCornerRadius = std::max(validated.artworkCornerRadius, 0);
+    validated.artworkCornerRadius = std::clamp(validated.artworkCornerRadius, 0, 100);
 
     if(!validated.iconSize.isValid()) {
         validated.iconSize = factoryConfig().iconSize;

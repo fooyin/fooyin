@@ -414,7 +414,7 @@ void LibraryTreeWidget::applyConfig(const ConfigData& config)
 
     m_config.rowHeight                   = std::max(m_config.rowHeight, 0);
     m_config.autoExpandSearchResultLimit = std::max(m_config.autoExpandSearchResultLimit, 0);
-    m_config.artworkCornerRadius         = std::max(m_config.artworkCornerRadius, 0);
+    m_config.artworkCornerRadius         = std::clamp(m_config.artworkCornerRadius, 0, 100);
 
     if(m_config.summaryNodeTitle.isEmpty()) {
         m_config.summaryNodeTitle = factoryConfig().summaryNodeTitle;
@@ -530,7 +530,7 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::configFromLayout(const QJsonObj
 
     config.rowHeight                   = std::max(config.rowHeight, 0);
     config.autoExpandSearchResultLimit = std::max(config.autoExpandSearchResultLimit, 0);
-    config.artworkCornerRadius         = std::max(config.artworkCornerRadius, 0);
+    config.artworkCornerRadius         = std::clamp(config.artworkCornerRadius, 0, 100);
 
     if(config.summaryNodeTitle.isEmpty()) {
         config.summaryNodeTitle = factoryConfig().summaryNodeTitle;

@@ -826,7 +826,7 @@ void QueueViewer::clearSavedDefaults() const
 void QueueViewer::applyConfig(const ConfigData& config)
 {
     m_config                     = config;
-    m_config.artworkCornerRadius = std::max(m_config.artworkCornerRadius, 0);
+    m_config.artworkCornerRadius = std::clamp(m_config.artworkCornerRadius, 0, 100);
 
     if(isWindowWidget()) {
         m_config.showHeader = false;
@@ -887,7 +887,7 @@ QueueViewer::ConfigData QueueViewer::configFromLayout(const QJsonObject& layout)
     if(!config.iconSize.isValid()) {
         config.iconSize = factoryConfig().iconSize;
     }
-    config.artworkCornerRadius = std::max(config.artworkCornerRadius, 0);
+    config.artworkCornerRadius = std::clamp(config.artworkCornerRadius, 0, 100);
 
     return config;
 }

@@ -43,6 +43,8 @@
 #include <QTreeView>
 #include <QUrl>
 
+#include <algorithm>
+
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::Gui {
@@ -101,6 +103,17 @@ QPalette::ColorRole itemViewSelectionTextRole(const QStyleOptionViewItem& option
     return normalSelectionText ? QPalette::Text : QPalette::HighlightedText;
 }
 
+QIcon::Mode itemViewIconMode(const QStyleOptionViewItem& option)
+{
+    if(!(option.state & QStyle::State_Enabled)) {
+        return QIcon::Disabled;
+    }
+    if(option.state & QStyle::State_Selected) {
+        return QIcon::Selected;
+    }
+    return QIcon::Normal;
+}
+
 QRect itemViewTextRect(const QStyleOptionViewItem& option)
 {
     const QStyle* style     = option.widget ? option.widget->style() : QApplication::style();
@@ -123,7 +136,8 @@ QRect itemViewTextRect(const QStyleOptionViewItem& option)
     return textRect;
 }
 
-void drawRoundedPixmap(QPainter& painter, const QRect& rect, Qt::Alignment alignment, const QPixmap& pixmap, int radius)
+void drawRoundedPixmap(QPainter& painter, const QRect& rect, Qt::Alignment alignment, const QPixmap& pixmap,
+                       int radiusPercent)
 {
     if(pixmap.isNull() || rect.isEmpty()) {
         return;
@@ -135,6 +149,7 @@ void drawRoundedPixmap(QPainter& painter, const QRect& rect, Qt::Alignment align
     painter.save();
     painter.setRenderHint(QPainter::Antialiasing);
 
+    const qreal radius = std::min(pixmapRect.width(), pixmapRect.height()) * std::clamp(radiusPercent, 0, 100) / 200.0;
     QPainterPath clipPath;
     clipPath.addRoundedRect(pixmapRect, radius, radius);
     painter.setClipPath(clipPath, Qt::IntersectClip);

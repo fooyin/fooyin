@@ -308,7 +308,9 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
         coverPen.setWidth(coverFrameWidth);
 
         painter->setRenderHint(QPainter::Antialiasing);
-        painter->drawRoundedRect(coverFrameRect, cornerRadius, cornerRadius);
+        const qreal frameRadius
+            = std::min(coverFrameRect.width(), coverFrameRect.height()) * std::clamp(cornerRadius, 0, 100) / 200.0;
+        painter->drawRoundedRect(coverFrameRect, frameRadius, frameRadius);
 
         const double dpr = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
         Gui::drawRoundedPixmap(*painter, coverRect, Qt::AlignCenter, Utils::scalePixmap(cover, coverSize, dpr, true),
@@ -404,7 +406,8 @@ void paintSubheader(QPainter* painter, const QStyleOptionViewItem& opt, const QM
     painter->drawLine(titleLine);
 }
 
-void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, int cornerRadius)
+void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index,
+                int cornerRadiusPercent)
 {
     QStyleOptionViewItem opt{option};
 
@@ -446,13 +449,8 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 
                 const QPixmap scaledImage
                     = Utils::scalePixmap(image, opt.rect.width(), opt.widget->devicePixelRatioF(), true);
-                if(cornerRadius > 0) {
-                    Gui::drawRoundedPixmap(*painter, opt.rect, Qt::AlignHCenter | Qt::AlignTop, scaledImage,
-                                           cornerRadius);
-                }
-                else {
-                    style->drawItemPixmap(painter, opt.rect, Qt::AlignHCenter | Qt::AlignTop, scaledImage);
-                }
+                Gui::drawRoundedPixmap(*painter, opt.rect, Qt::AlignHCenter | Qt::AlignTop, scaledImage,
+                                       cornerRadiusPercent);
             }
         }
         else {
@@ -572,7 +570,7 @@ QSize PlaylistDelegate::sizeHint(const QStyleOptionViewItem& option, const QMode
 
 void PlaylistDelegate::setArtworkCornerRadius(int radius)
 {
-    m_artworkCornerRadius = std::max(radius, 0);
+    m_artworkCornerRadius = std::clamp(radius, 0, 100);
 }
 } // namespace Fooyin
 

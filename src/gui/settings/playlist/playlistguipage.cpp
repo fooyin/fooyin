@@ -139,8 +139,8 @@ PlaylistAppearancePageWidget::PlaylistAppearancePageWidget(SettingsManager* sett
     m_imagePaddingTop->setMaximum(100);
     m_imagePaddingTop->setSuffix(u" px"_s);
 
-    m_artworkCornerRadius->setRange(0, 256);
-    m_artworkCornerRadius->setSuffix(u" px"_s);
+    m_artworkCornerRadius->setRange(0, 100);
+    m_artworkCornerRadius->setSuffix(u" %"_s);
     m_artworkCornerRadius->setSpecialValueText(tr("Square"));
 
     addComboItem(m_backgroundImage, tr("No background image"), static_cast<int>(PlaylistBgImage::None));

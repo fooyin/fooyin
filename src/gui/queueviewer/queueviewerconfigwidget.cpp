@@ -64,8 +64,8 @@ QueueViewerConfigDialog::QueueViewerConfigDialog(QueueViewer* queueViewer, QWidg
     m_iconHeight->setMaximum(512);
     m_iconWidth->setSingleStep(5);
     m_iconHeight->setSingleStep(5);
-    m_artworkCornerRadius->setRange(0, 256);
-    m_artworkCornerRadius->setSuffix(u" px"_s);
+    m_artworkCornerRadius->setRange(0, 100);
+    m_artworkCornerRadius->setSuffix(u" %"_s);
     m_artworkCornerRadius->setSpecialValueText(tr("Square"));
 
     auto* iconSizeHint = new QLabel(u"🛈 "_s + tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this);
