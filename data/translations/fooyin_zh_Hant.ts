@@ -3231,7 +3231,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="621"/>
         <source>Display</source>
-        <translation type="unfinished">顯示</translation>
+        <translation>顯示</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="624"/>
@@ -3246,7 +3246,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="646"/>
         <source>Show header</source>
-        <translation type="unfinished">顯示標題</translation>
+        <translation>顯示標題</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="774"/>
@@ -3330,12 +3330,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="41"/>
         <source>Show header</source>
-        <translation type="unfinished">顯示標題</translation>
+        <translation>顯示標題</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="42"/>
         <source>Remember sort column</source>
-        <translation type="unfinished"></translation>
+        <translation>記住排序欄位</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="44"/>
@@ -3370,7 +3370,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="54"/>
         <source>Restore the sort column on startup and when changing directories.</source>
-        <translation type="unfinished"></translation>
+        <translation>還原排序欄位，在啟動之時和當變更目錄時。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="56"/>
@@ -3438,17 +3438,17 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="196"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>欄位</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="207"/>
         <source>Show header</source>
-        <translation type="unfinished">顯示標題</translation>
+        <translation>顯示標題</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="212"/>
         <source>Auto-size sections</source>
-        <translation type="unfinished">自動調整大小</translation>
+        <translation>自動調整區段大小</translation>
     </message>
 </context>
 <context>
@@ -3581,7 +3581,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dsp/dsplayouteditor.cpp" line="42"/>
         <source>Restore Defaults</source>
-        <translation type="unfinished">還原預設</translation>
+        <translation>還原預設</translation>
     </message>
 </context>
 <context>
@@ -4128,7 +4128,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="73"/>
         <source>Level</source>
-        <translation>層級</translation>
+        <translation>等級</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="80"/>
@@ -4191,7 +4191,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="52"/>
         <source>level %1</source>
-        <translation>層級 %1</translation>
+        <translation>等級 %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="87"/>
@@ -4224,77 +4224,77 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="269"/>
         <source>Enabled</source>
-        <translation type="unfinished">已經啟用</translation>
+        <translation>已經啟用</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="270"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="436"/>
         <source>Zero level</source>
-        <translation type="unfinished"></translation>
+        <translation>零等級</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="271"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="449"/>
         <source>Auto level</source>
-        <translation type="unfinished">自動等級</translation>
+        <translation>自動等級</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="273"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
         <source>Save preset</source>
-        <translation type="unfinished"></translation>
+        <translation>儲存預設集</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="310"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="515"/>
         <source> dB</source>
-        <translation type="unfinished"> dB</translation>
+        <translation> dB</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="324"/>
         <source>Preamp</source>
-        <translation type="unfinished">前級擴大機</translation>
+        <translation>前級擴大機</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="441"/>
         <source>Show controls</source>
-        <translation type="unfinished">顯示控制</translation>
+        <translation>顯示控制</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="453"/>
         <source>Save preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>儲存預設集…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="457"/>
         <source>Presets</source>
-        <translation type="unfinished">預設集</translation>
+        <translation>預設集</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="461"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="543"/>
         <source>No presets</source>
-        <translation type="unfinished"></translation>
+        <translation>無預設集</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="546"/>
         <source>Load preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>載入預設集…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
         <source>Preset name:</source>
-        <translation type="unfinished"></translation>
+        <translation>預設集名稱：</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="583"/>
         <source>Preset already exists</source>
-        <translation type="unfinished">預設集已經存在</translation>
+        <translation>預設集已經存在</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="584"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
-        <translation type="unfinished">預設集 &quot;%1&quot; 已經存在。覆蓋？</translation>
+        <translation>預設集 &quot;%1&quot; 已經存在。覆蓋？</translation>
     </message>
 </context>
 <context>
@@ -5203,7 +5203,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="186"/>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="269"/>
         <source>Tracks</source>
-        <translation type="unfinished">曲目</translation>
+        <translation>曲目</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="201"/>
@@ -5220,27 +5220,27 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="254"/>
         <source>Copy</source>
-        <translation type="unfinished">複製</translation>
+        <translation>複製</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="257"/>
         <source>Move</source>
-        <translation type="unfinished">移動</translation>
+        <translation>移動</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="260"/>
         <source>Rename</source>
-        <translation type="unfinished">重新命名</translation>
+        <translation>重新命名</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="263"/>
         <source>Extract</source>
-        <translation type="unfinished">解壓縮提取</translation>
+        <translation>解壓縮提取</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="266"/>
         <source>Other</source>
-        <translation type="unfinished">其他</translation>
+        <translation>其他</translation>
     </message>
 </context>
 <context>
@@ -9551,7 +9551,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="83"/>
         <source>Maximum album art size</source>
-        <translation type="unfinished"></translation>
+        <translation>最大專輯圖面大小</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="85"/>
@@ -9587,7 +9587,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="104"/>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="202"/>
         <source>Maximum width or height of album art sent with notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>與通知一同發送的專輯圖面的最大寬度或高度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="123"/>
@@ -9683,7 +9683,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="102"/>
         <source>Played threshold reached</source>
-        <translation type="unfinished"></translation>
+        <translation>已經達到播放閾值</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="103"/>
@@ -10228,24 +10228,26 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="34"/>
         <source>PipeWire Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>PipeWire 設定</translation>
     </message>
     <message>
         <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="40"/>
         <source>Latency</source>
-        <translation type="unfinished"></translation>
+        <translation>延遲</translation>
     </message>
     <message>
         <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="44"/>
         <source>Automatic</source>
-        <translation type="unfinished">自動</translation>
+        <translation>自動</translation>
     </message>
     <message>
         <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="47"/>
         <source>Lower values provide more frequent audio processing but may increase underrun risk.
 Higher values improve stability but increase latency and may reduce visualisation smoothness.
 Changes take effect the next time the PipeWire output is initialised.</source>
-        <translation type="unfinished"></translation>
+        <translation>較低的數值可提供較為密集的音訊處理，但可能會增加風險。 
+較高的數值可提升穩定性，但會提昇延遲，並可能降低視覺化流暢度。 
+下次 PipeWire 輸出初始化時，變更即會生效。</translation>
     </message>
 </context>
 <context>
@@ -12646,12 +12648,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="240"/>
         <source>fooyin Plugin (*.dll)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin 外掛 (*.dll)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="242"/>
         <source>fooyin Plugin (*.so)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin 外掛 (*.so)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="244"/>
@@ -12661,32 +12663,32 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="254"/>
         <source>Plugin Already Installed</source>
-        <translation type="unfinished"></translation>
+        <translation>外掛已經安裝</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="255"/>
         <source>This plugin is already installed. Update it?</source>
-        <translation type="unfinished"></translation>
+        <translation>此外掛已經安裝。進行更新？</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="256"/>
         <source>Update</source>
-        <translation type="unfinished">更新</translation>
+        <translation>更新</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="265"/>
         <source>Plugin Updated</source>
-        <translation type="unfinished"></translation>
+        <translation>外掛已經更新</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="272"/>
         <source>Plugin Installation Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>外掛安裝失敗</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="272"/>
         <source>The plugin could not be installed.</source>
-        <translation type="unfinished"></translation>
+        <translation>此外掛無法安裝。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="265"/>
@@ -17201,12 +17203,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="96"/>
         <source>Minimum level</source>
-        <translation>最小層級</translation>
+        <translation>最小等級</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="98"/>
         <source>Maximum level</source>
-        <translation>最大層級</translation>
+        <translation>最大等級</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="100"/>
@@ -17483,12 +17485,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="268"/>
         <source>Signal level mapped to the bottom of the spectrum</source>
-        <translation>訊號層級已經映對至頻譜底部</translation>
+        <translation>訊號等級已經映對至頻譜底部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="269"/>
         <source>Signal level mapped to the top of the spectrum</source>
-        <translation>訊號層級已經映對至頻譜頂部</translation>
+        <translation>訊號等級已經映對至頻譜頂部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="270"/>
