@@ -550,8 +550,7 @@ void PlaylistWidget::resetSort(bool force)
 
 void PlaylistWidget::setHeaderVisible(bool visible)
 {
-    m_header->setFixedHeight(visible ? QWIDGETSIZE_MAX : 0);
-    m_header->adjustSize();
+    m_header->setCollapsed(!visible);
 }
 
 void PlaylistWidget::setScrollbarVisible(bool visible)

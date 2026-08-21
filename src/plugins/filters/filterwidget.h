@@ -190,7 +190,6 @@ private:
 
     QByteArray m_headerState;
 
-    bool m_showHeader;
     bool m_showScrollbar;
     bool m_alternatingColours;
     ConfigData m_config;

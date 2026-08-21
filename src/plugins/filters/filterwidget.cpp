@@ -117,7 +117,6 @@ FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* c
           this, Context{IdList{Constants::Context::TrackSelection, Id{"Fooyin.Context.FilterWidget."}.append(id())}},
           this)}
     , m_applyingViewState{false}
-    , m_showHeader{true}
     , m_showScrollbar{true}
     , m_alternatingColours{false}
 {
@@ -369,7 +368,7 @@ void FilterWidget::saveLayoutData(QJsonObject& layout)
     layout["Artwork"_L1]         = static_cast<int>(m_model->coverType());
     layout["Source"_L1]          = coverSourceToInt(m_model->coverSource());
     layout["ShowSummary"_L1]     = m_model->showSummary();
-    layout["ShowHeader"_L1]      = m_showHeader;
+    layout["ShowHeader"_L1]      = !m_header->isCollapsed();
     layout["ShowScrollbar"_L1]   = m_showScrollbar;
     layout["AlternatingRows"_L1] = m_alternatingColours;
 
@@ -445,7 +444,7 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
         m_model->setShowSummary(layout.value("ShowSummary"_L1).toBool());
     }
     if(layout.contains("ShowHeader"_L1)) {
-        m_showHeader = layout.value("ShowHeader"_L1).toBool();
+        m_header->setCollapsed(!layout.value("ShowHeader"_L1).toBool());
     }
     if(layout.contains("ShowScrollbar"_L1)) {
         m_showScrollbar = layout.value("ShowScrollbar"_L1).toBool();
@@ -852,9 +851,6 @@ void FilterWidget::updateAppearance()
 
     const QVariant resolvedStyleValue = m_settings->value<Settings::Gui::ResolvedAppStyle>();
     Gui::refreshItemViewPalette(m_view, resolvedStyleValue.value<ResolvedAppStyle>().palette);
-
-    m_header->setFixedHeight(!m_showHeader ? 0 : QWIDGETSIZE_MAX);
-    m_header->adjustSize();
 }
 
 void FilterWidget::scheduleVisibleCoverPinUpdate(int delay)
@@ -992,11 +988,8 @@ void FilterWidget::addDisplayMenu(QMenu* menu)
 
     auto* showHeader = new QAction(FilterWidget::tr("Show header"), displayMenu);
     showHeader->setCheckable(true);
-    showHeader->setChecked(m_showHeader);
-    QObject::connect(showHeader, &QAction::triggered, this, [this](bool checked) {
-        m_showHeader = checked;
-        updateAppearance();
-    });
+    showHeader->setChecked(!m_header->isCollapsed());
+    QObject::connect(showHeader, &QAction::triggered, this, [this](bool checked) { m_header->setCollapsed(!checked); });
 
     auto* showScrollbar = new QAction(FilterWidget::tr("Show scrollbar"), displayMenu);
     showScrollbar->setCheckable(true);

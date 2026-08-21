@@ -1995,8 +1995,7 @@ void RadioBrowserWidget::setViewConfig(const ConfigData::ViewConfig& config, con
                                            && m_viewConfig.alternatingRows);
 
     auto* header = m_resultsView->stationHeader();
-    header->setFixedHeight(!m_viewConfig.showHeader ? 0 : QWIDGETSIZE_MAX);
-    header->adjustSize();
+    header->setCollapsed(!m_viewConfig.showHeader);
 
     if(restoringBrowseViewState) {
         if(m_browseViewState.headerState.isEmpty()) {

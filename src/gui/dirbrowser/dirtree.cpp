@@ -103,7 +103,7 @@ void DirTree::resizeView()
 
 bool DirTree::showHeader() const
 {
-    return !isHeaderHidden();
+    return !m_header->isCollapsed();
 }
 
 void DirTree::setShowHeader(bool show)
@@ -112,7 +112,7 @@ void DirTree::setShowHeader(bool show)
         return;
     }
 
-    setHeaderHidden(!show);
+    m_header->setCollapsed(!show);
     Q_EMIT headerVisibilityChanged(show);
 }
 

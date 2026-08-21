@@ -67,6 +67,7 @@ public:
     AutoHeaderView* m_self;
 
     bool m_stretchEnabled{false};
+    bool m_isCollapsed{false};
     SectionWidths m_sectionWidths;
 
     SectionState m_state{SectionState::None};
@@ -368,6 +369,28 @@ void AutoHeaderView::resetSectionPositions()
         setSectionHidden(section, false);
         moveSection(visualIndex(section), section);
     }
+}
+
+bool AutoHeaderView::isCollapsed() const
+{
+    return p->m_isCollapsed;
+}
+
+void AutoHeaderView::setCollapsed(bool collapsed)
+{
+    if(std::exchange(p->m_isCollapsed, collapsed) == collapsed) {
+        return;
+    }
+
+    const int size = collapsed ? 0 : QWIDGETSIZE_MAX;
+    if(orientation() == Qt::Horizontal) {
+        setFixedHeight(size);
+    }
+    else {
+        setFixedWidth(size);
+    }
+
+    adjustSize();
 }
 
 void AutoHeaderView::hideHeaderSection(int logical)

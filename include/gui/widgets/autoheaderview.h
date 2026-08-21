@@ -44,6 +44,9 @@ public:
     void resetSections();
     void resetSectionPositions();
 
+    [[nodiscard]] bool isCollapsed() const;
+    void setCollapsed(bool collapsed);
+
     void hideHeaderSection(int logical);
     void showHeaderSection(int logical);
     void setHeaderSectionHidden(int logical, bool hidden);
