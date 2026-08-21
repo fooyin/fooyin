@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased
+
+### Improvements
+
+* Artwork: Add configurable corner radii in the Library Tree, Playlist, Queue Viewer, and Filters
+
+### Fixes
+
+* Interface
+  - Align rich text using consistent font baselines ([#1476](https://github.com/fooyin/fooyin/issues/1476))
+  - Keep dialogs and standalone windows single instance ([#1530](https://github.com/fooyin/fooyin/issues/1530))
+* SoundTouch: Fix processor recreation
+* VU Meter: Prevent bars overlapping channel labels
+
+
 ## [0.12.5](https://github.com/fooyin/fooyin/releases/tag/v0.12.5) (2026-08-21)
 
 ### Improvements
@@ -52,8 +67,8 @@
 ### Build/System
 
 * CI
-  - Build nightly packages with commit versions
-  - Add nightly pre-releases with AppImage and Flatpak packages
+  - Add nightly pre-releases
+  - Add AppImage and Flatpak packages
   - Drop Ubuntu 25.10 (Questing) support
 * Translations: Update translations and translation sources ([#1497](https://github.com/fooyin/fooyin/pull/1497), [#1498](https://github.com/fooyin/fooyin/pull/1498), [#1500](https://github.com/fooyin/fooyin/pull/1500)), [#1526](https://github.com/fooyin/fooyin/pull/1526), [#1527](https://github.com/fooyin/fooyin/pull/1527))
 
