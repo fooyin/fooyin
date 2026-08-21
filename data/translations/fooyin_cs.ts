@@ -3249,7 +3249,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="621"/>
         <source>Display</source>
-        <translation type="unfinished">Zobrazení</translation>
+        <translation>Zobrazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="624"/>
@@ -3264,7 +3264,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="646"/>
         <source>Show header</source>
-        <translation type="unfinished">Zobrazit záhlaví</translation>
+        <translation>Zobrazit záhlaví</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="774"/>
@@ -3348,12 +3348,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="41"/>
         <source>Show header</source>
-        <translation type="unfinished">Zobrazit záhlaví</translation>
+        <translation>Zobrazit záhlaví</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="42"/>
         <source>Remember sort column</source>
-        <translation type="unfinished"></translation>
+        <translation>Pamatovat si sloupec řazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="44"/>
@@ -3388,7 +3388,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="54"/>
         <source>Restore the sort column on startup and when changing directories.</source>
-        <translation type="unfinished"></translation>
+        <translation>Po spuštění a při změně složky obnovit sloupec řazení.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="56"/>
@@ -3456,17 +3456,17 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="196"/>
         <source>Columns</source>
-        <translation type="unfinished">Sloupce</translation>
+        <translation>Sloupce</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="207"/>
         <source>Show header</source>
-        <translation type="unfinished">Zobrazit záhlaví</translation>
+        <translation>Zobrazit záhlaví</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="212"/>
         <source>Auto-size sections</source>
-        <translation type="unfinished">Automatická velikost sekcí</translation>
+        <translation>Automatická velikost sekcí</translation>
     </message>
 </context>
 <context>
@@ -3599,7 +3599,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dsp/dsplayouteditor.cpp" line="42"/>
         <source>Restore Defaults</source>
-        <translation type="unfinished">Obnovit výchozí</translation>
+        <translation>Obnovit výchozí</translation>
     </message>
 </context>
 <context>
@@ -4242,77 +4242,77 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="269"/>
         <source>Enabled</source>
-        <translation type="unfinished">Povoleno</translation>
+        <translation>Povoleno</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="270"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="436"/>
         <source>Zero level</source>
-        <translation type="unfinished"></translation>
+        <translation>Úroveň nuly</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="271"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="449"/>
         <source>Auto level</source>
-        <translation type="unfinished">Vyrovnat</translation>
+        <translation>Vyrovnat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="273"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
         <source>Save preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit předvolbu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="310"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="515"/>
         <source> dB</source>
-        <translation type="unfinished"> dB</translation>
+        <translation> dB</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="324"/>
         <source>Preamp</source>
-        <translation type="unfinished">Předzesílení</translation>
+        <translation>Předzesílení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="441"/>
         <source>Show controls</source>
-        <translation type="unfinished">Zobrazovat tlačítka</translation>
+        <translation>Zobrazovat tlačítka</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="453"/>
         <source>Save preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit předvolbu…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="457"/>
         <source>Presets</source>
-        <translation type="unfinished">Předvolby</translation>
+        <translation>Předvolby</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="461"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="543"/>
         <source>No presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádné předvolby</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="546"/>
         <source>Load preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>Načíst předvolbu…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
         <source>Preset name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Název předvolby:</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="583"/>
         <source>Preset already exists</source>
-        <translation type="unfinished">Předvolba již existuje</translation>
+        <translation>Předvolba již existuje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="584"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
-        <translation type="unfinished">Předvolba „%1“ již existuje. Přepsat?</translation>
+        <translation>Předvolba „%1“ již existuje. Přepsat?</translation>
     </message>
 </context>
 <context>
@@ -5247,7 +5247,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="186"/>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="269"/>
         <source>Tracks</source>
-        <translation type="unfinished">Skladby</translation>
+        <translation>Skladby</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="201"/>
@@ -5266,27 +5266,27 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="254"/>
         <source>Copy</source>
-        <translation type="unfinished">Kopírovat</translation>
+        <translation>Kopírovat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="257"/>
         <source>Move</source>
-        <translation type="unfinished">Přesunout</translation>
+        <translation>Přesunout</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="260"/>
         <source>Rename</source>
-        <translation type="unfinished">Přejmenovat</translation>
+        <translation>Přejmenovat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="263"/>
         <source>Extract</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozbalit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="266"/>
         <source>Other</source>
-        <translation type="unfinished">Ostatní</translation>
+        <translation>Ostatní</translation>
     </message>
 </context>
 <context>
@@ -9605,7 +9605,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="83"/>
         <source>Maximum album art size</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximální velikost přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="85"/>
@@ -9641,7 +9641,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="104"/>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="202"/>
         <source>Maximum width or height of album art sent with notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximální šířka nebo výška přebalu alba odesílaného s upozorněním</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="123"/>
@@ -9737,7 +9737,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="102"/>
         <source>Played threshold reached</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosažena prahová hodnota přehrání</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="103"/>
@@ -10286,24 +10286,26 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="34"/>
         <source>PipeWire Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení PipeWire</translation>
     </message>
     <message>
         <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="40"/>
         <source>Latency</source>
-        <translation type="unfinished"></translation>
+        <translation>Latence</translation>
     </message>
     <message>
         <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="44"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="47"/>
         <source>Lower values provide more frequent audio processing but may increase underrun risk.
 Higher values improve stability but increase latency and may reduce visualisation smoothness.
 Changes take effect the next time the PipeWire output is initialised.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nižší hodnoty zajistí častější zpracování zvuku, ale mohou vést k vyprázdnění vyrovnávací paměti.
+Vyšší hodnoty zlepšují stabilitu, ale zvyšují latenci a mohou snížit plynulost vizualizací.
+Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
 </context>
 <context>
@@ -12708,12 +12710,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="240"/>
         <source>fooyin Plugin (*.dll)</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin aplikace fooyin ( *.dll )</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="242"/>
         <source>fooyin Plugin (*.so)</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin aplikace fooyin ( *.so )</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="244"/>
@@ -12723,32 +12725,32 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="254"/>
         <source>Plugin Already Installed</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin je již nainstalován</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="255"/>
         <source>This plugin is already installed. Update it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Tento plugin je již nainstalován. Provést aktualizaci?</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="256"/>
         <source>Update</source>
-        <translation type="unfinished">Aktualizovat</translation>
+        <translation>Aktualizovat</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="265"/>
         <source>Plugin Updated</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin aktualizován</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="272"/>
         <source>Plugin Installation Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Instalace pluginu se nezdařila</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="272"/>
         <source>The plugin could not be installed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin nemohl být nainstalován.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="265"/>
