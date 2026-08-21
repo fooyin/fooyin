@@ -304,6 +304,7 @@ set(SOURCES
     playlist/playlistwidget.h
     playlist/presetregistry.cpp
     playlist/presetregistry.h
+    plugins/pluginsettingsprovider.cpp
     queueviewer/queueviewer.cpp
     queueviewer/queueviewer.h
     queueviewer/queueviewerconfigwidget.cpp

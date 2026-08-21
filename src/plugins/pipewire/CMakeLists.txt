@@ -9,6 +9,7 @@ create_fooyin_plugin_internal(
     pipewire
     NO_PCH
     DEPENDS Fooyin::Core
+            Fooyin::Gui
             PipeWire::PipeWire
     SOURCES pipewirecontext.cpp
             pipewirecontext.h

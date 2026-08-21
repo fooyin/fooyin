@@ -28,12 +28,10 @@ namespace Fooyin::Pipewire {
 namespace {
 class PipewirePluginSettingsProvider : public PluginSettingsProvider
 {
-public:
-    void showSettings(QWidget* parent) override
+protected:
+    QDialog* createSettings(QWidget* parent) override
     {
-        auto* dialog = new PipewireSettings(parent);
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
-        dialog->show();
+        return new PipewireSettings(parent);
     }
 };
 } // namespace

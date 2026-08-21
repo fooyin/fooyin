@@ -31,18 +31,17 @@ class SleepInhibitorPluginSettingsProvider : public QObject,
 {
     Q_OBJECT
 
-public:
-    void showSettings(QWidget* parent) override
-    {
-        auto* dialog = new SleepInhibitorSettings(parent);
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
-        QObject::connect(dialog, &SleepInhibitorSettings::settingsChanged, this,
-                         &SleepInhibitorPluginSettingsProvider::settingsChanged);
-        dialog->show();
-    }
-
 Q_SIGNALS:
     void settingsChanged();
+
+protected:
+    QDialog* createSettings(QWidget* parent) override
+    {
+        auto* dialog = new SleepInhibitorSettings(parent);
+        QObject::connect(dialog, &SleepInhibitorSettings::settingsChanged, this,
+                         &SleepInhibitorPluginSettingsProvider::settingsChanged);
+        return dialog;
+    }
 };
 
 SleepInhibitorPlugin::SleepInhibitorPlugin()

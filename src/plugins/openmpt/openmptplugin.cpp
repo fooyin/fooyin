@@ -36,11 +36,10 @@ public:
         : m_settings{settings}
     { }
 
-    void showSettings(QWidget* parent) override
+protected:
+    QDialog* createSettings(QWidget* parent) override
     {
-        auto* dialog = new OpenMptSettings(m_settings, parent);
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
-        dialog->show();
+        return new OpenMptSettings(m_settings, parent);
     }
 
 private:

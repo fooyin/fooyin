@@ -35,15 +35,6 @@
 
 using namespace Qt::StringLiterals;
 
-namespace {
-void showAboutDialog()
-{
-    auto* aboutDialog = new Fooyin::AboutDialog(Fooyin::Utils::getMainWindow());
-    aboutDialog->setAttribute(Qt::WA_DeleteOnClose);
-    aboutDialog->show();
-}
-} // namespace
-
 namespace Fooyin {
 HelpMenu::HelpMenu(ActionManager* actionManager, QObject* parent)
     : QObject{parent}
@@ -75,13 +66,27 @@ HelpMenu::HelpMenu(ActionManager* actionManager, QObject* parent)
     auto* about = new QAction(tr("&About"), this);
     Gui::setThemeIcon(about, Constants::Icons::Fooyin);
     about->setStatusTip(tr("Open the about dialog"));
-    QObject::connect(about, &QAction::triggered, this, showAboutDialog);
+    QObject::connect(about, &QAction::triggered, this, &HelpMenu::showAboutDialog);
 
     helpMenu->addAction(quickStart);
     helpMenu->addAction(scripting);
     helpMenu->addAction(searching);
     helpMenu->addAction(faq);
     helpMenu->addAction(about);
+}
+
+void HelpMenu::showAboutDialog()
+{
+    if(m_aboutDialog) {
+        m_aboutDialog->show();
+        m_aboutDialog->raise();
+        m_aboutDialog->activateWindow();
+        return;
+    }
+
+    m_aboutDialog = new AboutDialog(Utils::getMainWindow());
+    m_aboutDialog->setAttribute(Qt::WA_DeleteOnClose);
+    m_aboutDialog->show();
 }
 } // namespace Fooyin
 

@@ -17,31 +17,39 @@
  *
  */
 
-#pragma once
-
-#include "fygui_export.h"
+#include <gui/plugins/pluginsettingsprovider.h>
 
 #include <QDialog>
-
-class QWidget;
+#include <QPointer>
 
 namespace Fooyin {
-class PluginSettingsProviderPrivate;
-
-/*! Provides a single-instance plugin settings dialog. */
-class FYGUI_EXPORT PluginSettingsProvider
+class PluginSettingsProviderPrivate
 {
 public:
-    PluginSettingsProvider();
-    virtual ~PluginSettingsProvider();
-
-    void showSettings(QWidget* parent);
-
-protected:
-    /*! Creates the settings dialog when no instance is currently open. */
-    [[nodiscard]] virtual QDialog* createSettings(QWidget* parent) = 0;
-
-private:
-    std::unique_ptr<PluginSettingsProviderPrivate> p;
+    QPointer<QDialog> m_dialog;
 };
+
+PluginSettingsProvider::PluginSettingsProvider()
+    : p{std::make_unique<PluginSettingsProviderPrivate>()}
+{ }
+
+PluginSettingsProvider::~PluginSettingsProvider() = default;
+
+void PluginSettingsProvider::showSettings(QWidget* parent)
+{
+    if(p->m_dialog) {
+        p->m_dialog->show();
+        p->m_dialog->raise();
+        p->m_dialog->activateWindow();
+        return;
+    }
+
+    p->m_dialog = createSettings(parent);
+    if(!p->m_dialog) {
+        return;
+    }
+
+    p->m_dialog->setAttribute(Qt::WA_DeleteOnClose);
+    p->m_dialog->show();
+}
 } // namespace Fooyin

@@ -31,9 +31,19 @@
 #include <QMenu>
 #include <QPointer>
 
+#include <unordered_map>
+
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
+namespace {
+std::unordered_map<QString, QPointer<FyWidget>>& standaloneWindows()
+{
+    static std::unordered_map<QString, QPointer<FyWidget>> windows;
+    return windows;
+}
+} // namespace
+
 class FyWidgetPrivate
 {
 public:
@@ -214,6 +224,26 @@ void FyWidget::showStandaloneWindow(const QString& title, const QString& stateKe
                                     const QSize& defaultSize)
 {
     Q_ASSERT(!parentWidget());
+
+    auto& windows = standaloneWindows();
+    if(const auto it = windows.find(stateKey); it != windows.end()) {
+        if(auto* window = it->second.data(); window && window != this) {
+            deleteLater();
+            window->show();
+            window->raise();
+            window->activateWindow();
+            return;
+        }
+    }
+
+    windows.insert_or_assign(stateKey, this);
+    QObject::connect(this, &QObject::destroyed, [stateKey, window = this]() {
+        auto& widgetWindows = standaloneWindows();
+        if(const auto it = widgetWindows.find(stateKey);
+           it != widgetWindows.end() && (!it->second || it->second.data() == window)) {
+            widgetWindows.erase(it);
+        }
+    });
 
     p->m_standaloneStateKey = stateKey;
 

@@ -183,10 +183,17 @@ void RadioBrowserPlugin::relinkRadioWidgets()
 
 void RadioBrowserPlugin::showRadioBrowserDialog()
 {
-    auto* dialog = new RadioBrowserDialog(m_network, m_playlistLoader, m_settings, m_playerController, m_store,
-                                          m_actionManager, m_trackSelection, Utils::getMainWindow());
-    dialog->setAttribute(Qt::WA_DeleteOnClose);
-    dialog->show();
+    if(m_radioBrowserDialog) {
+        m_radioBrowserDialog->show();
+        m_radioBrowserDialog->raise();
+        m_radioBrowserDialog->activateWindow();
+        return;
+    }
+
+    m_radioBrowserDialog = new RadioBrowserDialog(m_network, m_playlistLoader, m_settings, m_playerController, m_store,
+                                                  m_actionManager, m_trackSelection, Utils::getMainWindow());
+    m_radioBrowserDialog->setAttribute(Qt::WA_DeleteOnClose);
+    m_radioBrowserDialog->show();
 }
 } // namespace Fooyin::RadioBrowser
 
