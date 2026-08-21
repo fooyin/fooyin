@@ -141,6 +141,7 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     m_iconWidth->setSingleStep(5);
     m_iconHeight->setSingleStep(5);
     m_artworkCornerRadius->setRange(0, 100);
+    m_artworkCornerRadius->setSingleStep(5);
     m_artworkCornerRadius->setSuffix(u" %"_s);
     m_artworkCornerRadius->setSpecialValueText(tr("Square"));
 
