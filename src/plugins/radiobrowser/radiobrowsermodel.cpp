@@ -34,13 +34,14 @@
 #include <QMimeData>
 #include <QPalette>
 
+#include <ranges>
 #include <set>
 #include <utility>
 
 using namespace Qt::StringLiterals;
 
 constexpr auto StationRowsMimeType       = "application/x-fooyin-radio-browser-station-rows"_L1;
-constexpr auto MaxCachedPlaceholderIcons = 512;
+constexpr auto MaxCachedPlaceholderBytes = 32 * 1024 * 1024;
 constexpr auto DefaultRadioIconSize      = 36;
 
 namespace Fooyin::RadioBrowser {
@@ -175,7 +176,7 @@ RadioBrowserModel::RadioBrowserModel(QObject* parent)
     , m_playingColour{columnPlayingRowColor()}
     , m_iconPlayingColour{playingRowColor()}
     , m_iconProvider{nullptr}
-    , m_placeholderIcons{MaxCachedPlaceholderIcons}
+    , m_placeholderIcons{MaxCachedPlaceholderBytes}
     , m_iconSize{DefaultRadioIconSize, DefaultRadioIconSize}
     , m_iconCaptionLineCount{1}
     , m_rowHeight{0}
@@ -488,6 +489,7 @@ void RadioBrowserModel::setStations(const RadioStationList& stations)
     beginResetModel();
     m_stations = stations;
     m_placeholderIcons.clear();
+    m_pinnedPlaceholderIcons.clear();
     if(!m_apiSortingEnabled) {
         sortStations();
     }
@@ -548,6 +550,7 @@ void RadioBrowserModel::setIconSize(const QSize& size)
     }
 
     m_placeholderIcons.clear();
+    m_pinnedPlaceholderIcons.clear();
     if(rowCount({}) > 0) {
         Q_EMIT dataChanged(index(0, Station), index(rowCount({}) - 1, Station), {Qt::DecorationRole});
     }
@@ -681,13 +684,16 @@ RadioStation RadioBrowserModel::stationAt(const int row) const
     return m_stations.at(row);
 }
 
-void RadioBrowserModel::requestIcons(const QModelIndexList& indexes)
+void RadioBrowserModel::setVisibleIcons(QObject* owner, const QModelIndexList& indexes)
 {
-    if(!m_iconProvider) {
+    if(!owner) {
         return;
     }
 
     QSet<int> requestedRows;
+    RadioStationList visibleStations;
+    std::set<QString> placeholderKeys;
+
     for(const QModelIndex& index : indexes) {
         const int row = index.row();
         if(!index.isValid() || requestedRows.contains(row) || row < 0
@@ -696,61 +702,50 @@ void RadioBrowserModel::requestIcons(const QModelIndexList& indexes)
         }
 
         requestedRows.insert(row);
-        m_iconProvider->requestIcon(m_stations.at(row), iconBucketSize());
+        const RadioStation& station = m_stations.at(row);
+        visibleStations.push_back(station);
+        placeholderKeys.emplace(placeholderCacheKey(station));
+    }
+
+    if(placeholderKeys.empty()) {
+        m_visiblePlaceholderKeys.erase(owner);
+    }
+    else {
+        const bool knownOwner = m_visiblePlaceholderKeys.contains(owner);
+        m_visiblePlaceholderKeys.insert_or_assign(owner, std::move(placeholderKeys));
+        if(!knownOwner) {
+            QObject::connect(owner, &QObject::destroyed, this, [this, owner]() { clearVisibleIcons(owner); });
+        }
+    }
+
+    rebuildPinnedPlaceholderIcons();
+
+    if(m_iconProvider) {
+        m_iconProvider->setVisibleIcons(owner, visibleStations, iconBucketSize());
+    }
+}
+
+void RadioBrowserModel::clearVisibleIcons(QObject* owner)
+{
+    if(!owner) {
+        return;
+    }
+
+    m_visiblePlaceholderKeys.erase(owner);
+    rebuildPinnedPlaceholderIcons();
+
+    if(m_iconProvider) {
+        m_iconProvider->clearVisibleIcons(owner);
     }
 }
 
 void RadioBrowserModel::refreshIcons()
 {
     m_placeholderIcons.clear();
+    m_pinnedPlaceholderIcons.clear();
     if(rowCount({}) > 0) {
         Q_EMIT dataChanged(index(0, 0), index(rowCount({}) - 1, columnCount({}) - 1), {Qt::DecorationRole});
     }
-}
-
-bool RadioBrowserModel::isCurrentStation(const RadioStation& station) const
-{
-    return m_currentStation.sameCurrentStationIdentity(station);
-}
-
-int RadioBrowserModel::iconBucketSize() const
-{
-    return radioIconBucketSize(m_iconSize);
-}
-
-QIcon RadioBrowserModel::stationIcon(const RadioStation& station) const
-{
-    if(m_iconProvider) {
-        const QIcon icon = m_iconProvider->icon(station, iconBucketSize());
-        if(!icon.isNull()) {
-            return icon;
-        }
-    }
-    return placeholderIcon(station);
-}
-
-QIcon RadioBrowserModel::placeholderIcon(const RadioStation& station) const
-{
-    const QString cacheKey
-        = u"%1#%2"_s.arg(station.uuid.isEmpty() ? station.name : station.uuid, QString::number(iconBucketSize()));
-    if(auto* icon = m_placeholderIcons.object(cacheKey)) {
-        return *icon;
-    }
-
-    auto* icon = new QIcon{Utils::placeholderIcon(station, iconBucketSize())};
-    m_placeholderIcons.insert(cacheKey, icon);
-    return *icon;
-}
-
-bool RadioBrowserModel::isSavedStation(const RadioStation& station) const
-{
-    const QString key = station.stationKey();
-    if(key.isEmpty()) {
-        return false;
-    }
-
-    return std::ranges::any_of(m_savedStations,
-                               [&key](const RadioStation& savedStation) { return savedStation.stationKey() == key; });
 }
 
 void RadioBrowserModel::sort(int column, const Qt::SortOrder order)
@@ -859,6 +854,87 @@ void RadioBrowserModel::updateIconCaptionLineCount()
     m_iconCaptionLineCount = lineCount;
 }
 
+bool RadioBrowserModel::isCurrentStation(const RadioStation& station) const
+{
+    return m_currentStation.sameCurrentStationIdentity(station);
+}
+
+int RadioBrowserModel::iconBucketSize() const
+{
+    return radioIconBucketSize(m_iconSize);
+}
+
+QIcon RadioBrowserModel::stationIcon(const RadioStation& station) const
+{
+    if(m_iconProvider) {
+        const QIcon icon = m_iconProvider->icon(station, iconBucketSize());
+        if(!icon.isNull()) {
+            return icon;
+        }
+    }
+    return placeholderIcon(station);
+}
+
+QIcon RadioBrowserModel::placeholderIcon(const RadioStation& station) const
+{
+    const QString cacheKey = placeholderCacheKey(station);
+
+    if(const auto pinned = m_pinnedPlaceholderIcons.find(cacheKey); pinned != m_pinnedPlaceholderIcons.cend()) {
+        return pinned->second;
+    }
+    if(auto* icon = m_placeholderIcons.object(cacheKey)) {
+        return *icon;
+    }
+
+    const QIcon icon   = Utils::placeholderIcon(station, iconBucketSize());
+    const int iconSize = iconBucketSize();
+    m_placeholderIcons.insert(cacheKey, new QIcon{icon}, static_cast<qsizetype>(iconSize) * iconSize * 4);
+
+    const bool visible
+        = std::ranges::any_of(m_visiblePlaceholderKeys | std::views::values,
+                              [&cacheKey](const std::set<QString>& keys) { return keys.contains(cacheKey); });
+    if(visible) {
+        m_pinnedPlaceholderIcons.insert_or_assign(cacheKey, icon);
+    }
+
+    return icon;
+}
+
+QString RadioBrowserModel::placeholderCacheKey(const RadioStation& station) const
+{
+    return u"%1#%2"_s.arg(station.uuid.isEmpty() ? station.name : station.uuid, QString::number(iconBucketSize()));
+}
+
+void RadioBrowserModel::rebuildPinnedPlaceholderIcons()
+{
+    std::set<QString> visibleKeys;
+    for(const auto& keys : m_visiblePlaceholderKeys | std::views::values) {
+        visibleKeys.insert(keys.cbegin(), keys.cend());
+    }
+
+    std::erase_if(m_pinnedPlaceholderIcons,
+                  [&visibleKeys](const auto& item) { return !visibleKeys.contains(item.first); });
+
+    for(const QString& key : visibleKeys) {
+        if(!m_pinnedPlaceholderIcons.contains(key)) {
+            if(auto* icon = m_placeholderIcons.object(key)) {
+                m_pinnedPlaceholderIcons.emplace(key, *icon);
+            }
+        }
+    }
+}
+
+bool RadioBrowserModel::isSavedStation(const RadioStation& station) const
+{
+    const QString key = station.stationKey();
+    if(key.isEmpty()) {
+        return false;
+    }
+
+    return std::ranges::any_of(m_savedStations,
+                               [&key](const RadioStation& savedStation) { return savedStation.stationKey() == key; });
+}
+
 void RadioBrowserModel::handleIconLoaded(const QString& favicon)
 {
     if(favicon.isEmpty()) {
@@ -867,6 +943,9 @@ void RadioBrowserModel::handleIconLoaded(const QString& favicon)
 
     for(int row{0}; std::cmp_less(row, m_stations.size()); ++row) {
         if(m_stations.at(row).favicon.trimmed() == favicon) {
+            const QString placeholderKey = placeholderCacheKey(m_stations.at(row));
+            m_placeholderIcons.remove(placeholderKey);
+            m_pinnedPlaceholderIcons.erase(placeholderKey);
             Q_EMIT dataChanged(index(row, Station), index(row, Station), {Qt::DecorationRole});
         }
     }

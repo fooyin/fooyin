@@ -34,6 +34,7 @@
 class QPoint;
 class QJsonObject;
 class QAction;
+class QHideEvent;
 class QModelIndex;
 class QMenu;
 
@@ -126,6 +127,7 @@ Q_SIGNALS:
     void sendClicksChanged(bool enabled);
 
 protected:
+    void hideEvent(QHideEvent* event) override;
     void showEvent(QShowEvent* event) override;
     void openConfigDialog() override;
 

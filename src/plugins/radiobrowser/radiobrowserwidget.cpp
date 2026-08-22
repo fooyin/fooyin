@@ -37,6 +37,7 @@
 #include <QDialog>
 #include <QGridLayout>
 #include <QGuiApplication>
+#include <QHideEvent>
 #include <QInputDialog>
 #include <QItemSelectionModel>
 #include <QJsonObject>
@@ -346,6 +347,8 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
 
 RadioBrowserWidget::~RadioBrowserWidget()
 {
+    m_model->clearVisibleIcons(this);
+
     const auto menus = findChildren<QMenu*>();
     for(QMenu* menu : menus) {
         menu->close();
@@ -761,6 +764,12 @@ void RadioBrowserWidget::showEvent(QShowEvent* event)
 {
     FyWidget::showEvent(event);
     scheduleVisibleIconRequest();
+}
+
+void RadioBrowserWidget::hideEvent(QHideEvent* event)
+{
+    m_model->clearVisibleIcons(this);
+    FyWidget::hideEvent(event);
 }
 
 void RadioBrowserWidget::openConfigDialog()
@@ -1248,10 +1257,11 @@ void RadioBrowserWidget::scheduleVisibleIconRequest()
 void RadioBrowserWidget::requestVisibleIcons()
 {
     if(!m_viewConfig.showIcons) {
+        m_model->clearVisibleIcons(this);
         return;
     }
 
-    m_model->requestIcons(m_resultsView->visibleIndexes(128));
+    m_model->setVisibleIcons(this, m_resultsView->visibleIndexes(128));
 }
 
 void RadioBrowserWidget::maybeLoadMoreStations()
@@ -1969,6 +1979,7 @@ void RadioBrowserWidget::setViewConfig(const ConfigData::ViewConfig& config, con
     }
 
     const QSize previousIconSize{m_config.view.iconSize};
+    const bool previouslyShowedIcons{m_config.view.showIcons};
     m_config.view = m_viewConfig;
 
     ViewState& activeState = (m_viewConfig.separateSavedStationsViewState && m_browsingSavedStations)
@@ -2009,7 +2020,7 @@ void RadioBrowserWidget::setViewConfig(const ConfigData::ViewConfig& config, con
     m_model->setShowIcons(m_viewConfig.showIcons);
     updateIconColumnOrder();
 
-    if(previousIconSize != m_viewConfig.iconSize) {
+    if(previousIconSize != m_viewConfig.iconSize || previouslyShowedIcons != m_viewConfig.showIcons) {
         scheduleVisibleIconRequest();
     }
 
