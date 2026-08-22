@@ -138,16 +138,12 @@ void LibraryScanSession::flushWriter(const bool finalFlush)
         return;
     }
 
-    const auto previousPhase = m_phase;
-    m_state.setProgressPhase(ScanProgress::Phase::WritingDatabase, 0);
-    m_state.reportProgress({});
-    m_writer.flush();
-
-    if(!finalFlush) {
-        const size_t total = previousPhase == ScanProgress::Phase::Finished ? m_state.filesScannedCount() : 0;
-        m_state.setProgressPhase(previousPhase, total);
+    if(finalFlush) {
+        m_state.setProgressPhase(ScanProgress::Phase::WritingDatabase, 0);
         m_state.reportProgress({});
     }
+
+    m_writer.flush();
 }
 
 void LibraryScanSession::maybeFlushWriter()
