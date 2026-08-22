@@ -68,6 +68,7 @@ QString doclink(const QStringList& vec);
 QString cmdlink(const QStringList& vec);
 QString urlencode(const QStringList& vec);
 QString crc32(const QStringList& vec);
+QString hex(const QStringList& vec);
 
 QString sep();
 

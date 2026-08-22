@@ -689,6 +689,7 @@ void ScriptRegistry::addDefaultFunctions()
     registerFunction(u"round"_s, makeScriptFunctionInvoker<Scripting::round>());
 
     registerFunction(u"num"_s, makeScriptFunctionInvoker<Scripting::num>());
+    registerFunction(u"hex"_s, makeScriptFunctionInvoker<Scripting::hex>());
     registerFunction(u"replace"_s, makeScriptFunctionInvoker<Scripting::replace>());
     registerFunction(u"regex_replace"_s, makeScriptFunctionInvoker<Scripting::regexReplace>());
     registerFunction(u"regex_match"_s, makeScriptFunctionInvoker<Scripting::regexMatch>());

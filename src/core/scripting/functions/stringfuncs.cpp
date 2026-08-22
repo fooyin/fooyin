@@ -927,6 +927,26 @@ QString crc32(const QStringList& values)
     return QString::number(crc);
 }
 
+QString hex(const QStringList& vec)
+{
+    if(vec.size() != 2) {
+        return {};
+    }
+
+    bool isInt{false};
+    const qlonglong number = vec.at(0).toLongLong(&isInt);
+    if(!isInt) {
+        return {};
+    }
+
+    const int length = vec.at(1).toInt(&isInt);
+    if(!isInt) {
+        return {};
+    }
+
+    return u"%1"_s.arg(number, length, 16, QLatin1Char{'0'}).toUpper();
+}
+
 QString sep()
 {
     return QDir::separator();
