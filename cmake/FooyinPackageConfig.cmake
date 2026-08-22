@@ -61,6 +61,14 @@ if(CPACK_GENERATOR STREQUAL "DEB")
         resolute "libqt6core6t64 (>= 6.4.0), libqt6gui6 (>= 6.4.0), libqt6widgets6 (>= 6.4.0), libqt6network6 (>= 6.4.0), libqt6concurrent6 (>= 6.4.0), libqt6sql6 (>= 6.4.0)"
     )
 
+    set(DISTRO_DEB_REVISION_MAP
+        bookworm "1~debian.12~bookworm"
+        trixie   "1~debian.13~trixie"
+        forky    "1~debian.14~forky"
+        noble    "1~ubuntu.24.04~noble"
+        resolute "1~ubuntu.26.04~resolute"
+    )
+
     # cmake-format: on
 
     function(get_distro_package map_name distro out_var)
@@ -83,12 +91,13 @@ if(CPACK_GENERATOR STREQUAL "DEB")
     get_distro_package(DISTRO_ICU_PACKAGE_MAP "${DIST_RELEASE}" ICU_PKG)
     get_distro_package(DISTRO_TAGLIB_PACKAGE_MAP "${DIST_RELEASE}" TAGLIB_PKG)
     get_distro_package(DISTRO_QT_PACKAGE_MAP "${DIST_RELEASE}" QT_PKGS)
+    get_distro_package(DISTRO_DEB_REVISION_MAP "${DIST_RELEASE}" DEB_REVISION)
 
-    if(NOT QT_PKGS)
-        message(
-            FATAL_ERROR "Unsupported distribution '${DIST_RELEASE}', update Qt runtime dependencies for cpack -G DEB"
-        )
+    if(NOT QT_PKGS OR NOT DEB_REVISION)
+        message(FATAL_ERROR "Unsupported distribution '${DIST_RELEASE}', update DEB packaging metadata")
     endif()
+
+    set(CPACK_DEBIAN_PACKAGE_RELEASE "${DEB_REVISION}")
 
     foreach(pkg IN ITEMS "${ICU_PKG}" "${TAGLIB_PKG}" "${QT_PKGS}")
         if(pkg)
