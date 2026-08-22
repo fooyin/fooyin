@@ -8,7 +8,6 @@ dnf -y install --skip-broken \
      rpmdevtools \
      tar \
      desktop-file-utils \
-     ccache \
      zstd \
      bison \
      flex \

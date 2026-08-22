@@ -6,7 +6,6 @@ brew untap aws/tap || true
 
 brew update
 brew install \
-    ccache \
     bison \
     flex \
     cmake \

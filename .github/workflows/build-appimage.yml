@@ -10,13 +10,8 @@ on:
 
 env:
   FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
-  BUILD_CCACHE: ON
+  BUILD_CCACHE: OFF
   BUILD_PCH: ON
-  CCACHE_DIR: ${{ github.workspace }}/.ccache
-  CCACHE_BASEDIR: ${{ github.workspace }}
-  CCACHE_MAXSIZE: 1G
-  CCACHE_COMPILERCHECK: content
-  CCACHE_SLOPPINESS: pch_defines,time_macros
 
 jobs:
   appimage:
@@ -52,15 +47,6 @@ jobs:
             file \
             patchelf \
             qt6-wayland
-
-      - name: Cache ccache
-        if: env.BUILD_CCACHE == 'ON'
-        uses: actions/cache@v6
-        with:
-          path: ${{ env.CCACHE_DIR }}
-          key: appimage-debian-bookworm-${{ matrix.arch }}-ccache-${{ github.sha }}
-          restore-keys: |
-            appimage-debian-bookworm-${{ matrix.arch }}-ccache-
 
       - name: Build AppImage
         run: |

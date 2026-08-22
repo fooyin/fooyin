@@ -6,7 +6,6 @@ sudo pkg install -y \
      git \
      bison \
      flex \
-     ccache \
      cmake-core \
      pkgconf \
      ninja \
