@@ -145,8 +145,8 @@ void ReplayGainModeSelector::setShowLabel(bool showLabel)
     m_showLabel = showLabel;
     m_label->setVisible(m_showLabel);
     m_combo->setItemText(m_combo->findData(DisabledMode), m_showLabel ? tr("Disabled") : tr("ReplayGain disabled"));
+    m_combo->invalidateSizeHint();
     m_combo->resizeDropDown();
-    m_combo->updateGeometry();
     updateGeometry();
 }
 
