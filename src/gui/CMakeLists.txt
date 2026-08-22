@@ -117,6 +117,8 @@ set(SOURCES
     controls/dspchainselector.h
     controls/outputselector.cpp
     controls/outputselector.h
+    controls/replaygainmodeselector.cpp
+    controls/replaygainmodeselector.h
     controls/seekbar.cpp
     controls/seekbar.h
     controls/volumecontrol.cpp

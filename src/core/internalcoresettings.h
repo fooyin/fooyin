@@ -113,6 +113,7 @@ enum CoreInternalSettings : uint32_t
     OutputAutoResample        = 25 | Type::Bool,
     OutputResamplerPreference = 26 | Type::StringList,
     PlaylistSkipUnavailable   = 27 | Type::Bool,
+    ReplayGainLastActiveMode  = 28 | Type::Int,
 };
 Q_ENUM_NS(CoreInternalSettings)
 } // namespace Settings::Core::Internal

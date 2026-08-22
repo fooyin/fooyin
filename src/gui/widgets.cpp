@@ -28,6 +28,7 @@
 #include "controls/outputselector.h"
 #include "controls/playercontrol.h"
 #include "controls/playlistcontrol.h"
+#include "controls/replaygainmodeselector.h"
 #include "controls/seekbar.h"
 #include "controls/volumecontrol.h"
 #include "dirbrowser/dirbrowser.h"
@@ -281,6 +282,11 @@ void Widgets::registerWidgets()
         u"OutputSelector"_s, [this]() { return new OutputSelector(m_outputProfileManager, m_settings, m_window); },
         tr("Output Selector"));
     provider->setSubMenus(u"OutputSelector"_s, {tr("Controls")});
+
+    provider->registerWidget(
+        u"ReplayGainMode"_s, [this]() { return new ReplayGainModeSelector(m_settings, m_window); },
+        tr("ReplayGain Mode"));
+    provider->setSubMenus(u"ReplayGainMode"_s, {tr("Controls")});
 
     provider->registerWidget(
         u"DspSelector"_s,

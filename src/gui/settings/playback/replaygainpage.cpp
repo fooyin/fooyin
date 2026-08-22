@@ -50,6 +50,9 @@ public:
     void reset() override;
 
 private:
+    void updateMode(int mode);
+    void updateType(int type);
+
     SettingsManager* m_settings;
 
     QRadioButton* m_disabled;
@@ -141,26 +144,37 @@ ReplayGainPageWidget::ReplayGainPageWidget(SettingsManager* settings)
     layout->addWidget(preAmpGroup, row++, 0);
 
     layout->setRowStretch(layout->rowCount(), 1);
+
+    m_settings->subscribe<Settings::Core::RGMode>(this, &ReplayGainPageWidget::updateMode);
+    m_settings->subscribe<Settings::Core::RGType>(this, &ReplayGainPageWidget::updateType);
 }
 
 void ReplayGainPageWidget::load()
 {
-    const auto mode = static_cast<Engine::RGProcessing>(m_settings->value<Settings::Core::RGMode>());
-    m_disabled->setChecked(mode == Engine::NoProcessing);
-    m_applyGain->setChecked(mode == Engine::ApplyGain);
-    m_applyGainClipping->setChecked(mode
-                                    == static_cast<Engine::RGProcessing>(Engine::ApplyGain | Engine::PreventClipping));
-    m_clipping->setChecked(mode == Engine::PreventClipping);
-
-    const auto gainType = static_cast<ReplayGainType>(m_settings->value<Settings::Core::RGType>());
-    m_trackGain->setChecked(gainType == ReplayGainType::Track);
-    m_albumGain->setChecked(gainType == ReplayGainType::Album);
-    m_orderGain->setChecked(gainType == ReplayGainType::PlaybackOrder);
+    updateMode(m_settings->value<Settings::Core::RGMode>());
+    updateType(m_settings->value<Settings::Core::RGType>());
 
     const auto rgPreAmp = static_cast<double>(m_settings->value<Settings::Core::RGPreAmp>());
     m_rgPreAmp->setValue(rgPreAmp);
     const auto preAmp = static_cast<double>(m_settings->value<Settings::Core::NonRGPreAmp>());
     m_preAmp->setValue(preAmp);
+}
+
+void ReplayGainPageWidget::updateMode(int modeValue)
+{
+    const auto mode = static_cast<Engine::RGProcessing>(modeValue);
+    m_disabled->setChecked(mode == Engine::NoProcessing);
+    m_applyGain->setChecked(mode == Engine::ApplyGain);
+    m_applyGainClipping->setChecked(mode == (Engine::ApplyGain | Engine::PreventClipping));
+    m_clipping->setChecked(mode == Engine::PreventClipping);
+}
+
+void ReplayGainPageWidget::updateType(int typeValue)
+{
+    const auto gainType = static_cast<ReplayGainType>(typeValue);
+    m_trackGain->setChecked(gainType == ReplayGainType::Track);
+    m_albumGain->setChecked(gainType == ReplayGainType::Album);
+    m_orderGain->setChecked(gainType == ReplayGainType::PlaybackOrder);
 }
 
 void ReplayGainPageWidget::apply()
@@ -199,6 +213,7 @@ void ReplayGainPageWidget::apply()
 void ReplayGainPageWidget::reset()
 {
     m_settings->reset<Settings::Core::RGMode>();
+    m_settings->reset<Settings::Core::Internal::ReplayGainLastActiveMode>();
     m_settings->reset<Settings::Core::RGType>();
     m_settings->reset<Settings::Core::RGPreAmp>();
     m_settings->reset<Settings::Core::NonRGPreAmp>();

@@ -97,6 +97,8 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<StopAfterCurrent>(false, u"Playback/StopAfterCurrent"_s);
     m_settings->createSetting<RGMode>(0, u"Engine/ReplayGainMode"_s);
     m_settings->createSetting<RGType>(static_cast<int>(ReplayGainType::Track), u"Engine/ReplayGainType"_s);
+    m_settings->createSetting<Internal::ReplayGainLastActiveMode>(static_cast<int>(Engine::ApplyGain),
+                                                                  u"Engine/ReplayGainLastActiveMode"_s);
     m_settings->createSetting<RGPreAmp>(0.0F, u"Engine/ReplayGainPreAmp"_s);
     m_settings->createSetting<NonRGPreAmp>(0.0F, u"Engine/NonReplayGainPreAmp"_s);
     m_settings->createSetting<UseVariousForCompilations>(false, u"Library/UseVariousArtistsForCompilations"_s);
@@ -161,11 +163,21 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 
+    const int rgMode = m_settings->value<RGMode>();
+    if(rgMode != Engine::NoProcessing) {
+        m_settings->set<Internal::ReplayGainLastActiveMode>(rgMode);
+    }
+    m_settings->subscribe<RGMode>(m_settings, [settings = m_settings](int mode) {
+        if(mode != Engine::NoProcessing) {
+            settings->set<Internal::ReplayGainLastActiveMode>(mode);
+        }
+    });
+
     auto logLevel = m_settings->fileValue(LogLevel, QtInfoMsg);
     bool newLogFormat{false};
     int level = logLevel.toInt(&newLogFormat);
     if(!newLogFormat) {
-        level = QtMsgType::QtInfoMsg;
+        level = QtInfoMsg;
     }
     MessageHandler::setLevel(static_cast<QtMsgType>(level));
 }
