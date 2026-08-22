@@ -403,9 +403,9 @@ using ReaderCreator = std::function<std::unique_ptr<AudioReader>()>;
 class FYCORE_EXPORT ArchiveReader
 {
 public:
-    using ReadEntryCallback      = std::function<void(ArchiveEntryData&&)>;
-    using ReadEntryInfoCallback  = std::function<bool(const ArchiveEntryInfo&)>;
-    using ShouldContinueCallback = std::function<bool()>;
+    using ReadEntryCallback     = std::function<void(ArchiveEntryData&&)>;
+    using ReadEntryInfoCallback = std::function<bool(const ArchiveEntryInfo&)>;
+    using StopRequestedCallback = std::function<bool()>;
 
     virtual ~ArchiveReader() = default;
 
@@ -435,24 +435,26 @@ public:
     /*!
      * Copies the file within the archive at @p file into @p device.
      * If the file can't be found or writing fails, this should return false.
+     * Long-running archive reads should stop when @p stopRequested returns true.
      * @note Called only after `init()` returns true.
      */
-    virtual bool copyEntryToDevice(const QString& file, QIODevice* device,
-                                   const ShouldContinueCallback& shouldContinue);
+    virtual bool copyEntryToDevice(const QString& file, QIODevice* device, const StopRequestedCallback& stopRequested);
     /*!
      * Reads metadata for all entries in the archive.
      * The callback @p readEntry should return false to stop iteration.
+     * Long-running archive reads should stop when @p stopRequested returns true.
      * @returns true if entries were read successfully.
      * @note Called only after `init()` returns true.
      */
-    virtual bool readEntries(const ReadEntryInfoCallback& readEntry);
+    virtual bool readEntries(const ReadEntryInfoCallback& readEntry, const StopRequestedCallback& stopRequested);
     /*!
      * Reads all files in the archive.
      * The callback @p readEntry should be used to read each file in the archive.
+     * Long-running entry reads should stop when @p stopRequested returns true.
      * @returns true if tracks were read successfully.
      * @note Called only after `init()` returns true.
      */
-    virtual bool readTracks(ReadEntryCallback readEntry) = 0;
+    virtual bool readTracks(ReadEntryCallback readEntry, const StopRequestedCallback& stopRequested) = 0;
     /*!
      * Reads artwork within the archive for the given Track @p track.
      * @returns image data.

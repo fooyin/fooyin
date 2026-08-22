@@ -747,7 +747,7 @@ TrackList LibraryTrackResolver::readArchiveTracks(const QString& filepath)
         }
     };
 
-    if(archiveReader->readTracks(readEntry)) {
+    if(archiveReader->readTracks(readEntry, [this]() { return m_state->stopRequested(); })) {
         qCDebug(LIB_SCANNER) << "Indexed" << tracks.size() << "tracks in" << filepath;
         return tracks;
     }

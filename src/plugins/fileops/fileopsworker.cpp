@@ -510,9 +510,6 @@ void FileOpsWorker::simulateExtract()
 
             archiveReader->readEntries(
                 [this, &track, &destPath, &script, &archiveTracks](const ArchiveEntryInfo& entry) {
-                    if(!mayRun()) {
-                        return false;
-                    }
                     if(!entry.isRegularFile) {
                         return true;
                     }
@@ -542,7 +539,8 @@ void FileOpsWorker::simulateExtract()
                     item.archiveEntry = entryPath;
                     m_operations.emplace_back(std::move(item));
                     return true;
-                });
+                },
+                [this]() { return !mayRun(); });
 
             if(m_preset.removeSourceArchive) {
                 FileOpsItem item;
@@ -689,7 +687,7 @@ FileOpResult FileOpsWorker::extractFile(const FileOpsItem& item)
         return {.operation = item, .status = FileOpStatus::Failed, .error = file.errorString()};
     }
 
-    if(!archiveReader->copyEntryToDevice(item.archiveEntry, &file, [this]() { return mayRun(); })) {
+    if(!archiveReader->copyEntryToDevice(item.archiveEntry, &file, [this]() { return !mayRun(); })) {
         qCWarning(FILEOPS) << "Failed to extract archive entry" << item.archiveEntry << "from" << item.archivePath
                            << "to" << item.destination;
         file.close();

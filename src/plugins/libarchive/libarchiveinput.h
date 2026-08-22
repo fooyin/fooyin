@@ -23,7 +23,7 @@
 #include <core/engine/audioloader.h>
 
 #include <QBuffer>
-#include <QFile>
+#include <QTemporaryFile>
 
 #include <archive.h>
 
@@ -48,11 +48,14 @@ class LibArchiveIODevice : public QIODevice
     Q_OBJECT
 
 public:
-    LibArchiveIODevice(ArchivePtr archive, archive_entry* entry, QObject* parent = nullptr);
+    LibArchiveIODevice(ArchivePtr archive, archive_entry* entry, QString archiveFile = {}, QString entryPath = {},
+                       ArchiveReader::StopRequestedCallback stopRequested = {}, QObject* parent = nullptr);
     ~LibArchiveIODevice() override;
 
     bool seek(qint64 pos) override;
     [[nodiscard]] qint64 size() const override;
+
+    [[nodiscard]] bool failed() const;
 
     archive* releaseArchive();
 
@@ -61,9 +64,21 @@ protected:
     qint64 writeData(const char* data, qint64 len) override;
 
 private:
+    bool stopRequested();
+    bool appendToBuffer(const char* data, qint64 len);
+    bool switchToTemporaryFile();
+    QIODevice* bufferDevice();
+    void setArchiveError(const char* operation);
+
     ArchivePtr m_archive;
     archive_entry* m_entry;
+    QString m_archiveFile;
+    QString m_entryPath;
+    ArchiveReader::StopRequestedCallback m_stopRequested;
     QBuffer m_buffer;
+    std::unique_ptr<QTemporaryFile> m_tempFile;
+    qint64 m_memoryLimit;
+    bool m_failed;
 };
 
 class LibArchiveReader : public ArchiveReader
@@ -74,10 +89,9 @@ public:
 
     bool init(const QString& file) override;
     ArchiveEntryData entry(const QString& file) override;
-    bool copyEntryToDevice(const QString& file, QIODevice* device,
-                           const ShouldContinueCallback& shouldContinue) override;
-    bool readEntries(const ReadEntryInfoCallback& readEntry) override;
-    bool readTracks(ReadEntryCallback readEntry) override;
+    bool copyEntryToDevice(const QString& file, QIODevice* device, const StopRequestedCallback& stopRequested) override;
+    bool readEntries(const ReadEntryInfoCallback& readEntry, const StopRequestedCallback& stopRequested) override;
+    bool readTracks(ReadEntryCallback readEntry, const StopRequestedCallback& stopRequested) override;
     QByteArray readCover(const Track& track, Track::Cover cover) override;
 
 private:

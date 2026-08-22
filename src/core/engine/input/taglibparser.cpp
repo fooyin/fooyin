@@ -123,7 +123,6 @@ public:
         std::vector<char> data(length);
         const auto lenRead = m_input->read(data.data(), static_cast<qint64>(length));
         if(lenRead < 0) {
-            m_input->close();
             return {};
         }
         return TagLib::ByteVector{data.data(), static_cast<unsigned int>(lenRead)};

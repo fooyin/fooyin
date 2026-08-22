@@ -362,9 +362,12 @@ public:
         };
     }
 
-    bool readTracks(ReadEntryCallback readEntry) override
+    bool readTracks(ReadEntryCallback readEntry, const StopRequestedCallback& stopRequested) override
     {
         for(const auto& path : m_state->entries | std::views::keys) {
+            if(stopRequested && stopRequested()) {
+                return false;
+            }
             readEntry(entry(path));
         }
         return true;

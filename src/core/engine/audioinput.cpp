@@ -163,7 +163,7 @@ bool AudioReader::writeCover(const AudioSource& /*source*/, const Track& /*track
 }
 
 bool ArchiveReader::copyEntryToDevice(const QString& file, QIODevice* device,
-                                      const ShouldContinueCallback& shouldContinue)
+                                      const StopRequestedCallback& stopRequested)
 {
     if(!device || !device->isWritable()) {
         return false;
@@ -175,7 +175,7 @@ bool ArchiveReader::copyEntryToDevice(const QString& file, QIODevice* device,
     }
 
     std::array<char, 64UL * 1024> buffer{};
-    while(shouldContinue()) {
+    while(!stopRequested()) {
         const qint64 read = entryData.device->read(buffer.data(), buffer.size());
         if(read == 0) {
             return true;
@@ -186,7 +186,7 @@ bool ArchiveReader::copyEntryToDevice(const QString& file, QIODevice* device,
 
         qint64 writtenTotal{0};
         while(writtenTotal < read) {
-            if(!shouldContinue()) {
+            if(stopRequested()) {
                 return false;
             }
             const qint64 written = device->write(buffer.data() + writtenTotal, read - writtenTotal);
@@ -200,14 +200,18 @@ bool ArchiveReader::copyEntryToDevice(const QString& file, QIODevice* device,
     return false;
 }
 
-bool ArchiveReader::readEntries(const ReadEntryInfoCallback& readEntry)
+bool ArchiveReader::readEntries(const ReadEntryInfoCallback& readEntry, const StopRequestedCallback& stopRequested)
 {
     bool keepReading{true};
-    return readTracks([&readEntry, &keepReading](ArchiveEntryData&& entryData) {
-        if(!readEntry || !keepReading) {
-            return;
-        }
-        keepReading = readEntry(entryData.info);
-    });
+    const bool result = readTracks(
+        [&readEntry, &keepReading](ArchiveEntryData&& entryData) {
+            if(!readEntry || !keepReading) {
+                return;
+            }
+            keepReading = readEntry(entryData.info);
+        },
+        [&keepReading, &stopRequested]() { return !keepReading || stopRequested(); });
+
+    return !keepReading || result;
 }
 } // namespace Fooyin

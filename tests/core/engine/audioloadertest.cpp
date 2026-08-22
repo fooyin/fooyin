@@ -35,8 +35,8 @@
 #include <chrono>
 #include <map>
 #include <memory>
+#include <ranges>
 #include <stop_token>
-#include <utility>
 #include <vector>
 
 using namespace Qt::StringLiterals;
@@ -483,10 +483,14 @@ public:
         };
     }
 
-    bool readTracks(ReadEntryCallback readEntry) override
+    bool readTracks(ReadEntryCallback readEntry, const StopRequestedCallback& stopRequested) override
     {
         ++m_state->readTracksCalls;
-        for(const auto& [path, spec] : m_state->entries) {
+        for(const auto& path : m_state->entries | std::views::keys) {
+            if(stopRequested()) {
+                return false;
+            }
+
             auto entryData = entry(path);
             if(entryData.device) {
                 readEntry(std::move(entryData));
