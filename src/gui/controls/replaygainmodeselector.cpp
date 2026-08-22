@@ -39,7 +39,7 @@ constexpr auto DisabledMode = -1;
 
 constexpr bool isActiveReplayGainMode(int mode)
 {
-    static constexpr int ApplyGainAndPreventClipping = Fooyin::Engine::ApplyGain | Fooyin::Engine::PreventClipping;
+    constexpr int ApplyGainAndPreventClipping = Fooyin::Engine::ApplyGain | Fooyin::Engine::PreventClipping;
 
     return mode == Fooyin::Engine::ApplyGain || mode == Fooyin::Engine::PreventClipping
         || mode == ApplyGainAndPreventClipping;
