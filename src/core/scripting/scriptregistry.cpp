@@ -690,6 +690,9 @@ void ScriptRegistry::addDefaultFunctions()
 
     registerFunction(u"num"_s, makeScriptFunctionInvoker<Scripting::num>());
     registerFunction(u"replace"_s, makeScriptFunctionInvoker<Scripting::replace>());
+    registerFunction(u"regex_replace"_s, makeScriptFunctionInvoker<Scripting::regexReplace>());
+    registerFunction(u"regex_match"_s, makeScriptFunctionInvoker<Scripting::regexMatch>());
+    registerFunction(u"regex_matches"_s, makeScriptFunctionInvoker<Scripting::regexMatches>());
     registerFunction(u"ascii"_s, makeScriptFunctionInvoker<Scripting::ascii>());
     registerFunction(u"slice"_s, makeScriptFunctionInvoker<Scripting::slice>());
     registerFunction(u"chop"_s, makeScriptFunctionInvoker<Scripting::chop>());
@@ -707,6 +710,7 @@ void ScriptRegistry::addDefaultFunctions()
     registerFunction(u"longest"_s, makeScriptFunctionInvoker<Scripting::longest>());
     registerFunction(u"strcmp"_s, makeScriptFunctionInvoker<Scripting::strcmp>());
     registerFunction(u"stricmp"_s, makeScriptFunctionInvoker<Scripting::stricmp>());
+    registerFunction(u"regex_test"_s, makeScriptFunctionInvoker<Scripting::regexTest>());
     registerFunction(u"longer"_s, makeScriptFunctionInvoker<Scripting::longer>());
     registerFunction(u"sep"_s, makeScriptFunctionInvoker<Scripting::sep>());
     registerFunction(u"crlf"_s, makeScriptFunctionInvoker<Scripting::crlf>());

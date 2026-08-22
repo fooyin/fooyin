@@ -577,6 +577,29 @@ TEST_F(ScriptParserTest, MetadataTest)
     EXPECT_EQ(u"", m_parser.evaluate(u"[%disc% - %track%]"_s, track));
 }
 
+TEST_F(ScriptParserTest, RegexTest)
+{
+    EXPECT_EQ(u"true", m_parser.evaluate(uR"REGEX($if($regex_test(Track 42,"^Track \\d+$"),true,false))REGEX"_s));
+    EXPECT_EQ(u"true", m_parser.evaluate(uR"REGEX($if($regex_test(FOOYIN,"^fooyin$",i),true,false))REGEX"_s));
+    EXPECT_EQ(u"false", m_parser.evaluate(uR"REGEX($if($regex_test(FOOYIN,"^fooyin$"),true,false))REGEX"_s));
+    EXPECT_EQ(u"false", m_parser.evaluate(uR"REGEX($if($regex_test(text,"["),true,false))REGEX"_s));
+    EXPECT_EQ(u"false", m_parser.evaluate(uR"REGEX($if($regex_test(text,"text",g),true,false))REGEX"_s));
+    EXPECT_EQ(u"Track 42", m_parser.evaluate(uR"REGEX($regex_match(Track 42,"Track (\\d+)"))REGEX"_s));
+    EXPECT_EQ(u"42", m_parser.evaluate(uR"REGEX($regex_match(Track 42,"Track (\\d+)",1))REGEX"_s));
+    EXPECT_EQ(u"FOOYIN", m_parser.evaluate(uR"REGEX($regex_match(FOOYIN,"(fooyin)",1,i))REGEX"_s));
+    EXPECT_EQ(u"42", m_parser.evaluate(uR"REGEX($regex_match(Track 42,"Track (?<number>\\d+)",number))REGEX"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(uR"REGEX($regex_match(Track 42,"Track (\\d+)",2))REGEX"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(uR"REGEX($regex_match(Track 42,"Track (\\d+)",missing))REGEX"_s));
+    EXPECT_EQ(u"A1 / B22 / C333", m_parser.evaluate(uR"REGEX($regex_matches(A1 B22 C333,"[A-Z]\\d+"," / "))REGEX"_s));
+    EXPECT_EQ(u"1 / 22 / 333",
+              m_parser.evaluate(uR"REGEX($regex_matches(A1 B22 C333,"([A-Z])(\\d+)"," / ",2))REGEX"_s));
+    EXPECT_EQ(u"1 / 22 / 333",
+              m_parser.evaluate(uR"REGEX($regex_matches(a1 B22 c333,"([a-z])(\\d+)"," / ",2,i))REGEX"_s));
+    EXPECT_EQ(u"Track #42", m_parser.evaluate(uR"REGEX($regex_replace(Track 42,"(\\d+)","#\\1"))REGEX"_s));
+    EXPECT_EQ(u"one cat two cat", m_parser.evaluate(u"$regex_replace(one DOG two dog,dog,cat,i)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(uR"REGEX($regex_replace(text,"[",replacement))REGEX"_s));
+}
+
 TEST_F(ScriptParserTest, ReplaceCanSanitiseUserFilenameExpression)
 {
     Track track;

@@ -22,15 +22,86 @@
 #include <core/constants.h>
 #include <utils/stringutils.h>
 
+#include <QCache>
 #include <QDir>
 #include <QRegularExpression>
 #include <QUrl>
+
+#include <optional>
 
 #include <zlib.h>
 
 using namespace Qt::StringLiterals;
 
 namespace {
+std::optional<QRegularExpression> regularExpression(const QString& pattern, const QString& flags)
+{
+    QRegularExpression::PatternOptions options{QRegularExpression::UseUnicodePropertiesOption};
+    for(const QChar flag : flags) {
+        switch(flag.unicode()) {
+            case u'i':
+                options |= QRegularExpression::CaseInsensitiveOption;
+                break;
+            case u'm':
+                options |= QRegularExpression::MultilineOption;
+                break;
+            case u's':
+                options |= QRegularExpression::DotMatchesEverythingOption;
+                break;
+            case u'x':
+                options |= QRegularExpression::ExtendedPatternSyntaxOption;
+                break;
+            case u'U':
+                options |= QRegularExpression::InvertedGreedinessOption;
+                break;
+            default:
+                return {};
+        }
+    }
+
+    const QString cacheKey = QString::number(options.toInt()) + u'\0' + pattern;
+    thread_local QCache<QString, QRegularExpression> cache{64};
+    if(const auto* cached = cache.object(cacheKey)) {
+        return *cached;
+    }
+
+    QRegularExpression regex{pattern, options};
+    if(!regex.isValid()) {
+        return {};
+    }
+
+    cache.insert(cacheKey, new QRegularExpression{regex});
+    return regex;
+}
+
+struct RegexCaptureGroup
+{
+    int index{0};
+    QString name;
+};
+
+std::optional<RegexCaptureGroup> regexCaptureGroup(const QRegularExpression& regex, const QString& group)
+{
+    bool isIndex{false};
+    const int index = group.toInt(&isIndex);
+    if(isIndex) {
+        if(index < 0 || index > regex.captureCount()) {
+            return {};
+        }
+        return RegexCaptureGroup{.index = index, .name = {}};
+    }
+
+    if(group.isEmpty() || !regex.namedCaptureGroups().contains(group)) {
+        return {};
+    }
+    return RegexCaptureGroup{.name = group};
+}
+
+QString captured(const QRegularExpressionMatch& match, const RegexCaptureGroup& group)
+{
+    return group.name.isEmpty() ? match.captured(group.index) : match.captured(group.name);
+}
+
 QString strstrHelper(const QStringList& vec, bool reverse, Qt::CaseSensitivity cs)
 {
     const qsizetype count = vec.size();
@@ -150,6 +221,65 @@ QString replace(const QStringList& vec)
     result.append(origStr.sliced(cursor));
 
     return result;
+}
+
+QString regexReplace(const QStringList& vec)
+{
+    if(vec.size() < 3 || vec.size() > 4) {
+        return {};
+    }
+
+    const auto regex = regularExpression(vec.at(1), vec.value(3));
+    if(!regex) {
+        return {};
+    }
+
+    QString result{vec.front()};
+    return result.replace(*regex, vec.at(2));
+}
+
+QString regexMatch(const QStringList& vec)
+{
+    if(vec.size() < 2 || vec.size() > 4) {
+        return {};
+    }
+
+    const auto regex = regularExpression(vec.at(1), vec.value(3));
+    if(!regex) {
+        return {};
+    }
+
+    const auto group = regexCaptureGroup(*regex, vec.size() >= 3 ? vec.at(2) : u"0"_s);
+    if(!group) {
+        return {};
+    }
+
+    const QRegularExpressionMatch match = regex->match(vec.front());
+    return match.hasMatch() ? captured(match, *group) : QString{};
+}
+
+QString regexMatches(const QStringList& vec)
+{
+    if(vec.size() < 3 || vec.size() > 5) {
+        return {};
+    }
+
+    const auto regex = regularExpression(vec.at(1), vec.value(4));
+    if(!regex) {
+        return {};
+    }
+
+    const auto group = regexCaptureGroup(*regex, vec.size() >= 4 ? vec.at(3) : u"0"_s);
+    if(!group) {
+        return {};
+    }
+
+    QStringList matches;
+    auto matchIterator = regex->globalMatch(vec.front());
+    while(matchIterator.hasNext()) {
+        matches.emplace_back(captured(matchIterator.next(), *group));
+    }
+    return matches.join(vec.at(2));
 }
 
 QString ascii(const QStringList& vec)
@@ -818,6 +948,16 @@ ScriptResult stricmp(const QStringList& vec)
     }
 
     return {.value = {}, .cond = QString::compare(vec.at(0), vec.at(1), Qt::CaseInsensitive) == 0};
+}
+
+ScriptResult regexTest(const QStringList& vec)
+{
+    if(vec.size() < 2 || vec.size() > 3) {
+        return {};
+    }
+
+    const auto regex = regularExpression(vec.at(1), vec.value(2));
+    return {.value = {}, .cond = regex && regex->match(vec.front()).hasMatch()};
 }
 
 ScriptResult longer(const QStringList& vec)

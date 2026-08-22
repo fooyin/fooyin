@@ -26,6 +26,9 @@
 namespace Fooyin::Scripting {
 QString num(const QStringList& vec);
 QString replace(const QStringList& vec);
+QString regexReplace(const QStringList& vec);
+QString regexMatch(const QStringList& vec);
+QString regexMatches(const QStringList& vec);
 QString ascii(const QStringList& vec);
 QString slice(const QStringList& vec);
 QString chop(const QStringList& vec);
@@ -70,6 +73,7 @@ QString sep();
 
 ScriptResult strcmp(const QStringList& vec);
 ScriptResult stricmp(const QStringList& vec);
+ScriptResult regexTest(const QStringList& vec);
 ScriptResult longer(const QStringList& vec);
 ScriptResult isalpha(const QStringList& vec);
 ScriptResult isalnum(const QStringList& vec);
