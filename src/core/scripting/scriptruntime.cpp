@@ -371,13 +371,20 @@ Expression ScriptRuntime::quote()
     QString val;
 
     while(!currentToken(TokenType::TokQuote) && !currentToken(TokenType::TokEos)) {
-        advance();
-        val.append(m_previous.value);
         if(currentToken(TokenType::TokEscape)) {
             advance();
-            val.append(m_current.value);
-            advance();
+            if(currentToken(TokenType::TokQuote) || currentToken(TokenType::TokEscape)) {
+                val.append(m_current.value);
+                advance();
+            }
+            else {
+                val.append(m_previous.value);
+            }
+            continue;
         }
+
+        advance();
+        val.append(m_previous.value);
     }
 
     expr.value = val;
