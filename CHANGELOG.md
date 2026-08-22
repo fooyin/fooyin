@@ -4,12 +4,16 @@
 
 ### Improvements
 
-* Artwork: Add configurable corner radii in the Library Tree, Playlist, Queue Viewer, and Filters
+* Artwork: Add configurable proportional corner radii in the Library Tree, Playlist, Queue Viewer, and Filters
+* Radio Browser: Improve visible icon loading and bound cache memory usage
+* Scripting: Add regular expression matching and replacement functions
 
 ### Fixes
 
 * Interface
   - Align rich text using consistent font baselines ([#1476](https://github.com/fooyin/fooyin/issues/1476))
+  - Fix playlist and library searches stuck loading ([#1532](https://github.com/fooyin/fooyin/issues/1532))
+  - Fix playlist loading state for small playlists
   - Keep dialogs and standalone windows single instance ([#1530](https://github.com/fooyin/fooyin/issues/1530))
 * SoundTouch: Fix processor recreation
 * VU Meter: Prevent bars overlapping channel labels
