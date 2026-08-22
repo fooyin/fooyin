@@ -19,6 +19,7 @@
  */
 
 #include "inhibitordbus.h"
+#include "inhibitor.h"
 
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusPendingCall>
@@ -38,17 +39,28 @@ constexpr auto FreedesktopPowerMgmtInterface = "org.freedesktop.PowerManagement.
 constexpr auto FreedesktopPortalService   = "org.freedesktop.portal.Desktop"_L1;
 constexpr auto FreedesktopPortalPath      = "/org/freedesktop/portal/desktop"_L1;
 constexpr auto FreedesktopPortalInterface = "org.freedesktop.portal.Inhibit"_L1;
+
+constexpr auto FreedesktopScreenSaverService   = "org.freedesktop.ScreenSaver"_L1;
+constexpr auto FreedesktopScreenSaverPath      = "/org/freedesktop/ScreenSaver"_L1;
+constexpr auto FreedesktopScreenSaverInterface = "org.freedesktop.ScreenSaver"_L1;
 } // namespace DbusConstants
 
+namespace {
+using namespace Fooyin::SleepInhibitor;
+bool canInhibit(InhibitorPrivate::State state)
+{
+    using enum InhibitorPrivate::State;
+    return state == Initializing || state == Uninhibited;
+}
+} // namespace
+
 namespace Fooyin::SleepInhibitor {
+static const auto Reason = InhibitorDbus::tr("fooyin is running");
+
 InhibitorDbus::InhibitorDbus(QObject* parent)
     : InhibitorPrivate{parent}
 {
     using namespace DbusConstants;
-
-    const auto invalidateBusInterface = [this] {
-        delete m_busInterface;
-    };
 
     m_busInterface = new QDBusInterface(GnomeSessionManagerService, GnomeSessionManagerPath,
                                         GnomeSessionManagerInterface, QDBusConnection::sessionBus(), this);
@@ -58,7 +70,7 @@ InhibitorDbus::InhibitorDbus(QObject* parent)
         return;
     }
 
-    invalidateBusInterface();
+    delete m_busInterface;
     m_busInterface = new QDBusInterface(FreedesktopPowerMgmtService, FreedesktopPowerMgmtPath,
                                         FreedesktopPowerMgmtInterface, QDBusConnection::sessionBus(), this);
     if(m_busInterface->isValid()) {
@@ -67,7 +79,7 @@ InhibitorDbus::InhibitorDbus(QObject* parent)
         return;
     }
 
-    invalidateBusInterface();
+    delete m_busInterface;
     m_busInterface = new QDBusInterface(FreedesktopPortalService, FreedesktopPortalPath, FreedesktopPortalInterface,
                                         QDBusConnection::sessionBus(), this);
     if(m_busInterface->isValid()) {
@@ -76,22 +88,128 @@ InhibitorDbus::InhibitorDbus(QObject* parent)
         return;
     }
 
-    invalidateBusInterface();
+    delete m_busInterface;
+    m_busInterface = nullptr;
     setState(State::Error);
-    qCWarning(SLEEPINHIBITOR) << "Could not get usable DBus interface";
+    qCWarning(SLEEPINHIBITOR) << "Could not get usable D-Bus interface";
 }
 
-void InhibitorDbus::inhibitSleep()
+bool InhibitorDbus::usingScreenSaverInterface() const
 {
-    if(state() == State::Error || state() == State::Inhibited) {
+    return m_interface == Interface::FreedesktopPower
+        && (m_powerState.desiredType == InhibitionType::DisplayAndSystem
+            || m_powerState.currentType == InhibitionType::DisplayAndSystem);
+}
+
+void InhibitorDbus::inhibitScreenSaver()
+{
+    m_screenSaverState.desiredState = State::Inhibited;
+
+    if(!canInhibit(m_screenSaverState.currentState)) {
+        return;
+    }
+
+    qCDebug(SLEEPINHIBITOR) << "Inhibiting ScreenSaver";
+    m_screenSaverState.currentState = State::Uninhibiting;
+
+    if(!m_screenSaverInterface) {
+        m_screenSaverInterface = new QDBusInterface(
+            DbusConstants::FreedesktopScreenSaverService, DbusConstants::FreedesktopScreenSaverPath,
+            DbusConstants::FreedesktopScreenSaverInterface, QDBusConnection::sessionBus(), this);
+        if(!m_screenSaverInterface->isValid()) [[unlikely]] {
+            qCWarning(SLEEPINHIBITOR) << "Could not get usable ScreenSaver D-Bus interface";
+            m_screenSaverState.currentState = State::Error;
+            return;
+        }
+    }
+
+    const auto pendingCall = m_screenSaverInterface->asyncCall("Inhibit"_L1, "fooyin"_L1, Reason);
+    auto* watcher          = new QDBusPendingCallWatcher(pendingCall, this);
+    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this,
+                     &InhibitorDbus::onScreenSaverInhibitCallFinished);
+}
+
+void InhibitorDbus::uninhibitScreenSaver()
+{
+    m_screenSaverState.desiredState = State::Uninhibited;
+
+    if(m_screenSaverState.currentState != State::Inhibited || !m_screenSaverInhibitCookie) {
+        return;
+    }
+
+    qCDebug(SLEEPINHIBITOR) << "Uninhibiting ScreenSaver";
+    m_screenSaverState.currentState = State::Uninhibiting;
+
+    const auto pendingCall = m_screenSaverInterface->asyncCall("UnInhibit"_L1, m_screenSaverInhibitCookie);
+    auto* watcher          = new QDBusPendingCallWatcher(pendingCall, this);
+    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this,
+                     &InhibitorDbus::onScreenSaverUninhibitCallFinished);
+}
+
+void InhibitorDbus::onScreenSaverInhibitCallFinished(QDBusPendingCallWatcher* watcher)
+{
+    const QDBusPendingReply<uint> reply = *watcher;
+    watcher->deleteLater();
+
+    if(reply.isValid()) {
+        m_screenSaverInhibitCookie      = reply.value();
+        m_screenSaverState.currentState = State::Inhibited;
+    }
+    else {
+        qCWarning(SLEEPINHIBITOR) << "ScreenSaver Inhibit call error:" << reply.error().message();
+        m_screenSaverState.currentState = State::Error;
+    }
+
+    if(m_screenSaverState.desiredState == State::Uninhibited) {
+        uninhibitScreenSaver();
+        m_screenSaverState.desiredState = {};
+    }
+}
+
+void InhibitorDbus::onScreenSaverUninhibitCallFinished(QDBusPendingCallWatcher* watcher)
+{
+    const QDBusPendingReply<> reply = *watcher;
+    watcher->deleteLater();
+
+    if(reply.isValid()) {
+        m_screenSaverInhibitCookie      = 0;
+        m_screenSaverState.currentState = State::Uninhibited;
+    }
+    else {
+        qCWarning(SLEEPINHIBITOR) << "ScreenSaver Uninhibit call error:" << reply.error().message();
+        m_screenSaverState.currentState = State::Error;
+    }
+
+    if(m_screenSaverState.desiredState == State::Inhibited) {
+        inhibitScreenSaver();
+        m_screenSaverState.desiredState = {};
+    }
+}
+
+void InhibitorDbus::inhibitSleep(InhibitionType type)
+{
+    m_powerState.desiredState = State::Inhibited;
+    m_powerState.desiredType  = type;
+
+    if(usingScreenSaverInterface()) {
+        inhibitScreenSaver();
+    }
+
+    if(!canInhibit(state())) {
         return;
     }
 
     qCDebug(SLEEPINHIBITOR) << "Inhibiting sleep";
+    setState(State::Inhibiting);
 
     static constexpr auto BlockLogoutFlag  = 1U;
     static constexpr auto BlockSuspendFlag = 4U;
-    static const auto Reason               = tr("fooyin is running");
+    static constexpr auto BlockIdleFlag    = 8U;
+
+    auto flags = BlockLogoutFlag | BlockSuspendFlag;
+    if(type == InhibitionType::DisplayAndSystem) {
+        flags |= BlockIdleFlag;
+    }
 
     QList<QVariant> args;
     switch(m_interface) {
@@ -99,7 +217,7 @@ void InhibitorDbus::inhibitSleep()
             break;
         case Interface::GnomeSessionManager: {
             static constexpr auto XWindowId = 0U;
-            args = {"org.fooyin.fooyin"_L1, XWindowId, Reason, BlockLogoutFlag | BlockSuspendFlag};
+            args                            = {"org.fooyin.fooyin"_L1, XWindowId, Reason, flags};
             break;
         }
         case Interface::FreedesktopPower:
@@ -110,7 +228,7 @@ void InhibitorDbus::inhibitSleep()
             options["reason"_L1] = Reason;
             // Pass empty string for parent_window
             // https://flatpak.github.io/xdg-desktop-portal/docs/window-identifiers.html
-            args = {QString{}, BlockLogoutFlag | BlockSuspendFlag, options};
+            args = {QString{}, flags, options};
             break;
         }
     }
@@ -118,15 +236,24 @@ void InhibitorDbus::inhibitSleep()
 
     auto* watcher = new QDBusPendingCallWatcher(pendingCall, this);
     QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, &InhibitorDbus::onInhibitCallFinished);
+
+    m_powerState.currentType = type;
 }
 
 void InhibitorDbus::uninhibitSleep()
 {
+    m_powerState.desiredState = State::Uninhibited;
+
+    if(m_screenSaverState.currentState == State::Inhibited && usingScreenSaverInterface()) {
+        uninhibitScreenSaver();
+    }
+
     if(state() != State::Inhibited) {
         return;
     }
 
     qCDebug(SLEEPINHIBITOR) << "Uninhibiting sleep";
+    setState(State::Uninhibiting);
 
     if(m_interface == Interface::FreedesktopPortal) {
         auto* inhibitRequestInterface
@@ -157,6 +284,8 @@ void InhibitorDbus::uninhibitSleep()
         auto* watcher = new QDBusPendingCallWatcher(pendingCall, this);
         QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, &InhibitorDbus::onUninhibitCallFinished);
     }
+
+    m_powerState.currentType = {};
 }
 
 void InhibitorDbus::onInhibitCallFinished(QDBusPendingCallWatcher* watcher)
@@ -182,6 +311,11 @@ void InhibitorDbus::onInhibitCallFinished(QDBusPendingCallWatcher* watcher)
         const QDBusPendingReply<uint> reply = *watcher;
         handleReply(reply, m_inhibitCookie);
     }
+
+    if(m_powerState.desiredState == State::Uninhibited) {
+        uninhibitSleep();
+        m_powerState.desiredState = {};
+    }
 }
 
 void InhibitorDbus::onUninhibitCallFinished(QDBusPendingCallWatcher* watcher)
@@ -197,6 +331,11 @@ void InhibitorDbus::onUninhibitCallFinished(QDBusPendingCallWatcher* watcher)
     else {
         qCWarning(SLEEPINHIBITOR) << "Uninhibit call error:" << reply.error().message();
         setState(State::Error);
+    }
+
+    if(m_powerState.desiredState == State::Inhibited) {
+        inhibitSleep(m_powerState.desiredType);
+        m_powerState.desiredState = {};
     }
 }
 } // namespace Fooyin::SleepInhibitor
