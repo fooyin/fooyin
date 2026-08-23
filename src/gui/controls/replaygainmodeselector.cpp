@@ -22,7 +22,9 @@
 #include <core/coresettings.h>
 #include <core/engine/enginedefs.h>
 #include <core/internalcoresettings.h>
+#include <gui/guiconstants.h>
 #include <gui/widgets/expandingcombobox.h>
+#include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QAction>
@@ -160,6 +162,14 @@ void ReplayGainModeSelector::showContextMenu(const QPoint& globalPos)
     showLabel->setChecked(m_showLabel);
     QObject::connect(showLabel, &QAction::triggered, this, &ReplayGainModeSelector::setShowLabel);
     menu->addAction(showLabel);
+
+    auto* configureReplayGain = new QAction(tr("Configure ReplayGain…"), menu);
+    QObject::connect(configureReplayGain, &QAction::triggered, this, [this]() {
+        if(m_settings->settingsDialog()) {
+            m_settings->settingsDialog()->openAtPage(Constants::Page::ReplayGain);
+        }
+    });
+    menu->addAction(configureReplayGain);
 
     menu->popup(globalPos);
 }
