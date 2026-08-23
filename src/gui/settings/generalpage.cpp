@@ -28,13 +28,13 @@
 #include <core/internalcoresettings.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <utils/fileutils.h>
 #include <utils/fypaths.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
-#include <QDesktopServices>
 #include <QDir>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -105,11 +105,11 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     startupGroupLayout->addWidget(m_waitForTracks, row++, 0, 1, 2);
     startupGroupLayout->setColumnStretch(1, 1);
 
-    auto* dirGroup       = new QGroupBox(tr("User Directories"), this);
+    auto* dirGroup       = new QGroupBox(tr("User Folders"), this);
     auto* dirGroupLayout = new QGridLayout(dirGroup);
 
-    auto* openConfig = new QPushButton(tr("Open Config Directory"), this);
-    auto* openShare  = new QPushButton(tr("Open Share Directory"), this);
+    auto* openConfig = new QPushButton(tr("Open Configuration Folder"), this);
+    auto* openShare  = new QPushButton(tr("Open Data Folder"), this);
 
     row = 0;
     dirGroupLayout->addWidget(openConfig, row, 0);
@@ -138,8 +138,9 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     addStartupBehaviour(tr("Remember from last run"), MainWindow::StartPrev);
 
     QObject::connect(m_showTray, &QCheckBox::toggled, m_minimiseToTray, &QWidget::setEnabled);
-    QObject::connect(openConfig, &QPushButton::clicked, this, []() { QDesktopServices::openUrl(Utils::configPath()); });
-    QObject::connect(openShare, &QPushButton::clicked, this, []() { QDesktopServices::openUrl(Utils::sharePath()); });
+    QObject::connect(openConfig, &QPushButton::clicked, this,
+                     []() { Utils::File::openDirectory(Utils::configPath()); });
+    QObject::connect(openShare, &QPushButton::clicked, this, []() { Utils::File::openDirectory(Utils::sharePath()); });
 }
 
 void GeneralPageWidget::load()
