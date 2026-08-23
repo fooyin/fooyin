@@ -2,7 +2,10 @@
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
   "builtin-baseline": "40f3c709db80acf154ac4b17a1f83c564ebd022e",
   "dependencies": [
-    "ffmpeg",
+    {
+      "name": "ffmpeg",
+      "features": [ "mp3lame", "opus", "vorbis" ]
+    },
     "icu",
     "taglib",
     "glm",
