@@ -304,7 +304,7 @@ QString WaveformGenerator::setup(const Track& track, int samplesPerChannel)
 
     m_data = {};
 
-    if(!track.isValid()) {
+    if(!track.isValid() || track.isRemote()) {
         return {};
     }
 
