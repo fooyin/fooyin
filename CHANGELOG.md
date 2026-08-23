@@ -1,12 +1,18 @@
 # Changelog
 
-## Unreleased
+## [0.12.6](https://github.com/fooyin/fooyin/releases/tag/v0.12.6) (2026-08-23)
 
 ### Improvements
 
-* Artwork: Add configurable proportional corner radii in the Library Tree, Playlist, Queue Viewer, and Filters
+* Archives: Improve read cancellation, buffering, and large entry handling
+* Artwork: Support rounded corners with configurable proportional radii in the Library Tree, Playlist, Queue Viewer, and Filters
 * Radio Browser: Improve visible icon loading and bound cache memory usage
-* Scripting: Add regular expression matching and replacement functions
+* ReplayGain
+  - Add a mode selector layout widget
+  - Add a ReplayGain settings shortcut to the selector context menu
+* Scripting
+  - Add regular expression matching and replacement functions
+  - Add `$hex` and document `$crc32` ([#1537](https://github.com/fooyin/fooyin/issues/1537))
 
 ### Fixes
 
@@ -15,8 +21,20 @@
   - Fix playlist and library searches stuck loading ([#1532](https://github.com/fooyin/fooyin/issues/1532))
   - Fix playlist loading state for small playlists
   - Keep dialogs and standalone windows single instance ([#1530](https://github.com/fooyin/fooyin/issues/1530))
+* Library: Prevent scan status flickering
+* ReplayGain: Refresh the Mode Selector size when labels change
 * SoundTouch: Fix processor recreation
 * VU Meter: Prevent bars overlapping channel labels
+
+### Build/System
+
+* CI: Remove ccache; add PCH support to FreeBSD build
+* Packaging: Use distribution-specific DEB versions ([#1529](https://github.com/fooyin/fooyin/issues/1529))
+* Translations: Update translations and translation sources ([#1539](https://github.com/fooyin/fooyin/pull/1539), [#1540](https://github.com/fooyin/fooyin/pull/1540))
+
+### Dev/API
+
+* Plugin Settings: Replace `showSettings()` with `createSettings()` returning a `QDialog*`; the base provider now manages dialog display, lifetime, and single-instance behaviour
 
 
 ## [0.12.5](https://github.com/fooyin/fooyin/releases/tag/v0.12.5) (2026-08-21)

@@ -61,6 +61,14 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="0.12.6" date="2026-08-23">
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.12.6</url>
+            <description>
+                <p>Adds configurable rounded artwork, a ReplayGain Mode Selector widget, regular expression scripting functions, and improved Radio Browser icon loading.</p>
+                <p>Archive reading gains faster buffering and safer handling of large entries. New scripting helpers include <code>$hex</code>, with <code>$crc32</code> now documented in the script reference.</p>
+                <p>This release also fixes stuck playlist/library searches, rich-text alignment, duplicate dialogs, SoundTouch processing, and VU Meter labels.</p>
+            </description>
+        </release>
         <release version="0.12.5" date="2026-08-21">
             <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.12.5</url>
             <description>
