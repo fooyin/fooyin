@@ -570,7 +570,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="408"/>
         <source>Returns the CRC-32 checksum of the text</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar CRC-32-kontrollsumman av texten</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="470"/>
@@ -822,7 +822,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="292"/>
         <source>Formats a number in hexadecimal with leading zeroes</source>
-        <translation type="unfinished"></translation>
+        <translation>Formaterar ett nummer i hexadecimal med inledande nollor</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="294"/>
@@ -879,17 +879,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="297"/>
         <source>Returns the first match or capture; group 0 is the full match</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar första matchningen eller fångsten; grupp 0 är den fulla matchningen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="300"/>
         <source>Returns all matches or captures; group 0 is the full match</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar alla matchningar eller fångster; grupp 0 är den fulla matchningen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="303"/>
         <source>Replaces all regular expression matches; flags: i, m, s, x, U</source>
-        <translation type="unfinished"></translation>
+        <translation>Ersätter alla matchningar för reguljära uttryck; flaggor: i, m, s, x, U</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="305"/>
@@ -974,7 +974,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="346"/>
         <source>Tests a regular expression match; flags: i, m, s, x, U</source>
-        <translation type="unfinished"></translation>
+        <translation>Testar en matchning för ett reguljärt uttryck; flaggor: i, m, s, x, U</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="348"/>
@@ -5520,7 +5520,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="121"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation>Kvadrat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="123"/>
@@ -5550,7 +5550,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="135"/>
         <source>Corner radius</source>
-        <translation type="unfinished"></translation>
+        <translation>Hörnradie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="139"/>
@@ -7608,17 +7608,17 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/plugins/libarchive/libarchiveinput.cpp" line="163"/>
         <source>Unexpected end of archive entry</source>
-        <translation type="unfinished"></translation>
+        <translation>Oväntat slut på arkivpost</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libarchive/libarchiveinput.cpp" line="235"/>
         <source>Operation cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Åtgärd avbruten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libarchive/libarchiveinput.cpp" line="283"/>
         <source>Unknown archive error</source>
-        <translation type="unfinished"></translation>
+        <translation>Okänt arkivfel</translation>
     </message>
 </context>
 <context>
@@ -8402,7 +8402,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="146"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation>Kvadrat</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="148"/>
@@ -8422,7 +8422,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="156"/>
         <source>Corner radius</source>
-        <translation type="unfinished"></translation>
+        <translation>Hörnradie</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="198"/>
@@ -10832,7 +10832,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="226"/>
         <source>Artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Konstverk</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="227"/>
@@ -10888,7 +10888,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="145"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation>Kvadrat</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="147"/>
@@ -11099,7 +11099,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="231"/>
         <source>Corner radius</source>
-        <translation type="unfinished"></translation>
+        <translation>Hörnradie</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="235"/>
@@ -13465,7 +13465,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="70"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation>Kvadrat</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="72"/>
@@ -13485,7 +13485,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="80"/>
         <source>Corner radius</source>
-        <translation type="unfinished"></translation>
+        <translation>Hörnradie</translation>
     </message>
 </context>
 <context>
@@ -15560,43 +15560,43 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="52"/>
         <source>ReplayGain</source>
-        <translation type="unfinished">ReplayGain</translation>
+        <translation>ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="68"/>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="147"/>
         <source>Disabled</source>
-        <translation type="unfinished">Av</translation>
+        <translation>Av</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="69"/>
         <source>Prefer track gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Föredra spårförstärkning</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="70"/>
         <source>Prefer album gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Föredra albumförstärkning</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="71"/>
         <source>By playback order</source>
-        <translation type="unfinished"></translation>
+        <translation>Efter uppspelningsordning</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="110"/>
         <source>ReplayGain Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain-läge</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="147"/>
         <source>ReplayGain disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain av</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="158"/>
         <source>Show label</source>
-        <translation type="unfinished">Visa etikett</translation>
+        <translation>Visa etikett</translation>
     </message>
 </context>
 <context>
@@ -19864,7 +19864,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/widgets.cpp" line="288"/>
         <source>ReplayGain Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain-läge</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="294"/>
