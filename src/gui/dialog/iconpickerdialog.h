@@ -24,11 +24,12 @@
 
 class QLabel;
 class QLineEdit;
-class QListView;
 class QSortFilterProxyModel;
 class QStandardItemModel;
 
 namespace Fooyin {
+class ExpandedTreeView;
+
 struct IconSelection
 {
     QString themeName;
@@ -59,7 +60,7 @@ private:
     void browseForImage();
     void updateCurrentLabel();
 
-    QListView* m_icons;
+    ExpandedTreeView* m_icons;
     QLineEdit* m_filter;
     QLabel* m_currentLabel;
     QStandardItemModel* m_model;

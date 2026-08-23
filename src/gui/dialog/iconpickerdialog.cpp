@@ -19,6 +19,7 @@
 #include "iconpickerdialog.h"
 
 #include <gui/iconloader.h>
+#include <gui/widgets/expandedtreeview.h>
 
 #include <QDialogButtonBox>
 #include <QFileDialog>
@@ -26,7 +27,6 @@
 #include <QImageReader>
 #include <QLabel>
 #include <QLineEdit>
-#include <QListView>
 #include <QPushButton>
 #include <QSortFilterProxyModel>
 #include <QStandardItemModel>
@@ -34,20 +34,19 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr QSize IconItemSize = {100, 96};
-constexpr QSize IconGridSize = {160, 108};
+constexpr QSize IconItemSize = {140, 96};
 
 namespace Fooyin {
 IconPickerDialog::IconPickerDialog(const QIcon& commandIcon, QWidget* parent)
     : QDialog{parent}
-    , m_icons{new QListView(this)}
+    , m_icons{new ExpandedTreeView(this)}
     , m_filter{new QLineEdit(this)}
     , m_currentLabel{new QLabel(this)}
     , m_model{new QStandardItemModel(this)}
     , m_proxy{new QSortFilterProxyModel(this)}
 {
     setWindowTitle(tr("Choose Icon"));
-    setMinimumSize(670, 480);
+    setMinimumSize(650, 480);
 
     m_filter->setPlaceholderText(tr("Filter icons"));
     m_filter->setClearButtonEnabled(true);
@@ -73,15 +72,13 @@ IconPickerDialog::IconPickerDialog(const QIcon& commandIcon, QWidget* parent)
     m_proxy->setFilterCaseSensitivity(Qt::CaseInsensitive);
 
     m_icons->setModel(m_proxy);
-    m_icons->setViewMode(QListView::IconMode);
-    m_icons->setResizeMode(QListView::Adjust);
+    m_icons->setViewMode(ExpandedTreeView::ViewMode::Icon);
+    m_icons->setCaptionDisplay(ExpandedTreeView::CaptionDisplay::Bottom);
+    m_icons->setHeaderHidden(true);
     m_icons->setSelectionMode(QAbstractItemView::SingleSelection);
     m_icons->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    m_icons->setIconSize({48, 48});
-    m_icons->setGridSize(IconGridSize);
-    m_icons->setTextElideMode(Qt::ElideNone);
-    m_icons->setUniformItemSizes(true);
-    m_icons->setWordWrap(true);
+    m_icons->changeIconSize({48, 48});
+    m_icons->setTextElideMode(Qt::ElideMiddle);
 
     auto* buttons      = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     auto* browseButton = buttons->addButton(tr("Browse custom image…"), QDialogButtonBox::ActionRole);
@@ -134,7 +131,7 @@ void IconPickerDialog::setSelection(const IconSelection& selection)
     const QModelIndex proxyIndex = m_proxy->mapFromSource(sourceIndex);
     if(proxyIndex.isValid()) {
         m_icons->setCurrentIndex(proxyIndex);
-        m_icons->scrollTo(proxyIndex);
+        m_icons->scrollTo(proxyIndex, QAbstractItemView::EnsureVisible);
     }
     else {
         m_icons->clearSelection();
