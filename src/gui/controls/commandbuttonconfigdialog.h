@@ -23,6 +23,8 @@
 
 #include <gui/configdialog.h>
 
+#include <QPointer>
+
 class QAction;
 class QComboBox;
 class QLineEdit;
@@ -30,8 +32,8 @@ class QPushButton;
 
 namespace Fooyin {
 class ActionManager;
-class ExpandingComboBox;
-class ScriptCommandHandler;
+class CommandPickerDialog;
+class IconPickerDialog;
 
 class CommandButtonConfigDialog : public WidgetConfigDialog<CommandButton, CommandButton::ConfigData>
 {
@@ -45,34 +47,28 @@ protected:
     [[nodiscard]] CommandButton::ConfigData config() const override;
 
 private:
-    void browseForIcon();
-    void clearIcon();
-    void builtInIconChanged();
-    void customIconPathChanged(const QString& path);
+    void chooseCommand();
+    void chooseIcon();
+    void updateCommandDisplay();
+    void updateIconDisplay();
     void updatePreview();
-
-    struct CommandOption
-    {
-        QIcon icon;
-        QString label;
-        QString id;
-        QString category;
-        QString description;
-    };
-
-    [[nodiscard]] std::vector<CommandOption> buildCommandOptions() const;
-    [[nodiscard]] QString currentCommandId() const;
-    [[nodiscard]] QString currentIconName() const;
 
     ActionManager* m_actionManager;
 
-    ExpandingComboBox* m_command;
+    QLineEdit* m_command;
+    QAction* m_commandIconAction;
+    QPushButton* m_chooseCommand;
     QLineEdit* m_text;
     QComboBox* m_buttonStyle;
     QPushButton* m_iconPreview;
-    ExpandingComboBox* m_iconName;
-    QLineEdit* m_iconPath;
-    QAction* m_browseIconAction;
-    QAction* m_clearIconAction;
+    QLineEdit* m_iconDescription;
+    QPushButton* m_chooseIcon;
+
+    QString m_commandId;
+    QString m_iconName;
+    QString m_iconPath;
+
+    QPointer<CommandPickerDialog> m_commandPicker;
+    QPointer<IconPickerDialog> m_iconPicker;
 };
 } // namespace Fooyin

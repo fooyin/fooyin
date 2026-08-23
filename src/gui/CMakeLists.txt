@@ -139,9 +139,13 @@ set(SOURCES
     dialog/aboutdialog.h
     dialog/autoplaylistdialog.cpp
     dialog/autoplaylistdialog.h
+    dialog/commandpickerdialog.cpp
+    dialog/commandpickerdialog.h
     dialog/configdialog.cpp
     dialog/exportlayoutdialog.cpp
     dialog/exportlayoutdialog.h
+    dialog/iconpickerdialog.cpp
+    dialog/iconpickerdialog.h
     dialog/importlayoutdialog.cpp
     dialog/importlayoutdialog.h
     dialog/propertiesdialog.cpp
