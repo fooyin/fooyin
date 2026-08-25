@@ -96,6 +96,7 @@ private:
     std::optional<PendingNotification> m_pendingNotification;
 
     ScriptParser m_scriptParser;
+    Track m_lastTrack;
     uint64_t m_notificationGeneration;
     bool m_notificationRequestInFlight;
 };

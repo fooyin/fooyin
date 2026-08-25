@@ -99,6 +99,13 @@ void NotifyPlugin::playStateChanged(Player::PlayState state)
 
 void NotifyPlugin::trackChanged(const Track& track)
 {
+    const bool isRepeat = track.isValid() && m_lastTrack.isValid() && track.sameIdentityAs(m_lastTrack);
+    m_lastTrack         = track;
+
+    if(isRepeat && !m_settings->value<Settings::Notify::NotifyOnRepeat>()) {
+        return;
+    }
+
     ++m_notificationGeneration;
 
     if(!m_settings->value<Settings::Notify::Enabled>()) {

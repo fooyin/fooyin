@@ -36,5 +36,6 @@ NotifySettings::NotifySettings(SettingsManager* settingsManager)
     m_settings->createSetting<Timeout>(-1, u"Notify/Timeout"_s);
     m_settings->createSetting<Controls>(static_cast<int>(PlaybackControlFlag::Default), u"Notify/PlaybackControls"_s);
     m_settings->createSetting<MaxAlbumArtSize>(128, u"Notify/MaxAlbumArtSize"_s);
+    m_settings->createSetting<NotifyOnRepeat>(true, u"Notify/NotifyOnRepeat"_s);
 }
 } // namespace Fooyin::Notify

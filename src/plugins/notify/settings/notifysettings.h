@@ -37,6 +37,7 @@ enum NotifySettings : uint32_t
     Timeout         = 5 | Type::Int,
     Controls        = 6 | Type::Int,
     MaxAlbumArtSize = 7 | Type::Int,
+    NotifyOnRepeat  = 8 | Type::Bool,
 };
 Q_ENUM_NS(NotifySettings)
 } // namespace Settings::Notify

@@ -57,6 +57,7 @@ private:
     NotifyPlugin* m_plugin;
 
     QCheckBox* m_enable;
+    QCheckBox* m_notifyOnRepeat;
     QLabel* m_titleLabel;
     ScriptLineEdit* m_titleField;
     QLabel* m_bodyLabel;
@@ -75,6 +76,7 @@ NotifyPageWidget::NotifyPageWidget(SettingsManager* settings, NotifyPlugin* plug
     : m_settings{settings}
     , m_plugin{plugin}
     , m_enable{new QCheckBox(tr("Enable notifications"), this)}
+    , m_notifyOnRepeat{new QCheckBox(tr("Notify when repeating a track"), this)}
     , m_titleLabel{new QLabel(tr("Title") + ":"_L1, this)}
     , m_titleField{new ScriptLineEdit(this)}
     , m_bodyLabel{new QLabel(tr("Body") + ":"_L1, this)}
@@ -133,6 +135,7 @@ NotifyPageWidget::NotifyPageWidget(SettingsManager* settings, NotifyPlugin* plug
 
     row = 0;
     generalLayout->addWidget(m_enable, row++, 0, 1, 2);
+    generalLayout->addWidget(m_notifyOnRepeat, row++, 0, 1, 2);
     generalLayout->addWidget(m_timeoutLabel, row, 0);
     generalLayout->addLayout(timeoutLayout, row++, 1);
     generalLayout->setColumnStretch(1, 1);
@@ -193,6 +196,7 @@ void NotifyPageWidget::updateWidgetState()
     m_titleField->setEnabled(enabled);
     m_bodyLabel->setEnabled(enabled);
     m_bodyField->setEnabled(enabled);
+    m_notifyOnRepeat->setEnabled(enabled);
 
     m_showAlbumArt->setEnabled(enabled && albumArtSupported);
     m_showAlbumArt->setToolTip(albumArtTooltip);
@@ -218,6 +222,7 @@ void NotifyPageWidget::updateWidgetState()
 void NotifyPageWidget::load()
 {
     m_enable->setChecked(m_settings->value<Settings::Notify::Enabled>());
+    m_notifyOnRepeat->setChecked(m_settings->value<Settings::Notify::NotifyOnRepeat>());
     m_titleField->setText(m_settings->value<Settings::Notify::TitleField>());
     m_bodyField->setText(m_settings->value<Settings::Notify::BodyField>());
     m_showAlbumArt->setChecked(m_settings->value<Settings::Notify::ShowAlbumArt>());
@@ -230,6 +235,7 @@ void NotifyPageWidget::load()
 void NotifyPageWidget::apply()
 {
     m_settings->set<Settings::Notify::Enabled>(m_enable->isChecked());
+    m_settings->set<Settings::Notify::NotifyOnRepeat>(m_notifyOnRepeat->isChecked());
     m_settings->set<Settings::Notify::TitleField>(m_titleField->text());
     m_settings->set<Settings::Notify::BodyField>(m_bodyField->text());
     m_settings->set<Settings::Notify::ShowAlbumArt>(m_showAlbumArt->isChecked());
@@ -241,6 +247,7 @@ void NotifyPageWidget::apply()
 void NotifyPageWidget::reset()
 {
     m_settings->reset<Settings::Notify::Enabled>();
+    m_settings->reset<Settings::Notify::NotifyOnRepeat>();
     m_settings->reset<Settings::Notify::TitleField>();
     m_settings->reset<Settings::Notify::BodyField>();
     m_settings->reset<Settings::Notify::ShowAlbumArt>();
