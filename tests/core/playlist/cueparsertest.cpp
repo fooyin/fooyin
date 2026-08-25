@@ -139,6 +139,34 @@ FILE "album.flac" FLAC
     EXPECT_EQ(u"Album Artist"_s, tracks.at(1).albumArtist());
 }
 
+TEST_F(CueParserTest, PreservesSpacesInUnquotedRemValues)
+{
+    const QString cueSheet = uR"(REM GENRE Thrash Metal
+REM COMMENT Roadrunner, RR 9016-2, USA
+FILE "album.flac" FLAC
+  TRACK 01 AUDIO
+    TITLE "Track One"
+    INDEX 01 00:00:00
+)"_s;
+
+    QByteArray cueData = cueSheet.toUtf8();
+    QBuffer buffer{&cueData};
+    ASSERT_TRUE(buffer.open(QIODevice::ReadOnly | QIODevice::Text));
+
+    PlaylistParser::ReadPlaylistEntry readEntry;
+    readEntry.readTrack = [](const Track& track) {
+        Track loaded{track};
+        loaded.setDuration(180000);
+        return loaded;
+    };
+
+    const auto tracks = m_parser->readPlaylist(&buffer, u"/music/album.flac"_s, {}, readEntry, false);
+    ASSERT_EQ(1, tracks.size());
+
+    EXPECT_EQ(u"Thrash Metal"_s, tracks.front().genre());
+    EXPECT_EQ(u"Roadrunner, RR 9016-2, USA"_s, tracks.front().comment());
+}
+
 TEST_F(CueParserTest, UnreadableCueImageTracksAreDisabled)
 {
     const QString cuePath = testFilePath(u"data/playlists/unreadableimage.cue"_s);
