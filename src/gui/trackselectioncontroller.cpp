@@ -187,7 +187,7 @@ public:
     WidgetContext* m_displayContext{nullptr};
     TrackSelection m_displaySelection;
     std::optional<TrackSelection> m_menuSelection;
-    QPointer<QMenu> m_menuSelectionMenu;
+    uint64_t m_menuSelectionGeneration{0};
     Playlist* m_tempPlaylist{nullptr};
 
     MenuNode m_trackRoot;
@@ -654,14 +654,13 @@ void TrackSelectionControllerPrivate::renderArea(QMenu* menu, TrackContextMenuAr
 
     Utils::forwardMenuStatusTips(menu);
 
-    m_menuSelection     = selection;
-    m_menuSelectionMenu = menu;
+    m_menuSelection = selection;
     updateActionState();
 
-    QObject::connect(menu, &QObject::destroyed, m_self, [this, menu]() {
-        if(m_menuSelectionMenu == menu) {
+    const uint64_t generation = ++m_menuSelectionGeneration;
+    QObject::connect(menu, &QObject::destroyed, m_self, [this, generation]() {
+        if(m_menuSelectionGeneration == generation) {
             m_menuSelection.reset();
-            m_menuSelectionMenu.clear();
             updateActionState();
         }
     });
