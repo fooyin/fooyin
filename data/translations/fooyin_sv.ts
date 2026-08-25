@@ -16673,7 +16673,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="462"/>
         <source>Delete a word in the search box</source>
-        <translation>Radera ett ord i söklådan</translation>
+        <translation>Radera ett ord i sökrutan</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="535"/>
