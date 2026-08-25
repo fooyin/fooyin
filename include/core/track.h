@@ -327,6 +327,9 @@ public:
     //! Sets rating on the internal 0-10 half-star scale; 0 clears the rating.
     void setRatingStars(int rating);
 
+    //! Clears metadata and extra tags while retaining ratings, ReplayGain and playback statistics.
+    void clearWritableTags();
+
     void setRGTrackGain(float gain);
     void setRGAlbumGain(float gain);
     void setRGTrackPeak(float peak);

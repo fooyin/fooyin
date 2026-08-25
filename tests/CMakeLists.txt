@@ -129,3 +129,6 @@ fooyin_add_test(
     test_lyricsparser plugins/lyrics/lyricsparsertest.cpp ${CMAKE_SOURCE_DIR}/src/plugins/lyrics/lyricsparser.cpp
 )
 target_include_directories(test_lyricsparser PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/lyrics)
+
+fooyin_add_test(test_metadatamatcher gui/metadatalookup/metadatamatchertest.cpp)
+fooyin_add_test(test_metadataapply gui/metadatalookup/metadataapplytest.cpp)

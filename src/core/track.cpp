@@ -1811,6 +1811,24 @@ void Track::setRatingStars(int rating)
     }
 }
 
+void Track::clearWritableTags()
+{
+    setTitle({});
+    setArtists({});
+    setAlbum({});
+    setAlbumArtists({});
+    setTrackNumber({});
+    setTrackTotal({});
+    setDiscNumber({});
+    setDiscTotal({});
+    setGenres({});
+    setComposers({});
+    setPerformers({});
+    setComment({});
+    setDate({});
+    clearExtraTags();
+}
+
 void Track::setRGTrackGain(float gain)
 {
     p->rgTrackGain = std::isfinite(gain) ? gain : Constants::InvalidGain;

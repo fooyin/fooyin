@@ -119,7 +119,8 @@ public:
     bool registerAction(QObject* owner, TrackContextMenuArea area, const Id& parentId, const Id& id,
                         const QString& title, const TrackSelectionController::TrackContextMenuRenderer& renderer,
                         const Id& beforeId = {});
-    bool registerSeparator(TrackContextMenuArea area, const Id& parentId, const Id& id = {}, const Id& beforeId = {});
+    bool registerSeparator(QObject* owner, TrackContextMenuArea area, const Id& parentId, const Id& id = {},
+                           const Id& beforeId = {});
 
     void renderArea(QMenu* menu, TrackContextMenuArea area, const TrackSelection& selection);
     void renderNode(QMenu* menu, const MenuNode& node, const TrackSelection& selection) const;
@@ -427,7 +428,7 @@ void TrackSelectionControllerPrivate::setupBuiltInMenus()
                    Constants::Actions::SearchArtwork, m_searchArtwork->text(),
                    [this](QMenu* menu, const TrackSelection&) { menu->addAction(m_searchArtwork); });
 
-    registerSeparator(TrackContextMenuArea::Track, Constants::Menus::Context::Artwork,
+    registerSeparator(m_self, TrackContextMenuArea::Track, Constants::Menus::Context::Artwork,
                       ContextMenuIds::TrackSelection::ArtworkSearchSeparator);
 
     m_extractArtwork->setStatusTip(
@@ -485,7 +486,7 @@ void TrackSelectionControllerPrivate::setupBuiltInMenus()
                    m_attachArtistArtwork->text(),
                    [this](QMenu* menu, const TrackSelection&) { menu->addAction(m_attachArtistArtwork); });
 
-    registerSeparator(TrackContextMenuArea::Track, Constants::Menus::Context::Artwork,
+    registerSeparator(m_self, TrackContextMenuArea::Track, Constants::Menus::Context::Artwork,
                       ContextMenuIds::TrackSelection::ArtworkAttachSeparator);
 
     m_removeArtwork->setStatusTip(tr("Remove all artwork associated with the selected tracks (embedded, directory)"));
@@ -500,7 +501,8 @@ void TrackSelectionControllerPrivate::setupBuiltInMenus()
                    Constants::Actions::RemoveArtwork, m_removeArtwork->text(),
                    [this](QMenu* menu, const TrackSelection&) { menu->addAction(m_removeArtwork); });
 
-    registerSeparator(TrackContextMenuArea::Track, m_trackRoot.id, Constants::Menus::Context::TrackFinalSeparator);
+    registerSeparator(m_self, TrackContextMenuArea::Track, m_trackRoot.id,
+                      Constants::Menus::Context::TrackFinalSeparator);
 
     m_openProperties->setStatusTip(tr("Open the properties dialog"));
     auto* openPropsCmd = m_actionManager->registerAction(m_openProperties, Constants::Actions::OpenProperties);
@@ -610,17 +612,17 @@ bool TrackSelectionControllerPrivate::registerAction(QObject* owner, TrackContex
     return true;
 }
 
-bool TrackSelectionControllerPrivate::registerSeparator(TrackContextMenuArea area, const Id& parentId, const Id& id,
-                                                        const Id& beforeId)
+bool TrackSelectionControllerPrivate::registerSeparator(QObject* owner, TrackContextMenuArea area, const Id& parentId,
+                                                        const Id& id, const Id& beforeId)
 {
-    if(!parentId.isValid() || !m_menuNodes.contains(parentId) || (id.isValid() && m_menuNodes.contains(id))) {
+    if(!owner || !parentId.isValid() || !m_menuNodes.contains(parentId) || (id.isValid() && m_menuNodes.contains(id))) {
         return false;
     }
     MenuNode* parent = m_menuNodes.at(parentId);
 
     auto node    = std::make_unique<MenuNode>();
     node->type   = MenuNodeType::Separator;
-    node->owner  = m_self;
+    node->owner  = owner;
     node->id     = id;
     node->area   = area;
     node->parent = parent;
@@ -1637,6 +1639,12 @@ bool TrackSelectionController::registerTrackContextAction(QObject* owner, TrackC
                                                           const TrackContextMenuRenderer& renderer, const Id& beforeId)
 {
     return p->registerAction(owner, area, parentId, id, title, renderer, beforeId);
+}
+
+bool TrackSelectionController::registerTrackContextSeparator(QObject* owner, TrackContextMenuArea area,
+                                                             const Id& parentId, const Id& id, const Id& beforeId)
+{
+    return p->registerSeparator(owner, area, parentId, id, beforeId);
 }
 
 bool TrackSelectionController::registerTrackContextDynamicSubmenu(QObject* owner, TrackContextMenuArea area,

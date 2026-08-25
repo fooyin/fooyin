@@ -147,6 +147,8 @@ public:
     bool registerTrackContextAction(QObject* owner, TrackContextMenuArea area, const Id& parentId, const Id& id,
                                     const QString& title, const TrackContextMenuRenderer& renderer,
                                     const Id& beforeId = {});
+    bool registerTrackContextSeparator(QObject* owner, TrackContextMenuArea area, const Id& parentId, const Id& id,
+                                       const Id& beforeId = {});
     bool registerTrackContextDynamicSubmenu(QObject* owner, TrackContextMenuArea area, const Id& parentId, const Id& id,
                                             const QString& title, const TrackContextMenuRenderer& renderer,
                                             const Id& beforeId = {});
