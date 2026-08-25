@@ -324,7 +324,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="127"/>
         <source>Track duration formatted as time</source>
-        <translation>Spårlängd formaterat som tid</translation>
+        <translation>Spårlängd formaterad som tid</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="129"/>
@@ -673,7 +673,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
         <source>Current date and time formatted as YYYY-MM-DD HH:MM:SS</source>
-        <translation>Nuvarande datum och tid formaterat som ÅÅÅÅ-MM-DD HH:MM:SS</translation>
+        <translation>Nuvarande datum och tid formaterat som ÅÅÅÅ-MM-DD tt:mm:ss</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="246"/>
@@ -689,7 +689,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="249"/>
         <source>Current library path</source>
-        <translation>Aktuellt bibliotekssökväg</translation>
+        <translation>Aktuell bibliotekssökväg</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="250"/>
@@ -5955,7 +5955,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="56"/>
         <source>Default length</source>
-        <translation>Defaultlängd</translation>
+        <translation>Default-längd</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="62"/>
@@ -6415,7 +6415,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="209"/>
         <source>Foreground (Bright)</source>
-        <translation>Foreground (ljust)</translation>
+        <translation>Förgund (ljust)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="210"/>
@@ -6986,7 +6986,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="101"/>
         <source>Sidebar track display</source>
-        <translation type="unfinished"></translation>
+        <translation>Sidruts-spårvisning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="108"/>
@@ -7778,7 +7778,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="90"/>
         <source>S&amp;earch</source>
-        <translation type="unfinished">S&amp;ök</translation>
+        <translation>S&amp;ök</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="91"/>
@@ -7808,7 +7808,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="109"/>
         <source>&amp;Quick Search</source>
-        <translation>&amp;Snabbsök</translation>
+        <translation>S&amp;nabbsök</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="110"/>
@@ -7974,7 +7974,7 @@ När av: Databasbetyget behålls och filtaggar används bara när databasbetyget
 Missing values still fall back to the database.
 When disabled, playcount uses the higher value, first played uses the earlier non-empty value,
 and last played uses the later value.</source>
-        <translation>När på: Antal spelningar och spelad-tidsstämplar hittade i filtaggar ersätter databasvärdena.
+        <translation>När på: Antal spelningar- och spelad-tidsstämplar hittade i filtaggar ersätter databasvärdena.
 Saknade värden faller tillbaka till databasen.
 När av: Antal spelningar använder det högre värdet, först spelad använder det tidigare icke-tomma värdet,
 och senast spelad använder det senare värdet.</translation>
@@ -11034,12 +11034,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="196"/>
         <source>Use a custom background colour for the currently playing row; transparency is supported</source>
-        <translation>Använd en egen bakgrundsfärg för den aktuellt spelande raden; genomskinlighet stöds</translation>
+        <translation>Använd en egen bakgrundsfärg för den aktuella spelande raden; genomskinlighet stöds</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="197"/>
         <source>Use a custom font for the currently playing row</source>
-        <translation>Använd ett eget typsnitt för den aktuellt spelande raden</translation>
+        <translation>Använd ett eget typsnitt för den aktuella spelande raden</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="199"/>
@@ -12946,7 +12946,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="136"/>
         <source>Resolution used to evaluate preset equations; higher values improve detail but require more processing</source>
-        <translation>Upplösning använt för att utvärdera förinställda ekvationer. Högre värden förbättrar detalj men kräver mer processande</translation>
+        <translation>Upplösning som används för att utvärdera förinställda ekvationer. Högre värden förbättrar detalj men kräver mer processande</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="137"/>
@@ -13772,7 +13772,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="84"/>
         <source>Used with the &quot;Calculate as albums (by tags)&quot; action</source>
-        <translation>Använt med ”Kalkylera som album (med taggar)”-handlingen</translation>
+        <translation>Används med ”Kalkylera som album (med taggar)”-handlingen</translation>
     </message>
 </context>
 <context>
@@ -19978,7 +19978,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/widgets.cpp" line="500"/>
         <source>Read-ahead for remote streams</source>
-        <translation type="unfinished">Förhandsläsning för fjärrströmmar</translation>
+        <translation>Framåtläsning för fjärrströmmar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="512"/>
@@ -20023,7 +20023,7 @@ Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</transla
     <message>
         <location filename="../../src/gui/widgets.cpp" line="547"/>
         <source>Interval used to refresh the list of available output devices. Set to 0 to disable.</source>
-        <translation>Intervall använt för att uppdatera listan av tillgängliga utgångsenheter. Sätt till 0 för att stänga av.</translation>
+        <translation>Intervall som används för att uppdatera listan av tillgängliga utgångsenheter. Sätt till 0 för att stänga av.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="552"/>
@@ -20081,7 +20081,7 @@ Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</transla
     <message>
         <location filename="../../src/gui/widgets.cpp" line="612"/>
         <source>ID3v2 revision used when writing MP3 tags</source>
-        <translation>ID3v2-version använt för skrivning av MP3-taggar</translation>
+        <translation>ID3v2-version som används för skrivning av MP3-taggar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="614"/>
