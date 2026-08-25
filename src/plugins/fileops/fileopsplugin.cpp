@@ -114,15 +114,17 @@ void FileOpsPlugin::initialise(const GuiPluginContext& context)
          .validate  = {}});
 
     context.advancedSettingsRegistry->add(
-        {.id           = QString::fromLatin1(Settings::DeleteEmptyFolders),
+        {.id           = QString::fromLatin1(Settings::RemoveEmptyParentFolders),
          .category     = {tr("File Operations")},
-         .label        = tr("Delete empty folders"),
-         .description  = {},
+         .label        = tr("Remove empty parent folders"),
+         .description  = tr("Remove empty parent folders after moving or deleting files, stopping at the library root"),
          .defaultValue = false,
          .editor       = AdvancedSettingCheckBox{},
-         .read         = [this] { return m_settings->fileValue(Settings::DeleteEmptyFolders, false).toBool(); },
-         .write
-         = [this](const QVariant& value) { return m_settings->fileSet(Settings::DeleteEmptyFolders, value.toBool()); },
+         .read         = [this] { return m_settings->fileValue(Settings::RemoveEmptyParentFolders, false).toBool(); },
+         .write =
+             [this](const QVariant& value) {
+                 return m_settings->fileSet(Settings::RemoveEmptyParentFolders, value.toBool());
+             },
          .normalise = {},
          .validate  = {}});
 

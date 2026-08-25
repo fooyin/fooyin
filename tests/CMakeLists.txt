@@ -93,6 +93,10 @@ fooyin_add_test(test_scriptformatter gui/scriptformattertest.cpp)
 
 fooyin_add_test(test_helpers utils/helperstest.cpp)
 
+set(FILEOPS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/plugins/fileops)
+fooyin_add_test(test_fileopsworker plugins/fileops/fileopsworkertest.cpp ${FILEOPS_SOURCE_DIR}/fileopsworker.cpp)
+target_include_directories(test_fileopsworker PRIVATE ${FILEOPS_SOURCE_DIR})
+
 set(FILTERS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/plugins/filters)
 set(FILTER_PIPELINE_TEST_SOURCES ${FILTERS_SOURCE_DIR}/filterpipeline.cpp ${FILTERS_SOURCE_DIR}/filterrows.cpp)
 set(FILTER_CONTROLLER_TEST_SOURCES

@@ -111,8 +111,8 @@ private:
     void reset();
 
     void updateExtractedArchiveTracks(const QString& archivePath);
-    void handleEmptyDirs(const QDir& dir, const QString& filepath);
-    void addEmptyDirs(const QDir& dir);
+    void handleEmptyDirs(const QDir& dir, const QString& filepath, const QDir& sourceRoot);
+    void addEmptyDirs(const QDir& dir, const QDir& sourceRoot);
     void removeEmptyFoldersUpToLibraryRoot(const QString& filePath, int libraryId = -1);
     [[nodiscard]] QString libraryRootForDeletedPath(const QString& filePath, int libraryId) const;
     [[nodiscard]] int archiveLibraryId(const QString& archivePath) const;
@@ -128,6 +128,7 @@ private:
 
     bool m_isMonitoring;
     std::optional<QDir> m_currentDir;
+    std::optional<QDir> m_currentSourceRoot;
     std::set<QString> m_tracksProcessed;
     std::set<QString> m_filesToMove;
     std::set<QString> m_dirsToCreate;

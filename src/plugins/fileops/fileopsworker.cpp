@@ -168,8 +168,7 @@ void FileOpsWorker::deleteFiles()
 
         appendDeletedTrack(track);
 
-        const bool deleteEmptyFolders = m_settings->fileValue(Settings::DeleteEmptyFolders, false).toBool();
-        if(deleteEmptyFolders) {
+        if(m_settings->fileValue(Settings::RemoveEmptyParentFolders, false).toBool()) {
             removeEmptyFoldersUpToLibraryRoot(filepath, track.libraryId());
         }
 
@@ -372,7 +371,7 @@ void FileOpsWorker::simulateMove()
                 const QFileInfo info{file};
                 const QDir fileDir{info.absolutePath()};
 
-                handleEmptyDirs(fileDir, file);
+                handleEmptyDirs(fileDir, file, srcDir);
 
                 const QString relativePath = srcDir.relativeFilePath(file);
                 const QString fileDestPath = QDir::cleanPath(destPath + "/"_L1 + relativePath);
@@ -392,7 +391,7 @@ void FileOpsWorker::simulateMove()
         }
         else {
             const QDir trackDir{srcPath};
-            handleEmptyDirs(trackDir, track.filepath());
+            handleEmptyDirs(trackDir, track.filepath(), trackDir);
 
             createDir(destPath);
 
@@ -401,7 +400,7 @@ void FileOpsWorker::simulateMove()
     }
 
     if(m_currentDir && !m_filesToMove.empty()) {
-        addEmptyDirs(m_currentDir.value());
+        addEmptyDirs(m_currentDir.value(), m_currentSourceRoot.value());
     }
 }
 
@@ -725,8 +724,7 @@ FileOpResult FileOpsWorker::removeArchive(const FileOpsItem& item)
         return {.operation = item, .status = FileOpStatus::Failed, .error = tr("Could not delete source archive")};
     }
 
-    const bool deleteEmptyFolders = m_settings->fileValue(Settings::DeleteEmptyFolders, false).toBool();
-    if(deleteEmptyFolders) {
+    if(m_settings->fileValue(Settings::RemoveEmptyParentFolders, false).toBool()) {
         removeEmptyFoldersUpToLibraryRoot(item.archivePath, archiveLibraryId(item.archivePath));
     }
 
@@ -757,7 +755,8 @@ void FileOpsWorker::removeDir(const QDir& dir)
 void FileOpsWorker::reset()
 {
     m_operations.clear();
-    m_currentDir = {};
+    m_currentDir        = {};
+    m_currentSourceRoot = {};
     m_tracksProcessed.clear();
     m_filesToMove.clear();
     m_dirsToCreate.clear();
@@ -799,24 +798,36 @@ void FileOpsWorker::updateExtractedArchiveTracks(const QString& archivePath)
     }
 }
 
-void FileOpsWorker::handleEmptyDirs(const QDir& dir, const QString& filepath)
+void FileOpsWorker::handleEmptyDirs(const QDir& dir, const QString& filepath, const QDir& sourceRoot)
 {
     if(m_preset.removeEmpty) {
-        if(m_currentDir && m_currentDir != dir) {
-            addEmptyDirs(m_currentDir.value());
-            m_filesToMove.clear();
+        if(m_currentDir && (m_currentDir != dir || m_currentSourceRoot != sourceRoot)) {
+            addEmptyDirs(m_currentDir.value(), m_currentSourceRoot.value());
         }
-        m_currentDir = dir;
+        m_currentDir        = dir;
+        m_currentSourceRoot = sourceRoot;
         m_filesToMove.emplace(filepath);
     }
 }
 
-void FileOpsWorker::addEmptyDirs(const QDir& dir)
+void FileOpsWorker::addEmptyDirs(const QDir& dir, const QDir& sourceRoot)
 {
     QDir currentDir{dir};
-    QString dirToRemove;
+
+    const bool removeEmptyParentFolders = m_settings->fileValue(Settings::RemoveEmptyParentFolders, false).toBool();
+    QString libraryRoot;
+
+    if(removeEmptyParentFolders) {
+        if(const auto libraryInfo = m_library->libraryForPath(sourceRoot.absolutePath())) {
+            libraryRoot = QDir::cleanPath(QFileInfo{libraryInfo->path}.absoluteFilePath());
+        }
+    }
 
     while(true) {
+        if(!libraryRoot.isEmpty() && Utils::File::isSamePath(currentDir.absolutePath(), libraryRoot)) {
+            break;
+        }
+
         const QFileInfoList files = currentDir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
         bool isEmpty{true};
 
@@ -831,27 +842,26 @@ void FileOpsWorker::addEmptyDirs(const QDir& dir)
             const QFileInfoList dirs = currentDir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
             for(const QFileInfo& dirInfo : dirs) {
                 const QDir subDir{dirInfo.absoluteFilePath()};
-                if(!m_dirsToRemove.contains(subDir.absolutePath()) && !subDir.isEmpty()) {
+                if(!m_dirsToRemove.contains(subDir.absolutePath())) {
                     isEmpty = false;
                     break;
                 }
             }
             if(isEmpty) {
-                m_dirsToRemove.emplace(currentDir.absolutePath());
-                dirToRemove = currentDir.absolutePath();
+                if(m_dirsToRemove.emplace(currentDir.absolutePath()).second) {
+                    removeDir(currentDir);
+                }
             }
         }
         else {
             break;
         }
 
-        if(!currentDir.cdUp()) {
+        if((Utils::File::isSamePath(currentDir.absolutePath(), sourceRoot.absolutePath())
+            && (!removeEmptyParentFolders || libraryRoot.isEmpty()))
+           || !currentDir.cdUp()) {
             break;
         }
-    }
-
-    if(!dirToRemove.isEmpty()) {
-        removeDir(dirToRemove);
     }
 }
 
