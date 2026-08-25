@@ -117,8 +117,8 @@ bool isSubdir(const QString& dir, const QString& parentDir)
 
 QString getParentDirectory(const QString& filename)
 {
-    const auto cleaned = cleanPath(filename);
-    const auto index   = cleaned.lastIndexOf(QDir::separator());
+    const QString cleaned = QDir::fromNativeSeparators(cleanPath(filename));
+    const auto index      = cleaned.lastIndexOf('/'_L1);
 
     return (index > 0) ? cleanPath(cleaned.left(index)) : QDir::rootPath();
 }
