@@ -14276,7 +14276,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="776"/>
         <source>Failed to parse category data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to parse category data.</translation>
     </message>
 </context>
 <context>
@@ -14284,28 +14284,28 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="198"/>
         <source>Show search bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Show search bar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="199"/>
         <source>Add to My Stations</source>
-        <translation type="unfinished">Add to My Stations</translation>
+        <translation>Add to My Stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="200"/>
         <source>Remove from My Stations</source>
-        <translation type="unfinished">Remove from My Stations</translation>
+        <translation>Remove from My Stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="238"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="818"/>
         <source>No stations found</source>
-        <translation type="unfinished"></translation>
+        <translation>No stations found</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="239"/>
         <source>Loading stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Loading stations…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="243"/>
@@ -14317,12 +14317,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="246"/>
         <source>Add the selected stations to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Add the selected stations to My Stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="252"/>
         <source>Remove the selected stations from My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove the selected stations from My Stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="255"/>
@@ -14332,32 +14332,32 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="262"/>
         <source>Show or hide the Radio Browser filter bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Show or hide the Radio Browser filter bar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="818"/>
         <source>No saved stations</source>
-        <translation type="unfinished"></translation>
+        <translation>No saved stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="939"/>
         <source>Failed to load stations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to load stations.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="940"/>
         <source>Failed to load stations: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to load stations: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1123"/>
         <source>Saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Saved search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1123"/>
         <source>Save search</source>
-        <translation type="unfinished"></translation>
+        <translation>Save search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1150"/>
@@ -14367,27 +14367,27 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1154"/>
         <source>Rename saved search…</source>
-        <translation type="unfinished"></translation>
+        <translation>Rename saved search…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1155"/>
         <source>Rename the saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Rename the saved search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1158"/>
         <source>Remove saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove saved search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1159"/>
         <source>Remove the saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove the saved search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1170"/>
         <source>Rename Saved Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Rename Saved Search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1170"/>
@@ -14397,7 +14397,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1200"/>
         <source>Radio Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio Search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1531"/>
@@ -14407,7 +14407,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1533"/>
         <source>Play the selected station</source>
-        <translation type="unfinished"></translation>
+        <translation>Play the selected station</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1564"/>
@@ -14417,87 +14417,87 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1568"/>
         <source>Add the selected stations to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Add the selected stations to another playlist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1610"/>
         <source>Edit station…</source>
-        <translation type="unfinished"></translation>
+        <translation>Edit station…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1610"/>
         <source>View station details…</source>
-        <translation type="unfinished"></translation>
+        <translation>View station details…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1611"/>
         <source>Edit the selected custom station</source>
-        <translation type="unfinished"></translation>
+        <translation>Edit the selected custom station</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1612"/>
         <source>View details for the selected station</source>
-        <translation type="unfinished"></translation>
+        <translation>View details for the selected station</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1619"/>
         <source>Add custom station…</source>
-        <translation type="unfinished"></translation>
+        <translation>Add custom station…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1620"/>
         <source>Add a custom station to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Add a custom station to My Stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1629"/>
         <source>Copy stream URL</source>
-        <translation type="unfinished">Copy stream URL</translation>
+        <translation>Copy stream URL</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1630"/>
         <source>Copy the selected station stream URLs to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Copy the selected station stream URLs to the clipboard</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1649"/>
         <source>Open homepage</source>
-        <translation type="unfinished">Open homepage</translation>
+        <translation>Open homepage</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1650"/>
         <source>Open the selected station homepage in a browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Open the selected station homepage in a browser</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1663"/>
         <source>Open radio-browser.info page</source>
-        <translation type="unfinished">Open radio-browser.info page</translation>
+        <translation>Open radio-browser.info page</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1664"/>
         <source>Open the selected station on radio-browser.info</source>
-        <translation type="unfinished"></translation>
+        <translation>Open the selected station on radio-browser.info</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1695"/>
         <source>Import stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Import stations…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1696"/>
         <source>Import saved stations from a playlist file</source>
-        <translation type="unfinished"></translation>
+        <translation>Import saved stations from a playlist file</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1699"/>
         <source>Export stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Export stations…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1700"/>
         <source>Export My Stations to a playlist file</source>
-        <translation type="unfinished"></translation>
+        <translation>Export My Stations to a playlist file</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1718"/>
@@ -14507,7 +14507,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1719"/>
         <source>Automatically size columns to fill the available width</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatically size columns to fill the available width</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1726"/>
@@ -14528,27 +14528,27 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1791"/>
         <source>Icons (right captions)</source>
-        <translation type="unfinished"></translation>
+        <translation>Icons (right captions)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1792"/>
         <source>Icons (bottom captions)</source>
-        <translation type="unfinished"></translation>
+        <translation>Icons (bottom captions)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1833"/>
         <source>Show station icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Show station icons</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1842"/>
         <source>Show station tooltips</source>
-        <translation type="unfinished"></translation>
+        <translation>Show station tooltips</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1851"/>
         <source>Show saved station icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Show saved station icons</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1860"/>
@@ -14571,12 +14571,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="74"/>
         <source>Radio Guide Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio Guide Settings</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="77"/>
         <source>Add Section</source>
-        <translation type="unfinished"></translation>
+        <translation>Add Section</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="78"/>
@@ -14601,7 +14601,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="82"/>
         <source>Show Countries</source>
-        <translation type="unfinished"></translation>
+        <translation>Show Countries</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="105"/>
@@ -14611,37 +14611,37 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="110"/>
         <source>Startup selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Startup selection</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="118"/>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Tags</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="248"/>
         <source>Restore previous selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Restore previous selection</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="249"/>
         <source>Popular</source>
-        <translation type="unfinished"></translation>
+        <translation>Popular</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="250"/>
         <source>Trending</source>
-        <translation type="unfinished"></translation>
+        <translation>Trending</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="251"/>
         <source>Now Listening</source>
-        <translation type="unfinished"></translation>
+        <translation>Now Listening</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="252"/>
         <source>Newest</source>
-        <translation type="unfinished"></translation>
+        <translation>Newest</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="253"/>
@@ -14656,18 +14656,18 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="255"/>
         <source>Latest Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Latest Search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="275"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="286"/>
         <source>New Section</source>
-        <translation type="unfinished"></translation>
+        <translation>New Section</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="290"/>
         <source>New Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>New Preset</translation>
     </message>
 </context>
 <context>
@@ -14680,7 +14680,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigmodel.cpp" line="91"/>
         <source>Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag</translation>
     </message>
 </context>
 <context>
@@ -14694,179 +14694,179 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="86"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="141"/>
         <source>Blues</source>
-        <translation type="unfinished"></translation>
+        <translation>Blues</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="87"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="142"/>
         <source>Classical</source>
-        <translation type="unfinished"></translation>
+        <translation>Classical</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="88"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="143"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Country</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="89"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="144"/>
         <source>Dance</source>
-        <translation type="unfinished"></translation>
+        <translation>Dance</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="90"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="145"/>
         <source>Disco</source>
-        <translation type="unfinished"></translation>
+        <translation>Disco</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="91"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="146"/>
         <source>Easy</source>
-        <translation type="unfinished"></translation>
+        <translation>Easy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="92"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="147"/>
         <source>Folk</source>
-        <translation type="unfinished"></translation>
+        <translation>Folk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="93"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="148"/>
         <source>Hits</source>
-        <translation type="unfinished"></translation>
+        <translation>Hits</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="94"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="149"/>
         <source>Jazz</source>
-        <translation type="unfinished"></translation>
+        <translation>Jazz</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="95"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="150"/>
         <source>Oldies</source>
-        <translation type="unfinished"></translation>
+        <translation>Oldies</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="96"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="151"/>
         <source>Pop</source>
-        <translation type="unfinished"></translation>
+        <translation>Pop</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="97"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="152"/>
         <source>Rap</source>
-        <translation type="unfinished"></translation>
+        <translation>Rap</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="98"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="153"/>
         <source>Rock</source>
-        <translation type="unfinished"></translation>
+        <translation>Rock</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="99"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="154"/>
         <source>Soul</source>
-        <translation type="unfinished"></translation>
+        <translation>Soul</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="101"/>
         <source>More Genres</source>
-        <translation type="unfinished"></translation>
+        <translation>More Genres</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="102"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="155"/>
         <source>Alternative</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternative</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="103"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="156"/>
         <source>Ambient</source>
-        <translation type="unfinished"></translation>
+        <translation>Ambient</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="104"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="157"/>
         <source>Club</source>
-        <translation type="unfinished"></translation>
+        <translation>Club</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="105"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="158"/>
         <source>Electronic</source>
-        <translation type="unfinished"></translation>
+        <translation>Electronic</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="106"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="159"/>
         <source>Funk</source>
-        <translation type="unfinished"></translation>
+        <translation>Funk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="107"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="160"/>
         <source>Hip Hop</source>
-        <translation type="unfinished"></translation>
+        <translation>Hip Hop</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="108"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="161"/>
         <source>House</source>
-        <translation type="unfinished"></translation>
+        <translation>House</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="109"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="162"/>
         <source>Indie</source>
-        <translation type="unfinished"></translation>
+        <translation>Indie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="110"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="163"/>
         <source>Latino</source>
-        <translation type="unfinished"></translation>
+        <translation>Latino</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="111"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="164"/>
         <source>Metal</source>
-        <translation type="unfinished"></translation>
+        <translation>Metal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="112"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="165"/>
         <source>Punk</source>
-        <translation type="unfinished"></translation>
+        <translation>Punk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="113"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="166"/>
         <source>Reggae</source>
-        <translation type="unfinished"></translation>
+        <translation>Reggae</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="114"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="167"/>
         <source>Salsa</source>
-        <translation type="unfinished"></translation>
+        <translation>Salsa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="115"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="168"/>
         <source>World Music</source>
-        <translation type="unfinished"></translation>
+        <translation>World Music</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="117"/>
         <source>Eras</source>
-        <translation type="unfinished"></translation>
+        <translation>Eras</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="118"/>
@@ -14912,42 +14912,42 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="127"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="135"/>
         <source>Talk</source>
-        <translation type="unfinished"></translation>
+        <translation>Talk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="128"/>
         <source>College Radio</source>
-        <translation type="unfinished"></translation>
+        <translation>College Radio</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="129"/>
         <source>Community Radio</source>
-        <translation type="unfinished"></translation>
+        <translation>Community Radio</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="130"/>
         <source>Culture</source>
-        <translation type="unfinished"></translation>
+        <translation>Culture</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="131"/>
         <source>News</source>
-        <translation type="unfinished"></translation>
+        <translation>News</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="132"/>
         <source>Public Radio</source>
-        <translation type="unfinished"></translation>
+        <translation>Public Radio</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="133"/>
         <source>Religion</source>
-        <translation type="unfinished"></translation>
+        <translation>Religion</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="134"/>
         <source>Sport</source>
-        <translation type="unfinished"></translation>
+        <translation>Sport</translation>
     </message>
 </context>
 <context>
@@ -14956,31 +14956,31 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="170"/>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="198"/>
         <source>Selections</source>
-        <translation type="unfinished"></translation>
+        <translation>Selections</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="171"/>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="199"/>
         <source>Popular</source>
-        <translation type="unfinished"></translation>
+        <translation>Popular</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="172"/>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="200"/>
         <source>Trending</source>
-        <translation type="unfinished"></translation>
+        <translation>Trending</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="173"/>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="201"/>
         <source>Now Listening</source>
-        <translation type="unfinished"></translation>
+        <translation>Now Listening</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="174"/>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="202"/>
         <source>Newest</source>
-        <translation type="unfinished"></translation>
+        <translation>Newest</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="175"/>
@@ -15004,18 +15004,18 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="179"/>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="207"/>
         <source>Latest Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Latest Search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="183"/>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="212"/>
         <source>Countries</source>
-        <translation type="unfinished"></translation>
+        <translation>Countries</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="427"/>
         <source>Saved Searches</source>
-        <translation type="unfinished"></translation>
+        <translation>Saved Searches</translation>
     </message>
 </context>
 <context>
@@ -15023,32 +15023,32 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="54"/>
         <source>Loading Countries…</source>
-        <translation type="unfinished"></translation>
+        <translation>Loading Countries…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="56"/>
         <source>Loading Languages…</source>
-        <translation type="unfinished"></translation>
+        <translation>Loading Languages…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="58"/>
         <source>Loading Genres…</source>
-        <translation type="unfinished"></translation>
+        <translation>Loading Genres…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="60"/>
         <source>Loading Codecs…</source>
-        <translation type="unfinished"></translation>
+        <translation>Loading Codecs…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="63"/>
         <source>Loading…</source>
-        <translation type="unfinished"></translation>
+        <translation>Loading…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="108"/>
         <source>Selections</source>
-        <translation type="unfinished"></translation>
+        <translation>Selections</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="108"/>
@@ -15058,77 +15058,77 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="233"/>
         <source>Radio Guide</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio Guide</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="572"/>
         <source>Browse</source>
-        <translation type="unfinished"></translation>
+        <translation>Browse</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="573"/>
         <source>Browse the selected section</source>
-        <translation type="unfinished"></translation>
+        <translation>Browse the selected section</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="581"/>
         <source>Rename saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Rename saved search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="582"/>
         <source>Rename the selected saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Rename the selected saved search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="585"/>
         <source>Remove saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove saved search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="586"/>
         <source>Remove the selected saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove the selected saved search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="596"/>
         <source>Add custom station…</source>
-        <translation type="unfinished"></translation>
+        <translation>Add custom station…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="597"/>
         <source>Add a custom station to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Add a custom station to My Stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="602"/>
         <source>Import stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Import stations…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="603"/>
         <source>Import saved stations from a playlist file</source>
-        <translation type="unfinished"></translation>
+        <translation>Import saved stations from a playlist file</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="606"/>
         <source>Export stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Export stations…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="607"/>
         <source>Export My Stations to a playlist file</source>
-        <translation type="unfinished"></translation>
+        <translation>Export My Stations to a playlist file</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="614"/>
         <source>Expand all</source>
-        <translation type="unfinished"></translation>
+        <translation>Expand all</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="617"/>
         <source>Collapse all</source>
-        <translation type="unfinished"></translation>
+        <translation>Collapse all</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="630"/>
@@ -15146,12 +15146,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="123"/>
         <source>Reset filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Reset filters</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="132"/>
         <source>Search stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Search stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="135"/>
@@ -15159,7 +15159,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="395"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="916"/>
         <source>Any country</source>
-        <translation type="unfinished"></translation>
+        <translation>Any country</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="138"/>
@@ -15167,13 +15167,13 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="403"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="944"/>
         <source>Any language</source>
-        <translation type="unfinished"></translation>
+        <translation>Any language</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="141"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="575"/>
         <source>Any genre</source>
-        <translation type="unfinished"></translation>
+        <translation>Any genre</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="145"/>
@@ -15181,7 +15181,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="621"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="624"/>
         <source>Any tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Any tag</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="148"/>
@@ -15189,7 +15189,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="419"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1012"/>
         <source>Any codec</source>
-        <translation type="unfinished"></translation>
+        <translation>Any codec</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="154"/>
@@ -15205,18 +15205,18 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="172"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="854"/>
         <source>Clear filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Clear filter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="176"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1234"/>
         <source>Pin filter to bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Pin filter to bar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="183"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Country</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="184"/>
@@ -15231,7 +15231,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="186"/>
         <source>Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="187"/>
@@ -15253,17 +15253,17 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="192"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="833"/>
         <source>Show filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Show filters</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="200"/>
         <source>Reset all filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Reset all filters</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="274"/>
         <source>Radio Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio Search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="396"/>
@@ -15309,7 +15309,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="826"/>
         <source>Filters (%1)</source>
         <extracomment>%1 is the number of active search filters</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Filters (%1)</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="827"/>
@@ -15322,12 +15322,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1040"/>
         <source>Min bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Min bitrate</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1047"/>
         <source>Max bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Max bitrate</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1085"/>
@@ -15337,7 +15337,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1234"/>
         <source>Unpin filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Unpin filter</translation>
     </message>
 </context>
 <context>
@@ -15348,33 +15348,33 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="442"/>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="477"/>
         <source>Station validated.</source>
-        <translation type="unfinished"></translation>
+        <translation>Station validated.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="129"/>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="368"/>
         <source>Enter a station name and stream URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>Enter a station name and stream URL.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="138"/>
         <source>Add Custom Station</source>
-        <translation type="unfinished"></translation>
+        <translation>Add Custom Station</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="141"/>
         <source>Edit Custom Station</source>
-        <translation type="unfinished"></translation>
+        <translation>Edit Custom Station</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="144"/>
         <source>Station Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Station Details</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="166"/>
         <source>Separate tags with commas</source>
-        <translation type="unfinished"></translation>
+        <translation>Separate tags with commas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="172"/>
@@ -15391,27 +15391,27 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="185"/>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="213"/>
         <source>Stream URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Stream URL</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="189"/>
         <source>Homepage</source>
-        <translation type="unfinished"></translation>
+        <translation>Homepage</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="191"/>
         <source>Favicon</source>
-        <translation type="unfinished"></translation>
+        <translation>Favicon</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="193"/>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Tags</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="195"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Country</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="197"/>
@@ -15431,42 +15431,42 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="373"/>
         <source>Waiting to validate…</source>
-        <translation type="unfinished"></translation>
+        <translation>Waiting to validate…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="385"/>
         <source>Radio Browser is unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio Browser is unavailable.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="395"/>
         <source>Validating station…</source>
-        <translation type="unfinished"></translation>
+        <translation>Validating station…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="404"/>
         <source>Station could not be validated.</source>
-        <translation type="unfinished"></translation>
+        <translation>Station could not be validated.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="421"/>
         <source>Station validated. Looking up station details…</source>
-        <translation type="unfinished"></translation>
+        <translation>Station validated. Looking up station details…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="460"/>
         <source>Station validated. Details found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Station validated. Details found.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="501"/>
         <source>▼ Details</source>
-        <translation type="unfinished"></translation>
+        <translation>▼ Details</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="501"/>
         <source>▶ Details</source>
-        <translation type="unfinished"></translation>
+        <translation>▶ Details</translation>
     </message>
 </context>
 <context>
@@ -15475,14 +15475,14 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="54"/>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="72"/>
         <source>Export Radio Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Export Radio Stations</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="77"/>
         <source>Exported %n radio station(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Exported %n radio station.</numerusform>
+            <numerusform>Exported %n radio stations.</numerusform>
         </translation>
     </message>
     <message>
@@ -15490,7 +15490,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="109"/>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="169"/>
         <source>Import Radio Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Import Radio Stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="89"/>
@@ -15500,7 +15500,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="91"/>
         <source>Append</source>
-        <translation type="unfinished"></translation>
+        <translation>Append</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="92"/>
@@ -15510,7 +15510,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="121"/>
         <source>Importing radio stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importing radio stations…</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="150"/>
@@ -15531,7 +15531,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="174"/>
         <source>M3U Playlists (*.m3u8);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>M3U Playlists (*.m3u8);;All Files (*)</translation>
     </message>
 </context>
 <context>
@@ -15539,7 +15539,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationview.cpp" line="37"/>
         <source>Retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Retry</translation>
     </message>
 </context>
 <context>
@@ -15547,12 +15547,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostreamresolver.cpp" line="126"/>
         <source>Invalid stream URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>Invalid stream URL.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostreamresolver.cpp" line="295"/>
         <source>Playlist did not contain any playable streams.</source>
-        <translation type="unfinished"></translation>
+        <translation>Playlist did not contain any playable streams.</translation>
     </message>
 </context>
 <context>
@@ -15560,13 +15560,13 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="52"/>
         <source>ReplayGain</source>
-        <translation type="unfinished">ReplayGain</translation>
+        <translation>ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="68"/>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="147"/>
         <source>Disabled</source>
-        <translation type="unfinished">Disabled</translation>
+        <translation>Disabled</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="69"/>
@@ -15596,7 +15596,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="158"/>
         <source>Show label</source>
-        <translation type="unfinished">Show label</translation>
+        <translation>Show label</translation>
     </message>
 </context>
 <context>
@@ -16543,7 +16543,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="84"/>
         <source>Search Matching</source>
-        <translation type="unfinished"></translation>
+        <translation>Search Matching</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="87"/>
@@ -16573,37 +16573,37 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="96"/>
         <source>Match beginnings of words</source>
-        <translation type="unfinished"></translation>
+        <translation>Match beginnings of words</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="97"/>
         <source>Match anywhere</source>
-        <translation type="unfinished"></translation>
+        <translation>Match anywhere</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="100"/>
         <source>Search mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Search mode</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="102"/>
         <source>Search script</source>
-        <translation type="unfinished"></translation>
+        <translation>Search script</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="105"/>
         <source>These settings are used for plain text searches, not query expressions.</source>
-        <translation type="unfinished"></translation>
+        <translation>These settings are used for plain text searches, not query expressions.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="112"/>
         <source>Only applies when autosearch is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Only applies when autosearch is disabled.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="120"/>
         <source>Results Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Results Playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="124"/>
@@ -16744,7 +16744,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/widgets/seekcontainer.cpp" line="71"/>
         <source>Live</source>
-        <translation type="unfinished"></translation>
+        <translation>Live</translation>
     </message>
 </context>
 <context>
@@ -16827,7 +16827,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfosettingspage.cpp" line="76"/>
         <source>Enabled fields use the configured name and order. Other tags are shown as &lt;TAG&gt; when extended metadata is enabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Enabled fields use the configured name and order. Other tags are shown as &lt;TAG&gt; when extended metadata is enabled.</translation>
     </message>
 </context>
 <context>
@@ -17023,7 +17023,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/sleepinhibitor/platforms/inhibitordbus.cpp" line="94"/>
         <source>fooyin is running</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin is running</translation>
     </message>
 </context>
 <context>
@@ -17031,7 +17031,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/sleepinhibitor/platforms/inhibitormacos.cpp" line="36"/>
         <source>fooyin is running</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin is running</translation>
     </message>
 </context>
 <context>
@@ -17039,17 +17039,17 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="33"/>
         <source>Inhibit system sleep</source>
-        <translation type="unfinished"></translation>
+        <translation>Inhibit system sleep</translation>
     </message>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="34"/>
         <source>Inhibit system sleep during playback only</source>
-        <translation type="unfinished"></translation>
+        <translation>Inhibit system sleep during playback only</translation>
     </message>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="38"/>
         <source>Sleep Inhibitor Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Sleep Inhibitor Settings</translation>
     </message>
 </context>
 <context>
@@ -17083,7 +17083,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/sortactionhandler.cpp" line="141"/>
         <source>Open the sorting presets settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Open the sorting presets settings</translation>
     </message>
 </context>
 <context>
@@ -17280,17 +17280,17 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="36"/>
         <source>Spectrogram Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Spectrogram Settings</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="37"/>
         <source>Use logarithmic frequency scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Use logarithmic frequency scale</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="38"/>
         <source>Clear on track change</source>
-        <translation type="unfinished"></translation>
+        <translation>Clear on track change</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="48"/>
@@ -17301,7 +17301,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="55"/>
         <source>Unchanged</source>
-        <translation type="unfinished"></translation>
+        <translation>Unchanged</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="56"/>
@@ -17311,12 +17311,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="57"/>
         <source>Front Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Front Only</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="58"/>
         <source>Back Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Back Only</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="60"/>
@@ -17326,7 +17326,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="61"/>
         <source>Stationary</source>
-        <translation type="unfinished"></translation>
+        <translation>Stationary</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="63"/>
@@ -17346,7 +17346,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="70"/>
         <source>Vertical space between the left and right channel spectrograms.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertical space between the left and right channel spectrograms.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="75"/>
@@ -17371,7 +17371,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="85"/>
         <source>Window function</source>
-        <translation type="unfinished"></translation>
+        <translation>Window function</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="89"/>
@@ -17381,12 +17381,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="96"/>
         <source>Minimum level</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimum level</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="98"/>
         <source>Maximum level</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum level</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="100"/>
@@ -17404,12 +17404,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="46"/>
         <source>Spectro&amp;gram</source>
-        <translation type="unfinished"></translation>
+        <translation>Spectro&amp;gram</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="47"/>
         <source>Open a spectrogram in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Open a spectrogram in a separate window</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="49"/>
@@ -17420,7 +17420,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="53"/>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="58"/>
         <source>Spectrogram</source>
-        <translation type="unfinished"></translation>
+        <translation>Spectrogram</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="49"/>
@@ -17434,12 +17434,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="552"/>
         <source>Use logarithmic frequency scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Use logarithmic frequency scale</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="553"/>
         <source>Clear on track change</source>
-        <translation type="unfinished"></translation>
+        <translation>Clear on track change</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="557"/>
@@ -17449,7 +17449,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="571"/>
         <source>Unchanged</source>
-        <translation type="unfinished"></translation>
+        <translation>Unchanged</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="572"/>
@@ -17459,12 +17459,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="573"/>
         <source>Front Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Front Only</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="574"/>
         <source>Back Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Back Only</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="576"/>
@@ -17479,7 +17479,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="591"/>
         <source>Stationary</source>
-        <translation type="unfinished"></translation>
+        <translation>Stationary</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="593"/>
@@ -17592,7 +17592,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="251"/>
         <source>Duration (sample-rate based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Duration (sample-rate based)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="252"/>
