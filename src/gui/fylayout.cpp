@@ -31,6 +31,7 @@ Q_LOGGING_CATEGORY(LAYOUT, "fy.layout")
 using namespace Qt::StringLiterals;
 
 constexpr auto OptionsKey         = "Options"_L1;
+constexpr auto ShowInMenuKey      = "ShowInMenu"_L1;
 constexpr auto ApplyThemeKey      = "ApplyTheme"_L1;
 constexpr auto ApplyWindowSizeKey = "ApplyWindowSize"_L1;
 constexpr auto ThemeOptionsKey    = "ThemeOptions"_L1;
@@ -106,6 +107,16 @@ QString FyLayout::name() const
 QJsonObject FyLayout::json() const
 {
     return m_json;
+}
+
+bool FyLayout::isShownInMenu() const
+{
+    return optionValue(m_json, ShowInMenuKey, true);
+}
+
+void FyLayout::setShownInMenu(bool shown)
+{
+    setOptionValue(m_json, ShowInMenuKey, shown);
 }
 
 bool FyLayout::appliesWindowSize() const

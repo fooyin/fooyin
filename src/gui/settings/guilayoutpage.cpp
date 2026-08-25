@@ -152,6 +152,7 @@ private:
     {
         FyLayout baseline;
         FyLayout layout;
+        bool showInMenu{true};
         bool applyTheme{false};
         bool applyWindowSize{false};
     };
@@ -206,6 +207,7 @@ private:
     QSpinBox* m_splitterSpacing;
     QCheckBox* m_lockSplitterSize;
     QGroupBox* m_metadataGroup;
+    QCheckBox* m_showInMenu;
     QCheckBox* m_applyTheme;
     QCheckBox* m_applyWindowSize;
 
@@ -240,6 +242,7 @@ GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, Editabl
     , m_splitterSpacing{new QSpinBox(this)}
     , m_lockSplitterSize{new QCheckBox(this)}
     , m_metadataGroup{new QGroupBox(tr("Layout options"), this)}
+    , m_showInMenu{new QCheckBox(tr("Show in Layout menu"), this)}
     , m_applyTheme{new QCheckBox(tr("Restore theme when switching to this layout"), this)}
     , m_applyWindowSize{new QCheckBox(tr("Restore window size when switching to this layout"), this)}
     , m_layoutCombo{new QComboBox(this)}
@@ -277,8 +280,9 @@ GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, Editabl
     splitterLayout->setColumnStretch(2, 1);
 
     auto* metadataLayout = new QGridLayout(m_metadataGroup);
-    metadataLayout->addWidget(m_applyTheme, 0, 0);
-    metadataLayout->addWidget(m_applyWindowSize, 1, 0);
+    metadataLayout->addWidget(m_showInMenu, 0, 0);
+    metadataLayout->addWidget(m_applyTheme, 1, 0);
+    metadataLayout->addWidget(m_applyWindowSize, 2, 0);
 
     auto* newLayout       = new QPushButton(tr("New"), this);
     auto* renameLayout    = new QPushButton(tr("Rename"), this);
@@ -394,6 +398,7 @@ void GuiLayoutPageWidget::showLayout(const QString& name)
             m_drafts.emplace(name, LayoutDraft{
                                        .baseline        = layout,
                                        .layout          = layout,
+                                       .showInMenu      = layout.isShownInMenu(),
                                        .applyTheme      = layout.appliesTheme(),
                                        .applyWindowSize = layout.appliesWindowSize(),
                                    });
@@ -406,6 +411,7 @@ void GuiLayoutPageWidget::showLayout(const QString& name)
     updateMetadataControls();
 
     if(const auto draft = m_drafts.find(name); draft != m_drafts.end()) {
+        m_showInMenu->setChecked(draft->second.showInMenu);
         m_applyTheme->setChecked(draft->second.applyTheme);
         m_applyWindowSize->setChecked(draft->second.applyWindowSize);
     }
@@ -430,6 +436,7 @@ void GuiLayoutPageWidget::saveDisplayedDraft()
                                                LayoutDraft{
                                                    .baseline        = baseline,
                                                    .layout          = layout,
+                                                   .showInMenu      = m_showInMenu->isChecked(),
                                                    .applyTheme      = m_applyTheme->isChecked(),
                                                    .applyWindowSize = m_applyWindowSize->isChecked(),
                                                })
@@ -437,6 +444,7 @@ void GuiLayoutPageWidget::saveDisplayedDraft()
     }
 
     draft->second.layout          = layout;
+    draft->second.showInMenu      = m_showInMenu->isChecked();
     draft->second.applyTheme      = m_applyTheme->isChecked();
     draft->second.applyWindowSize = m_applyWindowSize->isChecked();
 }
@@ -456,6 +464,9 @@ void GuiLayoutPageWidget::mergeExternalLayout(const FyLayout& layout)
     const auto mergedJson
         = Utils::mergeJsonThreeWay(state.baseline.json(), layout.json(), state.layout.json(), arrayItemId).toObject();
 
+    if(state.showInMenu == state.baseline.isShownInMenu()) {
+        state.showInMenu = layout.isShownInMenu();
+    }
     if(state.applyTheme == state.baseline.appliesTheme()) {
         state.applyTheme = layout.appliesTheme();
     }
@@ -517,6 +528,7 @@ void GuiLayoutPageWidget::onLayoutRemoved(const QString& name)
 FyLayout GuiLayoutPageWidget::finaliseDraft(const LayoutDraft& draft) const
 {
     FyLayout layout{draft.layout};
+    layout.setShownInMenu(draft.showInMenu);
 
     if(draft.applyTheme) {
         const auto theme = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
@@ -546,6 +558,7 @@ void GuiLayoutPageWidget::apply()
 
     const TreeSelectionGuard selectionGuard{m_layoutTree, m_model};
 
+    const QString selectedName{m_displayedLayoutName};
     const QString currentName = m_layoutProvider->currentLayout().name();
 
     std::vector<FyLayout> layouts;
@@ -553,6 +566,7 @@ void GuiLayoutPageWidget::apply()
 
     for(const auto& draft : m_drafts | std::views::values) {
         const bool changed = draft.layout.json() != draft.baseline.json()
+                          || draft.showInMenu != draft.baseline.isShownInMenu()
                           || draft.applyTheme != draft.baseline.appliesTheme()
                           || draft.applyWindowSize != draft.baseline.appliesWindowSize();
         if(!changed) {
@@ -567,18 +581,23 @@ void GuiLayoutPageWidget::apply()
 
     m_applying = true;
 
-    for(const auto& layout : layouts) {
-        if(layout.name() != currentName) {
-            m_layoutProvider->saveLayout(layout);
-        }
-    }
-    if(const auto current = std::ranges::find(layouts, currentName, &FyLayout::name); current != layouts.end()) {
-        m_editableLayout->changeLayout(*current);
+    const auto selected = std::ranges::find(layouts, selectedName, &FyLayout::name);
+    const FyLayout selectedLayout
+        = selected != layouts.end() ? *selected : m_layoutProvider->layoutByName(selectedName);
+    if(selectedLayout.isValid() && (selectedName != currentName || selected != layouts.end())) {
+        m_editableLayout->changeLayout(selectedLayout);
         m_layoutProvider->saveCurrentLayout();
     }
 
+    for(const auto& layout : layouts) {
+        if(layout.name() != selectedName) {
+            m_layoutProvider->saveLayout(layout);
+        }
+    }
+
     m_applying = false;
-    load();
+    m_drafts.clear();
+    refreshLayouts(selectedName);
 }
 
 void GuiLayoutPageWidget::reset() { }
@@ -758,6 +777,7 @@ void GuiLayoutPageWidget::updateMetadataControls()
     const bool enabled    = layout.isValid();
 
     m_metadataGroup->setEnabled(enabled);
+    m_showInMenu->setChecked(enabled && layout.isShownInMenu());
     m_applyTheme->setChecked(enabled && layout.appliesTheme());
     m_applyWindowSize->setChecked(enabled && layout.appliesWindowSize());
 }
