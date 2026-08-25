@@ -17,6 +17,8 @@
  *
  */
 
+#include "networktestutils.h"
+
 #include <core/engine/input/id3utils.h>
 #include <core/network/hlsstreamdevice.h>
 #include <core/network/networkstreamdevice.h>
@@ -25,14 +27,11 @@
 #include <gtest/gtest.h>
 
 #include <QCoreApplication>
-#include <QNetworkReply>
 #include <QPointer>
 #include <QStandardPaths>
 #include <QtEndian>
 
-#include <algorithm>
 #include <chrono>
-#include <cstring>
 #include <future>
 #include <stop_token>
 #include <utility>
@@ -56,100 +55,6 @@ QCoreApplication* ensureCoreApplication()
     static auto* const app = new QCoreApplication{argc, argv};
     QCoreApplication::setApplicationName(QString::fromLatin1(appName));
     return app;
-}
-
-class FakeReply : public QNetworkReply
-{
-public:
-    FakeReply(const QNetworkRequest& request, QNetworkAccessManager::Operation operation, QObject* parent = nullptr)
-        : QNetworkReply{parent}
-    {
-        setRequest(request);
-        setUrl(request.url());
-        setOperation(operation);
-        QIODevice::open(ReadOnly | Unbuffered);
-    }
-
-    void abort() override
-    {
-        m_aborted = true;
-    }
-
-    [[nodiscard]] bool wasAborted() const
-    {
-        return m_aborted;
-    }
-
-    [[nodiscard]] bool isSequential() const override
-    {
-        return true;
-    }
-
-    [[nodiscard]] qint64 bytesAvailable() const override
-    {
-        return m_data.size() + QNetworkReply::bytesAvailable();
-    }
-
-    void appendData(const QByteArray& data)
-    {
-        m_data.append(data);
-    }
-
-    void emitReadyRead()
-    {
-        Q_EMIT readyRead();
-    }
-
-    void setResponseHeader(const QByteArray& name, const QByteArray& value)
-    {
-        setRawHeader(name, value);
-    }
-
-    void emitFinished()
-    {
-        Q_EMIT finished();
-    }
-
-protected:
-    qint64 readData(char* data, qint64 maxSize) override
-    {
-        const qint64 bytesRead = std::min<qint64>(m_data.size(), maxSize);
-        if(bytesRead <= 0) {
-            return 0;
-        }
-
-        std::memcpy(data, m_data.constData(), bytesRead);
-        m_data.remove(0, bytesRead);
-        return bytesRead;
-    }
-
-private:
-    QByteArray m_data;
-    bool m_aborted{false};
-};
-
-class FakeNetworkAccessManager : public QNetworkAccessManager
-{
-public:
-    QPointer<FakeReply> lastReply;
-    QNetworkRequest lastRequest;
-    int requestCount{0};
-
-protected:
-    QNetworkReply* createRequest(Operation operation, const QNetworkRequest& request,
-                                 QIODevice* /*outgoingData*/) override
-    {
-        ++requestCount;
-        lastRequest = request;
-        auto* reply = new FakeReply{request, operation};
-        lastReply   = reply;
-        return reply;
-    }
-};
-
-std::shared_ptr<FakeNetworkAccessManager> makeFakeNetworkAccessManager()
-{
-    return {new FakeNetworkAccessManager{}, [](FakeNetworkAccessManager* manager) { manager->deleteLater(); }};
 }
 
 QByteArray icyStreamData(QByteArrayView audio, QByteArray metadata)
@@ -386,7 +291,7 @@ TEST_F(NetworkStreamDeviceTest, CancellationTokenWakesBlockingRead)
 TEST_F(NetworkStreamDeviceTest, LateReplySignalsAfterDeviceDestructionDoNotUseDestroyedDevice)
 {
     auto network = makeFakeNetworkAccessManager();
-    QPointer<FakeReply> reply;
+    QPointer<FakeNetworkReply> reply;
 
     {
         NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
@@ -415,13 +320,13 @@ TEST_F(NetworkStreamDeviceTest, ReconnectsAfterCleanFinishWhenEnabled)
     device.setNonBlockingReadsEnabled(true);
     device.setReconnectOnFinishedEnabled(true);
 
-    QPointer<FakeReply> firstReply = network->lastReply;
+    QPointer<FakeNetworkReply> firstReply = network->lastReply;
     ASSERT_FALSE(firstReply.isNull());
 
     firstReply->emitFinished();
     QCoreApplication::processEvents();
 
-    QPointer<FakeReply> secondReply = network->lastReply;
+    QPointer<FakeNetworkReply> secondReply = network->lastReply;
     ASSERT_FALSE(secondReply.isNull());
     EXPECT_NE(firstReply, secondReply);
 }
@@ -439,7 +344,7 @@ TEST_F(NetworkStreamDeviceTest, StopsReconnectLoopAfterRepeatedEmptyCleanFinishe
     ASSERT_EQ(network->requestCount, 1);
 
     for(int i{0}; i < MaxReconnects; ++i) {
-        QPointer<FakeReply> reply = network->lastReply;
+        QPointer<FakeNetworkReply> reply = network->lastReply;
         ASSERT_FALSE(reply.isNull());
 
         reply->emitFinished();
@@ -450,7 +355,7 @@ TEST_F(NetworkStreamDeviceTest, StopsReconnectLoopAfterRepeatedEmptyCleanFinishe
         EXPECT_NE(reply, network->lastReply);
     }
 
-    QPointer<FakeReply> finalReply = network->lastReply;
+    QPointer<FakeNetworkReply> finalReply = network->lastReply;
     ASSERT_FALSE(finalReply.isNull());
     finalReply->emitFinished();
     QCoreApplication::processEvents();
@@ -465,7 +370,7 @@ TEST_F(NetworkStreamDeviceTest, HlsReadsTimedId3MetadataFromEmsg)
 
     ASSERT_TRUE(device.open(QIODevice::ReadOnly));
 
-    QPointer<FakeReply> playlistReply = network->lastReply;
+    QPointer<FakeNetworkReply> playlistReply = network->lastReply;
     ASSERT_FALSE(playlistReply.isNull());
     playlistReply->appendData("#EXTM3U\n"
                               "#EXTINF:3,\n"
@@ -476,7 +381,7 @@ TEST_F(NetworkStreamDeviceTest, HlsReadsTimedId3MetadataFromEmsg)
     playlistReply->emitFinished();
     QCoreApplication::processEvents();
 
-    QPointer<FakeReply> segmentReply = network->lastReply;
+    QPointer<FakeNetworkReply> segmentReply = network->lastReply;
     ASSERT_FALSE(segmentReply.isNull());
     const QByteArray firstMetadata = timedId3Emsg("Paul Carrack", "Don't Shed a Tear", "LG73");
     segmentReply->appendData(firstMetadata.first(17));
@@ -503,7 +408,7 @@ TEST_F(NetworkStreamDeviceTest, HlsReadsTimedId3MetadataFromEmsg)
     segmentReply->emitFinished();
     QCoreApplication::processEvents();
 
-    QPointer<FakeReply> nextSegmentReply = network->lastReply;
+    QPointer<FakeNetworkReply> nextSegmentReply = network->lastReply;
     ASSERT_FALSE(nextSegmentReply.isNull());
     ASSERT_NE(nextSegmentReply, segmentReply);
     nextSegmentReply->appendData(timedId3Emsg("The Police", "Message In A Bottle", "LG73"));

@@ -17,12 +17,13 @@
  *
  */
 
+#include "testutils.h"
+
 #include <core/player/playercontroller.h>
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
 #include <core/internalcoresettings.h>
-#include <core/library/musiclibrary.h>
 #include <core/player/playerdefs.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
@@ -130,152 +131,6 @@ bool createPlaylistTables(const DbConnectionPoolPtr& dbPool)
                                                   "TrackIndex INTEGER NOT NULL);"_s};
     return createPlaylistTracks.exec();
 }
-
-class StubMusicLibrary : public MusicLibrary
-{
-public:
-    explicit StubMusicLibrary(QObject* parent = nullptr)
-        : MusicLibrary(parent)
-    { }
-
-    bool hasLibrary() const override
-    {
-        return false;
-    }
-
-    std::optional<LibraryInfo> libraryInfo(int) const override
-    {
-        return std::nullopt;
-    }
-
-    std::optional<LibraryInfo> libraryForPath(const QString&) const override
-    {
-        return std::nullopt;
-    }
-
-    void loadAllTracks() override { }
-    bool isEmpty() const override
-    {
-        return m_tracks.empty();
-    }
-    void refreshAll() override { }
-    void rescanAll() override { }
-
-    ScanRequest refresh(const LibraryInfo&) override
-    {
-        return {.type = ScanRequest::Library, .cancel = []() { }};
-    }
-
-    ScanRequest rescan(const LibraryInfo&) override
-    {
-        return {.type = ScanRequest::Library, .cancel = []() { }};
-    }
-
-    void cancelScan(int) override { }
-
-    ScanRequest scanTracks(const TrackList&) override
-    {
-        return {.type = ScanRequest::Tracks, .cancel = []() { }};
-    }
-
-    ScanRequest scanModifiedTracks(const TrackList&) override
-    {
-        return {.type = ScanRequest::Tracks, .cancel = []() { }};
-    }
-
-    ScanRequest scanFiles(const QList<QUrl>&) override
-    {
-        return {.type = ScanRequest::Files, .cancel = []() { }};
-    }
-
-    ScanRequest loadPlaylist(const QList<QUrl>&) override
-    {
-        return {.type = ScanRequest::Playlist, .cancel = []() { }};
-    }
-
-    TrackList tracks() const override
-    {
-        return m_tracks;
-    }
-
-    TrackList libraryTracks() const override
-    {
-        return m_tracks;
-    }
-
-    Track trackForId(int id) const override
-    {
-        const auto it = std::ranges::find_if(m_tracks, [id](const Track& track) { return track.id() == id; });
-        return it != m_tracks.cend() ? *it : Track{};
-    }
-
-    TrackList tracksForIds(const TrackIds& ids) const override
-    {
-        TrackList result;
-        for(const int id : ids) {
-            if(const auto track = trackForId(id); track.isValid()) {
-                result.emplace_back(track);
-            }
-        }
-        return result;
-    }
-
-    std::shared_ptr<TrackMetadataStore> metadataStore() const override
-    {
-        return {};
-    }
-
-    void updateTrack(const Track&) override { }
-    void updateTracks(const TrackList&) override { }
-    void updateTrackMetadata(const TrackList&) override { }
-
-    WriteRequest writeTrackMetadata(const TrackList&) override
-    {
-        return {};
-    }
-
-    WriteRequest writeTrackCovers(const TrackCoverData&) override
-    {
-        return {};
-    }
-
-    PendingTrackCoverProvider* pendingTrackCoverProvider() const override
-    {
-        return nullptr;
-    }
-
-    void updateTrackStats(const TrackList&) override { }
-    void updateTrackStats(const Track&) override { }
-
-    WriteRequest removeUnavailbleTracks() override
-    {
-        return {};
-    }
-
-    WriteRequest deleteTracks(const TrackList& /*tracks*/) override
-    {
-        return {};
-    }
-
-    void emitTracksUpdatedForTests(const TrackList& tracks)
-    {
-        for(const auto& updatedTrack : tracks) {
-            const auto it = std::ranges::find_if(m_tracks, [&updatedTrack](const Track& libraryTrack) {
-                return updatedTrack.id() >= 0 ? libraryTrack.id() == updatedTrack.id()
-                                              : libraryTrack.sameIdentityAs(updatedTrack);
-            });
-
-            if(it != m_tracks.end()) {
-                *it = updatedTrack;
-            }
-        }
-
-        Q_EMIT tracksUpdated(tracks);
-    }
-
-private:
-    TrackList m_tracks;
-};
 
 struct PlaylistHandlerHarness
 {

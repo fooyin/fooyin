@@ -24,6 +24,7 @@
 #include <core/engine/input/playcounttagpolicy.h>
 #include <core/engine/input/ratingtagpolicy.h>
 #include <core/playlist/playlist.h>
+#include <utils/fileutils.h>
 
 #include <QDir>
 #include <QFile>
@@ -168,5 +169,171 @@ void PlaylistTestUtils::replaceTracks(Playlist& playlist, const TrackList& track
 void PlaylistTestUtils::changeCurrentIndex(Playlist& playlist, int index)
 {
     playlist.changeCurrentIndex(index);
+}
+
+void StubMusicLibrary::setTracks(TrackList tracks)
+{
+    m_tracks = std::move(tracks);
+    m_libraryTracks.reset();
+}
+
+void StubMusicLibrary::setLibraryTracks(TrackList tracks)
+{
+    m_libraryTracks = std::move(tracks);
+}
+
+void StubMusicLibrary::setLibrary(LibraryInfo library)
+{
+    m_library = std::move(library);
+}
+
+void StubMusicLibrary::emitTracksLoaded()
+{
+    Q_EMIT tracksLoaded(m_tracks);
+}
+
+void StubMusicLibrary::emitTracksUpdatedForTests(const TrackList& tracks)
+{
+    for(const Track& updatedTrack : tracks) {
+        const auto it = std::ranges::find_if(m_tracks, [&updatedTrack](const Track& libraryTrack) {
+            return updatedTrack.id() >= 0 ? libraryTrack.id() == updatedTrack.id()
+                                          : libraryTrack.sameIdentityAs(updatedTrack);
+        });
+
+        if(it != m_tracks.end()) {
+            *it = updatedTrack;
+        }
+    }
+
+    Q_EMIT tracksUpdated(tracks);
+}
+
+bool StubMusicLibrary::hasLibrary() const
+{
+    return m_library.has_value();
+}
+
+std::optional<LibraryInfo> StubMusicLibrary::libraryInfo(int id) const
+{
+    return m_library && m_library->id == id ? m_library : std::nullopt;
+}
+
+std::optional<LibraryInfo> StubMusicLibrary::libraryForPath(const QString& path) const
+{
+    if(m_library && (Utils::File::isSamePath(path, m_library->path) || Utils::File::isSubdir(path, m_library->path))) {
+        return m_library;
+    }
+    return std::nullopt;
+}
+
+void StubMusicLibrary::loadAllTracks() { }
+
+bool StubMusicLibrary::isEmpty() const
+{
+    return m_tracks.empty();
+}
+
+void StubMusicLibrary::refreshAll() { }
+
+void StubMusicLibrary::rescanAll() { }
+
+ScanRequest StubMusicLibrary::refresh(const LibraryInfo& /*library*/)
+{
+    return {.type = ScanRequest::Library, .cancel = []() { }};
+}
+
+ScanRequest StubMusicLibrary::rescan(const LibraryInfo& /*library*/)
+{
+    return {.type = ScanRequest::Library, .cancel = []() { }};
+}
+
+void StubMusicLibrary::cancelScan(int /*id*/) { }
+
+ScanRequest StubMusicLibrary::scanTracks(const TrackList& /*tracks*/)
+{
+    return {.type = ScanRequest::Tracks, .cancel = []() { }};
+}
+
+ScanRequest StubMusicLibrary::scanModifiedTracks(const TrackList& /*tracks*/)
+{
+    return {.type = ScanRequest::Tracks, .cancel = []() { }};
+}
+
+ScanRequest StubMusicLibrary::scanFiles(const QList<QUrl>& /*files*/)
+{
+    return {.type = ScanRequest::Files, .cancel = []() { }};
+}
+
+ScanRequest StubMusicLibrary::loadPlaylist(const QList<QUrl>& /*files*/)
+{
+    return {.type = ScanRequest::Playlist, .cancel = []() { }};
+}
+
+TrackList StubMusicLibrary::tracks() const
+{
+    return m_tracks;
+}
+
+TrackList StubMusicLibrary::libraryTracks() const
+{
+    return m_libraryTracks.value_or(m_tracks);
+}
+
+Track StubMusicLibrary::trackForId(int id) const
+{
+    const auto it = std::ranges::find_if(m_tracks, [id](const Track& track) { return track.id() == id; });
+    return it != m_tracks.cend() ? *it : Track{};
+}
+
+TrackList StubMusicLibrary::tracksForIds(const TrackIds& ids) const
+{
+    TrackList tracks;
+    tracks.reserve(ids.size());
+    for(const int id : ids) {
+        if(const Track track = trackForId(id); track.isValid()) {
+            tracks.emplace_back(track);
+        }
+    }
+    return tracks;
+}
+
+std::shared_ptr<TrackMetadataStore> StubMusicLibrary::metadataStore() const
+{
+    return {};
+}
+
+void StubMusicLibrary::updateTrack(const Track& /*track*/) { }
+
+void StubMusicLibrary::updateTracks(const TrackList& /*tracks*/) { }
+
+void StubMusicLibrary::updateTrackMetadata(const TrackList& /*tracks*/) { }
+
+WriteRequest StubMusicLibrary::writeTrackMetadata(const TrackList& /*tracks*/)
+{
+    return {};
+}
+
+WriteRequest StubMusicLibrary::writeTrackCovers(const TrackCoverData& /*coverData*/)
+{
+    return {};
+}
+
+PendingTrackCoverProvider* StubMusicLibrary::pendingTrackCoverProvider() const
+{
+    return nullptr;
+}
+
+void StubMusicLibrary::updateTrackStats(const TrackList& /*tracks*/) { }
+
+void StubMusicLibrary::updateTrackStats(const Track& /*track*/) { }
+
+WriteRequest StubMusicLibrary::removeUnavailbleTracks()
+{
+    return {};
+}
+
+WriteRequest StubMusicLibrary::deleteTracks(const TrackList& /*tracks*/)
+{
+    return {};
 }
 } // namespace Fooyin::Testing

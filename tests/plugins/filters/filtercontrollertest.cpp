@@ -20,11 +20,11 @@
 #include "plugins/filters/filtercontroller.h"
 #include "plugins/filters/filtermodel.h"
 #include "plugins/filters/filterwidget.h"
+#include "testutils.h"
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
 #include <core/internalcoresettings.h>
-#include <core/library/musiclibrary.h>
 #include <core/plugins/coreplugincontext.h>
 #include <core/ratingsymbols.h>
 #include <gui/coverprovider.h>
@@ -52,125 +52,6 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin::Testing {
 namespace {
-class EmptyMusicLibrary : public MusicLibrary
-{
-public:
-    using MusicLibrary::MusicLibrary;
-
-    [[nodiscard]] bool hasLibrary() const override
-    {
-        return false;
-    }
-
-    [[nodiscard]] std::optional<LibraryInfo> libraryInfo(int /*id*/) const override
-    {
-        return {};
-    }
-
-    [[nodiscard]] std::optional<LibraryInfo> libraryForPath(const QString& /*path*/) const override
-    {
-        return {};
-    }
-
-    void loadAllTracks() override { }
-    [[nodiscard]] bool isEmpty() const override
-    {
-        return true;
-    }
-
-    void refreshAll() override { }
-    void rescanAll() override { }
-
-    ScanRequest refresh(const LibraryInfo& /*library*/) override
-    {
-        return {};
-    }
-
-    ScanRequest rescan(const LibraryInfo& /*library*/) override
-    {
-        return {};
-    }
-
-    void cancelScan(int /*id*/) override { }
-
-    ScanRequest scanTracks(const TrackList& /*tracks*/) override
-    {
-        return {};
-    }
-
-    ScanRequest scanModifiedTracks(const TrackList& /*tracks*/) override
-    {
-        return {};
-    }
-
-    ScanRequest scanFiles(const QList<QUrl>& /*files*/) override
-    {
-        return {};
-    }
-
-    ScanRequest loadPlaylist(const QList<QUrl>& /*files*/) override
-    {
-        return {};
-    }
-
-    [[nodiscard]] TrackList tracks() const override
-    {
-        return {};
-    }
-
-    [[nodiscard]] TrackList libraryTracks() const override
-    {
-        return {};
-    }
-
-    [[nodiscard]] Track trackForId(int /*id*/) const override
-    {
-        return {};
-    }
-
-    [[nodiscard]] TrackList tracksForIds(const TrackIds& /*ids*/) const override
-    {
-        return {};
-    }
-
-    [[nodiscard]] std::shared_ptr<TrackMetadataStore> metadataStore() const override
-    {
-        return {};
-    }
-
-    void updateTrack(const Track& /*track*/) override { }
-    void updateTracks(const TrackList& /*tracks*/) override { }
-    void updateTrackMetadata(const TrackList& /*tracks*/) override { }
-
-    WriteRequest writeTrackMetadata(const TrackList& /*tracks*/) override
-    {
-        return {};
-    }
-
-    WriteRequest writeTrackCovers(const TrackCoverData& /*coverData*/) override
-    {
-        return {};
-    }
-
-    [[nodiscard]] PendingTrackCoverProvider* pendingTrackCoverProvider() const override
-    {
-        return nullptr;
-    }
-
-    void updateTrackStats(const TrackList& /*tracks*/) override { }
-    void updateTrackStats(const Track& /*track*/) override { }
-
-    WriteRequest removeUnavailbleTracks() override
-    {
-        return {};
-    }
-
-    WriteRequest deleteTracks(const TrackList& /*tracks*/) override
-    {
-        return {};
-    }
-};
-
 class TestCurrentPlaylistController : public CurrentPlaylistController
 {
 public:
@@ -313,7 +194,7 @@ protected:
     }
 
     QTemporaryDir m_settingsDir;
-    EmptyMusicLibrary m_library;
+    StubMusicLibrary m_library;
     TestCurrentPlaylistController m_playlistController;
     WidgetProvider m_widgetProvider;
     LayoutProvider m_layoutProvider;

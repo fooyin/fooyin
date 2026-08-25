@@ -17,6 +17,8 @@
  *
  */
 
+#include "networktestutils.h"
+
 #include <core/network/networkutils.h>
 #include <core/network/remoteioservice.h>
 
@@ -24,13 +26,8 @@
 
 #include <QCoreApplication>
 #include <QElapsedTimer>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QPointer>
 #include <QStandardPaths>
 
-#include <algorithm>
-#include <cstring>
 #include <functional>
 #include <optional>
 
@@ -52,82 +49,6 @@ QCoreApplication* ensureCoreApplication()
     QCoreApplication::setApplicationName(QString::fromLatin1(appName));
     return app;
 }
-
-class FakeReply : public QNetworkReply
-{
-public:
-    explicit FakeReply(const QNetworkRequest& request, QObject* parent = nullptr)
-        : QNetworkReply{parent}
-    {
-        setRequest(request);
-        setUrl(request.url());
-        setOperation(QNetworkAccessManager::GetOperation);
-        QIODevice::open(ReadOnly | Unbuffered);
-    }
-
-    void abort() override
-    {
-        m_aborted = true;
-        setError(OperationCanceledError, u"aborted"_s);
-        Q_EMIT finished();
-    }
-
-    [[nodiscard]] bool wasAborted() const
-    {
-        return m_aborted;
-    }
-
-    [[nodiscard]] bool isSequential() const override
-    {
-        return true;
-    }
-
-    [[nodiscard]] qint64 bytesAvailable() const override
-    {
-        return m_data.size() + QNetworkReply::bytesAvailable();
-    }
-
-    void finish(QByteArray data)
-    {
-        m_data = std::move(data);
-        Q_EMIT readyRead();
-        Q_EMIT finished();
-    }
-
-protected:
-    qint64 readData(char* data, qint64 maxSize) override
-    {
-        const qint64 bytesRead = std::min<qint64>(m_data.size(), maxSize);
-        if(bytesRead <= 0) {
-            return 0;
-        }
-
-        std::memcpy(data, m_data.constData(), bytesRead);
-        m_data.remove(0, bytesRead);
-        return bytesRead;
-    }
-
-private:
-    QByteArray m_data;
-    bool m_aborted{false};
-};
-
-class FakeNetworkAccessManager : public QNetworkAccessManager
-{
-public:
-    QPointer<FakeReply> lastReply;
-    QNetworkRequest lastRequest;
-
-protected:
-    QNetworkReply* createRequest(Operation /*operation*/, const QNetworkRequest& request,
-                                 QIODevice* /*outgoingData*/) override
-    {
-        lastRequest = request;
-        auto* reply = new FakeReply{request};
-        lastReply   = reply;
-        return reply;
-    }
-};
 
 bool waitFor(const std::function<bool()>& condition)
 {
@@ -159,7 +80,7 @@ protected:
 
 TEST_F(RemoteIoServiceTest, DownloadsUsingSharedNetworkManager)
 {
-    auto network = std::make_shared<FakeNetworkAccessManager>();
+    auto network = makeFakeNetworkAccessManager(true);
     RemoteIoService service{network, nullptr};
 
     std::optional<QByteArray> result;
@@ -183,7 +104,7 @@ TEST_F(RemoteIoServiceTest, DownloadsUsingSharedNetworkManager)
 
 TEST_F(RemoteIoServiceTest, CancelsInFlightDownload)
 {
-    auto network = std::make_shared<FakeNetworkAccessManager>();
+    auto network = makeFakeNetworkAccessManager(true);
     RemoteIoService service{network, nullptr};
 
     bool finished{false};
@@ -205,7 +126,7 @@ TEST_F(RemoteIoServiceTest, CancelsInFlightDownload)
 
 TEST_F(RemoteIoServiceTest, ReportsTimeoutExplicitly)
 {
-    auto network = std::make_shared<FakeNetworkAccessManager>();
+    auto network = makeFakeNetworkAccessManager(true);
     RemoteIoService service{network, nullptr};
 
     bool finished{false};

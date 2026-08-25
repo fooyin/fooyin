@@ -60,8 +60,8 @@ fooyin_add_test(test_playbacktransitioncoordinator core/engine/playbacktransitio
 fooyin_add_test(test_replaygainprocessor core/engine/replaygainprocessortest.cpp)
 fooyin_add_test(test_seekplanner core/engine/seekplannertest.cpp)
 fooyin_add_test(test_trackloadplanner core/engine/trackloadplannertest.cpp)
-fooyin_add_test(test_networkstreamdevice core/network/networkstreamdevicetest.cpp)
-fooyin_add_test(test_remoteioservice core/network/remoteioservicetest.cpp)
+fooyin_add_test(test_networkstreamdevice core/network/networkstreamdevicetest.cpp networktestutils.h)
+fooyin_add_test(test_remoteioservice core/network/remoteioservicetest.cpp networktestutils.h)
 
 fooyin_add_test(test_playbackcursor core/playback/playbackcursortest.cpp)
 fooyin_add_test(test_playbackprogresstracker core/playback/playbackprogresstrackertest.cpp)

@@ -17,12 +17,13 @@
  *
  */
 
+#include "testutils.h"
+
 #include <core/playlist/playlisthandler.h>
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
 #include <core/internalcoresettings.h>
-#include <core/library/musiclibrary.h>
 #include <core/track.h>
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/database/dbconnectionpool.h>
@@ -38,7 +39,6 @@
 
 #include <gtest/gtest.h>
 
-#include <optional>
 #include <ranges>
 
 using namespace Qt::StringLiterals;
@@ -104,158 +104,6 @@ Track makeTrack(const QString& path, int id)
     track.generateHash();
     return track;
 }
-
-class StubMusicLibrary : public MusicLibrary
-{
-public:
-    explicit StubMusicLibrary(QObject* parent = nullptr)
-        : MusicLibrary(parent)
-    { }
-
-    void setTracks(TrackList tracks)
-    {
-        m_tracks = std::move(tracks);
-        m_libraryTracks.reset();
-    }
-
-    void setLibraryTracks(TrackList tracks)
-    {
-        m_libraryTracks = std::move(tracks);
-    }
-
-    void emitTracksLoaded()
-    {
-        Q_EMIT tracksLoaded(m_tracks);
-    }
-
-    bool hasLibrary() const override
-    {
-        return false;
-    }
-
-    std::optional<LibraryInfo> libraryInfo(int) const override
-    {
-        return std::nullopt;
-    }
-
-    std::optional<LibraryInfo> libraryForPath(const QString&) const override
-    {
-        return std::nullopt;
-    }
-
-    void loadAllTracks() override { }
-    bool isEmpty() const override
-    {
-        return m_tracks.empty();
-    }
-    void refreshAll() override { }
-    void rescanAll() override { }
-
-    ScanRequest refresh(const LibraryInfo&) override
-    {
-        return {.type = ScanRequest::Library, .cancel = []() { }};
-    }
-
-    ScanRequest rescan(const LibraryInfo&) override
-    {
-        return {.type = ScanRequest::Library, .cancel = []() { }};
-    }
-
-    void cancelScan(int) override { }
-
-    ScanRequest scanTracks(const TrackList&) override
-    {
-        return {.type = ScanRequest::Tracks, .cancel = []() { }};
-    }
-
-    ScanRequest scanModifiedTracks(const TrackList&) override
-    {
-        return {.type = ScanRequest::Tracks, .cancel = []() { }};
-    }
-
-    ScanRequest scanFiles(const QList<QUrl>&) override
-    {
-        return {.type = ScanRequest::Files, .cancel = []() { }};
-    }
-
-    ScanRequest loadPlaylist(const QList<QUrl>&) override
-    {
-        return {.type = ScanRequest::Playlist, .cancel = []() { }};
-    }
-
-    TrackList tracks() const override
-    {
-        return m_tracks;
-    }
-
-    TrackList libraryTracks() const override
-    {
-        return m_libraryTracks.value_or(m_tracks);
-    }
-
-    Track trackForId(int id) const override
-    {
-        for(const auto& track : m_tracks) {
-            if(track.id() == id) {
-                return track;
-            }
-        }
-        return {};
-    }
-
-    TrackList tracksForIds(const TrackIds& ids) const override
-    {
-        TrackList result;
-        result.reserve(ids.size());
-        for(const int id : ids) {
-            if(const Track track = trackForId(id); track.isValid()) {
-                result.emplace_back(track);
-            }
-        }
-        return result;
-    }
-
-    std::shared_ptr<TrackMetadataStore> metadataStore() const override
-    {
-        return {};
-    }
-
-    void updateTrack(const Track&) override { }
-    void updateTracks(const TrackList&) override { }
-    void updateTrackMetadata(const TrackList&) override { }
-
-    WriteRequest writeTrackMetadata(const TrackList&) override
-    {
-        return {};
-    }
-
-    WriteRequest writeTrackCovers(const TrackCoverData&) override
-    {
-        return {};
-    }
-
-    PendingTrackCoverProvider* pendingTrackCoverProvider() const override
-    {
-        return nullptr;
-    }
-
-    void updateTrackStats(const TrackList&) override { }
-    void updateTrackStats(const Track&) override { }
-
-    WriteRequest removeUnavailbleTracks() override
-    {
-        return {};
-    }
-
-    WriteRequest deleteTracks(const TrackList&) override
-    {
-        return {};
-    }
-
-private:
-    TrackList m_tracks;
-    std::optional<TrackList> m_libraryTracks;
-};
 
 struct PlaylistHandlerHarness
 {
