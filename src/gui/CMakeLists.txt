@@ -237,6 +237,25 @@ set(SOURCES
     menubar/playbackmenu.h
     menubar/viewmenu.cpp
     menubar/viewmenu.h
+    metadatalookup/lookupresultsmodel.cpp
+    metadatalookup/lookupresultsmodel.h
+    metadatalookup/metadataapply.cpp
+    metadatalookup/metadataapply.h
+    metadatalookup/metadatachangesdialog.cpp
+    metadatalookup/metadatachangesdialog.h
+    metadatalookup/metadatalookupdialog.cpp
+    metadatalookup/metadatalookupdialog.h
+    metadatalookup/metadatalookupregistry.cpp
+    metadatalookup/metadatalookupregistry.h
+    metadatalookup/metadatamatcher.cpp
+    metadatalookup/metadatamatcher.h
+    metadatalookup/metadatatypes.h
+    metadatalookup/trackmatchmodel.cpp
+    metadatalookup/trackmatchmodel.h
+    metadatalookup/sources/metadatalookupsource.cpp
+    metadatalookup/sources/metadatalookupsource.h
+    metadatalookup/sources/musicbrainzmetadata.cpp
+    metadatalookup/sources/musicbrainzmetadata.h
     sortactionhandler.cpp
     sortactionhandler.h
     nowplayingoutput/nowplayingoutputservice.cpp

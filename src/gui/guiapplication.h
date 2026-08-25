@@ -61,6 +61,8 @@ class LibraryMenu;
 class LogWidget;
 class MainMenuBar;
 class MainWindow;
+class MetadataLookupDialog;
+enum class LookupMode : uint8_t;
 class Playlist;
 class PlaylistController;
 class PlaylistManagerWidget;
@@ -181,6 +183,9 @@ private:
     void showTrackNotFoundMessage(const Track& track) const;
     void showTrackUnreableMessage(const Track& track) const;
 
+    void showMetadataLookupDialog(LookupMode mode);
+    void showMetadataLookupById();
+
     void createNewPlaylist() const;
     void createNewAutoPlaylist();
 
@@ -250,6 +255,10 @@ private:
     QAction* m_lastUsedConversionAction;
     Command* m_lastUsedConversionCommand;
     std::vector<ConversionPresetAction> m_conversionPresetActions;
+
+    QAction* m_lookupArtistAlbumAction;
+    QAction* m_lookupIdAction;
+    QPointer<MetadataLookupDialog> m_metadataLookupDialog;
 
     ScriptParser m_scriptParser;
     CoverProvider m_coverProvider;

@@ -37,6 +37,7 @@
 #include "menubar/mainmenubar.h"
 #include "menubar/playbackmenu.h"
 #include "menubar/viewmenu.h"
+#include "metadatalookup/metadatalookupdialog.h"
 #include "playlist/manager/playlistmanagerwidget.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
@@ -50,7 +51,6 @@
 #include "search/searchwidget.h"
 #include "systemtrayicon.h"
 #include "widgets.h"
-#include <gui/playlist/currentplaylistcontroller.h>
 
 #include <core/application.h>
 #include <core/corepaths.h>
@@ -78,6 +78,7 @@
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/layoutprovider.h>
+#include <gui/playlist/currentplaylistcontroller.h>
 #include <gui/plugins/dspguiplugin.h>
 #include <gui/plugins/guiplugin.h>
 #include <gui/plugins/guiplugincontext.h>
@@ -129,6 +130,8 @@
 #include <QTimer>
 #include <QUrl>
 
+#include <optional>
+
 Q_LOGGING_CATEGORY(GUI_APP, "fy.gui")
 
 using namespace std::chrono_literals;
@@ -138,6 +141,31 @@ constexpr auto ThemeUpdateDelayMs = 50;
 
 namespace Fooyin {
 namespace {
+QString commonMetadataValue(const TrackList& tracks, const QString& field)
+{
+    if(tracks.empty()) {
+        return {};
+    }
+
+    const QString value = tracks.front().metaValue(field);
+    return !value.isEmpty()
+                && std::ranges::all_of(tracks,
+                                       [&field, &value](const Track& track) { return track.metaValue(field) == value; })
+             ? value
+             : QString{};
+}
+
+std::optional<LookupMode> musicBrainzLookupMode(const TrackList& tracks)
+{
+    if(!commonMetadataValue(tracks, u"MUSICBRAINZ_ALBUMID"_s).isEmpty()) {
+        return LookupMode::ReleaseId;
+    }
+    if(!commonMetadataValue(tracks, u"MUSICBRAINZ_RELEASEGROUPID"_s).isEmpty()) {
+        return LookupMode::ReleaseGroupId;
+    }
+    return {};
+}
+
 QString pluginIdentifierForRoot(const PluginManager& pluginManager, const QObject* root)
 {
     if(!root) {
@@ -261,6 +289,8 @@ GuiApplication::GuiApplication(Application* core)
     , m_defaultConversionCommand{nullptr}
     , m_lastUsedConversionAction{nullptr}
     , m_lastUsedConversionCommand{nullptr}
+    , m_lookupArtistAlbumAction{nullptr}
+    , m_lookupIdAction{nullptr}
     , m_coverProvider{m_coverRepository}
     , m_themeUpdatePending{false}
     , m_refreshSystemBaseline{false}
@@ -1104,6 +1134,44 @@ void GuiApplication::registerActions()
                      [this](bool visible) { m_settings->set<Settings::Gui::ShowMenuBar>(visible); });
     m_settings->subscribe<Settings::Gui::ShowMenuBar>(
         toggleMenubar, [toggleMenubar](bool visible) { toggleMenubar->setChecked(visible); });
+
+    m_lookupArtistAlbumAction = new QAction(tr("Lookup metadata by artist and album…"), this);
+    m_lookupArtistAlbumAction->setStatusTip(tr("Look up metadata using the selected tracks' artist and album"));
+    QObject::connect(m_lookupArtistAlbumAction, &QAction::triggered, this,
+                     [this] { showMetadataLookupDialog(LookupMode::ArtistAlbum); });
+    Command* artistAlbumCommand
+        = m_actionManager->registerAction(m_lookupArtistAlbumAction, Constants::Actions::LookupMetadata);
+    artistAlbumCommand->setDescription(tr("Look up metadata by artist and album"));
+    artistAlbumCommand->setCategories({tr("Tagging")});
+
+    m_lookupIdAction = new QAction(tr("Lookup metadata by MusicBrainz ID…"), this);
+    m_lookupIdAction->setStatusTip(tr("Look up metadata using a MusicBrainz release identifier"));
+    QObject::connect(m_lookupIdAction, &QAction::triggered, this, &GuiApplication::showMetadataLookupById);
+    Command* idCommand = m_actionManager->registerAction(m_lookupIdAction, Constants::Actions::LookupMetadataById);
+    idCommand->setDescription(tr("Look up metadata by MusicBrainz ID"));
+    idCommand->setCategories({tr("Tagging")});
+
+    m_selectionController->registerTrackContextSubmenu(this, TrackContextMenuArea::Track,
+                                                       Fooyin::Constants::Menus::Context::TrackSelection,
+                                                       Fooyin::Constants::Menus::Context::Tagging, tr("Tagging"),
+                                                       Fooyin::Constants::Menus::Context::TrackFinalSeparator);
+    m_selectionController->registerTrackContextAction(
+        this, TrackContextMenuArea::Track, Fooyin::Constants::Menus::Context::Tagging,
+        Constants::Actions::LookupMetadata, m_lookupArtistAlbumAction->text(),
+        [this](QMenu* menu, const TrackSelection& selection) {
+            m_lookupArtistAlbumAction->setEnabled(!selection.tracks.empty());
+            menu->addAction(m_lookupArtistAlbumAction);
+        });
+    m_selectionController->registerTrackContextAction(
+        this, TrackContextMenuArea::Track, Fooyin::Constants::Menus::Context::Tagging,
+        Constants::Actions::LookupMetadataById, m_lookupIdAction->text(),
+        [this](QMenu* menu, const TrackSelection& selection) {
+            m_lookupIdAction->setEnabled(musicBrainzLookupMode(selection.tracks).has_value());
+            menu->addAction(m_lookupIdAction);
+        });
+    m_selectionController->registerTrackContextSeparator(this, TrackContextMenuArea::Track,
+                                                         Constants::Menus::Context::Tagging,
+                                                         Constants::Menus::Context::TaggingLookupSeparator);
 }
 
 void GuiApplication::rescanTracks(const TrackList& tracks, bool onlyModified) const
@@ -1179,6 +1247,9 @@ void GuiApplication::setupScanMenu()
             rescanChangedAction->setEnabled(m_selectionController->hasTracks());
             menu->addAction(rescanChangedAction);
         });
+    m_selectionController->registerTrackContextSeparator(this, TrackContextMenuArea::Track,
+                                                         Constants::Menus::Context::Tagging,
+                                                         Constants::Menus::Context::TaggingReloadSeparator);
 }
 
 void GuiApplication::setupRatingMenu()
@@ -1811,6 +1882,48 @@ void GuiApplication::showTrackNotFoundMessage(const Track& track) const
 void GuiApplication::showTrackUnreableMessage(const Track& track) const
 {
     showMessage(tr("No Decoder Available"), track);
+}
+
+void GuiApplication::showMetadataLookupDialog(LookupMode mode)
+{
+    const auto* selection = m_selectionController->selectedSelection();
+    if(!selection || selection->tracks.empty()) {
+        return;
+    }
+
+    if(m_metadataLookupDialog) {
+        // Start new lookup if same tracks
+        if(m_metadataLookupDialog->hasSameTracks(selection->tracks)) {
+            m_metadataLookupDialog->startLookup(mode);
+            m_metadataLookupDialog->raise();
+            m_metadataLookupDialog->activateWindow();
+            return;
+        }
+
+        if(!m_metadataLookupDialog->close()) {
+            m_metadataLookupDialog->raise();
+            m_metadataLookupDialog->activateWindow();
+            return;
+        }
+    }
+
+    m_metadataLookupDialog
+        = new MetadataLookupDialog(selection->tracks, m_library, m_core->audioLoader(), m_core->networkManager(),
+                                   m_settings, mode, Utils::getMainWindow());
+    m_metadataLookupDialog->show();
+    m_metadataLookupDialog->raise();
+}
+
+void GuiApplication::showMetadataLookupById()
+{
+    const auto* selection = m_selectionController->selectedSelection();
+    if(!selection) {
+        return;
+    }
+
+    if(const auto mode = musicBrainzLookupMode(selection->tracks)) {
+        showMetadataLookupDialog(*mode);
+    }
 }
 
 void GuiApplication::createNewPlaylist() const
