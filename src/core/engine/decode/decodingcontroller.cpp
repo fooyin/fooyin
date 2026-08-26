@@ -210,6 +210,8 @@ public:
         bool valid{false};
         bool decoding{false};
         bool seekable{false};
+        bool allowsConcurrentDecoding{true};
+        int playbackPrebufferMs{0};
         AudioDecoder::RepeatHandling repeatHandling{AudioDecoder::RepeatHandling::EngineTransition};
         AudioStreamPtr activeStream;
         StreamId activeStreamId{InvalidStreamId};
@@ -332,6 +334,8 @@ public:
         next.valid                     = context.isValid();
         next.decoding                  = context.isDecoding();
         next.seekable                  = context.isSeekable();
+        next.allowsConcurrentDecoding  = context.allowsConcurrentDecoding();
+        next.playbackPrebufferMs       = context.playbackPrebufferMs();
         next.repeatHandling            = context.repeatHandling();
         next.activeStream              = context.activeStream();
         next.activeStreamId            = context.activeStreamId();
@@ -754,6 +758,16 @@ bool DecodingController::isDecoding() const
 bool DecodingController::isSeekable() const
 {
     return p->currentSnapshot().seekable;
+}
+
+bool DecodingController::allowsConcurrentDecoding() const
+{
+    return p->currentSnapshot().allowsConcurrentDecoding;
+}
+
+int DecodingController::playbackPrebufferMs() const
+{
+    return p->currentSnapshot().playbackPrebufferMs;
 }
 
 AudioDecoder::RepeatHandling DecodingController::repeatHandling() const

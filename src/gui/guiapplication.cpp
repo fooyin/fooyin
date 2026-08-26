@@ -299,6 +299,8 @@ GuiApplication::GuiApplication(Application* core)
 {
     m_coverRepository->setPendingTrackCoverProvider(m_core->pendingTrackCoverProvider());
 
+    m_guiPluginContext.conversionService = m_conversionController;
+
     m_scriptParser.addProvider(playlistVariableProvider());
 
     QObject::connect(m_settings->settingsDialog(), &SettingsDialogController::opening, this, [this]() {

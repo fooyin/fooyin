@@ -199,6 +199,14 @@ bool ConverterSetupDialog::showReport() const
     return m_showReport->isChecked();
 }
 
+void ConverterSetupDialog::applySuggestedFilenamePattern(const QString& pattern)
+{
+    const QString trimmedPattern = pattern.trimmed();
+    if(!trimmedPattern.isEmpty() && m_filenamePattern->text().trimmed() == u"%filename%"_s) {
+        m_filenamePattern->setText(trimmedPattern);
+    }
+}
+
 void ConverterSetupDialog::accept()
 {
     if(!selectedEncoder()) {

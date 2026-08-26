@@ -23,6 +23,8 @@
 
 #include "metadatamatcher.h"
 
+#include <optional>
+
 namespace Fooyin {
 enum class ExistingMetadataPolicy : uint8_t
 {
@@ -58,4 +60,7 @@ struct MetadataApplyResult
 FYGUI_EXPORT MetadataApplyResult applyReleaseMetadata(const TrackList& localTracks, const Release& release,
                                                       const std::vector<TrackMatch>& matches,
                                                       const MetadataApplyOptions& options);
+
+[[nodiscard]] FYGUI_EXPORT std::optional<TrackList>
+applyAutomaticDiscMetadata(const TrackList& tracks, const Release& release, const QString& discId);
 } // namespace Fooyin

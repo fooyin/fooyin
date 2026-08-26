@@ -92,18 +92,18 @@ NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const C
     NextTrackPreparationState state;
     state.item.track = track;
 
-    const auto canceled = [&context]() {
+    const auto cancelled = [&context]() {
         return context.cancelFlag && context.cancelFlag->load(std::memory_order_relaxed);
     };
 
-    if(!track.isValid() || !context.audioLoader || canceled()) {
+    if(!track.isValid() || !context.audioLoader || !context.currentAllowsConcurrentDecoding || cancelled()) {
         return {};
     }
 
     DecoderContext decoderContext;
     decoderContext.setPlaybackHints(context.playbackHints);
 
-    if(canceled()) {
+    if(cancelled()) {
         return {};
     }
 
@@ -115,7 +115,7 @@ NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const C
 
     const ActiveDecoderRegistration activeDecoder{context.activeDecoderChanged, decoder.decoder.get()};
 
-    if(canceled()) {
+    if(cancelled()) {
         return {};
     }
 
@@ -124,10 +124,12 @@ NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const C
         return {};
     }
 
-    state.format = decoderContext.format();
+    state.format                   = decoderContext.format();
+    state.allowsConcurrentDecoding = decoderContext.allowsConcurrentDecoding();
 
     const bool sameFileSegmentHandoff = isMultiTrackFileTransition(context.currentTrack, track);
     const bool canPrimePreparedStream = context.playbackState == Engine::PlaybackState::Playing
+                                     && context.currentAllowsConcurrentDecoding && state.allowsConcurrentDecoding
                                      && (decoderContext.isSeekable() || track.offset() == 0) && !sameFileSegmentHandoff;
 
     if(canPrimePreparedStream) {
@@ -147,7 +149,7 @@ NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const C
                 decoderContext.seek(track.offset());
             }
 
-            if(canceled()) {
+            if(cancelled()) {
                 return {};
             }
 
@@ -155,7 +157,7 @@ NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const C
 
             const auto chunksDecoded = decoderContext.prefillActiveStreamMs(clampedPrefillMs);
 
-            if(canceled()) {
+            if(cancelled()) {
                 return {};
             }
 
@@ -293,12 +295,13 @@ void NextTrackPrepareWorker::run(const std::stop_token& stopToken)
         auto prepared = NextTrackPreparer::prepare(request.item.track, request.context);
         prepared.item = request.item;
 
-        const bool canceled = request.context.cancelFlag && request.context.cancelFlag->load(std::memory_order_relaxed);
+        const bool cancelled
+            = request.context.cancelFlag && request.context.cancelFlag->load(std::memory_order_relaxed);
 
         const uint64_t currentActive = m_activeJobToken.load(std::memory_order_relaxed);
         const bool stale             = (currentActive != request.jobToken);
 
-        if(!canceled && !stale && completion) {
+        if(!cancelled && !stale && completion) {
             completion(request.jobToken, request.requestId, request.purpose, request.item, std::move(prepared));
         }
     }

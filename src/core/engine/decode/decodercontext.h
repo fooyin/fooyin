@@ -62,6 +62,8 @@ public:
     [[nodiscard]] bool isValid() const;
     [[nodiscard]] bool isDecoding() const;
     [[nodiscard]] bool isSeekable() const;
+    [[nodiscard]] bool allowsConcurrentDecoding() const;
+    [[nodiscard]] int playbackPrebufferMs() const;
     [[nodiscard]] AudioDecoder::RepeatHandling repeatHandling() const;
     [[nodiscard]] AudioStreamPtr activeStream() const;
     [[nodiscard]] StreamId activeStreamId() const;

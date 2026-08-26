@@ -514,8 +514,9 @@ void MusicBrainzMetadata::handleReply()
     m_active.reset();
     QObject::disconnect(reply, nullptr, this, nullptr);
 
-    const int status                               = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    const QByteArray retryAfter                    = reply->rawHeader("Retry-After");
+    const int status            = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    const QString reason        = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
+    const QByteArray retryAfter = reply->rawHeader("Retry-After");
     const QNetworkReply::NetworkError networkError = reply->error();
     const QString networkErrorText                 = reply->errorString();
     const QByteArray data                          = reply->readAll();
@@ -534,7 +535,10 @@ void MusicBrainzMetadata::handleReply()
 
     if(networkError != QNetworkReply::NoError) {
         qCWarning(METADATA_LOOKUP) << "MusicBrainz request failed with HTTP" << status << networkErrorText;
-        Q_EMIT failed(tr("MusicBrainz request failed: %1").arg(networkErrorText));
+        const QString error
+            = status > 0 ? (reason.isEmpty() ? u"HTTP %1"_s.arg(status) : u"HTTP %1: %2"_s.arg(status).arg(reason))
+                         : networkErrorText;
+        Q_EMIT failed(tr("MusicBrainz request failed: %1").arg(error));
         finishOperation();
         return;
     }

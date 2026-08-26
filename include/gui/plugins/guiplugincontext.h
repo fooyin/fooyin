@@ -25,6 +25,7 @@ namespace Fooyin {
 class ActionManager;
 class AdvancedSettingsRegistry;
 class CoverRepository;
+class ConversionService;
 class CurrentPlaylistController;
 class EditableLayout;
 class GuiStyleProvider;
@@ -79,5 +80,6 @@ struct FYGUI_EXPORT GuiPluginContext
     GuiStyleProvider* styleProvider;
     AdvancedSettingsRegistry* advancedSettingsRegistry;
     CoverRepository* coverRepository;
+    ConversionService* conversionService;
 };
 } // namespace Fooyin

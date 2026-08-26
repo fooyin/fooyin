@@ -27,6 +27,7 @@
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
 #include <gui/trackmimedata.h>
+#include <utils/helpers.h>
 #include <utils/stringutils.h>
 
 #include <QMimeData>

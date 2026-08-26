@@ -25,6 +25,7 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QRegularExpression>
 #include <QTextStream>
 #include <QUrl>
 
@@ -43,9 +44,22 @@ struct PlsEntry
     int durationSeconds{-1};
 };
 
+int endingSubsong(QString* filepath)
+{
+    static const QRegularExpression regex{uR"(#(\d+)$)"_s};
+    const QRegularExpressionMatch match = regex.match(*filepath);
+    if(!match.hasMatch()) {
+        return -1;
+    }
+
+    const int subsong = match.captured(1).toInt();
+    filepath->remove(match.capturedStart(), match.capturedLength());
+    return subsong;
+}
+
 QString resolvePlaylistEntryPath(const QString& playlistPath, const QString& entry, const QDir& dir)
 {
-    if(Track::isArchivePath(entry) || Track::isRemotePath(entry)) {
+    if(Track::isArchivePath(entry) || Track::isRemotePath(entry) || Track::isVirtualPath(entry)) {
         return entry;
     }
 
@@ -177,10 +191,16 @@ TrackList PlsParser::readPlaylist(QIODevice* device, const QString& filepath, co
             continue;
         }
 
-        QString path = resolvePlaylistEntryPath(filepath, entry.file, dir);
-        Track track{path};
+        QString path      = resolvePlaylistEntryPath(filepath, entry.file, dir);
+        const int subsong = endingSubsong(&path);
 
-        if(!Track::isArchivePath(path) && !Track::isRemotePath(path) && !QFile::exists(path)) {
+        Track track{path};
+        if(subsong > 0) {
+            track.setSubsong(subsong);
+        }
+
+        if(!Track::isArchivePath(path) && !Track::isRemotePath(path) && !Track::isVirtualPath(path)
+           && !QFile::exists(path)) {
             track.setFilePath(path.replace(u'\\', u'/'));
         }
 
@@ -211,9 +231,16 @@ void PlsParser::savePlaylist(QIODevice* device, const QString& /*extension*/, co
     for(size_t i{0}; i < count; ++i) {
         const Track& track      = tracks.at(i);
         const size_t entryIndex = i + 1;
-        const QUrl trackUrl     = track.isRemote() ? QUrl{track.filepath()} : QUrl::fromLocalFile(track.filepath());
 
-        stream << "File" << entryIndex << "=" << PlaylistParser::determineTrackPath(trackUrl, dir, type) << "\n";
+        QString path = track.filepath();
+        if(track.subsong() > 0) {
+            path += u"#%1"_s.arg(track.subsong());
+        }
+
+        const QUrl trackUrl
+            = track.isRemote() || track.isVirtual() ? QUrl{path, QUrl::StrictMode} : QUrl::fromLocalFile(path);
+
+        stream << "File" << entryIndex << "=" << determineTrackPath(trackUrl, dir, type) << "\n";
 
         if(writeMetdata) {
             const QString title = track.title();

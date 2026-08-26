@@ -59,6 +59,15 @@ struct ConversionProgress
     uint64_t sourceDurationMs{0};
 };
 
+class FYCORE_EXPORT ConversionInputObserver
+{
+public:
+    virtual ~ConversionInputObserver()                                       = default;
+    virtual void trackStarted(const Track& track, const AudioFormat& format) = 0;
+    virtual void sourceAudio(const Track& track, const AudioBuffer& buffer)  = 0;
+    virtual void trackFinished(const Track& track, bool complete)            = 0;
+};
+
 namespace ConversionRunner {
 using ProgressCallback     = std::function<void(const ConversionProgress&)>;
 using CancelCallback       = std::function<bool()>;
@@ -74,6 +83,7 @@ struct Request
     ProgressCallback progressCallback;
     CancelCallback cancelCallback;
     ExistingFileCallback existingFileCallback;
+    std::shared_ptr<ConversionInputObserver> sourceObserver;
 };
 
 FYCORE_EXPORT std::vector<ConversionTrackResult> run(const Request& request);

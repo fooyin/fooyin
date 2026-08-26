@@ -21,11 +21,14 @@
 
 #include <QMap>
 
+#include <cmath>
 #include <functional>
 #include <ranges>
 #include <set>
 
 using namespace Qt::StringLiterals;
+
+constexpr int64_t MaxDurationDifferenceMs = 3000;
 
 namespace Fooyin {
 namespace {
@@ -177,5 +180,68 @@ MetadataApplyResult applyReleaseMetadata(const TrackList& localTracks, const Rel
     }
 
     return result;
+}
+
+std::optional<TrackList> applyAutomaticDiscMetadata(const TrackList& tracks, const Release& release,
+                                                    const QString& discId)
+{
+    if(tracks.empty() || discId.isEmpty()) {
+        return {};
+    }
+
+    const ReleaseMedium* matchingMedium{nullptr};
+    bool hasDiscIds{false};
+
+    for(const ReleaseMedium& medium : release.media) {
+        hasDiscIds = hasDiscIds || !medium.discIds.isEmpty();
+        if(!medium.discIds.contains(discId)) {
+            continue;
+        }
+        if(matchingMedium) {
+            return {};
+        }
+        matchingMedium = &medium;
+    }
+
+    if(!matchingMedium && !hasDiscIds && release.media.size() == 1) {
+        matchingMedium = &release.media.front();
+    }
+    if(!matchingMedium || matchingMedium->tracks.size() != tracks.size()) {
+        return {};
+    }
+
+    std::vector<TrackMatch> matches;
+    matches.reserve(tracks.size());
+
+    for(size_t index{0}; index < tracks.size(); ++index) {
+        const Track& local         = tracks.at(index);
+        const ReleaseTrack& remote = matchingMedium->tracks.at(index);
+        if(std::cmp_not_equal(remote.position, index + 1) || local.trackNumber().toInt() != remote.position
+           || remote.durationMs <= 0
+           || std::llabs(static_cast<int64_t>(local.duration()) - remote.durationMs) > MaxDurationDifferenceMs) {
+            return {};
+        }
+        matches.push_back({.localIndex = index, .remoteIndex = index, .confidence = 100, .ambiguous = false});
+    }
+
+    Release selectedRelease{release};
+    selectedRelease.media = {*matchingMedium};
+
+    const MetadataApplyResult applied = applyReleaseMetadata(tracks, selectedRelease, matches,
+                                                             {.policy = ExistingMetadataPolicy::ReplaceLookupFields,
+                                                              .writeGenres            = true,
+                                                              .writeReleaseIds        = true,
+                                                              .useOriginalReleaseDate = false});
+
+    TrackList updated{tracks};
+
+    for(size_t index{0}; index < applied.tracks.size(); ++index) {
+        const size_t localIndex = applied.trackIndices.at(index);
+        if(localIndex < updated.size()) {
+            updated.at(localIndex) = applied.tracks.at(index);
+        }
+    }
+
+    return updated;
 }
 } // namespace Fooyin

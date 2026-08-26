@@ -130,6 +130,7 @@ struct DecoderState
     QString label;
     QStringList extensions;
     QStringList preferredExtensions;
+    QStringList supportedSchemes;
     bool supportsRemoteSources{false};
     bool initSucceeds{true};
     bool requireDevice{false};
@@ -174,6 +175,11 @@ public:
     QStringList preferredExtensions() const override
     {
         return m_state->preferredExtensions;
+    }
+
+    QStringList supportedSchemes() const override
+    {
+        return m_state->supportedSchemes;
     }
 
     bool supportsRemoteSources() const override
@@ -236,6 +242,7 @@ struct ReaderState
     QString label;
     QStringList extensions;
     QStringList preferredExtensions;
+    QStringList supportedSchemes;
     bool supportsRemoteSources{false};
     bool canReadCover{false};
     bool canWriteMetadata{false};
@@ -291,6 +298,11 @@ public:
     QStringList preferredExtensions() const override
     {
         return m_state->preferredExtensions;
+    }
+
+    QStringList supportedSchemes() const override
+    {
+        return m_state->supportedSchemes;
     }
 
     bool supportsRemoteSources() const override
@@ -592,11 +604,13 @@ protected:
     }
 
     std::shared_ptr<DecoderState> addDecoder(AudioLoader& loader, const QString& label, const QStringList& extensions,
-                                             int priority = -1, bool isArchiveWrapper = false)
+                                             int priority = -1, bool isArchiveWrapper = false,
+                                             const QStringList& supportedSchemes = {})
     {
-        auto state        = std::make_shared<DecoderState>();
-        state->label      = label;
-        state->extensions = extensions;
+        auto state              = std::make_shared<DecoderState>();
+        state->label            = label;
+        state->extensions       = extensions;
+        state->supportedSchemes = supportedSchemes;
 
         loader.addDecoder(
             label,
@@ -609,11 +623,13 @@ protected:
     }
 
     std::shared_ptr<ReaderState> addReader(AudioLoader& loader, const QString& label, const QStringList& extensions,
-                                           int priority = -1, bool isArchiveWrapper = false)
+                                           int priority = -1, bool isArchiveWrapper = false,
+                                           const QStringList& supportedSchemes = {})
     {
-        auto state        = std::make_shared<ReaderState>();
-        state->label      = label;
-        state->extensions = extensions;
+        auto state              = std::make_shared<ReaderState>();
+        state->label            = label;
+        state->extensions       = extensions;
+        state->supportedSchemes = supportedSchemes;
 
         loader.addReader(
             label,
@@ -900,6 +916,64 @@ TEST_F(AudioLoaderTest, LoadsDecoderAndReaderForRegularTracks)
     EXPECT_TRUE(readerTwo->lastDeviceOpen);
     EXPECT_FALSE(readerTwo->lastHadArchiveReader);
     EXPECT_EQ(3, loadedReader.reader->subsongCount());
+}
+
+TEST_F(AudioLoaderTest, LoadsDecoderAndReaderForRegisteredUriSchemeWithoutOpeningAFile)
+{
+    AudioLoader loader;
+    const Track track{u"cdda:///I5l9cCSFccLKFEKS.7wqSZAorPU-"_s};
+    const auto provider = std::make_shared<FakeRemoteSourceProvider>();
+    loader.setRemoteSourceProvider(provider);
+
+    addDecoder(loader, u"extension-only-decoder"_s, {u"cdda"_s});
+    const auto decoder = addDecoder(loader, u"cdda-decoder"_s, {}, -1, false, {u" CDDA "_s});
+
+    addReader(loader, u"extension-only-reader"_s, {u"cdda"_s});
+    const auto reader        = addReader(loader, u"cdda-reader"_s, {}, -1, false, {u"cDdA"_s});
+    reader->title            = u"Audio CD"_s;
+    reader->canReadCover     = true;
+    reader->coverData        = "disc-cover";
+    reader->canWriteMetadata = true;
+
+    EXPECT_EQ((QStringList{u"cdda-decoder"_s}), decoderLabels(loader.decodersForTrack(track)));
+    EXPECT_EQ((QStringList{u"cdda-reader"_s}), readerLabels(loader.readersForTrack(track)));
+
+    const auto loadedDecoder = loader.loadDecoderForTrack(track);
+    ASSERT_NE(loadedDecoder.decoder, nullptr);
+    EXPECT_EQ(track.filepath(), loadedDecoder.input.source.filepath);
+    EXPECT_EQ(nullptr, loadedDecoder.input.source.device);
+    EXPECT_EQ(nullptr, loadedDecoder.input.device.get());
+    EXPECT_FALSE(decoder->lastHadDevice);
+
+    const auto loadedReader = loader.loadReaderForTrack(track);
+    ASSERT_NE(loadedReader.reader, nullptr);
+    EXPECT_EQ(track.filepath(), loadedReader.input.source.filepath);
+    EXPECT_EQ(nullptr, loadedReader.input.source.device);
+    EXPECT_EQ(nullptr, loadedReader.input.device.get());
+    EXPECT_FALSE(reader->lastHadDevice);
+
+    Track metadataTrack{track};
+    ASSERT_TRUE(loader.readTrackMetadata(metadataTrack));
+    EXPECT_EQ(u"Audio CD"_s, metadataTrack.title());
+    EXPECT_EQ(QByteArray{"disc-cover"}, loader.readTrackCover(track, Track::Cover::Front));
+    EXPECT_FALSE(loader.canWriteMetadata(track));
+    EXPECT_FALSE(loader.writeTrackMetadata(track, AudioReader::Metadata));
+    EXPECT_FALSE(loader.writeTrackCover(track, {}, AudioReader::None));
+    EXPECT_EQ(0, provider->calls);
+}
+
+TEST_F(AudioLoaderTest, UriSchemeSelectionHonoursDisabledStateAndDoesNotMisclassifyWindowsPaths)
+{
+    AudioLoader loader;
+    addDecoder(loader, u"windows-file-decoder"_s, {u"mp3"_s});
+    addDecoder(loader, u"drive-letter-scheme-decoder"_s, {}, -1, false, {u"c"_s});
+    addDecoder(loader, u"cdda-decoder"_s, {}, -1, false, {u"cdda"_s});
+
+    EXPECT_EQ((QStringList{u"windows-file-decoder"_s}),
+              decoderLabels(loader.decodersForFile(uR"(C:\music\song.mp3)"_s)));
+
+    loader.setDecoderEnabled(u"cdda-decoder"_s, false);
+    EXPECT_TRUE(loader.decodersForFile(u"cdda:///I5l9cCSFccLKFEKS.7wqSZAorPU-"_s).empty());
 }
 
 TEST_F(AudioLoaderTest, LoadsDecoderAndReaderForRemoteTracksWithoutOpeningDevices)

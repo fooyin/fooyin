@@ -20,6 +20,7 @@
 #pragma once
 
 #include <core/engine/conversion/conversiondefs.h>
+#include <gui/conversion/conversionservice.h>
 
 #include <QObject>
 
@@ -35,7 +36,8 @@ class DspRegistry;
 class DspSettingsRegistry;
 class SettingsManager;
 
-class ConversionController : public QObject
+class ConversionController : public QObject,
+                             public ConversionService
 {
     Q_OBJECT
 
@@ -45,8 +47,21 @@ public:
                          DspSettingsRegistry* dspSettingsRegistry, SettingsManager* settings, QWidget* parentWindow,
                          QObject* parent = nullptr);
 
-    void showSetup(const TrackList& tracks);
+    void showSetup(const TrackList& tracks) override;
+    void showSetup(const TrackList& tracks, const QString& suggestedFilenamePattern,
+                   std::shared_ptr<ConversionInputObserver> sourceObserver,
+                   std::function<void(const std::vector<ConversionTrackResult>&)> completion) override;
+
+    [[nodiscard]] std::vector<ConversionPresetInfo> presets() const override;
+    bool startPreset(const QString& presetId, const TrackList& tracks) override;
+    bool startPreset(const QString& presetId, const TrackList& tracks, const QString& suggestedFilenamePattern,
+                     std::shared_ptr<ConversionInputObserver> sourceObserver,
+                     std::function<void(const std::vector<ConversionTrackResult>&)> completion) override;
+
     void start(ConversionJob job, QString askFolder, bool showReport);
+    void start(ConversionJob job, QString askFolder, bool showReport,
+               std::shared_ptr<ConversionInputObserver> sourceObserver,
+               std::function<void(const std::vector<ConversionTrackResult>&)> completion);
 
 Q_SIGNALS:
     void conversionPresetsChanged();

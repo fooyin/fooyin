@@ -240,7 +240,7 @@ PcmHashResult pcmHashFailure(QString error)
 PcmHashResult calculatePcmHash(const AudioLoader& loader, const Track& track,
                                std::optional<AudioFormat> comparisonFormat, SampleFormat sampleFormat)
 {
-    auto loaded = loader.loadDecoderForTrack(track, AudioDecoder::NoLooping);
+    auto loaded = loader.loadDecoderForTrack(track, AudioDecoder::NoLooping | AudioDecoder::ForConversion);
     if(!loaded.decoder || !loaded.format) {
         return pcmHashFailure(u"PCM verification could not open input"_s);
     }
@@ -496,6 +496,7 @@ struct TrackEncodingResult
     bool cancelled{false};
     AudioFormat encoderInputFormat;
     QString error;
+    QStringList warnings;
 };
 
 struct SharedProcessingContext
@@ -513,6 +514,7 @@ TrackEncodingResult trackEncodingFailure(QString error, const AudioFormat& forma
         .cancelled          = false,
         .encoderInputFormat = format,
         .error              = std::move(error),
+        .warnings           = {},
     };
 }
 
@@ -530,7 +532,8 @@ TrackEncodingResult encodeTrack(const ConversionRunner::Request& request, const 
         previewDuration = *duration;
     }
 
-    auto loaded = request.audioLoader->loadDecoderForTrack(track, AudioDecoder::NoLooping);
+    auto loaded
+        = request.audioLoader->loadDecoderForTrack(track, AudioDecoder::NoLooping | AudioDecoder::ForConversion);
     if(!loaded.decoder || !loaded.format) {
         return trackEncodingFailure(u"No decoder available"_s);
     }
@@ -650,13 +653,25 @@ TrackEncodingResult encodeTrack(const ConversionRunner::Request& request, const 
     QString error;
     AudioEncoder::Result encoderResult;
 
+    if(request.sourceObserver) {
+        request.sourceObserver->trackStarted(track, *loaded.format);
+    }
+
+    const auto observerGuard = qScopeGuard([&request, &track, &failed, &sourceComplete]() {
+        if(request.sourceObserver) {
+            request.sourceObserver->trackFinished(track, !failed && sourceComplete);
+        }
+    });
+
     while(true) {
         if(shouldCancel(request)) {
+            const QStringList warnings = loaded.decoder->takeWarnings();
             return {
                 .ok                 = false,
                 .cancelled          = true,
                 .encoderInputFormat = encoderInputFormat,
                 .error              = u"Conversion cancelled"_s,
+                .warnings           = warnings,
             };
         }
 
@@ -670,6 +685,10 @@ TrackEncodingResult encodeTrack(const ConversionRunner::Request& request, const 
                     inputBuffer = trimBuffer(inputBuffer, frames);
                     sourceFramesRemaining -= static_cast<uint64_t>(frames);
                     sourceComplete = sourceFramesRemaining == 0;
+                }
+
+                if(request.sourceObserver && inputBuffer.frameCount() > 0) {
+                    request.sourceObserver->sourceAudio(track, inputBuffer);
                 }
 
                 if(hasProcessing) {
@@ -705,6 +724,7 @@ TrackEncodingResult encodeTrack(const ConversionRunner::Request& request, const 
             case AudioDecoder::ReadStatus::NeedMoreInput:
                 continue;
             case AudioDecoder::ReadStatus::EndOfStream:
+                sourceComplete = true;
                 break;
             case AudioDecoder::ReadStatus::Error:
                 failed = true;
@@ -732,6 +752,7 @@ TrackEncodingResult encodeTrack(const ConversionRunner::Request& request, const 
         .cancelled          = false,
         .encoderInputFormat = encoderInputFormat,
         .error              = error,
+        .warnings           = loaded.decoder->takeWarnings(),
     };
 }
 
@@ -888,6 +909,7 @@ std::vector<ConversionTrackResult> runGroupedOutputs(const ConversionRunner::Req
         SharedProcessingContext sharedProcessing;
         AudioFormat combinedFormat;
         TrackEncodingResult encoding;
+        QStringList sourceWarnings;
 
         for(size_t i{0}; i < groupTracks.size(); ++i) {
             const Track& track           = groupTracks[i];
@@ -896,6 +918,7 @@ std::vector<ConversionTrackResult> runGroupedOutputs(const ConversionRunner::Req
             encoding = encodeTrack(request, track, progressIndex++, pathResult.outputPath, output.path(), *encoder,
                                    i == 0, combinedFormat, preserveProcessingState ? &sharedProcessing : nullptr,
                                    !preserveProcessingState || finalTrackInGroup);
+            sourceWarnings.append(encoding.warnings);
             if(!encoding.ok) {
                 progressIndex += static_cast<int>(groupTracks.size() - i - 1);
                 break;
@@ -914,16 +937,17 @@ std::vector<ConversionTrackResult> runGroupedOutputs(const ConversionRunner::Req
         if(!encoding.ok || !finishResult.ok) {
             const QString error = !encoding.ok ? encoding.error : finishResult.error;
             encoder.reset();
-            addResults(encoding.cancelled ? ConversionResultStatus::Cancelled : ConversionResultStatus::Failed, error);
+            addResults(encoding.cancelled ? ConversionResultStatus::Cancelled : ConversionResultStatus::Failed, error,
+                       sourceWarnings);
             continue;
         }
 
         if(shouldCancel(request)) {
-            addResults(ConversionResultStatus::Cancelled, u"Conversion cancelled"_s);
+            addResults(ConversionResultStatus::Cancelled, u"Conversion cancelled"_s, sourceWarnings);
             continue;
         }
 
-        QStringList warnings;
+        QStringList warnings{sourceWarnings};
         const QString metadataError = transferMetadata(request, groupTracks.front(), output.path(), false);
         if(!metadataError.isEmpty()) {
             warnings.append(metadataError);
@@ -936,7 +960,7 @@ std::vector<ConversionTrackResult> runGroupedOutputs(const ConversionRunner::Req
         if(request.job.preset.other.verifyOutput) {
             const QString verificationError = verifyOutput(*request.audioLoader, output.path());
             if(!verificationError.isEmpty()) {
-                addResults(ConversionResultStatus::Failed, verificationError);
+                addResults(ConversionResultStatus::Failed, verificationError, warnings);
                 continue;
             }
         }
@@ -1018,7 +1042,7 @@ std::vector<ConversionTrackResult> runIndividualOutputs(const ConversionRunner::
                 .outputPath  = pathResult.outputPath,
                 .status      = encoding.cancelled ? ConversionResultStatus::Cancelled : ConversionResultStatus::Failed,
                 .error       = error,
-                .warnings    = {},
+                .warnings    = encoding.warnings,
             });
             continue;
         }
@@ -1029,12 +1053,12 @@ std::vector<ConversionTrackResult> runIndividualOutputs(const ConversionRunner::
                 .outputPath  = pathResult.outputPath,
                 .status      = ConversionResultStatus::Cancelled,
                 .error       = u"Conversion cancelled"_s,
-                .warnings    = {},
+                .warnings    = encoding.warnings,
             });
             continue;
         }
 
-        QStringList warnings;
+        QStringList warnings{encoding.warnings};
         const QString metadataError = transferMetadata(request, track, output.path(), true);
         if(!metadataError.isEmpty()) {
             warnings.append(metadataError);
@@ -1050,13 +1074,21 @@ std::vector<ConversionTrackResult> runIndividualOutputs(const ConversionRunner::
                 verificationError = verifyLosslessPcm(*request.audioLoader, track, output.path(), request.job.preset);
             }
             if(!verificationError.isEmpty()) {
-                results.push_back(failedResult(track, pathResult.outputPath, verificationError));
+                results.push_back({.sourceTrack = track,
+                                   .outputPath  = pathResult.outputPath,
+                                   .status      = ConversionResultStatus::Failed,
+                                   .error       = verificationError,
+                                   .warnings    = warnings});
                 continue;
             }
         }
 
         if(!output.commit(outputError)) {
-            results.push_back(failedResult(track, pathResult.outputPath, outputError));
+            results.push_back({.sourceTrack = track,
+                               .outputPath  = pathResult.outputPath,
+                               .status      = ConversionResultStatus::Failed,
+                               .error       = outputError,
+                               .warnings    = warnings});
             continue;
         }
 

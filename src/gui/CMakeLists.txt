@@ -4,6 +4,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/coverrepository.h
     ${CMAKE_SOURCE_DIR}/include/gui/configdialog.h
     ${CMAKE_SOURCE_DIR}/include/gui/contextmenuutils.h
+    ${CMAKE_SOURCE_DIR}/include/gui/conversion/conversionservice.h
     ${CMAKE_SOURCE_DIR}/include/gui/dsp/dsplayouteditor.h
     ${CMAKE_SOURCE_DIR}/include/gui/dsp/dspsettingsdialog.h
     ${CMAKE_SOURCE_DIR}/include/gui/dsp/dspsettingsprovider.h
