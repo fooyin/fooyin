@@ -3911,14 +3911,17 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
         return false;
     }
 
-    if(atime.isValid() || mtime.isValid()) {
-        if(auto* fileDev = qobject_cast<QFile*>(source.device)) {
-            fileDev->setFileTime(mtime, QFileDevice::FileModificationTime);
+    if(auto* fileDev = qobject_cast<QFile*>(source.device)) {
+        fileDev->flush();
+        if(atime.isValid()) {
             fileDev->setFileTime(atime, QFileDevice::FileAccessTime);
+        }
+        if(mtime.isValid()) {
+            fileDev->setFileTime(mtime, QFileDevice::FileModificationTime);
         }
     }
 
-    return success;
+    return true;
 }
 
 bool TagLibReader::writeCover(const AudioSource& source, const Track& track, const TrackCovers& covers,
@@ -4133,13 +4136,16 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
         return false;
     }
 
-    if(atime.isValid() || mtime.isValid()) {
-        if(auto* fileDev = qobject_cast<QFile*>(source.device)) {
-            fileDev->setFileTime(mtime, QFileDevice::FileModificationTime);
+    if(auto* fileDev = qobject_cast<QFile*>(source.device)) {
+        fileDev->flush();
+        if(atime.isValid()) {
             fileDev->setFileTime(atime, QFileDevice::FileAccessTime);
+        }
+        if(mtime.isValid()) {
+            fileDev->setFileTime(mtime, QFileDevice::FileModificationTime);
         }
     }
 
-    return success;
+    return true;
 }
 } // namespace Fooyin
