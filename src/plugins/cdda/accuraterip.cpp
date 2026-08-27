@@ -108,10 +108,10 @@ QUrl accurateRipDiscUrl(const AccurateRipDiscId& id)
     return QUrl{u"https://www.accuraterip.com/accuraterip/%1/%2/%3/dBAR-%4-%5-%6-%7.bin"_s.arg(id1.at(7))
                     .arg(id1.at(6))
                     .arg(id1.at(5))
-                    .arg(id.trackCount, 3, 10, u'0')
-                    .arg(id.id1, 8, 16, u'0')
-                    .arg(id.id2, 8, 16, u'0')
-                    .arg(id.cddbId, 8, 16, u'0')};
+                    .arg(id.trackCount, 3, 10, QChar{u'0'})
+                    .arg(id.id1, 8, 16, QChar{u'0'})
+                    .arg(id.id2, 8, 16, QChar{u'0'})
+                    .arg(id.cddbId, 8, 16, QChar{u'0'})};
 }
 
 std::expected<std::vector<AccurateRipPressing>, QString> parseAccurateRipResponse(const QByteArray& data,
@@ -353,7 +353,7 @@ std::vector<AccurateRipTrackResult> AccurateRipVerifier::results() const
                     continue;
                 }
                 const auto& expected = pressing.at(index);
-                if(!std::ranges::contains(trackResult.databaseCrcs, expected.crc)) {
+                if(std::ranges::find(trackResult.databaseCrcs, expected.crc) == trackResult.databaseCrcs.end()) {
                     trackResult.databaseCrcs.push_back(expected.crc);
                 }
                 if(state.crcV1 == expected.crc || state.crcV2 == expected.crc) {

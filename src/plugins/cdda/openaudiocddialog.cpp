@@ -48,7 +48,7 @@ namespace {
 QString displayDuration(uint64_t milliseconds)
 {
     const uint64_t seconds = milliseconds / 1000;
-    return u"%1:%2"_s.arg(seconds / 60).arg(seconds % 60, 2, 10, u'0');
+    return u"%1:%2"_s.arg(seconds / 60).arg(seconds % 60, 2, 10, QChar{u'0'});
 }
 } // namespace
 
@@ -441,7 +441,9 @@ void OpenAudioCdDialog::startAutomaticLookup(int index)
                              return;
                          }
                          for(const ReleaseSummary& release : releases) {
-                             if(!release.id.isEmpty() && !std::ranges::contains(m_autoLookupReleaseIds, release.id)) {
+                             if(!release.id.isEmpty()
+                                && std::ranges::find(m_autoLookupReleaseIds, release.id)
+                                       == m_autoLookupReleaseIds.end()) {
                                  m_autoLookupReleaseIds.push_back(release.id);
                              }
                          }

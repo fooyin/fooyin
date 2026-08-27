@@ -46,7 +46,7 @@ std::expected<void, QString> populateTrack(Track& track, const CdTocTrack& tocTr
     }
 
     if(track.title().isEmpty()) {
-        track.setTitle(trackText.title.isEmpty() ? CddaReader::tr("Track %1").arg(tocTrack.number, 2, 10, u'0')
+        track.setTitle(trackText.title.isEmpty() ? CddaReader::tr("Track %1").arg(tocTrack.number, 2, 10, QChar{u'0'})
                                                  : trackText.title);
     }
     if(track.album().isEmpty()) {
