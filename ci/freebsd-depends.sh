@@ -25,6 +25,8 @@ sudo pkg install -y \
      libopenmpt \
      libarchive \
      ebur128 \
+     libcdio \
+     libcdio-paranoia \
      soundtouch \
      libsoxr \
      googletest

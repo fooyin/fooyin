@@ -100,6 +100,39 @@ TEST(TrackTest, PreservesRatingStarSteps)
     EXPECT_EQ(track.ratingStars(), 7);
 }
 
+TEST(TrackTest, DerivesPathFieldsForVirtualUrls)
+{
+    const QString filepath = u"cdda:///I5l9cCSFccLKFEKS.7wqSZAorPU-"_s;
+    const Track track{filepath, 3};
+
+    EXPECT_TRUE(track.isVirtual());
+    EXPECT_FALSE(track.isRemote());
+    EXPECT_FALSE(track.isInArchive());
+    EXPECT_TRUE(track.exists());
+    EXPECT_TRUE(track.url().isEmpty());
+    EXPECT_EQ(u"I5l9cCSFccLKFEKS.7wqSZAorPU-"_s, track.filename());
+    EXPECT_EQ(u"I5l9cCSFccLKFEKS.7wqSZAorPU-"_s, track.filenameExt());
+    EXPECT_EQ(u"cdda://"_s, track.directory());
+    EXPECT_EQ(u"cdda"_s, track.extension());
+    EXPECT_EQ(u"cdda://"_s, track.path());
+    EXPECT_EQ(u"cdda://I5l9cCSFccLKFEKS.7wqSZAorPU-"_s, track.prettyFilepath());
+    EXPECT_EQ(filepath, track.filepath());
+    EXPECT_EQ(3, track.subsong());
+}
+
+TEST(TrackTest, RejectsLocalNetworkArchiveAndMalformedPathsAsVirtual)
+{
+    EXPECT_FALSE(Track::isVirtualPath(uR"(C:\music\song.mp3)"_s));
+    EXPECT_FALSE(Track::isVirtualPath(uR"(\\server\music\song.mp3)"_s));
+    EXPECT_FALSE(Track::isVirtualPath(u"//server/music/song.mp3"_s));
+    EXPECT_FALSE(Track::isVirtualPath(u"/music/song.mp3"_s));
+    EXPECT_FALSE(Track::isVirtualPath(u"file:///music/song.mp3"_s));
+    EXPECT_FALSE(Track::isVirtualPath(u"https://radio.example.com/live"_s));
+    EXPECT_FALSE(Track::isVirtualPath(u"unpack://zip|1|file:///a!b.mp3"_s));
+    EXPECT_FALSE(Track::isVirtualPath(u"not a uri"_s));
+    EXPECT_TRUE(Track::isVirtualPath(u"cdda:///I5l9cCSFccLKFEKS.7wqSZAorPU-"_s));
+}
+
 TEST(TrackTest, UsesCompactMetadataAccessors)
 {
     Track track;

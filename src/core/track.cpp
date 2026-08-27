@@ -62,6 +62,61 @@ bool isRemoteTrackPath(const QString& path)
     return scheme == "http"_L1 || scheme == "https"_L1;
 }
 
+bool isWindowsAbsolutePath(const QString& path)
+{
+    return (path.size() >= 3 && path.at(0).isLetter() && path.at(1) == u':'
+            && (path.at(2) == u'/' || path.at(2) == u'\\'))
+        || path.startsWith(uR"(\\)"_s) || path.startsWith("//"_L1);
+}
+
+bool isVirtualTrackPath(const QString& path)
+{
+    if(path.isEmpty() || Fooyin::Track::isArchivePath(path) || isRemoteTrackPath(path) || isWindowsAbsolutePath(path)) {
+        return false;
+    }
+
+    const QUrl url{path, QUrl::StrictMode};
+    return url.isValid() && !url.scheme().isEmpty() && url.scheme().compare(u"file"_s, Qt::CaseInsensitive) != 0;
+}
+
+QString virtualUrlName(const QString& path)
+{
+    const QUrl url{path, QUrl::StrictMode};
+    if(const QString name = QFileInfo{url.path()}.fileName(); !name.isEmpty()) {
+        return name;
+    }
+
+    const qsizetype separator = path.indexOf("://"_L1);
+    if(separator < 0) {
+        return {};
+    }
+
+    const QStringView authority = QStringView{path}.sliced(separator + 3);
+    const qsizetype slash       = authority.indexOf(u'/');
+    return (slash < 0 ? authority : authority.first(slash)).toString();
+}
+
+QString virtualUrlPath(const QString& path)
+{
+    const qsizetype separator = path.indexOf("://"_L1);
+    if(separator < 0) {
+        return {};
+    }
+
+    const qsizetype prefixEnd = separator + 3;
+    const qsizetype lastSlash = path.lastIndexOf(u'/');
+    return lastSlash < prefixEnd ? path.first(prefixEnd) : path.first(lastSlash);
+}
+
+QString prettyVirtualUrl(const QString& path)
+{
+    const qsizetype separator = path.indexOf(":///"_L1);
+    if(separator < 0) {
+        return path;
+    }
+    return path.first(separator + 3) + path.sliced(separator + 4);
+}
+
 QString remoteTrackFilename(const QString& path)
 {
     const QUrl url{path};
@@ -369,6 +424,11 @@ QString TrackPrivate::directory() const
     if(isRemoteTrackPath(filepath)) {
         return remoteTrackDirectory(filepath);
     }
+    if(isVirtualTrackPath(filepath)) {
+        const QString parent = virtualUrlPath(filepath);
+        const QString name   = virtualUrlName(parent);
+        return !name.isEmpty() ? name : parent;
+    }
 
     const QFileInfo info{isInArchive ? filepathWithinArchive : filepath};
     QString dir = info.dir().dirName();
@@ -383,6 +443,9 @@ QString TrackPrivate::filename() const
     if(isRemoteTrackPath(filepath)) {
         return remoteTrackFilename(filepath);
     }
+    if(isVirtualTrackPath(filepath)) {
+        return virtualUrlName(filepath);
+    }
 
     return QFileInfo{isInArchive ? filepathWithinArchive : filepath}.completeBaseName();
 }
@@ -391,6 +454,9 @@ QString TrackPrivate::extension() const
 {
     if(isRemoteTrackPath(filepath)) {
         return remoteTrackExtension(filepath);
+    }
+    if(isVirtualTrackPath(filepath)) {
+        return QUrl{filepath, QUrl::StrictMode}.scheme().toLower();
     }
 
     return QFileInfo{isInArchive ? filepathWithinArchive : filepath}.suffix().toLower();
@@ -634,7 +700,7 @@ bool Track::metadataWasModified() const
 
 bool Track::exists() const
 {
-    if(isRemote()) {
+    if(isRemote() || isVirtual()) {
         return true;
     }
 
@@ -657,6 +723,11 @@ bool Track::isInArchive() const
 bool Track::isRemote() const
 {
     return isRemotePath(p->filepath);
+}
+
+bool Track::isVirtual() const
+{
+    return isVirtualPath(p->filepath);
 }
 
 QString Track::archivePath() const
@@ -761,6 +832,9 @@ QString Track::prettyFilepath() const
     if(isInArchive()) {
         return archivePath() + "/"_L1 + pathInArchive();
     }
+    if(isVirtual()) {
+        return prettyVirtualUrl(p->filepath);
+    }
 
     return p->filepath;
 }
@@ -774,6 +848,10 @@ QString Track::path() const
 {
     if(isRemote()) {
         return {};
+    }
+
+    if(isVirtual()) {
+        return virtualUrlPath(p->filepath);
     }
 
     if(isInArchive()) {
@@ -799,6 +877,9 @@ QString Track::filenameExt() const
         const QUrl remoteUrl{p->filepath};
         const QString filename = QFileInfo{remoteUrl.path()}.fileName();
         return !filename.isEmpty() ? filename : remoteUrl.host();
+    }
+    if(isVirtual()) {
+        return virtualUrlName(p->filepath);
     }
 
     return QFileInfo{p->filepath}.fileName();
@@ -1225,6 +1306,11 @@ bool Track::isArchivePath(const QString& path)
 bool Track::isRemotePath(const QString& path)
 {
     return isRemoteTrackPath(path);
+}
+
+bool Track::isVirtualPath(const QString& path)
+{
+    return isVirtualTrackPath(path);
 }
 
 bool Track::isMultiValueTag(const QString& tag)

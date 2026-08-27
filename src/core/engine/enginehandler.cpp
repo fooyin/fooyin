@@ -350,7 +350,8 @@ void EngineHandler::handleTrackChangeRequest(const Player::TrackChangeRequest& r
         return;
     }
 
-    if(request.context.reason == Player::AdvanceReason::StartupRestore && m_pendingStartupRestore.has_value()) {
+    if(request.context.reason == Player::AdvanceReason::StartupRestore && m_pendingStartupRestore.has_value()
+       && m_pendingStartupRestore->positionMs > 0) {
         m_pendingStartupRestoreItemId = request.itemId;
     }
     else if(m_pendingStartupRestore.has_value()) {
@@ -363,6 +364,10 @@ void EngineHandler::handleTrackChangeRequest(const Player::TrackChangeRequest& r
     clearEngineOwnedTransition();
     m_pendingTrackChange = request;
     m_pendingTrackChangeGeneration.reset();
+
+    if(request.context.reason == Player::AdvanceReason::StartupRestore && m_pendingStartupRestore.has_value()) {
+        dispatchCommand(&AudioEngine::queueInitialRestore, m_pendingStartupRestore->positionMs, track.id());
+    }
     dispatchCommand(&AudioEngine::loadTrack, makePlaybackItem(track, request.itemId), request.context.userInitiated);
 }
 

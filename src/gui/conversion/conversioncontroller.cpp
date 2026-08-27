@@ -27,6 +27,8 @@
 #include <utils/async.h>
 
 #include <QAbstractButton>
+#include <QDir>
+#include <QFileDialog>
 #include <QFileInfo>
 #include <QFutureWatcher>
 #include <QMessageBox>
@@ -47,7 +49,9 @@ class ConversionSession : public QObject
 public:
     ConversionSession(std::shared_ptr<AudioLoader> audioLoader, AudioEncoderRegistry* encoderRegistry,
                       DspRegistry* dspRegistry, ConversionJob job, QString askFolder, bool showReport,
-                      QWidget* parentWindow, QObject* parent)
+                      std::shared_ptr<ConversionInputObserver> sourceObserver,
+                      std::function<void(const std::vector<ConversionTrackResult>&)> completion, QWidget* parentWindow,
+                      QObject* parent)
         : QObject{parent}
         , m_audioLoader{std::move(audioLoader)}
         , m_encoderRegistry{encoderRegistry}
@@ -55,6 +59,8 @@ public:
         , m_job{std::move(job)}
         , m_askFolder{std::move(askFolder)}
         , m_showReport{showReport}
+        , m_sourceObserver{std::move(sourceObserver)}
+        , m_completion{std::move(completion)}
         , m_parentWindow{parentWindow}
         , m_cancelled{std::make_shared<std::atomic_bool>(false)}
         , m_progress{new ElapsedProgressDialog(tr("Preparing conversion…"), tr("Cancel"), 0, 100, parentWindow)}
@@ -78,12 +84,14 @@ public:
     {
         auto future = Utils::asyncExec([audioLoader = m_audioLoader, encoderRegistry = m_encoderRegistry,
                                         dspRegistry = m_dspRegistry, job = m_job, askFolder = m_askFolder,
-                                        cancelled = m_cancelled, progress = m_progress, session = this]() {
+                                        cancelled = m_cancelled, progress = m_progress, session = this,
+                                        sourceObserver = m_sourceObserver]() {
             ConversionRunner::Request request;
             request.audioLoader     = audioLoader.get();
             request.encoderRegistry = encoderRegistry;
             request.dspRegistry     = dspRegistry;
             request.job             = job;
+            request.sourceObserver  = sourceObserver;
             request.askFolder       = askFolder;
             request.cancelCallback  = [cancelled]() {
                 return cancelled->load(std::memory_order_acquire);
@@ -97,7 +105,14 @@ public:
                                                : 0.0;
                 const auto percentage      = static_cast<int>(
                     ((static_cast<double>(current.trackIndex) + trackProgress) / trackCount) * 100.0);
-                const QString text = tr("Current file") + ":\n"_L1 + current.sourcePath;
+                const QString progressText = current.sourceDurationMs > 0
+                                               ? tr("%1%").arg(QString::number(trackProgress * 100.0, 'f', 1))
+                                               : tr("Calculating…");
+                const QString text         = tr("Converting %1 of %2 (%3)")
+                                                 .arg(current.trackIndex + 1)
+                                                 .arg(current.trackCount)
+                                                 .arg(progressText)
+                                           + "\n"_L1 + tr("Current file") + ":\n"_L1 + current.sourcePath;
                 QMetaObject::invokeMethod(progress, [progress, percentage, text]() {
                     progress->setText(text);
                     progress->setValue(percentage);
@@ -203,6 +218,10 @@ private:
             report.exec();
         }
 
+        if(m_completion) {
+            m_completion(results);
+        }
+
         m_progress->deleteLater();
         deleteLater();
     }
@@ -214,6 +233,8 @@ private:
     ConversionJob m_job;
     QString m_askFolder;
     bool m_showReport;
+    std::shared_ptr<ConversionInputObserver> m_sourceObserver;
+    std::function<void(const std::vector<ConversionTrackResult>&)> m_completion;
     QWidget* m_parentWindow;
     std::shared_ptr<std::atomic_bool> m_cancelled;
     ElapsedProgressDialog* m_progress;
@@ -237,6 +258,13 @@ ConversionController::ConversionController(std::shared_ptr<AudioLoader> audioLoa
 
 void ConversionController::showSetup(const TrackList& tracks)
 {
+    showSetup(tracks, {}, {}, {});
+}
+
+void ConversionController::showSetup(const TrackList& tracks, const QString& suggestedFilenamePattern,
+                                     std::shared_ptr<ConversionInputObserver> sourceObserver,
+                                     std::function<void(const std::vector<ConversionTrackResult>&)> completion)
+{
     if(tracks.empty()) {
         return;
     }
@@ -245,37 +273,108 @@ void ConversionController::showSetup(const TrackList& tracks)
                                            m_dspSettingsRegistry);
     setup->setAttribute(Qt::WA_DeleteOnClose);
     setup->setModal(false);
+    setup->applySuggestedFilenamePattern(suggestedFilenamePattern);
 
-    QObject::connect(setup, &QDialog::finished, this, [this, setup](int result) {
-        if(result != QDialog::Accepted) {
-            Q_EMIT conversionPresetsChanged();
-            return;
-        }
+    QObject::connect(setup, &QDialog::finished, this,
+                     [this, setup, sourceObserver = std::move(sourceObserver),
+                      completion = std::move(completion)](int result) mutable {
+                         if(result != QDialog::Accepted) {
+                             Q_EMIT conversionPresetsChanged();
+                             return;
+                         }
 
-        ConversionJob job     = setup->job();
-        const bool showReport = setup->showReport();
-        ConverterSettings::setLastUsedConversionPreset({
-            .name       = u"[last used]"_s,
-            .preset     = job.preset,
-            .showReport = showReport,
-        });
-        Q_EMIT conversionPresetsChanged();
-        start(std::move(job), setup->askFolder(), showReport);
-    });
+                         ConversionJob job     = setup->job();
+                         const bool showReport = setup->showReport();
+                         ConverterSettings::setLastUsedConversionPreset({
+                             .name       = u"[last used]"_s,
+                             .preset     = job.preset,
+                             .showReport = showReport,
+                         });
+                         Q_EMIT conversionPresetsChanged();
+                         start(std::move(job), setup->askFolder(), showReport, std::move(sourceObserver),
+                               std::move(completion));
+                     });
 
     setup->show();
     setup->raise();
     setup->activateWindow();
 }
 
+std::vector<ConversionPresetInfo> ConversionController::presets() const
+{
+    std::vector<ConversionPresetInfo> result;
+
+    for(const StoredConversionPreset& stored : ConverterSettings::conversionPresets()) {
+        if(!stored.preset.id.isEmpty()) {
+            result.push_back({.id = stored.preset.id, .name = stored.name});
+        }
+    }
+
+    return result;
+}
+
+bool ConversionController::startPreset(const QString& presetId, const TrackList& tracks)
+{
+    return startPreset(presetId, tracks, {}, {}, {});
+}
+
+bool ConversionController::startPreset(const QString& presetId, const TrackList& tracks,
+                                       const QString& suggestedFilenamePattern,
+                                       std::shared_ptr<ConversionInputObserver> sourceObserver,
+                                       std::function<void(const std::vector<ConversionTrackResult>&)> completion)
+{
+    if(presetId.isEmpty() || tracks.empty()) {
+        return false;
+    }
+
+    const auto presets = ConverterSettings::conversionPresets();
+    const auto stored
+        = std::ranges::find(presets, presetId, [](const StoredConversionPreset& preset) { return preset.preset.id; });
+    if(stored == presets.cend()) {
+        return false;
+    }
+
+    QString askFolder;
+    if(stored->preset.destination.mode == DestinationMode::Ask) {
+        askFolder = QFileDialog::getExistingDirectory(m_parentWindow, tr("Choose destination"), QDir::homePath());
+        if(askFolder.isEmpty()) {
+            return false;
+        }
+    }
+
+    StoredConversionPreset selected{*stored};
+    if(!suggestedFilenamePattern.trimmed().isEmpty()
+       && selected.preset.destination.filenamePattern.trimmed() == u"%filename%"_s) {
+        selected.preset.destination.filenamePattern = suggestedFilenamePattern.trimmed();
+    }
+
+    StoredConversionPreset lastUsed{selected};
+    lastUsed.name        = u"[last used]"_s;
+    lastUsed.preset.name = lastUsed.name;
+    ConverterSettings::setLastUsedConversionPreset(lastUsed);
+    Q_EMIT conversionPresetsChanged();
+
+    start({.tracks = tracks, .preset = std::move(selected.preset)}, std::move(askFolder), selected.showReport,
+          std::move(sourceObserver), std::move(completion));
+    return true;
+}
+
 void ConversionController::start(ConversionJob job, QString askFolder, bool showReport)
+{
+    start(std::move(job), std::move(askFolder), showReport, {}, {});
+}
+
+void ConversionController::start(ConversionJob job, QString askFolder, bool showReport,
+                                 std::shared_ptr<ConversionInputObserver> sourceObserver,
+                                 std::function<void(const std::vector<ConversionTrackResult>&)> completion)
 {
     if(job.tracks.empty()) {
         return;
     }
 
-    auto* session = new ConversionSession{m_audioLoader,        m_encoderRegistry, m_dspRegistry,  std::move(job),
-                                          std::move(askFolder), showReport,        m_parentWindow, this};
+    auto* session = new ConversionSession{
+        m_audioLoader, m_encoderRegistry,         m_dspRegistry,         std::move(job), std::move(askFolder),
+        showReport,    std::move(sourceObserver), std::move(completion), m_parentWindow, this};
     session->start();
 }
 } // namespace Fooyin

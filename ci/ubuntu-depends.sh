@@ -44,6 +44,8 @@ $SUDO apt-get install -y \
         libarchive-dev \
         libsndfile1-dev \
         libebur128-dev \
+        libcdio-dev \
+        libcdio-paranoia-dev \
         libsoundtouch-dev \
         libsoxr-dev \
         libgtest-dev

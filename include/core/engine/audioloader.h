@@ -83,6 +83,7 @@ public:
         int index{0};
         QString name;
         QStringList extensions;
+        QStringList schemes;
         bool enabled{true};
         bool isArchiveWrapper{false};
         T creator;

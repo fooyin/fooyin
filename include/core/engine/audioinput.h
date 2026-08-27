@@ -107,6 +107,8 @@ public:
         //! Allow decoder to update `Track` metadata after `init()`.
         //! Useful when duration/fields depend on decoder options.
         UpdateTracks = 1 << 3,
+        //! Select source policies intended for offline conversion/extraction.
+        ForConversion = 1 << 4,
     };
     Q_DECLARE_FLAGS(DecoderOptions, DecoderFlag)
     Q_FLAG(DecoderOptions)
@@ -192,6 +194,12 @@ public:
      */
     [[nodiscard]] virtual QStringList preferredExtensions() const;
     /*!
+     * Returns URI schemes this decoder handles directly without a QIODevice.
+     * Scheme names are matched case-insensitively and should omit the trailing colon.
+     * Base class implementation returns an empty list.
+     */
+    [[nodiscard]] virtual QStringList supportedSchemes() const;
+    /*!
      * Returns @c true if this decoder can consume remote/network-backed sources
      * supplied by AudioLoader. Base implementation returns @c false.
      */
@@ -208,6 +216,18 @@ public:
      * @note Called only after `init()` succeeds.
      */
     [[nodiscard]] virtual bool isSeekable() const = 0;
+    /*!
+     * Returns whether this decoder may read while another decoder instance is active.
+     * Base implementation returns true.
+     */
+    [[nodiscard]] virtual bool allowsConcurrentDecoding() const;
+    /*!
+     * Returns the minimum decoded audio reserve preferred before playback starts or resumes.
+     * A value of zero selects the engine's normal low-latency behaviour.
+     */
+    [[nodiscard]] virtual int playbackPrebufferMs() const;
+    //! Drains non-fatal source diagnostics accumulated since the previous call.
+    [[nodiscard]] virtual QStringList takeWarnings();
     /*!
      * Returns which component owns repeat-track playback for this decoder.
      * Base implementation returns EngineTransition.
@@ -300,6 +320,8 @@ public:
 protected:
     //! Called on the decoder worker thread when runtime playback policy changes.
     virtual void playbackHintsChanged(PlaybackHints hints);
+    //! Interrupts a backend read after requestAbort(); may be called from another thread.
+    virtual void interruptRead();
     //! Shared cancellation token for decoder backends and blocking input devices.
     [[nodiscard]] std::stop_token abortToken() const noexcept;
 
@@ -343,6 +365,12 @@ public:
      * Base class implementation returns an empty list.
      */
     [[nodiscard]] virtual QStringList preferredExtensions() const;
+    /*!
+     * Returns URI schemes this reader handles directly without a QIODevice.
+     * Scheme names are matched case-insensitively and should omit the trailing colon.
+     * Base class implementation returns an empty list.
+     */
+    [[nodiscard]] virtual QStringList supportedSchemes() const;
     /*!
      * Returns @c true if this reader can consume remote/network-backed sources
      * supplied by AudioLoader. Base implementation returns @c false.

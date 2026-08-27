@@ -42,9 +42,29 @@ QStringList AudioDecoder::preferredExtensions() const
     return {};
 }
 
+QStringList AudioDecoder::supportedSchemes() const
+{
+    return {};
+}
+
 bool AudioDecoder::supportsRemoteSources() const
 {
     return false;
+}
+
+bool AudioDecoder::allowsConcurrentDecoding() const
+{
+    return true;
+}
+
+int AudioDecoder::playbackPrebufferMs() const
+{
+    return 0;
+}
+
+QStringList AudioDecoder::takeWarnings()
+{
+    return {};
 }
 
 bool AudioDecoder::needsMoreInput() const
@@ -71,6 +91,8 @@ void AudioDecoder::setPlaybackHints(PlaybackHints hints)
 }
 
 void AudioDecoder::playbackHintsChanged(PlaybackHints /*hints*/) { }
+
+void AudioDecoder::interruptRead() { }
 
 bool AudioDecoder::isRepeatingTrack() const
 {
@@ -102,6 +124,7 @@ void AudioDecoder::start() { }
 void AudioDecoder::requestAbort()
 {
     p->abortSource.request_stop();
+    interruptRead();
 }
 
 std::stop_token AudioDecoder::abortToken() const noexcept
@@ -122,6 +145,11 @@ AudioDecoder::ReadResult AudioDecoder::readAudio(size_t bytes)
 }
 
 QStringList AudioReader::preferredExtensions() const
+{
+    return {};
+}
+
+QStringList AudioReader::supportedSchemes() const
 {
     return {};
 }

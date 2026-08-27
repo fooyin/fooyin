@@ -132,3 +132,66 @@ target_include_directories(test_lyricsparser PRIVATE ${CMAKE_SOURCE_DIR}/src/plu
 
 fooyin_add_test(test_metadatamatcher gui/metadatalookup/metadatamatchertest.cpp)
 fooyin_add_test(test_metadataapply gui/metadatalookup/metadataapplytest.cpp)
+
+if(TARGET cdda)
+    fooyin_add_test(
+        test_cddadomain plugins/cdda/cddadomaintest.cpp ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddatoc.cpp
+                        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddaurl.cpp
+    )
+    target_include_directories(test_cddadomain PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/cdda)
+
+    fooyin_add_test(
+        test_accuraterip plugins/cdda/accurateriptest.cpp ${CMAKE_SOURCE_DIR}/src/plugins/cdda/accuraterip.cpp
+                         ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddatoc.cpp
+    )
+    target_include_directories(test_accuraterip PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/cdda)
+
+    fooyin_add_test(
+        test_cddrivebackend plugins/cdda/cddrivebackendtest.cpp
+                            ${CMAKE_SOURCE_DIR}/src/plugins/cdda/drive/cddrivebackend.cpp
+    )
+    target_include_directories(test_cddrivebackend PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/cdda)
+
+    fooyin_add_test(
+        test_cddasectorreader
+        plugins/cdda/cddasectorreadertest.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddasectorreader.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddatoc.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/drive/cddrivebackend.cpp
+    )
+    target_include_directories(test_cddasectorreader PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/cdda)
+
+    fooyin_add_test(
+        test_cddrivemanager
+        plugins/cdda/cddadrivemanagertest.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddadrivemanager.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddatoc.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddaurl.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/drive/cddrivebackend.cpp
+    )
+    target_include_directories(test_cddrivemanager PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/cdda)
+
+    fooyin_add_test(
+        test_cddareader
+        plugins/cdda/cddareadertest.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddareader.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddadrivemanager.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddatoc.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddaurl.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/drive/cddrivebackend.cpp
+    )
+    target_include_directories(test_cddareader PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/cdda)
+
+    fooyin_add_test(
+        test_cddadecoder
+        plugins/cdda/cddadecodertest.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddadecoder.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddadrivesettings.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddadrivemanager.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddasectorreader.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddatoc.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddaurl.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/drive/cddrivebackend.cpp
+    )
+    target_include_directories(test_cddadecoder PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/cdda)
+endif()

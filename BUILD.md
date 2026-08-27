@@ -30,6 +30,7 @@ The following libraries are optional:
 * [Game Music Emu](https://github.com/libgme/game-music-emu) - for the GME audio input plugin
 * [libarchive](https://www.libarchive.org) - for the archive support plugin
 * [libebur128](https://github.com/jiixyj/libebur128) - for the ReplayGain scanner plugin
+* [libcdio](https://www.gnu.org/software/libcdio/) and libcdio-paranoia - for the Audio CD plugin
 * [SoundTouch](https://www.surina.net/soundtouch/) - for the SoundTouch DSP plugin
 * [SoXR (libsoxr)](https://sourceforge.net/projects/soxr/) - for the SoX resampler DSP plugin
 * [projectM](https://github.com/projectM-visualizer/projectm) (4.x) - for the projectM visualisation plugin
@@ -45,8 +46,8 @@ sudo apt install \
     libasound2-dev libtag1-dev libicu-dev libpipewire-0.3-dev libpulse-dev \
     qt6-base-dev libqt6sql6-sqlite libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
     libavcodec-dev libavformat-dev libavutil-dev libavdevice-dev libswresample-dev \
-    libsndfile1-dev libopenmpt-dev libgme-dev libarchive-dev libebur128-dev libsoundtouch-dev \
-    libsoxr-dev
+    libsndfile1-dev libopenmpt-dev libgme-dev libarchive-dev libebur128-dev libcdio-dev \
+    libcdio-paranoia-dev libsoundtouch-dev libsoxr-dev
 ```
 
 ### Arch Linux
@@ -56,7 +57,7 @@ sudo pacman -Syu
 sudo pacman -S --needed \
     gcc git cmake pkgconf ninja alsa-lib pipewire libpulse icu zlib ffmpeg \
     qt6-base qt6-svg qt6-imageformats qt6-tools kdsingleapplication \
-    taglib libsndfile libopenmpt libgme libarchive libebur128 soundtouch libsoxr
+    taglib libsndfile libopenmpt libgme libarchive libebur128 libcdio libcdio-paranoia soundtouch libsoxr
 ```
 
 ### Fedora
@@ -68,8 +69,8 @@ sudo dnf install \
     alsa-lib-devel qt6-qtbase-devel qt6-qtsvg-devel qt6-qttools-devel \
     libavcodec-free-devel libavformat-free-devel libavutil-free-devel libswresample-free-devel \
     taglib-devel kdsingleapplication-qt6-devel libicu-devel pipewire-devel pulseaudio-libs-devel \
-    libsndfile-devel libopenmpt-devel game-music-emu-devel libarchive-devel libebur128-devel soundtouch-devel \
-    soxr-devel
+    libsndfile-devel libopenmpt-devel game-music-emu-devel libarchive-devel libebur128-devel libcdio-devel \
+    libcdio-paranoia-devel soundtouch-devel soxr-devel
 ```
 
 ### Windows

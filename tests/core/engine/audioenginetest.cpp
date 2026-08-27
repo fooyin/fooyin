@@ -265,6 +265,16 @@ public:
         return true;
     }
 
+    [[nodiscard]] bool allowsConcurrentDecoding() const override
+    {
+        return !m_track.filepath().contains(u"exclusive"_s);
+    }
+
+    [[nodiscard]] int playbackPrebufferMs() const override
+    {
+        return m_track.filepath().contains(u"slow-prebuffer"_s) ? 1000 : 0;
+    }
+
     [[nodiscard]] int bitrate() const override
     {
         return m_stats->bitrate.load(std::memory_order_relaxed);
@@ -288,10 +298,11 @@ public:
         ++m_stats->initCalls;
         m_track = track;
         m_format.setSampleRate(track.filenameExt().contains(u"sr2000"_s) ? 2000 : 1000);
-        m_position  = track.offset();
-        m_sourceEnd = m_stats->sourceEndMs.load(std::memory_order_relaxed);
-        m_started   = false;
-        m_initValid = true;
+        m_position         = track.offset();
+        m_sourceEnd        = m_stats->sourceEndMs.load(std::memory_order_relaxed);
+        m_started          = false;
+        m_initValid        = true;
+        m_delayedFirstRead = false;
         return m_format;
     }
 
@@ -336,6 +347,11 @@ public:
             return {};
         }
 
+        if(!m_delayedFirstRead && m_track.filepath().contains(u"slow-prebuffer"_s)) {
+            m_delayedFirstRead = true;
+            std::this_thread::sleep_for(150ms);
+        }
+
         AudioBuffer buffer{m_format, m_position};
         buffer.resize(frameCount * static_cast<size_t>(bytesPerFrame));
 
@@ -357,6 +373,7 @@ private:
     uint64_t m_sourceEnd{0};
     bool m_started{false};
     bool m_initValid{false};
+    bool m_delayedFirstRead{false};
     std::optional<TimedTrackChange> m_timedTrackChange;
 };
 
@@ -656,10 +673,15 @@ public:
         engine.m_fadingEnabled         = true;
         engine.m_fadingValues.stop.out = 1000;
         engine.m_decoder.stopDecodeTimer();
-        engine.m_remoteBuffering.active     = true;
-        engine.m_remoteBuffering.generation = engine.m_trackGeneration;
-        engine.m_remoteBuffering.streamId   = stream->id();
+        engine.m_inputBuffering.active     = true;
+        engine.m_inputBuffering.generation = engine.m_trackGeneration;
+        engine.m_inputBuffering.streamId   = stream->id();
         engine.m_pipeline.setBufferingPaused(true);
+    }
+
+    static bool inputBufferingActive(const AudioEngine& engine)
+    {
+        return engine.m_inputBuffering.active;
     }
 
     static int streamBufferLengthMs(const AudioEngine& engine, const Track& track)
@@ -771,6 +793,13 @@ public:
     static Engine::PlaybackItem upcomingTrackCandidate(const AudioEngine& engine)
     {
         return engine.upcomingTrackCandidateItem();
+    }
+
+    static const char* autoTransitionRejectionReason(const AudioEngine& engine, const Track& track)
+    {
+        const char* reason{nullptr};
+        engine.evaluateAutoTransitionEligibility(track, false, false, &reason);
+        return reason;
     }
 };
 
@@ -1176,6 +1205,48 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SeekDiscontinuityPublishesNea
     EXPECT_NE(postSeekPositionMs, preSeekPositionMs);
     EXPECT_GE(postSeekPositionMs, seekPositionMs > 1000 ? seekPositionMs - 1000 : 0);
     EXPECT_LE(postSeekPositionMs, seekPositionMs + 1800);
+}
+
+FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, InitialRestoreSeeksBeforeTrackPrefill)
+{
+    ensureCoreApplication();
+    EngineHarness harness{false};
+
+    const Track track                           = harness.createTrack(u"initial-restore.fyt"_s, 0, 120000);
+    static constexpr uint64_t restorePositionMs = 32000;
+
+    harness.engine.queueInitialRestore(restorePositionMs, track.id());
+    harness.engine.loadTrack(makePlaybackItem(track, 1), false);
+
+    ASSERT_EQ(harness.engine.trackStatus(), Engine::TrackStatus::Loaded);
+    ASSERT_EQ(harness.decoderStats->seekCalls.load(), 1);
+    EXPECT_EQ(harness.engine.position(), restorePositionMs);
+
+    harness.engine.restorePosition(restorePositionMs, false);
+    EXPECT_EQ(harness.decoderStats->seekCalls.load(), 1);
+    EXPECT_EQ(harness.engine.position(), restorePositionMs);
+}
+
+FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, DecoderPrebufferHoldsPlaybackUntilPcmReady)
+{
+    ensureCoreApplication();
+    EngineHarness harness{false};
+
+    const Track track = harness.createTrack(u"slow-prebuffer.fyt"_s, 0, 120000);
+    harness.engine.loadTrack(makePlaybackItem(track, 1), false);
+    harness.engine.play();
+
+    EXPECT_EQ(harness.engine.playbackState(), Engine::PlaybackState::Playing);
+    EXPECT_EQ(harness.engine.trackStatus(), Engine::TrackStatus::Buffering);
+    EXPECT_TRUE(AudioEngineTestAccessor::inputBufferingActive(harness.engine));
+
+    ASSERT_TRUE(pumpUntil(
+        [&harness]() {
+            return harness.engine.trackStatus() == Engine::TrackStatus::Buffered
+                && !AudioEngineTestAccessor::inputBufferingActive(harness.engine);
+        },
+        2000ms));
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.position() > 0; }, 1000ms));
 }
 
 FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SeekWithRequestPublishesMatchingRequestIds)
@@ -1813,6 +1884,49 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, FormatMismatchPreparationDisc
     ASSERT_TRUE(AudioEngineTestAccessor::hasPreparedNext(harness.engine));
     EXPECT_FALSE(AudioEngineTestAccessor::preparedNextHasStream(harness.engine));
     EXPECT_GT(AudioEngineTestAccessor::preparedDecodePositionMs(harness.engine), 0U);
+}
+
+FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, ExclusiveDecodersRejectOverlappingAutoTransitions)
+{
+    ensureCoreApplication();
+
+    {
+        EngineHarness harness{false};
+        AudioEngineTestAccessor::setGaplessEnabled(harness.engine, true);
+
+        const Track currentTrack = harness.createTrack(u"exclusive-current.fyt"_s, 0, 120000);
+        const Track nextTrack    = harness.createTrack(u"ordinary-target.fyt"_s, 0, 120000);
+        const auto nextItem      = makePlaybackItem(nextTrack, 2);
+
+        harness.engine.loadTrack(makePlaybackItem(currentTrack, 1), false);
+        ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.trackStatus() == Engine::TrackStatus::Loaded; }));
+        harness.engine.play();
+        ASSERT_TRUE(
+            pumpUntil([&harness]() { return harness.engine.playbackState() == Engine::PlaybackState::Playing; }));
+
+        EXPECT_FALSE(AudioEngineTestAccessor::prepareNextTrackImmediate(harness.engine, nextItem, 1200));
+        EXPECT_STREQ("current-decoder-exclusive",
+                     AudioEngineTestAccessor::autoTransitionRejectionReason(harness.engine, nextTrack));
+    }
+
+    {
+        EngineHarness harness{false};
+        AudioEngineTestAccessor::setGaplessEnabled(harness.engine, true);
+
+        const Track currentTrack = harness.createTrack(u"ordinary-current.fyt"_s, 0, 120000);
+        const Track nextTrack    = harness.createTrack(u"exclusive-target.fyt"_s, 0, 120000);
+        const auto nextItem      = makePlaybackItem(nextTrack, 2);
+
+        harness.engine.loadTrack(makePlaybackItem(currentTrack, 1), false);
+        ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.trackStatus() == Engine::TrackStatus::Loaded; }));
+        harness.engine.play();
+        ASSERT_TRUE(
+            pumpUntil([&harness]() { return harness.engine.playbackState() == Engine::PlaybackState::Playing; }));
+
+        ASSERT_TRUE(AudioEngineTestAccessor::prepareNextTrackImmediate(harness.engine, nextItem, 1200));
+        EXPECT_STREQ("target-decoder-exclusive",
+                     AudioEngineTestAccessor::autoTransitionRejectionReason(harness.engine, nextTrack));
+    }
 }
 
 FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, SetAnalysisDataSubscriptionsAcceptsRuntimeChanges)

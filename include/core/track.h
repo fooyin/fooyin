@@ -130,6 +130,8 @@ public:
 
     [[nodiscard]] bool isInArchive() const;
     [[nodiscard]] bool isRemote() const;
+    //! True when the track is backed by a non-file, non-HTTP(S) URI handled by a specialised input backend.
+    [[nodiscard]] bool isVirtual() const;
     [[nodiscard]] QString archivePath() const;
     [[nodiscard]] QString pathInArchive() const;
     [[nodiscard]] QString relativeArchivePath() const;
@@ -241,6 +243,8 @@ public:
     //! Archive paths use fooyin's unpack:// URL format.
     static bool isArchivePath(const QString& path);
     static bool isRemotePath(const QString& path);
+    //! True for a valid custom URI, excluding local, archive, and HTTP(S).
+    static bool isVirtualPath(const QString& path);
     //! True for built-in tags that can hold multiple values.
     static bool isMultiValueTag(const QString& tag);
     //! True when tag is not one of Track's built-in metadata fields.

@@ -22,6 +22,7 @@
 #include "playlist/playlistmodel.h"
 
 #include <core/player/playbackqueue.h>
+#include <core/player/playerdefs.h>
 #include <core/playlist/playlist.h>
 #include <core/playlist/playlistchangeset.h>
 #include <gui/playlist/currentplaylistcontroller.h>
@@ -59,7 +60,7 @@ class PlaylistController : public CurrentPlaylistController
     Q_OBJECT
 
 public:
-    PlaylistController(Application* app, QObject* parent = nullptr);
+    explicit PlaylistController(Application* app, QObject* parent = nullptr);
     ~PlaylistController() override;
 
     [[nodiscard]] PlayerController* playerController() const;

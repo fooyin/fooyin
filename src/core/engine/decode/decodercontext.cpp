@@ -136,6 +136,16 @@ bool DecoderContext::isSeekable() const
     return m_decoder && m_decoder->isSeekable();
 }
 
+bool DecoderContext::allowsConcurrentDecoding() const
+{
+    return !m_decoder || m_decoder->allowsConcurrentDecoding();
+}
+
+int DecoderContext::playbackPrebufferMs() const
+{
+    return m_decoder ? std::max(0, m_decoder->playbackPrebufferMs()) : 0;
+}
+
 AudioDecoder::RepeatHandling DecoderContext::repeatHandling() const
 {
     return m_decoder ? m_decoder->repeatHandling() : AudioDecoder::RepeatHandling::EngineTransition;

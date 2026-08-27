@@ -62,6 +62,8 @@ public:
     [[nodiscard]] QString askFolder() const;
     [[nodiscard]] bool showReport() const;
 
+    void applySuggestedFilenamePattern(const QString& pattern);
+
     void accept() override;
 
 private:

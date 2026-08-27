@@ -39,6 +39,8 @@ dnf -y install --skip-broken \
      libarchive-devel \
      libsndfile-devel \
      libebur128-devel \
+     libcdio-devel \
+     libcdio-paranoia-devel \
      soundtouch-devel \
      soxr-devel \
      gtest-devel

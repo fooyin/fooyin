@@ -187,22 +187,24 @@ public:
         profile.extension     = u"wav"_s;
         profile.containerName = u"wav"_s;
         profile.codecName     = u"capture"_s;
-        return {{.id               = profile.id,
-                 .backendId        = u"capture"_s,
-                 .name             = profile.name,
-                 .description      = {},
-                 .profile          = profile,
-                 .supportsMetadata = false,
-                 .supportsPictures = false}};
+        return {{.id                  = profile.id,
+                 .backendId           = u"capture"_s,
+                 .name                = profile.name,
+                 .description         = {},
+                 .profile             = profile,
+                 .estimateBitrateKbps = {},
+                 .supportsMetadata    = false,
+                 .supportsPictures    = false}};
     }
 
-    Result init(const QString&, const AudioFormat&, const AudioEncoderSettings& settings) override
+    Result init(const QString& /*outputPath*/, const AudioFormat& /*inputFormat*/,
+                const AudioEncoderSettings& settings) override
     {
         m_ditherModes->push_back(settings.ditherMode);
         return Result::success();
     }
 
-    Result write(const AudioBuffer&) override
+    Result write(const AudioBuffer& /*buffer*/) override
     {
         return Result::success();
     }
@@ -214,6 +216,66 @@ public:
 
 private:
     std::shared_ptr<std::vector<DitherMode>> m_ditherModes;
+};
+
+struct WarningDecoderState
+{
+    AudioDecoder::DecoderOptions options{AudioDecoder::None};
+    int warningDrains{0};
+};
+
+class WarningDecoder : public AudioDecoder
+{
+public:
+    explicit WarningDecoder(std::shared_ptr<WarningDecoderState> state)
+        : m_state{std::move(state)}
+    { }
+
+    [[nodiscard]] QStringList extensions() const override
+    {
+        return {u"warning"_s};
+    }
+
+    [[nodiscard]] bool isSeekable() const override
+    {
+        return true;
+    }
+
+    std::optional<AudioFormat> init(const AudioSource& /*source*/, const Track& /*track*/,
+                                    DecoderOptions options) override
+    {
+        m_state->options = options;
+        m_emitted        = false;
+        m_warningPending = true;
+        return m_format;
+    }
+
+    void seek(uint64_t /*pos*/) override { }
+    void stop() override { }
+
+    AudioBuffer readBuffer(size_t bytes) override
+    {
+        if(m_emitted || std::cmp_less(bytes, m_format.bytesPerFrame())) {
+            return {};
+        }
+        m_emitted = true;
+        AudioBuffer buffer{m_format, 0};
+        buffer.resize(100 * static_cast<size_t>(m_format.bytesPerFrame()));
+        buffer.fillSilence();
+        return buffer;
+    }
+
+    QStringList takeWarnings() override
+    {
+        ++m_state->warningDrains;
+        return std::exchange(m_warningPending, false) ? QStringList{u"Recovered source read"_s} : QStringList{};
+    }
+
+private:
+    std::shared_ptr<WarningDecoderState> m_state;
+    AudioFormat m_format{SampleFormat::S16, 44100, 2};
+    bool m_emitted{false};
+    bool m_warningPending{false};
 };
 
 class CountingDsp : public DspNode
@@ -229,8 +291,8 @@ public:
         return u"test.dsp.counting"_s;
     }
 
-    void prepare(const AudioFormat&) override { }
-    void process(ProcessingBufferList&) override { }
+    void prepare(const AudioFormat& /*format*/) override { }
+    void process(ProcessingBufferList& /*chunks*/) override { }
 };
 } // namespace
 
@@ -241,7 +303,7 @@ TEST(ConversionRunnerTest, ConvertsTrackToFlac)
         GTEST_SKIP() << "Runtime FFmpeg FLAC encoder is unavailable";
     }
 
-    QTemporaryDir outputDir;
+    const QTemporaryDir outputDir;
     ASSERT_TRUE(outputDir.isValid());
 
     AudioLoader loader;
@@ -321,7 +383,7 @@ TEST(ConversionRunnerTest, ConvertsTrackToFlac)
 
 TEST(ConversionRunnerTest, ReportsFailedDecode)
 {
-    QTemporaryDir outputDir;
+    const QTemporaryDir outputDir;
     ASSERT_TRUE(outputDir.isValid());
 
     AudioLoader loader;
@@ -364,9 +426,55 @@ TEST(ConversionRunnerTest, ReportsFailedDecode)
     EXPECT_EQ(existingOutput.readAll(), originalContents);
 }
 
+TEST(ConversionRunnerTest, MarksSourceAsConversionAndForwardsDecoderWarnings)
+{
+    const QTemporaryDir outputDir;
+    ASSERT_TRUE(outputDir.isValid());
+    const QString sourcePath = outputDir.filePath(u"source.warning"_s);
+    QFile source{sourcePath};
+    ASSERT_TRUE(source.open(QIODevice::WriteOnly));
+    source.close();
+
+    auto decoderState = std::make_shared<WarningDecoderState>();
+    AudioLoader loader;
+    loader.addDecoder(u"Warning"_s, [decoderState] { return std::make_unique<WarningDecoder>(decoderState); });
+
+    auto ditherModes = std::make_shared<std::vector<DitherMode>>();
+    AudioEncoderRegistry encoderRegistry;
+    encoderRegistry.addEncoderBackend(u"capture"_s, u"Capture"_s,
+                                      [ditherModes] { return std::make_unique<CapturingAudioEncoder>(ditherModes); });
+
+    Track track{sourcePath};
+    track.setTitle(u"Warning Source"_s);
+    ConversionPreset preset;
+    preset.encoder.profile.id            = u"capture-wav"_s;
+    preset.encoder.profile.extension     = u"wav"_s;
+    preset.encoder.profile.containerName = u"wav"_s;
+    preset.encoder.profile.codecName     = u"capture"_s;
+    preset.destination.mode              = DestinationMode::FixedFolder;
+    preset.destination.fixedFolder       = outputDir.path();
+    preset.destination.filenamePattern   = u"%title%"_s;
+    preset.destination.existingFileMode  = ExistingFileMode::Overwrite;
+    preset.processing.transferMetadata   = false;
+
+    ConversionRunner::Request request;
+    request.audioLoader     = &loader;
+    request.encoderRegistry = &encoderRegistry;
+    request.job.tracks      = {track};
+    request.job.preset      = preset;
+
+    const auto results = ConversionRunner::run(request);
+    ASSERT_EQ(1, results.size());
+    ASSERT_EQ(ConversionResultStatus::Succeeded, results.front().status) << results.front().error.toStdString();
+    EXPECT_TRUE(decoderState->options.testFlag(AudioDecoder::ForConversion));
+    EXPECT_TRUE(decoderState->options.testFlag(AudioDecoder::NoLooping));
+    EXPECT_EQ(1, results.front().warnings.count(u"Recovered source read"_s));
+    EXPECT_EQ(1, decoderState->warningDrains);
+}
+
 TEST(ConversionRunnerTest, CancelsAtTrackBoundary)
 {
-    QTemporaryDir outputDir;
+    const QTemporaryDir outputDir;
     ASSERT_TRUE(outputDir.isValid());
     QFile existing{outputDir.filePath(u"First.wav"_s)};
     ASSERT_TRUE(existing.open(QIODevice::WriteOnly));
@@ -416,7 +524,7 @@ TEST(ConversionRunnerTest, AppliesTrackReplayGainBeforeEncoding)
         GTEST_SKIP() << "Runtime FFmpeg WAV encoder is unavailable";
     }
 
-    QTemporaryDir outputDir;
+    const QTemporaryDir outputDir;
     ASSERT_TRUE(outputDir.isValid());
 
     AudioLoader loader;
@@ -472,7 +580,7 @@ TEST(ConversionRunnerTest, AppliesIndependentDspChainBeforeEncoding)
         GTEST_SKIP() << "Runtime FFmpeg WAV encoder is unavailable";
     }
 
-    QTemporaryDir outputDir;
+    const QTemporaryDir outputDir;
     ASSERT_TRUE(outputDir.isValid());
 
     AudioLoader loader;
@@ -514,7 +622,7 @@ TEST(ConversionRunnerTest, AppliesIndependentDspChainBeforeEncoding)
 
 TEST(ConversionRunnerTest, ResolvesLossySourceDitherPerTrack)
 {
-    QTemporaryDir outputDir;
+    const QTemporaryDir outputDir;
     ASSERT_TRUE(outputDir.isValid());
 
     AudioLoader loader;
@@ -564,7 +672,7 @@ TEST(ConversionRunnerTest, ResolvesLossySourceDitherPerTrack)
 
 TEST(ConversionRunnerTest, EnablesAutomaticDitherWhenReducingBitDepth)
 {
-    QTemporaryDir outputDir;
+    const QTemporaryDir outputDir;
     ASSERT_TRUE(outputDir.isValid());
 
     AudioLoader loader;
@@ -613,7 +721,7 @@ TEST(ConversionRunnerTest, GeneratesPercentagePreview)
         GTEST_SKIP() << "Runtime FFmpeg WAV encoder is unavailable";
     }
 
-    QTemporaryDir outputDir;
+    const QTemporaryDir outputDir;
     ASSERT_TRUE(outputDir.isValid());
 
     AudioLoader loader;
@@ -663,7 +771,7 @@ TEST(ConversionRunnerTest, CopiesMatchingSidecarFiles)
         GTEST_SKIP() << "Runtime FFmpeg WAV encoder is unavailable";
     }
 
-    QTemporaryDir tempDir;
+    const QTemporaryDir tempDir;
     ASSERT_TRUE(tempDir.isValid());
     const QDir root{tempDir.path()};
     ASSERT_TRUE(root.mkpath(u"source"_s));
@@ -721,7 +829,7 @@ TEST(ConversionRunnerTest, GeneratesGroupedMultiTrackOutputs)
         GTEST_SKIP() << "Runtime FFmpeg FLAC encoder is unavailable";
     }
 
-    QTemporaryDir outputDir;
+    const QTemporaryDir outputDir;
     ASSERT_TRUE(outputDir.isValid());
 
     AudioLoader loader;
@@ -789,7 +897,7 @@ TEST(ConversionRunnerTest, PreservesDspStateAcrossCombinedOutputWhenRequested)
         GTEST_SKIP() << "Runtime FFmpeg WAV encoder is unavailable";
     }
 
-    QTemporaryDir outputDir;
+    const QTemporaryDir outputDir;
     ASSERT_TRUE(outputDir.isValid());
 
     AudioLoader loader;

@@ -180,4 +180,31 @@ TEST_F(PlsParserTest, SavesPlaylist)
                            "Version=2\n"_s};
     EXPECT_EQ(expected, saved);
 }
+
+TEST_F(PlsParserTest, RoundTripsVirtualTracksWithoutResolvingThemAsLocalFiles)
+{
+    const QString filepath = u"cdda:///I5l9cCSFccLKFEKS.7wqSZAorPU-"_s;
+    const Track source{filepath, 4};
+
+    QByteArray output;
+    QBuffer writeBuffer{&output};
+    ASSERT_TRUE(writeBuffer.open(QIODevice::WriteOnly | QIODevice::Text));
+    m_parser->savePlaylist(&writeBuffer, u"pls"_s, {source}, QDir{u"/music"_s}, PlaylistParser::PathType::Relative,
+                           false);
+    EXPECT_TRUE(QString::fromUtf8(output).contains(u"File1=%1#4"_s.arg(filepath)));
+
+    QBuffer readBuffer{&output};
+    ASSERT_TRUE(readBuffer.open(QIODevice::ReadOnly | QIODevice::Text));
+    PlaylistParser::ReadPlaylistEntry readEntry;
+    readEntry.readTrack = [](const Track& track) {
+        return track;
+    };
+
+    const TrackList tracks
+        = m_parser->readPlaylist(&readBuffer, u"/music/disc.pls"_s, QDir{u"/music"_s}, readEntry, true);
+    ASSERT_EQ(1, tracks.size());
+    EXPECT_EQ(filepath, tracks.front().filepath());
+    EXPECT_EQ(4, tracks.front().subsong());
+    EXPECT_TRUE(tracks.front().isVirtual());
+}
 } // namespace Fooyin::Testing

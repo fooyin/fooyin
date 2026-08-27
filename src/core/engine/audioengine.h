@@ -164,6 +164,8 @@ public Q_SLOTS:
     void pause();
     void stop();
     void stopImmediate();
+    //! Queue a restored position before the target decoder begins its initial prefill.
+    void queueInitialRestore(uint64_t positionMs, int trackId);
     void restorePosition(uint64_t positionMs, bool pause);
 
     void seek(uint64_t positionMs);
@@ -304,11 +306,12 @@ private:
     void handlePipelineWakeSignals(const AudioPipeline::PendingSignals& pendingSignals);
     void handleOutputStateChange(AudioOutput::State state);
 
-    void clearRemoteBufferingState(bool resumePipeline = true);
-    void maybeUpdateRemoteBuffering(const char* reason);
+    void clearInputBufferingState(bool resumePipeline = true);
+    void maybeUpdateInputBuffering(const char* reason);
     [[nodiscard]] int streamBufferLengthMs(const Track& track) const;
     [[nodiscard]] int remotePrebufferTargetMs(int capacityMs) const;
     [[nodiscard]] int remotePrebufferTargetMs(const AudioStreamPtr& stream) const;
+    [[nodiscard]] int inputPrebufferTargetMs(const AudioStreamPtr& stream) const;
 
     [[nodiscard]] uint64_t beginTransportTransition();
     void clearTransportTransition();
@@ -532,13 +535,21 @@ private:
     PendingAudiblePause m_pendingAudiblePause;
     uint64_t m_nextPendingAudiblePauseSerial{0};
 
-    struct RemoteBufferingState
+    struct InitialRestoreState
+    {
+        uint64_t positionMs{0};
+        int trackId{-1};
+        bool applied{false};
+    };
+    std::optional<InitialRestoreState> m_initialRestore;
+
+    struct InputBufferingState
     {
         bool active{false};
         uint64_t generation{0};
         StreamId streamId{InvalidStreamId};
         uint64_t rebufferCount{0};
     };
-    RemoteBufferingState m_remoteBuffering;
+    InputBufferingState m_inputBuffering;
 };
 } // namespace Fooyin

@@ -87,7 +87,7 @@ constexpr auto LiveBitrateWindowMs          = 1000;
 constexpr auto RemoteDecodedBufferMinMs     = 2000;
 constexpr auto RemotePrebufferMinMs         = 500;
 constexpr auto RemotePrebufferMaxMs         = 5000;
-constexpr auto RemoteRebufferFloorMs        = 100;
+constexpr auto InputRebufferFloorMs         = 100;
 constexpr auto RemoteCrossfadePrefillMaxMs  = 1500;
 constexpr auto MaxPendingLevelFrames        = 64;
 
@@ -1078,14 +1078,16 @@ void AudioEngine::play()
 
         m_decoder.startDecoding();
         m_pipeline.play();
-
         updatePosition();
-        m_audioClock.start();
-
         updatePlaybackState(Engine::PlaybackState::Playing);
         restoreLoadedTrackPhase();
         updateTrackStatus(Engine::TrackStatus::Buffered);
-        maybeUpdateRemoteBuffering("play");
+        maybeUpdateInputBuffering("play");
+
+        if(!m_inputBuffering.active) {
+            m_audioClock.start();
+        }
+
         return;
     }
 
@@ -1097,14 +1099,15 @@ void AudioEngine::play()
 
     m_decoder.startDecoding();
     m_pipeline.play();
-
     updatePosition();
-    m_audioClock.start();
-
     updatePlaybackState(Engine::PlaybackState::Playing);
     restoreLoadedTrackPhase();
     updateTrackStatus(Engine::TrackStatus::Buffered);
-    maybeUpdateRemoteBuffering("play");
+    maybeUpdateInputBuffering("play");
+
+    if(!m_inputBuffering.active) {
+        m_audioClock.start();
+    }
 }
 
 void AudioEngine::pause()
@@ -1142,7 +1145,7 @@ void AudioEngine::pause()
         return;
     }
 
-    clearRemoteBufferingState(false);
+    clearInputBufferingState(false);
     finalisePausedState();
 }
 
@@ -1154,7 +1157,7 @@ void AudioEngine::stop()
     // A transport fade advances only while the pipeline is rendering audio.
     // Remote rebuffering pauses that pipeline, so waiting for a fade callback
     // here would leave the decoder blocked indefinitely on the stalled input.
-    if(m_remoteBuffering.active) {
+    if(m_inputBuffering.active) {
         stopImmediate();
         return;
     }
@@ -1222,7 +1225,7 @@ void AudioEngine::stopImmediate()
 {
     clearPendingAudiblePause();
     m_pausedStreamSuspended = false;
-    clearRemoteBufferingState(false);
+    clearInputBufferingState(false);
     clearAutoCrossfadeTailFadeState();
     clearAutoBoundaryFadeState();
     m_upcomingTrackCandidate       = {};
@@ -1268,6 +1271,10 @@ void AudioEngine::restorePosition(uint64_t positionMs, bool pause)
         return;
     }
 
+    const bool initialRestoreApplied = m_initialRestore && m_initialRestore->applied
+                                    && m_initialRestore->trackId == m_currentTrack.id()
+                                    && m_initialRestore->positionMs == positionMs;
+
     if(!m_decoder.isValid() || !m_decoder.activeStream()) {
         m_transitions.queueInitialSeek(positionMs, m_currentTrack.id(), 0);
         loadTrack(currentPlaybackItem(), false);
@@ -1275,12 +1282,14 @@ void AudioEngine::restorePosition(uint64_t positionMs, bool pause)
             return;
         }
     }
-    else {
+    else if(!initialRestoreApplied) {
         performSimpleSeek(positionMs, 0);
         if(!m_decoder.isValid() || !m_decoder.activeStream()) {
             return;
         }
     }
+
+    m_initialRestore.reset();
 
     m_pipeline.pause();
     clearPendingAnalysisData();
@@ -1289,6 +1298,12 @@ void AudioEngine::restorePosition(uint64_t positionMs, bool pause)
     if(pause) {
         updatePlaybackState(Engine::PlaybackState::Paused);
     }
+}
+
+void AudioEngine::queueInitialRestore(uint64_t positionMs, int trackId)
+{
+    m_initialRestore = InitialRestoreState{.positionMs = positionMs, .trackId = trackId, .applied = false};
+    m_transitions.queueInitialSeek(positionMs, trackId, 0);
 }
 
 void AudioEngine::seek(uint64_t positionMs)
@@ -1902,6 +1917,12 @@ void AudioEngine::performSeek(uint64_t positionMs, uint64_t requestId)
 
     m_transitions.cancelPendingSeek();
 
+    // Sources with mechanical/network startup latency mustn't begin a seek crossfade with an empty replacement stream
+    if(m_decoder.playbackPrebufferMs() > 0) {
+        performSimpleSeek(positionMs, requestId);
+        return;
+    }
+
     auto currentStream = m_decoder.activeStream();
     const SeekPlanContext context{
         .decoderValid           = m_decoder.isValid(),
@@ -2135,6 +2156,7 @@ void AudioEngine::performSimpleSeek(uint64_t positionMs, uint64_t requestId, int
     if(wasPlaying) {
         m_pipeline.sendStreamCommand(stream->id(), AudioStream::Command::Play);
         m_pipeline.play();
+        maybeUpdateInputBuffering("seek");
     }
 
     if(wasDecoding || wasPlaying) {
@@ -2504,7 +2526,7 @@ void AudioEngine::suspendPausedStream()
                    << "trackId=" << m_currentTrack.id() << "itemId=" << m_currentTrackItemId
                    << "generation=" << m_trackGeneration;
 
-    clearRemoteBufferingState(false);
+    clearInputBufferingState(false);
     clearAutoCrossfadeTailFadeState();
     clearAutoBoundaryFadeState();
     clearAutoAdvanceState();
@@ -3748,9 +3770,9 @@ void AudioEngine::handleTimerTick(int timerId)
         syncDecoderBitrate();
         checkPendingSeek();
         cleanupOrphanedStream();
-        maybeUpdateRemoteBuffering("decode-timer");
+        maybeUpdateInputBuffering("decode-timer");
 
-        if(decodeResult->stopDecodeTimer && !m_remoteBuffering.active) {
+        if(decodeResult->stopDecodeTimer && !m_inputBuffering.active) {
             m_decoder.stopDecodeTimer();
         }
     }
@@ -3946,7 +3968,7 @@ void AudioEngine::handlePipelineWakeSignals(const AudioPipeline::PendingSignals&
 
     if(pendingSignals.needsData) {
         m_decoder.ensureDecodeTimerRunning();
-        maybeUpdateRemoteBuffering("pipeline-needs-data");
+        maybeUpdateInputBuffering("pipeline-needs-data");
     }
 }
 
@@ -3984,55 +4006,74 @@ int AudioEngine::remotePrebufferTargetMs(const AudioStreamPtr& stream) const
     return remotePrebufferTargetMs(capacityMs);
 }
 
-void AudioEngine::clearRemoteBufferingState(bool resumePipeline)
+int AudioEngine::inputPrebufferTargetMs(const AudioStreamPtr& stream) const
 {
-    if(!m_remoteBuffering.active) {
+    if(m_currentTrack.isRemote()) {
+        return remotePrebufferTargetMs(stream);
+    }
+
+    const int preferredMs = std::max(0, m_decoder.playbackPrebufferMs());
+    if(!stream || stream->sampleRate() <= 0 || stream->channelCount() <= 0) {
+        return preferredMs;
+    }
+
+    const auto capacityFrames
+        = stream->writer().capacity() / static_cast<uint64_t>(std::max(1, stream->channelCount()));
+    const auto capacityMs64 = (capacityFrames * 1000ULL) / static_cast<uint64_t>(stream->sampleRate());
+    const int capacityMs    = static_cast<int>(std::min<uint64_t>(capacityMs64, std::numeric_limits<int>::max()));
+    return std::clamp(preferredMs, 0, std::max(0, capacityMs));
+}
+
+void AudioEngine::clearInputBufferingState(bool resumePipeline)
+{
+    if(!m_inputBuffering.active) {
         return;
     }
 
-    qCDebug(ENGINE) << "Remote stream buffering cleared:" << "trackId=" << m_currentTrack.id()
-                    << "generation=" << m_trackGeneration << "streamId=" << m_remoteBuffering.streamId;
+    qCDebug(ENGINE) << "Input buffering cleared:" << "trackId=" << m_currentTrack.id()
+                    << "generation=" << m_trackGeneration << "streamId=" << m_inputBuffering.streamId;
 
-    m_remoteBuffering.active = false;
+    m_inputBuffering.active = false;
     if(resumePipeline) {
         m_pipeline.setBufferingPaused(false);
     }
 }
 
-void AudioEngine::maybeUpdateRemoteBuffering(const char* reason)
+void AudioEngine::maybeUpdateInputBuffering(const char* reason)
 {
-    if(!m_currentTrack.isRemote() || !m_decoder.isValid()) {
-        clearRemoteBufferingState(false);
+    if((!m_currentTrack.isRemote() && m_decoder.playbackPrebufferMs() <= 0) || !m_decoder.isValid()) {
+        clearInputBufferingState(false);
         return;
     }
 
     auto stream = m_decoder.activeStream();
     if(!stream || stream->endOfInput() || !hasPlaybackState(Engine::PlaybackState::Playing)) {
-        clearRemoteBufferingState();
+        clearInputBufferingState();
         return;
     }
 
     const uint64_t bufferedMs = stream->bufferedDurationMs();
-    const int targetMs        = remotePrebufferTargetMs(stream);
+    const int targetMs        = inputPrebufferTargetMs(stream);
 
-    if(!m_remoteBuffering.active && std::cmp_less(bufferedMs, static_cast<uint64_t>(targetMs))) {
+    if(!m_inputBuffering.active && std::cmp_less(bufferedMs, static_cast<uint64_t>(targetMs))) {
         m_decoder.requestDecodeReserveMs(targetMs);
         m_decoder.ensureDecodeTimerRunning();
     }
 
-    if(m_remoteBuffering.active) {
-        if(m_remoteBuffering.generation != m_trackGeneration || m_remoteBuffering.streamId != stream->id()) {
-            clearRemoteBufferingState();
+    if(m_inputBuffering.active) {
+        if(m_inputBuffering.generation != m_trackGeneration || m_inputBuffering.streamId != stream->id()) {
+            clearInputBufferingState();
             return;
         }
 
         if(std::cmp_greater_equal(bufferedMs, targetMs)) {
-            qCInfo(ENGINE) << "Remote stream recovered:" << "trackId=" << m_currentTrack.id()
+            qCInfo(ENGINE) << "Input stream recovered:" << "trackId=" << m_currentTrack.id()
                            << "generation=" << m_trackGeneration << "streamId=" << stream->id()
                            << "bufferedMs=" << bufferedMs << "targetMs=" << targetMs
-                           << "rebufferCount=" << m_remoteBuffering.rebufferCount;
-            clearRemoteBufferingState();
+                           << "rebufferCount=" << m_inputBuffering.rebufferCount;
+            clearInputBufferingState();
             m_audioClock.setPlaying(m_audioClock.position());
+            m_audioClock.start();
             updateTrackStatus(Engine::TrackStatus::Buffered);
         }
         else {
@@ -4042,25 +4083,24 @@ void AudioEngine::maybeUpdateRemoteBuffering(const char* reason)
         return;
     }
 
-    const bool belowCriticalFloor = std::cmp_less_equal(bufferedMs, static_cast<uint64_t>(RemoteRebufferFloorMs));
+    const bool belowCriticalFloor = std::cmp_less_equal(bufferedMs, static_cast<uint64_t>(InputRebufferFloorMs));
     if(!belowCriticalFloor) {
         return;
     }
 
-    ++m_remoteBuffering.rebufferCount;
-    m_remoteBuffering.active     = true;
-    m_remoteBuffering.generation = m_trackGeneration;
-    m_remoteBuffering.streamId   = stream->id();
+    ++m_inputBuffering.rebufferCount;
+    m_inputBuffering.active     = true;
+    m_inputBuffering.generation = m_trackGeneration;
+    m_inputBuffering.streamId   = stream->id();
 
     const bool inputNeedsMoreData = m_decoder.inputNeedsMoreData();
     const uint64_t neededMs
         = bufferedMs < static_cast<uint64_t>(targetMs) ? static_cast<uint64_t>(targetMs) - bufferedMs : 0;
 
-    qCInfo(ENGINE) << "Remote stream rebuffering:" << "reason=" << reason << "trackId=" << m_currentTrack.id()
+    qCInfo(ENGINE) << "Input stream buffering:" << "reason=" << reason << "trackId=" << m_currentTrack.id()
                    << "generation=" << m_trackGeneration << "streamId=" << stream->id() << "bufferedMs=" << bufferedMs
-                   << "neededMs=" << neededMs << "floorMs=" << RemoteRebufferFloorMs << "targetMs=" << targetMs
-                   << "inputNeedsMoreData=" << inputNeedsMoreData
-                   << "rebufferCount=" << m_remoteBuffering.rebufferCount;
+                   << "neededMs=" << neededMs << "floorMs=" << InputRebufferFloorMs << "targetMs=" << targetMs
+                   << "inputNeedsMoreData=" << inputNeedsMoreData << "rebufferCount=" << m_inputBuffering.rebufferCount;
 
     m_pipeline.setBufferingPaused(true);
     m_audioClock.setPaused();
@@ -4210,7 +4250,7 @@ void AudioEngine::setupSettings()
     m_settings->subscribe<Settings::Core::Internal::RemotePrebufferMs>(this, [this](int prebufferMs) {
         m_remotePrebufferMs = std::max(0, prebufferMs);
         if(m_currentTrack.isRemote()) {
-            maybeUpdateRemoteBuffering("prebuffer-setting-changed");
+            maybeUpdateInputBuffering("prebuffer-setting-changed");
         }
     });
     m_settings->subscribe<Settings::Core::Internal::DecodeLowWatermarkRatio>(
@@ -4557,11 +4597,20 @@ AudioEngine::evaluateAutoTransitionEligibility(const Track& track, bool isManual
         return reject("decoder-invalid");
     }
 
+    if(!m_decoder.allowsConcurrentDecoding()) {
+        return reject("current-decoder-exclusive");
+    }
+
     if(m_transitions.isSeekInProgress()) {
         return reject("seek-in-progress");
     }
 
     const bool directManualRemoteCrossfade = isManualChange && (m_currentTrack.isRemote() || track.isRemote());
+
+    if(m_preparedNext && samePlaybackItem(Engine::PlaybackItem{.track = track}, m_preparedNext->item)
+       && !m_preparedNext->allowsConcurrentDecoding) {
+        return reject("target-decoder-exclusive");
+    }
 
     if(!directManualRemoteCrossfade) {
         if(!m_preparedNext || !samePlaybackItem(Engine::PlaybackItem{.track = track}, m_preparedNext->item)
@@ -4743,7 +4792,7 @@ bool AudioEngine::setupNewTrackStream(const Track& track, bool applyPendingSeek)
     else {
         const int baseMs       = m_playbackBufferLengthMs / 4;
         const int decodeHighMs = std::max(1, m_decoder.highWatermarkMs());
-        targetMs               = std::max({baseMs, decodeHighMs, outputDemandMs});
+        targetMs               = std::max({baseMs, decodeHighMs, outputDemandMs, m_decoder.playbackPrebufferMs()});
     }
 
     const auto startupPrefillMs = std::clamp(targetMs, 1, std::max(1, streamBufferLength));
@@ -4780,6 +4829,11 @@ bool AudioEngine::setupNewTrackStream(const Track& track, bool applyPendingSeek)
         }
 
         performSimpleSeek(pendingSeek->positionMs, pendingSeek->requestId, startupPrefillMs);
+
+        if(m_initialRestore && m_initialRestore->trackId == track.id()
+           && m_initialRestore->positionMs == pendingSeek->positionMs) {
+            m_initialRestore->applied = true;
+        }
 
         if(!m_decoder.isValid()) {
             qCWarning(ENGINE) << "Pending-seek stream setup left decoder invalid";
@@ -4951,12 +5005,13 @@ bool AudioEngine::prepareNextTrackImmediate(const Engine::PlaybackItem& item, co
 
     const uint64_t preparedBufferMs = transitionReserveMs();
     NextTrackPreparer::Context context;
-    context.audioLoader        = m_audioLoader;
-    context.currentTrack       = m_currentTrack;
-    context.playbackState      = m_playbackState.load(std::memory_order_relaxed);
-    context.playbackHints      = m_decoderPlaybackHints;
-    context.bufferLengthMs     = preparedBufferMs;
-    context.preferredPrefillMs = (prefillTargetMs > 0) ? prefillTargetMs : preferredPreparedPrefillMs();
+    context.audioLoader                     = m_audioLoader;
+    context.currentTrack                    = m_currentTrack;
+    context.playbackState                   = m_playbackState.load(std::memory_order_relaxed);
+    context.playbackHints                   = m_decoderPlaybackHints;
+    context.currentAllowsConcurrentDecoding = m_decoder.allowsConcurrentDecoding();
+    context.bufferLengthMs                  = preparedBufferMs;
+    context.preferredPrefillMs              = (prefillTargetMs > 0) ? prefillTargetMs : preferredPreparedPrefillMs();
 
     auto prepared = NextTrackPreparer::prepare(track, context);
     if(!prepared.isValid()) {
@@ -5018,15 +5073,16 @@ bool AudioEngine::enqueueManualRemoteCrossfadePrepare(const Engine::PlaybackItem
     const auto prefillMs     = static_cast<uint64_t>(remotePrebufferTargetMs(streamBufferMs));
 
     NextTrackPrepareWorker::Request request;
-    request.requestId                  = requestId;
-    request.purpose                    = NextTrackPrepareWorker::Purpose::ManualRemoteCrossfade;
-    request.item                       = item;
-    request.context.audioLoader        = m_audioLoader;
-    request.context.currentTrack       = m_currentTrack;
-    request.context.playbackState      = m_playbackState.load(std::memory_order_relaxed);
-    request.context.playbackHints      = m_decoderPlaybackHints;
-    request.context.bufferLengthMs     = static_cast<uint64_t>(std::max(1, streamBufferMs));
-    request.context.preferredPrefillMs = prefillMs;
+    request.requestId                               = requestId;
+    request.purpose                                 = NextTrackPrepareWorker::Purpose::ManualRemoteCrossfade;
+    request.item                                    = item;
+    request.context.audioLoader                     = m_audioLoader;
+    request.context.currentTrack                    = m_currentTrack;
+    request.context.playbackState                   = m_playbackState.load(std::memory_order_relaxed);
+    request.context.playbackHints                   = m_decoderPlaybackHints;
+    request.context.currentAllowsConcurrentDecoding = m_decoder.allowsConcurrentDecoding();
+    request.context.bufferLengthMs                  = static_cast<uint64_t>(std::max(1, streamBufferMs));
+    request.context.preferredPrefillMs              = prefillMs;
 
     qCDebug(ENGINE) << "Queued manual remote crossfade target preparation:"
                     << "currentTrackId=" << m_currentTrack.id() << "currentItemId=" << m_currentTrackItemId
@@ -5122,13 +5178,14 @@ void AudioEngine::enqueuePrepareNextTrack(const Engine::PlaybackItem& item, uint
     const uint64_t itemId           = item.itemId;
     const uint64_t preparedBufferMs = transitionReserveMs();
     NextTrackPrepareWorker::Request request;
-    request.requestId                  = requestId;
-    request.item                       = item;
-    request.context.audioLoader        = m_audioLoader;
-    request.context.currentTrack       = m_currentTrack;
-    request.context.playbackState      = m_playbackState.load(std::memory_order_relaxed);
-    request.context.playbackHints      = m_decoderPlaybackHints;
-    request.context.bufferLengthMs     = preparedBufferMs;
+    request.requestId                               = requestId;
+    request.item                                    = item;
+    request.context.audioLoader                     = m_audioLoader;
+    request.context.currentTrack                    = m_currentTrack;
+    request.context.playbackState                   = m_playbackState.load(std::memory_order_relaxed);
+    request.context.playbackHints                   = m_decoderPlaybackHints;
+    request.context.currentAllowsConcurrentDecoding = m_decoder.allowsConcurrentDecoding();
+    request.context.bufferLengthMs                  = preparedBufferMs;
     request.context.preferredPrefillMs = (prefillTargetMs > 0) ? prefillTargetMs : preferredPreparedPrefillMs();
 
     qCDebug(ENGINE) << "Queued next-track preparation:" << "currentTrackId=" << m_currentTrack.id()
@@ -5342,7 +5399,7 @@ void AudioEngine::executeFullReinitLoad(const Engine::PlaybackItem& item, bool m
     clearAutoBoundaryFadeState(true);
     clearPendingAnalysisData();
     m_decoder.stopDecoding();
-    clearRemoteBufferingState();
+    clearInputBufferingState();
     cleanupActiveStream();
 
     const auto prevState = m_playbackState.load(std::memory_order_relaxed);
