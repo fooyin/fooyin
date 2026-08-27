@@ -3913,11 +3913,11 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
 
     if(auto* fileDev = qobject_cast<QFile*>(source.device)) {
         fileDev->flush();
-        if(atime.isValid()) {
-            fileDev->setFileTime(atime, QFileDevice::FileAccessTime);
-        }
         if(mtime.isValid()) {
             fileDev->setFileTime(mtime, QFileDevice::FileModificationTime);
+        }
+        if(atime.isValid()) {
+            fileDev->setFileTime(atime, QFileDevice::FileAccessTime);
         }
     }
 

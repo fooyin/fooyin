@@ -38,7 +38,10 @@
 #include <taglib/vorbisfile.h>
 
 #include <QBuffer>
+#include <QDateTime>
+#include <QFileInfo>
 #include <QImage>
+#include <QTimeZone>
 
 #include <gtest/gtest.h>
 
@@ -94,6 +97,16 @@ QByteArray createPngCover(const QSize& size)
 
     return data;
 }
+
+void setKnownFileTimes(QFile& file)
+{
+    const auto accessTime       = QDateTime::fromSecsSinceEpoch(978307200, QTimeZone::UTC);
+    const auto modificationTime = QDateTime::fromSecsSinceEpoch(946684800, QTimeZone::UTC);
+
+    ASSERT_TRUE(file.setFileTime(modificationTime, QFileDevice::FileModificationTime));
+    ASSERT_TRUE(file.setFileTime(accessTime, QFileDevice::FileAccessTime));
+}
+
 QString mp4StringItem(const TagLib::MP4::ItemMap& items, const char* key)
 {
     if(!items.contains(key)) {
@@ -1800,5 +1813,32 @@ TEST_F(TagWriterTest, WavWrite)
         ASSERT_TRUE(!writeTag.isEmpty());
         EXPECT_EQ(writeTag.front(), u"Success"_s);
     }
+}
+
+TEST_F(TagWriterTest, WritePreservesTimestamps)
+{
+    const QString filepath = u":/audio/audiotest.flac"_s;
+    TempResource file{filepath};
+    file.checkValid();
+    setKnownFileTimes(file);
+
+    const QDateTime accessTime       = file.fileTime(QFileDevice::FileAccessTime);
+    const QDateTime modificationTime = file.fileTime(QFileDevice::FileModificationTime);
+    ASSERT_TRUE(accessTime.isValid());
+    ASSERT_TRUE(modificationTime.isValid());
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    Track track{file.fileName()};
+    track.setTitle(u"Timestamp test"_s);
+
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Flags | AudioReader::PreserveTimestamps));
+    file.close();
+
+    const QFileInfo fileInfo{source.filepath};
+    EXPECT_EQ(fileInfo.lastRead(), accessTime);
+    EXPECT_EQ(fileInfo.lastModified(), modificationTime);
 }
 } // namespace Fooyin::Testing
