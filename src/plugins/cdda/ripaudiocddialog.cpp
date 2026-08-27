@@ -23,6 +23,7 @@
 
 #include <core/constants.h>
 
+#include <QAction>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -31,6 +32,7 @@
 #include <QHeaderView>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMenu>
 #include <QPushButton>
 #include <QSignalBlocker>
 #include <QTableWidget>
@@ -217,6 +219,7 @@ RipAudioCdDialog::RipAudioCdDialog(TrackList tracks, const std::vector<Conversio
     m_trackTable->verticalHeader()->hide();
     m_trackTable->setAlternatingRowColors(true);
     m_trackTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_trackTable->setContextMenuPolicy(Qt::CustomContextMenu);
 
     for(int row{0}; std::cmp_less(row, m_tracks.size()); ++row) {
         const Track& track = m_tracks.at(static_cast<size_t>(row));
@@ -267,6 +270,27 @@ RipAudioCdDialog::RipAudioCdDialog(TrackList tracks, const std::vector<Conversio
 
     QObject::connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
     QObject::connect(m_trackTable, &QTableWidget::itemChanged, this, &RipAudioCdDialog::updateActions);
+    QObject::connect(m_trackTable, &QWidget::customContextMenuRequested, this, [this](const QPoint& position) {
+        auto* menu                = new QMenu(m_trackTable);
+        const QAction* checkAll   = menu->addAction(tr("Check all"));
+        const QAction* uncheckAll = menu->addAction(tr("Uncheck all"));
+
+        const auto updateCheckState = [&](Qt::CheckState state) {
+            const QSignalBlocker blocker{m_trackTable};
+            for(int row{0}; row < m_trackTable->rowCount(); ++row) {
+                if(QTableWidgetItem* item = m_trackTable->item(row, 0)) {
+                    item->setCheckState(state);
+                }
+            }
+            updateActions();
+        };
+
+        QObject::connect(checkAll, &QAction::triggered, this, [updateCheckState]() { updateCheckState(Qt::Checked); });
+        QObject::connect(uncheckAll, &QAction::triggered, this,
+                         [updateCheckState]() { updateCheckState(Qt::Unchecked); });
+
+        menu->popup(m_trackTable->viewport()->mapToGlobal(position));
+    });
     QObject::connect(m_presets, &QComboBox::currentIndexChanged, this, &RipAudioCdDialog::updateActions);
     QObject::connect(m_lookupButton, &QPushButton::clicked, this, &RipAudioCdDialog::showMetadataLookup);
     QObject::connect(m_setupButton, &QPushButton::clicked, this, &RipAudioCdDialog::showConverterSetup);
