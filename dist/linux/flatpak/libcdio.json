@@ -1,0 +1,64 @@
+{
+  "name": "libcdio",
+  "modules": [
+    {
+      "name": "libcdio",
+      "buildsystem": "autotools",
+      "config-opts": [
+        "--disable-static",
+        "--disable-cxx",
+        "--disable-cpp-progs",
+        "--disable-example-progs",
+        "--disable-cddb",
+        "--without-cd-drive",
+        "--without-cd-info",
+        "--without-cdda-player",
+        "--without-cd-read",
+        "--without-iso-info",
+        "--without-iso-read"
+      ],
+      "cleanup": [
+        "/include",
+        "/share/info",
+        "*.a",
+        "*.la",
+        "/lib/*.so"
+      ],
+      "sources": [
+        {
+          "type": "archive",
+          "url": "https://github.com/libcdio/libcdio/archive/refs/tags/2.4.0.tar.gz",
+          "sha256": "62b940b458241b3b03eee554f07094c89f4afbfdb3180b8bacd336970e145df1",
+          "x-checker-data": {
+            "type": "anitya",
+            "project-id": 1573,
+            "url-template": "https://github.com/libcdio/libcdio/archive/refs/tags/$version.tar.gz"
+          }
+        }
+      ]
+    },
+    {
+      "name": "libcdio-paranoia",
+      "config-opts": [
+        "--disable-cxx",
+        "--disable-cpp-progs",
+        "--disable-example-progs"
+      ],
+      "cleanup": [
+        "/bin/cd-paranoia"
+      ],
+      "sources": [
+        {
+          "type": "archive",
+          "url": "https://github.com/libcdio/libcdio-paranoia/archive/refs/tags/release-10.2+2.0.2.tar.gz",
+          "sha256": "fe35208811f3edfcb79ae7b4ad1984f3188aea42c4c8ba4d009efafb36734a8b",
+          "x-checker-data": {
+            "type": "anitya",
+            "project-id": 21751,
+            "url-template": "https://github.com/libcdio/libcdio-paranoia/archive/refs/tags/release-10.2+$version.tar.gz"
+          }
+        }
+      ]
+    }
+  ]
+}
