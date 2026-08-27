@@ -100,8 +100,8 @@ QByteArray createPngCover(const QSize& size)
 
 void setKnownFileTimes(QFile& file)
 {
-    const auto accessTime       = QDateTime::fromSecsSinceEpoch(978307200, QTimeZone::UTC);
-    const auto modificationTime = QDateTime::fromSecsSinceEpoch(946684800, QTimeZone::UTC);
+    const auto accessTime       = QDateTime::fromSecsSinceEpoch(978307200, QTimeZone::utc());
+    const auto modificationTime = QDateTime::fromSecsSinceEpoch(946684800, QTimeZone::utc());
 
     ASSERT_TRUE(file.setFileTime(modificationTime, QFileDevice::FileModificationTime));
     ASSERT_TRUE(file.setFileTime(accessTime, QFileDevice::FileAccessTime));
