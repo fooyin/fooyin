@@ -678,6 +678,27 @@ TEST_F(UnifiedMusicLibraryTest, DeferredWritesMergeMetadataAndStatsSnapshots)
     EXPECT_EQ(writes.at(1).second, AudioReader::Rating);
 }
 
+TEST_F(UnifiedMusicLibraryTest, RatingUpdateDoesNotWriteMetadataWhenDisabled)
+{
+    context().settings.set<Settings::Core::SaveRatingToMetadata>(false);
+    ASSERT_FALSE(context().settings.value<Settings::Core::SaveRatingToMetadata>());
+
+    createTrackFile(u"rating_update.mp3"_s, u"Track"_s);
+
+    const LibraryInfo libraryInfo = addLibrary(u"Rating Update"_s);
+    ASSERT_GE(libraryInfo.id, 0);
+
+    waitForSuccessfulScan([&]() { return context().library.rescan(libraryInfo); });
+    ASSERT_EQ(context().library.tracks().size(), 1);
+
+    Track track = context().library.tracks().front();
+    track.setRating(0.8F);
+    context().library.updateTrackStats(track);
+
+    ASSERT_TRUE(waitForCondition([&]() { return context().library.trackForId(track.id()).rating() == 0.8F; }));
+    EXPECT_TRUE(context().readerState->writes().empty());
+}
+
 TEST_F(UnifiedMusicLibraryTest, OverlappingSortAndScanDoNotLoseNewTracks)
 {
     ASSERT_TRUE(context().settings.set<Settings::Core::LibrarySortScript>(u"%title%"_s));
