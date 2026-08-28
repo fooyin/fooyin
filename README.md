@@ -1,5 +1,9 @@
 <p align="center">
-<img src="https://github.com/ludouzi/fooyin/assets/45490980/a6c6923a-5de3-4d29-a6e9-f73ebd5181ac" width="40%" alt="fooyin logo">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="data/icons/logo-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="data/icons/logo.svg">
+    <img src="data/icons/logo.svg" width="40%" alt="fooyin logo">
+  </picture>
 </p>
 
 <hr />
