@@ -1164,7 +1164,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="432"/>
         <source>Returns the time formatted as HH:MM or HH:MM:SS</source>
-        <translation>Returnerar tiden formaterad som HH:MM eller HH:MM:SS</translation>
+        <translation>Returnerar tiden formaterad som tt:mm eller tt:mm:ss</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="435"/>
@@ -1981,12 +1981,12 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="56"/>
         <source>&amp;Delete</source>
-        <translation>&amp;Radera</translation>
+        <translation>Ra&amp;dera</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="57"/>
         <source>&amp;Restore Defaults</source>
-        <translation>&amp;Återställ</translation>
+        <translation>Åte&amp;rställ defaulter</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="59"/>
@@ -2043,7 +2043,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="302"/>
         <source>Last Played 2 Weeks</source>
-        <translation>Sist spelat 2 veckor</translation>
+        <translation>Spelat senaste 2 veckorna</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="303"/>
@@ -3660,7 +3660,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="379"/>
         <source>Load</source>
-        <translation>Ladda</translation>
+        <translation>Läs in</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="380"/>
@@ -4361,7 +4361,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="613"/>
         <source>Load</source>
-        <translation>Ladda</translation>
+        <translation>Läs in</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="614"/>
@@ -4426,7 +4426,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="901"/>
         <source>Unable to load the selected preset.</source>
-        <translation>Kan inte ladda den valda förinställningen.</translation>
+        <translation>Kan inte läsa in den valda förinställningen.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="918"/>
@@ -5490,7 +5490,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="83"/>
         <source>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</source>
-        <translation>När denna selektionsspellista används för uppspelning bevara den med ”(uppspelning)” tillagd i dess namn, istället för att byta ut spår.</translation>
+        <translation>När denna selektionsspellista används för uppspelning, bevara den med ”(uppspelning)” tillagd i dess namn, istället för att byta ut spår.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="89"/>
@@ -6352,7 +6352,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1958"/>
         <source>Load Playlist</source>
-        <translation>Ladda spellista</translation>
+        <translation>Läs in spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1995"/>
@@ -8847,7 +8847,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="182"/>
         <source>Fade</source>
-        <translation>Tona</translation>
+        <translation>Toning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="199"/>
@@ -9092,7 +9092,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="87"/>
         <source>Autosave after 60 seconds or 1/3 of track duration</source>
-        <translation>Autospara efter 60 sekunder eller 1/3 av spårlängden</translation>
+        <translation>Autospara efter 60&#xa0;sekunder eller 1/3 av spårlängden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="88"/>
@@ -11355,7 +11355,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="51"/>
         <source>Playing</source>
-        <translation>Spelar</translation>
+        <translation>Spelas</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="52"/>
@@ -11519,7 +11519,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="79"/>
         <source>Prevent duplicate tracks when loading playlists</source>
-        <translation>Hindra duplicerade spår när spellistor laddas</translation>
+        <translation>Hindra duplicerade spår när spellistor läses in</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="80"/>
@@ -11569,7 +11569,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
         <source>Skip unavailable tracks when loading playlists</source>
-        <translation>Hoppa över otillgängliga spår när spellistor laddas in</translation>
+        <translation>Hoppa över otillgängliga spår när spellistor läses in</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="124"/>
@@ -12659,7 +12659,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="435"/>
         <source>Add the selected tracks to the playback queue</source>
-        <translation>Lägg till de valda spåren till uppspelningskön</translation>
+        <translation>Lägg till de valda spåren i uppspelningskön</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="441"/>
@@ -12837,7 +12837,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="127"/>
         <source>Load</source>
-        <translation>Ladda</translation>
+        <translation>Läs in</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="129"/>
@@ -15801,27 +15801,27 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="49"/>
         <source>Very High (28-bit)</source>
-        <translation>Mycket hög (28-bit)</translation>
+        <translation>Mycket hög (28-bitars)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="50"/>
         <source>High (20-bit)</source>
-        <translation>Hög (20-bit)</translation>
+        <translation>Hög (20-bitars)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="51"/>
         <source>Medium (18-bit)</source>
-        <translation>Medium (18-bit)</translation>
+        <translation>Medium (18-bitars)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="52"/>
         <source>Low (16-bit)</source>
-        <translation>Låg (16-bit)</translation>
+        <translation>Låg (16-bitars)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="53"/>
         <source>Quick (15-bit)</source>
-        <translation>Snabb (15-bit)</translation>
+        <translation>Snabb (15-bitars)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="69"/>
@@ -16406,31 +16406,31 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
         <location filename="../../src/gui/search/searchcontroller.cpp" line="191"/>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="227"/>
         <source>Connect</source>
-        <translation>Anslut</translation>
+        <translation>Koppla</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="183"/>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="195"/>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="227"/>
         <source>Disconnect</source>
-        <translation>Frånkoppla</translation>
+        <translation>Avkoppla</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="168"/>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="176"/>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="223"/>
         <source>Unavailable</source>
-        <translation>Otillgängligt</translation>
+        <translation>Otillgänglig</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="246"/>
         <source>Clear All</source>
-        <translation>Rensa allt</translation>
+        <translation>Avkoppla allt</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="256"/>
         <source>Finish</source>
-        <translation>Slutför</translation>
+        <translation>Klart</translation>
     </message>
 </context>
 <context>
