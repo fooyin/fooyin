@@ -216,10 +216,10 @@ public:
      */
     [[nodiscard]] virtual PendingTrackCoverProvider* pendingTrackCoverProvider() const = 0;
 
-    /** Updates the statistics (playcount, rating etc) in the database for @p tracks.  */
-    virtual void updateTrackStats(const TrackList& tracks) = 0;
-    /** Updates the statistics (playcount, rating etc) in the database for @p track.  */
-    virtual void updateTrackStats(const Track& track) = 0;
+    /** Updates the specified @p stats in the database for @p tracks. */
+    virtual void updateTrackStats(const TrackList& tracks, Track::Stats stats) = 0;
+    /** Updates the specified @p stats in the database for @p track. */
+    virtual void updateTrackStats(const Track& track, Track::Stats stats) = 0;
 
     /** Remove unavailable tracks from the library and database. */
     virtual WriteRequest removeUnavailbleTracks() = 0;

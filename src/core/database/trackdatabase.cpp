@@ -191,7 +191,7 @@ bool TrackDatabase::storeTracks(TrackList& tracks)
                 }
             }
 
-            TrackStats stats;
+            StoredTrackStats stats;
             if(!insertOrUpdateStats(track, &stats)) {
                 return false;
             }
@@ -411,6 +411,21 @@ bool TrackDatabase::updateTrack(const Track& track)
 bool TrackDatabase::updateTrackStats(const Track& track)
 {
     return insertOrUpdateStats(track);
+}
+
+bool TrackDatabase::updateTrackStats(Track& track, Track::Stats updatedStats)
+{
+    StoredTrackStats stats;
+    if(!insertOrUpdateStats(track, &stats, updatedStats)) {
+        return false;
+    }
+
+    track.setAddedTime(stats.added);
+    track.setFirstPlayed(stats.firstPlayed);
+    track.setLastPlayed(stats.lastPlayed);
+    track.setPlayCount(stats.playCount);
+    track.setRating(stats.rating);
+    return true;
 }
 
 bool TrackDatabase::updateTrackStats(const TrackList& tracks)
@@ -781,7 +796,7 @@ bool TrackDatabase::insertTrack(Track& track, bool ignoreDuplicates) const
     return true;
 }
 
-std::optional<TrackDatabase::TrackStats> TrackDatabase::existingTrackStats(const QString& hash) const
+std::optional<TrackDatabase::StoredTrackStats> TrackDatabase::existingTrackStats(const QString& hash) const
 {
     static const QString statement = u"SELECT AddedDate, FirstPlayed, LastPlayed, PlayCount, Rating "
                                      "FROM TrackStats WHERE TrackHash = :trackHash;"_s;
@@ -794,10 +809,10 @@ std::optional<TrackDatabase::TrackStats> TrackDatabase::existingTrackStats(const
     }
 
     if(!query.next()) {
-        return TrackStats{};
+        return StoredTrackStats{};
     }
 
-    return TrackStats{
+    return StoredTrackStats{
         .added       = query.value(0).toULongLong(),
         .firstPlayed = query.value(1).toULongLong(),
         .lastPlayed  = query.value(2).toULongLong(),
@@ -806,7 +821,8 @@ std::optional<TrackDatabase::TrackStats> TrackDatabase::existingTrackStats(const
     };
 }
 
-bool TrackDatabase::insertOrUpdateStats(const Track& track, TrackStats* mergedStats) const
+bool TrackDatabase::insertOrUpdateStats(const Track& track, StoredTrackStats* mergedStats,
+                                        Track::Stats updatedStats) const
 {
     if(track.hash().isEmpty()) {
         qCWarning(TRK_DB) << "Cannot insert/update track stats (Hash empty)";
@@ -834,25 +850,25 @@ bool TrackDatabase::insertOrUpdateStats(const Track& track, TrackStats* mergedSt
             dbNeedsUpdate = true;
         }
     }
-    if(trackFirstPlayed != firstPlayed) {
+    if(updatedStats.testFlag(Track::Stat::Playcount) && trackFirstPlayed != firstPlayed) {
         if(firstPlayed == 0 || (trackFirstPlayed > 0 && trackFirstPlayed < firstPlayed)) {
             firstPlayed   = trackFirstPlayed;
             dbNeedsUpdate = true;
         }
     }
-    if(trackLastPlayed != lastPlayed) {
+    if(updatedStats.testFlag(Track::Stat::Playcount) && trackLastPlayed != lastPlayed) {
         if(trackLastPlayed > lastPlayed) {
             lastPlayed    = trackLastPlayed;
             dbNeedsUpdate = true;
         }
     }
-    if(trackPlayCount != playCount) {
+    if(updatedStats.testFlag(Track::Stat::Playcount) && trackPlayCount != playCount) {
         if(trackPlayCount > playCount) {
             playCount     = trackPlayCount;
             dbNeedsUpdate = true;
         }
     }
-    if(trackRating != rating) {
+    if(updatedStats.testFlag(Track::Stat::Rating) && trackRating != rating) {
         rating        = trackRating;
         dbNeedsUpdate = true;
     }

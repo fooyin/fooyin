@@ -323,9 +323,9 @@ PendingTrackCoverProvider* StubMusicLibrary::pendingTrackCoverProvider() const
     return nullptr;
 }
 
-void StubMusicLibrary::updateTrackStats(const TrackList& /*tracks*/) { }
+void StubMusicLibrary::updateTrackStats(const TrackList& /*tracks*/, Track::Stats /*stats*/) { }
 
-void StubMusicLibrary::updateTrackStats(const Track& /*track*/) { }
+void StubMusicLibrary::updateTrackStats(const Track& /*track*/, Track::Stats /*stats*/) { }
 
 WriteRequest StubMusicLibrary::removeUnavailbleTracks()
 {

@@ -74,8 +74,7 @@ public:
     [[nodiscard]] std::optional<CoverImage> pendingTrackCover(const Track& track, Track::Cover type) const override;
     void setActivePlaybackTrack(const Track& track);
     void flushPendingWrites();
-    void saveUpdatedTrackStats(const TrackList& tracks);
-    void saveUpdatedTrackPlaycounts(const TrackList& tracks);
+    void saveUpdatedTrackStats(const TrackList& tracks, Track::Stats stats);
     void checkTrackAvailability(const TrackList& tracks);
 
     WriteRequest removeUnavailbleTracks(const TrackList& tracks);

@@ -657,7 +657,7 @@ TEST_F(UnifiedMusicLibraryTest, DeferredWritesMergeMetadataAndStatsSnapshots)
 
     Track statsTrack{originalTrack};
     statsTrack.setRating(0.8F);
-    context().library.updateTrackStats(statsTrack);
+    context().library.updateTrackStats(statsTrack, Track::Stat::Rating);
 
     ASSERT_TRUE(waitForCondition([&]() { return context().library.trackForId(originalTrack.id()).rating() == 0.8F; }));
 
@@ -678,6 +678,53 @@ TEST_F(UnifiedMusicLibraryTest, DeferredWritesMergeMetadataAndStatsSnapshots)
     EXPECT_EQ(writes.at(1).second, AudioReader::Rating);
 }
 
+TEST_F(UnifiedMusicLibraryTest, StalePlaycountUpdatePreservesPendingRating)
+{
+    ASSERT_TRUE(context().settings.set<Settings::Core::SaveRatingToMetadata>(true));
+    ASSERT_TRUE(context().settings.set<Settings::Core::SavePlaycountToMetadata>(true));
+
+    createTrackFile(u"stale_playcount.mp3"_s, u"Track"_s);
+
+    const LibraryInfo libraryInfo = addLibrary(u"Stale Playcount"_s);
+    ASSERT_GE(libraryInfo.id, 0);
+
+    waitForSuccessfulScan([&]() { return context().library.rescan(libraryInfo); });
+    ASSERT_EQ(context().library.tracks().size(), 1U);
+
+    const Track originalTrack = context().library.tracks().front();
+    context().library.setActivePlaybackTrack(originalTrack);
+
+    Track ratingTrack{originalTrack};
+    ratingTrack.setRating(0.4F);
+    context().library.updateTrackStats(ratingTrack, Track::Stat::Rating);
+    ASSERT_TRUE(waitForCondition([&]() { return context().library.trackForId(originalTrack.id()).rating() == 0.4F; }));
+
+    const Track stalePlaycountTrack{originalTrack};
+    QSignalSpy staleUpdateSpy{&context().library, &MusicLibrary::tracksUpdated};
+    context().library.updateTracks({stalePlaycountTrack});
+    waitForSignal(staleUpdateSpy);
+    ASSERT_FLOAT_EQ(context().library.trackForId(originalTrack.id()).rating(), originalTrack.rating());
+
+    QSignalSpy updateSpy{&context().library, &MusicLibrary::tracksUpdated};
+    context().library.trackWasPlayed(stalePlaycountTrack);
+
+    const QVariantList updateArgs = waitForSignal(updateSpy);
+    ASSERT_EQ(updateArgs.size(), 1);
+    const auto updatedTracks = updateArgs.front().value<TrackList>();
+    ASSERT_EQ(updatedTracks.size(), 1U);
+    EXPECT_EQ(updatedTracks.front().playCount(), 1);
+    EXPECT_FLOAT_EQ(updatedTracks.front().rating(), 0.4F);
+
+    context().library.flushPendingWrites();
+    ASSERT_TRUE(waitForCondition([&]() { return context().readerState->writes().size() == 1U; }));
+
+    const auto writes = context().readerState->writes();
+    ASSERT_EQ(writes.size(), 1U);
+    EXPECT_FLOAT_EQ(writes.front().first.rating(), 0.4F);
+    EXPECT_EQ(writes.front().first.playCount(), 1);
+    EXPECT_EQ(writes.front().second, AudioReader::Rating | AudioReader::Playcount);
+}
+
 TEST_F(UnifiedMusicLibraryTest, RatingUpdateDoesNotWriteMetadataWhenDisabled)
 {
     context().settings.set<Settings::Core::SaveRatingToMetadata>(false);
@@ -693,7 +740,7 @@ TEST_F(UnifiedMusicLibraryTest, RatingUpdateDoesNotWriteMetadataWhenDisabled)
 
     Track track = context().library.tracks().front();
     track.setRating(0.8F);
-    context().library.updateTrackStats(track);
+    context().library.updateTrackStats(track, Track::Stat::Rating);
 
     ASSERT_TRUE(waitForCondition([&]() { return context().library.trackForId(track.id()).rating() == 0.8F; }));
     EXPECT_TRUE(context().readerState->writes().empty());

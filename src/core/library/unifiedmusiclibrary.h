@@ -75,8 +75,8 @@ public:
     WriteRequest writeTrackCovers(const TrackCoverData& tracks) override;
     [[nodiscard]] PendingTrackCoverProvider* pendingTrackCoverProvider() const override;
 
-    void updateTrackStats(const TrackList& tracks) override;
-    void updateTrackStats(const Track& track) override;
+    void updateTrackStats(const TrackList& tracks, Track::Stats stats) override;
+    void updateTrackStats(const Track& track, Track::Stats stats) override;
 
     void trackWasPlayed(const Track& track);
     void setActivePlaybackTrack(const Track& track);
