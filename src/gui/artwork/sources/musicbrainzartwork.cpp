@@ -20,6 +20,7 @@
 #include "musicbrainzartwork.h"
 
 #include <core/network/networkaccessmanager.h>
+#include <core/network/networkutils.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QJsonArray>
@@ -40,12 +41,12 @@ QString coverTypeToString(Fooyin::Track::Cover cover)
     using Cover = Fooyin::Track::Cover;
 
     switch(cover) {
-        case(Cover::Front):
+        case Cover::Front:
             return u"front"_s;
-        case(Cover::Back):
+        case Cover::Back:
             return u"back"_s;
-        case(Cover::Artist):
-        case(Cover::Other):
+        case Cover::Artist:
+        case Cover::Other:
         default:
             return {};
     }
@@ -77,11 +78,7 @@ void MusicBrainzArtwork::search(const SearchParams& params)
     urlQuery.addQueryItem(u"fmt"_s, u"json"_s);
     url.setQuery(urlQuery);
 
-    QNetworkRequest req{url};
-    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
-    req.setRawHeader(
-        "User-Agent",
-        u"fooyin/%1 (https://www.fooyin.org)"_s.arg(settings()->value<Settings::Core::Version>()).toUtf8());
+    const QNetworkRequest req = makeNetworkRequest(url);
 
     qCDebug(ARTWORK) << u"Sending request: %1?%2"_s.arg(QLatin1String{SearchUrl}).arg(urlQuery.toString());
 

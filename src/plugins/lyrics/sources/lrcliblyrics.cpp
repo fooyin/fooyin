@@ -20,6 +20,7 @@
 #include "lrcliblyrics.h"
 
 #include <core/network/networkaccessmanager.h>
+#include <core/network/networkutils.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QJsonArray>
@@ -52,10 +53,7 @@ void LrcLibLyrics::search(const SearchParams& params)
     urlQuery.addQueryItem(encode(u"duration"_s), encode(QString::number(params.track.duration() / 1000)));
     url.setQuery(urlQuery);
 
-    QNetworkRequest req{url};
-    req.setRawHeader(
-        "User-Agent",
-        u"fooyin v%1 (https://www.fooyin.org)"_s.arg(settings()->value<Settings::Core::Version>()).toUtf8());
+    const QNetworkRequest req = makeNetworkRequest(url);
 
     qCDebug(LYRICS) << "Sending request" << url.toString();
 

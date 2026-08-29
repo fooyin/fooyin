@@ -18,6 +18,8 @@
 
 #include "discordartworkuploader.h"
 
+#include <core/network/networkutils.h>
+
 #include <QCryptographicHash>
 #include <QHttpMultiPart>
 #include <QLoggingCategory>
@@ -104,7 +106,7 @@ void DiscordArtworkUploader::upload(const QByteArray& artwork, const Config& con
 
     multipart->append(artworkPart);
 
-    QNetworkRequest request{config.endpoint};
+    QNetworkRequest request = makeNetworkRequest(config.endpoint);
     request.setTransferTimeout(UploadTimeoutMs);
 
     const uint64_t generation{m_generation};
