@@ -22,7 +22,8 @@
 <a href="https://fooyin.org/download">Download</a> ·
 <a href="https://docs.fooyin.org/en/latest/">Documentation</a> ·
 <a href="https://docs.fooyin.org/en/latest/quick-start/quick-start.html">Quick start</a> ·
-<a href="https://github.com/fooyin/fooyin/releases">Releases</a>
+<a href="https://github.com/fooyin/fooyin/releases">Releases</a> ·
+<a href="https://github.com/fooyin/fooyin/releases/tag/nightly">Nightly</a>
 </p>
 
 ## A customisable music player
@@ -96,6 +97,7 @@ It's built around extensibility and supports plugins for widgets, decoders, tag 
 
 The [download page](https://fooyin.org/download) lists the Flathub package and packages available through Linux distribution repositories. 
 Release notes and downloadable artifacts are published on [GitHub Releases](https://github.com/fooyin/fooyin/releases).
+The [latest nightly build](https://github.com/fooyin/fooyin/releases/tag/nightly) is also available for testing upcoming changes.
 
 ## Building from source
 

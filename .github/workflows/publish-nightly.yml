@@ -64,7 +64,7 @@ jobs:
         run: |
           date="$(date -u +'%Y-%m-%d')"
           short_sha="$SHORT_SHA"
-          tag="nightly-${date}-${short_sha}"
+          tag="nightly"
           version="$(awk '$1 == "VERSION" { print $2; exit }' CMakeLists.txt)"
           nightly_version="${version}.g${short_sha}"
           latest_release_tag="$(gh api "/repos/${GITHUB_REPOSITORY}/releases/latest" --jq '.tag_name')"
@@ -120,7 +120,48 @@ jobs:
             mv -- "$file" "$directory/$nightly_filename"
           done < <(find artifacts -type f -print0)
 
-      - name: Create pre-release
+      - name: Update nightly tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUILD_SHA: ${{ github.sha }}
+          NIGHTLY_TAG: ${{ steps.release.outputs.tag }}
+        shell: bash
+        run: |
+          if gh api "/repos/${GITHUB_REPOSITORY}/git/ref/tags/${NIGHTLY_TAG}" >/dev/null 2>&1; then
+            gh api --method PATCH "/repos/${GITHUB_REPOSITORY}/git/refs/tags/${NIGHTLY_TAG}" \
+              -f sha="$BUILD_SHA" \
+              -F force=true >/dev/null
+          else
+            gh api --method POST "/repos/${GITHUB_REPOSITORY}/git/refs" \
+              -f ref="refs/tags/${NIGHTLY_TAG}" \
+              -f sha="$BUILD_SHA" >/dev/null
+          fi
+
+      - name: Reuse previous nightly pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NIGHTLY_TAG: ${{ steps.release.outputs.tag }}
+        shell: bash
+        run: |
+          if gh api "/repos/${GITHUB_REPOSITORY}/releases/tags/${NIGHTLY_TAG}" >/dev/null 2>&1; then
+            exit 0
+          fi
+
+          previous_release="$(gh api "/repos/${GITHUB_REPOSITORY}/releases?per_page=100" \
+            --jq 'map(select(.prerelease == true and (.tag_name | startswith("nightly-")))) | first | if . then [.id, .tag_name] | @tsv else empty end')"
+
+          if [[ -z "$previous_release" ]]; then
+            exit 0
+          fi
+
+          IFS=$'\t' read -r release_id previous_tag <<< "$previous_release"
+          echo "Reusing nightly pre-release: $previous_tag"
+          gh api --method PATCH "/repos/${GITHUB_REPOSITORY}/releases/${release_id}" \
+            -f tag_name="$NIGHTLY_TAG" >/dev/null
+          gh api --method DELETE "/repos/${GITHUB_REPOSITORY}/git/refs/tags/${previous_tag}"
+
+      - name: Update pre-release
+        id: publish
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.release.outputs.tag }}
@@ -128,6 +169,7 @@ jobs:
           name: ${{ steps.release.outputs.name }}
           prerelease: true
           make_latest: false
+          overwrite_files: true
           fail_on_unmatched_files: true
           body_path: ci-nightly-body.md
           files: |
@@ -139,17 +181,34 @@ jobs:
             artifacts/**/*.flatpak
             artifacts/**/*.AppImage
 
-      - name: Remove older nightly pre-releases
+      - name: Remove superseded nightly assets
         env:
           GH_TOKEN: ${{ github.token }}
-          CURRENT_TAG: ${{ steps.release.outputs.tag }}
+          RELEASE_ID: ${{ steps.publish.outputs.id }}
+        shell: bash
+        run: |
+          declare -A current_assets=()
+          while IFS= read -r -d '' file; do
+            current_assets["$(basename "$file")"]=1
+          done < <(find artifacts -type f -print0)
+
+          gh api --paginate "/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/assets?per_page=100" \
+            --jq '.[] | [.id, .name] | @tsv' |
+            while IFS=$'\t' read -r asset_id asset_name; do
+              if [[ -z "${current_assets[$asset_name]+x}" ]]; then
+                echo "Deleting superseded nightly asset: $asset_name"
+                gh api --method DELETE "/repos/${GITHUB_REPOSITORY}/releases/assets/${asset_id}"
+              fi
+            done
+
+      - name: Remove legacy nightly pre-releases
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           gh api --paginate "/repos/${GITHUB_REPOSITORY}/releases?per_page=100" \
             --jq '.[] | select(.prerelease == true) | .tag_name | select(startswith("nightly-"))' |
             while IFS= read -r tag; do
-              if [[ "$tag" != "$CURRENT_TAG" ]]; then
-                echo "Deleting old nightly pre-release: $tag"
-                gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --cleanup-tag --yes
-              fi
+              echo "Deleting legacy nightly pre-release: $tag"
+              gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --cleanup-tag --yes
             done
