@@ -171,6 +171,7 @@ private:
     TrackSelectionController* m_trackSelection;
     SettingsManager* m_settings;
     GuiStyleProvider* m_styleProvider;
+    bool m_styleInitialised;
 
     SignalThrottler* m_resetThrottler;
     LibraryTreeGrouping m_grouping;

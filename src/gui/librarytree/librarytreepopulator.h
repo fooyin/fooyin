@@ -61,12 +61,19 @@ class LibraryTreePopulator : public Worker
     Q_OBJECT
 
 public:
+    enum class PopulationMode : uint8_t
+    {
+        Incremental = 0,
+        Atomic
+    };
+
     explicit LibraryTreePopulator(LibraryManager* libraryManager, SettingsManager* settings, QObject* parent = nullptr);
     ~LibraryTreePopulator() override;
 
     void setFont(const QFont& font);
 
-    void run(const LibraryTreeGrouping& grouping, const TrackList& tracks, bool useVarious);
+    void run(const LibraryTreeGrouping& grouping, const TrackList& tracks, bool useVarious,
+             PopulationMode mode = PopulationMode::Incremental);
     void updateItems(ItemKeyMap items, bool useVarious);
 
 Q_SIGNALS:

@@ -64,6 +64,7 @@ public:
     Md5Hash nodeKey(const Md5Hash& parentKey, const QString& title);
     void updateRichTitle(LibraryTreeItem& item);
     PendingTreeData buildBatchData();
+    PendingTreeData buildCompleteData();
     void clearBatchData();
     void iterateTrack(const Track& track);
     bool runBatch(int size);
@@ -90,6 +91,7 @@ public:
     std::unordered_map<Md5Hash, std::unordered_map<QString, Md5Hash>> m_nodeKeyCache;
     TrackList m_pendingTracks;
     size_t m_pendingTrackIndex{0};
+    LibraryTreePopulator::PopulationMode m_populationMode{LibraryTreePopulator::PopulationMode::Incremental};
 };
 
 LibraryTreeItem* LibraryTreePopulatorPrivate::getOrInsertItem(const Md5Hash& key, const LibraryTreeItem* parent,
@@ -111,7 +113,7 @@ LibraryTreeItem* LibraryTreePopulatorPrivate::getOrInsertItem(const Md5Hash& key
         child->setSortTitle(sortTitle);
     }
 
-    if(!m_emittedItems.contains(key) && !m_data.items.contains(key)) {
+    if(inserted) {
         m_data.nodes[parent->key()].push_back(key);
     }
     return child;
@@ -159,6 +161,21 @@ PendingTreeData LibraryTreePopulatorPrivate::buildBatchData()
         }
     }
 
+    return data;
+}
+
+PendingTreeData LibraryTreePopulatorPrivate::buildCompleteData()
+{
+    for(auto& [key, item] : m_items) {
+        item.setScriptChildCount(static_cast<int>(m_childKeys[key].size()));
+        updateRichTitle(item);
+        item.setPending(true);
+    }
+
+    PendingTreeData data;
+    data.items        = std::move(m_items);
+    data.nodes        = std::move(m_data.nodes);
+    data.trackParents = std::move(m_data.trackParents);
     return data;
 }
 
@@ -214,15 +231,17 @@ void LibraryTreePopulatorPrivate::iterateTrack(const Track& track)
 
             node->addTrack(track);
 
-            auto [batchNode, inserted] = m_data.items.try_emplace(key, LibraryTreeItem{title, nullptr, level});
-            if(inserted) {
-                batchNode->second.setKey(key);
-                batchNode->second.setPending(true);
-                batchNode->second.setTitleSource(item);
-                batchNode->second.setRichTitle(richTitle);
-                batchNode->second.setSortTitle(sortTitle.isEmpty() ? title : sortTitle);
+            if(m_populationMode == LibraryTreePopulator::PopulationMode::Incremental) {
+                auto [batchNode, inserted] = m_data.items.try_emplace(key, LibraryTreeItem{title, nullptr, level});
+                if(inserted) {
+                    batchNode->second.setKey(key);
+                    batchNode->second.setPending(true);
+                    batchNode->second.setTitleSource(item);
+                    batchNode->second.setRichTitle(richTitle);
+                    batchNode->second.setSortTitle(sortTitle.isEmpty() ? title : sortTitle);
+                }
+                batchNode->second.addTrack(track);
             }
-            batchNode->second.addTrack(track);
 
             m_data.trackParents[track.id()].push_back(node->key());
 
@@ -256,12 +275,18 @@ bool LibraryTreePopulatorPrivate::runBatch(int size)
         return false;
     }
 
-    Q_EMIT m_self->populated(std::make_shared<PendingTreeData>(buildBatchData()));
-
-    clearBatchData();
     m_pendingTrackIndex = batchEnd;
 
     const auto remaining = static_cast<int>(m_pendingTracks.size() - m_pendingTrackIndex);
+
+    if(m_populationMode == LibraryTreePopulator::PopulationMode::Incremental) {
+        Q_EMIT m_self->populated(std::make_shared<PendingTreeData>(buildBatchData()));
+        clearBatchData();
+    }
+    else if(remaining == 0) {
+        Q_EMIT m_self->populated(std::make_shared<PendingTreeData>(buildCompleteData()));
+    }
+
     return runBatch(std::min(remaining, BatchSize));
 }
 
@@ -277,7 +302,8 @@ void LibraryTreePopulator::setFont(const QFont& font)
     p->m_formatter.setBaseFont(font);
 }
 
-void LibraryTreePopulator::run(const LibraryTreeGrouping& grouping, const TrackList& tracks, bool useVarious)
+void LibraryTreePopulator::run(const LibraryTreeGrouping& grouping, const TrackList& tracks, bool useVarious,
+                               PopulationMode mode)
 {
     setState(Running);
 
@@ -301,6 +327,7 @@ void LibraryTreePopulator::run(const LibraryTreeGrouping& grouping, const TrackL
 
     p->m_pendingTracks     = tracks;
     p->m_pendingTrackIndex = 0;
+    p->m_populationMode    = mode;
     const bool success     = p->runBatch(InitialBatchSize);
 
     setState(Idle);
