@@ -1332,12 +1332,12 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="88"/>
         <source>&amp;Playback</source>
-        <translation>&amp;Uppspelning</translation>
+        <translation>U&amp;ppspelning</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="92"/>
         <source>&amp;Library</source>
-        <translation>&amp;Bibliotek</translation>
+        <translation>Bib&amp;liotek</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="96"/>
