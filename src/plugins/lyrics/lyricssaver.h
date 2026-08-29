@@ -35,6 +35,7 @@ namespace Fooyin {
 class MusicLibrary;
 class SettingsManager;
 class Track;
+struct WriteRequest;
 
 namespace Lyrics {
 class LyricsSaver : public QObject
@@ -56,7 +57,7 @@ public:
     void autoSaveLyrics(const Lyrics& lyrics, const Track& track);
     bool saveLyrics(const Lyrics& lyrics, const Track& track);
     [[nodiscard]] Lyrics savedLyrics(const Lyrics& lyrics, const Track& track);
-    void writeLyricsToTags(const TrackList& tracks);
+    WriteRequest writeLyricsToTags(const TrackList& tracks);
     bool saveLyricsToFile(const Lyrics& lyrics, const Track& track);
     std::optional<Track> writeLyricsToTag(const Lyrics& lyrics, const Track& track);
     [[nodiscard]] std::optional<Track> updateLyricsTag(const Lyrics& lyrics, const Track& track) const;

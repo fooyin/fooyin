@@ -129,7 +129,7 @@ void ReplayGainWidget::apply()
         }
 
         Q_EMIT tracksChanged(m_pendingTracks);
-        m_library->writeTrackMetadata(tracksToWrite);
+        Q_EMIT writeRequestStarted(m_library->writeTrackMetadata(tracksToWrite));
         m_pendingTracks.clear();
     }
 }

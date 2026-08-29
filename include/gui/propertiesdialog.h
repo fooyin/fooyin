@@ -21,6 +21,7 @@
 
 #include "fygui_export.h"
 
+#include <core/library/musiclibrary.h>
 #include <core/track.h>
 
 #include <QPointer>
@@ -87,6 +88,7 @@ public:
 Q_SIGNALS:
     void pendingChangesStateChanged();
     void tracksChanged(const Fooyin::TrackList& tracks);
+    void writeRequestStarted(Fooyin::WriteRequest request);
 };
 
 using WidgetBuilder = std::function<PropertiesTabWidget*(const TrackList& tracks)>;
