@@ -1,53 +1,50 @@
 <svg height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <defs>
-        <linearGradient id="a" gradientUnits="userSpaceOnUse" x1="24" x2="24" y1="4" y2="43.5">
-            <stop offset="0" stop-color="#292d30"/>
-            <stop offset="1" stop-color="#111315"/>
-        </linearGradient>
-        <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="0" x2="0" y1="8" y2="40">
-            <stop offset="0" stop-color="#fff"/>
-            <stop offset=".42" stop-color="#fff"/>
-            <stop offset=".54" stop-color="#777"/>
-            <stop offset=".66" stop-color="#ddd"/>
-            <stop offset="1" stop-color="#fff"/>
-        </linearGradient>
-        <clipPath id="c">
-            <rect height="39.5" rx="7.5" width="40" x="4" y="4"/>
-        </clipPath>
-        <mask id="d" height="40" maskUnits="userSpaceOnUse" width="40" x="4" y="4">
-            <path d="m4 4h40v40h-40z" fill="url(#b)"/>
-        </mask>
-        <linearGradient id="e" gradientUnits="userSpaceOnUse" x1="512" x2="512" y1="73" y2="1450">
-            <stop offset="0" stop-color="#fff000"/>
-            <stop offset=".38" stop-color="#ffb300"/>
-            <stop offset=".7" stop-color="#ff7800"/>
-            <stop offset="1" stop-color="#ff2d16"/>
-        </linearGradient>
-        <radialGradient id="f" cx="0" cy="0" gradientTransform="matrix(470 1110 -610 258 742 158)" gradientUnits="userSpaceOnUse" r="1">
-            <stop offset="0" stop-color="#fff" stop-opacity=".16"/>
-            <stop offset=".48" stop-color="#fff" stop-opacity=".06"/>
-            <stop offset="1" stop-color="#b92b00" stop-opacity=".1"/>
-        </radialGradient>
-        <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="730" x2="315" y1="110" y2="1430">
-            <stop offset="0" stop-color="#fff86a"/>
-            <stop offset=".42" stop-color="#ffc516"/>
-            <stop offset="1" stop-color="#ff5b20"/>
-        </linearGradient>
-        <filter id="h" color-interpolation-filters="sRGB" height="144%" width="190%" x="-45%" y="-22%">
-            <feGaussianBlur stdDeviation="72"/>
-        </filter>
-        <filter id="i" color-interpolation-filters="sRGB" height="160%" width="170%" x="-30%" y="-20%">
-            <feGaussianBlur in="SourceAlpha" result="blur" stdDeviation="18"/>
-            <feOffset dy="18" in="blur" result="offset"/>
-            <feFlood flood-color="#5b1300" flood-opacity=".4" result="colour"/>
-            <feComposite in="colour" in2="offset" operator="in" result="drop"/>
-            <feMerge>
-                <feMergeNode in="drop"/>
-                <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-        </filter>
-        <path id="j" d="m290 493c-8 0-14-6-14-14v-100c0-169 137-306 306-306h217c20 0 36 16 36 36v144c0 21-16 37-36 37h-147c-69 0-125 56-125 125v64c0 8-6 14-14 14zm0 30h223c8 0 14 6 14 14v526c0 8-6 14-14 14h-223c-8 0-14-6-14-14v-526c0-8 6-14 14-14zm281 137h204c20 0 37 17 37 37v140c0 21-17 38-37 38h-204c-8 0-14-6-14-14v-187c0-8 6-14 14-14zm-281 447h223c8 0 14 6 14 14v291c0 21-17 38-38 38h-175c-21 0-38-17-38-38v-291c0-8 6-14 14-14z"/>
-    </defs>
+    <linearGradient id="a" gradientUnits="userSpaceOnUse" x1="24" x2="24" y1="4" y2="43.5">
+        <stop offset="0" stop-color="#292d30"/>
+        <stop offset="1" stop-color="#111315"/>
+    </linearGradient>
+    <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="0" x2="0" y1="8" y2="40">
+        <stop offset="0" stop-color="#fff"/>
+        <stop offset=".42" stop-color="#fff"/>
+        <stop offset=".54" stop-color="#777"/>
+        <stop offset=".66" stop-color="#ddd"/>
+        <stop offset="1" stop-color="#fff"/>
+    </linearGradient>
+    <clipPath id="c">
+        <rect height="39.5" rx="7.5" width="40" x="4" y="4"/>
+    </clipPath>
+    <mask id="d" height="40" maskUnits="userSpaceOnUse" width="40" x="4" y="4">
+        <path d="m4 4h40v40h-40z" fill="url(#b)"/>
+    </mask>
+    <linearGradient id="e" gradientUnits="userSpaceOnUse" x1="512" x2="512" y1="73" y2="1450">
+        <stop offset="0" stop-color="#fff000"/>
+        <stop offset=".38" stop-color="#ffb300"/>
+        <stop offset=".7" stop-color="#ff7800"/>
+        <stop offset="1" stop-color="#ff2d16"/>
+    </linearGradient>
+    <radialGradient id="f" cx="0" cy="0" gradientTransform="matrix(470 1110 -610 258 742 158)" gradientUnits="userSpaceOnUse" r="1">
+        <stop offset="0" stop-color="#fff" stop-opacity=".16"/>
+        <stop offset=".48" stop-color="#fff" stop-opacity=".06"/>
+        <stop offset="1" stop-color="#b92b00" stop-opacity=".1"/>
+    </radialGradient>
+    <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="730" x2="315" y1="110" y2="1430">
+        <stop offset="0" stop-color="#fff86a"/>
+        <stop offset=".42" stop-color="#ffc516"/>
+        <stop offset="1" stop-color="#ff5b20"/>
+    </linearGradient>
+    <filter id="h" color-interpolation-filters="sRGB" height="1.299003" width="1.682301" x="-.34115" y="-.149502">
+        <feGaussianBlur stdDeviation="72"/>
+    </filter>
+    <filter id="i" color-interpolation-filters="sRGB" height="1.090324" width="1.170575" x="-.085288" y="-.037375">
+        <feGaussianBlur in="SourceAlpha" result="blur" stdDeviation="18"/>
+        <feOffset dy="18" in="blur" result="offset"/>
+        <feFlood flood-color="#5b1300" flood-opacity=".4" result="colour"/>
+        <feComposite in="colour" in2="offset" operator="in" result="drop"/>
+        <feMerge>
+            <feMergeNode in="drop"/>
+            <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+    </filter>
     <rect height="39" opacity=".1" rx="7.5" width="40" x="4" y="5"/>
     <rect fill="url(#a)" height="39.5" rx="7.5" width="40" x="4" y="4"/>
     <g clip-path="url(#c)">
@@ -64,7 +61,9 @@
     <g clip-path="url(#c)">
         <g transform="matrix(.025716 0 0 .025716 10.833 4)">
             <use fill="#ff8a00" filter="url(#h)" opacity=".34" xlink:href="#j"/>
-            <use fill="url(#e)" filter="url(#i)" xlink:href="#j"/>
+            <g fill="url(#e)" filter="url(#i)">
+                <path id="j" d="m314.9249 536.12361c-7.24896 0-12.68567-5.03635-12.68567-11.75146v-83.93908c0-141.85701 124.13854-256.85353 277.27298-256.85353h196.62823c18.12241 0 32.62033 13.43026 32.62033 30.21805v120.87227c0 17.62718-14.49792 31.05745-32.62033 31.05745h-133.19977c-62.52235 0-113.26511 47.00587-113.26511 104.92383v53.72101c0 6.71511-5.43674 11.75146-12.6857 11.75146zm0 25.18172h202.06496c7.24896 0 12.6857 5.03635 12.6857 11.75148v441.51959c0 6.7151-5.43674 11.7514-12.6857 11.7514h-202.06496c-7.24896 0-12.68567-5.0363-12.68567-11.7514v-441.51959c0-6.71513 5.43671-11.75148 12.68567-11.75148zm254.61996 114.99651h184.84868c18.12241 0 33.52645 14.26964 33.52645 31.05748v117.51468c0 17.62719-15.40404 31.89684-33.52645 31.89684h-184.84868c-7.24894 0-12.68568-5.03635-12.68568-11.75148v-156.96605c0-6.71511 5.43674-11.75147 12.68568-11.75147zm-254.61996 375.20766h202.06496c7.24896 0 12.6857 5.0364 12.6857 11.7515v244.2628c0 17.627-15.40407 31.8966-34.43259 31.8966h-158.57116c-19.02854 0-34.43258-14.2696-34.43258-31.8966v-244.2628c0-6.7151 5.43671-11.7515 12.68567-11.7515z"/>
+            </g>
             <use fill="url(#f)" xlink:href="#j"/>
             <use fill="none" stroke="url(#g)" stroke-width="2" xlink:href="#j"/>
         </g>
