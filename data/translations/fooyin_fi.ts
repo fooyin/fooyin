@@ -6,72 +6,72 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="228"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Toista</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="232"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää nykyiseen soittolistaan</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="235"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Lisää aktiiviseen soittolistaan</translation>
+        <translation>Lisää aktiiviseen soittolistaan</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="238"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Korvaa nykyiseen soittolista</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="241"/>
         <source>Create new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Luo uusi soittolista</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="244"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää soittolistalle</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="248"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Lisää toistojonoon</translation>
+        <translation>Lisää toistojonoon</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="251"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>Toista seuraavaksi</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="254"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Korvaa toistojono</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="258"/>
         <source>Set as root</source>
-        <translation type="unfinished"></translation>
+        <translation>Aseta root-käyttäjäksi</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="261"/>
         <source>View mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarkastele-tila</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="264"/>
         <source>Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>Asetukset</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="401"/>
         <source>Directory Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiedostoselain</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="403"/>
         <source>Unchecked items will be hidden from the directory browser context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Merkkaamattomat valinnat jätetään näyttämättä tiedostoselaimen konteksti menusta.</translation>
     </message>
 </context>
 <context>
@@ -79,57 +79,57 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="54"/>
         <source>Widget actions</source>
-        <translation type="unfinished"></translation>
+        <translation>Widget toiminnot</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="58"/>
         <source>Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Korvaa</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="61"/>
         <source>Split</source>
-        <translation type="unfinished"></translation>
+        <translation>Jaa</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="64"/>
         <source>Remove split</source>
-        <translation type="unfinished"></translation>
+        <translation>Poista jako</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="68"/>
         <source>Copy</source>
-        <translation type="unfinished">Kopioi</translation>
+        <translation>Kopioi</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="71"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Liitä</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="75"/>
         <source>Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>Sijoita</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="78"/>
         <source>Move</source>
-        <translation type="unfinished">Siirrä</translation>
+        <translation>Siirrä</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="82"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="412"/>
         <source>Layout Editing</source>
-        <translation type="unfinished"></translation>
+        <translation>Ulkoasun muokkaus</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="414"/>
         <source>Unchecked items will be hidden from the layout editing context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Merkkaamattomat valinnat jätetään näyttämättä ulkoasun muokkaus-valikosta.</translation>
     </message>
 </context>
 <context>
@@ -137,67 +137,67 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="48"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää nykyiseen soittolistaan</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="51"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Lisää aktiiviseen soittolistaan</translation>
+        <translation>Lisää aktiiviseen soittolistaan</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="54"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Korvaa nykyinen soittolista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="57"/>
         <source>Create new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Luo uusi soittolista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="60"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää soittolistaan</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="64"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Lisää toistojonoon</translation>
+        <translation>Lisää toistojonoon</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="67"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>Toista seuraavaksi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="71"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Poisto toistojonosta</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="75"/>
         <source>Filter options</source>
-        <translation type="unfinished"></translation>
+        <translation>Suodatin valinnat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="78"/>
         <source>Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>Asetukset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="82"/>
         <source>Track menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Kappale valikko</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="55"/>
         <source>Library Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Kirjasto suodatin</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="57"/>
         <source>Unchecked items will be hidden from the library filter context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Merkkaamattomat valinnat jätetään näyttämättä kirjasto suodatin valikosta.</translation>
     </message>
 </context>
 <context>
@@ -259,102 +259,102 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="208"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="210"/>
         <source>Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadata</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="104"/>
         <source>Track title</source>
-        <translation type="unfinished"></translation>
+        <translation>Kappaleen nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="106"/>
         <source>Primary artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Ensisijainen artisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="108"/>
         <source>Unique artists combined into one value</source>
-        <translation type="unfinished"></translation>
+        <translation>Uniikit artistit yhdisettynä yhteen arvoon</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="110"/>
         <source>Album title</source>
-        <translation type="unfinished"></translation>
+        <translation>Albumin nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="112"/>
         <source>Album artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Albumin artisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="114"/>
         <source>Track number</source>
-        <translation type="unfinished"></translation>
+        <translation>Kappaleen numero</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="116"/>
         <source>Total tracks on the release</source>
-        <translation type="unfinished"></translation>
+        <translation>Julkaisun kappaleiden kokonaismäärä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="118"/>
         <source>Disc number</source>
-        <translation type="unfinished"></translation>
+        <translation>Levy numero</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="120"/>
         <source>Total discs on the release</source>
-        <translation type="unfinished"></translation>
+        <translation>Julkaisun levyjen kokonaismäärä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="121"/>
         <source>Genres</source>
-        <translation type="unfinished"></translation>
+        <translation>Genret</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="123"/>
         <source>Composers</source>
-        <translation type="unfinished"></translation>
+        <translation>Säveltäjät</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="125"/>
         <source>Performers</source>
-        <translation type="unfinished"></translation>
+        <translation>Esittäjät</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="127"/>
         <source>Track duration formatted as time</source>
-        <translation type="unfinished"></translation>
+        <translation>Kappaleen pituus aika formaatissa</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="129"/>
         <source>Track duration in seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Kappaleen pituus sekunneissa</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="131"/>
         <source>Track duration in milliseconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Kappaleen pituus millisekunneissa</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="133"/>
         <source>Comment tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommentti merkintä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="135"/>
         <source>Release date</source>
-        <translation type="unfinished"></translation>
+        <translation>Julkaisun päivämäärä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="137"/>
         <source>Release year</source>
-        <translation type="unfinished"></translation>
+        <translation>Julkaisuvuosi</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="139"/>
         <source>File size in bytes</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiedoston koko tavuina</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="141"/>
@@ -364,12 +364,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="143"/>
         <source>Track bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Kappaleen tiedonsiirtonopeus</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="145"/>
         <source>Sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Näytteenottotaajuus</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="147"/>
@@ -389,12 +389,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="153"/>
         <source>Play count</source>
-        <translation type="unfinished"></translation>
+        <translation>Toistokerrat</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="161"/>
         <source>Rating shown as stars</source>
-        <translation type="unfinished"></translation>
+        <translation>Arvio tähdillä merkittynä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="165"/>
@@ -404,17 +404,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="167"/>
         <source>Codec name</source>
-        <translation type="unfinished"></translation>
+        <translation>Koodekin nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="169"/>
         <source>Codec profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Koodekin profiili</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="171"/>
         <source>Encoding tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Enkoodaus työkalu</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="173"/>
