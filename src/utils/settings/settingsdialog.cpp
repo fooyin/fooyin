@@ -35,6 +35,7 @@
 #include <QPushButton>
 #include <QResizeEvent>
 #include <QScrollArea>
+#include <QScrollBar>
 #include <QStackedLayout>
 #include <QTreeView>
 #include <QVBoxLayout>
@@ -149,7 +150,7 @@ SimpleTreeView::SimpleTreeView(QWidget* parent)
 QSize SimpleTreeView::sizeHint() const
 {
     const int maxWidth = calculateMaxItemWidth({});
-    return {maxWidth, 100};
+    return {maxWidth + verticalScrollBar()->sizeHint().width() + (2 * frameWidth()), 100};
 }
 
 int SimpleTreeView::calculateMaxItemWidth(const QModelIndex& index) const
