@@ -33,6 +33,7 @@
 namespace Fooyin {
 struct HeaderRow
 {
+    QString grouping;
     RichScript title;
     RichScript subtitle;
     RichScript sideText;
@@ -42,12 +43,7 @@ struct HeaderRow
     bool showCover{true};
     bool simple{false};
 
-    bool operator==(const HeaderRow& other) const
-    {
-        return std::tie(title, subtitle, sideText, info, rowHeight, showCover, simple)
-            == std::tie(other.title, other.subtitle, other.sideText, other.info, other.rowHeight, other.showCover,
-                        other.simple);
-    };
+    bool operator==(const HeaderRow& other) const = default;
 
     [[nodiscard]] bool isValid() const
     {
@@ -61,15 +57,13 @@ struct HeaderRow
 
 struct SubheaderRow
 {
+    QString grouping;
     RichScript leftText;
     RichScript rightText;
 
     int rowHeight{0};
 
-    bool operator==(const SubheaderRow& other) const
-    {
-        return std::tie(leftText, rightText, rowHeight) == std::tie(other.leftText, other.rightText, other.rowHeight);
-    };
+    bool operator==(const SubheaderRow& other) const = default;
 
     [[nodiscard]] bool isValid() const
     {
@@ -89,11 +83,7 @@ struct TrackRow
 
     int rowHeight{0};
 
-    bool operator==(const TrackRow& other) const
-    {
-        return std::tie(columns, leftText, rightText, rowHeight)
-            == std::tie(other.columns, other.leftText, other.rightText, other.rowHeight);
-    };
+    bool operator==(const TrackRow& other) const = default;
 
     [[nodiscard]] bool isValid() const
     {
