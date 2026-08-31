@@ -28,6 +28,8 @@
 #include <QDir>
 #include <QFile>
 
+#include <ranges>
+
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::Testing {
@@ -290,6 +292,49 @@ TEST_F(CueParserTest, EmbeddedCuePreservesTrackLevelComposerWhenAlbumComposerIsM
 
     EXPECT_EQ(u"Track Writer"_s, tracks.at(0).composer());
     EXPECT_EQ(u"Source Composer"_s, tracks.at(1).composer());
+}
+
+TEST_F(CueParserTest, EmbeddedCueAppliesPerTrackTags)
+{
+    QByteArray cueData{R"(FILE "album.flac" FLAC
+  TRACK 01 AUDIO
+    TITLE "First"
+    INDEX 01 00:00:00
+  TRACK 02 AUDIO
+    TITLE "Second"
+    INDEX 01 01:00:00
+)"};
+    QBuffer buffer{&cueData};
+    ASSERT_TRUE(buffer.open(QIODevice::ReadOnly | QIODevice::Text));
+
+    PlaylistParser::ReadPlaylistEntry readEntry;
+    readEntry.readTrack = [](const Track& track) {
+        Track loaded{track};
+        loaded.setDuration(120000);
+        loaded.addExtraTag(u"cue_track01_DISCOGS_TRACK_DURATION"_s, u"1:00"_s);
+        loaded.addExtraTag(u"CUE_TRACK1_TRACKNUMBER"_s, u"01"_s);
+        loaded.addExtraTag(u"Cue_Track02_Composer"_s, u"Composer Two"_s);
+        loaded.addExtraTag(u"CUE_TRACK02_RATING"_s, u"5"_s);
+        loaded.addExtraTag(u"MOOD"_s, QStringList{u"Calm"_s, u"Acoustic"_s});
+        return loaded;
+    };
+
+    const TrackList tracks = m_parser->readPlaylist(&buffer, u"/music/album.flac"_s, {}, readEntry, false);
+    ASSERT_EQ(2, tracks.size());
+
+    EXPECT_EQ(u"01"_s, tracks.at(0).trackNumber());
+    EXPECT_FALSE(tracks.at(0).hasExtraTag(u"TRACKNUMBER"_s));
+    EXPECT_EQ(QStringList{u"1:00"_s}, tracks.at(0).extraTag(u"DISCOGS_TRACK_DURATION"_s));
+    EXPECT_EQ(QStringList{u"Composer Two"_s}, tracks.at(1).composers());
+    EXPECT_EQ((QStringList{u"Calm"_s, u"Acoustic"_s}), tracks.at(0).extraTag(u"MOOD"_s));
+
+    for(const Track& track : tracks) {
+        EXPECT_FALSE(std::ranges::any_of(track.extraTags(), [](const auto& tag) {
+            return tag.first.startsWith(u"CUE_TRACK"_s, Qt::CaseInsensitive);
+        }));
+        EXPECT_FALSE(track.hasExtraTag(u"RATING"_s));
+        EXPECT_TRUE(track.removedTags().empty());
+    }
 }
 
 TEST_F(CueParserTest, CueAppliesTrailingAlbumMetadataToAllTracks)

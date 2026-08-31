@@ -42,7 +42,6 @@
 #include <QEventLoop>
 #include <QFile>
 #include <QFileInfo>
-#include <QHash>
 #include <QLoggingCategory>
 #include <QRegularExpression>
 #include <QSignalSpy>
@@ -53,12 +52,12 @@
 
 #include <gtest/gtest.h>
 
-#include <algorithm>
 #include <atomic>
 #include <map>
 #include <memory>
 #include <mutex>
 #include <ranges>
+#include <unordered_map>
 
 using namespace Qt::StringLiterals;
 
@@ -248,13 +247,30 @@ public:
         void setTitle(const QString& path, const QString& title)
         {
             const std::scoped_lock lock(m_mutex);
-            m_titles.insert(QFileInfo{path}.absoluteFilePath(), title);
+            m_titles.insert_or_assign(QFileInfo{path}.absoluteFilePath(), title);
         }
 
         [[nodiscard]] QString titleForPath(const QString& path) const
         {
             const std::scoped_lock lock(m_mutex);
-            return m_titles.value(QFileInfo{path}.absoluteFilePath(), QFileInfo{path}.completeBaseName());
+            auto title = m_titles.find(QFileInfo{path}.absoluteFilePath());
+            if(title == m_titles.cend()) {
+                return QFileInfo{path}.completeBaseName();
+            }
+            return title->second;
+        }
+
+        void setExtraTags(const QString& path, std::map<QString, QStringList> tags)
+        {
+            const std::scoped_lock lock(m_mutex);
+            m_extraTags.insert_or_assign(QFileInfo{path}.absoluteFilePath(), std::move(tags));
+        }
+
+        [[nodiscard]] std::map<QString, QStringList> extraTagsForPath(const QString& path) const
+        {
+            const std::scoped_lock lock(m_mutex);
+            const auto tags = m_extraTags.find(QFileInfo{path}.absoluteFilePath());
+            return tags != m_extraTags.cend() ? tags->second : std::map<QString, QStringList>{};
         }
 
         void addWrite(const Fooyin::Track& track, WriteOptions options)
@@ -271,7 +287,8 @@ public:
 
     private:
         mutable std::mutex m_mutex;
-        QHash<QString, QString> m_titles;
+        std::unordered_map<QString, QString> m_titles;
+        std::map<QString, std::map<QString, QStringList>> m_extraTags;
         std::vector<std::pair<Fooyin::Track, WriteOptions>> m_writes;
     };
 
@@ -305,6 +322,12 @@ public:
         const auto match = QRegularExpression{u"(\\d+)"_s}.match(info.completeBaseName());
         track.setTrackNumber(match.hasMatch() ? match.captured(1) : u"1"_s);
         track.setDiscNumber(u"1"_s);
+
+        const auto extraTags = m_state->extraTagsForPath(info.absoluteFilePath());
+        for(const auto& [field, values] : extraTags) {
+            track.addExtraTag(field, values);
+        }
+
         return true;
     }
 
@@ -482,7 +505,7 @@ TEST_F(UnifiedMusicLibraryTest, ScanForChangesMakesTracksVisibleBeforeScanFinish
     ASSERT_GE(libraryInfo.id, 0);
 
     waitForSuccessfulScan([&]() { return context().library.rescan(libraryInfo); });
-    ASSERT_EQ(context().library.tracks().size(), 1U);
+    ASSERT_EQ(context().library.tracks().size(), 1);
 
     createTrackFile(u"new_track.mp3"_s, u"Added Later"_s);
 
@@ -498,7 +521,7 @@ TEST_F(UnifiedMusicLibraryTest, ScanForChangesMakesTracksVisibleBeforeScanFinish
     expectSummarySignal(summaryArgs, request.id, ScanRequest::Library, {.added = 1, .updated = 0, .removed = 0});
 
     EXPECT_EQ(tracksAtFinish, 2);
-    EXPECT_EQ(context().library.tracks().size(), 2U);
+    EXPECT_EQ(context().library.tracks().size(), 2);
     EXPECT_EQ(sortedTrackTitles(context().library.tracks()), (QStringList{u"Added Later"_s, u"Initial"_s}));
 }
 
@@ -617,7 +640,7 @@ TEST_F(UnifiedMusicLibraryTest, TrackRescanUpdatesMetadataBeforeScanFinished)
     ASSERT_GE(libraryInfo.id, 0);
 
     waitForSuccessfulScan([&]() { return context().library.rescan(libraryInfo); });
-    ASSERT_EQ(context().library.tracks().size(), 1U);
+    ASSERT_EQ(context().library.tracks().size(), 1);
 
     const Track existingTrack = context().library.tracks().front();
     ASSERT_TRUE(existingTrack.isValid());
@@ -640,6 +663,102 @@ TEST_F(UnifiedMusicLibraryTest, TrackRescanUpdatesMetadataBeforeScanFinished)
     EXPECT_EQ(context().library.trackForId(existingTrack.id()).title(), u"After"_s);
 }
 
+TEST_F(UnifiedMusicLibraryTest, TrackRescanReloadsEmbeddedCueTracks)
+{
+    const QString filePath = createTrackFile(u"embedded.mp3"_s, u"Backing File"_s);
+    const QString cueSheet = uR"(FILE "embedded.mp3" MP3
+  TRACK 01 AUDIO
+    TITLE "Cue One"
+    INDEX 01 00:00:00
+  TRACK 02 AUDIO
+    TITLE "Cue Two"
+    INDEX 01 01:00:00
+)"_s;
+
+    context().readerState->setExtraTags(filePath, {{u"CUESHEET"_s, {cueSheet}},
+                                                   {u"CUE_TRACK01_CONDUCTOR"_s, {u"First Conductor"_s}},
+                                                   {u"CUE_TRACK02_CONDUCTOR"_s, {u"Second Conductor"_s}}});
+    context().playlistLoader->addParser(std::make_unique<CueParser>());
+
+    const LibraryInfo libraryInfo = addLibrary(u"Embedded CUE reload"_s);
+    ASSERT_GE(libraryInfo.id, 0);
+    waitForSuccessfulScan([&]() { return context().library.rescan(libraryInfo); });
+
+    TrackList cueTracks = context().library.tracks();
+    ASSERT_EQ(2, cueTracks.size());
+    ASSERT_TRUE(std::ranges::all_of(cueTracks, &Track::hasEmbeddedCue));
+
+    std::map<QString, int> idsByTrackNumber;
+    for(const Track& track : cueTracks) {
+        idsByTrackNumber.emplace(track.trackNumber(), track.id());
+    }
+
+    const QString updatedCueSheet = QString{cueSheet}.replace(u"Cue Two"_s, u"Cue Two Reloaded"_s);
+    context().readerState->setExtraTags(filePath, {{u"CUESHEET"_s, {updatedCueSheet}},
+                                                   {u"CUE_TRACK01_CONDUCTOR"_s, {u"First Reloaded"_s}},
+                                                   {u"CUE_TRACK02_CONDUCTOR"_s, {u"Second Reloaded"_s}}});
+
+    waitForSuccessfulScan([&]() { return context().library.scanTracks(cueTracks); }, ScanRequest::Tracks);
+
+    cueTracks = context().library.tracks();
+    ASSERT_EQ(2, cueTracks.size());
+    for(const Track& track : cueTracks) {
+        EXPECT_EQ(idsByTrackNumber.at(track.trackNumber()), track.id());
+        EXPECT_EQ(QStringList{track.trackNumber() == u"01"_s ? u"First Reloaded"_s : u"Second Reloaded"_s},
+                  track.extraTag(u"CONDUCTOR"_s));
+        EXPECT_FALSE(std::ranges::any_of(track.extraTags(), [](const auto& tag) {
+            return tag.first.startsWith(u"CUE_TRACK"_s, Qt::CaseInsensitive);
+        }));
+    }
+    EXPECT_EQ(activeTrackTitles(cueTracks), (QStringList{u"Cue One"_s, u"Cue Two Reloaded"_s}));
+}
+
+TEST_F(UnifiedMusicLibraryTest, TrackRescanReloadsExternalCueTracks)
+{
+    createTrackFile(u"external.mp3"_s, u"Backing File"_s);
+    const QString cuePath = context().tempDir.filePath(u"external.cue"_s);
+    writeFile(cuePath, "FILE \"external.mp3\" MP3\n"
+                       "  TRACK 01 AUDIO\n"
+                       "    TITLE \"Cue One\"\n"
+                       "    INDEX 01 00:00:00\n"
+                       "  TRACK 02 AUDIO\n"
+                       "    TITLE \"Cue Two\"\n"
+                       "    INDEX 01 01:00:00\n");
+    context().playlistLoader->addParser(std::make_unique<CueParser>());
+    context().settings.fileSet(Settings::Core::Internal::LibraryExcludeTypes, QStringList{});
+
+    const LibraryInfo libraryInfo = addLibrary(u"External CUE reload"_s);
+    ASSERT_GE(libraryInfo.id, 0);
+    waitForSuccessfulScan([&]() { return context().library.rescan(libraryInfo); });
+
+    TrackList cueTracks = context().library.tracks();
+    ASSERT_EQ(2, cueTracks.size());
+    ASSERT_TRUE(
+        std::ranges::all_of(cueTracks, [](const Track& track) { return track.hasCue() && !track.hasEmbeddedCue(); }));
+
+    std::map<QString, int> idsByTrackNumber;
+    for(const Track& track : cueTracks) {
+        idsByTrackNumber.emplace(track.trackNumber(), track.id());
+    }
+
+    writeFile(cuePath, "FILE \"external.mp3\" MP3\n"
+                       "  TRACK 01 AUDIO\n"
+                       "    TITLE \"Cue One Reloaded\"\n"
+                       "    INDEX 01 00:00:00\n"
+                       "  TRACK 02 AUDIO\n"
+                       "    TITLE \"Cue Two Reloaded\"\n"
+                       "    INDEX 01 01:00:00\n");
+
+    waitForSuccessfulScan([&]() { return context().library.scanTracks(cueTracks); }, ScanRequest::Tracks);
+
+    cueTracks = context().library.tracks();
+    ASSERT_EQ(2, cueTracks.size());
+    for(const Track& track : cueTracks) {
+        EXPECT_EQ(idsByTrackNumber.at(track.trackNumber()), track.id());
+    }
+    EXPECT_EQ(activeTrackTitles(cueTracks), (QStringList{u"Cue One Reloaded"_s, u"Cue Two Reloaded"_s}));
+}
+
 TEST_F(UnifiedMusicLibraryTest, DeferredWritesMergeMetadataAndStatsSnapshots)
 {
     ASSERT_TRUE(context().settings.set<Settings::Core::SaveRatingToMetadata>(true));
@@ -650,7 +769,7 @@ TEST_F(UnifiedMusicLibraryTest, DeferredWritesMergeMetadataAndStatsSnapshots)
     ASSERT_GE(libraryInfo.id, 0);
 
     waitForSuccessfulScan([&]() { return context().library.rescan(libraryInfo); });
-    ASSERT_EQ(context().library.tracks().size(), 1U);
+    ASSERT_EQ(context().library.tracks().size(), 1);
 
     const Track originalTrack = context().library.tracks().front();
     context().library.setActivePlaybackTrack(originalTrack);
@@ -666,10 +785,10 @@ TEST_F(UnifiedMusicLibraryTest, DeferredWritesMergeMetadataAndStatsSnapshots)
     context().library.writeTrackMetadata({metadataTrack});
     context().library.flushPendingWrites();
 
-    ASSERT_TRUE(waitForCondition([&]() { return context().readerState->writes().size() == 2U; }));
+    ASSERT_TRUE(waitForCondition([&]() { return context().readerState->writes().size() == 2; }));
 
     const auto writes = context().readerState->writes();
-    ASSERT_EQ(writes.size(), 2U);
+    ASSERT_EQ(writes.size(), 2);
     EXPECT_EQ(writes.at(0).first.title(), u"After"_s);
     EXPECT_FLOAT_EQ(writes.at(0).first.rating(), 0.8F);
     EXPECT_TRUE(writes.at(0).second.testFlag(AudioReader::Metadata));
@@ -689,7 +808,7 @@ TEST_F(UnifiedMusicLibraryTest, StalePlaycountUpdatePreservesPendingRating)
     ASSERT_GE(libraryInfo.id, 0);
 
     waitForSuccessfulScan([&]() { return context().library.rescan(libraryInfo); });
-    ASSERT_EQ(context().library.tracks().size(), 1U);
+    ASSERT_EQ(context().library.tracks().size(), 1);
 
     const Track originalTrack = context().library.tracks().front();
     context().library.setActivePlaybackTrack(originalTrack);
@@ -711,15 +830,15 @@ TEST_F(UnifiedMusicLibraryTest, StalePlaycountUpdatePreservesPendingRating)
     const QVariantList updateArgs = waitForSignal(updateSpy);
     ASSERT_EQ(updateArgs.size(), 1);
     const auto updatedTracks = updateArgs.front().value<TrackList>();
-    ASSERT_EQ(updatedTracks.size(), 1U);
+    ASSERT_EQ(updatedTracks.size(), 1);
     EXPECT_EQ(updatedTracks.front().playCount(), 1);
     EXPECT_FLOAT_EQ(updatedTracks.front().rating(), 0.4F);
 
     context().library.flushPendingWrites();
-    ASSERT_TRUE(waitForCondition([&]() { return context().readerState->writes().size() == 1U; }));
+    ASSERT_TRUE(waitForCondition([&]() { return context().readerState->writes().size() == 1; }));
 
     const auto writes = context().readerState->writes();
-    ASSERT_EQ(writes.size(), 1U);
+    ASSERT_EQ(writes.size(), 1);
     EXPECT_FLOAT_EQ(writes.front().first.rating(), 0.4F);
     EXPECT_EQ(writes.front().first.playCount(), 1);
     EXPECT_EQ(writes.front().second, AudioReader::Rating | AudioReader::Playcount);
@@ -787,8 +906,8 @@ TEST_F(UnifiedMusicLibraryTest, ReaddingLibraryUpdatesExistingPlaylistTracksAndE
 
     const ScanRequest initialRequest = context().library.rescan(originalLibrary);
     ASSERT_GE(initialRequest.id, 0);
-    ASSERT_TRUE(waitForCondition([&]() { return context().library.tracks().size() == 1U; }));
-    ASSERT_EQ(context().library.tracks().size(), 1U);
+    ASSERT_TRUE(waitForCondition([&]() { return context().library.tracks().size() == 1; }));
+    ASSERT_EQ(context().library.tracks().size(), 1);
 
     const Track originalTrack = context().library.tracks().front();
     ASSERT_TRUE(originalTrack.isValid());
