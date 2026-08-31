@@ -565,12 +565,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="350"/>
         <source>Returns the platform path separator</source>
-        <translation type="unfinished"></translation>
+        <translation>回傳平台路徑分隔符號</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="408"/>
         <source>Returns the CRC-32 checksum of the text</source>
-        <translation type="unfinished"></translation>
+        <translation>回傳文字的 CRC-32 核對和</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="470"/>
@@ -822,7 +822,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="292"/>
         <source>Formats a number in hexadecimal with leading zeroes</source>
-        <translation type="unfinished"></translation>
+        <translation>將數字格式化為開頭為零的十六進位數</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="294"/>
@@ -879,17 +879,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="297"/>
         <source>Returns the first match or capture; group 0 is the full match</source>
-        <translation type="unfinished"></translation>
+        <translation>回傳第一個符合或獲取的；群組 0 則是完整符合</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="300"/>
         <source>Returns all matches or captures; group 0 is the full match</source>
-        <translation type="unfinished"></translation>
+        <translation>回傳全部符合的或獲取的；群組 0 是完整符合</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="303"/>
         <source>Replaces all regular expression matches; flags: i, m, s, x, U</source>
-        <translation type="unfinished"></translation>
+        <translation>取代全部正規表示式符合的；flags: i, m, a, x, U</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="305"/>
@@ -974,7 +974,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="346"/>
         <source>Tests a regular expression match; flags: i, m, s, x, U</source>
-        <translation type="unfinished"></translation>
+        <translation>測試一個正則表達式符合；flags: i, m, s, x, U</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="348"/>
@@ -5497,7 +5497,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="121"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation>方形</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="123"/>
@@ -5527,7 +5527,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="135"/>
         <source>Corner radius</source>
-        <translation type="unfinished"></translation>
+        <translation>圓角</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="139"/>
@@ -7585,17 +7585,17 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/plugins/libarchive/libarchiveinput.cpp" line="163"/>
         <source>Unexpected end of archive entry</source>
-        <translation type="unfinished"></translation>
+        <translation>壓縮封存檔意外結束</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libarchive/libarchiveinput.cpp" line="235"/>
         <source>Operation cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>操作已經取消</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libarchive/libarchiveinput.cpp" line="283"/>
         <source>Unknown archive error</source>
-        <translation type="unfinished"></translation>
+        <translation>不明的壓縮封存錯誤</translation>
     </message>
 </context>
 <context>
@@ -8376,7 +8376,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="146"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation>方形</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="148"/>
@@ -8396,7 +8396,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="156"/>
         <source>Corner radius</source>
-        <translation type="unfinished"></translation>
+        <translation>圓角</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="198"/>
@@ -10803,7 +10803,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="226"/>
         <source>Artwork</source>
-        <translation type="unfinished">圖面</translation>
+        <translation>圖面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="227"/>
@@ -10859,7 +10859,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="145"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation>方形</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="147"/>
@@ -11070,7 +11070,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="231"/>
         <source>Corner radius</source>
-        <translation type="unfinished"></translation>
+        <translation>圓角</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="235"/>
@@ -13431,7 +13431,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="70"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation>方形</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="72"/>
@@ -13451,7 +13451,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="80"/>
         <source>Corner radius</source>
-        <translation type="unfinished"></translation>
+        <translation>圓角</translation>
     </message>
 </context>
 <context>
@@ -15521,43 +15521,43 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="52"/>
         <source>ReplayGain</source>
-        <translation type="unfinished">播放增益</translation>
+        <translation>播放增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="68"/>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="147"/>
         <source>Disabled</source>
-        <translation type="unfinished">已經停用</translation>
+        <translation>已經停用</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="69"/>
         <source>Prefer track gain</source>
-        <translation type="unfinished"></translation>
+        <translation>偏好曲目增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="70"/>
         <source>Prefer album gain</source>
-        <translation type="unfinished"></translation>
+        <translation>偏好專輯增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="71"/>
         <source>By playback order</source>
-        <translation type="unfinished"></translation>
+        <translation>依照播放順序</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="110"/>
         <source>ReplayGain Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>播放增益模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="147"/>
         <source>ReplayGain disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>播放增益已經取消</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="158"/>
         <source>Show label</source>
-        <translation type="unfinished">顯示標籤</translation>
+        <translation>顯示標籤</translation>
     </message>
 </context>
 <context>
@@ -19824,7 +19824,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="288"/>
         <source>ReplayGain Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>播放增益模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="294"/>

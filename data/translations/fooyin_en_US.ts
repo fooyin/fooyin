@@ -565,12 +565,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="350"/>
         <source>Returns the platform path separator</source>
-        <translation type="unfinished"></translation>
+        <translation>Returns the platform path separator</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="408"/>
         <source>Returns the CRC-32 checksum of the text</source>
-        <translation type="unfinished"></translation>
+        <translation>Returns the CRC-32 checksum of the text</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="470"/>
@@ -817,12 +817,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="289"/>
         <source>Formats a number with leading zeroes</source>
-        <translation>Formats a number with leading zeroes</translation>
+        <translation>Formats a number with leading zeros</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="292"/>
         <source>Formats a number in hexadecimal with leading zeroes</source>
-        <translation type="unfinished"></translation>
+        <translation>Formats a number in hexadecimal with leading zeros</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="294"/>
@@ -879,17 +879,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="297"/>
         <source>Returns the first match or capture; group 0 is the full match</source>
-        <translation type="unfinished"></translation>
+        <translation>Returns the first match or capture; group 0 is the full match</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="300"/>
         <source>Returns all matches or captures; group 0 is the full match</source>
-        <translation type="unfinished"></translation>
+        <translation>Returns all matches or captures; group 0 is the full match</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="303"/>
         <source>Replaces all regular expression matches; flags: i, m, s, x, U</source>
-        <translation type="unfinished"></translation>
+        <translation>Replaces all regular expression matches; flags: i, m, s, x, U</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="305"/>
@@ -974,7 +974,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="346"/>
         <source>Tests a regular expression match; flags: i, m, s, x, U</source>
-        <translation type="unfinished"></translation>
+        <translation>Tests a regular expression match; flags: i, m, s, x, U</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="348"/>
@@ -2364,8 +2364,8 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="196"/>
         <source>Cancelled: %Ln track(s)</source>
         <translation>
-            <numerusform>Cancelled: %Ln track</numerusform>
-            <numerusform>Cancelled: %Ln tracks</numerusform>
+            <numerusform>Canceled: %Ln track</numerusform>
+            <numerusform>Canceled: %Ln tracks</numerusform>
         </translation>
     </message>
 </context>
@@ -2511,7 +2511,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="293"/>
         <source>Automatic (preserve source)</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatic (preserve source)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="294"/>
@@ -2541,7 +2541,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="300"/>
         <source>Automatic (when reducing bit depth)</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatic (when reducing bit depth)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="301"/>
@@ -2670,7 +2670,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="401"/>
         <source>ReplayGain processing</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain processing</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="404"/>
@@ -2685,22 +2685,22 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="409"/>
         <source>Without ReplayGain info</source>
-        <translation type="unfinished"></translation>
+        <translation>Without ReplayGain info</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="412"/>
         <source>ReplayGain is applied permanently to the converted audio.</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain is applied permanently to the converted audio.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="443"/>
         <source>DSP chain</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP chain</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="445"/>
         <source>Active DSPs</source>
-        <translation type="unfinished"></translation>
+        <translation>Active DSPs</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="448"/>
@@ -2715,7 +2715,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="510"/>
         <source>Preview generation</source>
-        <translation type="unfinished"></translation>
+        <translation>Preview generation</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="515"/>
@@ -2725,12 +2725,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="519"/>
         <source>When done</source>
-        <translation type="unfinished"></translation>
+        <translation>When done</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="524"/>
         <source>Copy other files to the destination folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Copy other files to the destination folder</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="713"/>
@@ -2751,12 +2751,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="773"/>
         <source>Default settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Default settings</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="802"/>
         <source>Save Converter Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Save Converter Preset</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="802"/>
@@ -2769,39 +2769,39 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="874"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="883"/>
         <source>Import Converter Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Import Converter Presets</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="860"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="931"/>
         <source>fooyin Converter Presets (*.fycp)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin Converter Presets (*.fycp)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="868"/>
         <source>The preset file could not be opened.</source>
-        <translation type="unfinished"></translation>
+        <translation>The preset file could not be opened.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="874"/>
         <source>The preset file is invalid or empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>The preset file is invalid or empty.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="884"/>
         <source>Encoder is unavailable for preset: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Encoder is unavailable for preset: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="930"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="940"/>
         <source>Export Converter Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Export Converter Preset</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="940"/>
         <source>The preset file could not be written.</source>
-        <translation type="unfinished"></translation>
+        <translation>The preset file could not be written.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1108"/>
@@ -2811,57 +2811,57 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1152"/>
         <source>No encoder available</source>
-        <translation type="unfinished"></translation>
+        <translation>No encoder available</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1165"/>
         <source>No folder specified</source>
-        <translation type="unfinished"></translation>
+        <translation>No folder specified</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1173"/>
         <source>group tracks by output name</source>
-        <translation type="unfinished"></translation>
+        <translation>group tracks by output name</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1176"/>
         <source>merge tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>merge tracks</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1180"/>
         <source>No name format</source>
-        <translation type="unfinished"></translation>
+        <translation>No name format</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1187"/>
         <source>metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>metadata</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1190"/>
         <source>rating</source>
-        <translation type="unfinished"></translation>
+        <translation>rating</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1193"/>
         <source>play count</source>
-        <translation type="unfinished"></translation>
+        <translation>play count</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1196"/>
         <source>attached pictures</source>
-        <translation type="unfinished"></translation>
+        <translation>attached pictures</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1201"/>
         <source>ReplayGain (track)</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain (track)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1204"/>
         <source>ReplayGain (album)</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain (album)</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1211"/>
@@ -2874,27 +2874,27 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1213"/>
         <source>continuous DSP</source>
-        <translation type="unfinished"></translation>
+        <translation>continuous DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1222"/>
         <source>%1% previews</source>
-        <translation type="unfinished"></translation>
+        <translation>%1% previews</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1225"/>
         <source>Show status report</source>
-        <translation type="unfinished"></translation>
+        <translation>Show status report</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1228"/>
         <source>Copy matching files</source>
-        <translation type="unfinished"></translation>
+        <translation>Copy matching files</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1231"/>
         <source>Verify output</source>
-        <translation type="unfinished"></translation>
+        <translation>Verify output</translation>
     </message>
 </context>
 <context>
@@ -3380,7 +3380,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="42"/>
         <source>Remember sort column</source>
-        <translation type="unfinished"></translation>
+        <translation>Remember sort column</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="44"/>
@@ -3415,7 +3415,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="54"/>
         <source>Restore the sort column on startup and when changing directories.</source>
-        <translation type="unfinished"></translation>
+        <translation>Restore the sort column on startup and when changing directories.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="56"/>
@@ -3460,7 +3460,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="87"/>
         <source>Path and controls position</source>
-        <translation type="unfinished"></translation>
+        <translation>Path and controls position</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="102"/>
@@ -4013,22 +4013,22 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="526"/>
         <source>Lock width</source>
-        <translation type="unfinished"></translation>
+        <translation>Lock width</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="526"/>
         <source>Lock height</source>
-        <translation type="unfinished"></translation>
+        <translation>Lock height</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="529"/>
         <source>Keep the width unchanged during automatic resizing; splitter handles can still resize it</source>
-        <translation type="unfinished"></translation>
+        <translation>Keep the width unchanged during automatic resizing; splitter handles can still resize it</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="531"/>
         <source>Keep the height unchanged during automatic resizing; splitter handles can still resize it</source>
-        <translation type="unfinished"></translation>
+        <translation>Keep the height unchanged during automatic resizing; splitter handles can still resize it</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="550"/>
@@ -4118,32 +4118,32 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="44"/>
         <source>Variable bitrate (VBR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Variable bitrate (VBR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="46"/>
         <source>Constrained variable bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Constrained variable bitrate</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="48"/>
         <source>Constant quality (VBR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Constant quality (VBR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="50"/>
         <source>Average bitrate (ABR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Average bitrate (ABR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="52"/>
         <source>Constant bitrate (CBR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Constant bitrate (CBR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="54"/>
         <source>Lossless compression</source>
-        <translation type="unfinished"></translation>
+        <translation>Lossless compression</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="66"/>
@@ -4163,7 +4163,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="70"/>
         <source>Estimated bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Estimated bitrate</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="72"/>
@@ -4173,17 +4173,17 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="73"/>
         <source>Level</source>
-        <translation type="unfinished"></translation>
+        <translation>Level</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="80"/>
         <source>Encoder Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Encoder Profile</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="107"/>
         <source>Encoder</source>
-        <translation type="unfinished"></translation>
+        <translation>Encoder</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="111"/>
@@ -4198,12 +4198,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="226"/>
         <source>Compression level</source>
-        <translation type="unfinished"></translation>
+        <translation>Compression level</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="227"/>
         <source>Encoding effort</source>
-        <translation type="unfinished"></translation>
+        <translation>Encoding effort</translation>
     </message>
 </context>
 <context>
@@ -4211,32 +4211,32 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="42"/>
         <source>VBR</source>
-        <translation type="unfinished"></translation>
+        <translation>VBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="44"/>
         <source>CVBR</source>
-        <translation type="unfinished"></translation>
+        <translation>CVBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="46"/>
         <source>VBR quality %1</source>
-        <translation type="unfinished"></translation>
+        <translation>VBR quality %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="48"/>
         <source>ABR</source>
-        <translation type="unfinished"></translation>
+        <translation>ABR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="50"/>
         <source>CBR</source>
-        <translation type="unfinished"></translation>
+        <translation>CBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="52"/>
         <source>level %1</source>
-        <translation type="unfinished"></translation>
+        <translation>level %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="87"/>
@@ -4275,7 +4275,7 @@ Effects here process the final combined output.</translation>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="270"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="436"/>
         <source>Zero level</source>
-        <translation type="unfinished"></translation>
+        <translation>Zero level</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="271"/>
@@ -4287,7 +4287,7 @@ Effects here process the final combined output.</translation>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="273"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
         <source>Save preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Save preset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="310"/>
@@ -4308,7 +4308,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="453"/>
         <source>Save preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>Save preset…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="457"/>
@@ -4319,17 +4319,17 @@ Effects here process the final combined output.</translation>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="461"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="543"/>
         <source>No presets</source>
-        <translation type="unfinished"></translation>
+        <translation>No presets</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="546"/>
         <source>Load preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>Load preset…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
         <source>Preset name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Preset name:</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="583"/>
@@ -4948,7 +4948,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="500"/>
         <source>Finishing operations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Finishing operations…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="509"/>
@@ -4967,57 +4967,57 @@ Effects here process the final combined output.</translation>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="530"/>
         <source>Aborted: %Ln operation(s) not run</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Aborted: %Ln operation not run</numerusform>
+            <numerusform>Aborted: %Ln operations not run</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="536"/>
         <source>Completed %Ln operation(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Completed %Ln operation</numerusform>
+            <numerusform>Completed %Ln operations</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="543"/>
         <source>%Ln succeeded</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln succeeded</numerusform>
+            <numerusform>%Ln succeeded</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="546"/>
         <source>%Ln failed</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln failed</numerusform>
+            <numerusform>%Ln failed</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="549"/>
         <source>%Ln skipped</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln skipped</numerusform>
+            <numerusform>%Ln skipped</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="552"/>
         <source>%Ln cancelled</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln canceled</numerusform>
+            <numerusform>%Ln canceled</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="557"/>
         <source>Completed %Ln operation(s): %1</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Completed %Ln operation: %1</numerusform>
+            <numerusform>Completed %Ln operations: %1</numerusform>
         </translation>
     </message>
     <message>
@@ -5127,12 +5127,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="124"/>
         <source>Result</source>
-        <translation type="unfinished"></translation>
+        <translation>Result</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="165"/>
         <source>Pending</source>
-        <translation type="unfinished"></translation>
+        <translation>Pending</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="238"/>
@@ -5178,27 +5178,27 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="261"/>
         <source>Succeeded</source>
-        <translation type="unfinished"></translation>
+        <translation>Succeeded</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="263"/>
         <source>Failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="265"/>
         <source>Skipped: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Skipped: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="267"/>
         <source>Cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Canceled</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="267"/>
         <source>Cancelled: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Canceled: %1</translation>
     </message>
 </context>
 <context>
@@ -5307,53 +5307,53 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="274"/>
         <source>Could not create directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Could not create directory</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="283"/>
         <source>Could not remove directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Could not remove directory</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="604"/>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="660"/>
         <source>Source file does not exist</source>
-        <translation type="unfinished"></translation>
+        <translation>Source file does not exist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="676"/>
         <source>Could not open archive</source>
-        <translation type="unfinished"></translation>
+        <translation>Could not open archive</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="682"/>
         <source>Destination file already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Destination file already exists</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="698"/>
         <source>Archive extraction was interrupted</source>
-        <translation type="unfinished"></translation>
+        <translation>Archive extraction was interrupted</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="700"/>
         <source>Could not extract archive entry</source>
-        <translation type="unfinished"></translation>
+        <translation>Could not extract archive entry</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="712"/>
         <source>One or more archive entries could not be extracted</source>
-        <translation type="unfinished"></translation>
+        <translation>One or more archive entries could not be extracted</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="717"/>
         <source>No archive entries were extracted</source>
-        <translation type="unfinished"></translation>
+        <translation>No archive entries were extracted</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="725"/>
         <source>Could not delete source archive</source>
-        <translation type="unfinished"></translation>
+        <translation>Could not delete source archive</translation>
     </message>
 </context>
 <context>
@@ -5470,27 +5470,27 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="48"/>
         <source>Preserve playback playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Preserve playback playlist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="57"/>
         <source>Align labels to artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Align labels to artwork</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="72"/>
         <source>Set to &lt;b&gt;Play&lt;/b&gt; to start playback at the first matching track.</source>
-        <translation type="unfinished"></translation>
+        <translation>Set to &lt;b&gt;Play&lt;/b&gt; to start playback at the first matching track.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="80"/>
         <source>In current playlist mode, matching tracks are selected directly in the playlist.</source>
-        <translation type="unfinished"></translation>
+        <translation>In current playlist mode, matching tracks are selected directly in the playlist.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="83"/>
         <source>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="89"/>
@@ -5505,7 +5505,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="97"/>
         <source>Align bottom labels to the horizontal bounds of the artwork in artwork mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Align bottom labels to the horizontal bounds of the artwork in artwork mode.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="104"/>
@@ -5520,7 +5520,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="121"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation>Square</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="123"/>
@@ -5550,7 +5550,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="135"/>
         <source>Corner radius</source>
-        <translation type="unfinished"></translation>
+        <translation>Corner radius</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="139"/>
@@ -5575,7 +5575,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="149"/>
         <source>Current playlist mode uses the displayed playlist as its source and selects the matching tracks in that playlist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Current playlist mode uses the displayed playlist as its source and selects the matching tracks in that playlist.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="167"/>
@@ -6060,12 +6060,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1013"/>
         <source>Prevent changes to the contents of the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Prevent changes to the contents of the current playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1016"/>
         <source>Lock Current Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Lock Current Playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1037"/>
@@ -6156,13 +6156,13 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1199"/>
         <source>Choose destination</source>
-        <translation type="unfinished">Choose destination</translation>
+        <translation>Choose destination</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1280"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1288"/>
         <source>Convert using preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Convert using preset %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1287"/>
@@ -6179,32 +6179,32 @@ Effects here process the final combined output.</translation>
         <location filename="../../src/gui/guiapplication.cpp" line="1339"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1350"/>
         <source>Convert</source>
-        <translation type="unfinished">Convert</translation>
+        <translation>Convert</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1318"/>
         <source>Converter setup…</source>
-        <translation type="unfinished"></translation>
+        <translation>Converter setup…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1327"/>
         <source>Using default settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Using default settings</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1331"/>
         <source>Convert using default settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Convert using default settings</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1336"/>
         <source>Repeat last conversion</source>
-        <translation type="unfinished"></translation>
+        <translation>Repeat last conversion</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1367"/>
         <source>Custom conversion…</source>
-        <translation type="unfinished"></translation>
+        <translation>Custom conversion…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1604"/>
@@ -6390,12 +6390,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="170"/>
         <source>&amp;Import…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Import…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="171"/>
         <source>E&amp;xport…</source>
-        <translation type="unfinished"></translation>
+        <translation>E&amp;xport…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="174"/>
@@ -6555,38 +6555,38 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="558"/>
         <source>Open Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Open Theme</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="558"/>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="591"/>
         <source>fooyin Theme (*.fyt)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin Theme (*.fyt)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="566"/>
         <source>Import Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Import Theme</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="566"/>
         <source>Could not import theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Could not import theme</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="590"/>
         <source>Save Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Save Theme</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="601"/>
         <source>Export Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Export Theme</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="601"/>
         <source>Could not export theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Could not export theme</translation>
     </message>
 </context>
 <context>
@@ -6617,7 +6617,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="118"/>
         <source>Dark mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Dark mode</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="120"/>
@@ -6652,7 +6652,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="129"/>
         <source>Only resize locked widgets using adjacent handles</source>
-        <translation type="unfinished"></translation>
+        <translation>Only resize locked widgets using adjacent handles</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="130"/>
@@ -6712,7 +6712,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="188"/>
         <source>Prevent other splitter handles and parent splitters from changing the size of a locked widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>Prevent other splitter handles and parent splitters from changing the size of a locked widget.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="190"/>
@@ -6727,7 +6727,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="341"/>
         <source>Dark mode is not supported by this style.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dark mode is not supported by this style.</translation>
     </message>
 </context>
 <context>
@@ -6854,22 +6854,22 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="739"/>
         <source>Lock width</source>
-        <translation type="unfinished"></translation>
+        <translation>Lock width</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="739"/>
         <source>Lock height</source>
-        <translation type="unfinished"></translation>
+        <translation>Lock height</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="742"/>
         <source>Keep the width unchanged during automatic resizing; splitter handles can still resize it</source>
-        <translation type="unfinished"></translation>
+        <translation>Keep the width unchanged during automatic resizing; splitter handles can still resize it</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="743"/>
         <source>Keep the height unchanged during automatic resizing; splitter handles can still resize it</source>
-        <translation type="unfinished"></translation>
+        <translation>Keep the height unchanged during automatic resizing; splitter handles can still resize it</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="789"/>
@@ -7132,12 +7132,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="47"/>
         <source>Import fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Import fonts</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="48"/>
         <source>Import window size</source>
-        <translation type="unfinished"></translation>
+        <translation>Import window size</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="49"/>
@@ -7172,22 +7172,22 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="149"/>
         <source>Enter a layout name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Enter a layout name.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="153"/>
         <source>A layout with this name already exists.</source>
-        <translation type="unfinished"></translation>
+        <translation>A layout with this name already exists.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="167"/>
         <source>Layout file could not be opened.</source>
-        <translation type="unfinished"></translation>
+        <translation>Layout file could not be opened.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="175"/>
         <source>Layout file is invalid.</source>
-        <translation type="unfinished"></translation>
+        <translation>Layout file is invalid.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="200"/>
@@ -7534,12 +7534,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="98"/>
         <source>&amp;New layout…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;New layout…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="99"/>
         <source>Create a new layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Create a new layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="104"/>
@@ -7569,7 +7569,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="168"/>
         <source>Switch</source>
-        <translation type="unfinished"></translation>
+        <translation>Switch</translation>
     </message>
 </context>
 <context>
@@ -7608,17 +7608,17 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/plugins/libarchive/libarchiveinput.cpp" line="163"/>
         <source>Unexpected end of archive entry</source>
-        <translation type="unfinished"></translation>
+        <translation>Unexpected end of archive entry</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libarchive/libarchiveinput.cpp" line="235"/>
         <source>Operation cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Operation canceled</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libarchive/libarchiveinput.cpp" line="283"/>
         <source>Unknown archive error</source>
-        <translation type="unfinished"></translation>
+        <translation>Unknown archive error</translation>
     </message>
 </context>
 <context>
@@ -7659,22 +7659,22 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="137"/>
         <source>Monitor library directories</source>
-        <translation type="unfinished"></translation>
+        <translation>Monitor library directories</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="138"/>
         <source>Monitor track files</source>
-        <translation type="unfinished"></translation>
+        <translation>Monitor track files</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="153"/>
         <source>Watch library directories for external changes such as new or removed files</source>
-        <translation type="unfinished"></translation>
+        <translation>Watch library directories for external changes such as new or removed files</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="154"/>
         <source>Watch individual track files for tag changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Watch individual track files for tag changes</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="156"/>
@@ -7788,22 +7788,22 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="96"/>
         <source>Show Recently &amp;Played</source>
-        <translation type="unfinished"></translation>
+        <translation>Show Recently &amp;Played</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="97"/>
         <source>Show tracks played in the last few weeks</source>
-        <translation type="unfinished"></translation>
+        <translation>Show tracks played in the last few weeks</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="103"/>
         <source>Show Recently &amp;Added</source>
-        <translation type="unfinished"></translation>
+        <translation>Show Recently &amp;Added</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="104"/>
         <source>Show tracks added in the last few weeks</source>
-        <translation type="unfinished"></translation>
+        <translation>Show tracks added in the last few weeks</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="109"/>
@@ -8008,7 +8008,7 @@ and last played uses the later value.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="357"/>
         <source>Ratings &amp;&amp; Playcounts</source>
-        <translation type="unfinished"></translation>
+        <translation>Ratings &amp;&amp; Playcounts</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="358"/>
@@ -8056,27 +8056,27 @@ and last played uses the later value.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="168"/>
         <source>Read ratings from ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Read ratings from ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="169"/>
         <source>Write ratings to ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Write ratings to ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="176"/>
         <source>Read playcounts from ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Read playcounts from ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="177"/>
         <source>Write playcounts to ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Write playcounts to ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="197"/>
         <source>Read ratings from ID3 POPM frames in MP3 files when no text rating was read.</source>
-        <translation type="unfinished"></translation>
+        <translation>Read ratings from ID3 POPM frames in MP3 files when no text rating was read.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="199"/>
@@ -8108,22 +8108,22 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="209"/>
         <source>Tag field to read playcount values from. Automatic detection prefers FMPS_PLAYCOUNT, then PLAYCOUNT.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag field to read playcount values from. Automatic detection prefers FMPS_PLAYCOUNT, then PLAYCOUNT.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="210"/>
         <source>Tag field used when saving playcounts as text metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag field used when saving playcounts as text metadata.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="212"/>
         <source>Read playcounts from ID3 POPM frames in MP3 files when no text playcount was read.</source>
-        <translation type="unfinished"></translation>
+        <translation>Read playcounts from ID3 POPM frames in MP3 files when no text playcount was read.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="214"/>
         <source>Additionally save playcounts to ID3 POPM frames when writing MP3 files. Other formats are unaffected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Additionally save playcounts to ID3 POPM frames when writing MP3 files. Other formats are unaffected.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="216"/>
@@ -8143,7 +8143,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="222"/>
         <source>Playcount Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Playcount Tags</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="226"/>
@@ -8178,12 +8178,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="252"/>
         <source>Read playcount from</source>
-        <translation type="unfinished"></translation>
+        <translation>Read playcount from</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="254"/>
         <source>Write playcount to</source>
-        <translation type="unfinished"></translation>
+        <translation>Write playcount to</translation>
     </message>
 </context>
 <context>
@@ -8366,7 +8366,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="49"/>
         <source>Preserve playback playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Preserve playback playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="82"/>
@@ -8377,7 +8377,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="100"/>
         <source>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="117"/>
@@ -8392,7 +8392,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="126"/>
         <source>Auto-expand if matching track count is at most</source>
-        <translation type="unfinished"></translation>
+        <translation>Auto-expand if matching track count is at most</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="134"/>
@@ -8402,7 +8402,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="146"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation>Square</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="148"/>
@@ -8422,7 +8422,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="156"/>
         <source>Corner radius</source>
-        <translation type="unfinished"></translation>
+        <translation>Corner radius</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="198"/>
@@ -8514,7 +8514,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="224"/>
         <source>Use display grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>Use display grouping</translation>
     </message>
 </context>
 <context>
@@ -8919,7 +8919,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="184"/>
         <source>Progress highlighting</source>
-        <translation type="unfinished"></translation>
+        <translation>Progress highlighting</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="194"/>
@@ -8930,22 +8930,22 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="214"/>
         <source>Synced lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Synced lines</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="215"/>
         <source>Synced words</source>
-        <translation type="unfinished"></translation>
+        <translation>Synced words</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="216"/>
         <source>Synced lines and words</source>
-        <translation type="unfinished"></translation>
+        <translation>Synced lines and words</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="218"/>
         <source>Controls whether playback progress is shown for line-synced lyrics, word-synced lyrics, or both.</source>
-        <translation type="unfinished"></translation>
+        <translation>Controls whether playback progress is shown for line-synced lyrics, word-synced lyrics, or both.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="252"/>
@@ -9652,7 +9652,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="83"/>
         <source>Maximum album art size</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum album art size</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="85"/>
@@ -9688,7 +9688,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="104"/>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="202"/>
         <source>Maximum width or height of album art sent with notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum width or height of album art sent with notifications</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="123"/>
@@ -9784,7 +9784,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="102"/>
         <source>Played threshold reached</source>
-        <translation type="unfinished"></translation>
+        <translation>Played threshold reached</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="103"/>
@@ -9936,12 +9936,12 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="39"/>
         <source>Oscilloscope Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Oscilloscope Settings</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="44"/>
         <source>Show zero line</source>
-        <translation type="unfinished"></translation>
+        <translation>Show zero line</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="45"/>
@@ -9971,12 +9971,12 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="60"/>
         <source>Time span of audio displayed across the oscilloscope</source>
-        <translation type="unfinished"></translation>
+        <translation>Time span of audio displayed across the oscilloscope</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="69"/>
         <source>Vertical amplitude scale; high values may overlap stereo channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertical amplitude scale; high values may overlap stereo channels</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="73"/>
@@ -9986,7 +9986,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="75"/>
         <source>Maximum waveform refresh rate; lower values can reduce motion blending</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum waveform refresh rate; lower values can reduce motion blending</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="77"/>
@@ -10001,17 +10001,17 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="79"/>
         <source>Display separate stereo channels or combine them into mono</source>
-        <translation type="unfinished"></translation>
+        <translation>Display separate stereo channels or combine them into mono</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="82"/>
         <source>Curve duration (ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Curve duration (ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="84"/>
         <source>Zoom (%)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom (%)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="86"/>
@@ -10021,7 +10021,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="88"/>
         <source>Downmix mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Downmix mode</translation>
     </message>
 </context>
 <context>
@@ -10029,12 +10029,12 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="49"/>
         <source>&amp;Oscilloscope</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Oscilloscope</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="50"/>
         <source>Open an oscilloscope in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Open an oscilloscope in a separate window</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="52"/>
@@ -10045,7 +10045,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="56"/>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="61"/>
         <source>Oscilloscope</source>
-        <translation type="unfinished"></translation>
+        <translation>Oscilloscope</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeplugin.cpp" line="52"/>
@@ -10059,17 +10059,17 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="84"/>
         <source>Oscilloscope</source>
-        <translation type="unfinished"></translation>
+        <translation>Oscilloscope</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="203"/>
         <source>Show zero line</source>
-        <translation type="unfinished"></translation>
+        <translation>Show zero line</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="212"/>
         <source>Downmix mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Downmix mode</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="228"/>
@@ -10084,7 +10084,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="231"/>
         <source>Curve duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Curve duration</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="236"/>
@@ -10094,12 +10094,12 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="247"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="252"/>
         <source>%1%</source>
-        <translation type="unfinished"></translation>
+        <translation>%1%</translation>
     </message>
 </context>
 <context>
@@ -10331,12 +10331,12 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="34"/>
         <source>PipeWire Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>PipeWire Settings</translation>
     </message>
     <message>
         <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="40"/>
         <source>Latency</source>
-        <translation type="unfinished"></translation>
+        <translation>Latency</translation>
     </message>
     <message>
         <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="44"/>
@@ -10691,12 +10691,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="102"/>
         <source>Played threshold (%)</source>
-        <translation type="unfinished"></translation>
+        <translation>Played threshold (%)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="103"/>
         <source>Played threshold (time)</source>
-        <translation type="unfinished"></translation>
+        <translation>Played threshold (time)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="109"/>
@@ -10711,7 +10711,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="111"/>
         <source>If the current track has been playing for more than 5s, restart it instead of moving to the previous track</source>
-        <translation>If the current track has been playing for more than 5s, restart it instead of moving to the previous track</translation>
+        <translation>If the current track has been playing for more than 5&#xa0;s, restart it instead of moving to the previous track</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="114"/>
@@ -10789,27 +10789,27 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="149"/>
         <source>Show Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Show Stop</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="150"/>
         <source>Show Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Show Previous</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="151"/>
         <source>Show Play/Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Show Play/Pause</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="152"/>
         <source>Show Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Show Next</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="153"/>
         <source>Show Random Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Show Random Track</translation>
     </message>
 </context>
 <context>
@@ -10832,7 +10832,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="226"/>
         <source>Artwork</source>
-        <translation type="unfinished">Artwork</translation>
+        <translation>Artwork</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="227"/>
@@ -10888,7 +10888,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="145"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation>Square</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="147"/>
@@ -11039,7 +11039,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="197"/>
         <source>Use a custom font for the currently playing row</source>
-        <translation type="unfinished"></translation>
+        <translation>Use a custom font for the currently playing row</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="199"/>
@@ -11094,12 +11094,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="223"/>
         <source>Playing row</source>
-        <translation type="unfinished"></translation>
+        <translation>Playing row</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="231"/>
         <source>Corner radius</source>
-        <translation type="unfinished"></translation>
+        <translation>Corner radius</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="235"/>
@@ -11524,7 +11524,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="80"/>
         <source>Open search bar instead of pop-up playlist search</source>
-        <translation type="unfinished"></translation>
+        <translation>Open search bar instead of pop-up playlist search</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="84"/>
@@ -11564,7 +11564,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="116"/>
         <source>After adding tracks to the front of or replacing the playback queue, start playback immediately</source>
-        <translation type="unfinished"></translation>
+        <translation>After adding tracks to the front of or replacing the playback queue, start playback immediately</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
@@ -11594,22 +11594,22 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="138"/>
         <source>Match beginnings of words</source>
-        <translation type="unfinished"></translation>
+        <translation>Match beginnings of words</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="139"/>
         <source>Match anywhere</source>
-        <translation type="unfinished"></translation>
+        <translation>Match anywhere</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="143"/>
         <source>Search mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Search mode</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="145"/>
         <source>Search script</source>
-        <translation type="unfinished"></translation>
+        <translation>Search script</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="166"/>
@@ -11806,7 +11806,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="543"/>
         <source>Activate on selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Activate on selection</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="572"/>
@@ -12206,38 +12206,38 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="118"/>
         <source>Search playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Search playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="122"/>
         <source>Previous match</source>
-        <translation type="unfinished"></translation>
+        <translation>Previous match</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="126"/>
         <source>Next match</source>
-        <translation type="unfinished"></translation>
+        <translation>Next match</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="130"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>Close</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="419"/>
         <source>Results are out of date</source>
-        <translation type="unfinished"></translation>
+        <translation>Results are out of date</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="423"/>
         <source>%1 of %2 matches</source>
         <extracomment>Search result matches e.g. &quot;6 of 11 matches&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 of %2 matches</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistsearchcontroller.cpp" line="426"/>
         <source>0 matches</source>
-        <translation type="unfinished"></translation>
+        <translation>0 matches</translation>
     </message>
 </context>
 <context>
@@ -12305,7 +12305,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="545"/>
         <source>Tab position</source>
-        <translation type="unfinished"></translation>
+        <translation>Tab position</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="562"/>
@@ -12344,7 +12344,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="32"/>
         <source>Playlist Tabs Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Playlist Tabs Settings</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="34"/>
@@ -12384,7 +12384,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="46"/>
         <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation>Position</translation>
     </message>
 </context>
 <context>
@@ -12410,12 +12410,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1236"/>
         <source>Use custom layout for this playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Use custom layout for this playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1237"/>
         <source>Use a separate view layout instead of the default</source>
-        <translation type="unfinished"></translation>
+        <translation>Use a separate view layout instead of the default</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1689"/>
@@ -12458,7 +12458,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1817"/>
         <source>Reverse the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Reverse the current playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1835"/>
@@ -12478,7 +12478,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1184"/>
         <source>Sort the current playlist using this preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Sort the current playlist using this preset</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1224"/>
@@ -12763,12 +12763,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="240"/>
         <source>fooyin Plugin (*.dll)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin Plugin (*.dll)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="242"/>
         <source>fooyin Plugin (*.so)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin Plugin (*.so)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="244"/>
@@ -12778,12 +12778,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="254"/>
         <source>Plugin Already Installed</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin Already Installed</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="255"/>
         <source>This plugin is already installed. Update it?</source>
-        <translation type="unfinished"></translation>
+        <translation>This plugin is already installed. Update it?</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="256"/>
@@ -12793,17 +12793,17 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="265"/>
         <source>Plugin Updated</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin Updated</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="272"/>
         <source>Plugin Installation Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin Installation Failed</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="272"/>
         <source>The plugin could not be installed.</source>
-        <translation type="unfinished"></translation>
+        <translation>The plugin could not be installed.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="265"/>
@@ -12850,22 +12850,22 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="41"/>
         <source>Track list</source>
-        <translation type="unfinished"></translation>
+        <translation>Track list</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="49"/>
         <source>Albums grouped by disc</source>
-        <translation type="unfinished"></translation>
+        <translation>Albums grouped by disc</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="66"/>
         <source>Albums with disc headers</source>
-        <translation type="unfinished"></translation>
+        <translation>Albums with disc headers</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="72"/>
         <source>Compact album headers</source>
-        <translation type="unfinished"></translation>
+        <translation>Compact album headers</translation>
     </message>
 </context>
 <context>
@@ -12878,7 +12878,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/projectm/projectmpresetdialog.cpp" line="45"/>
         <source>Filter presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter presets</translation>
     </message>
 </context>
 <context>
@@ -12886,12 +12886,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="47"/>
         <source> s</source>
-        <translation type="unfinished"></translation>
+        <translation> s</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="97"/>
         <source>projectM Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM Settings</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="100"/>
@@ -12901,32 +12901,32 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="101"/>
         <source>Scan for presets recursively</source>
-        <translation type="unfinished"></translation>
+        <translation>Scan for presets recursively</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="104"/>
         <source>Correct aspect ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>Correct aspect ratio</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="107"/>
         <source>Enable hard cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Enable hard cuts</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="113"/>
         <source>Preset library</source>
-        <translation type="unfinished"></translation>
+        <translation>Preset library</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="115"/>
         <source>Soft cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Soft cuts</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="117"/>
         <source>Hard cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Hard cuts</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="119"/>
@@ -12936,17 +12936,17 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="123"/>
         <source>Folder containing .milk presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Folder containing .milk presets</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="130"/>
         <source>Maximum rendering frame rate in frames per second</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum rendering frame rate in frames per second</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="136"/>
         <source>Resolution used to evaluate preset equations; higher values improve detail but require more processing</source>
-        <translation type="unfinished"></translation>
+        <translation>Resolution used to evaluate preset equations; higher values improve detail but require more processing</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="137"/>
@@ -12981,57 +12981,57 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="146"/>
         <source>Maximum time a preset is shown before projectM starts a smooth transition to the next preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum time a preset is shown before projectM starts a smooth transition to the next preset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="147"/>
         <source>Time taken to blend smoothly from one preset to the next</source>
-        <translation type="unfinished"></translation>
+        <translation>Time taken to blend smoothly from one preset to the next</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="149"/>
         <source>Allow strong beats to switch presets immediately instead of using a smooth transition</source>
-        <translation type="unfinished"></translation>
+        <translation>Allow strong beats to switch presets immediately instead of using a smooth transition</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="150"/>
         <source>Minimum time a preset must be shown before a beat can trigger a hard cut</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimum time a preset must be shown before a beat can trigger a hard cut</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="152"/>
         <source>Volume-change threshold for hard cuts; higher values require a stronger beat</source>
-        <translation type="unfinished"></translation>
+        <translation>Volume-change threshold for hard cuts; higher values require a stronger beat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="153"/>
         <source>Sensitivity of projectM&apos;s beat detection</source>
-        <translation type="unfinished"></translation>
+        <translation>Sensitivity of projectM&apos;s beat detection</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="167"/>
         <source>Time between auto preset changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Time between auto preset changes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="168"/>
         <source>Auto preset blend time</source>
-        <translation type="unfinished"></translation>
+        <translation>Auto preset blend time</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="172"/>
         <source>Average time between hard cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Average time between hard cuts</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="173"/>
         <source>Hard cut sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Hard cut sensitivity</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="174"/>
         <source>Beat sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Beat sensitivity</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="177"/>
@@ -13041,22 +13041,22 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="178"/>
         <source>Mesh size</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesh size</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="254"/>
         <source>Select Preset Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Select Preset Folder</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="267"/>
         <source>No user preset library is configured.</source>
-        <translation type="unfinished"></translation>
+        <translation>No user preset library is configured.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="271"/>
         <source>Folder does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Folder does not exist.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="279"/>
@@ -13072,12 +13072,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="50"/>
         <source>project&amp;M</source>
-        <translation type="unfinished"></translation>
+        <translation>project&amp;M</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="51"/>
         <source>Open projectM in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Open projectM in a separate window</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="53"/>
@@ -13094,7 +13094,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="58"/>
         <location filename="../../src/plugins/projectm/projectmplugin.cpp" line="65"/>
         <source>projectM</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM</translation>
     </message>
 </context>
 <context>
@@ -13108,7 +13108,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="392"/>
         <source>Preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Preset %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="415"/>
@@ -13118,7 +13118,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="420"/>
         <source>projectM requires OpenGL 3.3 or newer.</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM requires OpenGL 3.3 or newer.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="548"/>
@@ -13128,7 +13128,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="553"/>
         <source>No projectM preset folders are configured.</source>
-        <translation type="unfinished"></translation>
+        <translation>No projectM preset folders are configured.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="577"/>
@@ -13148,7 +13148,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="617"/>
         <source>Using presets from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Using presets from %1</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="618"/>
@@ -13165,108 +13165,108 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="147"/>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="572"/>
         <source>&amp;Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Full Screen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="148"/>
         <source>&amp;Select Preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Select Preset…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="149"/>
         <source>&amp;Previous Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Previous Preset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="150"/>
         <source>&amp;Next Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Next Preset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="151"/>
         <source>&amp;Random Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Random Preset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="152"/>
         <source>&amp;Lock Current Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Lock Current Preset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="153"/>
         <source>&amp;Shuffle Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Shuffle Presets</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="154"/>
         <source>Remember &amp;Current Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Remember &amp;Current Preset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="203"/>
         <source>No projectM presets were found in the configured location.</source>
-        <translation type="unfinished"></translation>
+        <translation>No projectM presets were found in the configured location.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="205"/>
         <source>Right-click to configure presets.</source>
-        <translation type="unfinished"></translation>
+        <translation>Right-click to configure presets.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="247"/>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="690"/>
         <source>projectM</source>
-        <translation type="unfinished"></translation>
+        <translation>projectM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="526"/>
         <source>Toggle projectM full screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Toggle projectM full screen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="530"/>
         <source>Select a projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Select a projectM preset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="534"/>
         <source>Switch to the previous projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Switch to the previous projectM preset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="540"/>
         <source>Switch to the next projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Switch to the next projectM preset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="547"/>
         <source>Switch to a random projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Switch to a random projectM preset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="551"/>
         <source>Lock the current projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Lock the current projectM preset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="555"/>
         <source>Shuffle projectM presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Shuffle projectM presets</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="559"/>
         <source>Remember the current projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Remember the current projectM preset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="572"/>
         <source>E&amp;xit Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>E&amp;xit Full Screen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="603"/>
         <source>Preset &amp;Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Preset &amp;Duration</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="607"/>
@@ -13397,12 +13397,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="245"/>
         <source>Reverse the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Reverse the playback queue</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="316"/>
         <source>Sort the playback queue using this preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Sort the playback queue using this preset</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="127"/>
@@ -13465,7 +13465,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="70"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation>Square</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="72"/>
@@ -13485,7 +13485,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="80"/>
         <source>Corner radius</source>
-        <translation type="unfinished"></translation>
+        <translation>Corner radius</translation>
     </message>
 </context>
 <context>
@@ -13509,7 +13509,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="57"/>
         <source>Playlist Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Playlist Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="58"/>
@@ -13534,7 +13534,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="70"/>
         <source>Dark mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Dark mode</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="126"/>
@@ -13549,12 +13549,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="135"/>
         <source>Dark mode is not supported by the current style.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dark mode is not supported by the current style.</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="142"/>
         <source>System defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>System defaults</translation>
     </message>
 </context>
 <context>
@@ -13889,17 +13889,17 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="42"/>
         <source>Show saved station icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Show saved station icons</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="43"/>
         <source>Show station tooltips</source>
-        <translation type="unfinished"></translation>
+        <translation>Show station tooltips</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="44"/>
         <source>Remember My Stations display separately</source>
-        <translation type="unfinished"></translation>
+        <translation>Remember My Stations display separately</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="45"/>
@@ -13909,7 +13909,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="50"/>
         <source>Apply icon gaps with right captions</source>
-        <translation type="unfinished"></translation>
+        <translation>Apply icon gaps with right captions</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="52"/>
@@ -13932,42 +13932,42 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="56"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="60"/>
         <source>Add or remove from My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Add or remove from My Stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="64"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately</source>
-        <translation type="unfinished"></translation>
+        <translation>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="65"/>
         <source>Exclude stations marked as broken by radio-browser.info from search results</source>
-        <translation type="unfinished"></translation>
+        <translation>Exclude stations marked as broken by radio-browser.info from search results</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="67"/>
         <source>Report played stations to radio-browser.info so click counts and station statistics stay up to date</source>
-        <translation type="unfinished"></translation>
+        <translation>Report played stations to radio-browser.info so click counts and station statistics stay up to date</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="69"/>
         <source>Draw station icons inside equally sized frames so rows and icon captions align consistently</source>
-        <translation type="unfinished"></translation>
+        <translation>Draw station icons inside equally sized frames so rows and icon captions align consistently</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="70"/>
         <source>Show an indicator for stations already in My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Show an indicator for stations already in My Stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="71"/>
         <source>Show station details when hovering over station rows and icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Show station details when hovering over station rows and icons</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="73"/>
         <source>Remember display mode and columns separately when browsing My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Remember display mode and columns separately when browsing My Stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="81"/>
@@ -13992,7 +13992,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="97"/>
         <source>Apply the configured horizontal and vertical gaps when captions appear to the right of station icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Apply the configured horizontal and vertical gaps when captions appear to the right of station icons</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="99"/>
@@ -14096,7 +14096,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="738"/>
         <source>Failed to load radio browser stations: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to load radio browser stations: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="762"/>
@@ -14143,12 +14143,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="449"/>
         <source>Station</source>
-        <translation type="unfinished"></translation>
+        <translation>Station</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="451"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Country</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="453"/>
@@ -14168,17 +14168,17 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="459"/>
         <source>Votes</source>
-        <translation type="unfinished"></translation>
+        <translation>Votes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="461"/>
         <source>Clicks</source>
-        <translation type="unfinished"></translation>
+        <translation>Clicks</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="463"/>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Tags</translation>
     </message>
 </context>
 <context>
@@ -14186,12 +14186,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="100"/>
         <source>Radio &amp;Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio &amp;Browser</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="101"/>
         <source>Open the Radio Browser window</source>
-        <translation type="unfinished"></translation>
+        <translation>Open the Radio Browser window</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="104"/>
@@ -14209,22 +14209,22 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="130"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="134"/>
         <source>Internet</source>
-        <translation type="unfinished"></translation>
+        <translation>Internet</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="129"/>
         <source>Radio Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio Search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="133"/>
         <source>Radio Guide</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio Guide</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="152"/>
         <source>Playback stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Playback stopped</translation>
     </message>
 </context>
 <context>
@@ -14232,51 +14232,51 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="197"/>
         <source>Unknown error</source>
-        <translation type="unfinished"></translation>
+        <translation>Unknown error</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="246"/>
         <source>Top clicked</source>
-        <translation type="unfinished"></translation>
+        <translation>Top clicked</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="251"/>
         <source>Top voted</source>
-        <translation type="unfinished"></translation>
+        <translation>Top voted</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="256"/>
         <source>Recently clicked</source>
-        <translation type="unfinished"></translation>
+        <translation>Recently clicked</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="261"/>
         <source>Recently changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Recently changed</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="592"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="730"/>
         <source>Request was cancelled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Request was canceled.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="623"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="680"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="763"/>
         <source>Unexpected response format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Unexpected response format.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="636"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="692"/>
         <source>Failed to parse station data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to parse station data.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserservice.cpp" line="776"/>
         <source>Failed to parse category data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to parse category data.</translation>
     </message>
 </context>
 <context>
@@ -14284,28 +14284,28 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="198"/>
         <source>Show search bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Show search bar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="199"/>
         <source>Add to My Stations</source>
-        <translation type="unfinished">Add to My Stations</translation>
+        <translation>Add to My Stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="200"/>
         <source>Remove from My Stations</source>
-        <translation type="unfinished">Remove from My Stations</translation>
+        <translation>Remove from My Stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="238"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="818"/>
         <source>No stations found</source>
-        <translation type="unfinished"></translation>
+        <translation>No stations found</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="239"/>
         <source>Loading stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Loading stations…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="243"/>
@@ -14317,12 +14317,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="246"/>
         <source>Add the selected stations to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Add the selected stations to My Stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="252"/>
         <source>Remove the selected stations from My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove the selected stations from My Stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="255"/>
@@ -14332,32 +14332,32 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="262"/>
         <source>Show or hide the Radio Browser filter bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Show or hide the Radio Browser filter bar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="818"/>
         <source>No saved stations</source>
-        <translation type="unfinished"></translation>
+        <translation>No saved stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="939"/>
         <source>Failed to load stations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to load stations.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="940"/>
         <source>Failed to load stations: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to load stations: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1123"/>
         <source>Saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Saved search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1123"/>
         <source>Save search</source>
-        <translation type="unfinished"></translation>
+        <translation>Save search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1150"/>
@@ -14367,27 +14367,27 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1154"/>
         <source>Rename saved search…</source>
-        <translation type="unfinished"></translation>
+        <translation>Rename saved search…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1155"/>
         <source>Rename the saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Rename the saved search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1158"/>
         <source>Remove saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove saved search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1159"/>
         <source>Remove the saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove the saved search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1170"/>
         <source>Rename Saved Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Rename Saved Search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1170"/>
@@ -14397,7 +14397,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1200"/>
         <source>Radio Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio Search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1531"/>
@@ -14407,7 +14407,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1533"/>
         <source>Play the selected station</source>
-        <translation type="unfinished"></translation>
+        <translation>Play the selected station</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1564"/>
@@ -14417,87 +14417,87 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1568"/>
         <source>Add the selected stations to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Add the selected stations to another playlist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1610"/>
         <source>Edit station…</source>
-        <translation type="unfinished"></translation>
+        <translation>Edit station…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1610"/>
         <source>View station details…</source>
-        <translation type="unfinished"></translation>
+        <translation>View station details…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1611"/>
         <source>Edit the selected custom station</source>
-        <translation type="unfinished"></translation>
+        <translation>Edit the selected custom station</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1612"/>
         <source>View details for the selected station</source>
-        <translation type="unfinished"></translation>
+        <translation>View details for the selected station</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1619"/>
         <source>Add custom station…</source>
-        <translation type="unfinished"></translation>
+        <translation>Add custom station…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1620"/>
         <source>Add a custom station to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Add a custom station to My Stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1629"/>
         <source>Copy stream URL</source>
-        <translation type="unfinished">Copy stream URL</translation>
+        <translation>Copy stream URL</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1630"/>
         <source>Copy the selected station stream URLs to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Copy the selected station stream URLs to the clipboard</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1649"/>
         <source>Open homepage</source>
-        <translation type="unfinished">Open homepage</translation>
+        <translation>Open homepage</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1650"/>
         <source>Open the selected station homepage in a browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Open the selected station homepage in a browser</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1663"/>
         <source>Open radio-browser.info page</source>
-        <translation type="unfinished">Open radio-browser.info page</translation>
+        <translation>Open radio-browser.info page</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1664"/>
         <source>Open the selected station on radio-browser.info</source>
-        <translation type="unfinished"></translation>
+        <translation>Open the selected station on radio-browser.info</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1695"/>
         <source>Import stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Import stations…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1696"/>
         <source>Import saved stations from a playlist file</source>
-        <translation type="unfinished"></translation>
+        <translation>Import saved stations from a playlist file</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1699"/>
         <source>Export stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Export stations…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1700"/>
         <source>Export My Stations to a playlist file</source>
-        <translation type="unfinished"></translation>
+        <translation>Export My Stations to a playlist file</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1718"/>
@@ -14507,7 +14507,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1719"/>
         <source>Automatically size columns to fill the available width</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatically size columns to fill the available width</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1726"/>
@@ -14528,27 +14528,27 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1791"/>
         <source>Icons (right captions)</source>
-        <translation type="unfinished"></translation>
+        <translation>Icons (right captions)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1792"/>
         <source>Icons (bottom captions)</source>
-        <translation type="unfinished"></translation>
+        <translation>Icons (bottom captions)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1833"/>
         <source>Show station icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Show station icons</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1842"/>
         <source>Show station tooltips</source>
-        <translation type="unfinished"></translation>
+        <translation>Show station tooltips</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1851"/>
         <source>Show saved station icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Show saved station icons</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1860"/>
@@ -14571,12 +14571,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="74"/>
         <source>Radio Guide Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio Guide Settings</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="77"/>
         <source>Add Section</source>
-        <translation type="unfinished"></translation>
+        <translation>Add Section</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="78"/>
@@ -14601,7 +14601,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="82"/>
         <source>Show Countries</source>
-        <translation type="unfinished"></translation>
+        <translation>Show Countries</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="105"/>
@@ -14611,37 +14611,37 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="110"/>
         <source>Startup selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Startup selection</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="118"/>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Tags</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="248"/>
         <source>Restore previous selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Restore previous selection</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="249"/>
         <source>Popular</source>
-        <translation type="unfinished"></translation>
+        <translation>Popular</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="250"/>
         <source>Trending</source>
-        <translation type="unfinished"></translation>
+        <translation>Trending</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="251"/>
         <source>Now Listening</source>
-        <translation type="unfinished"></translation>
+        <translation>Now Listening</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="252"/>
         <source>Newest</source>
-        <translation type="unfinished"></translation>
+        <translation>Newest</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="253"/>
@@ -14656,18 +14656,18 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="255"/>
         <source>Latest Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Latest Search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="275"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="286"/>
         <source>New Section</source>
-        <translation type="unfinished"></translation>
+        <translation>New Section</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="290"/>
         <source>New Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>New Preset</translation>
     </message>
 </context>
 <context>
@@ -14680,7 +14680,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigmodel.cpp" line="91"/>
         <source>Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag</translation>
     </message>
 </context>
 <context>
@@ -14694,179 +14694,179 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="86"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="141"/>
         <source>Blues</source>
-        <translation type="unfinished"></translation>
+        <translation>Blues</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="87"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="142"/>
         <source>Classical</source>
-        <translation type="unfinished"></translation>
+        <translation>Classical</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="88"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="143"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Country</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="89"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="144"/>
         <source>Dance</source>
-        <translation type="unfinished"></translation>
+        <translation>Dance</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="90"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="145"/>
         <source>Disco</source>
-        <translation type="unfinished"></translation>
+        <translation>Disco</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="91"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="146"/>
         <source>Easy</source>
-        <translation type="unfinished"></translation>
+        <translation>Easy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="92"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="147"/>
         <source>Folk</source>
-        <translation type="unfinished"></translation>
+        <translation>Folk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="93"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="148"/>
         <source>Hits</source>
-        <translation type="unfinished"></translation>
+        <translation>Hits</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="94"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="149"/>
         <source>Jazz</source>
-        <translation type="unfinished"></translation>
+        <translation>Jazz</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="95"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="150"/>
         <source>Oldies</source>
-        <translation type="unfinished"></translation>
+        <translation>Oldies</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="96"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="151"/>
         <source>Pop</source>
-        <translation type="unfinished"></translation>
+        <translation>Pop</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="97"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="152"/>
         <source>Rap</source>
-        <translation type="unfinished"></translation>
+        <translation>Rap</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="98"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="153"/>
         <source>Rock</source>
-        <translation type="unfinished"></translation>
+        <translation>Rock</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="99"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="154"/>
         <source>Soul</source>
-        <translation type="unfinished"></translation>
+        <translation>Soul</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="101"/>
         <source>More Genres</source>
-        <translation type="unfinished"></translation>
+        <translation>More Genres</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="102"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="155"/>
         <source>Alternative</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternative</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="103"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="156"/>
         <source>Ambient</source>
-        <translation type="unfinished"></translation>
+        <translation>Ambient</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="104"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="157"/>
         <source>Club</source>
-        <translation type="unfinished"></translation>
+        <translation>Club</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="105"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="158"/>
         <source>Electronic</source>
-        <translation type="unfinished"></translation>
+        <translation>Electronic</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="106"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="159"/>
         <source>Funk</source>
-        <translation type="unfinished"></translation>
+        <translation>Funk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="107"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="160"/>
         <source>Hip Hop</source>
-        <translation type="unfinished"></translation>
+        <translation>Hip Hop</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="108"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="161"/>
         <source>House</source>
-        <translation type="unfinished"></translation>
+        <translation>House</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="109"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="162"/>
         <source>Indie</source>
-        <translation type="unfinished"></translation>
+        <translation>Indie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="110"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="163"/>
         <source>Latino</source>
-        <translation type="unfinished"></translation>
+        <translation>Latino</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="111"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="164"/>
         <source>Metal</source>
-        <translation type="unfinished"></translation>
+        <translation>Metal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="112"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="165"/>
         <source>Punk</source>
-        <translation type="unfinished"></translation>
+        <translation>Punk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="113"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="166"/>
         <source>Reggae</source>
-        <translation type="unfinished"></translation>
+        <translation>Reggae</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="114"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="167"/>
         <source>Salsa</source>
-        <translation type="unfinished"></translation>
+        <translation>Salsa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="115"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="168"/>
         <source>World Music</source>
-        <translation type="unfinished"></translation>
+        <translation>World Music</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="117"/>
         <source>Eras</source>
-        <translation type="unfinished"></translation>
+        <translation>Eras</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="118"/>
@@ -14912,42 +14912,42 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="127"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="135"/>
         <source>Talk</source>
-        <translation type="unfinished"></translation>
+        <translation>Talk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="128"/>
         <source>College Radio</source>
-        <translation type="unfinished"></translation>
+        <translation>College Radio</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="129"/>
         <source>Community Radio</source>
-        <translation type="unfinished"></translation>
+        <translation>Community Radio</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="130"/>
         <source>Culture</source>
-        <translation type="unfinished"></translation>
+        <translation>Culture</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="131"/>
         <source>News</source>
-        <translation type="unfinished"></translation>
+        <translation>News</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="132"/>
         <source>Public Radio</source>
-        <translation type="unfinished"></translation>
+        <translation>Public Radio</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="133"/>
         <source>Religion</source>
-        <translation type="unfinished"></translation>
+        <translation>Religion</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="134"/>
         <source>Sport</source>
-        <translation type="unfinished"></translation>
+        <translation>Sport</translation>
     </message>
 </context>
 <context>
@@ -14956,31 +14956,31 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="170"/>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="198"/>
         <source>Selections</source>
-        <translation type="unfinished"></translation>
+        <translation>Selections</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="171"/>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="199"/>
         <source>Popular</source>
-        <translation type="unfinished"></translation>
+        <translation>Popular</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="172"/>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="200"/>
         <source>Trending</source>
-        <translation type="unfinished"></translation>
+        <translation>Trending</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="173"/>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="201"/>
         <source>Now Listening</source>
-        <translation type="unfinished"></translation>
+        <translation>Now Listening</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="174"/>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="202"/>
         <source>Newest</source>
-        <translation type="unfinished"></translation>
+        <translation>Newest</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="175"/>
@@ -15004,18 +15004,18 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="179"/>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="207"/>
         <source>Latest Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Latest Search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="183"/>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="212"/>
         <source>Countries</source>
-        <translation type="unfinished"></translation>
+        <translation>Countries</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="427"/>
         <source>Saved Searches</source>
-        <translation type="unfinished"></translation>
+        <translation>Saved Searches</translation>
     </message>
 </context>
 <context>
@@ -15023,32 +15023,32 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="54"/>
         <source>Loading Countries…</source>
-        <translation type="unfinished"></translation>
+        <translation>Loading Countries…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="56"/>
         <source>Loading Languages…</source>
-        <translation type="unfinished"></translation>
+        <translation>Loading Languages…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="58"/>
         <source>Loading Genres…</source>
-        <translation type="unfinished"></translation>
+        <translation>Loading Genres…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="60"/>
         <source>Loading Codecs…</source>
-        <translation type="unfinished"></translation>
+        <translation>Loading Codecs…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="63"/>
         <source>Loading…</source>
-        <translation type="unfinished"></translation>
+        <translation>Loading…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="108"/>
         <source>Selections</source>
-        <translation type="unfinished"></translation>
+        <translation>Selections</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="108"/>
@@ -15058,77 +15058,77 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="233"/>
         <source>Radio Guide</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio Guide</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="572"/>
         <source>Browse</source>
-        <translation type="unfinished"></translation>
+        <translation>Browse</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="573"/>
         <source>Browse the selected section</source>
-        <translation type="unfinished"></translation>
+        <translation>Browse the selected section</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="581"/>
         <source>Rename saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Rename saved search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="582"/>
         <source>Rename the selected saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Rename the selected saved search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="585"/>
         <source>Remove saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove saved search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="586"/>
         <source>Remove the selected saved search</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove the selected saved search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="596"/>
         <source>Add custom station…</source>
-        <translation type="unfinished"></translation>
+        <translation>Add custom station…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="597"/>
         <source>Add a custom station to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Add a custom station to My Stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="602"/>
         <source>Import stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Import stations…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="603"/>
         <source>Import saved stations from a playlist file</source>
-        <translation type="unfinished"></translation>
+        <translation>Import saved stations from a playlist file</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="606"/>
         <source>Export stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Export stations…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="607"/>
         <source>Export My Stations to a playlist file</source>
-        <translation type="unfinished"></translation>
+        <translation>Export My Stations to a playlist file</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="614"/>
         <source>Expand all</source>
-        <translation type="unfinished"></translation>
+        <translation>Expand all</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="617"/>
         <source>Collapse all</source>
-        <translation type="unfinished"></translation>
+        <translation>Collapse all</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="630"/>
@@ -15146,12 +15146,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="123"/>
         <source>Reset filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Reset filters</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="132"/>
         <source>Search stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Search stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="135"/>
@@ -15159,7 +15159,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="395"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="916"/>
         <source>Any country</source>
-        <translation type="unfinished"></translation>
+        <translation>Any country</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="138"/>
@@ -15167,13 +15167,13 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="403"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="944"/>
         <source>Any language</source>
-        <translation type="unfinished"></translation>
+        <translation>Any language</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="141"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="575"/>
         <source>Any genre</source>
-        <translation type="unfinished"></translation>
+        <translation>Any genre</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="145"/>
@@ -15181,7 +15181,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="621"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="624"/>
         <source>Any tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Any tag</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="148"/>
@@ -15189,7 +15189,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="419"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1012"/>
         <source>Any codec</source>
-        <translation type="unfinished"></translation>
+        <translation>Any codec</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="154"/>
@@ -15205,18 +15205,18 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="172"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="854"/>
         <source>Clear filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Clear filter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="176"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1234"/>
         <source>Pin filter to bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Pin filter to bar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="183"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Country</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="184"/>
@@ -15231,7 +15231,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="186"/>
         <source>Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="187"/>
@@ -15253,17 +15253,17 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="192"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="833"/>
         <source>Show filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Show filters</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="200"/>
         <source>Reset all filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Reset all filters</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="274"/>
         <source>Radio Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio Search</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="396"/>
@@ -15309,7 +15309,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="826"/>
         <source>Filters (%1)</source>
         <extracomment>%1 is the number of active search filters</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Filters (%1)</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="827"/>
@@ -15322,12 +15322,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1040"/>
         <source>Min bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Min bitrate</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1047"/>
         <source>Max bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Max bitrate</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1085"/>
@@ -15337,7 +15337,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1234"/>
         <source>Unpin filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Unpin filter</translation>
     </message>
 </context>
 <context>
@@ -15348,33 +15348,33 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="442"/>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="477"/>
         <source>Station validated.</source>
-        <translation type="unfinished"></translation>
+        <translation>Station validated.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="129"/>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="368"/>
         <source>Enter a station name and stream URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>Enter a station name and stream URL.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="138"/>
         <source>Add Custom Station</source>
-        <translation type="unfinished"></translation>
+        <translation>Add Custom Station</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="141"/>
         <source>Edit Custom Station</source>
-        <translation type="unfinished"></translation>
+        <translation>Edit Custom Station</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="144"/>
         <source>Station Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Station Details</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="166"/>
         <source>Separate tags with commas</source>
-        <translation type="unfinished"></translation>
+        <translation>Separate tags with commas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="172"/>
@@ -15391,27 +15391,27 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="185"/>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="213"/>
         <source>Stream URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Stream URL</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="189"/>
         <source>Homepage</source>
-        <translation type="unfinished"></translation>
+        <translation>Homepage</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="191"/>
         <source>Favicon</source>
-        <translation type="unfinished"></translation>
+        <translation>Favicon</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="193"/>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Tags</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="195"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Country</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="197"/>
@@ -15431,42 +15431,42 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="373"/>
         <source>Waiting to validate…</source>
-        <translation type="unfinished"></translation>
+        <translation>Waiting to validate…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="385"/>
         <source>Radio Browser is unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio Browser is unavailable.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="395"/>
         <source>Validating station…</source>
-        <translation type="unfinished"></translation>
+        <translation>Validating station…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="404"/>
         <source>Station could not be validated.</source>
-        <translation type="unfinished"></translation>
+        <translation>Station could not be validated.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="421"/>
         <source>Station validated. Looking up station details…</source>
-        <translation type="unfinished"></translation>
+        <translation>Station validated. Looking up station details…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="460"/>
         <source>Station validated. Details found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Station validated. Details found.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="501"/>
         <source>▼ Details</source>
-        <translation type="unfinished"></translation>
+        <translation>▼ Details</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="501"/>
         <source>▶ Details</source>
-        <translation type="unfinished"></translation>
+        <translation>▶ Details</translation>
     </message>
 </context>
 <context>
@@ -15475,14 +15475,14 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="54"/>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="72"/>
         <source>Export Radio Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Export Radio Stations</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="77"/>
         <source>Exported %n radio station(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Exported %n radio station.</numerusform>
+            <numerusform>Exported %n radio stations.</numerusform>
         </translation>
     </message>
     <message>
@@ -15490,7 +15490,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="109"/>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="169"/>
         <source>Import Radio Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Import Radio Stations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="89"/>
@@ -15500,7 +15500,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="91"/>
         <source>Append</source>
-        <translation type="unfinished"></translation>
+        <translation>Append</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="92"/>
@@ -15510,7 +15510,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="121"/>
         <source>Importing radio stations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importing radio stations…</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="150"/>
@@ -15531,7 +15531,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="174"/>
         <source>M3U Playlists (*.m3u8);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>M3U Playlists (*.m3u8);;All Files (*)</translation>
     </message>
 </context>
 <context>
@@ -15539,7 +15539,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationview.cpp" line="37"/>
         <source>Retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Retry</translation>
     </message>
 </context>
 <context>
@@ -15547,12 +15547,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostreamresolver.cpp" line="126"/>
         <source>Invalid stream URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>Invalid stream URL.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostreamresolver.cpp" line="295"/>
         <source>Playlist did not contain any playable streams.</source>
-        <translation type="unfinished"></translation>
+        <translation>Playlist did not contain any playable streams.</translation>
     </message>
 </context>
 <context>
@@ -15560,43 +15560,43 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="52"/>
         <source>ReplayGain</source>
-        <translation type="unfinished">ReplayGain</translation>
+        <translation>ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="68"/>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="147"/>
         <source>Disabled</source>
-        <translation type="unfinished">Disabled</translation>
+        <translation>Disabled</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="69"/>
         <source>Prefer track gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Prefer track gain</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="70"/>
         <source>Prefer album gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Prefer album gain</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="71"/>
         <source>By playback order</source>
-        <translation type="unfinished"></translation>
+        <translation>By playback order</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="110"/>
         <source>ReplayGain Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain Mode</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="147"/>
         <source>ReplayGain disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain disabled</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="158"/>
         <source>Show label</source>
-        <translation type="unfinished">Show label</translation>
+        <translation>Show label</translation>
     </message>
 </context>
 <context>
@@ -16543,7 +16543,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="84"/>
         <source>Search Matching</source>
-        <translation type="unfinished"></translation>
+        <translation>Search Matching</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="87"/>
@@ -16573,37 +16573,37 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="96"/>
         <source>Match beginnings of words</source>
-        <translation type="unfinished"></translation>
+        <translation>Match beginnings of words</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="97"/>
         <source>Match anywhere</source>
-        <translation type="unfinished"></translation>
+        <translation>Match anywhere</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="100"/>
         <source>Search mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Search mode</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="102"/>
         <source>Search script</source>
-        <translation type="unfinished"></translation>
+        <translation>Search script</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="105"/>
         <source>These settings are used for plain text searches, not query expressions.</source>
-        <translation type="unfinished"></translation>
+        <translation>These settings are used for plain text searches, not query expressions.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="112"/>
         <source>Only applies when autosearch is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Only applies when autosearch is disabled.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="120"/>
         <source>Results Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Results Playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="124"/>
@@ -16744,7 +16744,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/widgets/seekcontainer.cpp" line="71"/>
         <source>Live</source>
-        <translation type="unfinished"></translation>
+        <translation>Live</translation>
     </message>
 </context>
 <context>
@@ -16827,7 +16827,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfosettingspage.cpp" line="76"/>
         <source>Enabled fields use the configured name and order. Other tags are shown as &lt;TAG&gt; when extended metadata is enabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Enabled fields use the configured name and order. Other tags are shown as &lt;TAG&gt; when extended metadata is enabled.</translation>
     </message>
 </context>
 <context>
@@ -17023,7 +17023,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/sleepinhibitor/platforms/inhibitordbus.cpp" line="94"/>
         <source>fooyin is running</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin is running</translation>
     </message>
 </context>
 <context>
@@ -17031,7 +17031,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/sleepinhibitor/platforms/inhibitormacos.cpp" line="36"/>
         <source>fooyin is running</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin is running</translation>
     </message>
 </context>
 <context>
@@ -17039,17 +17039,17 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="33"/>
         <source>Inhibit system sleep</source>
-        <translation type="unfinished"></translation>
+        <translation>Inhibit system sleep</translation>
     </message>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="34"/>
         <source>Inhibit system sleep during playback only</source>
-        <translation type="unfinished"></translation>
+        <translation>Inhibit system sleep during playback only</translation>
     </message>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="38"/>
         <source>Sleep Inhibitor Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Sleep Inhibitor Settings</translation>
     </message>
 </context>
 <context>
@@ -17083,7 +17083,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/gui/sortactionhandler.cpp" line="141"/>
         <source>Open the sorting presets settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Open the sorting presets settings</translation>
     </message>
 </context>
 <context>
@@ -17280,17 +17280,17 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="36"/>
         <source>Spectrogram Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Spectrogram Settings</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="37"/>
         <source>Use logarithmic frequency scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Use logarithmic frequency scale</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="38"/>
         <source>Clear on track change</source>
-        <translation type="unfinished"></translation>
+        <translation>Clear on track change</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="48"/>
@@ -17301,7 +17301,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="55"/>
         <source>Unchanged</source>
-        <translation type="unfinished"></translation>
+        <translation>Unchanged</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="56"/>
@@ -17311,12 +17311,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="57"/>
         <source>Front Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Front Only</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="58"/>
         <source>Back Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Back Only</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="60"/>
@@ -17326,7 +17326,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="61"/>
         <source>Stationary</source>
-        <translation type="unfinished"></translation>
+        <translation>Stationary</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="63"/>
@@ -17346,7 +17346,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="70"/>
         <source>Vertical space between the left and right channel spectrograms.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertical space between the left and right channel spectrograms.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="75"/>
@@ -17371,7 +17371,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="85"/>
         <source>Window function</source>
-        <translation type="unfinished"></translation>
+        <translation>Window function</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="89"/>
@@ -17381,12 +17381,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="96"/>
         <source>Minimum level</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimum level</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="98"/>
         <source>Maximum level</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum level</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="100"/>
@@ -17404,12 +17404,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="46"/>
         <source>Spectro&amp;gram</source>
-        <translation type="unfinished"></translation>
+        <translation>Spectro&amp;gram</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="47"/>
         <source>Open a spectrogram in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Open a spectrogram in a separate window</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="49"/>
@@ -17420,7 +17420,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="53"/>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="58"/>
         <source>Spectrogram</source>
-        <translation type="unfinished"></translation>
+        <translation>Spectrogram</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="49"/>
@@ -17434,12 +17434,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="552"/>
         <source>Use logarithmic frequency scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Use logarithmic frequency scale</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="553"/>
         <source>Clear on track change</source>
-        <translation type="unfinished"></translation>
+        <translation>Clear on track change</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="557"/>
@@ -17449,7 +17449,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="571"/>
         <source>Unchanged</source>
-        <translation type="unfinished"></translation>
+        <translation>Unchanged</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="572"/>
@@ -17459,12 +17459,12 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="573"/>
         <source>Front Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Front Only</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="574"/>
         <source>Back Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Back Only</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="576"/>
@@ -17479,7 +17479,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="591"/>
         <source>Stationary</source>
-        <translation type="unfinished"></translation>
+        <translation>Stationary</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="593"/>
@@ -17592,7 +17592,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="251"/>
         <source>Duration (sample-rate based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Duration (sample-rate based)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="252"/>
@@ -17678,7 +17678,7 @@ Changes take effect the next time the PipeWire output is initialised.</translati
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="271"/>
         <source>Number of samples analysed per spectrum frame; higher values improve frequency detail but respond more slowly</source>
-        <translation>Number of samples analysed per spectrum frame; higher values improve frequency detail but respond more slowly</translation>
+        <translation>Number of samples analyzed per spectrum frame; higher values improve frequency detail but respond more slowly</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="274"/>
@@ -19864,7 +19864,7 @@ Higher supersampling values work best with higher sample counts.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="288"/>
         <source>ReplayGain Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain Mode</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="294"/>
