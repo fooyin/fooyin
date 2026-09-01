@@ -5,16 +5,25 @@
 ### New Features
 
 * Audio CD: Add playback and ripping with AccurateRip verification ([#834](https://github.com/fooyin/fooyin/issues/834), [#1558](https://github.com/fooyin/fooyin/pull/1558))
+* Audio Verification: Add file integrity checks and AccurateRip verification for complete discs
 * Metadata Lookup: Add MusicBrainz metadata lookup ([#1554](https://github.com/fooyin/fooyin/pull/1554))
 
 ### Improvements
 
+* Audio Conversion
+  - Add detailed conversion results
+  - Add a per-preset option to show output files in a detached playlist
 * Command Button: Add searchable command and icon pickers
 * Discord: Add local and MusicBrainz artwork to Rich Presence ([#812](https://github.com/fooyin/fooyin/issues/812))
 * Interface
   - Add per-layout visibility for the Layout menu
+  - Refine wording and typography ([#1561](https://github.com/fooyin/fooyin/pull/1561))
   - Update application icons and logos
+* Library/Metadata: Support per-track metadata and reliable reloads for embedded CUE sheets ([#1549](https://github.com/fooyin/fooyin/issues/1549), [#1567](https://github.com/fooyin/fooyin/issues/1567))
 * Notifications: Make notifications on track repeat optional ([#1545](https://github.com/fooyin/fooyin/issues/1545))
+* Playlist
+  - Add custom grouping scripts to presets ([#1566](https://github.com/fooyin/fooyin/issues/1566))
+  - Replace the default playlist contents when opening external files by default
 
 ### Fixes
 
@@ -23,6 +32,8 @@
   - Apply all changes when confirming Properties dialogs without Apply ([#939](https://github.com/fooyin/fooyin/issues/939))
   - Fix icon scaling in the system tray and interface
   - Prevent track context menu access during destruction
+  - Fix the Settings category tree width in some styles
+* Library Tree: Keep the existing tree visible until replacement population completes ([#1559](https://github.com/fooyin/fooyin/issues/1559))
 * Library/Metadata
   - Prevent stale playcount updates overwriting newer ratings ([#1563](https://github.com/fooyin/fooyin/issues/1563))
   - Flush file changes after tag writes ([#1557](https://github.com/fooyin/fooyin/pull/1557))
@@ -36,6 +47,7 @@
 
 * CI: Reuse a single pre-release for nightly builds
 * Dependencies: Add libcdio and libcdio-paranoia for Audio CD support
+* Translations: Update translations and translation sources ([#1562](https://github.com/fooyin/fooyin/pull/1562), [#1569](https://github.com/fooyin/fooyin/pull/1569), [#1571](https://github.com/fooyin/fooyin/pull/1571))
 * Windows: Enable MP3, Opus, and Vorbis encoders ([#1542](https://github.com/fooyin/fooyin/issues/1542))
 
 
