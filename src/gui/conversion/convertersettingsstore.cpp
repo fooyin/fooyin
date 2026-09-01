@@ -129,6 +129,7 @@ QJsonObject conversionPresetToJson(const StoredConversionPreset& stored)
         {u"copyFilesPattern"_s, preset.other.copyFilesPattern},
         {u"verifyOutput"_s, preset.other.verifyOutput},
         {u"showReport"_s, stored.showReport},
+        {u"showOutputFiles"_s, stored.showOutputFiles},
     };
 }
 
@@ -166,6 +167,7 @@ StoredConversionPreset conversionPresetFromJson(const QJsonObject& object)
     stored.preset.other.copyFilesPattern   = object.value(u"copyFilesPattern"_s).toString();
     stored.preset.other.verifyOutput       = object.value(u"verifyOutput"_s).toBool(false);
     stored.showReport                      = object.value(u"showReport"_s).toBool(true);
+    stored.showOutputFiles                 = object.value(u"showOutputFiles"_s).toBool(false);
 
     return stored;
 }

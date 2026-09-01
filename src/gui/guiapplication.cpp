@@ -111,6 +111,7 @@
 #include <QAction>
 #include <QApplication>
 #include <QCheckBox>
+#include <QDialog>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QGuiApplication>
@@ -131,6 +132,7 @@
 #include <QStyleHints>
 #include <QTimer>
 #include <QUrl>
+#include <QVBoxLayout>
 
 #include <optional>
 
@@ -139,7 +141,8 @@ Q_LOGGING_CATEGORY(GUI_APP, "fy.gui")
 using namespace std::chrono_literals;
 using namespace Qt::StringLiterals;
 
-constexpr auto ThemeUpdateDelayMs = 50;
+constexpr auto ThemeUpdateDelayMs   = 50;
+constexpr auto ConverterOutputState = "Converter/Output"_L1;
 
 namespace Fooyin {
 namespace {
@@ -304,6 +307,8 @@ GuiApplication::GuiApplication(Application* core)
     m_coverRepository->setPendingTrackCoverProvider(m_core->pendingTrackCoverProvider());
 
     m_guiPluginContext.conversionService = m_conversionController;
+    QObject::connect(m_conversionController, &ConversionController::convertedFilesReady, this,
+                     &GuiApplication::showConvertedFiles);
 
     m_scriptParser.addProvider(playlistVariableProvider());
 
@@ -1288,7 +1293,49 @@ void GuiApplication::startConversionPreset(const StoredConversionPreset& stored,
     }
 
     ConversionJob job{.tracks = tracks, .preset = stored.preset};
-    m_conversionController->start(std::move(job), std::move(askFolder), stored.showReport);
+    m_conversionController->start(std::move(job), std::move(askFolder), stored.showReport, stored.showOutputFiles);
+}
+
+void GuiApplication::showConvertedFiles(const TrackList& tracks)
+{
+    if(tracks.empty()) {
+        return;
+    }
+
+    auto* dialog = new QDialog(m_mainWindow.get());
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->setWindowTitle(tr("Converter Output"));
+    dialog->resize(800, 480);
+
+    auto* view
+        = PlaylistWidget::createDetachedTracks(m_actionManager, &m_playlistInteractor, m_selectionController.get(),
+                                               &m_coverProvider, m_core, m_styleProvider, tracks, dialog);
+
+    auto* layout = new QVBoxLayout(dialog);
+    layout->setContentsMargins({});
+    layout->addWidget(view);
+
+    const FyStateSettings savedSettings;
+    const QJsonObject savedState = savedSettings.value(ConverterOutputState).toJsonObject();
+    if(!savedState.isEmpty()) {
+        view->loadLayoutData(savedState);
+        if(const QByteArray geometry = QByteArray::fromBase64(savedState.value("Geometry"_L1).toString().toUtf8());
+           !geometry.isEmpty()) {
+            dialog->restoreGeometry(geometry);
+        }
+    }
+
+    QObject::connect(dialog, &QDialog::finished, dialog, [dialog, view]() {
+        QJsonObject outputState;
+        view->saveLayoutData(outputState);
+        outputState["Geometry"_L1] = QString::fromUtf8(dialog->saveGeometry().toBase64());
+
+        FyStateSettings outputSettings;
+        outputSettings.setValue(ConverterOutputState, outputState);
+    });
+
+    view->finalise();
+    dialog->show();
 }
 
 void GuiApplication::startDefaultConversion(const TrackList& tracks)

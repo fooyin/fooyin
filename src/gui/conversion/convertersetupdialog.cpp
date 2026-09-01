@@ -115,6 +115,7 @@ ConverterSetupDialog::ConverterSetupDialog(AudioEncoderRegistry* registry, DspCh
     , m_generatePreview{new QCheckBox(tr("Generate short previews instead of converting entire tracks"), this)}
     , m_previewPercentage{new QSpinBox(this)}
     , m_showReport{new QCheckBox(tr("Show full status report"), this)}
+    , m_showOutputFiles{new QCheckBox(tr("Show converted files when finished"), this)}
     , m_copyFilesPattern{new QLineEdit(this)}
     , m_verifyOutput{new QCheckBox(tr("Verify converted output"), this)}
     , m_outputSummary{new QLabel(this)}
@@ -197,6 +198,11 @@ QString ConverterSetupDialog::askFolder() const
 bool ConverterSetupDialog::showReport() const
 {
     return m_showReport->isChecked();
+}
+
+bool ConverterSetupDialog::showOutputFiles() const
+{
+    return m_showOutputFiles->isChecked();
 }
 
 void ConverterSetupDialog::applySuggestedFilenamePattern(const QString& pattern)
@@ -527,6 +533,7 @@ QWidget* ConverterSetupDialog::createOtherPage()
     auto* whenDoneBox    = new QGroupBox(tr("When done"), this);
     auto* whenDoneLayout = new QVBoxLayout(whenDoneBox);
     whenDoneLayout->addWidget(m_showReport);
+    whenDoneLayout->addWidget(m_showOutputFiles);
     whenDoneLayout->addWidget(m_verifyOutput);
 
     auto* copyFilesBox    = new QGroupBox(tr("Copy other files to the destination folder"), this);
@@ -543,6 +550,7 @@ QWidget* ConverterSetupDialog::createOtherPage()
     QObject::connect(m_generatePreview, &QCheckBox::toggled, this, &ConverterSetupDialog::updateState);
     QObject::connect(m_previewPercentage, &QSpinBox::valueChanged, this, &ConverterSetupDialog::updateOverview);
     QObject::connect(m_showReport, &QCheckBox::toggled, this, &ConverterSetupDialog::updateOverview);
+    QObject::connect(m_showOutputFiles, &QCheckBox::toggled, this, &ConverterSetupDialog::updateOverview);
     QObject::connect(m_copyFilesPattern, &QLineEdit::textChanged, this, &ConverterSetupDialog::updateOverview);
     QObject::connect(m_verifyOutput, &QCheckBox::toggled, this, &ConverterSetupDialog::updateOverview);
 
@@ -826,11 +834,12 @@ void ConverterSetupDialog::savePreset()
         presetId = QUuid::createUuid().toString(QUuid::WithoutBraces);
     }
 
-    stored.name        = name;
-    stored.preset      = job().preset;
-    stored.preset.id   = presetId;
-    stored.preset.name = name;
-    stored.showReport  = m_showReport->isChecked();
+    stored.name            = name;
+    stored.preset          = job().preset;
+    stored.preset.id       = presetId;
+    stored.preset.name     = name;
+    stored.showReport      = m_showReport->isChecked();
+    stored.showOutputFiles = m_showOutputFiles->isChecked();
 
     if(existing != m_presets.end()) {
         *existing = std::move(stored);
@@ -1021,6 +1030,7 @@ void ConverterSetupDialog::applyPreset(const StoredConversionPreset& stored)
     m_copyFilesPattern->setText(stored.preset.other.copyFilesPattern);
     m_verifyOutput->setChecked(stored.preset.other.verifyOutput);
     m_showReport->setChecked(stored.showReport);
+    m_showOutputFiles->setChecked(stored.showOutputFiles);
 
     updateState();
 }
@@ -1066,6 +1076,7 @@ void ConverterSetupDialog::applyDefaultPreset()
     m_copyFilesPattern->clear();
     m_verifyOutput->setChecked(false);
     m_showReport->setChecked(true);
+    m_showOutputFiles->setChecked(false);
     updateState();
 }
 
@@ -1231,6 +1242,9 @@ void ConverterSetupDialog::updateOverview()
     }
     if(m_showReport->isChecked()) {
         other.push_back(tr("Show status report"));
+    }
+    if(m_showOutputFiles->isChecked()) {
+        other.push_back(tr("Show converted files"));
     }
     if(!m_copyFilesPattern->text().trimmed().isEmpty()) {
         other.push_back(tr("Copy matching files"));

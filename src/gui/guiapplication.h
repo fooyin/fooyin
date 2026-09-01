@@ -153,6 +153,7 @@ private:
     void startConversionPreset(const StoredConversionPreset& preset, const TrackList& tracks);
     void startDefaultConversion(const TrackList& tracks);
     void startLastUsedConversion(const TrackList& tracks);
+    void showConvertedFiles(const TrackList& tracks);
 
     void close();
     void changeVolume(double delta) const;

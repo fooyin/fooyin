@@ -35,6 +35,11 @@ std::unique_ptr<PlaylistWidgetSession> PlaylistWidgetSession::createDetachedLibr
     return std::make_unique<DetachedLibrarySession>();
 }
 
+std::unique_ptr<PlaylistWidgetSession> PlaylistWidgetSession::createDetachedTracks(const TrackList& tracks)
+{
+    return std::make_unique<DetachedTrackListSession>(tracks);
+}
+
 QString DetachedSearchSession::emptyText() const
 {
     return PlaylistWidget::tr("No results");
@@ -162,6 +167,46 @@ bool DetachedLibrarySession::canResetWithoutPlaylist() const
 }
 
 PlaylistAction::ActionOptions DetachedLibrarySession::playbackOptions() const
+{
+    return PlaylistAction::TempPlaylist;
+}
+
+DetachedTrackListSession::DetachedTrackListSession(const TrackList& tracks)
+    : m_tracks{PlaylistTrack::fromTracks(tracks, {})}
+{
+    setFilteredTracks(m_tracks);
+}
+
+PlaylistWidget::ModeCapabilities DetachedTrackListSession::capabilities() const
+{
+    return {};
+}
+
+TrackSelection DetachedTrackListSession::selection(Playlist* /*currentPlaylist*/, const TrackList& tracks,
+                                                   const std::set<int>& /*trackIndexes*/,
+                                                   const PlaylistTrack& /*firstTrack*/) const
+{
+    TrackSelection trackSelection;
+    trackSelection.tracks = tracks;
+    return trackSelection;
+}
+
+bool DetachedTrackListSession::canDequeue(const PlayerController* playerController, Playlist* /*currentPlaylist*/,
+                                          const std::set<int>& /*trackIndexes*/,
+                                          const std::set<Track>& selectedTracks) const
+{
+    const auto queuedTracks = playerController->playbackQueue().tracks();
+    return std::ranges::any_of(
+        queuedTracks, [&selectedTracks](const PlaylistTrack& track) { return selectedTracks.contains(track.track); });
+}
+
+PlaylistTrackList DetachedTrackListSession::searchSourceTracks(const PlaylistController* /*playlistController*/,
+                                                               const MusicLibrary* /*library*/) const
+{
+    return m_tracks;
+}
+
+PlaylistAction::ActionOptions DetachedTrackListSession::playbackOptions() const
 {
     return PlaylistAction::TempPlaylist;
 }

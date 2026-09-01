@@ -61,6 +61,7 @@ public:
     [[nodiscard]] ConversionJob job() const;
     [[nodiscard]] QString askFolder() const;
     [[nodiscard]] bool showReport() const;
+    [[nodiscard]] bool showOutputFiles() const;
 
     void applySuggestedFilenamePattern(const QString& pattern);
 
@@ -151,6 +152,7 @@ private:
     QCheckBox* m_generatePreview;
     QSpinBox* m_previewPercentage;
     QCheckBox* m_showReport;
+    QCheckBox* m_showOutputFiles;
     QLineEdit* m_copyFilesPattern;
     QCheckBox* m_verifyOutput;
     QLabel* m_outputSummary;

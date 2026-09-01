@@ -22,7 +22,9 @@
 #include "convertersettingsstore.h"
 #include "convertersetupdialog.h"
 
+#include <core/engine/audioloader.h>
 #include <core/engine/conversion/conversionrunner.h>
+#include <core/library/libraryscanutils.h>
 #include <gui/widgets/elapsedprogressdialog.h>
 #include <utils/async.h>
 
@@ -35,6 +37,7 @@
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
+#include <QLoggingCategory>
 #include <QMessageBox>
 #include <QTableWidget>
 #include <QVBoxLayout>
@@ -42,6 +45,9 @@
 #include <atomic>
 #include <chrono>
 #include <future>
+#include <set>
+
+Q_LOGGING_CATEGORY(CONV_CTRL, "fy.conversioncontroller")
 
 using namespace std::chrono_literals;
 using namespace Qt::StringLiterals;
@@ -176,7 +182,7 @@ class ConversionSession : public QObject
 public:
     ConversionSession(std::shared_ptr<AudioLoader> audioLoader, AudioEncoderRegistry* encoderRegistry,
                       DspRegistry* dspRegistry, ConversionJob job, QString askFolder, bool showReport,
-                      std::shared_ptr<ConversionInputObserver> sourceObserver,
+                      bool showOutputFiles, std::shared_ptr<ConversionInputObserver> sourceObserver,
                       std::function<void(const std::vector<ConversionTrackResult>&)> completion, QWidget* parentWindow,
                       QObject* parent)
         : QObject{parent}
@@ -186,6 +192,7 @@ public:
         , m_job{std::move(job)}
         , m_askFolder{std::move(askFolder)}
         , m_showReport{showReport}
+        , m_showOutputFiles{showOutputFiles}
         , m_sourceObserver{std::move(sourceObserver)}
         , m_completion{std::move(completion)}
         , m_parentWindow{parentWindow}
@@ -315,6 +322,32 @@ private:
             showConversionResults(m_parentWindow, results, counts, hasDetails, m_job.preset.other.verifyOutput);
         }
 
+        if(m_showOutputFiles) {
+            TrackList convertedTracks;
+            std::set<QString> outputPaths;
+            for(const ConversionTrackResult& result : results) {
+                if(result.status != ConversionResultStatus::Succeeded || result.outputPath.isEmpty()) {
+                    continue;
+                }
+
+                const QString outputPath = QDir::cleanPath(QFileInfo{result.outputPath}.absoluteFilePath());
+                if(!outputPaths.insert(outputPath).second) {
+                    continue;
+                }
+
+                Track outputTrack{outputPath};
+                if(!m_audioLoader->readTrackMetadata(outputTrack)) {
+                    qCWarning(CONV_CTRL) << "Failed to read metadata of file:" << outputPath;
+                }
+                readFileProperties(outputTrack);
+                convertedTracks.push_back(std::move(outputTrack));
+            }
+
+            if(!convertedTracks.empty()) {
+                Q_EMIT convertedFilesReady(convertedTracks);
+            }
+        }
+
         if(m_completion) {
             m_completion(results);
         }
@@ -330,12 +363,16 @@ private:
     ConversionJob m_job;
     QString m_askFolder;
     bool m_showReport;
+    bool m_showOutputFiles;
     std::shared_ptr<ConversionInputObserver> m_sourceObserver;
     std::function<void(const std::vector<ConversionTrackResult>&)> m_completion;
     QWidget* m_parentWindow;
     std::shared_ptr<std::atomic_bool> m_cancelled;
     ElapsedProgressDialog* m_progress;
     QFutureWatcher<std::vector<ConversionTrackResult>>* m_watcher;
+
+Q_SIGNALS:
+    void convertedFilesReady(const Fooyin::TrackList& tracks);
 };
 } // namespace
 
@@ -380,16 +417,18 @@ void ConversionController::showSetup(const TrackList& tracks, const QString& sug
                              return;
                          }
 
-                         ConversionJob job     = setup->job();
-                         const bool showReport = setup->showReport();
+                         ConversionJob job          = setup->job();
+                         const bool showReport      = setup->showReport();
+                         const bool showOutputFiles = setup->showOutputFiles();
                          ConverterSettings::setLastUsedConversionPreset({
-                             .name       = u"[last used]"_s,
-                             .preset     = job.preset,
-                             .showReport = showReport,
+                             .name            = u"[last used]"_s,
+                             .preset          = job.preset,
+                             .showReport      = showReport,
+                             .showOutputFiles = showOutputFiles,
                          });
                          Q_EMIT conversionPresetsChanged();
-                         start(std::move(job), setup->askFolder(), showReport, std::move(sourceObserver),
-                               std::move(completion));
+                         start(std::move(job), setup->askFolder(), showReport, showOutputFiles,
+                               std::move(sourceObserver), std::move(completion));
                      });
 
     setup->show();
@@ -452,16 +491,16 @@ bool ConversionController::startPreset(const QString& presetId, const TrackList&
     Q_EMIT conversionPresetsChanged();
 
     start({.tracks = tracks, .preset = std::move(selected.preset)}, std::move(askFolder), selected.showReport,
-          std::move(sourceObserver), std::move(completion));
+          selected.showOutputFiles, std::move(sourceObserver), std::move(completion));
     return true;
 }
 
-void ConversionController::start(ConversionJob job, QString askFolder, bool showReport)
+void ConversionController::start(ConversionJob job, QString askFolder, bool showReport, bool showOutputFiles)
 {
-    start(std::move(job), std::move(askFolder), showReport, {}, {});
+    start(std::move(job), std::move(askFolder), showReport, showOutputFiles, {}, {});
 }
 
-void ConversionController::start(ConversionJob job, QString askFolder, bool showReport,
+void ConversionController::start(ConversionJob job, QString askFolder, bool showReport, bool showOutputFiles,
                                  std::shared_ptr<ConversionInputObserver> sourceObserver,
                                  std::function<void(const std::vector<ConversionTrackResult>&)> completion)
 {
@@ -469,9 +508,19 @@ void ConversionController::start(ConversionJob job, QString askFolder, bool show
         return;
     }
 
-    auto* session = new ConversionSession{
-        m_audioLoader, m_encoderRegistry,         m_dspRegistry,         std::move(job), std::move(askFolder),
-        showReport,    std::move(sourceObserver), std::move(completion), m_parentWindow, this};
+    auto* session = new ConversionSession{m_audioLoader,
+                                          m_encoderRegistry,
+                                          m_dspRegistry,
+                                          std::move(job),
+                                          std::move(askFolder),
+                                          showReport,
+                                          showOutputFiles,
+                                          std::move(sourceObserver),
+                                          std::move(completion),
+                                          m_parentWindow,
+                                          this};
+    QObject::connect(session, &ConversionSession::convertedFilesReady, this,
+                     &ConversionController::convertedFilesReady);
     session->start();
 }
 } // namespace Fooyin

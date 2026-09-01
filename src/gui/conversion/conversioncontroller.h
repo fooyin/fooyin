@@ -58,13 +58,14 @@ public:
                      std::shared_ptr<ConversionInputObserver> sourceObserver,
                      std::function<void(const std::vector<ConversionTrackResult>&)> completion) override;
 
-    void start(ConversionJob job, QString askFolder, bool showReport);
-    void start(ConversionJob job, QString askFolder, bool showReport,
+    void start(ConversionJob job, QString askFolder, bool showReport, bool showOutputFiles);
+    void start(ConversionJob job, QString askFolder, bool showReport, bool showOutputFiles,
                std::shared_ptr<ConversionInputObserver> sourceObserver,
                std::function<void(const std::vector<ConversionTrackResult>&)> completion);
 
 Q_SIGNALS:
     void conversionPresetsChanged();
+    void convertedFilesReady(const Fooyin::TrackList& tracks);
 
 private:
     std::shared_ptr<AudioLoader> m_audioLoader;

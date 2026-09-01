@@ -112,6 +112,11 @@ public:
                                                        TrackSelectionController* selectionController,
                                                        CoverProvider* coverProvider, Application* core,
                                                        GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
+    static PlaylistWidget* createDetachedTracks(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
+                                                TrackSelectionController* selectionController,
+                                                CoverProvider* coverProvider, Application* core,
+                                                GuiStyleProvider* styleProvider, const TrackList& tracks,
+                                                QWidget* parent = nullptr);
 
     ~PlaylistWidget() override;
 
@@ -244,6 +249,8 @@ private:
     PlaylistWidgetLayoutState m_layoutState;
     PlaylistWidgetLayoutState m_defaultLayoutState;
     QString m_loadedPlaylistLayout;
+    // Until playlist settings are per-playlist
+    bool m_useGlobalPresetState;
 
     WidgetContext* m_playlistContext;
     TrackAction m_doubleClickAction;

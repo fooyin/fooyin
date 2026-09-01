@@ -34,6 +34,7 @@ struct StoredConversionPreset
     QString name;
     ConversionPreset preset;
     bool showReport{true};
+    bool showOutputFiles{false};
 };
 
 namespace ConverterSettings {
