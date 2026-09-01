@@ -28,6 +28,7 @@
 #include <core/engine/dsp/dspregistry.h>
 #include <core/engine/dsp/processingbuffer.h>
 #include <core/engine/dsp/processingbufferlist.h>
+#include <core/engine/verification/audioverifier.h>
 #include <utils/scopeguard.h>
 
 #include <QCryptographicHash>
@@ -173,26 +174,23 @@ QStringList copySidecarFiles(const QString& pattern, const TrackList& tracks, co
     return warnings;
 }
 
-QString verifyOutput(const AudioLoader& loader, const QString& outputPath)
+QString verifyOutput(AudioLoader& loader, const QString& outputPath)
 {
-    auto loaded = loader.loadDecoderForTrack(Track{outputPath}, AudioDecoder::NoLooping);
-    if(!loaded.decoder || !loaded.format) {
+    const auto results = AudioVerifier::run({.audioLoader      = &loader,
+                                             .tracks           = {Track{outputPath}},
+                                             .verifyIntegrity  = true,
+                                             .progressCallback = {},
+                                             .cancelCallback   = {},
+                                             .observer         = {}});
+    if(results.empty()) {
         return u"Converted output could not be opened"_s;
     }
 
-    loaded.decoder->start();
-
-    const auto stopDecoder = scopeGuard([&loaded] { loaded.decoder->stop(); });
-    for(int attempt{0}; attempt < 1000; ++attempt) {
-        const auto result = loaded.decoder->readAudio(TargetReadBytes);
-        if(result.status == AudioDecoder::ReadStatus::DecodedAudio && result.buffer.isValid()) {
-            return {};
-        }
-        if(result.status == AudioDecoder::ReadStatus::EndOfStream || result.status == AudioDecoder::ReadStatus::Error) {
-            return !result.error.isEmpty() ? result.error : u"Converted output contains no decodable audio"_s;
-        }
+    const AudioVerificationResult& result = results.front();
+    if(result.status == AudioVerificationStatus::Succeeded && result.decodedFrames > 0) {
+        return {};
     }
-    return u"Converted output verification did not complete"_s;
+    return !result.error.isEmpty() ? result.error : u"Converted output contains no decodable audio"_s;
 }
 
 struct PcmHashResult
