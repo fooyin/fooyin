@@ -90,7 +90,7 @@ void addPopmMappingItems(QComboBox* combo)
                 tooltip = QObject::tr(
                     "Use fooyin's default POPM byte conversion when reading and writing MP3 ratings.\n"
                     "This supports intermediate rating steps, but does not treat the POPM byte as a fully linear "
-                    "0-255 scale.");
+                    "0–255 scale.");
                 break;
             case PopmMapping::CommonFiveStar:
                 tooltip = QObject::tr("Use common POPM byte values for whole-star ratings only.\n"

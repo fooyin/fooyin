@@ -154,7 +154,7 @@ const std::vector<ScriptReferenceEntry>& scriptReferenceEntries()
         variableEntry(MetaData::Rating, QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
                       QT_TRANSLATE_NOOP("Fooyin", "Numeric rating in stars")),
         variableEntry(MetaData::RatingNormalized, QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
-                      QT_TRANSLATE_NOOP("Fooyin", "Normalized rating")),
+                      QT_TRANSLATE_NOOP("Fooyin", "Normalised rating")),
         variableEntry(MetaData::Stars, QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
                       QT_TRANSLATE_NOOP("Fooyin", "Numeric rating in stars")),
         variableEntry(MetaData::RatingStars, QT_TRANSLATE_NOOP("Fooyin", "Metadata"),

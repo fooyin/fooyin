@@ -457,7 +457,7 @@ void EditablePlaylistSession::setupActions(PlaylistWidgetSessionHost& sessionHos
     QObject::connect(m_removeDuplicatesAction, &QAction::triggered, widget,
                      [widget, this]() { removeDuplicates(widgetSessionHost(widget)); });
 
-    m_removeDeadTracksAction->setStatusTip(PlaylistWidget::tr("Remove dead (non-existant) tracks from the playlist"));
+    m_removeDeadTracksAction->setStatusTip(PlaylistWidget::tr("Remove dead (non-existent) tracks from the playlist"));
     editMenu->addAction(m_removeDeadTracksAction);
     QObject::connect(m_removeDeadTracksAction, &QAction::triggered, widget,
                      [widget, this]() { removeDeadTracks(widgetSessionHost(widget)); });
