@@ -97,7 +97,7 @@ ScrobblerPageWidget::ScrobblerPageWidget(SettingsManager* settings)
     m_scrobbleDelay->setSuffix(u" s"_s);
     m_scrobbleDelay->setMaximumWidth(120);
 
-    const QString filterTip = tr("Enter a query - tracks that match the query will NOT be scrobbled");
+    const QString filterTip = tr("Enter a query — tracks that match the query will NOT be scrobbled");
     m_filterLabel->setToolTip(filterTip);
     m_scrobbleFilter->setToolTip(filterTip);
 

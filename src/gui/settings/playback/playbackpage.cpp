@@ -109,7 +109,7 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     m_restoreActivePlaylistState->setToolTip(tr("Save active playlist state on exit and restore it on next startup"));
     m_restorePlaybackState->setToolTip(tr("Save playback state on exit and restore it on next startup"));
     m_rewindPrevious->setToolTip(tr(
-        "If the current track has been playing for more than 5s, restart it instead of moving to the previous track"));
+        "If the current track has been playing for more than 5 s, restart it instead of moving to the previous track"));
     m_followPlaybackQueue->setToolTip(
         tr("Once the playback queue has finished, start playback from the tracks following the last queued track"));
     m_clearQueueOnExit->setToolTip(tr("Do not restore the playback queue on next startup"));
