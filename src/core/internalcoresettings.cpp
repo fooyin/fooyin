@@ -86,7 +86,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Language>(QString{}, u"Language"_s);
     m_settings->createSetting<BufferLength>(4000, u"Engine/BufferLength"_s);
     m_settings->createSetting<OpenFilesPlaylist>(u"Default"_s, u"Playlist/OpenFilesPlaylist"_s);
-    m_settings->createSetting<OpenFilesSendTo>(false, u"Playlist/OpenFilesSendToPlaylist"_s);
+    m_settings->createSetting<OpenFilesSendTo>(true, u"Playlist/OpenFilesSendToPlaylist"_s);
     m_settings->createSetting<SaveRatingToMetadata>(false, u"Library/SaveRatingToFile"_s);
     m_settings->createSetting<SavePlaycountToMetadata>(false, u"Library/SavePlaycountToFile"_s);
     m_settings->createSetting<PlayedThreshold>(0.5, u"Playback/PlayedThreshold"_s);
