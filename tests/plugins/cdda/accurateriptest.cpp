@@ -88,7 +88,7 @@ TEST(AccurateRipTest, CalculatesPublishedDiscRecordAddress)
 
 TEST(AccurateRipTest, ParsesMatchingBinaryRecords)
 {
-    const AccurateRipDiscId id{.id1 = 1, .id2 = 2, .cddbId = 3, .trackCount = 2};
+    const AccurateRip::DiscId id{.id1 = 1, .id2 = 2, .cddbId = 3, .trackCount = 2};
     QByteArray data;
     data.append(char{2});
     appendLe32(data, 1);
@@ -106,7 +106,7 @@ TEST(AccurateRipTest, ParsesMatchingBinaryRecords)
     ASSERT_EQ(1, records->size());
     EXPECT_EQ(7, records->front().front().confidence);
     EXPECT_EQ(0x11223344, records->front().front().crc);
-    EXPECT_EQ(0x01020304, records->front().back().crc2);
+    EXPECT_EQ(0x01020304, records->front().back().offsetChecksum);
 }
 
 TEST(AccurateRipTest, ParsesAndMatchesDriveOffsetsExactly)
@@ -123,11 +123,20 @@ TEST(AccurateRipTest, ParsesAndMatchesDriveOffsetsExactly)
 
 TEST(AccurateRipTest, VerifiesOffsetCorrectedSourcePcm)
 {
-    AccurateRipPressing pressing(3);
-    pressing[1] = {.confidence = 5, .crc = 14, .crc2 = 0};
-    AccurateRipVerifier verifier{simpleToc(), {pressing}};
+    AccurateRip::Pressing pressing(3);
+    pressing[1] = {.confidence = 5, .crc = 14, .offsetChecksum = 0};
+
     Track track{u"cdda:///abcdefghijklmnopqrstuvwx1234"_s, 1};
     track.setTrackNumber(u"2"_s);
+
+    TrackList tracks(3, track);
+    tracks[0].setSubsong(0);
+    tracks[2].setSubsong(2);
+
+    const auto layout = accurateRipLayout(simpleToc());
+    ASSERT_TRUE(layout.has_value()) << layout.error().toStdString();
+
+    AccurateRip::Verifier verifier{*layout, {pressing}, tracks};
 
     QByteArray pcm(FramesPerSector * 4LL, '\0');
     const uint32_t values[]{qToLittleEndian(1), qToLittleEndian(2), qToLittleEndian(3)};
@@ -142,7 +151,7 @@ TEST(AccurateRipTest, VerifiesOffsetCorrectedSourcePcm)
 
     const auto results = verifier.results();
     ASSERT_EQ(1, results.size());
-    EXPECT_EQ(AccurateRipVerifyStatus::Verified, results.front().status);
+    EXPECT_EQ(AccurateRip::VerifyStatus::Verified, results.front().status);
     EXPECT_EQ(14U, results.front().crcV1);
     EXPECT_EQ(5, results.front().confidence);
     EXPECT_EQ((std::vector<uint32_t>{14U}), results.front().databaseCrcs);

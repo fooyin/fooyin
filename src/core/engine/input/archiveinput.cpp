@@ -108,6 +108,13 @@ AudioBuffer ArchiveDecoder::readBuffer(size_t bytes)
     return m_loadedDecoder.decoder->readBuffer(bytes);
 }
 
+void ArchiveDecoder::interruptRead()
+{
+    if(m_loadedDecoder.decoder) {
+        m_loadedDecoder.decoder->requestAbort();
+    }
+}
+
 Fooyin::GeneralArchiveReader::GeneralArchiveReader(std::shared_ptr<AudioLoader> audioLoader)
     : m_audioLoader{std::move(audioLoader)}
 { }

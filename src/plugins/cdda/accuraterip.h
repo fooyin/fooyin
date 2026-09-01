@@ -20,35 +20,15 @@
 
 #include "cddatypes.h"
 
-#include <core/engine/conversion/conversionrunner.h>
+#include <core/engine/verification/accuraterip.h>
 
 #include <QByteArray>
-#include <QUrl>
 
 #include <expected>
-#include <mutex>
 #include <optional>
 #include <vector>
 
 namespace Fooyin::Cdda {
-struct AccurateRipDiscId
-{
-    uint32_t id1{0};
-    uint32_t id2{0};
-    uint32_t cddbId{0};
-    int trackCount{0};
-
-    bool operator==(const AccurateRipDiscId&) const = default;
-};
-
-struct AccurateRipChecksum
-{
-    uint32_t confidence{0};
-    uint32_t crc{0};
-    uint32_t crc2{0};
-};
-using AccurateRipPressing = std::vector<AccurateRipChecksum>;
-
 struct AccurateRipDriveOffset
 {
     QString name;
@@ -58,61 +38,14 @@ struct AccurateRipDriveOffset
     bool purged{false};
 };
 
-enum class AccurateRipVerifyStatus : uint8_t
-{
-    Verified = 0,
-    Mismatch,
-    Incomplete,
-    InvalidFormat,
-};
+std::expected<AccurateRip::DiscLayout, QString> accurateRipLayout(const CdToc& toc);
+std::expected<AccurateRip::DiscId, QString> accurateRipDiscId(const CdToc& toc);
+QUrl accurateRipDiscUrl(const AccurateRip::DiscId& id);
 
-struct AccurateRipTrackResult
-{
-    Track track;
-    AccurateRipVerifyStatus status{AccurateRipVerifyStatus::Incomplete};
-    uint32_t crcV1{0};
-    uint32_t crcV2{0};
-    int confidence{0};
-    std::vector<uint32_t> databaseCrcs;
-};
+std::expected<std::vector<AccurateRip::Pressing>, QString>
+parseAccurateRipResponse(const QByteArray& data, const AccurateRip::DiscId& expected);
 
-std::expected<AccurateRipDiscId, QString> accurateRipDiscId(const CdToc& toc);
-QUrl accurateRipDiscUrl(const AccurateRipDiscId& id);
-
-std::expected<std::vector<AccurateRipPressing>, QString> parseAccurateRipResponse(const QByteArray& data,
-                                                                                  const AccurateRipDiscId& expected);
 std::vector<AccurateRipDriveOffset> parseAccurateRipDriveOffsets(const QByteArray& html);
 std::optional<AccurateRipDriveOffset> findAccurateRipDriveOffset(const std::vector<AccurateRipDriveOffset>& offsets,
                                                                  const QString& vendor, const QString& model);
-
-class AccurateRipVerifier : public ConversionInputObserver
-{
-public:
-    AccurateRipVerifier(CdToc toc, std::vector<AccurateRipPressing> pressings);
-    ~AccurateRipVerifier() override;
-
-    void trackStarted(const Track& track, const AudioFormat& format) override;
-    void sourceAudio(const Track& track, const AudioBuffer& buffer) override;
-    void trackFinished(const Track& track, bool complete) override;
-
-    [[nodiscard]] std::vector<AccurateRipTrackResult> results() const;
-
-private:
-    struct State
-    {
-        Track track;
-        uint64_t totalFrames{0};
-        uint64_t position{0};
-        uint32_t crcV1{0};
-        uint32_t crcV2{0};
-        bool validFormat{false};
-        bool complete{false};
-    };
-    [[nodiscard]] State* stateFor(const Track& track);
-
-    CdToc m_toc;
-    std::vector<AccurateRipPressing> m_pressings;
-    std::vector<State> m_states;
-    mutable std::mutex m_mutex;
-};
 } // namespace Fooyin::Cdda

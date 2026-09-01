@@ -109,6 +109,8 @@ public:
         UpdateTracks = 1 << 3,
         //! Select source policies intended for offline conversion/extraction.
         ForConversion = 1 << 4,
+        //! Enable strict bitstream and checksum validation where supported.
+        VerifyIntegrity = 1 << 5,
     };
     Q_DECLARE_FLAGS(DecoderOptions, DecoderFlag)
     Q_FLAG(DecoderOptions)

@@ -46,6 +46,9 @@ public:
     ReadResult readAudio(size_t bytes) override;
     AudioBuffer readBuffer(size_t bytes) override;
 
+protected:
+    void interruptRead() override;
+
 private:
     std::shared_ptr<AudioLoader> m_audioLoader;
     LoadedDecoder m_loadedDecoder;

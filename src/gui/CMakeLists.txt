@@ -530,6 +530,8 @@ set(SOURCES
     trackselectioncontroller.cpp
     widgetfilter.cpp
     widgetprovider.cpp
+    verification/verificationcontroller.cpp
+    verification/verificationcontroller.h
     widgets.cpp
     widgets.h
     widgets/actiondelegate.cpp

@@ -73,6 +73,7 @@ class SearchController;
 class ScriptCommandHandler;
 class SystemTrayIcon;
 class ThemeRegistry;
+class VerificationController;
 class UId;
 class ViewMenu;
 class WindowController;
@@ -243,6 +244,7 @@ private:
     QPointer<PlaylistManagerWidget> m_playlistManagerWidget;
     Widgets* m_widgets;
     ConversionController* m_conversionController;
+    VerificationController* m_verificationController;
 
     struct ConversionPresetAction
     {

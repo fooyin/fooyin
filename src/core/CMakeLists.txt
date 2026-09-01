@@ -12,6 +12,8 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/engine/conversion/conversiondefs.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/conversion/conversionpathresolver.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/conversion/conversionrunner.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/verification/accuraterip.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/verification/audioverifier.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/dsp/dspnode.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/dsp/dspplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/dsp/processingbuffer.h
@@ -96,6 +98,8 @@ set(SOURCES
     engine/conversion/conversionrunner.cpp
     engine/conversion/outputtransaction.cpp
     engine/conversion/outputtransaction.h
+    engine/verification/accuraterip.cpp
+    engine/verification/audioverifier.cpp
     engine/control/enginetaskqueue.cpp
     engine/control/enginetaskqueue.h
     engine/control/playbackintentreducer.cpp

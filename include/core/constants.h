@@ -27,6 +27,8 @@ constexpr auto InvalidGain        = -1000;
 constexpr auto InvalidPeak        = -1;
 constexpr auto OpusHeaderGainQ78  = "_OPUS_HEADER_GAIN_Q78";
 constexpr auto RawRatingTagPrefix = "_FY_RATING_RAW_";
+constexpr auto CueIndex01Sector   = "_CUE_INDEX01_SECTOR";
+constexpr auto CueEndSector       = "_CUE_END_SECTOR";
 
 namespace MetaData {
 constexpr auto Title             = "TITLE";

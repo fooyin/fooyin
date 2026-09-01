@@ -181,12 +181,17 @@ void CddaPlugin::startRip(RipAudioCdDialog* dialog, TrackList tracks, CdToc toc,
         startConversion(dialog, tracks, presetId, showSetup, {}, discId.error());
         return;
     }
+    const auto layout = accurateRipLayout(toc);
+    if(!layout) {
+        startConversion(dialog, tracks, presetId, showSetup, {}, layout.error());
+        return;
+    }
 
     QNetworkReply* reply = m_networkAccess->get(makeNetworkRequest(accurateRipDiscUrl(*discId)));
     QObject::connect(reply, &QNetworkReply::finished, reply, &QObject::deleteLater);
     QObject::connect(reply, &QNetworkReply::finished, dialog,
-                     [this, dialog, reply, tracks = std::move(tracks), toc = std::move(toc),
-                      presetId = std::move(presetId), discId = *discId, showSetup]() {
+                     [this, dialog, reply, tracks = std::move(tracks), presetId = std::move(presetId), discId = *discId,
+                      layout = *layout, showSetup]() {
                          if(reply->error() != QNetworkReply::NoError) {
                              startConversion(dialog, tracks, presetId, showSetup, {},
                                              reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 404
@@ -209,16 +214,16 @@ void CddaPlugin::startRip(RipAudioCdDialog* dialog, TrackList tracks, CdToc toc,
                          }
 
                          startConversion(dialog, tracks, presetId, showSetup,
-                                         std::make_shared<AccurateRipVerifier>(toc, *records));
+                                         std::make_shared<AccurateRip::Verifier>(layout, *records, tracks));
                      });
 }
 
 void CddaPlugin::startConversion(RipAudioCdDialog* dialog, const TrackList& tracks, const QString& presetId,
-                                 bool showSetup, std::shared_ptr<AccurateRipVerifier> verifier, QString lookupMessage)
+                                 bool showSetup, std::shared_ptr<AccurateRip::Verifier> verifier, QString lookupMessage)
 {
     const QPointer reportParent{dialog->parentWidget()};
     const auto completion = [verifier, lookupMessage = std::move(lookupMessage), reportParent](const auto&) {
-        const auto results = verifier ? verifier->results() : std::vector<AccurateRipTrackResult>{};
+        const auto results = verifier ? verifier->results() : std::vector<AccurateRip::TrackResult>{};
         if(!results.empty() || !lookupMessage.isEmpty()) {
             showAccurateRipResults(reportParent, results, lookupMessage);
         }

@@ -129,7 +129,7 @@ bool isTopLevelCueLine(const QString& line)
     return !line.isEmpty() && !line.front().isSpace();
 }
 
-std::optional<uint64_t> msfToMs(const QString& index)
+std::optional<uint64_t> msfToSector(const QString& index)
 {
     static const QRegularExpression indexRegex{QLatin1String{TrackIndexRegex}};
     const QRegularExpressionMatch match = indexRegex.match(index);
@@ -143,7 +143,13 @@ std::optional<uint64_t> msfToMs(const QString& index)
     const int seconds = parts.at(1).toInt();
     const int frames  = parts.at(2).toInt();
 
-    return ((minutes * 60 + seconds) * 1000) + frames * 1000 / 75;
+    return static_cast<uint64_t>((((minutes * 60) + seconds) * 75) + frames);
+}
+
+std::optional<uint64_t> msfToMs(const QString& index)
+{
+    const auto sector = msfToSector(index);
+    return sector ? *sector * 1000 / 75 : std::optional<uint64_t>{};
 }
 
 QString findMatchingFile(const QString& filepath)
@@ -298,6 +304,10 @@ void finaliseDurations(TrackList& tracks)
 
         if(currentTrack->filepath() == nextTrack->filepath()) {
             currentTrack->setDuration(nextTrack->offset() - currentTrack->offset());
+            const auto properties = nextTrack->extraProperties();
+            if(const auto* const end = properties.find(QString::fromLatin1(Constants::CueIndex01Sector))) {
+                currentTrack->setExtraProperty(QString::fromLatin1(Constants::CueEndSector), *end);
+            }
         }
     }
 }
@@ -667,6 +677,10 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
             if(const auto start = msfToMs(parts.at(2))) {
                 if(track.trackNumber() == "01"_L1 || !sheet.singleTrackFile) {
                     track.setOffset(start.value());
+                    if(const auto sector = msfToSector(parts.at(2))) {
+                        track.setExtraProperty(QString::fromLatin1(Constants::CueIndex01Sector),
+                                               QString::number(*sector));
+                    }
                 }
                 sheet.hasValidIndex = true;
             }

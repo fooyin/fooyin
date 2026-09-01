@@ -50,6 +50,7 @@
 #include "search/searchcontroller.h"
 #include "search/searchwidget.h"
 #include "systemtrayicon.h"
+#include "verification/verificationcontroller.h"
 #include "widgets.h"
 
 #include <core/application.h>
@@ -59,6 +60,7 @@
 #include <core/engine/audioencoderregistry.h>
 #include <core/engine/enginehandler.h>
 #include <core/engine/enginehelpers.h>
+#include <core/engine/verification/accuraterip.h>
 #include <core/internalcoresettings.h>
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
@@ -285,6 +287,8 @@ GuiApplication::GuiApplication(Application* core)
     , m_conversionController{new ConversionController(
           m_core->audioLoader(), m_core->audioEncoderRegistry(), m_core->dspRegistry(), m_core->dspChainStore(),
           m_widgets->dspSettingsRegistry(), m_settings, m_mainWindow.get(), this)}
+    , m_verificationController{new VerificationController(m_core->audioLoader(), m_core->networkManager(),
+                                                          m_mainWindow.get(), this)}
     , m_defaultConversionAction{nullptr}
     , m_defaultConversionCommand{nullptr}
     , m_lastUsedConversionAction{nullptr}
@@ -1450,6 +1454,36 @@ void GuiApplication::setupUtilitiesMenu()
     m_selectionController->registerTrackContextSubmenu(
         this, TrackContextMenuArea::Track, Constants::Menus::Context::TrackSelection,
         Constants::Menus::Context::Utilities, tr("Utilities"), Constants::Menus::Context::TrackFinalSeparator);
+
+    auto* verifyIntegrity = new QAction(tr("Verify integrity"), m_mainWindow.get());
+    verifyIntegrity->setStatusTip(tr("Decode the selected tracks and report file or checksum errors"));
+    auto* integrityCommand = m_actionManager->registerAction(verifyIntegrity, Constants::Actions::VerifyIntegrity);
+    integrityCommand->setCategories({tr("Tracks"), tr("Utilities")});
+    integrityCommand->action()->setShortcutVisibleInContextMenu(true);
+    QObject::connect(verifyIntegrity, &QAction::triggered, this,
+                     [this] { m_verificationController->verifyIntegrity(m_selectionController->selectedTracks()); });
+
+    auto* verifyAccurateRip = new QAction(tr("Verify album with AccurateRip"), m_mainWindow.get());
+    verifyAccurateRip->setStatusTip(tr("Verify all tracks from one complete lossless CD rip against AccurateRip"));
+    auto* accurateRipCommand
+        = m_actionManager->registerAction(verifyAccurateRip, Constants::Actions::VerifyAccurateRip);
+    accurateRipCommand->setCategories({tr("Tracks"), tr("Utilities")});
+    accurateRipCommand->action()->setShortcutVisibleInContextMenu(true);
+    QObject::connect(verifyAccurateRip, &QAction::triggered, this,
+                     [this] { m_verificationController->verifyAccurateRip(m_selectionController->selectedTracks()); });
+
+    m_selectionController->registerTrackContextAction(
+        this, TrackContextMenuArea::Track, Constants::Menus::Context::Utilities, Constants::Actions::VerifyIntegrity,
+        verifyIntegrity->text(), [verifyIntegrity](QMenu* menu, const TrackSelection& selection) {
+            verifyIntegrity->setEnabled(!selection.tracks.empty());
+            menu->addAction(verifyIntegrity);
+        });
+    m_selectionController->registerTrackContextAction(
+        this, TrackContextMenuArea::Track, Constants::Menus::Context::Utilities, Constants::Actions::VerifyAccurateRip,
+        verifyAccurateRip->text(), [verifyAccurateRip](QMenu* menu, const TrackSelection& selection) {
+            verifyAccurateRip->setEnabled(AccurateRip::prepareAlbumTracks(selection.tracks).has_value());
+            menu->addAction(verifyAccurateRip);
+        });
 }
 
 void GuiApplication::close()

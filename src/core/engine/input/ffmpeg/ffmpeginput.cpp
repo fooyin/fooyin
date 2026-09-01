@@ -1055,6 +1055,7 @@ public:
     bool m_returnFrame{false};
     bool m_lastErrorRecoverable{false};
     mutable bool m_trackChanged{false};
+    QString m_errorMessage;
 
     AudioDecoder::DecoderOptions m_options;
     Track m_baseTrack;
@@ -1095,9 +1096,10 @@ void FFmpegInputPrivate::reset()
     m_consecutiveDecodeErrors = 0;
     m_lastErrorRecoverable    = false;
     m_trackChanged            = false;
-    m_baseTrack               = {};
-    m_changedTrack            = {};
-    m_lastTimedTrack          = {};
+    m_errorMessage.clear();
+    m_baseTrack      = {};
+    m_changedTrack   = {};
+    m_lastTimedTrack = {};
     m_timedTrackChanges.clear();
     m_remoteDevice            = nullptr;
     m_networkMetadataRevision = 0;
@@ -1195,6 +1197,10 @@ bool FFmpegInputPrivate::createCodec(AVStream* avStream)
 
     avCodecContext.get()->pkt_timebase = m_timeBase;
 
+    if(m_options.testFlag(AudioDecoder::VerifyIntegrity)) {
+        avCodecContext.get()->err_recognition |= AV_EF_CRCCHECK | AV_EF_EXPLODE;
+    }
+
     if(avcodec_open2(avCodecContext.get(), avCodec, nullptr) < 0) {
         Utils::printError(u"Could not initialise codec context"_s);
         m_error = true;
@@ -1277,11 +1283,12 @@ int FFmpegInputPrivate::receiveAVFrames()
 
     if(result < 0) {
         const QString error = Utils::ffmpegErrorString(result);
+        m_errorMessage      = error;
         qCWarning(FFMPEG) << "FFmpeg receive frame failed:"
                           << "error=" << error << "code=" << result << "remote=" << isRemoteStream()
                           << "consecutiveDecodeErrors=" << m_consecutiveDecodeErrors << "currentPosMs=" << m_currentPos
                           << "inputUnavailable=" << m_inputUnavailable << "eof=" << m_eof << "draining=" << m_draining;
-        m_lastErrorRecoverable = isRecoverableDecodeError(result);
+        m_lastErrorRecoverable = !m_options.testFlag(AudioDecoder::VerifyIntegrity) && isRecoverableDecodeError(result);
 
         if(m_lastErrorRecoverable) {
             ++m_consecutiveDecodeErrors;
@@ -1318,7 +1325,8 @@ int FFmpegInputPrivate::receiveAVFrames()
             if(!interleave(m_frame.avFrame()->extended_data, m_buffer)) {
                 qCWarning(FFMPEG) << "Invalid planar audio frame";
                 m_buffer.clear();
-                m_error = true;
+                m_errorMessage = u"Invalid planar audio frame"_s;
+                m_error        = true;
                 return AVERROR_INVALIDDATA;
             }
         }
@@ -1511,7 +1519,7 @@ void FFmpegInputPrivate::readNext()
         }
         else {
             const QString error = Utils::ffmpegErrorString(readResult);
-            if(isRemoteStream() && readResult != AVERROR(EIO)) {
+            if(isRemoteStream() && readResult != AVERROR(EIO) && !m_options.testFlag(AudioDecoder::VerifyIntegrity)) {
                 qCWarning(FFMPEG) << "Treating remote FFmpeg read error as temporary:"
                                   << "error=" << error << "code=" << readResult << "currentPosMs=" << m_currentPos
                                   << "eof=" << m_eof << "draining=" << m_draining
@@ -1521,7 +1529,8 @@ void FFmpegInputPrivate::readNext()
             }
             qCWarning(FFMPEG) << (isRemoteStream() ? "Remote FFmpeg input failed:" : "FFmpeg read failed:")
                               << "error=" << error << "code=" << readResult << "currentPosMs=" << m_currentPos;
-            m_error = true;
+            m_errorMessage = error;
+            m_error        = true;
             return;
         }
         return;
@@ -1709,7 +1718,7 @@ AudioDecoder::ReadResult FFmpegDecoder::readAudio(size_t bytes)
                           << "isDecoding=" << p->m_isDecoding << "error=" << p->m_error
                           << "hasContext=" << static_cast<bool>(p->m_context) << "remote=" << p->isRemoteStream()
                           << "currentPosMs=" << p->m_currentPos;
-        return p->m_error ? ReadResult::errorResult() : ReadResult::endOfStream();
+        return p->m_error ? ReadResult::errorResult(p->m_errorMessage) : ReadResult::endOfStream();
     }
 
     p->m_inputUnavailable = false;
@@ -1754,7 +1763,7 @@ AudioDecoder::ReadResult FFmpegDecoder::readAudio(size_t bytes)
         qCWarning(FFMPEG) << "FFmpeg readAudio returning error:"
                           << "remote=" << p->isRemoteStream() << "currentPosMs=" << p->m_currentPos
                           << "eof=" << p->m_eof << "inputUnavailable=" << p->m_inputUnavailable;
-        return ReadResult::errorResult();
+        return ReadResult::errorResult(p->m_errorMessage);
     }
     qCWarning(FFMPEG) << "FFmpeg readAudio returning end of stream:"
                       << "remote=" << p->isRemoteStream() << "currentPosMs=" << p->m_currentPos << "eof=" << p->m_eof

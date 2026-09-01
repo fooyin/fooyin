@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "accuraterip.h"
+
 #include <core/engine/inputplugin.h>
 #include <core/plugins/coreplugin.h>
 #include <core/plugins/plugin.h>
@@ -36,7 +38,6 @@ class ConversionService;
 class CurrentPlaylistController;
 
 namespace Cdda {
-class AccurateRipVerifier;
 class CdDriveManager;
 class CdDriveSettingsStore;
 class RipAudioCdDialog;
@@ -67,7 +68,7 @@ private:
     void startRip(RipAudioCdDialog* dialog, TrackList tracks, CdToc toc, QString presetId, bool showSetup,
                   bool verifyAccurateRip);
     void startConversion(RipAudioCdDialog* dialog, const TrackList& tracks, const QString& presetId, bool showSetup,
-                         std::shared_ptr<AccurateRipVerifier> verifier, QString lookupMessage = {});
+                         std::shared_ptr<AccurateRip::Verifier> verifier, QString lookupMessage = {});
 
     PlayerController* m_playerController;
     PlaylistHandler* m_playlistHandler;

@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "accuraterip.h"
+
 #include <core/track.h>
 #include <gui/conversion/conversionservice.h>
 
@@ -34,9 +36,7 @@ class QPushButton;
 class QTableWidget;
 
 namespace Fooyin::Cdda {
-struct AccurateRipTrackResult;
-
-void showAccurateRipResults(QWidget* parent, const std::vector<AccurateRipTrackResult>& results,
+void showAccurateRipResults(QWidget* parent, const std::vector<AccurateRip::TrackResult>& results,
                             const QString& message);
 
 class RipAudioCdDialog final : public QDialog

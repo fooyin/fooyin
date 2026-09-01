@@ -69,16 +69,16 @@ QString accurateRipCrc(uint32_t crc)
     return QString::number(crc, 16).rightJustified(8, u'0').toUpper();
 }
 
-QString accurateRipVerdict(AccurateRipVerifyStatus status)
+QString accurateRipVerdict(AccurateRip::VerifyStatus status)
 {
     switch(status) {
-        case AccurateRipVerifyStatus::Verified:
+        case AccurateRip::VerifyStatus::Verified:
             return RipAudioCdDialog::tr("Accurately ripped");
-        case AccurateRipVerifyStatus::Mismatch:
+        case AccurateRip::VerifyStatus::Mismatch:
             return RipAudioCdDialog::tr("Mismatch");
-        case AccurateRipVerifyStatus::Incomplete:
+        case AccurateRip::VerifyStatus::Incomplete:
             return RipAudioCdDialog::tr("Incomplete");
-        case AccurateRipVerifyStatus::InvalidFormat:
+        case AccurateRip::VerifyStatus::InvalidFormat:
             return RipAudioCdDialog::tr("Unsupported format");
     }
     return {};
@@ -86,7 +86,8 @@ QString accurateRipVerdict(AccurateRipVerifyStatus status)
 
 } // namespace
 
-void showAccurateRipResults(QWidget* parent, const std::vector<AccurateRipTrackResult>& results, const QString& message)
+void showAccurateRipResults(QWidget* parent, const std::vector<AccurateRip::TrackResult>& results,
+                            const QString& message)
 {
     auto* dialog = new QDialog(parent);
     dialog->setWindowTitle(RipAudioCdDialog::tr("AccurateRip Verification"));
@@ -95,8 +96,8 @@ void showAccurateRipResults(QWidget* parent, const std::vector<AccurateRipTrackR
     int verified{0};
     int mismatched{0};
     for(const auto& result : results) {
-        verified += result.status == AccurateRipVerifyStatus::Verified ? 1 : 0;
-        mismatched += result.status == AccurateRipVerifyStatus::Mismatch ? 1 : 0;
+        verified += result.status == AccurateRip::VerifyStatus::Verified ? 1 : 0;
+        mismatched += result.status == AccurateRip::VerifyStatus::Mismatch ? 1 : 0;
     }
 
     QStringList summaryParts;
@@ -135,7 +136,7 @@ void showAccurateRipResults(QWidget* parent, const std::vector<AccurateRipTrackR
         table->setItem(row, 1, new QTableWidgetItem(result.track.effectiveTitle()));
         table->setItem(row, 2, new QTableWidgetItem(accurateRipVerdict(result.status)));
         table->setItem(row, 3,
-                       new QTableWidgetItem(result.status == AccurateRipVerifyStatus::Verified
+                       new QTableWidgetItem(result.status == AccurateRip::VerifyStatus::Verified
                                                 ? QString::number(result.confidence)
                                                 : QString{}));
         table->setItem(row, 4, new QTableWidgetItem(accurateRipCrc(result.crcV1)));
