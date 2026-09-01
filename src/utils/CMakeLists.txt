@@ -28,6 +28,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/lockfreeringbuffer.h
     ${CMAKE_SOURCE_DIR}/include/utils/logging/messagehandler.h
     ${CMAKE_SOURCE_DIR}/include/utils/modelutils.h
+    ${CMAKE_SOURCE_DIR}/include/utils/scopeguard.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/advancedsettingsregistry.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsdialogcontroller.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsentry.h

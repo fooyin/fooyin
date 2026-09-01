@@ -23,6 +23,7 @@
 #include <core/playlist/playlisthandler.h>
 #include <core/library/musiclibrary.h>
 #include <gui/guisettings.h>
+#include <utils/scopeguard.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/enum.h>
 
@@ -106,16 +107,6 @@ using namespace Qt::StringLiterals;
 
 
 namespace Fooyin::NowPlaying {
-
-template <typename Fn>
-struct on_scope_exit {
-    on_scope_exit(Fn &&fn): _fn(std::move(fn)) {}
-    ~on_scope_exit() { this->_fn(); }
-
-private:
-    Fn _fn;
-};
-
 NowPlayingPlugin::NowPlayingPlugin()
     : m_nowPlayingInfo([NSMutableDictionary new])
     , m_remoteTarget([NowPlayingRemoteTarget new])
@@ -247,7 +238,7 @@ void NowPlayingPlugin::updateNowPlayingInfo()
     if(!cover.isNull()) {
         QImage image = cover.toImage().convertToFormat(QImage::Format_ARGB32);
         CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-        on_scope_exit releaseColorSpace([&] { CGColorSpaceRelease(colorSpace); });
+        const auto releaseColorSpace = scopeGuard([&] { CGColorSpaceRelease(colorSpace); });
 
         CGContextRef context = CGBitmapContextCreate(
             image.bits(),
@@ -257,7 +248,7 @@ void NowPlayingPlugin::updateNowPlayingInfo()
             image.bytesPerLine(),
             colorSpace,
             kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
-        on_scope_exit releaseContext([&] { CGContextRelease(context); });
+        const auto releaseContext = scopeGuard([&] { CGContextRelease(context); });
 
         if(context) {
             CGImageRef cgImage = CGBitmapContextCreateImage(context);

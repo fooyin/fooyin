@@ -28,6 +28,7 @@
 #include <core/engine/dsp/dspregistry.h>
 #include <core/engine/dsp/processingbuffer.h>
 #include <core/engine/dsp/processingbufferlist.h>
+#include <utils/scopeguard.h>
 
 #include <QCryptographicHash>
 #include <QDir>
@@ -35,7 +36,6 @@
 #include <QFileInfo>
 #include <QMimeDatabase>
 #include <QSaveFile>
-#include <QScopeGuard>
 
 #include <array>
 #include <expected>
@@ -182,7 +182,7 @@ QString verifyOutput(const AudioLoader& loader, const QString& outputPath)
 
     loaded.decoder->start();
 
-    const auto stopDecoder = qScopeGuard([&loaded] { loaded.decoder->stop(); });
+    const auto stopDecoder = scopeGuard([&loaded] { loaded.decoder->stop(); });
     for(int attempt{0}; attempt < 1000; ++attempt) {
         const auto result = loaded.decoder->readAudio(TargetReadBytes);
         if(result.status == AudioDecoder::ReadStatus::DecodedAudio && result.buffer.isValid()) {
@@ -255,7 +255,7 @@ PcmHashResult calculatePcmHash(const AudioLoader& loader, const Track& track,
     }
 
     loaded.decoder->start();
-    const auto stopDecoder = qScopeGuard([&loaded] { loaded.decoder->stop(); });
+    const auto stopDecoder = scopeGuard([&loaded] { loaded.decoder->stop(); });
 
     if(track.offset() > 0) {
         if(!loaded.decoder->isSeekable()) {
@@ -540,7 +540,7 @@ TrackEncodingResult encodeTrack(const ConversionRunner::Request& request, const 
 
     loaded.decoder->start();
 
-    auto finishDecoder = qScopeGuard([&loaded] {
+    auto finishDecoder = scopeGuard([&loaded] {
         if(loaded.decoder) {
             loaded.decoder->stop();
         }
@@ -657,7 +657,7 @@ TrackEncodingResult encodeTrack(const ConversionRunner::Request& request, const 
         request.sourceObserver->trackStarted(track, *loaded.format);
     }
 
-    const auto observerGuard = qScopeGuard([&request, &track, &failed, &sourceComplete]() {
+    const auto observerGuard = scopeGuard([&request, &track, &failed, &sourceComplete]() {
         if(request.sourceObserver) {
             request.sourceObserver->trackFinished(track, !failed && sourceComplete);
         }
