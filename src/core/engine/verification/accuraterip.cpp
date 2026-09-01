@@ -359,7 +359,7 @@ std::vector<TrackResult> Verifier::results() const
                     continue;
                 }
                 const Checksum& expected = pressing.at(state.discTrackIndex);
-                if(!std::ranges::contains(trackResult.databaseCrcs, expected.crc)) {
+                if(std::ranges::find(trackResult.databaseCrcs, expected.crc) == trackResult.databaseCrcs.end()) {
                     trackResult.databaseCrcs.push_back(expected.crc);
                 }
                 if(state.crcV1 == expected.crc || state.crcV2 == expected.crc) {
@@ -601,7 +601,7 @@ std::vector<TrackResult> AlbumVerifier::results(const std::vector<Pressing>& pre
                 }
 
                 const Checksum& expected = pressing.at(state.discTrackIndex);
-                if(!std::ranges::contains(trackResult.databaseCrcs, expected.crc)) {
+                if(std::ranges::find(trackResult.databaseCrcs, expected.crc) == trackResult.databaseCrcs.end()) {
                     trackResult.databaseCrcs.push_back(expected.crc);
                 }
                 if(state.crcV1 == expected.crc || state.crcV2 == expected.crc) {
@@ -756,7 +756,7 @@ std::vector<TrackResult> OffsetVerifier::results() const
                 }
 
                 const Checksum& expected = pressing.at(index);
-                if(!std::ranges::contains(trackResult.databaseCrcs, expected.crc)) {
+                if(std::ranges::find(trackResult.databaseCrcs, expected.crc) == trackResult.databaseCrcs.end()) {
                     trackResult.databaseCrcs.push_back(expected.crc);
                 }
                 if(state.crcV1 == expected.crc || state.crcV2 == expected.crc) {

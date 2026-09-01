@@ -260,8 +260,8 @@ QStringList matchedDatabaseCrcs(const AccurateRip::TrackResult& result)
 {
     QStringList matches;
 
-    const bool matchesV1 = std::ranges::contains(result.databaseCrcs, result.crcV1);
-    const bool matchesV2 = std::ranges::contains(result.databaseCrcs, result.crcV2);
+    const bool matchesV1 = std::ranges::find(result.databaseCrcs, result.crcV1) != result.databaseCrcs.end();
+    const bool matchesV2 = std::ranges::find(result.databaseCrcs, result.crcV2) != result.databaseCrcs.end();
 
     if(matchesV1 && matchesV2 && result.crcV1 == result.crcV2) {
         matches.push_back(VerificationController::tr("%1 (AR v1/v2)").arg(crcText(result.crcV1)));
@@ -478,7 +478,7 @@ void showAccurateRipResults(QWidget* parent, const AccurateRip::DiscId& discId,
         table->setItem(row, 3, new QTableWidgetItem(verified ? pressingOffsetText(result.sampleOffset) : u"—"_s));
 
         auto* crcV1Item = new QTableWidgetItem(crcText(result.crcV1));
-        if(std::ranges::contains(result.databaseCrcs, result.crcV1)) {
+        if(std::ranges::find(result.databaseCrcs, result.crcV1) != result.databaseCrcs.end()) {
             QFont font = crcV1Item->font();
             font.setBold(true);
             crcV1Item->setFont(font);
@@ -487,7 +487,7 @@ void showAccurateRipResults(QWidget* parent, const AccurateRip::DiscId& discId,
         table->setItem(row, 4, crcV1Item);
 
         auto* crcV2Item = new QTableWidgetItem(crcText(result.crcV2));
-        if(std::ranges::contains(result.databaseCrcs, result.crcV2)) {
+        if(std::ranges::find(result.databaseCrcs, result.crcV2) != result.databaseCrcs.end()) {
             QFont font = crcV2Item->font();
             font.setBold(true);
             crcV2Item->setFont(font);
