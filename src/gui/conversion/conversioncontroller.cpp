@@ -27,11 +27,17 @@
 #include <utils/async.h>
 
 #include <QAbstractButton>
+#include <QDialogButtonBox>
 #include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QFutureWatcher>
+#include <QHBoxLayout>
+#include <QHeaderView>
+#include <QLabel>
 #include <QMessageBox>
+#include <QTableWidget>
+#include <QVBoxLayout>
 
 #include <atomic>
 #include <chrono>
@@ -42,6 +48,127 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 namespace {
+struct ConversionCounts
+{
+    int succeeded{0};
+    int skipped{0};
+    int failed{0};
+    int cancelled{0};
+};
+
+QString conversionStatus(ConversionResultStatus status, bool verifyOutput)
+{
+    switch(status) {
+        case ConversionResultStatus::Succeeded:
+            return verifyOutput ? ConversionController::tr("Converted and verified")
+                                : ConversionController::tr("Converted");
+        case ConversionResultStatus::Skipped:
+            return ConversionController::tr("Skipped");
+        case ConversionResultStatus::Failed:
+            return ConversionController::tr("Failed");
+        case ConversionResultStatus::Cancelled:
+            return ConversionController::tr("Cancelled");
+    }
+    return {};
+}
+
+QString conversionName(const Track& track)
+{
+    return !track.effectiveTitle().isEmpty() ? track.effectiveTitle() : QFileInfo{track.filepath()}.fileName();
+}
+
+ConversionCounts conversionCounts(const std::vector<ConversionTrackResult>& results)
+{
+    ConversionCounts counts;
+    for(const auto& result : results) {
+        switch(result.status) {
+            case ConversionResultStatus::Succeeded:
+                ++counts.succeeded;
+                break;
+            case ConversionResultStatus::Skipped:
+                ++counts.skipped;
+                break;
+            case ConversionResultStatus::Failed:
+                ++counts.failed;
+                break;
+            case ConversionResultStatus::Cancelled:
+                ++counts.cancelled;
+                break;
+        }
+    }
+    return counts;
+}
+
+void showConversionResults(QWidget* parent, const std::vector<ConversionTrackResult>& results,
+                           const ConversionCounts& counts, bool showDetails, bool verifyOutput)
+{
+    auto* dialog = new QDialog(parent);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->setWindowTitle(ConversionController::tr("Audio Conversion Results"));
+    dialog->resize(900, 440);
+
+    auto* table = new QTableWidget(static_cast<int>(results.size()), showDetails ? 4 : 3, dialog);
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->verticalHeader()->setVisible(false);
+
+    QStringList headers{ConversionController::tr("Name"), ConversionController::tr("Status"),
+                        ConversionController::tr("Output")};
+    if(showDetails) {
+        headers.push_back(ConversionController::tr("Details"));
+    }
+    table->setHorizontalHeaderLabels(headers);
+
+    for(int row{0}; std::cmp_less(row, results.size()); ++row) {
+        const auto& result  = results.at(row);
+        QStringList details = result.warnings;
+        if(!result.error.isEmpty()) {
+            details.push_front(result.error);
+        }
+
+        auto* nameItem = new QTableWidgetItem(conversionName(result.sourceTrack));
+        nameItem->setToolTip(result.sourceTrack.prettyFilepath());
+        table->setItem(row, 0, nameItem);
+        table->setItem(row, 1, new QTableWidgetItem(conversionStatus(result.status, verifyOutput)));
+
+        auto* outputItem = new QTableWidgetItem(QDir::toNativeSeparators(result.outputPath));
+        outputItem->setToolTip(QDir::toNativeSeparators(result.outputPath));
+        table->setItem(row, 2, outputItem);
+
+        if(showDetails) {
+            auto* detailsItem = new QTableWidgetItem(details.join(u"; "_s));
+            detailsItem->setToolTip(details.join(u'\n'));
+            table->setItem(row, 3, detailsItem);
+        }
+    }
+
+    table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+    if(showDetails) {
+        table->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
+    }
+
+    auto* summary = new QLabel(ConversionController::tr("Converted: %1 | Skipped: %2 | Failed: %3 | Cancelled: %4")
+                                   .arg(counts.succeeded)
+                                   .arg(counts.skipped)
+                                   .arg(counts.failed)
+                                   .arg(counts.cancelled),
+                               dialog);
+    auto* buttons = new QDialogButtonBox(QDialogButtonBox::Close, dialog);
+    QObject::connect(buttons, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
+
+    auto* footer = new QHBoxLayout();
+    footer->addWidget(summary, 1);
+    footer->addWidget(buttons);
+
+    auto* layout = new QVBoxLayout(dialog);
+    layout->addWidget(table);
+    layout->addLayout(footer);
+
+    dialog->show();
+}
+
 class ConversionSession : public QObject
 {
     Q_OBJECT
@@ -176,46 +303,16 @@ private:
         const auto results = m_watcher->result();
         m_progress->setValue(100);
 
-        int succeeded{0};
-        int skipped{0};
-        int failed{0};
-        int cancelledCount{0};
-        QStringList details;
+        const ConversionCounts counts = conversionCounts(results);
+
+        bool hasDetails{false};
         for(const ConversionTrackResult& result : results) {
-            switch(result.status) {
-                case ConversionResultStatus::Succeeded:
-                    ++succeeded;
-                    break;
-                case ConversionResultStatus::Skipped:
-                    ++skipped;
-                    break;
-                case ConversionResultStatus::Failed:
-                    ++failed;
-                    break;
-                case ConversionResultStatus::Cancelled:
-                    ++cancelledCount;
-                    break;
-            }
-            if(!result.error.isEmpty()) {
-                details.push_back(QFileInfo{result.sourceTrack.filepath()}.fileName() + u": "_s + result.error);
-            }
-            for(const QString& warning : result.warnings) {
-                details.push_back(QFileInfo{result.sourceTrack.filepath()}.fileName() + u": "_s + warning);
-            }
+            hasDetails = hasDetails || !result.error.isEmpty() || !result.warnings.empty();
         }
 
-        if(m_showReport || failed > 0 || !details.isEmpty()) {
-            const QString summary = QStringList{tr("Converted: %Ln track(s)", nullptr, succeeded),
-                                                tr("Skipped: %Ln track(s)", nullptr, skipped),
-                                                tr("Failed: %Ln track(s)", nullptr, failed),
-                                                tr("Cancelled: %Ln track(s)", nullptr, cancelledCount)}
-                                        .join(u'\n');
-            QMessageBox report{failed > 0 ? QMessageBox::Warning : QMessageBox::Information, tr("Audio Conversion"),
-                               summary, QMessageBox::Ok, m_parentWindow};
-            if(!details.isEmpty()) {
-                report.setDetailedText(details.join(u'\n'));
-            }
-            report.exec();
+        if(m_showReport || counts.failed > 0 || counts.cancelled > 0 || hasDetails) {
+            m_progress->hide();
+            showConversionResults(m_parentWindow, results, counts, hasDetails, m_job.preset.other.verifyOutput);
         }
 
         if(m_completion) {
