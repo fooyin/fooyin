@@ -69,8 +69,8 @@ private:
     QRadioButton* m_scrollAutomatic;
 
     QCheckBox* m_showScrollbar;
-    QCheckBox* m_centreFirstSyncedLine;
-    QCheckBox* m_centreLastSyncedLine;
+    QCheckBox* m_centreFirstLine;
+    QCheckBox* m_centreLastLine;
     QComboBox* m_progressMode;
     QComboBox* m_alignment;
     QSpinBox* m_lineSpacing;

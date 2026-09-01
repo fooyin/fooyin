@@ -65,6 +65,7 @@
 #include <QTimerEvent>
 
 #include <algorithm>
+#include <limits>
 #include <utility>
 
 Q_LOGGING_CATEGORY(LYRICS_WIDGET, "fy.lyrics")
@@ -78,12 +79,11 @@ constexpr auto ScrollTimeout = 100ms;
 constexpr auto ScrollTimeout = 100;
 #endif
 
+namespace Fooyin::Lyrics {
 namespace {
-bool hasSameTagLyrics(const Fooyin::Track& lhs, const Fooyin::Track& rhs, const Fooyin::SettingsManager* settings)
+bool hasSameTagLyrics(const Track& lhs, const Track& rhs, const SettingsManager* settings)
 {
-    const QStringList searchTags
-        = settings->fileValue(Fooyin::Lyrics::Settings::SearchTags, Fooyin::Lyrics::Defaults::searchTags())
-              .toStringList();
+    const QStringList searchTags = settings->fileValue(Settings::SearchTags, Defaults::searchTags()).toStringList();
     return std::ranges::all_of(searchTags,
                                [&lhs, &rhs](const QString& tag) { return lhs.extraTag(tag) == rhs.extraTag(tag); });
 }
@@ -127,14 +127,12 @@ int validatedEdgeFadeSize(int edgeFadeSize)
 
 int validatedEdgeFadeMode(int edgeFadeMode)
 {
-    return std::clamp(edgeFadeMode, static_cast<int>(Fooyin::Lyrics::EdgeFadeMode::Off),
-                      static_cast<int>(Fooyin::Lyrics::EdgeFadeMode::AllLyrics));
+    return std::clamp(edgeFadeMode, static_cast<int>(EdgeFadeMode::Off), static_cast<int>(EdgeFadeMode::AllLyrics));
 }
 
 int validatedProgressMode(int progressMode)
 {
-    return std::clamp(progressMode, static_cast<int>(Fooyin::Lyrics::ProgressMode::Off),
-                      static_cast<int>(Fooyin::Lyrics::ProgressMode::AllSynced));
+    return std::clamp(progressMode, static_cast<int>(ProgressMode::Off), static_cast<int>(ProgressMode::AllSynced));
 }
 
 int progressModeFromVariant(const QVariant& value, int defaultMode)
@@ -143,14 +141,40 @@ int progressModeFromVariant(const QVariant& value, int defaultMode)
         return defaultMode;
     }
     if(value.metaType().id() == QMetaType::Bool) {
-        return value.toBool() ? static_cast<int>(Fooyin::Lyrics::ProgressMode::AllSynced)
-                              : static_cast<int>(Fooyin::Lyrics::ProgressMode::Off);
+        return value.toBool() ? static_cast<int>(ProgressMode::AllSynced) : static_cast<int>(ProgressMode::Off);
     }
     return validatedProgressMode(value.toInt());
 }
+
+struct AutoScrollState
+{
+    int value{0};
+    int remainingDuration{0};
+};
+
+AutoScrollState autoScrollState(uint64_t position, uint64_t duration, int maximum)
+{
+    maximum = std::max(0, maximum);
+
+    if(duration == 0 || maximum == 0) {
+        return {};
+    }
+
+    position = std::min(position, duration);
+
+    const auto value = static_cast<int>((static_cast<double>(position) / static_cast<double>(duration)) * maximum);
+    const auto remaining
+        = static_cast<int>(std::min(duration - position, static_cast<uint64_t>(std::numeric_limits<int>::max())));
+
+    return {.value = std::clamp(value, 0, maximum), .remainingDuration = remaining};
+}
+
+int centredViewportPadding(int viewportHeight, int lineHeight)
+{
+    return std::max(0, (viewportHeight - lineHeight) / 2);
+}
 } // namespace
 
-namespace Fooyin::Lyrics {
 LyricsWidget::LyricsWidget(PlayerController* playerController, PlaylistHandler* playlistHandler,
                            LyricsFinder* lyricsFinder, LyricsSaver* lyricsSaver, SettingsManager* settings,
                            GuiStyleProvider* styleProvider, QWidget* parent)
@@ -190,8 +214,7 @@ LyricsWidget::LyricsWidget(PlayerController* playerController, PlaylistHandler* 
     QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this,
                      [this](const Track& track) { updateLyrics(track, true); });
     QObject::connect(m_playerController, &PlayerController::positionChanged, this, &LyricsWidget::setCurrentTime);
-    QObject::connect(m_playerController, &PlayerController::positionMoved, this,
-                     qOverload<uint64_t>(&LyricsWidget::checkStartAutoScrollPos));
+    QObject::connect(m_playerController, &PlayerController::positionMoved, this, &LyricsWidget::syncAutoScroll);
     QObject::connect(m_lyricsView, &LyricsView::viewportResized, this, &LyricsWidget::updateViewportPadding);
     QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsSearchFinished, this,
                      &LyricsWidget::handleLyricsSearchFinished);
@@ -225,7 +248,7 @@ LyricsWidget::LyricsWidget(PlayerController* playerController, PlaylistHandler* 
         }
     });
     QObject::connect(m_lyricsView->verticalScrollBar(), &QScrollBar::rangeChanged, this,
-                     [this]() { checkStartAutoScroll(0); });
+                     [this]() { syncAutoScroll(m_playerController->currentPosition()); });
 
     QObject::connect(m_lyricsView->verticalScrollBar(), &QScrollBar::sliderPressed, this,
                      [this]() { m_isUserScrolling = true; });
@@ -346,12 +369,11 @@ LyricsWidget::ConfigData LyricsWidget::defaultConfig() const
     config.edgeFadeMode = m_settings->fileValue(Settings::EdgeFadeMode, config.edgeFadeMode).toInt();
     config.edgeFadeSize = m_settings->fileValue(Settings::EdgeFadeSize, config.edgeFadeSize).toInt();
 
-    config.showScrollbar = m_settings->fileValue(Settings::ShowScrollbar, config.showScrollbar).toBool();
-    config.alignment     = m_settings->fileValue(Settings::Alignment, config.alignment).toInt();
-    config.lineSpacing   = m_settings->fileValue(Settings::LineSpacing, config.lineSpacing).toInt();
-    config.centreFirstSyncedLine
-        = m_settings->fileValue(Settings::CentreFirstLine, config.centreFirstSyncedLine).toBool();
-    config.centreLastSyncedLine = m_settings->fileValue(Settings::CentreLastLine, config.centreLastSyncedLine).toBool();
+    config.showScrollbar   = m_settings->fileValue(Settings::ShowScrollbar, config.showScrollbar).toBool();
+    config.alignment       = m_settings->fileValue(Settings::Alignment, config.alignment).toInt();
+    config.lineSpacing     = m_settings->fileValue(Settings::LineSpacing, config.lineSpacing).toInt();
+    config.centreFirstLine = m_settings->fileValue(Settings::CentreFirstLine, config.centreFirstLine).toBool();
+    config.centreLastLine  = m_settings->fileValue(Settings::CentreLastLine, config.centreLastLine).toBool();
     config.progressMode = progressModeFromVariant(m_settings->fileValue(Settings::ProgressFill), config.progressMode);
 
     const QVariant margins = m_settings->fileValue(Settings::Margins);
@@ -405,8 +427,8 @@ void LyricsWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(Settings::ShowScrollbar, validated.showScrollbar);
     m_settings->fileSet(Settings::Alignment, validated.alignment);
     m_settings->fileSet(Settings::LineSpacing, validated.lineSpacing);
-    m_settings->fileSet(Settings::CentreFirstLine, validated.centreFirstSyncedLine);
-    m_settings->fileSet(Settings::CentreLastLine, validated.centreLastSyncedLine);
+    m_settings->fileSet(Settings::CentreFirstLine, validated.centreFirstLine);
+    m_settings->fileSet(Settings::CentreLastLine, validated.centreLastLine);
     m_settings->fileSet(Settings::ProgressFill, validated.progressMode);
     m_settings->fileSet(Settings::Margins, QVariant::fromValue(validated.margins));
     m_settings->fileSet(Settings::Colours, validated.colours);
@@ -472,9 +494,8 @@ void LyricsWidget::applyConfig(const ConfigData& config)
     m_model->setFonts(m_config.baseFont, m_config.lineFont, m_config.wordLineFont, m_config.wordFont);
     m_model->setProgressMode(static_cast<ProgressMode>(m_config.progressMode));
 
-    updateViewportPadding();
-
     updateScrollMode(static_cast<ScrollMode>(m_config.scrollMode));
+    updateViewportPadding();
 
     if(!m_currentLyrics.isValid() && m_currentTrack.isValid()) {
         m_lyricsView->setDisplayString(noLyricsDisplayText(m_currentTrack));
@@ -488,7 +509,7 @@ void LyricsWidget::timerEvent(QTimerEvent* event)
     if(event->timerId() == m_scrollTimer.timerId()) {
         m_scrollTimer.stop();
         m_isUserScrolling = false;
-        checkStartAutoScroll(m_lyricsView->verticalScrollBar()->value());
+        resumeAutoScroll();
     }
     FyWidget::timerEvent(event);
 }
@@ -749,10 +770,10 @@ LyricsWidget::ConfigData LyricsWidget::configFromLayout(const QJsonObject& layou
         config.lineSpacing = layout.value("LineSpacing"_L1).toInt();
     }
     if(layout.contains("CentreFirstSyncedLine"_L1)) {
-        config.centreFirstSyncedLine = layout.value("CentreFirstSyncedLine"_L1).toBool();
+        config.centreFirstLine = layout.value("CentreFirstSyncedLine"_L1).toBool();
     }
     if(layout.contains("CentreLastSyncedLine"_L1)) {
-        config.centreLastSyncedLine = layout.value("CentreLastSyncedLine"_L1).toBool();
+        config.centreLastLine = layout.value("CentreLastSyncedLine"_L1).toBool();
     }
     if(layout.contains("ProgressFill"_L1)) {
         config.progressMode = layout.value("ProgressFill"_L1).toInt();
@@ -829,8 +850,8 @@ void LyricsWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
     layout["ShowScrollbar"_L1]         = config.showScrollbar;
     layout["Alignment"_L1]             = config.alignment;
     layout["LineSpacing"_L1]           = config.lineSpacing;
-    layout["CentreFirstSyncedLine"_L1] = config.centreFirstSyncedLine;
-    layout["CentreLastSyncedLine"_L1]  = config.centreLastSyncedLine;
+    layout["CentreFirstSyncedLine"_L1] = config.centreFirstLine;
+    layout["CentreLastSyncedLine"_L1]  = config.centreLastLine;
     layout["ProgressFill"_L1]          = config.progressMode;
     layout["LeftMargin"_L1]            = config.margins.left();
     layout["TopMargin"_L1]             = config.margins.top();
@@ -878,18 +899,16 @@ void LyricsWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
 
 void LyricsWidget::playStateChanged(Player::PlayState state)
 {
-    const auto stopScrolling = [this]() {
-        if(m_scrollMode == ScrollMode::Automatic && m_scrollAnim) {
-            m_scrollAnim->stop();
-        }
-    };
-
     switch(state) {
         case Player::PlayState::Paused:
-            stopScrolling();
+            if(m_scrollMode == ScrollMode::Automatic) {
+                stopAutoScroll();
+            }
             break;
         case Player::PlayState::Stopped:
-            stopScrolling();
+            if(m_scrollMode == ScrollMode::Automatic) {
+                stopAutoScroll();
+            }
             scrollToCurrentLine(0);
             break;
         case Player::PlayState::Playing:
@@ -900,9 +919,15 @@ void LyricsWidget::playStateChanged(Player::PlayState state)
 
 void LyricsWidget::setCurrentTime(uint64_t time)
 {
+    const bool movedBackwards = time < m_currentTime;
+
     m_currentTime = time;
     m_model->setCurrentTime(time);
     highlightCurrentLine();
+
+    if((movedBackwards || time == 0) && !m_currentLyrics.isSynced()) {
+        syncAutoScroll(time);
+    }
 }
 
 RichText LyricsWidget::noLyricsDisplayText(const Track& track)
@@ -934,15 +959,20 @@ void LyricsWidget::updateViewportPadding()
     QMargins margins{m_config.margins};
     int topPadding{0};
     int bottomPadding{0};
+    const bool autoScrollUnsynced
+        = m_currentLyrics.isValid() && !m_currentLyrics.isSynced() && m_scrollMode == ScrollMode::Automatic;
 
-    if(m_currentLyrics.isSynced()) {
-        if(m_config.centreFirstSyncedLine) {
+    if((m_currentLyrics.isSynced() || autoScrollUnsynced) && m_model->rowCount({}) > 2) {
+        const int viewportHeight     = m_lyricsView->viewport()->height();
+        const QModelIndex firstIndex = m_model->index(1, 0);
+        const QModelIndex lastIndex  = m_model->index(m_model->rowCount({}) - 2, 0);
+        if(m_config.centreFirstLine) {
             margins.setTop(0);
-            topPadding = m_lyricsView->viewport()->height() / 2;
+            topPadding = centredViewportPadding(viewportHeight, m_lyricsView->sizeHintForIndex(firstIndex).height());
         }
-        if(m_config.centreLastSyncedLine) {
+        if(m_config.centreLastLine) {
             margins.setBottom(0);
-            bottomPadding = m_lyricsView->viewport()->height() / 2;
+            bottomPadding = centredViewportPadding(viewportHeight, m_lyricsView->sizeHintForIndex(lastIndex).height());
         }
     }
 
@@ -953,6 +983,9 @@ void LyricsWidget::updateViewportPadding()
         m_currentLineStart = -1;
         m_currentLineEnd   = -1;
         highlightCurrentLine();
+    }
+    else if(autoScrollUnsynced) {
+        syncAutoScroll(m_playerController->currentPosition());
     }
 }
 
@@ -1080,64 +1113,55 @@ void LyricsWidget::updateScrollMode(ScrollMode mode)
         m_scrollAnim->stop();
     }
     else if(m_scrollMode == ScrollMode::Automatic) {
-        checkStartAutoScroll(m_lyricsView->verticalScrollBar()->value());
+        resumeAutoScroll();
     }
 
     updateEdgeFadeState();
 }
 
-void LyricsWidget::checkStartAutoScrollPos(uint64_t pos)
+void LyricsWidget::syncAutoScroll(uint64_t position)
 {
-    if(m_isUserScrolling) {
-        return;
-    }
-
-    if(!m_currentLyrics.isSynced() && m_scrollMode == ScrollMode::Automatic) {
-        const int maxScroll   = m_lyricsView->verticalScrollBar()->maximum();
-        const auto duration   = static_cast<int>(m_playerController->currentTrack().duration());
-        const auto startValue = static_cast<int>((static_cast<double>(pos) / duration) * maxScroll);
-        updateAutoScroll(startValue);
-    }
+    startAutoScroll(position, true);
 }
 
-void LyricsWidget::checkStartAutoScroll(int startValue)
+void LyricsWidget::resumeAutoScroll()
 {
-    if(m_isUserScrolling) {
-        return;
-    }
-
-    if(!m_currentLyrics.isSynced() && m_scrollMode == ScrollMode::Automatic) {
-        updateAutoScroll(startValue);
-    }
+    startAutoScroll(m_playerController->currentPosition(), false);
 }
 
-void LyricsWidget::updateAutoScroll(int startValue)
+void LyricsWidget::startAutoScroll(uint64_t position, bool syncPosition)
 {
-    if(m_isUserScrolling) {
+    if(m_isUserScrolling || m_currentLyrics.isSynced() || m_scrollMode != ScrollMode::Automatic) {
         return;
     }
 
-    auto* scrollbar = m_lyricsView->verticalScrollBar();
+    auto* scrollbar  = m_lyricsView->verticalScrollBar();
+    const auto state = autoScrollState(position, m_playerController->currentTrack().duration(), scrollbar->maximum());
 
-    scrollbar->setValue(startValue >= 0 ? startValue : scrollbar->value());
-
-    const int maxScroll = scrollbar->maximum();
-    if(scrollbar->value() == maxScroll) {
-        return;
+    stopAutoScroll();
+    if(syncPosition) {
+        scrollbar->setValue(state.value);
     }
 
-    if(m_scrollAnim) {
-        m_scrollAnim->stop();
+    if(m_playerController->playState() != Player::PlayState::Playing || state.remainingDuration == 0
+       || scrollbar->value() == scrollbar->maximum()) {
+        return;
     }
 
     m_scrollAnim = new QPropertyAnimation(scrollbar, "value", this);
-    m_scrollAnim->setDuration(
-        static_cast<int>(m_playerController->currentTrack().duration() - m_playerController->currentPosition()));
+    m_scrollAnim->setDuration(state.remainingDuration);
     m_scrollAnim->setEasingCurve(QEasingCurve::Linear);
     m_scrollAnim->setStartValue(scrollbar->value());
-    m_scrollAnim->setEndValue(maxScroll);
+    m_scrollAnim->setEndValue(scrollbar->maximum());
 
     m_scrollAnim->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void LyricsWidget::stopAutoScroll()
+{
+    if(m_scrollAnim) {
+        m_scrollAnim->stop();
+    }
 }
 
 void LyricsWidget::updateEdgeFadeState()
