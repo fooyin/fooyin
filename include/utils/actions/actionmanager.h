@@ -26,6 +26,9 @@
 
 #include <QObject>
 
+#include <memory>
+#include <vector>
+
 class QAction;
 class QMainWindow;
 
@@ -36,6 +39,13 @@ class SettingsManager;
 class ActionContainer;
 
 using CommandList = std::vector<Command*>;
+
+enum class GlobalShortcutManagement : uint8_t
+{
+    Unavailable = 0,
+    ApplicationManaged,
+    SystemManaged,
+};
 
 class FYUTILS_EXPORT ActionManager : public QObject
 {
@@ -66,11 +76,20 @@ public:
     [[nodiscard]] CommandList commands() const;
     [[nodiscard]] ActionContainer* actionContainer(const Id& id) const;
 
+    [[nodiscard]] GlobalShortcutManagement globalShortcutManagement() const;
+    void setGlobalShortcutManagement(GlobalShortcutManagement management);
+    [[nodiscard]] bool globalShortcutConfigurationAvailable() const;
+    void setGlobalShortcutConfigurationAvailable(bool available);
+    void configureGlobalShortcuts();
+
     bool eventFilter(QObject* watched, QEvent* event) override;
 
 Q_SIGNALS:
     void commandsChanged();
     void contextChanged(const Fooyin::Context& context);
+    void globalShortcutManagementChanged(Fooyin::GlobalShortcutManagement management);
+    void globalShortcutConfigurationAvailabilityChanged(bool available);
+    void globalShortcutConfigurationRequested();
 
 private:
     std::unique_ptr<ActionManagerPrivate> p;

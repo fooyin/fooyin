@@ -32,6 +32,7 @@
 #include <QMenuBar>
 #include <QMouseEvent>
 
+#include <optional>
 #include <set>
 
 using namespace Qt::StringLiterals;
@@ -40,13 +41,14 @@ namespace Fooyin {
 class ActionManagerPrivate
 {
 public:
-    explicit ActionManagerPrivate(ActionManager* self, SettingsManager* settingsManager)
+    ActionManagerPrivate(ActionManager* self, SettingsManager* settingsManager)
         : m_self{self}
         , m_settingsManager{settingsManager}
     { }
 
     Command* overridableAction(const Id& id);
     void loadSetting(const Id& id, Command* command) const;
+    [[nodiscard]] std::optional<ShortcutList> loadShortcuts(const QString& key) const;
 
     void updateContainer();
     void scheduleContainerUpdate(ActionContainer* actionContainer);
@@ -80,6 +82,8 @@ public:
     std::set<ActionContainer*> m_scheduledContainerUpdates;
 
     Context m_currentContext;
+    GlobalShortcutManagement m_globalShortcutManagement{GlobalShortcutManagement::Unavailable};
+    bool m_globalShortcutConfigurationAvailable{false};
     bool m_contextOverride{false};
     WidgetContext* m_widgetOverride{nullptr};
     WidgetContextList m_activeContext;
@@ -107,20 +111,36 @@ Command* ActionManagerPrivate::overridableAction(const Id& id)
 
 void ActionManagerPrivate::loadSetting(const Id& id, Command* command) const
 {
-    const QString key = u"KeyboardShortcuts/"_s + id.name();
+    if(const auto shortcuts = loadShortcuts(u"KeyboardShortcuts/"_s + id.name())) {
+        command->setShortcut(*shortcuts);
+    }
+    if(const auto shortcuts = loadShortcuts(u"GlobalShortcuts/"_s + id.name())) {
+        command->setGlobalShortcuts(*shortcuts);
+    }
 
+    const QString registrationKey = u"GlobalShortcutRegistrations/"_s + id.name();
+    if(m_settingsManager->fileContains(registrationKey)) {
+        command->setGlobalShortcutRegistered(m_settingsManager->fileValue(registrationKey).toBool());
+    }
+    else if(!command->globalShortcuts().empty()) {
+        command->setGlobalShortcutRegistered(true);
+    }
+}
+
+std::optional<ShortcutList> ActionManagerPrivate::loadShortcuts(const QString& key) const
+{
     if(m_settingsManager->fileContains(key)) {
         const QVariant var = m_settingsManager->fileValue(key);
         if(QMetaType::Type(var.typeId()) == QMetaType::QStringList) {
             ShortcutList shortcuts;
-            std::ranges::transform(var.toStringList(), std::back_inserter(shortcuts),
-                                   [](const QKeySequence& k) { return k.toString(); });
-            command->setShortcut(shortcuts);
+            std::ranges::transform(var.toStringList(), std::back_inserter(shortcuts), [](const QString& keyText) {
+                return QKeySequence::fromString(keyText, QKeySequence::PortableText);
+            });
+            return shortcuts;
         }
-        else {
-            command->setShortcut({QKeySequence::fromString(var.toString())});
-        }
+        return ShortcutList{QKeySequence::fromString(var.toString(), QKeySequence::PortableText)};
     }
+    return std::nullopt;
 }
 
 void ActionManagerPrivate::updateContainer()
@@ -193,7 +213,7 @@ void ActionManagerPrivate::updateFocusWidget(QWidget* widget)
 void ActionManagerPrivate::setContext(const Context& updatedContext)
 {
     m_currentContext = updatedContext;
-    for(const auto& [id, command] : m_idCmdMap) {
+    for(const auto& [_, command] : m_idCmdMap) {
         command->setCurrentContext(m_currentContext);
     }
 }
@@ -241,7 +261,9 @@ void ActionManager::setMainWindow(QMainWindow* mainWindow)
 void ActionManager::saveSettings()
 {
     for(const auto& [_, command] : p->m_idCmdMap) {
-        const QString key = u"KeyboardShortcuts/"_s + command->id().name();
+        const QString localKey        = u"KeyboardShortcuts/"_s + command->id().name();
+        const QString globalKey       = u"GlobalShortcuts/"_s + command->id().name();
+        const QString registrationKey = u"GlobalShortcutRegistrations/"_s + command->id().name();
 
         const ShortcutList commandShortcuts = command->shortcuts();
         const ShortcutList defaultShortcuts = command->defaultShortcuts();
@@ -249,11 +271,32 @@ void ActionManager::saveSettings()
             // Only save user changes
             QStringList keys;
             std::ranges::transform(commandShortcuts, std::back_inserter(keys),
-                                   [](const QKeySequence& k) { return k.toString(); });
-            p->m_settingsManager->fileSet(key, keys);
+                                   [](const QKeySequence& key) { return key.toString(QKeySequence::PortableText); });
+            p->m_settingsManager->fileSet(localKey, keys);
         }
         else {
-            p->m_settingsManager->fileRemove(key);
+            p->m_settingsManager->fileRemove(localKey);
+        }
+
+        const ShortcutList globalShortcuts = command->globalShortcuts();
+        if(!globalShortcuts.empty()) {
+            QStringList keys;
+            std::ranges::transform(globalShortcuts, std::back_inserter(keys),
+                                   [](const QKeySequence& key) { return key.toString(QKeySequence::PortableText); });
+            p->m_settingsManager->fileSet(globalKey, keys);
+        }
+        else {
+            p->m_settingsManager->fileRemove(globalKey);
+        }
+
+        if(command->isGlobalShortcutRegistered()) {
+            p->m_settingsManager->fileSet(registrationKey, true);
+        }
+        else if(!globalShortcuts.empty()) {
+            p->m_settingsManager->fileSet(registrationKey, false);
+        }
+        else {
+            p->m_settingsManager->fileRemove(registrationKey);
         }
     }
 }
@@ -446,6 +489,35 @@ ActionContainer* ActionManager::actionContainer(const Id& id) const
         return p->m_idContainerMap.at(id).get();
     }
     return nullptr;
+}
+
+GlobalShortcutManagement ActionManager::globalShortcutManagement() const
+{
+    return p->m_globalShortcutManagement;
+}
+
+void ActionManager::setGlobalShortcutManagement(GlobalShortcutManagement management)
+{
+    if(std::exchange(p->m_globalShortcutManagement, management) != management) {
+        Q_EMIT globalShortcutManagementChanged(management);
+    }
+}
+
+bool ActionManager::globalShortcutConfigurationAvailable() const
+{
+    return p->m_globalShortcutConfigurationAvailable;
+}
+
+void ActionManager::setGlobalShortcutConfigurationAvailable(bool available)
+{
+    if(std::exchange(p->m_globalShortcutConfigurationAvailable, available) != available) {
+        Q_EMIT globalShortcutConfigurationAvailabilityChanged(available);
+    }
+}
+
+void ActionManager::configureGlobalShortcuts()
+{
+    Q_EMIT globalShortcutConfigurationRequested();
 }
 
 bool ActionManager::eventFilter(QObject* watched, QEvent* event)

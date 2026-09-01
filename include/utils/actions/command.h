@@ -57,6 +57,8 @@ public:
     [[nodiscard]] bool hasOverrideActions() const;
 
     void setShortcut(const ShortcutList& keys);
+    void setGlobalShortcuts(const ShortcutList& keys);
+    void setGlobalShortcutRegistered(bool registered);
     [[nodiscard]] QString stringWithShortcut(const QString& str) const;
     void actionWithShortcutToolTip(QAction* action) const;
 
@@ -64,6 +66,8 @@ public:
     void setDefaultShortcut(const ShortcutList& keys);
     [[nodiscard]] ShortcutList defaultShortcuts() const;
     [[nodiscard]] ShortcutList shortcuts() const;
+    [[nodiscard]] ShortcutList globalShortcuts() const;
+    [[nodiscard]] bool isGlobalShortcutRegistered() const;
     [[nodiscard]] QKeySequence shortcut() const;
 
     void setDescription(const QString& text);
@@ -78,6 +82,8 @@ public:
 
 Q_SIGNALS:
     void shortcutChanged();
+    void globalShortcutsChanged();
+    void globalShortcutRegistrationChanged();
     void activeStateChanged();
 
 private:

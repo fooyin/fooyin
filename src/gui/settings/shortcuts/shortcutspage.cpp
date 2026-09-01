@@ -27,6 +27,7 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
+#include <QCheckBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -37,6 +38,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QRegularExpression>
+#include <QSignalBlocker>
 #include <QSortFilterProxyModel>
 #include <QToolButton>
 #include <QTreeView>
@@ -127,12 +129,13 @@ private:
     {
         QWidget* widget;
         QKeySequenceEdit* input;
+        QCheckBox* global;
         QToolButton* removeButton;
     };
 
     [[nodiscard]] Command* selectedCommand() const;
-    void updateCurrentShortcuts(const ShortcutList& shortcuts);
-    void addShortcutInput(const QKeySequence& shortcut = {}, bool focus = false);
+    void updateCurrentBindings(const ShortcutBindingList& bindings);
+    void addShortcutInput(const ShortcutBinding& binding = {}, bool focus = false);
     void removeShortcutInput(QKeySequenceEdit* input);
     void clearShortcutInputs();
     void updateShortcutButtons();
@@ -154,6 +157,8 @@ private:
     QVBoxLayout* m_shortcutRowsLayout;
     QPushButton* m_resetShortcut;
     QPushButton* m_addShortcut;
+    QPushButton* m_registerGlobalShortcut;
+    QPushButton* m_configureGlobalShortcuts;
     QLabel* m_conflictLabel;
     QPushButton* m_reassignButton;
     std::vector<ShortcutRow> m_shortcutRowsData;
@@ -170,6 +175,8 @@ ShortcutsPageWidget::ShortcutsPageWidget(ActionManager* actionManager)
     , m_shortcutRowsLayout{new QVBoxLayout(m_shortcutRows)}
     , m_resetShortcut{new QPushButton(tr("Reset to default"), this)}
     , m_addShortcut{new QPushButton(Gui::iconFromTheme(Constants::Icons::Add), tr("Add shortcut"), this)}
+    , m_registerGlobalShortcut{new QPushButton(this)}
+    , m_configureGlobalShortcuts{new QPushButton(tr("Configure global shortcuts…"), this)}
     , m_conflictLabel{new QLabel(this)}
     , m_reassignButton{new QPushButton(tr("Overwrite Shortcut"), this)}
 {
@@ -203,6 +210,8 @@ ShortcutsPageWidget::ShortcutsPageWidget(ActionManager* actionManager)
 
     auto* shortcutActions = new QHBoxLayout();
     shortcutActions->addWidget(m_addShortcut);
+    shortcutActions->addWidget(m_registerGlobalShortcut);
+    shortcutActions->addWidget(m_configureGlobalShortcuts);
     shortcutActions->addStretch(1);
     shortcutActions->addWidget(m_resetShortcut);
 
@@ -221,6 +230,14 @@ ShortcutsPageWidget::ShortcutsPageWidget(ActionManager* actionManager)
 
     QObject::connect(m_resetShortcut, &QAbstractButton::clicked, this, &ShortcutsPageWidget::resetCurrentShortcut);
     QObject::connect(m_addShortcut, &QAbstractButton::clicked, this, [this]() { addShortcutInput({}, true); });
+    QObject::connect(m_registerGlobalShortcut, &QAbstractButton::clicked, this, [this] {
+        if(Command* command = selectedCommand()) {
+            m_model->globalShortcutRegistrationChanged(command, !m_model->isGlobalShortcutRegistered(command));
+            updateShortcutButtons();
+        }
+    });
+    QObject::connect(m_configureGlobalShortcuts, &QAbstractButton::clicked, m_actionManager,
+                     &ActionManager::configureGlobalShortcuts);
     QObject::connect(m_reassignButton, &QAbstractButton::clicked, this, &ShortcutsPageWidget::reassignConflicts);
     QObject::connect(m_shortcutTable->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &ShortcutsPageWidget::selectionChanged);
@@ -231,6 +248,16 @@ ShortcutsPageWidget::ShortcutsPageWidget(ActionManager* actionManager)
         selectionChanged();
     });
     QObject::connect(m_actionManager, &ActionManager::commandsChanged, this, &ShortcutsPageWidget::repopulateShortcuts);
+    QObject::connect(m_actionManager, &ActionManager::globalShortcutManagementChanged, this,
+                     &ShortcutsPageWidget::repopulateShortcuts);
+    QObject::connect(m_actionManager, &ActionManager::globalShortcutConfigurationAvailabilityChanged, this,
+                     &ShortcutsPageWidget::selectionChanged);
+    QObject::connect(m_model, &ShortcutsModel::bindingsSynchronised, this, [this](Command* command) {
+        if(command == selectedCommand()) {
+            updateCurrentBindings(m_model->bindings(command));
+            updateConflictState();
+        }
+    });
 
     m_shortcutBox->setDisabled(true);
 }
@@ -249,8 +276,10 @@ void ShortcutsPageWidget::repopulateShortcuts()
 
 void ShortcutsPageWidget::apply()
 {
+    shortcutChanged();
     m_model->processQueue();
     m_actionManager->saveSettings();
+    selectionChanged();
 }
 
 void ShortcutsPageWidget::reset()
@@ -258,6 +287,8 @@ void ShortcutsPageWidget::reset()
     const auto commands = m_actionManager->commands();
     for(Command* command : commands) {
         command->setShortcut(command->defaultShortcuts());
+        command->setGlobalShortcuts({});
+        command->setGlobalShortcutRegistered(false);
     }
 }
 
@@ -281,22 +312,22 @@ Command* ShortcutsPageWidget::selectedCommand() const
     return index.data(ShortcutItem::ActionCommand).value<Command*>();
 }
 
-void ShortcutsPageWidget::updateCurrentShortcuts(const ShortcutList& shortcuts)
+void ShortcutsPageWidget::updateCurrentBindings(const ShortcutBindingList& bindings)
 {
     clearShortcutInputs();
 
-    for(const auto& shortcut : shortcuts) {
-        addShortcutInput(shortcut);
+    for(const auto& binding : bindings) {
+        addShortcutInput(binding);
     }
 
-    if(shortcuts.empty()) {
+    if(bindings.empty()) {
         addShortcutInput();
     }
 
     updateShortcutButtons();
 }
 
-void ShortcutsPageWidget::addShortcutInput(const QKeySequence& shortcut, const bool focus)
+void ShortcutsPageWidget::addShortcutInput(const ShortcutBinding& binding, const bool focus)
 {
     if(static_cast<int>(m_shortcutRowsData.size()) >= MaxShortcuts) {
         return;
@@ -308,19 +339,34 @@ void ShortcutsPageWidget::addShortcutInput(const QKeySequence& shortcut, const b
 
     auto* input = new QKeySequenceEdit(rowWidget);
     input->setClearButtonEnabled(true);
-    input->setKeySequence(shortcut);
+    input->setKeySequence(binding.shortcut);
+
+    auto* global = new QCheckBox(tr("Global"), rowWidget);
+    global->setChecked(binding.scope == ShortcutScope::Global);
 
     auto* removeButton = new QToolButton(rowWidget);
     removeButton->setIcon(Gui::iconFromTheme(Constants::Icons::Remove));
     removeButton->setToolTip(tr("Remove shortcut"));
 
     rowLayout->addWidget(input);
+    rowLayout->addWidget(global);
     rowLayout->addWidget(removeButton);
 
     m_shortcutRowsLayout->addWidget(rowWidget);
-    m_shortcutRowsData.emplace_back(rowWidget, input, removeButton);
+    m_shortcutRowsData.emplace_back(rowWidget, input, global, removeButton);
 
     QObject::connect(input, &QKeySequenceEdit::keySequenceChanged, this, &ShortcutsPageWidget::shortcutChanged);
+    QObject::connect(global, &QCheckBox::toggled, this, [this, global](bool checked) {
+        if(checked) {
+            for(const auto& row : m_shortcutRowsData) {
+                if(row.global != global && row.global->isChecked()) {
+                    const QSignalBlocker blocker{row.global};
+                    row.global->setChecked(false);
+                }
+            }
+        }
+        shortcutChanged();
+    });
     QObject::connect(removeButton, &QAbstractButton::clicked, this, [this, input]() { removeShortcutInput(input); });
 
     updateShortcutButtons();
@@ -332,17 +378,20 @@ void ShortcutsPageWidget::addShortcutInput(const QKeySequence& shortcut, const b
 
 void ShortcutsPageWidget::removeShortcutInput(QKeySequenceEdit* input)
 {
-    ShortcutList shortcuts;
+    ShortcutBindingList bindings;
     for(const auto& row : m_shortcutRowsData) {
         if(row.input == input || row.input->keySequence().isEmpty()) {
             continue;
         }
-        if(!shortcuts.contains(row.input->keySequence())) {
-            shortcuts.append(row.input->keySequence());
+        const ShortcutBinding binding{.shortcut = row.input->keySequence(),
+                                      .scope
+                                      = row.global->isChecked() ? ShortcutScope::Global : ShortcutScope::Application};
+        if(std::ranges::find(bindings, binding) == bindings.cend()) {
+            bindings.push_back(binding);
         }
     }
 
-    updateCurrentShortcuts(shortcuts);
+    updateCurrentBindings(bindings);
     shortcutChanged();
 }
 
@@ -359,6 +408,14 @@ void ShortcutsPageWidget::clearShortcutInputs()
 
 void ShortcutsPageWidget::updateShortcutButtons()
 {
+    Command* command                    = selectedCommand();
+    const auto management               = m_actionManager->globalShortcutManagement();
+    const bool available                = management != GlobalShortcutManagement::Unavailable;
+    const bool systemManaged            = management == GlobalShortcutManagement::SystemManaged;
+    const bool eligible                 = command && command->actionForContext(Constants::Context::Global);
+    const bool globalShortcutRegistered = m_model->isGlobalShortcutRegistered(command);
+    const bool configurationAvailable   = m_actionManager->globalShortcutConfigurationAvailable();
+
     const bool allRowsHaveShortcuts
         = std::ranges::all_of(m_shortcutRowsData, [](const auto& row) { return !row.input->keySequence().isEmpty(); });
 
@@ -366,8 +423,30 @@ void ShortcutsPageWidget::updateShortcutButtons()
 
     const bool canRemove = m_shortcutRowsData.size() > 1;
     for(const auto& row : m_shortcutRowsData) {
+        row.global->setVisible(!systemManaged);
+        row.global->setEnabled(available && eligible);
+        row.input->setEnabled(true);
+
+        if(!available) {
+            row.global->setToolTip(tr("Global shortcuts are not available on this platform"));
+        }
+        else if(!eligible) {
+            row.global->setToolTip(tr("This action is only available within an application context"));
+        }
+        else {
+            row.global->setToolTip({});
+        }
+        row.input->setToolTip({});
+
         row.removeButton->setEnabled(canRemove);
     }
+
+    m_registerGlobalShortcut->setVisible(systemManaged);
+    m_registerGlobalShortcut->setEnabled(systemManaged && eligible);
+    m_registerGlobalShortcut->setText(globalShortcutRegistered ? tr("Disable global shortcut")
+                                                               : tr("Register globally…"));
+    m_configureGlobalShortcuts->setVisible(systemManaged && configurationAvailable && globalShortcutRegistered);
+    m_configureGlobalShortcuts->setEnabled(command && command->isGlobalShortcutRegistered());
 }
 
 void ShortcutsPageWidget::updateConflictState()
@@ -396,13 +475,14 @@ void ShortcutsPageWidget::selectionChanged()
     Command* command = selectedCommand();
     if(!command) {
         m_shortcutBox->setDisabled(true);
+        updateShortcutButtons();
         updateConflictState();
         return;
     }
 
-    const auto shortcuts = m_model->shortcuts(command);
+    const auto bindings = m_model->bindings(command);
 
-    updateCurrentShortcuts(shortcuts);
+    updateCurrentBindings(bindings);
     m_shortcutBox->setDisabled(false);
     updateConflictState();
 }
@@ -414,16 +494,19 @@ void ShortcutsPageWidget::shortcutChanged()
         return;
     }
 
-    ShortcutList shortcuts;
+    ShortcutBindingList bindings;
+    ShortcutList usedShortcuts;
 
     for(const auto& row : m_shortcutRowsData) {
         const QKeySequence shortcut = row.input->keySequence();
-        if(!shortcut.isEmpty() && !shortcuts.contains(shortcut)) {
-            shortcuts.append(shortcut);
+        if(!shortcut.isEmpty() && !usedShortcuts.contains(shortcut)) {
+            usedShortcuts.append(shortcut);
+            bindings.push_back({.shortcut = shortcut,
+                                .scope = row.global->isChecked() ? ShortcutScope::Global : ShortcutScope::Application});
         }
     }
 
-    m_model->shortcutChanged(command, shortcuts);
+    m_model->bindingsChanged(command, bindings);
     updateShortcutButtons();
     updateConflictState();
 }
@@ -435,8 +518,15 @@ void ShortcutsPageWidget::resetCurrentShortcut()
         return;
     }
 
-    m_model->shortcutChanged(command, command->defaultShortcuts());
-    updateCurrentShortcuts(command->defaultShortcuts());
+    ShortcutBindingList bindings;
+    for(const auto& shortcut : command->defaultShortcuts()) {
+        bindings.emplace_back(shortcut, ShortcutScope::Application);
+    }
+    m_model->bindingsChanged(command, bindings);
+    if(m_actionManager->globalShortcutManagement() == GlobalShortcutManagement::SystemManaged) {
+        m_model->globalShortcutRegistrationChanged(command, false);
+    }
+    updateCurrentBindings(bindings);
     updateConflictState();
 }
 

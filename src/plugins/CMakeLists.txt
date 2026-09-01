@@ -8,6 +8,7 @@ set(FOOYIN_KNOWN_PLUGINS
     fileops
     filters
     gme
+    globalhotkeys
     libarchive
     lyrics
     mediacontrol
@@ -44,6 +45,7 @@ set(FOOYIN_DEFAULT_PLUGINS
     fileops
     filters
     gme
+    globalhotkeys
     libarchive
     lyrics
     oscilloscope
@@ -134,6 +136,7 @@ fooyin_add_selected_plugin(equaliser)
 fooyin_add_selected_plugin(fileops)
 fooyin_add_selected_plugin(filters)
 fooyin_add_selected_plugin(gme)
+fooyin_add_selected_plugin(globalhotkeys)
 fooyin_add_selected_plugin(libarchive)
 fooyin_add_selected_plugin(lyrics)
 fooyin_add_selected_plugin(oscilloscope)
