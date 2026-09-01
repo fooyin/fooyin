@@ -24,6 +24,7 @@
 #include <gui/iconloader.h>
 #include <gui/internalguisettings.h>
 #include <gui/propertiesdialog.h>
+#include <gui/widgets/elapsedprogressdialog.h>
 #include <gui/widgets/toolbutton.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
@@ -48,11 +49,13 @@
 #include <QTimer>
 
 #include <algorithm>
+#include <chrono>
 #include <ranges>
 #include <unordered_set>
 #include <utility>
 
 using namespace Qt::StringLiterals;
+using namespace std::chrono_literals;
 
 constexpr auto PropertiesDialogGroup   = "PropertiesDialog";
 constexpr auto SidebarVisibleKey       = "PropertiesDialog/SidebarVisible";
@@ -97,6 +100,95 @@ bool editorEqual(const Fooyin::Track& lhs, const Fooyin::Track& rhs)
 } // namespace
 
 namespace Fooyin {
+class PropertiesWriteProgress : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit PropertiesWriteProgress(int trackCount, QWidget* parent)
+        : QObject{parent}
+        , m_dialog{new ElapsedProgressDialog(tr("Writing changes…"), tr("Abort"), 0, 1, parent)}
+    {
+        m_dialog->setAttribute(Qt::WA_DeleteOnClose);
+        m_dialog->setModal(true);
+
+        m_dialog->setMinimumDuration(2000ms);
+        m_dialog->setBusy(true);
+        m_dialog->setShowRemaining(false);
+        m_dialog->setWindowTitle(tr("Writing Metadata"));
+        m_dialog->setText(tr("Writing changes to %Ln track(s)…", nullptr, trackCount));
+        m_dialog->startTimer();
+
+        QObject::connect(m_dialog, &ElapsedProgressDialog::cancelled, this, [this]() { cancelRequests(); });
+        QObject::connect(m_dialog, &QDialog::rejected, this, [this]() {
+            if(!m_finishing) {
+                cancelRequests();
+            }
+        });
+    }
+
+    void addRequest(WriteRequest request)
+    {
+        if(!request.finished.isValid()) {
+            return;
+        }
+
+        ++m_pendingRequests;
+        if(request.cancel) {
+            m_cancelCallbacks.emplace_back(std::move(request.cancel));
+        }
+
+        request.finished.then(this, [this](const WriteResult& /*result*/) {
+            --m_pendingRequests;
+            finishIfIdle();
+        });
+    }
+
+    void beginCollecting()
+    {
+        m_collecting = true;
+    }
+
+    void finishCollecting()
+    {
+        m_collecting = false;
+        finishIfIdle();
+    }
+
+private:
+    void finishIfIdle()
+    {
+        if(m_collecting || m_pendingRequests > 0 || m_finishing) {
+            return;
+        }
+
+        m_finishing = true;
+        if(m_dialog) {
+            m_dialog->close();
+        }
+
+        deleteLater();
+    }
+
+    void cancelRequests()
+    {
+        if(std::exchange(m_cancelled, true)) {
+            return;
+        }
+
+        for(const auto& cancel : m_cancelCallbacks) {
+            cancel();
+        }
+    }
+
+    QPointer<ElapsedProgressDialog> m_dialog;
+    std::vector<std::function<void()>> m_cancelCallbacks;
+    int m_pendingRequests{0};
+    bool m_collecting{true};
+    bool m_cancelled{false};
+    bool m_finishing{false};
+};
+
 void PropertiesDialogSession::reset(const TrackList& tracks)
 {
     const auto workingTracks = filterDuplicateTracks(tracks);
@@ -393,6 +485,7 @@ public:
 
 private:
     void apply();
+    void addWriteRequest(WriteRequest request);
     void updateTracks(const TrackList& tracks);
 
     void buildScopePanel();
@@ -442,6 +535,7 @@ private:
     bool m_scopePanelVisible{false};
     int m_scopePanelReservedWidth{0};
     std::vector<int> m_itemRevisions;
+    QPointer<PropertiesWriteProgress> m_writeProgress;
 };
 
 namespace {
@@ -564,6 +658,8 @@ PropertiesDialogWidget::PropertiesDialogWidget(ActionManager* actionManager, Set
             QObject::connect(tabPage, &PropertiesTabWidget::tracksChanged, this, &PropertiesDialogWidget::updateTracks);
             QObject::connect(tabPage, &PropertiesTabWidget::pendingChangesStateChanged, this,
                              &PropertiesDialogWidget::refreshScopePanel);
+            QObject::connect(tabPage, &PropertiesTabWidget::writeRequestStarted, this,
+                             &PropertiesDialogWidget::addWriteRequest);
         }
     }
 
@@ -598,13 +694,34 @@ void PropertiesDialogWidget::reject()
 
 void PropertiesDialogWidget::apply()
 {
+    if(m_writeProgress) {
+        m_writeProgress->beginCollecting();
+    }
+
     auto visitedTabs = std::views::filter(m_tabs, [&](const PropertiesTab& tab) { return tab.hasVisited(); });
     for(PropertiesTab& tab : visitedTabs) {
         tab.apply();
     }
 
+    if(m_writeProgress) {
+        m_writeProgress->finishCollecting();
+    }
+
     m_session.acceptChanges();
     refreshScopePanel();
+}
+
+void PropertiesDialogWidget::addWriteRequest(WriteRequest request)
+{
+    if(!request.finished.isValid()) {
+        return;
+    }
+
+    if(!m_writeProgress) {
+        m_writeProgress
+            = new PropertiesWriteProgress(static_cast<int>(m_session.workingTracks().size()), Utils::getMainWindow());
+    }
+    m_writeProgress->addRequest(std::move(request));
 }
 
 void PropertiesDialogWidget::updateTracks(const TrackList& tracks)

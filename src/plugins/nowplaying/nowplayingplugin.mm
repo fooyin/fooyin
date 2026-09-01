@@ -99,7 +99,7 @@ using namespace Qt::StringLiterals;
 - (MPRemoteCommandHandlerStatus)ratingCommand:(MPRatingCommandEvent *)event {
     auto track = self.plugin->playerController()->currentTrack();
     track.setRating(event.rating);
-    self.plugin->musicLibrary()->updateTrackStats(track);
+    self.plugin->musicLibrary()->updateTrackStats(track, Fooyin::Track::Stat::Rating);
     return MPRemoteCommandHandlerStatusSuccess;
 }
 @end

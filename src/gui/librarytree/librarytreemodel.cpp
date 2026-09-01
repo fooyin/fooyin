@@ -797,9 +797,6 @@ void LibraryTreeModelPrivate::populateModel(PendingTreeData& data)
         }
     }
 
-    const QModelIndex allIndex = m_self->indexOfItem(&m_summaryNode);
-    Q_EMIT m_self->dataChanged(allIndex, allIndex, {Qt::DisplayRole});
-
     for(const QModelIndex& index : changedIndexes) {
         Q_EMIT m_self->dataChanged(index, index,
                                    {Qt::DisplayRole, Qt::ToolTipRole, Qt::SizeHintRole, LibraryTreeItem::RichTitle,
@@ -836,6 +833,9 @@ void LibraryTreeModelPrivate::populateModel(PendingTreeData& data)
     applyUpdatedItems(data.updatedItems);
     queueRichTitleUpdate(std::move(itemsToUpdate));
     updateSummary();
+
+    const QModelIndex allIndex = m_self->indexOfItem(&m_summaryNode);
+    Q_EMIT m_self->dataChanged(allIndex, allIndex, {Qt::DisplayRole});
 }
 
 void LibraryTreeModelPrivate::beginReset()
@@ -1345,12 +1345,12 @@ void LibraryTreeModel::reset(const TrackList& tracks)
     }
 
     p->m_resetting = true;
-    p->m_trackParents.clear();
     p->m_tracksPendingRemoval.clear();
 
     QMetaObject::invokeMethod(&p->m_populator, [this, tracks] {
         p->m_populator.setFont(p->libraryTreeFont());
-        p->m_populator.run(p->m_grouping, tracks, p->m_settings->value<Settings::Core::UseVariousForCompilations>());
+        p->m_populator.run(p->m_grouping, tracks, p->m_settings->value<Settings::Core::UseVariousForCompilations>(),
+                           LibraryTreePopulator::PopulationMode::Atomic);
     });
 }
 

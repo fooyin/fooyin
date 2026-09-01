@@ -61,7 +61,7 @@ public Q_SLOTS:
     void getAllTracks();
     void checkTrackAvailability(const Fooyin::TrackList& tracks);
     void updateTracks(const Fooyin::TrackList& tracks, bool write);
-    void updateTrackStats(const Fooyin::TrackList& track, AudioReader::WriteOptions writeOptions);
+    void updateTrackStats(const Fooyin::TrackList& tracks, Track::Stats updatedStats, bool writeToFiles);
     void writeCovers(const Fooyin::TrackCoverData& tracks);
     void deleteTracks(const TrackList& tracks);
     void removeUnavailbleTracks(const TrackList& tracks);

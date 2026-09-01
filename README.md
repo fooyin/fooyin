@@ -1,5 +1,9 @@
 <p align="center">
-<img src="https://github.com/ludouzi/fooyin/assets/45490980/a6c6923a-5de3-4d29-a6e9-f73ebd5181ac" width="40%" alt="fooyin logo">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="data/icons/logo-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="data/icons/logo.svg">
+    <img src="data/icons/logo.svg" width="40%" alt="fooyin logo">
+  </picture>
 </p>
 
 <hr />
@@ -18,7 +22,8 @@
 <a href="https://fooyin.org/download">Download</a> ·
 <a href="https://docs.fooyin.org/en/latest/">Documentation</a> ·
 <a href="https://docs.fooyin.org/en/latest/quick-start/quick-start.html">Quick start</a> ·
-<a href="https://github.com/fooyin/fooyin/releases">Releases</a>
+<a href="https://github.com/fooyin/fooyin/releases">Releases</a> ·
+<a href="https://github.com/fooyin/fooyin/releases/tag/nightly">Nightly</a>
 </p>
 
 ## A customisable music player
@@ -92,6 +97,7 @@ It's built around extensibility and supports plugins for widgets, decoders, tag 
 
 The [download page](https://fooyin.org/download) lists the Flathub package and packages available through Linux distribution repositories. 
 Release notes and downloadable artifacts are published on [GitHub Releases](https://github.com/fooyin/fooyin/releases).
+The [latest nightly build](https://github.com/fooyin/fooyin/releases/tag/nightly) is also available for testing upcoming changes.
 
 ## Building from source
 

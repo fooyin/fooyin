@@ -1,5 +1,44 @@
 # Changelog
 
+## Unreleased
+
+### New Features
+
+* Audio CD: Add playback and ripping with AccurateRip verification ([#834](https://github.com/fooyin/fooyin/issues/834), [#1558](https://github.com/fooyin/fooyin/pull/1558))
+* Metadata Lookup: Add MusicBrainz metadata lookup ([#1554](https://github.com/fooyin/fooyin/pull/1554))
+
+### Improvements
+
+* Command Button: Add searchable command and icon pickers
+* Discord: Add local and MusicBrainz artwork to Rich Presence ([#812](https://github.com/fooyin/fooyin/issues/812))
+* Interface
+  - Add per-layout visibility for the Layout menu
+  - Update application icons and logos
+* Notifications: Make notifications on track repeat optional ([#1545](https://github.com/fooyin/fooyin/issues/1545))
+
+### Fixes
+
+* FileOps: Improve empty parent folder removal and stop at the library root ([#1550](https://github.com/fooyin/fooyin/issues/1550))
+* Interface
+  - Apply all changes when confirming Properties dialogs without Apply ([#939](https://github.com/fooyin/fooyin/issues/939))
+  - Fix icon scaling in the system tray and interface
+  - Prevent track context menu access during destruction
+* Library/Metadata
+  - Prevent stale playcount updates overwriting newer ratings ([#1563](https://github.com/fooyin/fooyin/issues/1563))
+  - Flush file changes after tag writes ([#1557](https://github.com/fooyin/fooyin/pull/1557))
+* Networking: Send a fooyin user agent with all network requests
+* Playlist: Preserve spaces in unquoted CUE `REM` values ([#1548](https://github.com/fooyin/fooyin/issues/1548))
+* Quick Tagger: Avoid file rewrites for rating changes ([#1551](https://github.com/fooyin/fooyin/issues/1551))
+* Settings: Fix user folder actions across platforms
+* WaveBar: Avoid warnings when playing remote streams
+
+### Build/System
+
+* CI: Reuse a single pre-release for nightly builds
+* Dependencies: Add libcdio and libcdio-paranoia for Audio CD support
+* Windows: Enable MP3, Opus, and Vorbis encoders ([#1542](https://github.com/fooyin/fooyin/issues/1542))
+
+
 ## [0.12.6](https://github.com/fooyin/fooyin/releases/tag/v0.12.6) (2026-08-23)
 
 ### Improvements

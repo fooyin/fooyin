@@ -29,6 +29,9 @@
 #include <QLoggingCategory>
 #include <QRegularExpression>
 
+#include <unordered_map>
+#include <vector>
+
 Q_LOGGING_CATEGORY(CUE, "fy.cue")
 
 using namespace Qt::StringLiterals;
@@ -63,10 +66,11 @@ struct CueSheet
     bool skipFile{false};
 };
 
+namespace Fooyin {
 namespace {
-Fooyin::Track unreadableCueTrack(const QString& path)
+Track unreadableCueTrack(const QString& path)
 {
-    Fooyin::Track track{path};
+    Track track{path};
     track.setIsEnabled(false);
     return track;
 }
@@ -84,7 +88,7 @@ float parseGain(const QString& gainStr)
         }
     }
 
-    return Fooyin::Constants::InvalidGain;
+    return Constants::InvalidGain;
 }
 
 float parsePeak(const QString& peakStr)
@@ -95,7 +99,7 @@ float parsePeak(const QString& peakStr)
         return peak;
     }
 
-    return Fooyin::Constants::InvalidPeak;
+    return Constants::InvalidPeak;
 }
 
 QStringList splitCueLine(const QString& line)
@@ -223,7 +227,7 @@ void readAlbumRemLine(CueSheet& sheet, const QStringList& lineParts)
     }
 }
 
-void readTrackRemLine(Fooyin::Track& track, const QStringList& lineParts)
+void readTrackRemLine(Track& track, const QStringList& lineParts)
 {
     if(lineParts.size() < 2) {
         return;
@@ -240,7 +244,7 @@ void readTrackRemLine(Fooyin::Track& track, const QStringList& lineParts)
     }
 }
 
-void applyCuePerformer(const CueSheet& sheet, Fooyin::Track& track)
+void applyCuePerformer(const CueSheet& sheet, Track& track)
 {
     applyIfNotEmpty(sheet.performer, [&sheet, &track](const QString& value) {
         if(sheet.hasTrackPerformer) {
@@ -252,7 +256,7 @@ void applyCuePerformer(const CueSheet& sheet, Fooyin::Track& track)
     });
 }
 
-void finaliseTrack(const CueSheet& sheet, Fooyin::Track& track, bool applyPerformer = true)
+void finaliseTrack(const CueSheet& sheet, Track& track, bool applyPerformer = true)
 {
     track.setCuePath(sheet.cuePath);
     track.setModifiedTime(std::max(track.modifiedTime(), sheet.lastModified));
@@ -263,17 +267,15 @@ void finaliseTrack(const CueSheet& sheet, Fooyin::Track& track, bool applyPerfor
     applyIfNotEmpty(sheet.disc, [&track](const QString& value) { track.setDiscNumber(value); });
     applyIfNotEmpty(sheet.comment, [&track](const QString& value) { track.setComment(value); });
     applyIfNotEmpty(sheet.composer, [&track](const QString& value) { track.setComposers({value}); });
-    applyIfValid(sheet.rgAlbumGain, Fooyin::Constants::InvalidGain,
-                 [&track](float value) { track.setRGAlbumGain(value); });
-    applyIfValid(sheet.rgAlbumPeak, Fooyin::Constants::InvalidPeak,
-                 [&track](float value) { track.setRGAlbumPeak(value); });
+    applyIfValid(sheet.rgAlbumGain, Constants::InvalidGain, [&track](float value) { track.setRGAlbumGain(value); });
+    applyIfValid(sheet.rgAlbumPeak, Constants::InvalidPeak, [&track](float value) { track.setRGAlbumPeak(value); });
 
     if(applyPerformer) {
         applyCuePerformer(sheet, track);
     }
 }
 
-void finaliseLastTrack(const CueSheet& sheet, Fooyin::Track& track, const QString& trackPath, Fooyin::TrackList& tracks)
+void finaliseLastTrack(const CueSheet& sheet, Track& track, const QString& trackPath, TrackList& tracks)
 {
     if(track.isValid() && (QFile::exists(trackPath) || !sheet.skipNotFound)) {
         finaliseTrack(sheet, track, false);
@@ -284,7 +286,7 @@ void finaliseLastTrack(const CueSheet& sheet, Fooyin::Track& track, const QStrin
     }
 }
 
-void finaliseDurations(Fooyin::TrackList& tracks)
+void finaliseDurations(TrackList& tracks)
 {
     if(tracks.size() <= 1) {
         return;
@@ -299,9 +301,100 @@ void finaliseDurations(Fooyin::TrackList& tracks)
         }
     }
 }
+
+void applyEmbeddedCueTrackTags(const Track& sourceTrack, TrackList& tracks)
+{
+    static const QRegularExpression cueTrackTagRegex{u"^CUE_TRACK(\\d+)_(.+)$"_s,
+                                                     QRegularExpression::CaseInsensitiveOption};
+
+    using CueTrackTags = std::vector<std::pair<QString, QStringList>>;
+    std::unordered_map<int, CueTrackTags> tagsByTrack;
+
+    for(const auto& [tag, values] : sourceTrack.extraTags()) {
+        const QRegularExpressionMatch match = cueTrackTagRegex.match(tag);
+        if(!match.hasMatch()) {
+            continue;
+        }
+
+        bool ok{false};
+        const int trackNumber = match.captured(1).toInt(&ok);
+        if(ok && !values.empty()) {
+            tagsByTrack[trackNumber].emplace_back(match.captured(2).toUpper(), values);
+        }
+    }
+
+    if(tagsByTrack.empty()) {
+        return;
+    }
+
+    for(auto& track : tracks) {
+        const auto inheritedTags = track.extraTags();
+        track.clearExtraTags();
+        for(const auto& [tag, values] : inheritedTags) {
+            if(!cueTrackTagRegex.match(tag).hasMatch()) {
+                track.addExtraTag(tag, values);
+            }
+        }
+
+        bool ok{false};
+        const int trackNumber = track.trackNumber().toInt(&ok);
+        if(!ok) {
+            continue;
+        }
+
+        const auto trackTags = tagsByTrack.find(trackNumber);
+        if(trackTags == tagsByTrack.cend()) {
+            continue;
+        }
+
+        for(const auto& [field, values] : trackTags->second) {
+            if(field == "TITLE"_L1) {
+                track.setTitle(values.front());
+            }
+            else if(field == "ARTIST"_L1) {
+                track.setArtists(values);
+            }
+            else if(field == "ALBUM"_L1) {
+                track.setAlbum(values.front());
+            }
+            else if(field == "ALBUMARTIST"_L1) {
+                track.setAlbumArtists(values);
+            }
+            else if(field == "GENRE"_L1) {
+                track.setGenres(values);
+            }
+            else if(field == "COMPOSER"_L1) {
+                track.setComposers(values);
+            }
+            else if(field == "PERFORMER"_L1) {
+                track.setPerformers(values);
+            }
+            else if(field == "COMMENT"_L1) {
+                track.setComment(values.front());
+            }
+            else if(field == "DATE"_L1) {
+                track.setDate(values.front());
+            }
+            else if(field == "TRACKTOTAL"_L1) {
+                track.setTrackTotal(values.front());
+            }
+            else if(field == "DISC"_L1 || field == "DISCNUMBER"_L1) {
+                track.setDiscNumber(values.front());
+            }
+            else if(field == "DISCTOTAL"_L1) {
+                track.setDiscTotal(values.front());
+            }
+            else if(field == "TRACK"_L1 || field == "TRACKNUMBER"_L1) {
+                // Use the cue sheet's TRACK
+            }
+            else if(Track::isExtraTag(field)) {
+                track.replaceExtraTag(field, values);
+            }
+        }
+    }
+}
 } // namespace
 
-namespace Fooyin {
 QString CueParser::name() const
 {
     return u"CUE"_s;
@@ -429,6 +522,7 @@ TrackList CueParser::readEmbeddedCueTracks(QIODevice* device, const QString& fil
     }
 
     finaliseDurations(tracks);
+    applyEmbeddedCueTrackTags(sheet.currentFile, tracks);
 
     return tracks;
 }

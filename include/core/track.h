@@ -25,6 +25,7 @@
 #include <utils/datastream.h>
 
 #include <QByteArray>
+#include <QFlags>
 #include <QMap>
 #include <QMetaType>
 #include <QSharedDataPointer>
@@ -64,6 +65,15 @@ public:
             return qHash(track.uniqueFilepath());
         }
     };
+
+    enum class Stat : uint8_t
+    {
+        None      = 0,
+        Rating    = 1 << 0,
+        Playcount = 1 << 1,
+        All       = Rating | Playcount,
+    };
+    Q_DECLARE_FLAGS(Stats, Stat)
 
     enum class Cover : uint8_t
     {
@@ -425,7 +435,9 @@ public:
 private:
     QSharedDataPointer<TrackPrivate> p;
 };
+
 FYCORE_EXPORT size_t qHash(const Track& track);
+FYCORE_EXPORT void mergeTrackStats(Track& track, const Track& updatedTrack, Track::Stats stats);
 
 struct CoverImage
 {
@@ -445,3 +457,4 @@ struct TrackCoverData
 
 Q_DECLARE_METATYPE(Fooyin::TrackList)
 Q_DECLARE_METATYPE(Fooyin::TrackIds)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::Track::Stats)

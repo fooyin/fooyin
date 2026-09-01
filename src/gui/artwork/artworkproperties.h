@@ -80,6 +80,5 @@ private:
 
     QWidget* m_artworkWidget;
     std::array<ArtworkRow*, 3> m_rows;
-    std::optional<WriteRequest> m_writeRequest;
 };
 } // namespace Fooyin

@@ -2483,4 +2483,16 @@ size_t qHash(const Track& track)
 {
     return qHash(track.uniqueFilepath());
 }
+
+void mergeTrackStats(Track& track, const Track& updatedTrack, Track::Stats stats)
+{
+    if(stats.testFlag(Track::Stat::Rating)) {
+        track.setRating(updatedTrack.rating());
+    }
+    if(stats.testFlag(Track::Stat::Playcount)) {
+        track.setPlayCount(updatedTrack.playCount());
+        track.setFirstPlayed(updatedTrack.firstPlayed());
+        track.setLastPlayed(updatedTrack.lastPlayed());
+    }
+}
 } // namespace Fooyin

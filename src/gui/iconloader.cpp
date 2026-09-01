@@ -131,6 +131,15 @@ bool setThemeIconOverrides(const QString& primaryTheme, const QString& fallbackT
     return IconLoader::setThemeOverrides(primaryTheme, fallbackTheme);
 }
 
+QIcon applicationIcon()
+{
+    QIcon icon;
+    for(const int size : {16, 22, 32, 48, 64, 128}) {
+        icon.addFile(u":/icons/%1-fooyin.png"_s.arg(size), QSize{size, size});
+    }
+    return icon;
+}
+
 QIcon iconFromTheme(const QString& icon)
 {
     return IconLoader::icon(icon);

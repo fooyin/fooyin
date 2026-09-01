@@ -24,6 +24,7 @@
 
 #include <core/coresettings.h>
 #include <core/network/networkaccessmanager.h>
+#include <core/network/networkutils.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QJsonArray>
@@ -330,9 +331,8 @@ void LastFmService::requestAuth(const QString& token)
     urlQuery.addQueryItem(u"format"_s, u"json"_s);
     reqUrl.setQuery(urlQuery);
 
-    QNetworkRequest req{reqUrl};
-    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
-    QNetworkReply* reply = addReply(network()->get(req));
+    const QNetworkRequest req = makeNetworkRequest(reqUrl);
+    QNetworkReply* reply      = addReply(network()->get(req));
     QObject::connect(reply, &QNetworkReply::finished, this, [this, reply]() { authFinished(reply); });
 }
 
@@ -451,8 +451,7 @@ QNetworkReply* LastFmService::createRequest(const std::map<QString, QString>& pa
     const QString signature = QString::fromLatin1(digest.toHex()).rightJustified(32, u'0').toLower();
 
     const QUrl reqUrl{url()};
-    QNetworkRequest req{reqUrl};
-    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+    QNetworkRequest req = makeNetworkRequest(reqUrl);
     req.setHeader(QNetworkRequest::ContentTypeHeader, u"application/x-www-form-urlencoded"_s);
 
     queryParams.emplace(u"api_sig"_s, signature);

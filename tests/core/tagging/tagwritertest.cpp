@@ -279,6 +279,42 @@ TEST_F(TagWriterTest, FlacWrite)
     }
 }
 
+TEST_F(TagWriterTest, FlacWriteIgnoresCanonicalFieldsInExtraTags)
+{
+    TempResource file{u":/audio/audiotest.flac"_s};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, track));
+    track.setTitle(u"Canonical Title"_s);
+    track.setTrackNumber(u"7"_s);
+    track.addExtraTag(u"TITLE"_s, u"Extra Title"_s);
+    track.addExtraTag(u"TRACKNUMBER"_s, u"99"_s);
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
+
+    Track reloaded{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, reloaded));
+    EXPECT_EQ(u"Canonical Title"_s, reloaded.title());
+    EXPECT_EQ(u"7"_s, reloaded.trackNumber());
+
+    reloaded.addExtraTag(u"TITLE"_s, u"Removed Extra Title"_s);
+    reloaded.addExtraTag(u"TRACKNUMBER"_s, u"98"_s);
+    reloaded.removeExtraTag(u"TITLE"_s);
+    reloaded.removeExtraTag(u"TRACKNUMBER"_s);
+    reloaded.setTitle(u"Updated Canonical Title"_s);
+    reloaded.setTrackNumber(u"8"_s);
+    ASSERT_TRUE(m_parser.writeTrack(source, reloaded, Flags));
+
+    Track updated{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, updated));
+    EXPECT_EQ(u"Updated Canonical Title"_s, updated.title());
+    EXPECT_EQ(u"8"_s, updated.trackNumber());
+}
+
 TEST_F(TagWriterTest, FlacCoverWrite)
 {
     const QString filepath = u":/audio/audiotest.flac"_s;

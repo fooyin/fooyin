@@ -88,10 +88,7 @@ Track mergeTrackUpdate(const Track& currentTrack, const Track& updatedTrack, Lib
             mergedTrack.setIsEnabled(updatedTrack.isEnabled());
             break;
         case LibraryTrackUpdateType::Stats:
-            mergedTrack.setPlayCount(updatedTrack.playCount());
-            mergedTrack.setFirstPlayed(updatedTrack.firstPlayed());
-            mergedTrack.setLastPlayed(updatedTrack.lastPlayed());
-            mergedTrack.setRating(updatedTrack.rating());
+            mergeTrackStats(mergedTrack, updatedTrack, Track::Stat::All);
             mergedTrack.setModifiedTime(updatedTrack.modifiedTime());
             break;
     }
@@ -919,14 +916,14 @@ PendingTrackCoverProvider* UnifiedMusicLibrary::pendingTrackCoverProvider() cons
     return &p->m_threadHandler;
 }
 
-void UnifiedMusicLibrary::updateTrackStats(const TrackList& tracks)
+void UnifiedMusicLibrary::updateTrackStats(const TrackList& tracks, Track::Stats stats)
 {
-    p->m_threadHandler.saveUpdatedTrackStats(tracks);
+    p->m_threadHandler.saveUpdatedTrackStats(tracks, stats);
 }
 
-void UnifiedMusicLibrary::updateTrackStats(const Track& track)
+void UnifiedMusicLibrary::updateTrackStats(const Track& track, Track::Stats stats)
 {
-    updateTrackStats(TrackList{track});
+    updateTrackStats(TrackList{track}, stats);
 }
 
 void UnifiedMusicLibrary::trackWasPlayed(const Track& track)
@@ -955,7 +952,7 @@ void UnifiedMusicLibrary::trackWasPlayed(const Track& track)
         }
     }
 
-    p->m_threadHandler.saveUpdatedTrackPlaycounts(tracksToUpdate);
+    p->m_threadHandler.saveUpdatedTrackStats(tracksToUpdate, Track::Stat::Playcount);
 }
 
 void UnifiedMusicLibrary::setActivePlaybackTrack(const Track& track)

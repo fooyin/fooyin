@@ -226,6 +226,8 @@ set(SOURCES
     library/libraryfileenumerator.h
     library/librarymonitor.cpp
     library/librarymonitor.h
+    library/librarycuetrackreloader.cpp
+    library/librarycuetrackreloader.h
     library/libraryscanner.cpp
     library/libraryscanner.h
     library/libraryscansession.cpp

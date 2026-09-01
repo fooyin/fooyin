@@ -163,7 +163,7 @@ bool TagEditorPanel::apply()
     }
 
     if(statOnly) {
-        m_library->updateTrackStats(changedTracks);
+        m_library->updateTrackStats(changedTracks, Track::Stat::Rating);
     }
     else {
         m_library->writeTrackMetadata(changedTracks);

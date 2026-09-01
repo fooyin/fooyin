@@ -1279,14 +1279,46 @@ void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Track& tra
         handleRGProperty(track.hasAlbumPeak(), track.rgAlbumPeak(), ReplayGain::AlbumPeak, ReplayGain::AlbumPeakAlt,
                          false);
 
+        static const std::set baseTags{QString::fromLatin1(Title),
+                                       QString::fromLatin1(Artist),
+                                       QString::fromLatin1(Album),
+                                       QString::fromLatin1(AlbumArtist),
+                                       QString::fromLatin1(Genre),
+                                       QString::fromLatin1(Composer),
+                                       QString::fromLatin1(Performer),
+                                       QString::fromLatin1(Comment),
+                                       QString::fromLatin1(Date),
+                                       QString::fromLatin1(TrackNumber),
+                                       QString::fromLatin1(TrackAlt),
+                                       QString::fromLatin1(TrackTotal),
+                                       QString::fromLatin1(TrackTotalAlt),
+                                       QString::fromLatin1(Disc),
+                                       QString::fromLatin1(DiscAlt),
+                                       QString::fromLatin1(DiscTotal),
+                                       QString::fromLatin1(DiscTotalAlt),
+                                       QString::fromLatin1(ReplayGain::TrackGain),
+                                       QString::fromLatin1(ReplayGain::TrackGainAlt),
+                                       QString::fromLatin1(ReplayGain::TrackPeak),
+                                       QString::fromLatin1(ReplayGain::TrackPeakAlt),
+                                       QString::fromLatin1(ReplayGain::AlbumGain),
+                                       QString::fromLatin1(ReplayGain::AlbumGainAlt),
+                                       QString::fromLatin1(ReplayGain::AlbumPeak),
+                                       QString::fromLatin1(ReplayGain::AlbumPeakAlt)};
+
         const auto customTags = track.extraTags();
         for(const auto& [tag, values] : customTags) {
+            if(baseTags.contains(tag) || !Track::isExtraTag(tag)) {
+                continue;
+            }
             const TagLib::String name = convertString(tag);
             oldProperties.replace(name, convertStringList(values));
         }
 
         const auto removedTags = track.removedTags();
         for(const auto& tag : removedTags) {
+            if(baseTags.contains(tag) || !Track::isExtraTag(tag)) {
+                continue;
+            }
             const TagLib::String name = convertString(tag);
             oldProperties.erase(name);
         }
@@ -2237,7 +2269,9 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Track& track, AudioReader::Wr
 
         const auto removedTags = track.removedTags();
         for(const auto& tag : removedTags) {
-            removeMp4TagAliases(mp4Tags, tag);
+            if(!baseMp4Tags.contains(tag)) {
+                removeMp4TagAliases(mp4Tags, tag);
+            }
         }
     }
 }

@@ -278,7 +278,7 @@ void QuickTaggerPlugin::applyQuickTag(const QuickTag& tag, const QString& value,
     }
 
     if(isRatingField(tag.field)) {
-        m_library->updateTrackStats(tracks);
+        m_library->updateTrackStats(tracks, Track::Stat::Rating);
     }
     else {
         m_library->writeTrackMetadata(tracks);
@@ -295,7 +295,7 @@ void QuickTaggerPlugin::removeQuickTag(const QuickTag& tag, TrackList tracks)
     }
 
     if(isRatingField(tag.field)) {
-        m_library->updateTrackStats(tracks);
+        m_library->updateTrackStats(tracks, Track::Stat::Rating);
     }
     else {
         m_library->writeTrackMetadata(tracks);

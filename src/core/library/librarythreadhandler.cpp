@@ -137,12 +137,20 @@ public:
     struct PendingTrackStatsUpdate
     {
         Track track;
-        std::optional<float> rating;
-        std::optional<int> playCount;
-        std::optional<uint64_t> firstPlayed;
-        std::optional<uint64_t> lastPlayed;
-        bool writeRating{false};
-        bool writePlaycount{false};
+        Track::Stats stats;
+    };
+
+    struct PendingStatWrite
+    {
+        Track track;
+        Track::Stats stats;
+    };
+
+    struct TrackStatsBatch
+    {
+        TrackList tracks;
+        Track::Stats stats;
+        bool writeToFiles{false};
     };
 
     struct WriteOperation
@@ -197,11 +205,11 @@ public:
     void finishWriteOperation(int operationId, int succeeded, int failed, bool cancelled);
     void cancelWriteOperations();
 
-    void queueTrackStatsUpdates(const TrackList& tracks, bool writeRating, bool writePlaycount);
+    void queueTrackStatsUpdates(const TrackList& tracks, Track::Stats stats);
     [[nodiscard]] Track applyTrackStatsUpdate(const PendingTrackStatsUpdate& pendingUpdate) const;
     void flushTrackStatsUpdates();
     [[nodiscard]] bool isActiveSource(const Track& track) const;
-    void queuePendingStatWrite(const Track& track, AudioReader::WriteOptions options);
+    void queuePendingStatWrite(const Track& track, Track::Stats stats);
     void queuePendingMetadataWrite(const Track& track);
     void queuePendingCoverWrite(const Track& track, const TrackCovers& covers);
     void flushPendingWritesForInactiveSources();
@@ -227,7 +235,7 @@ public:
     QString m_activeSourceKey;
     mutable std::mutex m_deferredWritesMutex;
     std::unordered_map<QString, Track> m_deferredMetadataWrites;
-    std::unordered_map<QString, std::pair<Track, AudioReader::WriteOptions>> m_deferredStatWrites;
+    std::unordered_map<QString, PendingStatWrite> m_deferredStatWrites;
     std::unordered_map<QString, std::pair<Track, TrackCovers>> m_deferredCoverWrites;
     std::unordered_map<QString, std::pair<Track, TrackCovers>> m_flushingCoverWriteData;
     std::set<QString> m_flushingCoverWrites;
@@ -722,17 +730,23 @@ bool LibraryThreadHandlerPrivate::isActiveSource(const Track& track) const
     return sourceKey.has_value() && *sourceKey == m_activeSourceKey;
 }
 
-void LibraryThreadHandlerPrivate::queuePendingStatWrite(const Track& track, AudioReader::WriteOptions options)
+void LibraryThreadHandlerPrivate::queuePendingStatWrite(const Track& track, Track::Stats stats)
 {
     const auto sourceKey = Utils::physicalSourceKey(track);
-    if(!sourceKey.has_value() || options == AudioReader::None) {
+    if(!sourceKey.has_value() || stats == Track::Stats{}) {
         return;
     }
 
     const std::scoped_lock lock{m_deferredWritesMutex};
     auto& pending = m_deferredStatWrites[*sourceKey];
-    pending.first = track;
-    pending.second |= options;
+    Track mergedTrack{track};
+
+    if(pending.track.isValid()) {
+        mergeTrackStats(mergedTrack, pending.track, pending.stats & ~stats);
+    }
+
+    pending.track = mergedTrack;
+    pending.stats |= stats;
 }
 
 void LibraryThreadHandlerPrivate::queuePendingMetadataWrite(const Track& track)
@@ -769,7 +783,7 @@ void LibraryThreadHandlerPrivate::flushPendingWritesForInactiveSources()
         std::optional<Track> metadataTrack;
         std::optional<Track> statsTrack;
         std::optional<Track> coverTrack;
-        AudioReader::WriteOptions statsOptions{AudioReader::None};
+        Track::Stats stats;
         TrackCovers covers;
 
         [[nodiscard]] Track writeTrack() const
@@ -785,13 +799,8 @@ void LibraryThreadHandlerPrivate::flushPendingWritesForInactiveSources()
                 track = *coverTrack;
             }
 
-            if(statsTrack.has_value() && statsOptions.testFlag(AudioReader::Rating)) {
-                track.setRating(statsTrack->rating());
-            }
-            if(statsTrack.has_value() && statsOptions.testFlag(AudioReader::Playcount)) {
-                track.setPlayCount(statsTrack->playCount());
-                track.setFirstPlayed(statsTrack->firstPlayed());
-                track.setLastPlayed(statsTrack->lastPlayed());
+            if(statsTrack.has_value()) {
+                mergeTrackStats(track, *statsTrack, stats);
             }
 
             return track;
@@ -829,8 +838,8 @@ void LibraryThreadHandlerPrivate::flushPendingWritesForInactiveSources()
                 pendingFlush.metadataTrack = it->second;
             }
             if(const auto it = m_deferredStatWrites.find(sourceKey); it != m_deferredStatWrites.end()) {
-                pendingFlush.statsTrack   = it->second.first;
-                pendingFlush.statsOptions = it->second.second;
+                pendingFlush.statsTrack = it->second.track;
+                pendingFlush.stats      = it->second.stats;
             }
             if(const auto it = m_deferredCoverWrites.find(sourceKey); it != m_deferredCoverWrites.end()) {
                 pendingFlush.coverTrack = it->second.first;
@@ -860,8 +869,8 @@ void LibraryThreadHandlerPrivate::flushPendingWritesForInactiveSources()
                 if(pendingFlush.metadataTrack.has_value()) {
                     m_trackDatabaseManager.updateTracks({writeTrack}, true);
                 }
-                if(pendingFlush.statsOptions != AudioReader::None) {
-                    m_trackDatabaseManager.updateTrackStats({writeTrack}, pendingFlush.statsOptions);
+                if(pendingFlush.stats != Track::Stats{}) {
+                    m_trackDatabaseManager.updateTrackStats({writeTrack}, pendingFlush.stats, true);
                 }
                 if(!pendingFlush.covers.empty()) {
                     m_trackDatabaseManager.writeCovers(
@@ -898,31 +907,24 @@ TrackCoverData LibraryThreadHandlerPrivate::inactiveCoverWrites(const TrackCover
     return result;
 }
 
-void LibraryThreadHandlerPrivate::queueTrackStatsUpdates(const TrackList& tracks, bool writeRating, bool writePlaycount)
+void LibraryThreadHandlerPrivate::queueTrackStatsUpdates(const TrackList& tracks, Track::Stats stats)
 {
     for(const Track& track : tracks) {
         const QString key   = track.id() >= 0 ? QString::number(track.id()) : track.uniqueFilepath();
         auto [pendingIt, _] = m_pendingTrackStats.try_emplace(key);
         auto& pendingUpdate = pendingIt->second;
 
-        pendingUpdate.track = track;
-
-        if(writeRating) {
-            pendingUpdate.rating      = track.rating();
-            pendingUpdate.writeRating = true;
+        Track mergedTrack{track};
+        if(pendingUpdate.track.isValid()) {
+            mergeTrackStats(mergedTrack, pendingUpdate.track, pendingUpdate.stats & ~stats);
         }
-        if(writePlaycount) {
-            pendingUpdate.playCount      = track.playCount();
-            pendingUpdate.firstPlayed    = track.firstPlayed();
-            pendingUpdate.lastPlayed     = track.lastPlayed();
-            pendingUpdate.writePlaycount = true;
-        }
+        pendingUpdate.track = mergedTrack;
+        pendingUpdate.stats |= stats;
 
         qCDebug(LIB_THREAD) << "Queued track stats update:" << "key=" << key << "id=" << track.id()
                             << "path=" << track.uniqueFilepath() << "rating=" << track.rating()
                             << "playCount=" << track.playCount() << "firstPlayed=" << track.firstPlayed()
-                            << "lastPlayed=" << track.lastPlayed() << "writeRating=" << writeRating
-                            << "writePlaycount=" << writePlaycount;
+                            << "lastPlayed=" << track.lastPlayed() << "stats=" << stats.toInt();
     }
 
     m_statsTimer.start(StatsUpdateInterval, m_self);
@@ -938,18 +940,7 @@ Track LibraryThreadHandlerPrivate::applyTrackStatsUpdate(const PendingTrackStats
         }
     }
 
-    if(pendingUpdate.rating) {
-        track.setRating(*pendingUpdate.rating);
-    }
-    if(pendingUpdate.playCount) {
-        track.setPlayCount(*pendingUpdate.playCount);
-    }
-    if(pendingUpdate.firstPlayed) {
-        track.setFirstPlayed(*pendingUpdate.firstPlayed);
-    }
-    if(pendingUpdate.lastPlayed) {
-        track.setLastPlayed(*pendingUpdate.lastPlayed);
-    }
+    mergeTrackStats(track, pendingUpdate.track, pendingUpdate.stats);
 
     return track;
 }
@@ -962,14 +953,19 @@ void LibraryThreadHandlerPrivate::flushTrackStatsUpdates()
 
     qCDebug(LIB_THREAD) << "Flushing pending track stats updates:" << m_pendingTrackStats.size();
 
-    TrackList ratingTracks;
-    TrackList playcountTracks;
-    TrackList ratingAndPlaycountTracks;
-    TrackList dbOnlyTracks;
+    std::vector<TrackStatsBatch> batches;
 
-    ratingTracks.reserve(m_pendingTrackStats.size());
-    playcountTracks.reserve(m_pendingTrackStats.size());
-    ratingAndPlaycountTracks.reserve(m_pendingTrackStats.size());
+    const auto addToBatch = [&batches](const Track& track, Track::Stats stats, bool writeToFiles) {
+        const auto batch = std::ranges::find_if(batches, [stats, writeToFiles](const TrackStatsBatch& candidate) {
+            return candidate.stats == stats && candidate.writeToFiles == writeToFiles;
+        });
+        if(batch != batches.end()) {
+            batch->tracks.push_back(track);
+        }
+        else {
+            batches.emplace_back(TrackList{track}, stats, writeToFiles);
+        }
+    };
 
     for(const auto& pendingUpdate : m_pendingTrackStats | std::views::values) {
         const Track track = applyTrackStatsUpdate(pendingUpdate);
@@ -977,51 +973,24 @@ void LibraryThreadHandlerPrivate::flushTrackStatsUpdates()
         qCDebug(LIB_THREAD) << "Resolved track stats update:" << "id=" << track.id()
                             << "path=" << track.uniqueFilepath() << "rating=" << track.rating()
                             << "playCount=" << track.playCount() << "firstPlayed=" << track.firstPlayed()
-                            << "lastPlayed=" << track.lastPlayed() << "writeRating=" << pendingUpdate.writeRating
-                            << "writePlaycount=" << pendingUpdate.writePlaycount;
+                            << "lastPlayed=" << track.lastPlayed() << "stats=" << pendingUpdate.stats.toInt();
 
         if(isActiveSource(track)) {
-            AudioReader::WriteOptions deferredOptions{AudioReader::None};
-            if(pendingUpdate.writeRating) {
-                deferredOptions |= AudioReader::Rating;
-            }
-            if(pendingUpdate.writePlaycount) {
-                deferredOptions |= AudioReader::Playcount;
-            }
-            queuePendingStatWrite(track, deferredOptions);
-            dbOnlyTracks.push_back(track);
+            queuePendingStatWrite(track, pendingUpdate.stats);
+            addToBatch(track, pendingUpdate.stats, false);
         }
-        else if(pendingUpdate.writeRating && pendingUpdate.writePlaycount) {
-            ratingAndPlaycountTracks.push_back(track);
-        }
-        else if(pendingUpdate.writeRating) {
-            ratingTracks.push_back(track);
-        }
-        else if(pendingUpdate.writePlaycount) {
-            playcountTracks.push_back(track);
+        else {
+            addToBatch(track, pendingUpdate.stats, true);
         }
     }
 
     m_pendingTrackStats.clear();
 
-    QMetaObject::invokeMethod(
-        &m_trackDatabaseManager,
-        [this, ratingAndPlaycountTracks = std::move(ratingAndPlaycountTracks), ratingTracks = std::move(ratingTracks),
-         playcountTracks = std::move(playcountTracks), dbOnlyTracks = std::move(dbOnlyTracks)]() {
-            if(!dbOnlyTracks.empty()) {
-                m_trackDatabaseManager.updateTrackStats(dbOnlyTracks, AudioReader::None);
-            }
-            if(!ratingAndPlaycountTracks.empty()) {
-                m_trackDatabaseManager.updateTrackStats(ratingAndPlaycountTracks,
-                                                        AudioReader::Rating | AudioReader::Playcount);
-            }
-            if(!ratingTracks.empty()) {
-                m_trackDatabaseManager.updateTrackStats(ratingTracks, AudioReader::Rating);
-            }
-            if(!playcountTracks.empty()) {
-                m_trackDatabaseManager.updateTrackStats(playcountTracks, AudioReader::Playcount);
-            }
-        });
+    QMetaObject::invokeMethod(&m_trackDatabaseManager, [this, batches = std::move(batches)]() {
+        for(const auto& batch : batches) {
+            m_trackDatabaseManager.updateTrackStats(batch.tracks, batch.stats, batch.writeToFiles);
+        }
+    });
 }
 
 LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibrary* library,
@@ -1283,20 +1252,15 @@ void LibraryThreadHandler::flushPendingWrites()
     p->flushPendingWritesForInactiveSources();
 }
 
-void LibraryThreadHandler::saveUpdatedTrackStats(const TrackList& tracks)
+void LibraryThreadHandler::saveUpdatedTrackStats(const TrackList& tracks, Track::Stats stats)
 {
-    p->queueTrackStatsUpdates(tracks, true, false);
+    p->queueTrackStatsUpdates(tracks, stats);
 }
 
 void LibraryThreadHandler::checkTrackAvailability(const TrackList& tracks)
 {
     QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
                               [this, tracks]() { p->m_trackDatabaseManager.checkTrackAvailability(tracks); });
-}
-
-void LibraryThreadHandler::saveUpdatedTrackPlaycounts(const TrackList& tracks)
-{
-    p->queueTrackStatsUpdates(tracks, false, true);
 }
 
 WriteRequest LibraryThreadHandler::removeUnavailbleTracks(const TrackList& tracks)

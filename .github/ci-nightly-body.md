@@ -2,7 +2,7 @@ This is the latest nightly build of fooyin. It includes recent fixes and feature
 
 Built from commit [`SHORT_SHA`](https://github.com/fooyin/fooyin/commit/COMMIT_SHA) on CI_BUILD_DATE. [View build details](https://github.com/fooyin/fooyin/actions/runs/CI_RUN_ID).
 
-If you encounter a regression, please [open an issue](https://github.com/fooyin/fooyin/issues) and include the nightly tag, operating system, and package used.
+If you encounter a regression, please [open an issue](https://github.com/fooyin/fooyin/issues) and include commit `SHORT_SHA`, operating system, and package used.
 
 [View changes since LATEST_RELEASE_TAG](https://github.com/fooyin/fooyin/compare/LATEST_RELEASE_TAG...COMMIT_SHA)
 

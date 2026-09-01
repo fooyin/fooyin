@@ -21,6 +21,7 @@
 
 #include <core/coresettings.h>
 #include <core/network/networkaccessmanager.h>
+#include <core/network/networkutils.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCoreApplication>
@@ -285,8 +286,7 @@ QUrl ListenBrainzService::tokenUrl() const
 
 QNetworkReply* ListenBrainzService::createRequest(RequestType type, const QUrl& url, const QJsonDocument& json)
 {
-    QNetworkRequest req{url};
-    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+    QNetworkRequest req = makeNetworkRequest(url);
     req.setHeader(QNetworkRequest::ContentTypeHeader, u"application/json"_s);
     req.setRawHeader("Authorization", u"Token %1"_s.arg(userToken()).toUtf8());
     const QByteArray payload = json.toJson();

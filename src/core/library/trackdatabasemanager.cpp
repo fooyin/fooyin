@@ -36,19 +36,31 @@ Q_LOGGING_CATEGORY(TRK_DBMAN, "fy.trackdbmanager")
 
 using namespace Qt::StringLiterals;
 
+namespace Fooyin {
 namespace {
 bool shouldContinue(const std::stop_token& stopToken)
 {
     return !stopToken.stop_requested();
 }
 
-bool isDbOnlyMetadataTrack(const Fooyin::Track& track)
+bool isDbOnlyMetadataTrack(const Track& track)
 {
     return track.isRemote();
 }
+
+AudioReader::WriteOptions writeOptionsForStats(Track::Stats stats)
+{
+    AudioReader::WriteOptions options{AudioReader::None};
+    if(stats.testFlag(Track::Stat::Rating)) {
+        options |= AudioReader::Rating;
+    }
+    if(stats.testFlag(Track::Stat::Playcount)) {
+        options |= AudioReader::Playcount;
+    }
+    return options;
+}
 } // namespace
 
-namespace Fooyin {
 TrackDatabaseManager::TrackDatabaseManager(DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,
                                            SettingsManager* settings, std::shared_ptr<TrackMetadataStore> metadataStore,
                                            QObject* parent)
@@ -177,7 +189,7 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int
     setState(Idle);
 }
 
-void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, AudioReader::WriteOptions requestedWriteOptions)
+void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, Track::Stats updatedStats, bool writeToFiles)
 {
     setState(Running);
 
@@ -193,7 +205,8 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, AudioReader
         options |= AudioReader::Playcount;
     }
 
-    AudioReader::WriteOptions writeOptions = requestedWriteOptions & options;
+    AudioReader::WriteOptions writeOptions
+        = writeToFiles ? writeOptionsForStats(updatedStats) & options : AudioReader::None;
     if(writeOptions != AudioReader::None && m_settings->value<Settings::Core::PreserveTimestamps>()) {
         writeOptions |= AudioReader::PreserveTimestamps;
     }
@@ -224,7 +237,7 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, AudioReader
         }
 
         if((!needsTrackUpdate || m_trackDatabase.updateTrack(updatedTrack))
-           && m_trackDatabase.updateTrackStats(updatedTrack)) {
+           && m_trackDatabase.updateTrackStats(updatedTrack, updatedStats)) {
             tracksUpdated.push_back(updatedTrack);
         }
         else {

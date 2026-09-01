@@ -99,8 +99,8 @@ public:
     WriteRequest writeTrackMetadata(const TrackList& tracks) override;
     WriteRequest writeTrackCovers(const TrackCoverData& coverData) override;
     [[nodiscard]] PendingTrackCoverProvider* pendingTrackCoverProvider() const override;
-    void updateTrackStats(const TrackList& tracks) override;
-    void updateTrackStats(const Track& track) override;
+    void updateTrackStats(const TrackList& tracks, Track::Stats stats) override;
+    void updateTrackStats(const Track& track, Track::Stats stats) override;
     WriteRequest removeUnavailbleTracks() override;
     WriteRequest deleteTracks(const TrackList& tracks) override;
 

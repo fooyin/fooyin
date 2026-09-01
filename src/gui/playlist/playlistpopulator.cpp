@@ -81,6 +81,7 @@ public:
 
     struct ParsedHeaderRow
     {
+        ParsedScript grouping;
         ParsedScript title;
         ParsedScript subtitle;
         ParsedScript sideText;
@@ -90,6 +91,7 @@ public:
 
     struct ParsedSubheaderRow
     {
+        ParsedScript grouping;
         ParsedScript leftText;
         ParsedScript rightText;
     };
@@ -151,6 +153,7 @@ void PlaylistPopulatorPrivate::resetState()
 
 void PlaylistPopulatorPrivate::prepareScripts()
 {
+    m_parsedHeader.grouping = m_parser.parse(m_currentPreset.header.grouping);
     m_parsedHeader.title    = m_parser.parse(m_currentPreset.header.title.script);
     m_parsedHeader.subtitle = m_parser.parse(m_currentPreset.header.subtitle.script);
     m_parsedHeader.sideText = m_parser.parse(m_currentPreset.header.sideText.script);
@@ -159,8 +162,8 @@ void PlaylistPopulatorPrivate::prepareScripts()
     m_parsedSubheaders.clear();
     m_parsedSubheaders.reserve(m_currentPreset.subHeaders.size());
     for(const auto& subheader : std::as_const(m_currentPreset.subHeaders)) {
-        m_parsedSubheaders.push_back(
-            {m_parser.parse(subheader.leftText.script), m_parser.parse(subheader.rightText.script)});
+        m_parsedSubheaders.emplace_back(m_parser.parse(subheader.grouping), m_parser.parse(subheader.leftText.script),
+                                        m_parser.parse(subheader.rightText.script));
     }
 
     m_parsedTrack = {};
@@ -351,7 +354,9 @@ void PlaylistPopulatorPrivate::iterateHeader(const Track& track, PlaylistItem*& 
     const auto sideScript     = m_parser.evaluate(m_parsedHeader.sideText, track, context);
     const auto infoScript     = m_parser.evaluate(m_parsedHeader.info, track, context);
 
-    const auto baseKey = Utils::generateMd5Hash(titleScript, subtitleScript, sideScript, infoScript);
+    const auto baseKey = !m_currentPreset.header.grouping.isEmpty()
+                           ? Utils::generateMd5Hash(m_parser.evaluate(m_parsedHeader.grouping, track, context))
+                           : Utils::generateMd5Hash(titleScript, subtitleScript, sideScript, infoScript);
     UId key{UId::create()};
     if(m_prevHeaderKey.isValid() && m_prevBaseHeaderKey == baseKey && index == m_prevIndex + 1) {
         key = m_prevHeaderKey;
@@ -401,7 +406,10 @@ void PlaylistPopulatorPrivate::iterateSubheaders(const Track& track, PlaylistIte
             continue;
         }
 
-        const auto baseKey = Utils::generateMd5Hash(parent->baseKey(), subheaderKey);
+        const auto groupingKey = !subheader.grouping.isEmpty()
+                                   ? m_parser.evaluate(parsedSubheader.grouping, track, context)
+                                   : subheaderKey;
+        const auto baseKey     = Utils::generateMd5Hash(parent->baseKey(), groupingKey);
         UId key{UId::create()};
         if(std::cmp_greater(m_prevSubheaderKey.size(), i) && m_prevBaseSubheaderKey.at(i) == baseKey
            && index == m_prevIndex + 1) {

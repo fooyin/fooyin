@@ -116,4 +116,4 @@ target_link_libraries(
            Qt6::Concurrent
 )
 
-target_include_directories(fooyin_utils PUBLIC ${ICU_INCLUDE_DIRS})
+target_include_directories(fooyin_utils PRIVATE ${ICU_INCLUDE_DIRS})

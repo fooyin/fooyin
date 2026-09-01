@@ -202,6 +202,7 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
     , m_trackSelection{trackSelection}
     , m_settings{core->settingsManager()}
     , m_styleProvider{styleProvider}
+    , m_styleInitialised{false}
     , m_resetThrottler{new SignalThrottler(this)}
     , m_layout{new QVBoxLayout(this)}
     , m_libraryTree{new LibraryTreeView(this)}
@@ -633,9 +634,12 @@ void LibraryTreeWidget::setupConnections()
                      [this](auto* playlist) { activePlaylistChanged(playlist); });
 
     m_styleProvider->subscribe(this, [this](const ResolvedAppStyle& resolvedStyle) {
+        const bool initialStyle = !std::exchange(m_styleInitialised, true);
         Gui::refreshItemViewPalette(m_libraryTree, resolvedStyle.palette);
         m_model->resetPalette();
-        reset();
+        if(initialStyle) {
+            reset();
+        }
     });
 
     m_settings->subscribe<Settings::Core::UseVariousForCompilations>(this, [this]() { reset(); });

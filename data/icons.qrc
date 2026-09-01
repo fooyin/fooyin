@@ -1,5 +1,11 @@
 <RCC>
     <qresource prefix="/">
+        <file>icons/16-fooyin.png</file>
+        <file>icons/22-fooyin.png</file>
+        <file>icons/32-fooyin.png</file>
+        <file>icons/48-fooyin.png</file>
+        <file>icons/64-fooyin.png</file>
+        <file>icons/128-fooyin.png</file>
         <file>icons/dark/index.theme</file>
         <file>icons/dark/scalable/actions/application-exit.svg</file>
         <file>icons/dark/scalable/actions/applications-graphics.svg</file>

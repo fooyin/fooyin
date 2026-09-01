@@ -18,6 +18,8 @@
 
 #include "discordcoverartresolver.h"
 
+#include <core/network/networkutils.h>
+
 #include <QCryptographicHash>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -163,8 +165,8 @@ void DiscordCoverArtResolver::requestNext(uint64_t generation)
         return;
     }
 
-    const QUrl candidate = m_candidates.at(m_candidateIndex++);
-    QNetworkRequest request{candidate};
+    const QUrl candidate    = m_candidates.at(m_candidateIndex++);
+    QNetworkRequest request = makeNetworkRequest(candidate);
     request.setTransferTimeout(RequestTimeoutMs);
 
     auto* reply = m_network->head(request);

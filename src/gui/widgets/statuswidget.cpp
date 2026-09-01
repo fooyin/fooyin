@@ -47,11 +47,12 @@
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QMenu>
+#include <QSize>
 #include <QToolButton>
 
 using namespace Qt::StringLiterals;
 
-constexpr int IconSize = 50;
+constexpr QSize IconSize{22, 22};
 
 namespace Fooyin {
 class StatusLabel : public ElidedLabel
@@ -72,7 +73,6 @@ public:
                         TrackSelectionController* selectionController, SettingsManager* settings);
 
     void setupConnections();
-
     [[nodiscard]] RatingStarSymbols ratingSymbols() const;
     [[nodiscard]] PlaybackScriptContext makeSelectionContext(const TrackSelection* selection) const;
     void updateSelectionVisibility() const;
@@ -151,9 +151,8 @@ StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, EngineController* e
     auto* layout = new QHBoxLayout(m_self);
     layout->setContentsMargins(5, 0, 5, 0);
 
-    m_iconLabel->setPixmap(Gui::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize));
-    m_iconLabel->setScaledContents(true);
-    m_iconLabel->setMaximumSize(22, 22);
+    m_iconLabel->setPixmap(Gui::applicationIcon().pixmap(IconSize, m_iconLabel->devicePixelRatioF()));
+    m_iconLabel->setMaximumSize(IconSize);
     m_scanCancelButton->setAutoRaise(true);
     m_scanCancelButton->setIcon(Gui::iconFromTheme(Constants::Icons::Close));
     m_scanCancelButton->setToolTip(tr("Cancel scan"));
@@ -213,10 +212,8 @@ void StatusWidgetPrivate::setupConnections()
         }
     });
 
-    m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
-        m_iconLabel->setPixmap(Gui::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize));
-        m_scanCancelButton->setIcon(Gui::iconFromTheme(Constants::Icons::Close));
-    });
+    m_settings->subscribe<Settings::Gui::IconTheme>(
+        this, [this]() { m_scanCancelButton->setIcon(Gui::iconFromTheme(Constants::Icons::Close)); });
     m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this]() {
         updatePlayingText();
         updateSelectionText();

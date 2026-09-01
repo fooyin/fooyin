@@ -1137,7 +1137,7 @@ void GuiApplication::registerActions()
     m_settings->subscribe<Settings::Gui::ShowMenuBar>(
         toggleMenubar, [toggleMenubar](bool visible) { toggleMenubar->setChecked(visible); });
 
-    m_lookupArtistAlbumAction = new QAction(tr("Lookup metadata by artist and album…"), this);
+    m_lookupArtistAlbumAction = new QAction(tr("Look up metadata by artist and album…"), this);
     m_lookupArtistAlbumAction->setStatusTip(tr("Look up metadata using the selected tracks' artist and album"));
     QObject::connect(m_lookupArtistAlbumAction, &QAction::triggered, this,
                      [this] { showMetadataLookupDialog(LookupMode::ArtistAlbum); });
@@ -1146,7 +1146,7 @@ void GuiApplication::registerActions()
     artistAlbumCommand->setDescription(tr("Look up metadata by artist and album"));
     artistAlbumCommand->setCategories({tr("Tagging")});
 
-    m_lookupIdAction = new QAction(tr("Lookup metadata by MusicBrainz ID…"), this);
+    m_lookupIdAction = new QAction(tr("Look up metadata by MusicBrainz ID…"), this);
     m_lookupIdAction->setStatusTip(tr("Look up metadata using a MusicBrainz release identifier"));
     QObject::connect(m_lookupIdAction, &QAction::triggered, this, &GuiApplication::showMetadataLookupById);
     Command* idCommand = m_actionManager->registerAction(m_lookupIdAction, Constants::Actions::LookupMetadataById);

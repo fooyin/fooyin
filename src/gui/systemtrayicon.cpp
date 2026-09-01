@@ -23,11 +23,8 @@
 #include <gui/iconloader.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
-#include <utils/utils.h>
 
 #include <QMenu>
-
-constexpr auto IconSize = 22;
 
 namespace Fooyin {
 SystemTrayIcon::SystemTrayIcon(ActionManager* actionManager, QObject* parent)
@@ -35,7 +32,7 @@ SystemTrayIcon::SystemTrayIcon(ActionManager* actionManager, QObject* parent)
     , m_actionManager{actionManager}
     , m_menu{std::make_unique<QMenu>()}
 {
-    setIcon(Gui::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize));
+    setIcon(Gui::applicationIcon());
 
     auto* stop      = actionManager->command(Constants::Actions::Stop)->action();
     auto* prev      = actionManager->command(Constants::Actions::Previous)->action();
@@ -57,11 +54,11 @@ SystemTrayIcon::SystemTrayIcon(ActionManager* actionManager, QObject* parent)
 
     QObject::connect(this, &QSystemTrayIcon::activated, this, [this, playPause](const auto reason) {
         switch(reason) {
-            case(QSystemTrayIcon::DoubleClick):
-            case(QSystemTrayIcon::Trigger):
+            case DoubleClick:
+            case Trigger:
                 Q_EMIT toggleVisibility();
                 break;
-            case(QSystemTrayIcon::MiddleClick):
+            case MiddleClick:
                 playPause->trigger();
                 break;
             default:
