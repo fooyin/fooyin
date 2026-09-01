@@ -4,7 +4,7 @@
 <context>
     <name>Fooyin::ArtworkProperties</name>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="328"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="331"/>
         <source>Exported artwork to %Ln file(s)</source>
         <translation>
             <numerusform>Exported artwork to %Ln file</numerusform>
@@ -12,7 +12,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="336"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="339"/>
         <source>Exported artwork to %Ln file(s); some exports failed</source>
         <translation>
             <numerusform>Exported artwork to %Ln file; some exports failed</numerusform>
@@ -40,9 +40,102 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::Cdda::CdDriveSettingsDialog</name>
+    <message numerus="yes">
+        <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="154"/>
+        <source>Found correction: %1 (%Ln submission(s), %2% agreement).</source>
+        <extracomment>Correction = CD Drive read offset correction</extracomment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Cdda::CddaSectorReader</name>
+    <message numerus="yes">
+        <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="129"/>
+        <source>CD read offset correction padded %Ln frame(s) with silence before the readable audio range</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="169"/>
+        <source>CD read offset correction padded %Ln frame(s) with silence after the readable audio range</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Cdda::LibcdioDriveSession</name>
+    <message numerus="yes">
+        <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="467"/>
+        <source>CD extraction corrected %Ln read inconsistency event(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="470"/>
+        <source>CD extraction encountered %Ln read error event(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="473"/>
+        <source>CD extraction exhausted retries and concealed %Ln unreadable sector event(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Cdda::OpenAudioCdDialog</name>
+    <message numerus="yes">
+        <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="305"/>
+        <source>Found %Ln audio track(s).</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="392"/>
+        <source>Applied CD-Text to %Ln audio track(s).</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="500"/>
+        <source>Applied automatic metadata to %Ln audio track(s).</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="549"/>
+        <source>Applied metadata to %Ln audio track(s).</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::ConversionSession</name>
     <message numerus="yes">
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="193"/>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="208"/>
         <source>Converted: %Ln track(s)</source>
         <translation>
             <numerusform>Converted: %Ln track</numerusform>
@@ -50,7 +143,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="194"/>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="209"/>
         <source>Skipped: %Ln track(s)</source>
         <translation>
             <numerusform>Skipped: %Ln track</numerusform>
@@ -58,7 +151,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="195"/>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="210"/>
         <source>Failed: %Ln track(s)</source>
         <translation>
             <numerusform>Failed: %Ln track</numerusform>
@@ -66,7 +159,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="196"/>
+        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="211"/>
         <source>Cancelled: %Ln track(s)</source>
         <translation>
             <numerusform>Cancelled: %Ln track</numerusform>
@@ -77,7 +170,7 @@
 <context>
     <name>Fooyin::ConverterSetupDialog</name>
     <message numerus="yes">
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1211"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1219"/>
         <source>%Ln DSP(s)</source>
         <translation>
             <numerusform>%Ln DSP</numerusform>
@@ -202,7 +295,7 @@
 <context>
     <name>Fooyin::FileOps::FileOpsPlugin</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="202"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="204"/>
         <source>Deleted %Ln track(s)</source>
         <translation>
             <numerusform>Deleted %Ln track</numerusform>
@@ -245,6 +338,86 @@
         <translation>
             <numerusform>%Ln result</numerusform>
             <numerusform>%Ln results</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::MetadataChangesDialog</name>
+    <message numerus="yes">
+        <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="48"/>
+        <source>%Ln metadata change(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="49"/>
+        <source>%Ln file(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::MetadataLookupDialog</name>
+    <message numerus="yes">
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="522"/>
+        <source>Found %Ln release(s).</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="909"/>
+        <source>Metadata will be applied to %Ln track(s).</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="911"/>
+        <source>%Ln track(s) will be updated.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="959"/>
+        <source>Writing metadata to %Ln track(s)…</source>
+        <translation type="unfinished">
+            <numerusform>Writing metadata to %Ln track…</numerusform>
+            <numerusform>Writing metadata to %Ln tracks…</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="980"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="985"/>
+        <source>%Ln succeeded</source>
+        <translation type="unfinished">
+            <numerusform>%Ln succeeded</numerusform>
+            <numerusform>%Ln succeeded</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="981"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="986"/>
+        <source>%Ln failed</source>
+        <translation type="unfinished">
+            <numerusform>%Ln failed</numerusform>
+            <numerusform>%Ln failed</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="991"/>
+        <source>Metadata was updated in %Ln track(s).</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
 </context>
@@ -314,7 +487,7 @@
 <context>
     <name>Fooyin::PropertiesDialogWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="658"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="775"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln track</numerusform>
@@ -323,9 +496,20 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::PropertiesWriteProgress</name>
+    <message numerus="yes">
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="119"/>
+        <source>Writing changes to %Ln track(s)…</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::QuickTagger::QuickTaggerPlugin</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="290"/>
+        <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="313"/>
         <source>Set &quot;%1&quot; on %Ln track(s)?</source>
         <extracomment>%1 is the Quick Tagger entry name, for example &quot;Rating&quot;.</extracomment>
         <translation>
