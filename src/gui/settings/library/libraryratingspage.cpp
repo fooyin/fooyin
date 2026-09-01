@@ -26,6 +26,7 @@
 
 #include <QCheckBox>
 #include <QComboBox>
+#include <QCoreApplication>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
@@ -75,14 +76,14 @@ void addRatingScaleItems(QComboBox* combo, RatingScaleUsage usage)
         if(!available) {
             continue;
         }
-        combo->addItem(QObject::tr(descriptor.label), ratingScaleKey(descriptor.scale));
+        combo->addItem(QCoreApplication::translate("Fooyin", descriptor.label), ratingScaleKey(descriptor.scale));
     }
 }
 
 void addPopmMappingItems(QComboBox* combo)
 {
     for(const auto& descriptor : popmMappingDescriptors()) {
-        combo->addItem(QObject::tr(descriptor.label), popmMappingKey(descriptor.mapping));
+        combo->addItem(QCoreApplication::translate("Fooyin", descriptor.label), popmMappingKey(descriptor.mapping));
 
         QString tooltip;
         switch(descriptor.mapping) {
