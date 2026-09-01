@@ -27,7 +27,7 @@ jobs:
           submodules: recursive
 
       - name: Start FreeBSD VM
-        uses: cross-platform-actions/action@v1.4.0
+        uses: cross-platform-actions/action@v1.5.0
         with:
           operating_system: freebsd
           architecture: x86-64
