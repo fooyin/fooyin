@@ -278,6 +278,27 @@ TEST(FileOpsWorkerTest, MoveWholeDirectoryPreservesRelativePaths)
     EXPECT_TRUE(QFileInfo::exists(destinationDir + u"/artwork/cover.jpg"_s));
 }
 
+TEST(FileOpsWorkerTest, MoveWholeDirectorySkipsFilesAlreadyAtDestination)
+{
+    FileOpsFixture simulation;
+    simulation.track.setTitle(u"renamed"_s);
+    Track unchangedTrack = simulation.createTrack(simulation.albumDir + u"/unchanged.flac"_s);
+    unchangedTrack.setTitle(u"unchanged"_s);
+    const QString coverPath = simulation.albumDir + u"/cover.jpg"_s;
+    simulation.createTrack(coverPath);
+
+    FileOpPreset movePreset = preset(Operation::Move, simulation.albumDir, u"%title%"_s);
+    movePreset.wholeDir     = true;
+    movePreset.removeEmpty  = true;
+
+    const WorkerRun run = simulation.process(movePreset, {simulation.track, unchangedTrack}, false, false);
+
+    ASSERT_EQ(run.operations.size(), 1);
+    EXPECT_EQ(run.operations.front().op, Operation::Move);
+    EXPECT_EQ(run.operations.front().source, simulation.track.filepath());
+    EXPECT_EQ(run.operations.front().destination, simulation.albumDir + u"/renamed.flac"_s);
+}
+
 TEST(FileOpsWorkerTest, ReportsMoveFailureWhenDestinationExists)
 {
     FileOpsFixture simulation;

@@ -369,24 +369,23 @@ void FileOpsWorker::simulateMove()
             const auto files = Utils::File::getFilesInDirRecursive(srcPath);
             for(const QString& file : files) {
                 const QFileInfo info{file};
-                const QDir fileDir{info.absolutePath()};
-
-                handleEmptyDirs(fileDir, file, srcDir);
-
                 const QString relativePath = srcDir.relativeFilePath(file);
-                const QString fileDestPath = QDir::cleanPath(destPath + "/"_L1 + relativePath);
-
-                const QString parentPath = QFileInfo{fileDestPath}.absolutePath();
-                createDir(parentPath);
+                QString fileDestPath       = QDir::cleanPath(destPath + "/"_L1 + relativePath);
+                QString name               = info.fileName();
 
                 if(m_trackPaths.contains(file)) {
-                    const Track fileTrack  = m_trackPaths.equal_range(file).first->second;
-                    const QString filePath = QDir::cleanPath(evaluatePath(script, fileTrack));
-                    m_operations.emplace_back(Operation::Move, fileTrack.filenameExt(), fileTrack.filepath(), filePath);
+                    const Track fileTrack = m_trackPaths.equal_range(file).first->second;
+                    fileDestPath          = QDir::cleanPath(evaluatePath(script, fileTrack));
+                    name                  = fileTrack.filenameExt();
                 }
-                else {
-                    m_operations.emplace_back(Operation::Move, info.fileName(), file, fileDestPath);
+
+                if(file == fileDestPath) {
+                    continue;
                 }
+
+                handleEmptyDirs(QDir{info.absolutePath()}, file, srcDir);
+                createDir(QFileInfo{fileDestPath}.absolutePath());
+                m_operations.emplace_back(Operation::Move, name, file, fileDestPath);
             }
         }
         else {
