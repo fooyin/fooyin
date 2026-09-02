@@ -24,6 +24,7 @@
 #include <core/plugins/coreplugin.h>
 #include <core/plugins/plugin.h>
 #include <gui/plugins/guiplugin.h>
+#include <utils/id.h>
 
 #include <memory>
 #include <vector>
@@ -54,7 +55,9 @@ public:
 private:
     struct PresetAction
     {
+        Operation operation;
         QString presetName;
+        Id id;
         QAction* action;
         Command* command;
     };

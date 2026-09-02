@@ -54,9 +54,15 @@ bool canExtractTracks(const TrackList& tracks)
     return !tracks.empty() && std::ranges::all_of(tracks, [](const Track& track) { return track.isInArchive(); });
 }
 
-Id presetActionId(const QString& presetName)
+Id presetActionId(Operation operation, const QString& presetName, const std::vector<FileOpPreset>& presets)
 {
-    return Id{u"FileOps.Preset.%1"_s.arg(presetName)};
+    // Retain compatability with exisiting shortcuts
+    const auto firstPreset = std::ranges::find(presets, presetName, &FileOpPreset::name);
+    if(firstPreset != presets.cend() && firstPreset->op == operation) {
+        return Id{u"FileOps.Preset.%1"_s.arg(presetName)};
+    }
+
+    return Id{u"FileOps.Preset.%1.%2"_s.arg(QString::number(static_cast<int>(operation)), presetName)};
 }
 
 bool canUsePreset(Operation operation, const TrackList& tracks)
@@ -159,7 +165,9 @@ void FileOpsPlugin::setupMenu()
                 auto* submenu = new QMenu(title, menu);
                 for(const auto& preset : presets.at(op)) {
                     const auto presetAction
-                        = std::ranges::find(m_presetActions, preset.name, &PresetAction::presetName);
+                        = std::ranges::find_if(m_presetActions, [op, &preset](const PresetAction& action) {
+                              return action.operation == op && action.presetName == preset.name;
+                          });
                     if(presetAction != m_presetActions.cend()) {
                         submenu->addAction(presetAction->command->action());
                     }
@@ -272,10 +280,11 @@ void FileOpsPlugin::refreshPresetActions()
     };
 
     std::erase_if(m_presetActions, [this, &presets](const PresetAction& presetAction) {
-        const bool removed = std::ranges::none_of(
-            presets, [&presetAction](const FileOpPreset& preset) { return preset.name == presetAction.presetName; });
+        const bool removed = std::ranges::none_of(presets, [&presetAction](const FileOpPreset& preset) {
+            return preset.op == presetAction.operation && preset.name == presetAction.presetName;
+        });
         if(removed && presetAction.action) {
-            m_actionManager->unregisterAction(presetAction.action, presetActionId(presetAction.presetName));
+            m_actionManager->unregisterAction(presetAction.action, presetAction.id);
             presetAction.action->deleteLater();
         }
         return removed;
@@ -286,23 +295,28 @@ void FileOpsPlugin::refreshPresetActions()
             continue;
         }
 
-        const auto existing = std::ranges::find(m_presetActions, preset.name, &PresetAction::presetName);
+        const auto existing = std::ranges::find_if(m_presetActions, [&preset](const PresetAction& action) {
+            return action.operation == preset.op && action.presetName == preset.name;
+        });
         if(existing != m_presetActions.end()) {
             existing->action->setText(preset.name);
             existing->command->setCategories(categoriesForOperation(preset.op));
             continue;
         }
 
-        auto* action  = new QAction(preset.name, this);
-        auto* command = m_actionManager->registerAction(action, presetActionId(preset.name));
+        auto* action      = new QAction(preset.name, this);
+        const Id actionId = presetActionId(preset.op, preset.name, presets);
+        auto* command     = m_actionManager->registerAction(action, actionId);
         command->setCategories(categoriesForOperation(preset.op));
         command->setAttribute(ProxyAction::UpdateText);
         command->action()->setShortcutVisibleInContextMenu(true);
 
-        QObject::connect(action, &QAction::triggered, this, [this, presetName = preset.name]() {
+        QObject::connect(action, &QAction::triggered, this, [this, operation = preset.op, presetName = preset.name]() {
             const auto currentPresets = getPresets();
-            const auto current        = std::ranges::find(currentPresets, presetName, &FileOpPreset::name);
-            const auto* selection     = m_trackSelectionController->selectedSelection();
+            const auto current = std::ranges::find_if(currentPresets, [operation, &presetName](const FileOpPreset& p) {
+                return p.op == operation && p.name == presetName;
+            });
+            const auto* selection = m_trackSelectionController->selectedSelection();
             if(!selection) {
                 selection = m_trackSelectionController->displaySelection();
             }
@@ -311,7 +325,8 @@ void FileOpsPlugin::refreshPresetActions()
             }
         });
 
-        m_presetActions.push_back({.presetName = preset.name, .action = action, .command = command});
+        m_presetActions.push_back(
+            {.operation = preset.op, .presetName = preset.name, .id = actionId, .action = action, .command = command});
     }
 }
 } // namespace Fooyin::FileOps
