@@ -958,6 +958,10 @@ void LibraryTreeModel::setPlayState(Player::PlayState state)
 
 void LibraryTreeModel::setPlayingPath(const QString& parentNode, const QString& path)
 {
+    if(p->m_parentNode == parentNode && p->m_playingPath == path) {
+        return;
+    }
+
     p->m_parentNode  = parentNode;
     p->m_playingPath = path;
     Q_EMIT dataUpdated({}, {}, {Qt::DecorationRole, Qt::BackgroundRole, LibraryTreeItem::IsPlaying});

@@ -679,7 +679,12 @@ void LibraryTreeWidget::activePlaylistChanged(Playlist* playlist) const
 
 void LibraryTreeWidget::playlistTrackChanged(const PlaylistTrack& track)
 {
-    if(!m_playlist || m_playlist->id() != track.playlistId) {
+    if(!m_playlist) {
+        return;
+    }
+
+    if(m_playlist->id() != track.playlistId) {
+        m_model->setPlayingPath({}, {});
         return;
     }
 
