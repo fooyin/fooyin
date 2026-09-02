@@ -293,7 +293,7 @@ void FileOpsDialogPrivate::updateOptionState() const
 {
     m_removeEmpty->setVisible(m_operation != Operation::Extract);
     m_removeArchive->setVisible(m_operation == Operation::Extract);
-    m_removeArchive->setEnabled(m_entireSource->isVisible() && m_entireSource->isChecked());
+    m_removeArchive->setEnabled(m_operation == Operation::Extract && m_entireSource->isChecked());
 
     if(m_operation != Operation::Extract || !m_entireSource->isChecked()) {
         m_removeArchive->setChecked(false);
