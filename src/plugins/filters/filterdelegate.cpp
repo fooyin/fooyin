@@ -476,7 +476,12 @@ QSize FilterDelegate::iconItemSize(const QStyleOptionViewItem& option, const QMo
     const int verticalMargin = std::max(2, style->pixelMetric(QStyle::PM_FocusFrameVMargin, &option, option.widget));
     const IconItemLayoutMetrics metrics{.verticalPadding = 2 * verticalMargin};
 
-    return iconItemSizeForText(option, metrics, textSize);
+    QSize size = iconItemSizeForText(option, metrics, textSize);
+    if(m_alignCaptionsToArtwork && view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Bottom) {
+        size.setWidth(option.decorationSize.width());
+    }
+
+    return size;
 }
 
 QSize FilterDelegate::iconItemSizeForText(const QStyleOptionViewItem& option, const IconItemLayoutMetrics& metrics,
