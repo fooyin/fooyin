@@ -2155,7 +2155,9 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
         <source>Compensates for a drive that reads slightly before or after the requested CD position.
 Positive values read later; negative values read earlier.
 Use AccurateRip to look up the correction for this drive model, or enter a known value manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gleicht ab, wenn das Laufwerk die CD etwas vor oder nach der angeforderten Position liest
+Positive Werte verspäten das Lesen; negative Werte legen das Lesen früher
+verwende AccurateRip, um den Korrekturwert dieses Laufwerkmodells zu finden, oder gebe einen bekannten Wert ein</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="62"/>
@@ -2188,7 +2190,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="77"/>
         <source>Limits the drive&apos;s read speed while ripping; playback is unaffected.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">begrenzt die Lesegeschwindigkeit des Laufwerks während des Rippens; Die Wiedergabe wird nicht beeinflusst</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="78"/>
