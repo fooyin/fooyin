@@ -31,6 +31,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QSpinBox>
+#include <QTabWidget>
 
 using namespace Qt::StringLiterals;
 
@@ -60,7 +61,15 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     m_playbackOnSend->setToolTip(
         tr("For \"Replace current playlist\" and \"Create new playlist\", start playback immediately."));
 
-    auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
+    auto* tabs = new QTabWidget(this);
+
+    auto* generalTab    = new QWidget(tabs);
+    auto* appearanceTab = new QWidget(tabs);
+
+    tabs->addTab(generalTab, tr("General"));
+    tabs->addTab(appearanceTab, tr("Appearance"));
+
+    auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), generalTab);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
 
     clickBehaviourLayout->addWidget(new QLabel(tr("Double-click") + u":"_s, this), 0, 0);
@@ -74,7 +83,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     clickBehaviourLayout->addWidget(playlistClickHint, 3, 0, 1, 3);
     clickBehaviourLayout->setColumnStretch(2, 1);
 
-    auto* selectionPlaylist       = new QGroupBox(tr("Filter Selection Playlist"), this);
+    auto* selectionPlaylist       = new QGroupBox(tr("Filter Selection Playlist"), generalTab);
     auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
     selectionPlaylist->setToolTip(
         tr("In current playlist mode, matching tracks are selected directly in the playlist."));
@@ -90,7 +99,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     selectionPlaylistLayout->addWidget(m_playlistName, 3, 1, 1, 2);
     selectionPlaylistLayout->setColumnStretch(2, 1);
 
-    auto* appearance       = new QGroupBox(tr("Appearance"), this);
+    auto* appearance       = new QGroupBox(tr("Appearance"), appearanceTab);
     auto* appearanceLayout = new QGridLayout(appearance);
 
     m_alignCaptionsToArtwork->setToolTip(
@@ -101,7 +110,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     appearanceLayout->addWidget(m_alignCaptionsToArtwork, 1, 0, 1, 3);
     appearanceLayout->setColumnStretch(3, 1);
 
-    auto* artworkMode   = new QGroupBox(tr("Artwork Mode"), this);
+    auto* artworkMode   = new QGroupBox(tr("Artwork Mode"), appearanceTab);
     auto* artworkLayout = new QGridLayout(artworkMode);
 
     m_iconWidth->setSuffix(u" px"_s);
@@ -136,7 +145,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     artworkLayout->addWidget(m_artworkCornerRadius, row++, 1);
     artworkLayout->setColumnStretch(4, 1);
 
-    auto* generalGroup       = new QGroupBox(tr("General"), this);
+    auto* generalGroup       = new QGroupBox(tr("General"), generalTab);
     auto* generalGroupLayout = new QGridLayout(generalGroup);
 
     m_source->addItem(tr("Library"), static_cast<int>(FilterSource::Library));
@@ -154,15 +163,27 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     generalGroupLayout->addWidget(m_manageColumns, 2, 0, 1, 3);
     generalGroupLayout->setColumnStretch(2, 1);
 
-    auto* mainLayout = contentLayout();
+    auto* generalLayout = new QGridLayout(generalTab);
 
     row = 0;
-    mainLayout->addWidget(generalGroup, row++, 0);
-    mainLayout->addWidget(clickBehaviour, row++, 0);
-    mainLayout->addWidget(selectionPlaylist, row++, 0);
-    mainLayout->addWidget(appearance, row++, 0);
-    mainLayout->addWidget(artworkMode, row++, 0);
-    mainLayout->setRowStretch(mainLayout->rowCount(), 1);
+    generalLayout->addWidget(generalGroup, row++, 0);
+    generalLayout->addWidget(clickBehaviour, row++, 0);
+    generalLayout->addWidget(selectionPlaylist, row++, 0);
+    generalLayout->setColumnStretch(0, 1);
+    generalLayout->setRowStretch(row, 1);
+
+    auto* appearanceTabLayout = new QGridLayout(appearanceTab);
+
+    row = 0;
+    appearanceTabLayout->addWidget(appearance, row++, 0);
+    appearanceTabLayout->addWidget(artworkMode, row++, 0);
+    appearanceTabLayout->setColumnStretch(0, 1);
+    appearanceTabLayout->setRowStretch(row, 1);
+
+    auto* mainLayout{contentLayout()};
+    mainLayout->addWidget(tabs, 0, 0);
+    mainLayout->setColumnStretch(0, 1);
+    mainLayout->setRowStretch(0, 1);
 
     TrackSelectionController::addAction(m_doubleClick, tr("None"), TrackAction::None);
     TrackSelectionController::addAction(m_doubleClick, tr("Play"), TrackAction::Play);
