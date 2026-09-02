@@ -21,6 +21,7 @@
 
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
+#include "playlist/playlistitem.h"
 #include "playlist/playlistuicontroller.h"
 #include "playlist/playlistview.h"
 #include "playlist/playlistwidget.h"
@@ -36,6 +37,7 @@
 
 #include <QAction>
 #include <QDesktopServices>
+#include <QItemSelectionModel>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QKeyEvent>
@@ -79,6 +81,7 @@ SearchDialog::SearchDialog(ActionManager* actionManager, PlaylistInteractor* pla
     Gui::setThemeIcon(searchMenu, Constants::Icons::Options);
     QObject::connect(searchMenu, &QAction::triggered, this, &SearchDialog::showOptionsMenu);
     m_searchBar->addAction(searchMenu, QLineEdit::TrailingPosition);
+    m_searchBar->installEventFilter(this);
 
     QObject::connect(m_view->view()->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &SearchDialog::selectInPlaylist);
@@ -122,13 +125,77 @@ void SearchDialog::setSearch(const QString& search)
     this->search();
 }
 
-void SearchDialog::keyPressEvent(QKeyEvent* event)
+bool SearchDialog::eventFilter(QObject* watched, QEvent* event)
 {
-    if(event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
-        m_view->startPlayback();
+    if(watched == m_searchBar && event->type() == QEvent::KeyPress) {
+        auto* keyEvent = static_cast<QKeyEvent*>(event);
+
+        if(keyEvent->key() == Qt::Key_Down) {
+            navigateResults(1);
+            return true;
+        }
+        if(keyEvent->key() == Qt::Key_Up) {
+            navigateResults(-1);
+            return true;
+        }
+        if(keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter) {
+            playCurrentResult();
+            return true;
+        }
     }
 
-    QDialog::keyPressEvent(event);
+    return QDialog::eventFilter(watched, event);
+}
+
+void SearchDialog::navigateResults(int delta)
+{
+    auto* view           = m_view->view();
+    auto* selectionModel = view->selectionModel();
+    if(!selectionModel) {
+        return;
+    }
+
+    const QModelIndex current = selectionModel->currentIndex();
+    const bool hasCurrentTrack
+        = current.data(PlaylistItem::Role::Type).toInt() == PlaylistItem::Track && selectionModel->isSelected(current);
+
+    QModelIndex index;
+    int direction{1};
+    if(hasCurrentTrack) {
+        index = current;
+        if(delta < 0) {
+            index     = view->indexAbove(index);
+            direction = -1;
+        }
+        else if(delta > 0) {
+            index = view->indexBelow(index);
+        }
+    }
+    else {
+        index = m_view->model()->index(0, 0, {});
+    }
+
+    while(index.isValid() && index.data(PlaylistItem::Role::Type).toInt() != PlaylistItem::Track) {
+        index = direction < 0 ? view->indexAbove(index) : view->indexBelow(index);
+    }
+
+    if(!index.isValid()) {
+        return;
+    }
+
+    selectionModel->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+    view->scrollTo(index, QAbstractItemView::EnsureVisible);
+}
+
+void SearchDialog::playCurrentResult()
+{
+    if(m_view->view()->selectionModel()->selectedRows().empty()) {
+        navigateResults(0);
+    }
+
+    m_view->view()->setFocus(Qt::OtherFocusReason);
+    m_view->startPlayback();
+    m_searchBar->setFocus(Qt::OtherFocusReason);
 }
 
 void SearchDialog::search()
