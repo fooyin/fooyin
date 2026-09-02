@@ -2155,9 +2155,9 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
         <source>Compensates for a drive that reads slightly before or after the requested CD position.
 Positive values read later; negative values read earlier.
 Use AccurateRip to look up the correction for this drive model, or enter a known value manually.</source>
-        <translation>Gleicht ab, wenn das Laufwerk die CD etwas vor oder nach der angeforderten Position liest
-Positive Werte verspäten das Lesen; negative Werte legen das Lesen früher
-verwende AccurateRip, um den Korrekturwert dieses Laufwerkmodells zu finden, oder gebe einen bekannten Wert ein</translation>
+        <translation>Kompensiert, wenn das Laufwerk die CD etwas vor oder nach der angeforderten Position liest.
+Positive Werte verzögern das Lesen; negative Werte ziehen es vor.
+Verwende AccurateRip, um den Korrekturwert dieses Laufwerkmodells zu finden, oder gib einen bekannten Wert ein.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="62"/>
@@ -2180,70 +2180,73 @@ verwende AccurateRip, um den Korrekturwert dieses Laufwerkmodells zu finden, ode
 Disabled: direct reads with no verification (fastest).
 Standard: verifies overlapping reads and retries inconsistencies (slower).
 Paranoid: performs the most thorough available checking and additional retries (slowest).</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrolliert die Fehlererkennung und -korrektur während des Rippens; die Wiedergabe ist nicht betroffen.
+Deaktiviert: direkte Lesevorgänge ohne Verifizierung (am schnellsten).
+Standard: verifiziert überlappende Lesevorgänge und unternimmt bei Unregelmäßigkeiten Neuversuche (langsamer).
+Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche durch (am langsamsten).</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="71"/>
         <source>Maximum</source>
-        <translation type="unfinished">Maximum</translation>
+        <translation>Maximum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="77"/>
         <source>Limits the drive&apos;s read speed while ripping; playback is unaffected.</source>
-        <translation type="unfinished">begrenzt die Lesegeschwindigkeit des Laufwerks während des Rippens; Die Wiedergabe wird nicht beeinflusst</translation>
+        <translation>Begrenzt die Lesegeschwindigkeit des Laufwerks während des Rippens; die Wiedergabe ist nicht betroffen.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="78"/>
         <source>This drive doesn&apos;t support read-speed control.</source>
-        <translation>Dieses Laufwerk unterstützt das Kontrollieren der Lesegeschwindigkeit nicht.</translation>
+        <translation>Dieses Laufwerk unterstützt das Einstellen der Lesegeschwindigkeit nicht.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="88"/>
         <source>Read offset correction</source>
-        <translation type="unfinished"></translation>
+        <translation>Leseversatz-Korrektur</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="91"/>
         <source>Ripping security</source>
-        <translation type="unfinished"></translation>
+        <translation>Rip-Sicherheit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="93"/>
         <source>Drive speed limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Laufwerk-Geschwindigkeitsbegrenzung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="119"/>
         <source>Looking up drive…</source>
-        <translation type="unfinished"></translation>
+        <translation>Laufwerk wird nachgeschlagen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="129"/>
         <source>Lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nachschlagen fehlgeschlagen: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="135"/>
         <source>AccurateRip returned an unexpectedly large drive list.</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip gab eine unerwartet große Laufwerkliste zurück.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="142"/>
         <source>No unambiguous entry was found for this drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>Für dieses Laufwerk wurde kein eindeutiger Eintrag gefunden.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="147"/>
         <source>This drive was purged because its offset is not consistent.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieses Laufwerk wurde gelöscht, weil der Versatz nicht gleichmäßig war.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="154"/>
         <source>Found correction: %1 (%Ln submission(s), %2% agreement).</source>
         <extracomment>Correction = CD Drive read offset correction</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Korrektur gefunden: %1 (%Ln Einreichung, %2% Zustimmung).</numerusform>
+            <numerusform>Korrektur gefunden: %1 (%Ln Einreichungen, %2% Zustimmung).</numerusform>
         </translation>
     </message>
 </context>
@@ -2252,12 +2255,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="42"/>
         <source>CD sector conversion overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>Überlauf bei der CD-Sektor-Konvertierung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="88"/>
         <source>The CD has an invalid TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese CD hat ein ungültiges Inhaltsverzeichnis</translation>
     </message>
 </context>
 <context>
@@ -2265,33 +2268,33 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="180"/>
         <source>Audio CD decoder is not initialised</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio-CD-Decoder ist nicht initialisiert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="187"/>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="321"/>
         <source>Audio CD read was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio-CD-Lesevorgang wurde abgebrochen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="268"/>
         <source>CD drive returned no audio data</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Laufwerk hat keine Audiodaten zurückgegeben</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="335"/>
         <source>The disc in the CD drive has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Die CD im Laufwerk hat sich geändert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="350"/>
         <source>Could not limit CD read speed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte CD-Lesegeschwindigkeit nicht begrenzen: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="362"/>
         <source>The selected CD drive became unavailable; extraction settings for %1 are being used</source>
-        <translation type="unfinished"></translation>
+        <translation>Das ausgewählte CD-Laufwerk ist nicht mehr verfügbar; verwende Extrahierungseinstellungen für %1</translation>
     </message>
 </context>
 <context>
@@ -2299,34 +2302,34 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="71"/>
         <source>Open audio &amp;CD…</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne Audio-&amp;CD…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="72"/>
         <source>Open an audio CD for playback or ripping</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne eine Audio-CD für die Wiedergabe oder zum Rippen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="74"/>
         <source>File</source>
-        <translation type="unfinished">Datei</translation>
+        <translation>Datei</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="102"/>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="117"/>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="243"/>
         <source>Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio-CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="193"/>
         <source>This disc is not present in AccurateRip.</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese CD ist nicht in AccurateRip vorhanden.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="194"/>
         <source>AccurateRip lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nachschlagen in AccurateRip fehlgeschlagen: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="201"/>
