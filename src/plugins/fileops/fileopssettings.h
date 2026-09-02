@@ -25,9 +25,10 @@
 
 namespace Fooyin::FileOps {
 namespace Settings {
-inline constexpr auto ConfirmDelete            = "FileOps/ConfirmDelete";
-inline constexpr auto ImmediateDelete          = "FileOps/ImmediateDelete";
-inline constexpr auto RemoveEmptyParentFolders = "FileOps/DeleteEmptyFolders";
+inline constexpr auto ConfirmDelete               = "FileOps/ConfirmDelete";
+inline constexpr auto ConfirmDeleteSourceArchives = "FileOps/ConfirmDeleteSourceArchives";
+inline constexpr auto ImmediateDelete             = "FileOps/ImmediateDelete";
+inline constexpr auto RemoveEmptyParentFolders    = "FileOps/DeleteEmptyFolders";
 } // namespace Settings
 
 std::vector<FileOpPreset> getPresets();

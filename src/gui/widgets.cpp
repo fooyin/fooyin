@@ -451,6 +451,27 @@ void Widgets::registerAdvancedSettings()
 {
     auto* advancedSettingsRegistry = m_gui->advancedSettingsRegistry();
 
+    advancedSettingsRegistry->add(
+        {.id           = QString::fromLatin1(Settings::Gui::Internal::ConfirmMetadataWipe),
+         .category     = {tr("Tagging"), tr("Metadata Lookup")},
+         .label        = tr("Confirm before wiping writable tags"),
+         .description  = {},
+         .defaultValue = true,
+         .editor       = AdvancedSettingCheckBox{},
+         .read =
+             [] {
+                 const FyStateSettings settings;
+                 return settings.value(Settings::Gui::Internal::ConfirmMetadataWipe, true).toBool();
+             },
+         .write =
+             [](const QVariant& value) {
+                 FyStateSettings settings;
+                 settings.setValue(Settings::Gui::Internal::ConfirmMetadataWipe, value.toBool());
+                 return true;
+             },
+         .normalise = {},
+         .validate  = {}});
+
     advancedSettingsRegistry->add<Settings::Gui::Internal::ImageAllocationLimit>(
         {.category    = {tr("Interface"), GuiApplication::tr("Display")},
          .label       = tr("Image allocation limit"),

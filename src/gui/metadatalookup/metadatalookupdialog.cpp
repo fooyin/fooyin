@@ -25,10 +25,12 @@
 #include "sources/metadatalookupsource.h"
 #include "trackmatchmodel.h"
 
+#include <core/coresettings.h>
 #include <core/engine/audioloader.h>
 #include <core/library/musiclibrary.h>
 #include <core/network/networkaccessmanager.h>
 #include <gui/guiutils.h>
+#include <gui/internalguisettings.h>
 #include <gui/widgets/elapsedprogressdialog.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/stringutils.h>
@@ -996,13 +998,34 @@ void MetadataLookupDialog::writeMetadata()
 
 bool MetadataLookupDialog::confirmMetadataWipe()
 {
-    return applyOptions().policy != ExistingMetadataPolicy::WipeWritableTags
-        || QMessageBox::warning(this, tr("Wipe existing tags?"),
-                                tr("Existing metadata and custom tags will be removed before applying the selected "
-                                   "release. Ratings, ReplayGain, technical information, playback statistics, and "
-                                   "artwork will be preserved."),
-                                QMessageBox::Yes | QMessageBox::No, QMessageBox::No)
-               == QMessageBox::Yes;
+    if(applyOptions().policy != ExistingMetadataPolicy::WipeWritableTags) {
+        return true;
+    }
+
+    const FyStateSettings stateSettings;
+    if(!stateSettings.value(Settings::Gui::Internal::ConfirmMetadataWipe, true).toBool()) {
+        return true;
+    }
+
+    QMessageBox confirmation{
+        QMessageBox::Warning, tr("Wipe existing tags?"),
+        tr("Existing metadata and custom tags will be removed before applying the selected release. Ratings, "
+           "ReplayGain, technical information, playback statistics, and artwork will be preserved."),
+        QMessageBox::Yes | QMessageBox::No, this};
+    confirmation.setDefaultButton(QMessageBox::No);
+    auto* dontAskAgain = new QCheckBox(tr("Don't ask again"), &confirmation);
+    confirmation.setCheckBox(dontAskAgain);
+
+    if(confirmation.exec() != QMessageBox::Yes) {
+        return false;
+    }
+
+    if(dontAskAgain->isChecked()) {
+        FyStateSettings settings;
+        settings.setValue(Settings::Gui::Internal::ConfirmMetadataWipe, false);
+    }
+
+    return true;
 }
 
 LookupQuery MetadataLookupDialog::query() const

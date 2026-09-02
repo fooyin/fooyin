@@ -466,7 +466,11 @@ void FileOpsDialogPrivate::toggleRun()
     }
     else {
         const FileOpPreset preset = currentPreset();
-        if(preset.removeSourceArchive) {
+
+        const FyStateSettings stateSettings;
+        const bool confirmDelete = stateSettings.value(Settings::ConfirmDeleteSourceArchives, true).toBool();
+
+        if(preset.removeSourceArchive && confirmDelete) {
             const bool immediateDelete = m_settings->fileValue(Settings::ImmediateDelete, false).toBool();
             const QString message
                 = immediateDelete
@@ -474,10 +478,20 @@ void FileOpsDialogPrivate::toggleRun()
                          "been extracted. Continue?")
                     : tr("Source archive files will be moved to the trash after every file from each archive has "
                          "been extracted. Continue?");
-            const auto result = QMessageBox::question(m_self, tr("Delete source archive after extraction?"), message,
-                                                      QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
-            if(result != QMessageBox::Yes) {
+
+            QMessageBox confirmation{QMessageBox::Question, tr("Delete source archive after extraction?"), message,
+                                     QMessageBox::Yes | QMessageBox::No, m_self};
+            confirmation.setDefaultButton(QMessageBox::No);
+            auto* dontAskAgain = new QCheckBox(tr("Don't ask again"), &confirmation);
+            confirmation.setCheckBox(dontAskAgain);
+
+            if(confirmation.exec() != QMessageBox::Yes) {
                 return;
+            }
+
+            if(dontAskAgain->isChecked()) {
+                FyStateSettings settings;
+                settings.setValue(Settings::ConfirmDeleteSourceArchives, false);
             }
         }
 

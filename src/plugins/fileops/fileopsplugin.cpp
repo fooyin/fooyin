@@ -24,6 +24,7 @@
 #include "fileopsdialog.h"
 #include "fileopssettings.h"
 
+#include <core/coresettings.h>
 #include <core/engine/audioloader.h>
 #include <gui/guiconstants.h>
 #include <gui/plugins/guiplugincontext.h>
@@ -103,6 +104,27 @@ void FileOpsPlugin::initialise(const GuiPluginContext& context)
          .read         = [this] { return m_settings->fileValue(Settings::ConfirmDelete, true).toBool(); },
          .write
          = [this](const QVariant& value) { return m_settings->fileSet(Settings::ConfirmDelete, value.toBool()); },
+         .normalise = {},
+         .validate  = {}});
+
+    context.advancedSettingsRegistry->add(
+        {.id           = QString::fromLatin1(Settings::ConfirmDeleteSourceArchives),
+         .category     = {tr("File Operations")},
+         .label        = tr("Confirm before deleting source archives after extraction"),
+         .description  = {},
+         .defaultValue = true,
+         .editor       = AdvancedSettingCheckBox{},
+         .read =
+             [] {
+                 const FyStateSettings settings;
+                 return settings.value(Settings::ConfirmDeleteSourceArchives, true).toBool();
+             },
+         .write =
+             [](const QVariant& value) {
+                 FyStateSettings settings;
+                 settings.setValue(Settings::ConfirmDeleteSourceArchives, value.toBool());
+                 return true;
+             },
          .normalise = {},
          .validate  = {}});
 
