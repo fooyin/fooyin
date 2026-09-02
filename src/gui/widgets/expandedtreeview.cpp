@@ -1838,7 +1838,6 @@ void IconView::doItemLayout()
 
     int deltaSegPosition{0};
     int segPosition{topLeft.y()};
-    int rowStartPosition{segStartPosition};
 
     const bool useConfiguredGridSpacing = useIconGaps();
     const bool fixedGridSpacing         = useConfiguredGridSpacing && m_p->m_iconHorizontalGap >= 0;
@@ -1871,6 +1870,19 @@ void IconView::doItemLayout()
     const int itmWidth            = useConfiguredGridSpacing ? itemWidth(0) : totalWidthAvailable / m_segmentSize;
     const int maxPadding          = static_cast<int>(totalWidthAvailable * maxPaddingRatio);
 
+    int gridStartPosition{segStartPosition};
+    if(fixedGridSpacing) {
+        const int nextRowWidth = ((m_segmentSize + 1) * itmWidth) + (m_segmentSize * m_itemSpacing);
+        if(nextRowWidth > totalWidthAvailable) {
+            const int gridWidth      = (m_segmentSize * itmWidth) + (std::max(0, m_segmentSize - 1) * m_itemSpacing);
+            const int remainingWidth = totalWidthAvailable - gridWidth;
+            gridStartPosition += std::max(0, remainingWidth / 2);
+        }
+        else {
+            gridStartPosition += MinItemSpacing;
+        }
+    }
+
     if(!fixedGridSpacing) {
         const int totalPadding = totalWidthAvailable - totalItemWidth;
         m_itemSpacing          = std::max(0, totalPadding / (m_segmentSize + 1));
@@ -1891,22 +1903,11 @@ void IconView::doItemLayout()
             deltaSegPosition = 0;
         }
 
-        if(segColumn == 0) {
-            rowStartPosition = segStartPosition;
-
-            if(fixedGridSpacing) {
-                const int itemsOnRow     = std::min(m_segmentSize, count - i);
-                const int rowWidth       = (itemsOnRow * itmWidth) + (std::max(0, itemsOnRow - 1) * m_itemSpacing);
-                const int remainingWidth = totalWidthAvailable - rowWidth;
-                rowStartPosition += std::max(0, remainingWidth / 2);
-            }
-        }
-
         if(!useConfiguredGridSpacing) {
             item.x = segStartPosition + (segColumn * itmWidth);
         }
         else if(fixedGridSpacing) {
-            item.x = rowStartPosition + (segColumn * (itmWidth + m_itemSpacing));
+            item.x = gridStartPosition + (segColumn * (itmWidth + m_itemSpacing));
         }
         else {
             item.x = segStartPosition + m_itemSpacing + (segColumn * (itmWidth + m_itemSpacing));
