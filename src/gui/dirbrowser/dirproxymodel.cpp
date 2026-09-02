@@ -184,22 +184,23 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
 
     const bool isPlayingTrack = m_playingState != Player::PlayState::Stopped && !m_playingTrackPath.isEmpty()
                              && sourcePath == m_playingTrackPath;
+    const bool isPlayingCell  = isPlayingTrack && proxyIndex.column() == 0;
 
     if(role == IsPlaying) {
-        return isPlayingTrack;
+        return isPlayingCell;
     }
 
     if(isPlayingTrack) {
         if(role == Qt::BackgroundRole) {
             return m_playingColour;
         }
-        if(role == Qt::DecorationRole) {
+        if(role == Qt::DecorationRole && isPlayingCell) {
             switch(m_playingState) {
-                case(Player::PlayState::Playing):
+                case Player::PlayState::Playing:
                     return Gui::pixmapFromTheme(Constants::Icons::Play);
-                case(Player::PlayState::Paused):
+                case Player::PlayState::Paused:
                     return Gui::pixmapFromTheme(Constants::Icons::Pause);
-                case(Player::PlayState::Stopped):
+                case Player::PlayState::Stopped:
                     break;
             }
         }
