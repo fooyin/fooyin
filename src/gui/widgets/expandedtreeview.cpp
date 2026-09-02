@@ -3587,7 +3587,7 @@ QModelIndex ExpandedTreeView::indexBelow(const QModelIndex& index) const
     p->layoutItems();
 
     const int i = p->viewIndex(index) + 1;
-    if(i > p->itemCount()) {
+    if(i >= p->itemCount()) {
         return {};
     }
 
