@@ -535,7 +535,10 @@ void DirBrowser::playlistTrackChanged(const PlaylistTrack& track)
 {
     if(m_playlist && m_playlist->id() == track.playlistId) {
         m_proxyModel->setPlayingPath(track.track.filepath());
+        return;
     }
+
+    m_proxyModel->setPlayingPath({});
 }
 
 void DirBrowser::contextMenuEvent(QContextMenuEvent* event)

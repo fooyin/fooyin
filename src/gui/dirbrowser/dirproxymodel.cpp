@@ -363,7 +363,10 @@ void DirProxyModel::setPlayState(Player::PlayState state)
 
 void DirProxyModel::setPlayingPath(const QString& path)
 {
-    m_playingTrackPath = path;
+    if(std::exchange(m_playingTrackPath, path) == path) {
+        return;
+    }
+
     Utils::recursiveDataChanged(this, {}, {Qt::BackgroundRole, Qt::DecorationRole, IsPlaying});
 }
 
