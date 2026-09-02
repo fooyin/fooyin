@@ -2195,7 +2195,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="78"/>
         <source>This drive doesn&apos;t support read-speed control.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieses Laufwerk unterstützt das Kontrollieren der Lesegeschwindigkeit nicht.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="88"/>
