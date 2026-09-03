@@ -2735,87 +2735,87 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="171"/>
         <source>Verify with AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit AccurateRip verifizieren</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="173"/>
         <source>Lookup metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadaten nachschlagen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="174"/>
         <source>Converter Setup…</source>
-        <translation type="unfinished"></translation>
+        <translation>Konverter-Einrichtung…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="175"/>
         <source>Rip</source>
-        <translation type="unfinished"></translation>
+        <translation>Rippen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="178"/>
         <source>Rip Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio-CD rippen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="182"/>
         <source>Album information</source>
-        <translation type="unfinished"></translation>
+        <translation>Albuminformation</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="198"/>
         <source>Album artist</source>
-        <translation type="unfinished">Albumkünstler</translation>
+        <translation>Albumkünstler</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="199"/>
         <source>Album title</source>
-        <translation type="unfinished">Albumname</translation>
+        <translation>Albumname</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="200"/>
         <source>Genre</source>
-        <translation type="unfinished">Genre</translation>
+        <translation>Genre</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="201"/>
         <source>Date</source>
-        <translation type="unfinished">Datum</translation>
+        <translation>Datum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="203"/>
         <source>Disc number</source>
-        <translation type="unfinished">CD-Nummer</translation>
+        <translation>CD-Nummer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="211"/>
         <source>Track information</source>
-        <translation type="unfinished"></translation>
+        <translation>Titelinformation</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="214"/>
         <source>#</source>
-        <translation type="unfinished"></translation>
+        <translation>#</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="214"/>
         <source>Artist</source>
-        <translation type="unfinished">Künstler</translation>
+        <translation>Künstler</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="259"/>
         <source>Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Voreinstellung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="275"/>
         <source>Check all</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle auswählen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="276"/>
         <source>Uncheck all</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle abwählen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="304"/>
@@ -2825,7 +2825,7 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="419"/>
         <source>Looking up disc in AccurateRip…</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlage CD in AccurateRip nach…</translation>
     </message>
 </context>
 <context>
@@ -2916,12 +2916,12 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="45"/>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="50"/>
         <source>Choose…</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle…</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="67"/>
         <source>Choose an icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle ein Symbol</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="75"/>
@@ -2961,17 +2961,17 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="101"/>
         <source>Selection</source>
-        <translation type="unfinished">Auswahl</translation>
+        <translation>Auswahl</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="115"/>
         <source>No command selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Befehle ausgewählt</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="184"/>
         <source>Custom image - %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzerdefiniertes Bild – %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="116"/>
@@ -2984,42 +2984,42 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="135"/>
         <source>Choose Command</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle Befehl</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="138"/>
         <source>Filter commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Befehle filtern</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="141"/>
         <source>Enter a raw `$cmdlink` id or alias</source>
-        <translation type="unfinished"></translation>
+        <translation>`$cmdlink`-ID oder -Alias im Rohformat eingeben</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="144"/>
         <source>Command</source>
-        <translation type="unfinished">Befehl</translation>
+        <translation>Befehl</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="144"/>
         <source>ID</source>
-        <translation type="unfinished">ID</translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="159"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Auswählen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="162"/>
         <source>Command ID or alias</source>
-        <translation type="unfinished"></translation>
+        <translation>Befehls-ID oder -Alias</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="252"/>
         <source>Other</source>
-        <translation type="unfinished">Andere</translation>
+        <translation>Andere</translation>
     </message>
 </context>
 <context>
@@ -3078,7 +3078,7 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="339"/>
         <source>Choose destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle Ziel</translation>
     </message>
 </context>
 <context>
@@ -3115,17 +3115,17 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="109"/>
         <source>%1%</source>
-        <translation type="unfinished">%1 %</translation>
+        <translation>%1 %</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="110"/>
         <source>Calculating…</source>
-        <translation type="unfinished">Berechnung…</translation>
+        <translation>Berechne…</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="111"/>
         <source>Converting %1 of %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>Konvertiere %1 von %2 (%3)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="115"/>
@@ -4094,7 +4094,7 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="621"/>
         <source>Display</source>
-        <translation type="unfinished">Anzeige</translation>
+        <translation>Anzeige</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="624"/>
@@ -4109,7 +4109,7 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="646"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Überschriften</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="774"/>
@@ -4193,12 +4193,12 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="41"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Überschriften</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="42"/>
         <source>Remember sort column</source>
-        <translation type="unfinished"></translation>
+        <translation>Merke Sortierspalte</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="44"/>
@@ -4233,7 +4233,7 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="54"/>
         <source>Restore the sort column on startup and when changing directories.</source>
-        <translation type="unfinished"></translation>
+        <translation>Stelle die Sortierspalte bei Programmstart und Verzeichniswechsel wieder her.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="56"/>
@@ -4301,17 +4301,17 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="196"/>
         <source>Columns</source>
-        <translation type="unfinished">Spalten</translation>
+        <translation>Spalten</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="207"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Überschriften</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="212"/>
         <source>Auto-size sections</source>
-        <translation type="unfinished">Spaltengröße automatisch einstellen</translation>
+        <translation>Automatische Abschnittgröße</translation>
     </message>
 </context>
 <context>
@@ -4367,17 +4367,17 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="86"/>
         <source>Show artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Artwork</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="87"/>
         <source>Source</source>
-        <translation type="unfinished">Quelle</translation>
+        <translation>Quelle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="89"/>
         <source>Retention</source>
-        <translation type="unfinished"></translation>
+        <translation>Beibehaltung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="92"/>
@@ -4392,47 +4392,47 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="115"/>
         <source>Artwork</source>
-        <translation type="unfinished">Artwork</translation>
+        <translation>Artwork</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="118"/>
         <source>1 hour</source>
-        <translation type="unfinished"></translation>
+        <translation>1 Stunde</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="119"/>
         <source>12 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>12 Stunden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="120"/>
         <source>24 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>24 Stunden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="121"/>
         <source>72 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>72 Stunden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="125"/>
         <source>Search for artwork via MusicBrainz ID only</source>
-        <translation type="unfinished"></translation>
+        <translation>Suche nur per MusicBrainz-ID nach Artwork</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="126"/>
         <source>Search via MusicBrainz ID, or upload if not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Suche per MusicBrainz-ID oder lade hoch, wenn nichts gefunden wurde</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="128"/>
         <source>Upload artwork only</source>
-        <translation type="unfinished"></translation>
+        <translation>Artwork nur hochladen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="129"/>
         <source>Upload artwork, or search via MusicBrainz ID if not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Artwork hoch oder suche per MusicBrainz-ID, falls nichts gefunden wurde</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="142"/>
@@ -4504,7 +4504,7 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/gui/dsp/dsplayouteditor.cpp" line="42"/>
         <source>Restore Defaults</source>
-        <translation type="unfinished">Grundeinstellungen wiederherstellen</translation>
+        <translation>Standardeinstellungen wiederherstellen</translation>
     </message>
 </context>
 <context>
@@ -5147,77 +5147,77 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="269"/>
         <source>Enabled</source>
-        <translation type="unfinished">Aktiviert</translation>
+        <translation>Aktiviert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="270"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="436"/>
         <source>Zero level</source>
-        <translation type="unfinished"></translation>
+        <translation>Nullpegel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="271"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="449"/>
         <source>Auto level</source>
-        <translation type="unfinished">Automatischer Pegel</translation>
+        <translation>Automatischer Pegel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="273"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
         <source>Save preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Voreinstellung speichern</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="310"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="515"/>
         <source> dB</source>
-        <translation type="unfinished"> dB</translation>
+        <translation> dB</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="324"/>
         <source>Preamp</source>
-        <translation type="unfinished">Vorverstärker</translation>
+        <translation>Vorverstärker</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="441"/>
         <source>Show controls</source>
-        <translation type="unfinished">Zeige Steuerung</translation>
+        <translation>Zeige Bedienelemente</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="453"/>
         <source>Save preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>Voreinstellung speichern…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="457"/>
         <source>Presets</source>
-        <translation type="unfinished">Voreinstellungen</translation>
+        <translation>Voreinstellungen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="461"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="543"/>
         <source>No presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Voreinstellungen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="546"/>
         <source>Load preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>Voreinstellung laden…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
         <source>Preset name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Voreinstellungsname:</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="583"/>
         <source>Preset already exists</source>
-        <translation type="unfinished">Voreinstellung existiert bereits</translation>
+        <translation>Voreinstellung existiert bereits</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="584"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
-        <translation type="unfinished">Voreinstellung „%1“ existiert bereits. Überschreiben?</translation>
+        <translation>Voreinstellung „%1“ existiert bereits. Überschreiben?</translation>
     </message>
 </context>
 <context>
@@ -5402,12 +5402,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="74"/>
         <source>Leave empty to group by the displayed values</source>
-        <translation type="unfinished"></translation>
+        <translation>Leer lassen, um entsprechend der angezeigten Werte zu gruppieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="82"/>
         <source>Grouping script</source>
-        <translation type="unfinished">Gruppierungs-Skript</translation>
+        <translation>Gruppierungs-Skript</translation>
     </message>
 </context>
 <context>
@@ -6111,12 +6111,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="119"/>
         <source>Remove empty parent folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Entferne leere übergeordnete Ordner</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="120"/>
         <source>Remove empty parent folders after moving or deleting files, stopping at the library root</source>
-        <translation type="unfinished"></translation>
+        <translation>Entferne leere übergeordnete Ordner nach dem Verschieben oder Löschen von Dateien; stoppt im Wurzelverzeichnis der Bibliothek.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="138"/>
@@ -6172,27 +6172,27 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="256"/>
         <source>Copy</source>
-        <translation type="unfinished">Kopieren</translation>
+        <translation>Kopieren</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="259"/>
         <source>Move</source>
-        <translation type="unfinished">Verschieben</translation>
+        <translation>Verschieben</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="262"/>
         <source>Rename</source>
-        <translation type="unfinished">Umbenennen</translation>
+        <translation>Umbenennen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="265"/>
         <source>Extract</source>
-        <translation type="unfinished">Entpacken</translation>
+        <translation>Entpacken</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="268"/>
         <source>Other</source>
-        <translation type="unfinished">Andere</translation>
+        <translation>Andere</translation>
     </message>
 </context>
 <context>
@@ -6413,7 +6413,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="121"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadratisch</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="123"/>
@@ -6443,7 +6443,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="135"/>
         <source>Corner radius</source>
-        <translation type="unfinished"></translation>
+        <translation>Eckradius</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="139"/>
@@ -6780,17 +6780,17 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="108"/>
         <source>User Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzerordner</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
         <source>Open Configuration Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne Einstellungsordner</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="112"/>
         <source>Open Data Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne Datenordner</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
@@ -7347,7 +7347,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="245"/>
         <source>Show in Layout menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Im Layoutmenü zeigen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="287"/>
@@ -7670,48 +7670,48 @@ Wenn der vorgegebene halbe Stern in der eingestellten Systemschrift nicht richti
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="48"/>
         <source>Choose Icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle Symbol</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="51"/>
         <source>Filter icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbole filtern</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="54"/>
         <source>Use command icon</source>
-        <translation type="unfinished">Verwende Befehlssymbol</translation>
+        <translation>Verwende Befehlssymbol</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="58"/>
         <source>Use the icon supplied by the selected command</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende das vom Befehl bereitgestellte Symbol</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="84"/>
         <source>Browse custom image…</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle eigenes Bild…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="85"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Wählen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="157"/>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="158"/>
         <source>All files (*)</source>
-        <translation type="unfinished">Alle Dateien (*)</translation>
+        <translation>Alle Dateien (*)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="157"/>
         <source>Images</source>
-        <translation type="unfinished">Bilder</translation>
+        <translation>Bilder</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="185"/>
         <source>Select Icon</source>
-        <translation type="unfinished">Icon auswählen</translation>
+        <translation>Symbol auswählen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="197"/>
