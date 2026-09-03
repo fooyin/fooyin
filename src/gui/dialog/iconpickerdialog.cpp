@@ -194,7 +194,7 @@ void IconPickerDialog::browseForImage()
 void IconPickerDialog::updateCurrentLabel()
 {
     if(!m_selection.customPath.isEmpty()) {
-        m_currentLabel->setText(tr("Current: Custom image - %1").arg(QFileInfo{m_selection.customPath}.fileName()));
+        m_currentLabel->setText(tr("Current: Custom image — %1").arg(QFileInfo{m_selection.customPath}.fileName()));
         m_currentLabel->setToolTip(m_selection.customPath);
     }
     else if(!m_selection.themeName.isEmpty()) {
