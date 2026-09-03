@@ -150,6 +150,7 @@ private:
     void expandSearchResults();
 
     void handlePlayback(const QModelIndexList& indexes, int row = 0);
+    void handlePlaySelection();
     void handlePlayTrack(const QModelIndex& index);
     void handleDoubleClick(const QModelIndex& index);
     void handleMiddleClick(const QModelIndex& index) const;

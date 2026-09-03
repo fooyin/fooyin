@@ -248,8 +248,7 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
     Gui::setThemeIcon(m_playAction, Constants::Icons::Play);
 
     m_playAction->setStatusTip(tr("Start playback of the selected tracks"));
-    QObject::connect(m_playAction, &QAction::triggered, this,
-                     [this]() { handlePlayback(m_libraryTree->selectionModel()->selectedRows()); });
+    QObject::connect(m_playAction, &QAction::triggered, this, &LibraryTreeWidget::handlePlaySelection);
 
     m_addToQueueAction->setEnabled(false);
     m_actionManager->registerAction(m_addToQueueAction, Constants::Actions::AddToQueue, actionContext);
@@ -1162,6 +1161,17 @@ void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, int row)
         m_playlist->changeCurrentIndex(row);
         m_playerController->startPlayback(m_playlist);
     }
+}
+
+void LibraryTreeWidget::handlePlaySelection()
+{
+    const QModelIndexList indexes = m_libraryTree->selectionModel()->selectedRows();
+    if(indexes.size() == 1 && !m_sortProxy->hasChildren(indexes.front())) {
+        handlePlayTrack(indexes.front());
+        return;
+    }
+
+    handlePlayback(indexes);
 }
 
 void LibraryTreeWidget::handlePlayTrack(const QModelIndex& index)
