@@ -62,7 +62,7 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     , m_iconWidth{new QSpinBox(this)}
     , m_iconHeight{new QSpinBox(this)}
     , m_artworkCornerRadius{new QSpinBox(this)}
-    , m_manageGroupings{new QPushButton(tr("Manage groupings..."), this)}
+    , m_manageGroupings{new QPushButton(tr("Manage groupings…"), this)}
 {
     m_playbackOnSend->setToolTip(
         tr(R"(For "Replace current playlist" and "Create new playlist", start playback immediately.)"));

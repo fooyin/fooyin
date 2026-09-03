@@ -56,7 +56,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     , m_iconVerticalGap{new QSpinBox(this)}
     , m_artworkCornerRadius{new QSpinBox(this)}
     , m_alignCaptionsToArtwork{new QCheckBox(tr("Align labels to artwork"), this)}
-    , m_manageColumns{new QPushButton(tr("Manage columns..."), this)}
+    , m_manageColumns{new QPushButton(tr("Manage columns…"), this)}
 {
     m_playbackOnSend->setToolTip(
         tr("For \"Replace current playlist\" and \"Create new playlist\", start playback immediately."));

@@ -19,7 +19,7 @@
 * Filters: Use tabs in the configuration dialog
 * Interface
   - Add per-layout visibility for the Layout menu
-  - Refine wording and typography ([#1561](https://github.com/fooyin/fooyin/pull/1561))
+  - Refine wording and typography ([#1561](https://github.com/fooyin/fooyin/pull/1561), [#1580](https://github.com/fooyin/fooyin/pull/1580))
   - Update application icons and logos
 * Library Tree: Make context menu playback of a single track match double-click playback
 * Library/Metadata: Support per-track metadata and reliable reloads for embedded CUE sheets ([#1549](https://github.com/fooyin/fooyin/issues/1549), [#1567](https://github.com/fooyin/fooyin/issues/1567))
