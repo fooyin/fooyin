@@ -15,31 +15,49 @@
   - Add a per-preset option to show output files in a detached playlist
 * Command Button: Add searchable command and icon pickers
 * Discord: Add local and MusicBrainz artwork to Rich Presence ([#812](https://github.com/fooyin/fooyin/issues/812))
+* FileOps: Add a "Don't ask again" option to destructive action confirmations
+* Filters: Use tabs in the configuration dialog
 * Interface
   - Add per-layout visibility for the Layout menu
   - Refine wording and typography ([#1561](https://github.com/fooyin/fooyin/pull/1561))
   - Update application icons and logos
+* Library Tree: Make context menu playback of a single track match double-click playback
 * Library/Metadata: Support per-track metadata and reliable reloads for embedded CUE sheets ([#1549](https://github.com/fooyin/fooyin/issues/1549), [#1567](https://github.com/fooyin/fooyin/issues/1567))
 * Notifications: Make notifications on track repeat optional ([#1545](https://github.com/fooyin/fooyin/issues/1545))
 * Playlist
   - Add custom grouping scripts to presets ([#1566](https://github.com/fooyin/fooyin/issues/1566))
   - Replace the default playlist contents when opening external files by default
+* Search: Add keyboard navigation to results
 
 ### Fixes
 
-* FileOps: Improve empty parent folder removal and stop at the library root ([#1550](https://github.com/fooyin/fooyin/issues/1550))
+* Directory Browser
+  - Clear stale playback indicators after playlist changes
+  - Show playback indicators only in the first column
+* FileOps
+  - Fix context menu actions for presets with duplicate names
+  - Fix enabling source removal when extracting archives
+  - Improve empty parent folder removal and stop at the library root ([#1550](https://github.com/fooyin/fooyin/issues/1550))
+  - Skip unchanged files when moving entire folders
 * Interface
   - Apply all changes when confirming Properties dialogs without Apply ([#939](https://github.com/fooyin/fooyin/issues/939))
+  - Fix bounds checking in expanded tree views
   - Fix icon scaling in the system tray and interface
+  - Keep artwork-aligned card widths consistent ([#1573](https://github.com/fooyin/fooyin/issues/1573))
+  - Keep fixed-gap icon rows consistently aligned ([#1573](https://github.com/fooyin/fooyin/issues/1573))
   - Prevent track context menu access during destruction
   - Fix the Settings category tree width in some styles
-* Library Tree: Keep the existing tree visible until replacement population completes ([#1559](https://github.com/fooyin/fooyin/issues/1559))
+* Library Tree
+  - Clear stale playback indicators after playlist changes
+  - Keep the existing tree visible until replacement population completes ([#1559](https://github.com/fooyin/fooyin/issues/1559))
 * Library/Metadata
   - Prevent stale playcount updates overwriting newer ratings ([#1563](https://github.com/fooyin/fooyin/issues/1563))
   - Flush file changes after tag writes ([#1557](https://github.com/fooyin/fooyin/pull/1557))
+* Lyrics: Fix automatic scrolling for unsynchronised lyrics ([#1556](https://github.com/fooyin/fooyin/issues/1556))
 * Networking: Send a fooyin user agent with all network requests
 * Playlist: Preserve spaces in unquoted CUE `REM` values ([#1548](https://github.com/fooyin/fooyin/issues/1548))
 * Quick Tagger: Avoid file rewrites for rating changes ([#1551](https://github.com/fooyin/fooyin/issues/1551))
+* Search: Fix starting playback from results
 * Settings: Fix user folder actions across platforms
 * WaveBar: Avoid warnings when playing remote streams
 
