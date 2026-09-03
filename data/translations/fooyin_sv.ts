@@ -394,7 +394,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Normalised rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Normaliserat betyg</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="161"/>
@@ -1296,22 +1296,22 @@
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="34"/>
         <source>Automatic detection</source>
-        <translation type="unfinished">Automatisk detektion</translation>
+        <translation>Automatisk detektion</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="56"/>
         <source>Default</source>
-        <translation type="unfinished">Default</translation>
+        <translation>Default</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="58"/>
         <source>Five star compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Femstjärns-kompatibilitet</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="60"/>
         <source>Raw 0–255 byte scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Rå 0–255 byte-skala</translation>
     </message>
 </context>
 <context>
@@ -2110,19 +2110,19 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="374"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="586"/>
         <source>The disc in the CD drive has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Skivan i CD-enheten har ändrats</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="466"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="521"/>
         <source>Invalid CD disc identity</source>
-        <translation type="unfinished"></translation>
+        <translation>Ogiltig CD-skivsidentitet</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="498"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="609"/>
         <source>The requested audio CD is not inserted</source>
-        <translation type="unfinished"></translation>
+        <translation>Den begärda ljud-CD:n är inte i</translation>
     </message>
 </context>
 <context>
@@ -2143,7 +2143,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="49"/>
         <source>Lookup with AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolla med AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="53"/>
@@ -2155,22 +2155,24 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
         <source>Compensates for a drive that reads slightly before or after the requested CD position.
 Positive values read later; negative values read earlier.
 Use AccurateRip to look up the correction for this drive model, or enter a known value manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kompenserar för en enhet som läser lite före eller efter den begärda CD-positionen.
+Positiva värden läser senare; negativa värden läser tidigare.
+Använd AccurateRip för att se korrigeringen för denna enhetsmodell, eller skriv in ett känt värde manuellt.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="62"/>
         <source>Disabled</source>
-        <translation type="unfinished">Av</translation>
+        <translation>Av</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="63"/>
         <source>Standard</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="64"/>
         <source>Paranoid</source>
-        <translation type="unfinished"></translation>
+        <translation>Paranoid</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="66"/>
@@ -2178,22 +2180,25 @@ Use AccurateRip to look up the correction for this drive model, or enter a known
 Disabled: direct reads with no verification (fastest).
 Standard: verifies overlapping reads and retries inconsistencies (slower).
 Paranoid: performs the most thorough available checking and additional retries (slowest).</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrollerar feldetektion och korrigering under rippning; uppspelning är opåverkad.
+Av: direktläser utan verifiering (snabbast).
+Standard: verifierar överlappande läsningar och återförsöker oförenligheter (saktare).
+Paranoid: utför de noggrannaste tillgängliga kontroller och additionella återförsök (saktast).</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="71"/>
         <source>Maximum</source>
-        <translation type="unfinished">Maximum</translation>
+        <translation>Maximum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="77"/>
         <source>Limits the drive&apos;s read speed while ripping; playback is unaffected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Begränsa enhetens läshastighet under rippning; uppspelning är opåverkad.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="78"/>
         <source>This drive doesn&apos;t support read-speed control.</source>
-        <translation type="unfinished"></translation>
+        <translation>Denna enhet stödjer inte läshastighetskontroll.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="88"/>
@@ -2203,7 +2208,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="91"/>
         <source>Ripping security</source>
-        <translation type="unfinished"></translation>
+        <translation>Rippningssäkerhet</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="93"/>
@@ -2307,7 +2312,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="74"/>
         <source>File</source>
-        <translation type="unfinished">Fil</translation>
+        <translation>Fil</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="102"/>
@@ -2494,7 +2499,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="70"/>
         <source>Metadata</source>
-        <translation type="unfinished">Metadata</translation>
+        <translation>Metadata</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="71"/>
@@ -2519,12 +2524,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="75"/>
         <source>Play</source>
-        <translation type="unfinished">Spela</translation>
+        <translation>Spela</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="76"/>
         <source>Add to playlist</source>
-        <translation type="unfinished">Lägg till i spellista</translation>
+        <translation>Lägg till i spellista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="78"/>
@@ -2534,17 +2539,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Track</source>
-        <translation type="unfinished">Spår</translation>
+        <translation>Spår</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Title</source>
-        <translation type="unfinished">Titel</translation>
+        <translation>Titel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Duration</source>
-        <translation type="unfinished">Längd</translation>
+        <translation>Längd</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="105"/>
@@ -10587,7 +10592,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="959"/>
         <source>Writing metadata to %Ln track(s)…</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Skriver metadata till %Ln spår…</numerusform>
             <numerusform>Skriver metadata till %Ln spår…</numerusform>
         </translation>
@@ -10596,7 +10601,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="980"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="985"/>
         <source>%Ln succeeded</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln lyckades</numerusform>
             <numerusform>%Ln lyckades</numerusform>
         </translation>
@@ -10605,7 +10610,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="981"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="986"/>
         <source>%Ln failed</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln misslyckades</numerusform>
             <numerusform>%Ln misslyckades</numerusform>
         </translation>
@@ -14534,9 +14539,9 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message numerus="yes">
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="119"/>
         <source>Writing changes to %Ln track(s)…</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Skriver ändringar till %Ln spår…</numerusform>
+            <numerusform>Skriver ändringar till %Ln spår…</numerusform>
         </translation>
     </message>
 </context>
@@ -16466,42 +16471,42 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="396"/>
         <source>Countries unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Länder otillgängliga – välj för att försöka igen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="397"/>
         <source>Countries unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Länder otillgängliga: %1 – välj för att försöka igen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="404"/>
         <source>Languages unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Språk otillgängliga – välj för att försöka igen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="405"/>
         <source>Languages unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Språk otillgängliga: %1 – välj för att försöka igen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="412"/>
         <source>Tags unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Taggar otillgängliga – välj för att försöka igen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="413"/>
         <source>Tags unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Taggar otillgängliga: %1 – välj för att försöka igen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="420"/>
         <source>Codecs unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Kodek otillgängliga – välj för att försöka igen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="421"/>
         <source>Codecs unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Kodek otillgängliga: %1 – välj för att försöka igen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="826"/>
@@ -17421,7 +17426,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="100"/>
         <source>Enter a query — tracks that match the query will NOT be scrobbled</source>
-        <translation type="unfinished"></translation>
+        <translation>Mata in en fråga – spår som matchar frågan kommer INTE att skrobblas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="77"/>
@@ -20043,7 +20048,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="223"/>
         <source>%1 / %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 / %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="248"/>
@@ -20053,7 +20058,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="250"/>
         <source>Title / file</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel / fil</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="252"/>
@@ -22410,8 +22415,8 @@ Changes apply to newly opened streams.</source>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="91"/>
         <source>Use fooyin&apos;s default POPM byte conversion when reading and writing MP3 ratings.
 This supports intermediate rating steps, but does not treat the POPM byte as a fully linear 0–255 scale.</source>
-        <translation type="unfinished">Använd fooyins förvalda POPM-byte-konvertering när MP3-betyg läses och skrivs.
-Detta stödjer mellanliggande betygssteg men behandlar inte POPM-byten som en fullt linjär 0–255-skala. {3 ?} {0–255 ?}</translation>
+        <translation>Använd fooyins förvalda POPM-byte-konvertering när MP3-betyg läses och skrivs.
+Detta stödjer mellanliggande betygssteg men behandlar inte POPM-byten som en fullt linjär 0–255-skala.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="97"/>
