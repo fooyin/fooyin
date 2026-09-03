@@ -2203,7 +2203,7 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="88"/>
         <source>Read offset correction</source>
-        <translation>Leseversatz-Korrektur</translation>
+        <translation>Lese-Offset-Korrektur</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="91"/>
@@ -2238,7 +2238,7 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="147"/>
         <source>This drive was purged because its offset is not consistent.</source>
-        <translation>Dieses Laufwerk wurde gelöscht, weil der Versatz nicht gleichmäßig war.</translation>
+        <translation>Dieses Laufwerk wurde gelöscht, weil das Offset nicht gleichmäßig war.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="154"/>
@@ -2334,7 +2334,7 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="201"/>
         <source>AccurateRip returned an unexpectedly large disc record.</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip hat einen unerwartet großen CD-Eintrag zurückgegeben.</translation>
     </message>
 </context>
 <context>
@@ -2342,17 +2342,17 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="49"/>
         <source>Track %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="53"/>
         <source>Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio-CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="111"/>
         <source>Invalid audio CD identity</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige Audio-CD-Identität</translation>
     </message>
 </context>
 <context>
@@ -2360,23 +2360,23 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="129"/>
         <source>CD read offset correction padded %Ln frame(s) with silence before the readable audio range</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Die CD-Lese-Offset-Korrektur hat %Ln Frame Stille vor dem lesbaren Audiobereich eingefügt</numerusform>
+            <numerusform>Die CD-Lese-Offset-Korrektur hat %Ln Frames Stille vor dem lesbaren Audiobereich eingefügt</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="169"/>
         <source>CD read offset correction padded %Ln frame(s) with silence after the readable audio range</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Die CD-Lese-Offset-Korrektur hat %Ln Frame Stille an den lesbaren Audiobereich angehängt</numerusform>
+            <numerusform>Die CD-Lese-Offset-Korrektur hat %Ln Frames Stille an den lesbaren Audiobereich angehängt</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="233"/>
         <source>CD extraction was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Extrahierung wurde abgebrochen</translation>
     </message>
 </context>
 <context>
@@ -2384,12 +2384,12 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="261"/>
         <source>The selected optical drive is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Das ausgewählte optische Laufwerk ist nicht verfügbar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="269"/>
         <source>The selected optical drive is unavailable: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Das ausgewählte optische Laufwerk ist nicht verfügbar: %1</translation>
     </message>
 </context>
 <context>
@@ -2397,91 +2397,91 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="99"/>
         <source>Details: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Details: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="104"/>
         <source>Check the disk drive device permissions.</source>
-        <translation type="unfinished"></translation>
+        <translation>Überprüfe die Geräteberechtigungen des CD-Laufwerks.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="306"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="384"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="523"/>
         <source>Failed to access audio CD drive %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte nicht auf Audio-CD-Laufwerk %1 zugreifen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="316"/>
         <source>Failed to read the CD TOC from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte das CD-Inhaltsverzeichnis nicht von %1 lesen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="329"/>
         <source>Failed to read a CD track boundary from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte eine CD-Titelgrenze nicht von %1 lesen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="392"/>
         <source>Failed to read CD audio sectors from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte Audiosektoren nicht von %1 lesen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="421"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="534"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="545"/>
         <source>Failed to initialise secure CD extraction for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte sichere CD-Extrahierung für %1 nicht initialisieren</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="436"/>
         <source>Failed to seek the secure CD reader for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte den sicheren CD-Leser für %1 nicht spulen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="456"/>
         <source>Failed to read securely from audio CD drive %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte nicht sicher vom Audio-CD-Laufwerk %1 lesen</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="467"/>
         <source>CD extraction corrected %Ln read inconsistency event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD-Extraktion korrigierte %Ln Leseinkonsistenz</numerusform>
+            <numerusform>CD-Extraktion korrigierte %Ln Leseinkonsistenzen</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="470"/>
         <source>CD extraction encountered %Ln read error event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD-Extraktion begegnete %Ln Lesefehler</numerusform>
+            <numerusform>CD-Extraktion begegnete %Ln Lesefehlern</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="473"/>
         <source>CD extraction exhausted retries and concealed %Ln unreadable sector event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD-Extraktion hat Wiederholversuche erschöpft und %Ln Vorkommnis unlesbarer Sektoren verborgen</numerusform>
+            <numerusform>CD-Extraktion hat Wiederholversuche erschöpft und %Ln Vorkommnisse unlesbarer Sektoren verborgen</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="484"/>
         <source>The requested CD read-speed limit is invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>Die angeforderte CD-Lesegeschwindigkeitsbegrenzung ist ungültig</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="491"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="496"/>
         <source>Failed to limit the CD read speed for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte die CD-Lesegeschwindigkeit für %1 nicht begrenzen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="554"/>
         <source>CD operation was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Vorgang wurde abgebrochen</translation>
     </message>
 </context>
 <context>
@@ -2489,173 +2489,173 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="68"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Neu laden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="69"/>
         <source>Drive settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Laufwerkeinstellungen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="70"/>
         <source>Metadata</source>
-        <translation type="unfinished">Metadaten</translation>
+        <translation>Metadaten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="71"/>
         <source>Read CD-Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Lies CD-Text</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="72"/>
         <source>Auto lookup metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadaten automatisch nachschlagen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="73"/>
         <source>Lookup metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadaten nachschlagen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="74"/>
         <source>Rip…</source>
-        <translation type="unfinished"></translation>
+        <translation>Rippen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="75"/>
         <source>Play</source>
-        <translation type="unfinished">Abspielen</translation>
+        <translation>Abspielen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="76"/>
         <source>Add to playlist</source>
-        <translation type="unfinished">Zur Wiedergabeliste hinzufügen</translation>
+        <translation>Zur Wiedergabeliste hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="78"/>
         <source>Open Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio-CD öffnen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Titelnummer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Duration</source>
-        <translation type="unfinished">Dauer</translation>
+        <translation>Dauer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="105"/>
         <source>CD drive</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Laufwerk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="143"/>
         <source>Check all</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle auswählen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="144"/>
         <source>Uncheck all</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle abwählen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="179"/>
         <source>Searching for CD drives…</source>
-        <translation type="unfinished"></translation>
+        <translation>Suche nach CD-Laufwerken…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="227"/>
         <source>Reading audio CD…</source>
-        <translation type="unfinished"></translation>
+        <translation>Lese Audio-CD…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="262"/>
         <source>No CD drives found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine CD-Laufwerke gefunden.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="287"/>
         <source>No audio CD is available in this drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>In diesem Laufwerk ist keine Audio-CD verfügbar.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="305"/>
         <source>Found %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln Audiospur gefunden.</numerusform>
+            <numerusform>%Ln Audiospuren gefunden.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="337"/>
         <source>Reading CD-Text…</source>
-        <translation type="unfinished"></translation>
+        <translation>Lese CD-Text…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="360"/>
         <source>Failed to read CD-Text: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte CD-Text nicht lesen: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="374"/>
         <source>No CD-Text found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein CD-Text gefunden.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="384"/>
         <source>CD-Text was read; existing metadata was kept.</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Text wurde gelesen; vorhandene Metadaten wurden behalten.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="392"/>
         <source>Applied CD-Text to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD-Text auf %Ln Audiospur angewandt.</numerusform>
+            <numerusform>CD-Text auf %Ln Audiospuren angewandt.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="461"/>
         <source>Automatic metadata lookup needs review.</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisches Nachschlagen von Metadaten muss überprüft werden.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="471"/>
         <source>Automatic metadata lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisches Nachschlagen von Metadaten fehlgeschlagen: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="476"/>
         <source>Looking up audio CD metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlage Audio-CD-Metadaten nach…</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="500"/>
         <source>Applied automatic metadata to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Automatische Metadaten auf %Ln Audiospur angewandt.</numerusform>
+            <numerusform>Automatische Metadaten auf %Ln Audiospuren angewandt.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="504"/>
         <source>No automatic metadata match found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Es wurde keine automatische Metadaten-Übereinstimmung gefunden.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="549"/>
         <source>Applied metadata to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Metadaten auf %Ln Audiospur angewandt.</numerusform>
+            <numerusform>Metadaten auf %Ln Audiospuren angewandt.</numerusform>
         </translation>
     </message>
 </context>
@@ -2664,73 +2664,73 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="76"/>
         <source>Accurately ripped</source>
-        <translation type="unfinished"></translation>
+        <translation>Akkurat gerippt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="78"/>
         <source>Mismatch</source>
-        <translation type="unfinished"></translation>
+        <translation>Nichtübereinstimmung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="80"/>
         <source>Incomplete</source>
-        <translation type="unfinished"></translation>
+        <translation>Unvollständig</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="82"/>
         <source>Unsupported format</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht unterstütztes Format</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="92"/>
         <source>AccurateRip Verification</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip Verifizierung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="104"/>
         <source>Verified: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifiziert: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="105"/>
         <source>Mismatched: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht übereinstimmend: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="115"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Titelnummer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="115"/>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="214"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="116"/>
         <source>Result</source>
-        <translation type="unfinished">Ergebnis</translation>
+        <translation>Ergebnis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="116"/>
         <source>Confidence</source>
-        <translation type="unfinished"></translation>
+        <translation>Zuversicht</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="117"/>
         <source>AR v1 CRC</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v1 CRC</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="117"/>
         <source>AR v2 CRC</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v2 CRC</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="118"/>
         <source>Database CRCs</source>
-        <translation type="unfinished"></translation>
+        <translation>Datenbank CRCs</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="171"/>
@@ -2820,7 +2820,7 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="304"/>
         <source>Drive offset has not been configured. Check Drive settings before ripping.</source>
-        <translation type="unfinished"></translation>
+        <translation>Laufwerk-Offset wurde nicht eingestellt. Überprüfe die Einstellungen des Laufwerks vor dem Rippen.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="419"/>
@@ -10250,7 +10250,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="273"/>
         <source>First track, last track, lead-out sector, then track offsets</source>
-        <translation type="unfinished"></translation>
+        <translation>Erster Titel, letzter Titel, Auslaufsektor, dann Titel-Offsets</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="282"/>
