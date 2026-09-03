@@ -2224,7 +2224,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="135"/>
         <source>AccurateRip returned an unexpectedly large drive list.</source>
-        <translation>AccurateRip 回傳一個出乎意料的大型光碟機清單。</translation>
+        <translation>AccurateRip 回傳一個出乎意料龐大的光碟機清單。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="142"/>
@@ -2234,14 +2234,14 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="147"/>
         <source>This drive was purged because its offset is not consistent.</source>
-        <translation>由於該光碟機的偏移量不一致，因此已將其清除。</translation>
+        <translation>由於該光碟機的偏移值不一致，因此已將其清除。</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="154"/>
         <source>Found correction: %1 (%Ln submission(s), %2% agreement).</source>
         <extracomment>Correction = CD Drive read offset correction</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>找到修正： %1 (%Ln 提交、% 2% 同意)。</numerusform>
         </translation>
     </message>
 </context>
@@ -2250,12 +2250,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="42"/>
         <source>CD sector conversion overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>CD 區段轉換溢出</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="88"/>
         <source>The CD has an invalid TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>該光碟具有無效的 TOC</translation>
     </message>
 </context>
 <context>
@@ -2263,33 +2263,33 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="180"/>
         <source>Audio CD decoder is not initialised</source>
-        <translation type="unfinished"></translation>
+        <translation>音訊光碟解碼器尚未初始化</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="187"/>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="321"/>
         <source>Audio CD read was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>音訊光碟讀取作業已被取消</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="268"/>
         <source>CD drive returned no audio data</source>
-        <translation type="unfinished"></translation>
+        <translation>光碟機回傳無音訊資料</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="335"/>
         <source>The disc in the CD drive has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>光磁機中的碟片已經變更</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="350"/>
         <source>Could not limit CD read speed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>無法限制光碟讀取速度： %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="362"/>
         <source>The selected CD drive became unavailable; extraction settings for %1 are being used</source>
-        <translation type="unfinished"></translation>
+        <translation>所選的光碟機無法使用；正在使用 % 1 的提取設定</translation>
     </message>
 </context>
 <context>
@@ -2297,39 +2297,39 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="71"/>
         <source>Open audio &amp;CD…</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟音訊 &amp;CD…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="72"/>
         <source>Open an audio CD for playback or ripping</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟音訊光碟以播放或轉錄</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="74"/>
         <source>File</source>
-        <translation type="unfinished">檔案</translation>
+        <translation>檔案</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="102"/>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="117"/>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="243"/>
         <source>Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>音訊 CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="193"/>
         <source>This disc is not present in AccurateRip.</source>
-        <translation type="unfinished"></translation>
+        <translation>此光碟未出現於 AccurateRip 。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="194"/>
         <source>AccurateRip lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip 找尋失敗：%1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="201"/>
         <source>AccurateRip returned an unexpectedly large disc record.</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip 回傳出乎意料龐大的碟片記錄。</translation>
     </message>
 </context>
 <context>
@@ -2337,17 +2337,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="49"/>
         <source>Track %1</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目 %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="53"/>
         <source>Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>音訊 CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="111"/>
         <source>Invalid audio CD identity</source>
-        <translation type="unfinished"></translation>
+        <translation>音訊 CD 識別無效</translation>
     </message>
 </context>
 <context>
@@ -2355,21 +2355,21 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="129"/>
         <source>CD read offset correction padded %Ln frame(s) with silence before the readable audio range</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD 讀取偏移校正 %Ln 個影格，在可供讀取音訊範圍之前以靜音方式呈現</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="169"/>
         <source>CD read offset correction padded %Ln frame(s) with silence after the readable audio range</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD 讀取偏移校正疊加 %Ln 個影格，在可供讀取音訊範圍之後以靜音呈現</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="233"/>
         <source>CD extraction was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>CD 解壓縮提取已被取消</translation>
     </message>
 </context>
 <context>
@@ -2377,12 +2377,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="261"/>
         <source>The selected optical drive is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>所選光碟機無法供用</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="269"/>
         <source>The selected optical drive is unavailable: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>所選的光碟機無法供用： % 1</translation>
     </message>
 </context>
 <context>
@@ -2390,12 +2390,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="99"/>
         <source>Details: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>詳細資訊： %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="104"/>
         <source>Check the disk drive device permissions.</source>
-        <translation type="unfinished"></translation>
+        <translation>檢查磁碟機設備擁有權限。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="306"/>
@@ -22521,7 +22521,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1809"/>
         <source>Quick Search</source>
-        <translation type="unfinished">快速搜尋</translation>
+        <translation>快速搜尋</translation>
     </message>
 </context>
 <context>
