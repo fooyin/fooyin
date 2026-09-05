@@ -9,10 +9,8 @@
 #
 # For each of the components it will additionally set.
 #   - AVCODEC
-#   - AVDEVICE
 #   - AVFORMAT
 #   - AVUTIL
-#   - POSTPROCESS
 #   - SWSCALE
 # the following variables will be defined
 #  <component>_FOUND        - System has <component>
@@ -144,12 +142,10 @@ unset(FFMPEG_TARGETS CACHE)
 # Check for all possible component.
 find_component(AVCODEC libavcodec avcodec libavcodec/avcodec.h)
 find_component(AVFORMAT libavformat avformat libavformat/avformat.h)
-find_component(AVDEVICE libavdevice avdevice libavdevice/avdevice.h)
 find_component(AVUTIL libavutil avutil libavutil/avutil.h)
 find_component(AVFILTER libavfilter avfilter libavfilter/avfilter.h)
 find_component(SWSCALE libswscale swscale libswscale/swscale.h)
 find_component(SWRESAMPLE libswresample swresample libswresample/swresample.h)
-find_component(POSTPROC libpostproc postproc libpostproc/postprocess.h)
 
 # Check if the required components were found and add their stuff to the FFMPEG_* vars.
 foreach(_component ${FFmpeg_FIND_COMPONENTS})
@@ -167,11 +163,9 @@ foreach(
     _lib
     avcodec
     avformat
-    avdevice
     avutil
     swscale
     swresample
-    postproc
 )
     if(TARGET ${_lib})
         set(FFMPEG_TARGETS ${FFMPEG_TARGETS} ${_lib})
@@ -188,15 +182,6 @@ endif()
 if(TARGET avfilter)
     imported_link_libraries(avfilter avformat avcodec avutil)
 endif()
-if(TARGET avdevice)
-    imported_link_libraries(
-        avdevice
-        avfilter
-        avformat
-        avcodec
-        avutil
-    )
-endif()
 if(TARGET swscale)
     imported_link_libraries(swscale avutil)
     if(TARGET avfilter)
@@ -205,12 +190,6 @@ if(TARGET swscale)
 endif()
 if(TARGET swresample)
     imported_link_libraries(swresample avutil)
-endif()
-if(TARGET postproc)
-    imported_link_libraries(postproc avutil)
-    if(TARGET avfilter)
-        imported_link_libraries(avfilter postproc)
-    endif()
 endif()
 
 if(TARGET avutil)
@@ -231,7 +210,7 @@ if(TARGET avutil)
         if(MSVC)
             find_library(BCRYPT_LIBRARY bcrypt.lib)
             set_target_properties(winbcrypt PROPERTIES IMPORTED_NO_SONAME 1 IMPORTED_LOCATION "${BCRYPT_LIBRARY}")
-            imported_link_libraries(avdevice shlwapi.lib)
+            imported_link_libraries(shlwapi.lib)
         else()
             find_library(BCRYPT_LIBRARY libbcrypt.a HINTS ${OSSIA_SDK}/llvm/x86_64-w64-mingw32/lib)
 
@@ -274,10 +253,8 @@ mark_as_advanced(FFMPEG_INCLUDE_DIRS FFMPEG_LIBRARIES FFMPEG_DEFINITIONS FFMPEG_
 foreach(
     _component
     AVCODEC
-    AVDEVICE
     AVFORMAT
     AVUTIL
-    POSTPROCESS
     SWSCALE
     SWRESAMPLE
 )
