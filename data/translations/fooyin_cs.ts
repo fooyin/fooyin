@@ -394,7 +394,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Normalised rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalizované hodnocení</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="161"/>
@@ -1296,22 +1296,22 @@
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="34"/>
         <source>Automatic detection</source>
-        <translation type="unfinished">Automatická detekce</translation>
+        <translation>Automatická detekce</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="56"/>
         <source>Default</source>
-        <translation type="unfinished">Výchozí</translation>
+        <translation>Výchozí</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="58"/>
         <source>Five star compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Kompatibilita s pěti hvězdami</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="60"/>
         <source>Raw 0–255 byte scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Stupnice bajtů 0-255</translation>
     </message>
 </context>
 <context>
@@ -2080,22 +2080,22 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="76"/>
         <source>AccurateRip verification of mixed-mode discs is not supported</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip ověření mixed-mode disků není podporováno</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="126"/>
         <source>Truncated AccurateRip response header</source>
-        <translation type="unfinished"></translation>
+        <translation>Zkrácená hlavička odpovědi AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="138"/>
         <source>Invalid AccurateRip response record</source>
-        <translation type="unfinished"></translation>
+        <translation>Neplatný záznam odpovědi AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="158"/>
         <source>AccurateRip response did not contain the requested disc</source>
-        <translation type="unfinished"></translation>
+        <translation>Odpověď AccurateRip neobsahovala požadovaný disk</translation>
     </message>
 </context>
 <context>
@@ -2103,30 +2103,30 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="61"/>
         <source>The CD drive is already in use</source>
-        <translation type="unfinished"></translation>
+        <translation>CD mechanika je již používána</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="355"/>
         <source>Audio CD identity is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Identita audio CD není k dispozici</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="374"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="586"/>
         <source>The disc in the CD drive has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Disk v CD mechanice byl změněn</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="466"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="521"/>
         <source>Invalid CD disc identity</source>
-        <translation type="unfinished"></translation>
+        <translation>Neplatná identita CD disku</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="498"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="609"/>
         <source>The requested audio CD is not inserted</source>
-        <translation type="unfinished"></translation>
+        <translation>Požadované audio CD není vloženo</translation>
     </message>
 </context>
 <context>
@@ -2134,12 +2134,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/cdda/drive/cddrivebackend.cpp" line="40"/>
         <source>Secure CD extraction is unavailable for this drive backend</source>
-        <translation type="unfinished"></translation>
+        <translation>Bezpečná CD extrakce není pro tento backend mechaniky k dispozici</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/cddrivebackend.cpp" line="47"/>
         <source>CD read speed control is unavailable for this drive backend</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrola rychlosti není pro tento backend mechaniky k dispozici</translation>
     </message>
 </context>
 <context>
@@ -2147,34 +2147,36 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="49"/>
         <source>Lookup with AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat pomocí AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="53"/>
         <source>Drive Settings - %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení mechaniky - %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="58"/>
         <source>Compensates for a drive that reads slightly before or after the requested CD position.
 Positive values read later; negative values read earlier.
 Use AccurateRip to look up the correction for this drive model, or enter a known value manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kompenzace pro mechaniky, které čtou kousek před nebo za požadovanou pozicí.
+Pozitivní hodnoty pro ty co čtou později; negativní hodnoty pro ty co čtou dříve.
+Použijte AccurateRip pro vyhledání hodnoty pro danou mechaniku, nebo zadejte hodnotu ručně.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="62"/>
         <source>Disabled</source>
-        <translation type="unfinished">Zakázáno</translation>
+        <translation>Zakázáno</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="63"/>
         <source>Standard</source>
-        <translation type="unfinished"></translation>
+        <translation>Standardní</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="64"/>
         <source>Paranoid</source>
-        <translation type="unfinished"></translation>
+        <translation>Paranoidní</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="66"/>
@@ -2182,71 +2184,74 @@ Use AccurateRip to look up the correction for this drive model, or enter a known
 Disabled: direct reads with no verification (fastest).
 Standard: verifies overlapping reads and retries inconsistencies (slower).
 Paranoid: performs the most thorough available checking and additional retries (slowest).</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontroluje detekci a opravu chyb při extrahování; přehrávání není ovlivněno.
+Zakázáno: čtení bez ověřování (nejrychlejší).
+Standardní: ověřuje překrývající se čtení a opakuje čtení při nekonzistencích (pomalejší).
+Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalejší).</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="71"/>
         <source>Maximum</source>
-        <translation type="unfinished">Maximum</translation>
+        <translation>Maximum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="77"/>
         <source>Limits the drive&apos;s read speed while ripping; playback is unaffected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Omezí rychlost čtení při extrakci; přehrávání není ovlivněno.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="78"/>
         <source>This drive doesn&apos;t support read-speed control.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tato mechanika nepodporuje kontrolu rychlosti.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="88"/>
         <source>Read offset correction</source>
-        <translation type="unfinished"></translation>
+        <translation>Korekce posunu čtení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="91"/>
         <source>Ripping security</source>
-        <translation type="unfinished"></translation>
+        <translation>Bezpečnost extrakce</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="93"/>
         <source>Drive speed limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Limit rychlosti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="119"/>
         <source>Looking up drive…</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledávání mechaniky…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="129"/>
         <source>Lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledání selhalo: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="135"/>
         <source>AccurateRip returned an unexpectedly large drive list.</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip vrátilo neočekávaně velký seznam mechanik.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="142"/>
         <source>No unambiguous entry was found for this drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pro tuto mechaniku nebyl nalezen žádný jednoznačný záznam.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="147"/>
         <source>This drive was purged because its offset is not consistent.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tato mechanika byla odstraněna, protože její odchylka není konzistentní.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="154"/>
         <source>Found correction: %1 (%Ln submission(s), %2% agreement).</source>
         <extracomment>Correction = CD Drive read offset correction</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Nalezena korekce: %1 (%Ln záznam, %2% shoda).</numerusform>
+            <numerusform>Nalezena korekce: %1 (%Ln záznamy, %2% shoda).</numerusform>
+            <numerusform>Nalezena korekce: %1 (%Ln záznamů, %2% shoda).</numerusform>
         </translation>
     </message>
 </context>
@@ -2255,12 +2260,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="42"/>
         <source>CD sector conversion overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>Přetečení při převodu CD sektorů</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="88"/>
         <source>The CD has an invalid TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>CD má neplatnou TOC</translation>
     </message>
 </context>
 <context>
@@ -2268,33 +2273,33 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="180"/>
         <source>Audio CD decoder is not initialised</source>
-        <translation type="unfinished"></translation>
+        <translation>Dekodér audio CD není inicializován</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="187"/>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="321"/>
         <source>Audio CD read was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Čtení audio CD bylo přerušeno</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="268"/>
         <source>CD drive returned no audio data</source>
-        <translation type="unfinished"></translation>
+        <translation>CD mechanika nevrátila žádná zvuková data</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="335"/>
         <source>The disc in the CD drive has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Disk v CD mechanice byl změněn</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="350"/>
         <source>Could not limit CD read speed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Omezení rychlosti čtení CD se nezdařilo: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="362"/>
         <source>The selected CD drive became unavailable; extraction settings for %1 are being used</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybraná CD mechanika se stala nedostupnou; používají se nastavení extrakce pro %1</translation>
     </message>
 </context>
 <context>
@@ -2302,39 +2307,39 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="71"/>
         <source>Open audio &amp;CD…</source>
-        <translation type="unfinished"></translation>
+        <translation>Otevřít zvukové &amp;CD…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="72"/>
         <source>Open an audio CD for playback or ripping</source>
-        <translation type="unfinished"></translation>
+        <translation>Otevřít audio CD pro přehrávání nebo extrakci</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="74"/>
         <source>File</source>
-        <translation type="unfinished">Soubor</translation>
+        <translation>Soubor</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="102"/>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="117"/>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="243"/>
         <source>Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="193"/>
         <source>This disc is not present in AccurateRip.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tento disk není v databázi AccurateRip.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="194"/>
         <source>AccurateRip lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledání AccurateRip selhalo: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="201"/>
         <source>AccurateRip returned an unexpectedly large disc record.</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip se vrátil neočekávaný velký záznam disku.</translation>
     </message>
 </context>
 <context>
@@ -2342,17 +2347,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="49"/>
         <source>Track %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Skladba %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="53"/>
         <source>Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="111"/>
         <source>Invalid audio CD identity</source>
-        <translation type="unfinished"></translation>
+        <translation>Neplatná identita audio CD</translation>
     </message>
 </context>
 <context>
@@ -2539,7 +2544,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="78"/>
         <source>Open Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>Otevřít audio CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
@@ -2579,7 +2584,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="227"/>
         <source>Reading audio CD…</source>
-        <translation type="unfinished"></translation>
+        <translation>Čte se audio CD…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="262"/>
@@ -2589,7 +2594,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="287"/>
         <source>No audio CD is available in this drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>V mechanice není žádné audio CD.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="305"/>
@@ -2642,7 +2647,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="476"/>
         <source>Looking up audio CD metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledávání metadat audio CD…</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="500"/>
@@ -2764,7 +2769,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="178"/>
         <source>Rip Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>Extrahovat audio CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="182"/>
