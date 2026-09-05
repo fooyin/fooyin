@@ -66,12 +66,12 @@
     <message>
         <location filename="../../src/gui/widgets.cpp" line="401"/>
         <source>Directory Browser</source>
-        <translation>Browser directory</translation>
+        <translation>Esplora Cartelle</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="403"/>
         <source>Unchecked items will be hidden from the directory browser context menu.</source>
-        <translation>Gli elementi non selezionati verranno nascosti dal menu contestuale del browser di directory.</translation>
+        <translation>Gli elementi non selezionati verranno nascosti dal menu contestuale di esplorazione cartelle.</translation>
     </message>
 </context>
 <context>
