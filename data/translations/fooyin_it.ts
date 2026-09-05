@@ -1261,7 +1261,7 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="495"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="497"/>
         <source>Lookup</source>
-        <translation>Cerca</translation>
+        <translation>Ricerca</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="478"/>
@@ -1347,7 +1347,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="84"/>
         <source>La&amp;yout</source>
-        <translation>Layout</translation>
+        <translation>A&amp;spetto</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="88"/>
@@ -1773,7 +1773,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="140"/>
         <source>Searching</source>
-        <translation>Ricerca</translation>
+        <translation>Ricerca in corso</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="141"/>
@@ -2172,7 +2172,7 @@ Usa AccurateRip per cercare la correzione per questo modello di unità, oppure i
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="64"/>
         <source>Paranoid</source>
-        <translation>Paranoid</translation>
+        <translation>Paranoia</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="66"/>
@@ -2534,108 +2534,108 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="78"/>
         <source>Open Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>Apri CD audio</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Traccia</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Title</source>
-        <translation type="unfinished">Titolo</translation>
+        <translation>Titolo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Duration</source>
-        <translation type="unfinished">Durata</translation>
+        <translation>Durata</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="105"/>
         <source>CD drive</source>
-        <translation type="unfinished"></translation>
+        <translation>Unità CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="143"/>
         <source>Check all</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona tutto</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="144"/>
         <source>Uncheck all</source>
-        <translation type="unfinished"></translation>
+        <translation>Deseleziona tutto</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="179"/>
         <source>Searching for CD drives…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ricerca delle unità CD in corso…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="227"/>
         <source>Reading audio CD…</source>
-        <translation type="unfinished"></translation>
+        <translation>Lettura CD audio in corso…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="262"/>
         <source>No CD drives found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessuna unità CD trovata.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="287"/>
         <source>No audio CD is available in this drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun CD audio disponibile in questa unità.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="305"/>
         <source>Found %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Trovata %Ln traccia audio.</numerusform>
+            <numerusform>Trovate %Ln tracce audio.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="337"/>
         <source>Reading CD-Text…</source>
-        <translation type="unfinished"></translation>
+        <translation>Lettura CD-Text in corso…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="360"/>
         <source>Failed to read CD-Text: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile leggere il CD-Text: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="374"/>
         <source>No CD-Text found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun CD-Text trovato.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="384"/>
         <source>CD-Text was read; existing metadata was kept.</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Text letto; i metadati esistenti sono stati mantenuti.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="392"/>
         <source>Applied CD-Text to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD-Text applicato a %Ln traccia audio.</numerusform>
+            <numerusform>CD-Text applicato a %Ln tracce audio.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="461"/>
         <source>Automatic metadata lookup needs review.</source>
-        <translation type="unfinished"></translation>
+        <translation>La ricerca automatica dei metadati richiede revisione.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="471"/>
         <source>Automatic metadata lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ricerca automatica dei metadati non riuscita: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="476"/>
         <source>Looking up audio CD metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ricerca metadati CD audio in corso…</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="500"/>
@@ -2648,7 +2648,7 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="504"/>
         <source>No automatic metadata match found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessuna corrispondenza automatica di metadati trovata.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="549"/>
@@ -2926,7 +2926,7 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="75"/>
         <source>Select a command, or enter a raw `$cmdlink` id or alias.</source>
-        <translation>Seleziona un comando, oppure inserisci un ID `$cmdlink` grezzo o un alias.</translation>
+        <translation>Seleziona un comando, oppure inserisci un id `$cmdlink` grezzo o un alias.</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="79"/>
@@ -22535,7 +22535,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="127"/>
         <source>Display</source>
-        <translation>Display</translation>
+        <translation>Visualizza</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="130"/>
