@@ -45,7 +45,7 @@ sudo apt install \
     g++ git cmake pkg-config ninja-build libglu1-mesa-dev libxkbcommon-dev zlib1g-dev \
     libasound2-dev libtag1-dev libicu-dev libpipewire-0.3-dev libpulse-dev \
     qt6-base-dev libqt6sql6-sqlite libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
-    libavcodec-dev libavformat-dev libavutil-dev libavdevice-dev libswresample-dev \
+    libavcodec-dev libavformat-dev libavutil-dev libswresample-dev \
     libsndfile1-dev libopenmpt-dev libgme-dev libarchive-dev libebur128-dev libcdio-dev \
     libcdio-paranoia-dev libsoundtouch-dev libsoxr-dev
 ```
