@@ -2365,25 +2365,25 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="129"/>
         <source>CD read offset correction padded %Ln frame(s) with silence before the readable audio range</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Korekce posunu čtení doplnila %Ln rámec před čitelným rozsahem tichem</numerusform>
+            <numerusform>Korekce posunu čtení doplnila %Ln rámce před čitelným rozsahem tichem</numerusform>
+            <numerusform>Korekce posunu čtení doplnila %Ln rámců před čitelným rozsahem tichem</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="169"/>
         <source>CD read offset correction padded %Ln frame(s) with silence after the readable audio range</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Korekce posunu čtení doplnila %Ln rámec za čitelným rozsahem tichem</numerusform>
+            <numerusform>Korekce posunu čtení doplnila %Ln rámce za čitelným rozsahem tichem</numerusform>
+            <numerusform>Korekce posunu čtení doplnila %Ln rámců za čitelným rozsahem tichem</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="233"/>
         <source>CD extraction was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Extrakce CD byla přerušena</translation>
     </message>
 </context>
 <context>
@@ -2391,12 +2391,12 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="261"/>
         <source>The selected optical drive is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybraná optická mechanika není k dispozici</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="269"/>
         <source>The selected optical drive is unavailable: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybraná optická mechanika není k dispozici: %1</translation>
     </message>
 </context>
 <context>
@@ -2404,12 +2404,12 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="99"/>
         <source>Details: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Podrobnosti: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="104"/>
         <source>Check the disk drive device permissions.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zkontroluj oprávnění zařízení.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="306"/>
