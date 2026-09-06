@@ -10561,7 +10561,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="601"/>
         <source>Release group</source>
-        <translation type="unfinished"></translation>
+        <translation>Skupina vydání</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="604"/>
