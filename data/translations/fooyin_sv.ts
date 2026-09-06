@@ -2260,7 +2260,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="88"/>
         <source>The CD has an invalid TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>CD:n har en ogiltig innehållsförteckning</translation>
     </message>
 </context>
 <context>
@@ -2414,7 +2414,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="316"/>
         <source>Failed to read the CD TOC from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Misslyckades att läsa CD:ns innehållsförteckning från %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="329"/>
@@ -2994,7 +2994,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="141"/>
         <source>Enter a raw `$cmdlink` id or alias</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in ett rått `$cmdlink`-id eller -alias</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="144"/>
@@ -10272,7 +10272,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="301"/>
         <source>TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>Innehållsförteckning</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="311"/>
@@ -10453,12 +10453,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="478"/>
         <source>Metadata options</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadataalternativ</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="481"/>
         <source>Existing metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Existerande metadata</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="488"/>
@@ -10473,7 +10473,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="491"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="572"/>
         <source>Ready.</source>
-        <translation type="unfinished"></translation>
+        <translation>Redo.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="496"/>
@@ -10483,12 +10483,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="496"/>
         <source>Update files</source>
-        <translation type="unfinished"></translation>
+        <translation>Uppdatera filer</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="521"/>
         <source>No matching releases found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inga matchande utsläpp hittades.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="522"/>
@@ -10506,22 +10506,22 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="592"/>
         <source>Artist and album</source>
-        <translation type="unfinished"></translation>
+        <translation>Artist och album</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="595"/>
         <source>Disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>Skivans innehållsförteckning</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="598"/>
         <source>Release</source>
-        <translation type="unfinished"></translation>
+        <translation>Utsläpp</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="601"/>
         <source>Release group</source>
-        <translation type="unfinished"></translation>
+        <translation>Utsläppsgrupp</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="604"/>
@@ -10541,7 +10541,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="898"/>
         <source>One or more selected tracks cannot be updated.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ett eller fler valda spår kan inte uppdateras.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="902"/>
@@ -10551,12 +10551,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="903"/>
         <source>Review unmatched or ambiguous tracks before updating files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrollera omatchade eller ambiguösa spår innan uppdatering av filer.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="906"/>
         <source>The selected release produces no metadata changes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Det valda utsläppet tillbringar inga metadataändringar.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="909"/>
@@ -10569,9 +10569,9 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="911"/>
         <source>%Ln track(s) will be updated.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln spår kommer uppdateras.</numerusform>
+            <numerusform>%Ln spår kommer uppdateras.</numerusform>
         </translation>
     </message>
     <message>
@@ -10623,7 +10623,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="987"/>
         <source>Metadata writing finished:</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadataskrivning slutförd:</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="991"/>
@@ -10654,27 +10654,27 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="251"/>
         <source>Enter an artist or album.</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in en artist eller ett album.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="252"/>
         <source>Enter a disc TOC.</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in en skiv-innehållsförteckning.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="253"/>
         <source>Enter a MusicBrainz ID.</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in ett MusicBrainz-ID.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="267"/>
         <source>The selected result has no release identifier.</source>
-        <translation type="unfinished"></translation>
+        <translation>Det valda resultatet har ingen utsläppsidentifierare.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="541"/>
         <source>MusicBrainz request failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>MusicBrainz-begäran misslyckades: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="555"/>
@@ -11878,7 +11878,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="111"/>
         <source>If the current track has been playing for more than 5 s, restart it instead of moving to the previous track</source>
-        <translation type="unfinished"></translation>
+        <translation>Om det aktuella spåret has spelats i mer än 5&#xa0;s, börja om den istället för att gå till föregående spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="114"/>
@@ -13243,7 +13243,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="281"/>
         <source>Leave empty to group by the displayed values</source>
-        <translation type="unfinished"></translation>
+        <translation>Lämna tomt för att gruppera efter de visade värdena</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="288"/>
@@ -20013,7 +20013,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="184"/>
         <source>This match was set manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Den här matchningar var satt manuellt.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="187"/>
@@ -20028,7 +20028,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="195"/>
         <source>This automatic match is ambiguous.</source>
-        <translation type="unfinished"></translation>
+        <translation>Den här automatiska matchningen är ambiguös.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="198"/>
@@ -21945,7 +21945,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2002"/>
         <source>Enter a valid http:// or https:// URL.</source>
-        <translation type="unfinished">Skriv in en giltig http://- eller https://-URL.</translation>
+        <translation>Skriv in en giltig http://- eller https://-URL.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2063"/>
