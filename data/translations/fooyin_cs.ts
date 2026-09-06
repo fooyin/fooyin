@@ -2347,7 +2347,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="49"/>
         <source>Track %1</source>
-        <translation>Skladba %1</translation>
+        <translation>Stopa %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="53"/>
@@ -2514,7 +2514,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="71"/>
         <source>Read CD-Text</source>
-        <translation>Číst CD-Text</translation>
+        <translation>Načíst CD-Text</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="72"/>
@@ -10240,7 +10240,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
         <source>Change</source>
-        <translation>Změnit</translation>
+        <translation>Změna</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
@@ -10337,7 +10337,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="332"/>
         <source>Search for a release to see matching results</source>
-        <translation>Vyhledat vydání pro zobrazení odpovídajících výsledků</translation>
+        <translation>Vyhledej vydání pro zobrazení odpovídajících výsledků</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="345"/>
