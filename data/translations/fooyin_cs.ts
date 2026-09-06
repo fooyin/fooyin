@@ -2416,82 +2416,82 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="384"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="523"/>
         <source>Failed to access audio CD drive %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Přístup k CD mechanice %1 se nezdařil</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="316"/>
         <source>Failed to read the CD TOC from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Čtení CD TOC z %1 se nezdařilo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="329"/>
         <source>Failed to read a CD track boundary from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Čtení hranice CD stopy z %1 se nezdařilo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="392"/>
         <source>Failed to read CD audio sectors from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Čtení zvukových CD sektorů z %1 se nezdařilo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="421"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="534"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="545"/>
         <source>Failed to initialise secure CD extraction for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Inicializace bezpečné CD extrakce z %1 se nezdařila</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="436"/>
         <source>Failed to seek the secure CD reader for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledání %1 se na CD čtečce nezdařilo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="456"/>
         <source>Failed to read securely from audio CD drive %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Bezpečné čtení z audio CD mechaniky %1 se nezdařilo</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="467"/>
         <source>CD extraction corrected %Ln read inconsistency event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Při CD extrakci byla opravena %Ln nekonzistence při čtení</numerusform>
+            <numerusform>Při CD extrakci byly opraveny %Ln nekonzistence při čtení</numerusform>
+            <numerusform>Při CD extrakci bylo opraveno %Ln nekonzistencí při čtení</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="470"/>
         <source>CD extraction encountered %Ln read error event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Při CD extrakci byla zjištěna %Ln chyba čtení</numerusform>
+            <numerusform>Při CD extrakci byly zjištěny %Ln chyby čtení</numerusform>
+            <numerusform>Při CD extrakci bylo zjištěno %Ln chyb čtení</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="473"/>
         <source>CD extraction exhausted retries and concealed %Ln unreadable sector event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Při CD extrakci byl vyčerpán počet opakovaných čtení a byl skryt %Ln nečitelný sektor</numerusform>
+            <numerusform>Při CD extrakci byl vyčerpán počet opakovaných čtení a byly skryty %Ln nečitelné sektory</numerusform>
+            <numerusform>Při CD extrakci byl vyčerpán počet opakovaných čtení a bylo skryto %Ln nečitelných sektorů</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="484"/>
         <source>The requested CD read-speed limit is invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>Požadovaný limit rychlosti čtení CD není platný</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="491"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="496"/>
         <source>Failed to limit the CD read speed for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení limitu rychlosti čtení CD pro %1 se nezdařilo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="554"/>
         <source>CD operation was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>CD operace byla zrušena</translation>
     </message>
 </context>
 <context>
@@ -2499,47 +2499,47 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="68"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualizovat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="69"/>
         <source>Drive settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení mechaniky…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="70"/>
         <source>Metadata</source>
-        <translation type="unfinished">Metadata</translation>
+        <translation>Metadata</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="71"/>
         <source>Read CD-Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Číst CD-Text</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="72"/>
         <source>Auto lookup metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky vyhledat metadata</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="73"/>
         <source>Lookup metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat metadata…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="74"/>
         <source>Rip…</source>
-        <translation type="unfinished"></translation>
+        <translation>Extrahovat…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="75"/>
         <source>Play</source>
-        <translation type="unfinished">Přehrát</translation>
+        <translation>Přehrát</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="76"/>
         <source>Add to playlist</source>
-        <translation type="unfinished">Přidat do seznamu skladeb</translation>
+        <translation>Přidat do seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="78"/>
@@ -2549,37 +2549,37 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Track</source>
-        <translation type="unfinished">Skladba</translation>
+        <translation>Skladba</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Název</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Duration</source>
-        <translation type="unfinished">Délka</translation>
+        <translation>Délka</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="105"/>
         <source>CD drive</source>
-        <translation type="unfinished"></translation>
+        <translation>CD mechanika</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="143"/>
         <source>Check all</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaškrtnout vše</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="144"/>
         <source>Uncheck all</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit zaškrtnutí všech</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="179"/>
         <source>Searching for CD drives…</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledávání CD mechanik…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="227"/>
@@ -2589,7 +2589,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="262"/>
         <source>No CD drives found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nenalezeny žádné CD mechaniky.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="287"/>
@@ -2599,50 +2599,50 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="305"/>
         <source>Found %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Nalezena %Ln zvuková stopa.</numerusform>
+            <numerusform>Nalezeny %Ln zvukové stopy.</numerusform>
+            <numerusform>Nalezeno %Ln zvukových stop.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="337"/>
         <source>Reading CD-Text…</source>
-        <translation type="unfinished"></translation>
+        <translation>Načítá se CD-Text…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="360"/>
         <source>Failed to read CD-Text: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Text se nepodařilo načíst: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="374"/>
         <source>No CD-Text found.</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Text nenalezen.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="384"/>
         <source>CD-Text was read; existing metadata was kept.</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Text načten; existující metadata byla zachována.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="392"/>
         <source>Applied CD-Text to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD-Text aplikován na %Ln stopu.</numerusform>
+            <numerusform>CD-Text aplikován na %Ln stopy.</numerusform>
+            <numerusform>CD-Text aplikován na %Ln stop.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="461"/>
         <source>Automatic metadata lookup needs review.</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatické vyhledání metadat vyžaduje kontrolu.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="471"/>
         <source>Automatic metadata lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatické vyhledání metadat selhalo: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="476"/>
@@ -2652,24 +2652,24 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="500"/>
         <source>Applied automatic metadata to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Automaticky vyhledaná metadata aplikována na %Ln stopu.</numerusform>
+            <numerusform>Automaticky vyhledaná metadata aplikována na %Ln stopy.</numerusform>
+            <numerusform>Automaticky vyhledaná metadata aplikována na %Ln stop.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="504"/>
         <source>No automatic metadata match found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatické vyhledání metadat nenašlo žádnou shodu.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="549"/>
         <source>Applied metadata to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Metadata aplikována na %Ln stopu.</numerusform>
+            <numerusform>Metadata aplikována na %Ln stopy.</numerusform>
+            <numerusform>Metadata aplikována na %Ln stop.</numerusform>
         </translation>
     </message>
 </context>
@@ -2678,93 +2678,93 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="76"/>
         <source>Accurately ripped</source>
-        <translation type="unfinished"></translation>
+        <translation>Extrahováno bez chyb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="78"/>
         <source>Mismatch</source>
-        <translation type="unfinished"></translation>
+        <translation>Nesoulad</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="80"/>
         <source>Incomplete</source>
-        <translation type="unfinished"></translation>
+        <translation>Nekompletní</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="82"/>
         <source>Unsupported format</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodporovaný formát</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="92"/>
         <source>AccurateRip Verification</source>
-        <translation type="unfinished"></translation>
+        <translation>Ověření AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="104"/>
         <source>Verified: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ověřeno: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="105"/>
         <source>Mismatched: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nesoulad: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="115"/>
         <source>Track</source>
-        <translation type="unfinished">Skladba</translation>
+        <translation>Stopa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="115"/>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="214"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Název</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="116"/>
         <source>Result</source>
-        <translation type="unfinished">Výsledek</translation>
+        <translation>Výsledek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="116"/>
         <source>Confidence</source>
-        <translation type="unfinished"></translation>
+        <translation>Jistota</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="117"/>
         <source>AR v1 CRC</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v1 CRC</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="117"/>
         <source>AR v2 CRC</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v2 CRC</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="118"/>
         <source>Database CRCs</source>
-        <translation type="unfinished"></translation>
+        <translation>CRC databáze</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="171"/>
         <source>Verify with AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>Ověřit pomocí AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="173"/>
         <source>Lookup metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat metadata…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="174"/>
         <source>Converter Setup…</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení převodu…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="175"/>
         <source>Rip</source>
-        <translation type="unfinished"></translation>
+        <translation>Extrahovat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="178"/>
@@ -2774,72 +2774,72 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="182"/>
         <source>Album information</source>
-        <translation type="unfinished"></translation>
+        <translation>Informace o albu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="198"/>
         <source>Album artist</source>
-        <translation type="unfinished">Interpret alba</translation>
+        <translation>Interpret alba</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="199"/>
         <source>Album title</source>
-        <translation type="unfinished">Název alba</translation>
+        <translation>Název alba</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="200"/>
         <source>Genre</source>
-        <translation type="unfinished">Žánr</translation>
+        <translation>Žánr</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="201"/>
         <source>Date</source>
-        <translation type="unfinished">Datum</translation>
+        <translation>Datum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="203"/>
         <source>Disc number</source>
-        <translation type="unfinished">Číslo disku</translation>
+        <translation>Číslo disku</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="211"/>
         <source>Track information</source>
-        <translation type="unfinished"></translation>
+        <translation>Informace o stopách</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="214"/>
         <source>#</source>
-        <translation type="unfinished"></translation>
+        <translation>#</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="214"/>
         <source>Artist</source>
-        <translation type="unfinished">Umělec</translation>
+        <translation>Umělec</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="259"/>
         <source>Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Předvolba</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="275"/>
         <source>Check all</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaškrtnout vše</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="276"/>
         <source>Uncheck all</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit zaškrtnutí všech</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="304"/>
         <source>Drive offset has not been configured. Check Drive settings before ripping.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nebyla nastavena odchylka mechaniky. Před extrakcí zkontrolujte nastavení mechaniky.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="419"/>
         <source>Looking up disc in AccurateRip…</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledávání disku v AccurateRip…</translation>
     </message>
 </context>
 <context>
@@ -2930,12 +2930,12 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="45"/>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="50"/>
         <source>Choose…</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat…</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="67"/>
         <source>Choose an icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyber ikonu</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="75"/>
@@ -2975,17 +2975,17 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="101"/>
         <source>Selection</source>
-        <translation type="unfinished">Výběr</translation>
+        <translation>Výběr</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="115"/>
         <source>No command selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Nebyl vybrán žádný příkaz</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="184"/>
         <source>Custom image - %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Uživatelský obrázek - %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="116"/>
@@ -2998,42 +2998,42 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="135"/>
         <source>Choose Command</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat příkaz</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="138"/>
         <source>Filter commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrovat příkazy</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="141"/>
         <source>Enter a raw `$cmdlink` id or alias</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadej `$cmdlink` id nebo alias</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="144"/>
         <source>Command</source>
-        <translation type="unfinished">Příkaz</translation>
+        <translation>Příkaz</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="144"/>
         <source>ID</source>
-        <translation type="unfinished">ID</translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="159"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="162"/>
         <source>Command ID or alias</source>
-        <translation type="unfinished"></translation>
+        <translation>ID příkazu nebo alias</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="252"/>
         <source>Other</source>
-        <translation type="unfinished">Ostatní</translation>
+        <translation>Ostatní</translation>
     </message>
 </context>
 <context>
@@ -3092,7 +3092,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="339"/>
         <source>Choose destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyber cíl</translation>
     </message>
 </context>
 <context>
@@ -3129,17 +3129,17 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="109"/>
         <source>%1%</source>
-        <translation type="unfinished">%1%</translation>
+        <translation>%1%</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="110"/>
         <source>Calculating…</source>
-        <translation type="unfinished">Výpočet…</translation>
+        <translation>Výpočet…</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="111"/>
         <source>Converting %1 of %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>Převádí se %1 / %2 (%3)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="115"/>
@@ -4386,17 +4386,17 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="86"/>
         <source>Show artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit přebal alba</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="87"/>
         <source>Source</source>
-        <translation type="unfinished">Zdroj</translation>
+        <translation>Zdroj</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="89"/>
         <source>Retention</source>
-        <translation type="unfinished"></translation>
+        <translation>Retence</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="92"/>
@@ -4411,47 +4411,47 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="115"/>
         <source>Artwork</source>
-        <translation type="unfinished">Přebaly alb</translation>
+        <translation>Přebaly alb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="118"/>
         <source>1 hour</source>
-        <translation type="unfinished"></translation>
+        <translation>1 hodina</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="119"/>
         <source>12 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>12 hodin</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="120"/>
         <source>24 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>24 hodin</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="121"/>
         <source>72 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>72 hodin</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="125"/>
         <source>Search for artwork via MusicBrainz ID only</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat pomocí MusicBrainz ID</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="126"/>
         <source>Search via MusicBrainz ID, or upload if not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat pomocí MusicBrainz ID, nebo nahrát lokální pokud nenalezen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="128"/>
         <source>Upload artwork only</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahrát lokální</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="129"/>
         <source>Upload artwork, or search via MusicBrainz ID if not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahrát lokální, nebo vyhledat pomocí MusicBrainz ID pokud nenalezen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="142"/>
@@ -5424,12 +5424,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="74"/>
         <source>Leave empty to group by the displayed values</source>
-        <translation type="unfinished"></translation>
+        <translation>Ponechej prázdné pro seskupení podle zobrazených hodnot</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="82"/>
         <source>Grouping script</source>
-        <translation type="unfinished">Skript seskupení</translation>
+        <translation>Skript seskupení</translation>
     </message>
 </context>
 <context>
@@ -6143,12 +6143,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="119"/>
         <source>Remove empty parent folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit prázdné nadřazené složky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="120"/>
         <source>Remove empty parent folders after moving or deleting files, stopping at the library root</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit prázdné nadřazené složky po přesunu nebo smazání souborů, omezeno na obsah knihovny</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="138"/>
@@ -6813,17 +6813,17 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="108"/>
         <source>User Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Uživatelské složky</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
         <source>Open Configuration Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Otevřít složku nastavení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="112"/>
         <source>Open Data Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Otevřít složku dat</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
@@ -7380,7 +7380,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="245"/>
         <source>Show in Layout menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit v nabídce vzhledů</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="287"/>
@@ -7703,63 +7703,63 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="48"/>
         <source>Choose Icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat ikonu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="51"/>
         <source>Filter icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrovat ikony</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="54"/>
         <source>Use command icon</source>
-        <translation type="unfinished">Použít ikonu příkazu</translation>
+        <translation>Použít ikonu příkazu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="58"/>
         <source>Use the icon supplied by the selected command</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít výchozí ikonu vybraného příkazu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="84"/>
         <source>Browse custom image…</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat vlastní obrázek…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="85"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="157"/>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="158"/>
         <source>All files (*)</source>
-        <translation type="unfinished">Všechny soubory ( * )</translation>
+        <translation>Všechny soubory ( * )</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="157"/>
         <source>Images</source>
-        <translation type="unfinished">Obrázky</translation>
+        <translation>Obrázky</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="185"/>
         <source>Select Icon</source>
-        <translation type="unfinished">Vybrat ikonu</translation>
+        <translation>Vybrat ikonu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="197"/>
         <source>Current: Custom image - %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuální: vlastní obrázek - %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="201"/>
         <source>Current: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuální: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="205"/>
         <source>Current: Use command icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuální: použít ikonu příkazu</translation>
     </message>
 </context>
 <context>
@@ -9316,27 +9316,27 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="41"/>
         <source>Release</source>
-        <translation type="unfinished"></translation>
+        <translation>Vydání</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="43"/>
         <source>Artist</source>
-        <translation type="unfinished">Umělec</translation>
+        <translation>Umělec</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="45"/>
         <source>Date/Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Datum/Země</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="47"/>
         <source>Format</source>
-        <translation type="unfinished">Formát</translation>
+        <translation>Formát</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="49"/>
         <source>Discs</source>
-        <translation type="unfinished"></translation>
+        <translation>Disky</translation>
     </message>
 </context>
 <context>
@@ -9649,12 +9649,12 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="125"/>
         <source>Rewind line (−100 ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Řádek zpět (−100ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="126"/>
         <source>Forward line (+100 ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Řádek vpřed (+100 ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="127"/>
@@ -10202,81 +10202,81 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="37"/>
         <source>Metadata Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Změny metadat</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="48"/>
         <source>%Ln metadata change(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln změna metadat</numerusform>
+            <numerusform>%Ln změny metadat</numerusform>
+            <numerusform>%Ln změn metadat</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="49"/>
         <source>%Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>v %Ln souboru</numerusform>
+            <numerusform>ve %Ln souborech</numerusform>
+            <numerusform>v %Ln souborech</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="50"/>
         <source>%1 across %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 %2.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="54"/>
         <source>File</source>
-        <translation type="unfinished">Soubor</translation>
+        <translation>Soubor</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="54"/>
         <source>Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Změny</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
         <source>Change</source>
-        <translation type="unfinished"></translation>
+        <translation>Změnit</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
         <source>Tag</source>
-        <translation type="unfinished">Tag</translation>
+        <translation>Tag</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
         <source>Current value</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuální hodnota</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
         <source>New value</source>
-        <translation type="unfinished"></translation>
+        <translation>Nová hodnota</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="137"/>
         <source>Added</source>
-        <translation type="unfinished">Přidáno</translation>
+        <translation>Přidáno</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="138"/>
         <source>Removed</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstraněno</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="139"/>
         <source>Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Změněno</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="146"/>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="150"/>
         <source>(empty)</source>
-        <translation type="unfinished"></translation>
+        <translation>(prázdné)</translation>
     </message>
 </context>
 <context>
@@ -10284,220 +10284,220 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="166"/>
         <source>Metadata Lookup</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledání metadat</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="273"/>
         <source>First track, last track, lead-out sector, then track offsets</source>
-        <translation type="unfinished"></translation>
+        <translation>První stopa, poslední stopa, ukončovací sektor, poté odstupy stop</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="282"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Hledat</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="293"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="360"/>
         <source>Artist</source>
-        <translation type="unfinished">Umělec</translation>
+        <translation>Umělec</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="295"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="361"/>
         <source>Album</source>
-        <translation type="unfinished">Album</translation>
+        <translation>Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="301"/>
         <source>TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>TOC</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="311"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="369"/>
         <source>Type</source>
-        <translation type="unfinished">Typ</translation>
+        <translation>Typ</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="313"/>
         <source>ID</source>
-        <translation type="unfinished">ID</translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="324"/>
         <source>Source</source>
-        <translation type="unfinished">Zdroj</translation>
+        <translation>Zdroj</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="326"/>
         <source>Lookup by</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat podle</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="332"/>
         <source>Search for a release to see matching results</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat vydání pro zobrazení odpovídajících výsledků</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="345"/>
         <source>Release information</source>
-        <translation type="unfinished"></translation>
+        <translation>Informace o vydání</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="362"/>
         <source>Date</source>
-        <translation type="unfinished">Datum</translation>
+        <translation>Datum</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="363"/>
         <source>Original release date</source>
-        <translation type="unfinished"></translation>
+        <translation>První datum vydání</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="364"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Země</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="365"/>
         <source>Label</source>
-        <translation type="unfinished"></translation>
+        <translation>Vydavatelství</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="366"/>
         <source>Catalogue number</source>
-        <translation type="unfinished"></translation>
+        <translation>Katalogové číslo</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="367"/>
         <source>Barcode</source>
-        <translation type="unfinished"></translation>
+        <translation>Čárový kód</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="368"/>
         <source>Format</source>
-        <translation type="unfinished">Formát</translation>
+        <translation>Formát</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="370"/>
         <source>Status</source>
-        <translation type="unfinished">Stav</translation>
+        <translation>Stav</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="371"/>
         <source>Comment</source>
-        <translation type="unfinished">Poznámka</translation>
+        <translation>Poznámka</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="376"/>
         <source>Releases</source>
-        <translation type="unfinished"></translation>
+        <translation>Vydání</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="386"/>
         <source>Select a release above to load its tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyber vydání pro načtení jeho skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="397"/>
         <source>No local tracks were selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Nebyly vybrány žádné lokální skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="418"/>
         <source>Retrieved tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Načtené skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="429"/>
         <source>Drag rows to align tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Přetáhněte řádky pro zarovnání skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="432"/>
         <source>Local tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Lokální skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="453"/>
         <source>Fill missing metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Doplnit chybějící metadata</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="454"/>
         <source>Replace lookup fields</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit vyhledaná pole</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="455"/>
         <source>Wipe writable tags, then apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat zapisovatelné tagy, poté aplikovat</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="456"/>
         <source>Choose how retrieved metadata is combined with the track&apos;s existing tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyber jak mají být načtená metadata zkombinována s existujícími tagy skladeb.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="458"/>
         <source>Allow applying unresolved tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Povolit použití neshodných skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="459"/>
         <source>Allow updating unresolved tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Povolit aktualizování neshodných skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="461"/>
         <source>Write genres</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapsat žánry</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="462"/>
         <source>Write provider IDs</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapsat ID poskytovatele</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="464"/>
         <source>Use original date for Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít datum prvního vydání</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="467"/>
         <source>Allow applying metadata when local tracks are unmatched or have an ambiguous match.</source>
-        <translation type="unfinished"></translation>
+        <translation>Povolit použití metadat pokud lokální skladby neodpovídají nebo nemají jednoznačnou shodu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="468"/>
         <source>Allow writing when local tracks are unmatched or have an ambiguous match.</source>
-        <translation type="unfinished"></translation>
+        <translation>Povolit zápis metadat pokud lokální skladby neodpovídají nebo nemají jednoznačnou shodu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="469"/>
         <source>Write genres supplied by the selected metadata provider when available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapsat žánry dodané vybraným poskytovatelem metadat.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="470"/>
         <source>Write identifiers supplied by the selected metadata provider.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapsat identifikátory dodané vybraným poskytovatelem metadat.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="472"/>
         <source>Use the original release date for the Date tag instead of this specific release&apos;s date.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pro tag Datum použít datum prvního vydání místo data vydání daného vydání.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="478"/>
         <source>Metadata options</source>
-        <translation type="unfinished"></translation>
+        <translation>Možnosti metadat</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="481"/>
         <source>Existing metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Existující metadata</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="488"/>
@@ -10506,57 +10506,57 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="782"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="848"/>
         <source>Changes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Změny…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="491"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="572"/>
         <source>Ready.</source>
-        <translation type="unfinished"></translation>
+        <translation>Připraveno.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="496"/>
         <source>Apply</source>
-        <translation type="unfinished">Použít</translation>
+        <translation>Použít</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="496"/>
         <source>Update files</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualizovat soubory</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="521"/>
         <source>No matching releases found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nebyla nalezena žádná odpovídající vydání.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="522"/>
         <source>Found %Ln release(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Nalezeno %Ln vydání.</numerusform>
+            <numerusform>Nalezena %Ln vydání.</numerusform>
+            <numerusform>Nalezeno %Ln vydání.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="543"/>
         <source>Contacting %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>Navazování kontaktu s %1…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="592"/>
         <source>Artist and album</source>
-        <translation type="unfinished"></translation>
+        <translation>Umělec a album</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="595"/>
         <source>Disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>TOC disku</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="598"/>
         <source>Release</source>
-        <translation type="unfinished"></translation>
+        <translation>Vydání</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="601"/>
@@ -10566,75 +10566,75 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="604"/>
         <source>%1 ID</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="783"/>
         <source>The selected release does not contain the queried disc.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrané vydání neobsahuje požadovaný disk.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="854"/>
         <source>Changes (%1)…</source>
-        <translation type="unfinished"></translation>
+        <translation>Změny (%1)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="898"/>
         <source>One or more selected tracks cannot be updated.</source>
-        <translation type="unfinished"></translation>
+        <translation>Jedna nebo více skladeb nemohou být aktualizovány.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="902"/>
         <source>Review unmatched or ambiguous tracks before applying metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>Před použitím metadat zkontrolujte neodpovídající nebo nejednoznačné skladby.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="903"/>
         <source>Review unmatched or ambiguous tracks before updating files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Před aktualizací souborů zkontrolujte neodpovídající nebo nejednoznačné skladby.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="906"/>
         <source>The selected release produces no metadata changes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrané vydání nemá za následek žádné změny metadat.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="909"/>
         <source>Metadata will be applied to %Ln track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Metadata budou použita pro %Ln skladbu.</numerusform>
+            <numerusform>Metadata budou použita pro %Ln skladby.</numerusform>
+            <numerusform>Metadata budou použita pro %Ln skladeb.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="911"/>
         <source>%Ln track(s) will be updated.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Aktualizována bude %Ln skladba.</numerusform>
+            <numerusform>Aktualizovány budou %Ln skladby.</numerusform>
+            <numerusform>Aktualizováno bude %Ln skladeb.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="951"/>
         <source>Writing metadata…</source>
-        <translation type="unfinished">Zápis metadat…</translation>
+        <translation>Zápis metadat…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="951"/>
         <source>Abort</source>
-        <translation type="unfinished">Přerušit</translation>
+        <translation>Přerušit</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="957"/>
         <source>Writing Metadata</source>
-        <translation type="unfinished">Zápis metadat</translation>
+        <translation>Zápis metadat</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="959"/>
         <source>Writing metadata to %Ln track(s)…</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Zápis metadat do souboru…</numerusform>
             <numerusform>Zápis metadat do %Ln souborů…</numerusform>
             <numerusform>Zápis metadat do %Ln souborů…</numerusform>
@@ -10644,7 +10644,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="980"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="985"/>
         <source>%Ln succeeded</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln úspěšná</numerusform>
             <numerusform>%Ln úspěšné</numerusform>
             <numerusform>%Ln úspěšných</numerusform>
@@ -10654,7 +10654,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="981"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="986"/>
         <source>%Ln failed</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln selhala</numerusform>
             <numerusform>%Ln selhaly</numerusform>
             <numerusform>%Ln selhalo</numerusform>
@@ -10663,31 +10663,31 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="982"/>
         <source>Metadata writing was cancelled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zápis metadat byl přerušen.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="987"/>
         <source>Metadata writing finished:</source>
-        <translation type="unfinished"></translation>
+        <translation>Zápis metadat dokončen:</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="991"/>
         <source>Metadata was updated in %Ln track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Byla aktualizována metadata %Ln skladby.</numerusform>
+            <numerusform>Byla aktualizována metadata %Ln skladeb.</numerusform>
+            <numerusform>Byla aktualizována metadata %Ln skladeb.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1000"/>
         <source>Wipe existing tags?</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat existující tagy?</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1001"/>
         <source>Existing metadata and custom tags will be removed before applying the selected release. Ratings, ReplayGain, technical information, playback statistics, and artwork will be preserved.</source>
-        <translation type="unfinished"></translation>
+        <translation>Existující metadata a uživatelské tagy budou před použitím vybraného vydání smazána. Hodnocení, ReplayGain, technické informace, statistika přehrávání a přebaly alb budou zachovány.</translation>
     </message>
 </context>
 <context>
@@ -10695,42 +10695,42 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="234"/>
         <source>MusicBrainz</source>
-        <translation type="unfinished"></translation>
+        <translation>MusicBrainz</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="251"/>
         <source>Enter an artist or album.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadejte umělce nebo album.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="252"/>
         <source>Enter a disc TOC.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadejte TOC disku.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="253"/>
         <source>Enter a MusicBrainz ID.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadejte MusicBrainz ID.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="267"/>
         <source>The selected result has no release identifier.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zvolený výsledek nemá žádný identifikátor vydání.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="541"/>
         <source>MusicBrainz request failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>MusicBrainz požadavek selhal: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="555"/>
         <source>Could not read the MusicBrainz search response: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se načíst odpověď na MusicBrainz hledání: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="566"/>
         <source>Could not read the MusicBrainz release response: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se načíst odpověď na MusicBrainz vydání: %1</translation>
     </message>
 </context>
 <context>
@@ -10850,7 +10850,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="79"/>
         <source>Notify when repeating a track</source>
-        <translation type="unfinished"></translation>
+        <translation>Upozornit na opakování skladby</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="80"/>
@@ -11926,7 +11926,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="111"/>
         <source>If the current track has been playing for more than 5 s, restart it instead of moving to the previous track</source>
-        <translation type="unfinished"></translation>
+        <translation>Místo přechodu na předchozí skladbu přehrát skladbu která byla přehrávána déle než 5 s od začátku</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="114"/>
@@ -13292,12 +13292,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="281"/>
         <source>Leave empty to group by the displayed values</source>
-        <translation type="unfinished"></translation>
+        <translation>Ponechej prázdné pro seskupení podle zobrazených hodnot</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="288"/>
         <source>Grouping script</source>
-        <translation type="unfinished">Skript seskupení</translation>
+        <translation>Skript seskupení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="294"/>
@@ -13906,7 +13906,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="460"/>
         <source>Remove dead (non-existent) tracks from the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Odebrat ze seznamu skladeb nedostupné (neexistující) skladby</translation>
     </message>
 </context>
 <context>
@@ -13949,7 +13949,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="46"/>
         <source>Licence</source>
-        <translation type="unfinished"></translation>
+        <translation>Licence</translation>
     </message>
 </context>
 <context>
@@ -14577,25 +14577,25 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="110"/>
         <source>Writing changes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Zápis změn…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="110"/>
         <source>Abort</source>
-        <translation type="unfinished">Přerušit</translation>
+        <translation>Přerušit</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="118"/>
         <source>Writing Metadata</source>
-        <translation type="unfinished">Zápis metadat</translation>
+        <translation>Zápis metadat</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="119"/>
         <source>Writing changes to %Ln track(s)…</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Zápis změny do %Ln skladby…</numerusform>
+            <numerusform>Zápis změny do %Ln skladeb…</numerusform>
+            <numerusform>Zápis změny do %Ln skladeb…</numerusform>
         </translation>
     </message>
 </context>
@@ -16526,42 +16526,42 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="396"/>
         <source>Countries unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Země nedostupné — vyber pro znovunačtení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="397"/>
         <source>Countries unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Země nedostupné: %1 — vyber pro znovunačtení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="404"/>
         <source>Languages unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Jazyky nedostupné — vyber pro znovunačtení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="405"/>
         <source>Languages unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Jazyky nedostupné: %1 — vyber pro znovunačtení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="412"/>
         <source>Tags unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Tagy nedostupné — vyber pro znovunačtení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="413"/>
         <source>Tags unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Tagy nedostupné: %1 — vyber pro znovunačtení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="420"/>
         <source>Codecs unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Kodeky nedostupné — vyber pro znovunačtení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="421"/>
         <source>Codecs unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Kodeky nedostupné: %1 — vyber pro znovunačtení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="826"/>
@@ -16863,7 +16863,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="166"/>
         <source>Configure ReplayGain…</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení ReplayGain…</translation>
     </message>
 </context>
 <context>
@@ -17126,17 +17126,17 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="109"/>
         <source>#</source>
-        <translation type="unfinished"></translation>
+        <translation>#</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="111"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Název</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="113"/>
         <source>Duration</source>
-        <translation type="unfinished">Délka</translation>
+        <translation>Délka</translation>
     </message>
 </context>
 <context>
@@ -17485,7 +17485,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="100"/>
         <source>Enter a query — tracks that match the query will NOT be scrobbled</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadejte dotaz — skladby které odpovídají dotazu nebudou scroblovány</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="77"/>
@@ -20057,78 +20057,78 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="157"/>
         <source>No local track</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádná lokální skladba</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="160"/>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="219"/>
         <source>Unmatched</source>
-        <translation type="unfinished"></translation>
+        <translation>Neodpovídající</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="181"/>
         <source>This local track is not matched to a retrieved track.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tato lokální skladba neodpovídá načtené skladbě.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="184"/>
         <source>This match was set manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tato shoda byla nastavena ručně.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="187"/>
         <source>Automatic match confidence: %1%.</source>
-        <translation type="unfinished"></translation>
+        <translation>Jistota shody: %1%.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="191"/>
         <source>The local and retrieved durations differ by more than 10 seconds.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lokání a načtená délka se liší o více než 10 sekund.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="195"/>
         <source>This automatic match is ambiguous.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tato automatická shoda není jednoznačná.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="198"/>
         <source>Drag this row to match it with a retrieved track.</source>
-        <translation type="unfinished"></translation>
+        <translation>Přetáhni tento řádek pro jeho přiřazení k některé z načtených skladeb.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="221"/>
         <source>Manual</source>
-        <translation type="unfinished">Manuální</translation>
+        <translation>Manuální</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="221"/>
         <source>%1%</source>
-        <translation type="unfinished">%1%</translation>
+        <translation>%1%</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="223"/>
         <source>%1 / %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 / %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="248"/>
         <source>Current #</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuální #</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="250"/>
         <source>Title / file</source>
-        <translation type="unfinished"></translation>
+        <translation>Název / soubor</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="252"/>
         <source>Duration</source>
-        <translation type="unfinished">Délka</translation>
+        <translation>Délka</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="254"/>
         <source>Match / Δ</source>
-        <translation type="unfinished"></translation>
+        <translation>Shoda / Δ</translation>
     </message>
 </context>
 <context>
@@ -21642,163 +21642,163 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="388"/>
         <source>Searching for artwork…</source>
-        <translation type="unfinished">Hledání přebalu alba…</translation>
+        <translation>Hledání přebalu alba…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="402"/>
         <source>Artwork search finished</source>
-        <translation type="unfinished">Hledání přebalu alba dokončeno</translation>
+        <translation>Hledání přebalu alba dokončeno</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="456"/>
         <source>Failed to open artwork file</source>
-        <translation type="unfinished">Nepodařilo se otevřít soubor přebalu alba</translation>
+        <translation>Nepodařilo se otevřít soubor přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="462"/>
         <source>Artwork file is empty</source>
-        <translation type="unfinished">Soubor přebalu alba je prázdný</translation>
+        <translation>Soubor přebalu alba je prázdný</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="859"/>
         <source>Plugins not found</source>
-        <translation type="unfinished">Pluginy nenalezeny</translation>
+        <translation>Pluginy nenalezeny</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="860"/>
         <source>Some plugins are required for full functionality.</source>
-        <translation type="unfinished">Pro plnou funkcionalitu jsou vyžadovány některé pluginy.</translation>
+        <translation>Pro plnou funkcionalitu jsou vyžadovány některé pluginy.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="861"/>
         <source>Plugin search locations:
 
 </source>
-        <translation type="unfinished">Cíle vyhledávání pluginů:
+        <translation>Cíle vyhledávání pluginů:
 
 </translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="864"/>
         <source>Quit</source>
-        <translation type="unfinished">Ukončit</translation>
+        <translation>Ukončit</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="990"/>
         <source>Volume</source>
-        <translation type="unfinished">Hlasitost</translation>
+        <translation>Hlasitost</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="992"/>
         <source>Volume up</source>
-        <translation type="unfinished">Zvýšit hlasitost</translation>
+        <translation>Zvýšit hlasitost</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="999"/>
         <source>Volume down</source>
-        <translation type="unfinished">Snížit hlasitost</translation>
+        <translation>Snížit hlasitost</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1006"/>
         <source>Mute</source>
-        <translation type="unfinished">Ztlumit</translation>
+        <translation>Ztlumit</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1016"/>
         <source>Clear Current Playlist</source>
-        <translation type="unfinished">Vymazat vybraný seznam skladeb</translation>
+        <translation>Vymazat vybraný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1017"/>
         <source>Remove all tracks from the current playlist</source>
-        <translation type="unfinished">Odstranit všechny skladby vybraného seznamu skladeb</translation>
+        <translation>Odstranit všechny skladby vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1020"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1047"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1120"/>
         <source>Playlist</source>
-        <translation type="unfinished">Seznam skladeb</translation>
+        <translation>Seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1043"/>
         <source>Lock playlist</source>
-        <translation type="unfinished">Uzamknout seznam skladeb</translation>
+        <translation>Uzamknout seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1045"/>
         <source>Prevent changes to the contents of the current playlist</source>
-        <translation type="unfinished">Znemožnit úpravy vybraného seznamu skladeb</translation>
+        <translation>Znemožnit úpravy vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1048"/>
         <source>Lock Current Playlist</source>
-        <translation type="unfinished">Uzamknout vybraný seznam skladeb</translation>
+        <translation>Uzamknout vybraný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1069"/>
         <source>Playback</source>
-        <translation type="unfinished">Přehrávání</translation>
+        <translation>Přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1069"/>
         <source>Seek</source>
-        <translation type="unfinished"></translation>
+        <translation>Přetáčení</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1071"/>
         <source>Seek forward (small step)</source>
-        <translation type="unfinished">Přetočit vpřed (málo)</translation>
+        <translation>Přetočit vpřed (málo)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1078"/>
         <source>Seek forward (large step)</source>
-        <translation type="unfinished">Přetočit vpřed (více)</translation>
+        <translation>Přetočit vpřed (více)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1085"/>
         <source>Seek backward (small step)</source>
-        <translation type="unfinished">Přetočit zpět (málo)</translation>
+        <translation>Přetočit zpět (málo)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1093"/>
         <source>Seek backward (large step)</source>
-        <translation type="unfinished">Přetočit zpět (více)</translation>
+        <translation>Přetočit zpět (více)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1118"/>
         <source>Remove Playlist</source>
-        <translation type="unfinished">Odstranit seznam skladeb</translation>
+        <translation>Odstranit seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1121"/>
         <source>Remove Current Playlist</source>
-        <translation type="unfinished">Odstranit vybraný seznam skladeb</translation>
+        <translation>Odstranit vybraný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1129"/>
         <source>Toggle Menubar</source>
-        <translation type="unfinished">Přepnout panel nabídek</translation>
+        <translation>Přepnout panel nabídek</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1133"/>
         <source>View</source>
-        <translation type="unfinished">Zobrazit</translation>
+        <translation>Zobrazit</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1140"/>
         <source>Look up metadata by artist and album…</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat metadata podle umělce a alba…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1141"/>
         <source>Look up metadata using the selected tracks&apos; artist and album</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat metadata podle umělce a alba vybraných skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1146"/>
         <source>Look up metadata by artist and album</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat metadata podle umělce a alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1147"/>
@@ -21807,68 +21807,68 @@ Změny se projeví pro nově otevřené streamy.</translation>
         <location filename="../../src/gui/guiapplication.cpp" line="1222"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1261"/>
         <source>Tagging</source>
-        <translation type="unfinished">Tagování</translation>
+        <translation>Tagování</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1149"/>
         <source>Look up metadata by MusicBrainz ID…</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat metadata podle MusicBrainz ID…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1150"/>
         <source>Look up metadata using a MusicBrainz release identifier</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat metadata pomocí identifikátoru vydání MusicBrainz</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1153"/>
         <source>Look up metadata by MusicBrainz ID</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat metadata podle MusicBrainz ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1181"/>
         <source>Reading tracks…</source>
-        <translation type="unfinished"></translation>
+        <translation>Čtení skladeb…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1181"/>
         <source>Abort</source>
-        <translation type="unfinished">Přerušit</translation>
+        <translation>Přerušit</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1209"/>
         <source>Current file</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuální soubor</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1224"/>
         <source>Reload tags from files</source>
-        <translation type="unfinished">Načíst tagy ze souborů</translation>
+        <translation>Načíst tagy ze souborů</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1225"/>
         <source>Reload tags from modified files</source>
-        <translation type="unfinished">Načíst tagy ze změněných souborů</translation>
+        <translation>Načíst tagy ze změněných souborů</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1227"/>
         <source>Replace tags in selected tracks with tags from the files</source>
-        <translation type="unfinished">Nahradit tagy vybraných skladeb tagy ze souborů</translation>
+        <translation>Nahradit tagy vybraných skladeb tagy ze souborů</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1228"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
-        <translation type="unfinished">Nahradit tagy vybraných skladeb tagy ze změněných souborů</translation>
+        <translation>Nahradit tagy vybraných skladeb tagy ze změněných souborů</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1272"/>
         <source>Choose destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyber cíl</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1353"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1361"/>
         <source>Convert using preset %1</source>
-        <translation type="unfinished">Převést pomocí předvolby %1</translation>
+        <translation>Převést pomocí předvolby %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1360"/>
@@ -21876,7 +21876,7 @@ Změny se projeví pro nově otevřené streamy.</translation>
         <location filename="../../src/gui/guiapplication.cpp" line="1403"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1412"/>
         <source>Tracks</source>
-        <translation type="unfinished">Skladby</translation>
+        <translation>Skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1360"/>
@@ -21885,147 +21885,147 @@ Změny se projeví pro nově otevřené streamy.</translation>
         <location filename="../../src/gui/guiapplication.cpp" line="1412"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1423"/>
         <source>Convert</source>
-        <translation type="unfinished">Převést</translation>
+        <translation>Převést</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1391"/>
         <source>Converter setup…</source>
-        <translation type="unfinished">Nastavení převodu…</translation>
+        <translation>Nastavení převodu…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1400"/>
         <source>Using default settings</source>
-        <translation type="unfinished">S pomocí výchozího nastavení</translation>
+        <translation>Pomocí výchozího nastavení</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1404"/>
         <source>Convert using default settings</source>
-        <translation type="unfinished">Převést s pomocí výchozího nastavení</translation>
+        <translation>Převést pomocí výchozího nastavení</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1409"/>
         <source>Repeat last conversion</source>
-        <translation type="unfinished">Opakovat poslední převod</translation>
+        <translation>Opakovat poslední převod</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1440"/>
         <source>Custom conversion…</source>
-        <translation type="unfinished">Vlastní převod…</translation>
+        <translation>Vlastní převod…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1452"/>
         <source>Utilities</source>
-        <translation type="unfinished">Nástroje</translation>
+        <translation>Nástroje</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1677"/>
         <source>Reload Required</source>
-        <translation type="unfinished">Vyžadováno obnovení</translation>
+        <translation>Vyžadováno obnovení</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1679"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
-        <translation type="unfinished">Pro aktualizaci uložených metadat z důvodu změny databáze by měly být skladby obnoveny ze souborů na disku.</translation>
+        <translation>Pro aktualizaci uložených metadat z důvodu změny databáze by měly být skladby obnoveny ze souborů na disku.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1683"/>
         <source>Reload Now</source>
-        <translation type="unfinished">Obnovit</translation>
+        <translation>Obnovit</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1686"/>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1828"/>
         <source>Playback Error</source>
-        <translation type="unfinished">Chyba přehrávání</translation>
+        <translation>Chyba přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1853"/>
         <source>Continue</source>
-        <translation type="unfinished">Pokračovat</translation>
+        <translation>Pokračovat</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1855"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Zastavit</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1859"/>
         <source>Always continue playing if a track is unavailable</source>
-        <translation type="unfinished">Pokračovat v přehrávání i když je skladba nedostupná</translation>
+        <translation>Pokračovat v přehrávání i když je skladba nedostupná</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1881"/>
         <source>Track Not Found</source>
-        <translation type="unfinished">Skladba nenalezena</translation>
+        <translation>Skladba nenalezena</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1886"/>
         <source>No Decoder Available</source>
-        <translation type="unfinished">Není k dispozici dekodér</translation>
+        <translation>Není k dispozici dekodér</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1958"/>
         <source>All Supported Media Files (%1)</source>
-        <translation type="unfinished">Podporované mediální soubory (%1)</translation>
+        <translation>Podporované mediální soubory (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1959"/>
         <source>Audio Files (%1)</source>
-        <translation type="unfinished">Zvukové soubory (%1)</translation>
+        <translation>Zvukové soubory (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1970"/>
         <source>Add Files</source>
-        <translation type="unfinished">Přidat soubory</translation>
+        <translation>Přidat soubory</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1984"/>
         <source>Add Folders</source>
-        <translation type="unfinished">Přidat složku</translation>
+        <translation>Přidat složky</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1996"/>
         <source>Add Stream URL</source>
-        <translation type="unfinished">Přidat adresu streamu</translation>
+        <translation>Přidat adresu streamu</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1996"/>
         <source>Stream URL:</source>
-        <translation type="unfinished">Adresa streamu:</translation>
+        <translation>Adresa streamu:</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1998"/>
         <source>&amp;Add</source>
-        <translation type="unfinished">&amp;Přidat</translation>
+        <translation>&amp;Přidat</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2002"/>
         <source>Enter a valid http:// or https:// URL.</source>
-        <translation type="unfinished">Zadej platnou adresu http:// nebo https://.</translation>
+        <translation>Zadej platnou adresu http:// nebo https://.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2063"/>
         <source>All Supported Playlists (%1)</source>
-        <translation type="unfinished">Podporované seznamy skladeb (%1)</translation>
+        <translation>Podporované seznamy skladeb (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2073"/>
         <source>Load Playlist</source>
-        <translation type="unfinished">Načíst seznam skladeb</translation>
+        <translation>Načíst seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2110"/>
         <source>Save Playlist</source>
-        <translation type="unfinished">Uložit seznam skladeb</translation>
+        <translation>Uložit seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="455"/>
         <source>Display</source>
-        <translation type="unfinished">Zobrazení</translation>
+        <translation>Zobrazení</translation>
     </message>
 </context>
 <context>
@@ -22477,8 +22477,8 @@ Změny se projeví pro nově otevřené streamy.</translation>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="91"/>
         <source>Use fooyin&apos;s default POPM byte conversion when reading and writing MP3 ratings.
 This supports intermediate rating steps, but does not treat the POPM byte as a fully linear 0–255 scale.</source>
-        <translation type="unfinished">Při čtení a ukládání hodnocení MP3 souborů použít výchozí převod hodnocení na POPM byty.
-Podporuje neceločíselné hodnocení, ale nenakládá s POPM bytem jako s lineární stupnicí 0-255. {3 ?} {0–255 ?}</translation>
+        <translation>Při čtení a ukládání hodnocení MP3 souborů použít výchozí převod hodnocení na POPM byty.
+Podporuje neceločíselné hodnocení, ale nenakládá s POPM bytem jako s lineární stupnicí 0-255.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="97"/>
@@ -22645,7 +22645,7 @@ hodnocení je zaokrouhleno na jednu, dvě, tři, čtyři, nebo pět hvězd.</tra
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1809"/>
         <source>Quick Search</source>
-        <translation type="unfinished">Rychlé hledání</translation>
+        <translation>Rychlé hledání</translation>
     </message>
 </context>
 <context>
