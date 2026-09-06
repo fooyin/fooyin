@@ -2212,7 +2212,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="91"/>
         <source>Ripping security</source>
-        <translation>Bezpečnost extrakce</translation>
+        <translation>Bezpečná extrakce</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="93"/>
@@ -2307,7 +2307,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="71"/>
         <source>Open audio &amp;CD…</source>
-        <translation>Otevřít zvukové &amp;CD…</translation>
+        <translation>Otevřít audio &amp;CD…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="72"/>
@@ -2416,7 +2416,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="384"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="523"/>
         <source>Failed to access audio CD drive %1</source>
-        <translation>Přístup k CD mechanice %1 se nezdařil</translation>
+        <translation>Přístup k audio CD mechanice %1 se nezdařil</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="316"/>
@@ -2549,7 +2549,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Track</source>
-        <translation>Skladba</translation>
+        <translation>Stopa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
