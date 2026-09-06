@@ -2080,7 +2080,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="76"/>
         <source>AccurateRip verification of mixed-mode discs is not supported</source>
-        <translation>AccurateRip ověření mixed-mode disků není podporováno</translation>
+        <translation>Ověření mixed-mode disků pomocí AccurateRip není podporováno</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="126"/>
@@ -2161,7 +2161,7 @@ Positive values read later; negative values read earlier.
 Use AccurateRip to look up the correction for this drive model, or enter a known value manually.</source>
         <translation>Kompenzace pro mechaniky, které čtou kousek před nebo za požadovanou pozicí.
 Pozitivní hodnoty pro ty co čtou později; negativní hodnoty pro ty co čtou dříve.
-Použijte AccurateRip pro vyhledání hodnoty pro danou mechaniku, nebo zadejte hodnotu ručně.</translation>
+Pro vyhledání hodnoty pro danou mechaniku použijte AccurateRip, nebo zadejte hodnotu ručně.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="62"/>
@@ -2339,7 +2339,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="201"/>
         <source>AccurateRip returned an unexpectedly large disc record.</source>
-        <translation>AccurateRip se vrátil neočekávaný velký záznam disku.</translation>
+        <translation>AccurateRip vrátil neočekávaně velký záznam disku.</translation>
     </message>
 </context>
 <context>
@@ -2409,14 +2409,14 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="104"/>
         <source>Check the disk drive device permissions.</source>
-        <translation>Zkontroluj oprávnění zařízení.</translation>
+        <translation>Zkontroluj oprávnění diskového zařízení.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="306"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="384"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="523"/>
         <source>Failed to access audio CD drive %1</source>
-        <translation>Přístup k audio CD mechanice %1 se nezdařil</translation>
+        <translation>Přístup k audio CD mechanice %1 zamítnut</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="316"/>
@@ -2448,7 +2448,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="456"/>
         <source>Failed to read securely from audio CD drive %1</source>
-        <translation>Bezpečné čtení z audio CD mechaniky %1 se nezdařilo</translation>
+        <translation>Bezpečné čtení z audio CD mechaniky %1 selhalo</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="467"/>
@@ -2499,7 +2499,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="68"/>
         <source>Refresh</source>
-        <translation>Aktualizovat</translation>
+        <translation>Obnovit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="69"/>
@@ -4441,7 +4441,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="126"/>
         <source>Search via MusicBrainz ID, or upload if not found</source>
-        <translation>Vyhledat pomocí MusicBrainz ID, nebo nahrát lokální pokud nenalezen</translation>
+        <translation>Vyhledat pomocí MusicBrainz ID, pokud nenalezen, nahrát lokální</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="128"/>
@@ -4451,7 +4451,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="129"/>
         <source>Upload artwork, or search via MusicBrainz ID if not found</source>
-        <translation>Nahrát lokální, nebo vyhledat pomocí MusicBrainz ID pokud nenalezen</translation>
+        <translation>Nahrát lokální, pokud nenalezen, vyhledat pomocí MusicBrainz ID</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="142"/>
