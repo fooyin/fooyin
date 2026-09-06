@@ -71,7 +71,8 @@ public:
     void saveUpdatedTracks(const TrackList& tracks);
     WriteRequest writeUpdatedTracks(const TrackList& tracks);
     WriteRequest writeTrackCovers(const TrackCoverData& tracks);
-    [[nodiscard]] std::optional<CoverImage> pendingTrackCover(const Track& track, Track::Cover type) const override;
+    [[nodiscard]] std::optional<PendingTrackCover> pendingTrackCover(const Track& track,
+                                                                     Track::Cover type) const override;
     void setActivePlaybackTrack(const Track& track);
     void flushPendingWrites();
     void saveUpdatedTrackStats(const TrackList& tracks, Track::Stats stats);

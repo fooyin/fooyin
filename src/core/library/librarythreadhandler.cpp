@@ -146,6 +146,13 @@ public:
         Track::Stats stats;
     };
 
+    struct PendingCoverWrite
+    {
+        Track track;
+        TrackCovers covers;
+        uint64_t revision{0};
+    };
+
     struct TrackStatsBatch
     {
         TrackList tracks;
@@ -236,9 +243,10 @@ public:
     mutable std::mutex m_deferredWritesMutex;
     std::unordered_map<QString, Track> m_deferredMetadataWrites;
     std::unordered_map<QString, PendingStatWrite> m_deferredStatWrites;
-    std::unordered_map<QString, std::pair<Track, TrackCovers>> m_deferredCoverWrites;
-    std::unordered_map<QString, std::pair<Track, TrackCovers>> m_flushingCoverWriteData;
+    std::unordered_map<QString, PendingCoverWrite> m_deferredCoverWrites;
+    std::unordered_map<QString, PendingCoverWrite> m_flushingCoverWriteData;
     std::set<QString> m_flushingCoverWrites;
+    uint64_t m_nextPendingCoverRevision{0};
 
     std::deque<LibraryScanRequest> m_scanRequests;
     int m_nextWriteOperationId{0};
@@ -769,10 +777,11 @@ void LibraryThreadHandlerPrivate::queuePendingCoverWrite(const Track& track, con
 
     const std::scoped_lock lock{m_deferredWritesMutex};
     auto& pending = m_deferredCoverWrites[*sourceKey];
-    pending.first = track;
+    pending.track = track;
     for(const auto& [type, cover] : covers) {
-        pending.second[type] = cover;
+        pending.covers[type] = cover;
     }
+    pending.revision = ++m_nextPendingCoverRevision;
 }
 
 void LibraryThreadHandlerPrivate::flushPendingWritesForInactiveSources()
@@ -842,15 +851,18 @@ void LibraryThreadHandlerPrivate::flushPendingWritesForInactiveSources()
                 pendingFlush.stats      = it->second.stats;
             }
             if(const auto it = m_deferredCoverWrites.find(sourceKey); it != m_deferredCoverWrites.end()) {
-                pendingFlush.coverTrack = it->second.first;
-                pendingFlush.covers     = it->second.second;
+                pendingFlush.coverTrack = it->second.track;
+                pendingFlush.covers     = it->second.covers;
             }
 
             m_deferredMetadataWrites.erase(sourceKey);
             m_deferredStatWrites.erase(sourceKey);
 
             if(!pendingFlush.covers.empty()) {
-                m_flushingCoverWriteData[sourceKey] = {pendingFlush.writeTrack(), pendingFlush.covers};
+                const auto pendingIt                = m_deferredCoverWrites.find(sourceKey);
+                m_flushingCoverWriteData[sourceKey] = {.track    = pendingFlush.writeTrack(),
+                                                       .covers   = pendingFlush.covers,
+                                                       .revision = pendingIt->second.revision};
                 m_flushingCoverWrites.emplace(sourceKey);
                 m_deferredCoverWrites.erase(sourceKey);
             }
@@ -1205,7 +1217,7 @@ WriteRequest LibraryThreadHandler::writeTrackCovers(const TrackCoverData& tracks
     return operation.request;
 }
 
-std::optional<CoverImage> LibraryThreadHandler::pendingTrackCover(const Track& track, Track::Cover type) const
+std::optional<PendingTrackCover> LibraryThreadHandler::pendingTrackCover(const Track& track, Track::Cover type) const
 {
     const std::scoped_lock lock{p->m_deferredWritesMutex};
     if(p->m_deferredCoverWrites.empty() && p->m_flushingCoverWriteData.empty()) {
@@ -1219,11 +1231,11 @@ std::optional<CoverImage> LibraryThreadHandler::pendingTrackCover(const Track& t
 
     const auto pendingIt = p->m_deferredCoverWrites.find(*sourceKey);
     if(pendingIt != p->m_deferredCoverWrites.end()) {
-        const auto coverIt = pendingIt->second.second.find(type);
-        if(coverIt == pendingIt->second.second.end()) {
+        const auto coverIt = pendingIt->second.covers.find(type);
+        if(coverIt == pendingIt->second.covers.end()) {
             return {};
         }
-        return coverIt->second;
+        return PendingTrackCover{.image = coverIt->second, .revision = pendingIt->second.revision};
     }
 
     const auto flushingIt = p->m_flushingCoverWriteData.find(*sourceKey);
@@ -1231,8 +1243,10 @@ std::optional<CoverImage> LibraryThreadHandler::pendingTrackCover(const Track& t
         return {};
     }
 
-    const auto coverIt = flushingIt->second.second.find(type);
-    return coverIt == flushingIt->second.second.end() ? std::optional<CoverImage>{} : std::optional{coverIt->second};
+    const auto coverIt = flushingIt->second.covers.find(type);
+    return coverIt == flushingIt->second.covers.end()
+             ? std::optional<PendingTrackCover>{}
+             : std::optional{PendingTrackCover{.image = coverIt->second, .revision = flushingIt->second.revision}};
 }
 
 void LibraryThreadHandler::setActivePlaybackTrack(const Track& track)

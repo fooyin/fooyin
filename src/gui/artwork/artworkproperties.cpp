@@ -142,7 +142,7 @@ void ArtworkProperties::loadTrackArtwork()
                 auto& entry             = result->entries[i];
                 const auto pendingCover = pendingCoverProvider->pendingTrackCover(track, entry.type);
                 const QByteArray cover
-                    = pendingCover.has_value() ? pendingCover->data : loader->readTrackCover(track, entry.type);
+                    = pendingCover.has_value() ? pendingCover->image.data : loader->readTrackCover(track, entry.type);
 
                 if(cancel->load()) {
                     result->cancelled = true;

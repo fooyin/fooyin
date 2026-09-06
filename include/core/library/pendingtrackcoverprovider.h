@@ -23,9 +23,16 @@
 
 #include <core/track.h>
 
+#include <cstdint>
 #include <optional>
 
 namespace Fooyin {
+struct PendingTrackCover
+{
+    CoverImage image;
+    uint64_t revision{0};
+};
+
 class FYCORE_EXPORT PendingTrackCoverProvider
 {
 public:
@@ -33,8 +40,9 @@ public:
 
     /*!
      * Returns a pending embedded cover override for @p track and @p type.
-     * @note A returned CoverImage with empty data means a pending removal; std::nullopt means no pending override.
+     * @note A returned cover with empty image data means a pending removal; std::nullopt means no pending override.
      */
-    [[nodiscard]] virtual std::optional<CoverImage> pendingTrackCover(const Track& track, Track::Cover type) const = 0;
+    [[nodiscard]] virtual std::optional<PendingTrackCover> pendingTrackCover(const Track& track,
+                                                                             Track::Cover type) const = 0;
 };
 } // namespace Fooyin
