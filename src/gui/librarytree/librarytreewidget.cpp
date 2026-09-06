@@ -717,7 +717,7 @@ void LibraryTreeWidget::addGroupMenu(QMenu* parent)
 
     groupMenu->addSeparator();
 
-    auto* manageGroupings = new QAction(tr("Manage groupings..."), groupMenu);
+    auto* manageGroupings = new QAction(tr("Manage groupings…"), groupMenu);
     QObject::connect(manageGroupings, &QAction::triggered, this, [this]() {
         auto* dialog = new LibraryTreeGroupEditorDialog(m_groupsRegistry, this);
         dialog->open();

@@ -50,7 +50,7 @@ CdDriveSettingsDialog::CdDriveSettingsDialog(CdDriveInfo drive, std::shared_ptr<
     , m_offsetStatus{new QLabel(this)}
 {
     setAttribute(Qt::WA_DeleteOnClose);
-    setWindowTitle(tr("Drive Settings - %1").arg(m_drive.displayName));
+    setWindowTitle(tr("Drive Settings — %1").arg(m_drive.displayName));
     setModal(true);
 
     m_readOffset->setRange(-MaximumReadOffsetFrames, MaximumReadOffsetFrames);

@@ -181,7 +181,7 @@ void CommandButtonConfigDialog::updateCommandDisplay()
 void CommandButtonConfigDialog::updateIconDisplay()
 {
     if(!m_iconPath.isEmpty()) {
-        m_iconDescription->setText(tr("Custom image - %1").arg(QFileInfo{m_iconPath}.fileName()));
+        m_iconDescription->setText(tr("Custom image — %1").arg(QFileInfo{m_iconPath}.fileName()));
         m_iconDescription->setToolTip(m_iconPath);
     }
     else if(!m_iconName.isEmpty()) {

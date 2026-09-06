@@ -542,7 +542,7 @@ void MetadataLookupDialog::connectSource(MetadataLookupSource* source)
         }
         m_busy = busy;
         if(busy) {
-            m_status->setText(tr("Contacting %1...").arg(source->name()));
+            m_status->setText(tr("Contacting %1…").arg(source->name()));
         }
         updateActions();
     });
