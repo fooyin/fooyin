@@ -2722,7 +2722,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="117"/>
         <source>Confidence</source>
-        <translation>Jistota</translation>
+        <translation>Konfidence</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="118"/>
@@ -2737,7 +2737,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="119"/>
         <source>Database CRCs</source>
-        <translation>CRC databáze</translation>
+        <translation>CRC v databázi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="172"/>
@@ -6160,7 +6160,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="100"/>
         <source>Confirm before deleting tracks</source>
-        <translation>Potvrdit smazání skladeb</translation>
+        <translation>Před smazáním skladeb požadovat potvrzení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="113"/>
@@ -9638,17 +9638,17 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="140"/>
         <source>Centring</source>
-        <translation type="unfinished"></translation>
+        <translation>Centrování</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="158"/>
         <source>Top and bottom margins apply to lyrics that are not centred at that edge.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dolní a horní okraje platí pro texty písní, které nejsou vycentrovány na tomto okraji.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="168"/>
         <source>These options apply to synced lyrics and automatically scrolling unsynced lyrics.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tyto možnosti se vztahují na synchronizované texty písní a automaticky posouvané nesynchronizované texty.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="182"/>
@@ -9690,12 +9690,12 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="56"/>
         <source>Centre first line</source>
-        <translation type="unfinished"></translation>
+        <translation>Vycentrovat první řádek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="57"/>
         <source>Centre last line</source>
-        <translation type="unfinished"></translation>
+        <translation>Vycentrovat poslední řádek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="149"/>
@@ -10676,12 +10676,12 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="545"/>
         <source>Contacting %1…</source>
-        <translation type="unfinished"></translation>
+        <translation>Navazování kontaktu s %1…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1016"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished">Příště se neptat</translation>
+        <translation>Příště se neptat</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="594"/>
@@ -18369,7 +18369,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="44"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="50"/>
         <source>Global</source>
-        <translation type="unfinished">Globální</translation>
+        <translation>Globální</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="68"/>
@@ -18380,22 +18380,22 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="421"/>
         <source>Only one global shortcut can be assigned to an action.</source>
-        <translation type="unfinished"></translation>
+        <translation>Každé akci může být přiřazena pouze jedna globální zkratka.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="431"/>
         <source>%1 is not available as a global action.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 není k dispozici jako globální akce.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="434"/>
         <source>Global shortcuts must contain exactly one key combination.</source>
-        <translation type="unfinished"></translation>
+        <translation>Globální zkratky musí obsahovat pouze jednu kombinaci kláves.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="441"/>
         <source>Global shortcuts using printable keys must include Ctrl, Alt, or Meta.</source>
-        <translation type="unfinished"></translation>
+        <translation>Globální zkratky používající tisknutelné znaky musí obsahovat Ctrl, Alt nebo Meta.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="458"/>
@@ -18442,7 +18442,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="179"/>
         <source>Configure global shortcuts…</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení globálních zkratek…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="183"/>
@@ -18457,7 +18457,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="344"/>
         <source>Global</source>
-        <translation type="unfinished">Globální</translation>
+        <translation>Globální</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="349"/>
@@ -18472,22 +18472,22 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="431"/>
         <source>Global shortcuts are not available on this platform</source>
-        <translation type="unfinished"></translation>
+        <translation>Globální zkratky nejsou na této platformě k dispozici</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="434"/>
         <source>This action is only available within an application context</source>
-        <translation type="unfinished"></translation>
+        <translation>Tato akce je dostupná pouze v kontextu aplikace</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="446"/>
         <source>Disable global shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Zakázat globální zkratky</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="447"/>
         <source>Register globally…</source>
-        <translation type="unfinished"></translation>
+        <translation>Registrovat globálně…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="468"/>
@@ -20274,7 +20274,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="187"/>
         <source>Automatic match confidence: %1%.</source>
-        <translation>Jistota shody: %1%.</translation>
+        <translation>Konfidence shody: %1%.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="191"/>
@@ -20541,93 +20541,93 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="77"/>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="79"/>
         <source>Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Selhalo</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="81"/>
         <source>Cancelled</source>
-        <translation type="unfinished">Zrušeno</translation>
+        <translation>Zrušeno</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="90"/>
         <source>Accurately ripped</source>
-        <translation type="unfinished">Extrahováno bez chyb</translation>
+        <translation>Extrahováno bez chyb</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="92"/>
         <source>No match</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádná shoda</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="94"/>
         <source>Incomplete</source>
-        <translation type="unfinished">Nekompletní</translation>
+        <translation>Nekompletní</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="96"/>
         <source>Unsupported format</source>
-        <translation type="unfinished">Nepodporovaný formát</translation>
+        <translation>Nepodporovaný formát</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="168"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="292"/>
         <source>Generated: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Vygenerováno: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="173"/>
         <source>Item: &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Položka: „%1“</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="174"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="325"/>
         <source>Status: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Stav: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="176"/>
         <source>Decoded audio MD5: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>MD5 dekódovaného: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="177"/>
         <source>Decoded audio CRC32: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>CRC32 dekódovaného: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="180"/>
         <source>Warning: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Varování: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="187"/>
         <source>Error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Chyba: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="194"/>
         <source>All items decoded successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Všechny položky úspěšně dekódovány.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="197"/>
         <source>%1 of %Ln item(s) decoded successfully.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1 z %Ln položky úspěšně dekódováno.</numerusform>
+            <numerusform>%1 ze %Ln položek úspěšně dekódováno.</numerusform>
+            <numerusform>%1 z %Ln položek úspěšně dekódováno.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="253"/>
         <source>0 samples</source>
-        <translation type="unfinished"></translation>
+        <translation>0 vzorků</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="255"/>
@@ -20637,200 +20637,200 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="267"/>
         <source>%1 (AR v1/v2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (AR v1/v2)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="270"/>
         <source>%1 (AR v1)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (AR v1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="273"/>
         <source>%1 (AR v2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (AR v2)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="281"/>
         <source>Accurately ripped: %1 | No match: %2 | Incomplete: %3 | Unsupported: %4</source>
-        <translation type="unfinished"></translation>
+        <translation>Přesně extrahované: %1 | Bez shody: %2 | Nekompletní: %3 | Nepodporované: %4</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="314"/>
         <source>AccurateRip disc ID: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ID disku AccurateRip: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="315"/>
         <source>Tracks: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Stopy: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="323"/>
         <source>Track %1</source>
-        <translation type="unfinished">Stopa %1</translation>
+        <translation>Stopa %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="324"/>
         <source>Filename: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Název souboru: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="326"/>
         <source>AR v1 CRC: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v1 CRC: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="327"/>
         <source>AR v2 CRC: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v2 CRC: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="330"/>
         <source>Confidence: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konfidence: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="333"/>
         <source>Pressing offset: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ofset výlisku: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="335"/>
         <source>Matched database CRC: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Shodné CRC z databáze: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="344"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="474"/>
         <source>Database CRCs: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>CRC v databázi: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="350"/>
         <source>Summary</source>
-        <translation type="unfinished">Souhrn</translation>
+        <translation>Souhrn</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="351"/>
         <source>Accurately ripped: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Extrahováno bez chyb: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="352"/>
         <source>No match: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Bez shody: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="353"/>
         <source>Incomplete: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nekompletní: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="354"/>
         <source>Unsupported: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodporované: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="361"/>
         <source>Export Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportovat výsledky</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="370"/>
         <source>The results file could not be written.</source>
-        <translation type="unfinished"></translation>
+        <translation>Soubor výsledků se nepodařilo uložit.</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="378"/>
         <source>File Integrity Verification</source>
-        <translation type="unfinished"></translation>
+        <translation>Ověření integrity souborů</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="387"/>
         <source>No problems found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nebyly nalezeny žádné problémy.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="388"/>
         <source>Problems found in %Ln item(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Nalezeny problému u %Ln položky.</numerusform>
+            <numerusform>Nalezeny problému u %Ln položek.</numerusform>
+            <numerusform>Nalezeny problému u %Ln položek.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="395"/>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation>Název</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="395"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="457"/>
         <source>Status</source>
-        <translation type="unfinished">Stav</translation>
+        <translation>Stav</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="396"/>
         <source>Warnings</source>
-        <translation type="unfinished"></translation>
+        <translation>Varování</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="422"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="506"/>
         <source>Export…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportovat…</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="428"/>
         <source>Text Files (*.txt)</source>
-        <translation type="unfinished"></translation>
+        <translation>Textové soubory (*.txt)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="446"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="750"/>
         <source>AccurateRip Verification</source>
-        <translation type="unfinished">Ověření AccurateRip</translation>
+        <translation>Ověření AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="457"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Stopa</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="458"/>
         <source>Confidence</source>
-        <translation type="unfinished">Jistota</translation>
+        <translation>Konfidence</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="459"/>
         <source>Pressing offset</source>
-        <translation type="unfinished"></translation>
+        <translation>Ofset výlisku</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="460"/>
         <source>CRC v1</source>
-        <translation type="unfinished"></translation>
+        <translation>CRC v1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="460"/>
         <source>CRC v2</source>
-        <translation type="unfinished"></translation>
+        <translation>CRC v2</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="485"/>
         <source>Matches the AccurateRip database (AR v1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Shoduje se s AccurateRip databází (AR v1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="494"/>
         <source>Matches the AccurateRip database (AR v2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Shoduje se s AccurateRip databází (AR v2)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="514"/>
         <source>Log Files (*.log);;Text Files (*.txt)</source>
-        <translation type="unfinished"></translation>
+        <translation>Soubory protokolu (*.log);;Textové soubory (*.txt)</translation>
     </message>
 </context>
 <context>
@@ -20838,54 +20838,55 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="541"/>
         <source>Preparing verification…</source>
-        <translation type="unfinished"></translation>
+        <translation>Připravuje se ověření…</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="541"/>
         <source>Cancel</source>
-        <translation type="unfinished">Zrušit</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="544"/>
         <source>File Integrity Verification</source>
-        <translation type="unfinished"></translation>
+        <translation>Ověření integrity souborů</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="545"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="604"/>
         <source>AccurateRip Verification</source>
-        <translation type="unfinished">Ověření AccurateRip</translation>
+        <translation>Ověření AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="591"/>
         <source>Current file:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuální soubor:
+%1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="663"/>
         <source>Looking up album in AccurateRip…</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledávání alba v AccurateRip…</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="677"/>
         <source>This album is not present in AccurateRip.</source>
-        <translation type="unfinished"></translation>
+        <translation>Toto album není v AccurateRip databázi.</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="678"/>
         <source>AccurateRip lookup failed: %1</source>
-        <translation type="unfinished">Vyhledání AccurateRip selhalo: %1</translation>
+        <translation>Vyhledání AccurateRip selhalo: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="685"/>
         <source>AccurateRip returned an unexpectedly large disc record.</source>
-        <translation type="unfinished">AccurateRip vrátil neočekávaně velký záznam disku.</translation>
+        <translation>AccurateRip vrátil neočekávaně velký záznam disku.</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="706"/>
         <source>Verifying album at sample offset %1…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ověřování alba s posunem vzorků o %1…</translation>
     </message>
 </context>
 <context>
@@ -21808,12 +21809,12 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/gui/widgets.cpp" line="456"/>
         <source>Metadata Lookup</source>
-        <translation type="unfinished">Vyhledání metadat</translation>
+        <translation>Vyhledání metadat</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="457"/>
         <source>Confirm before wiping writable tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Před smazáním editovatelných tagů požadovat potvrzení</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="476"/>
@@ -22426,7 +22427,7 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1311"/>
         <source>Converter Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Výstup převodu</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1408"/>
@@ -22488,22 +22489,22 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1509"/>
         <source>Verify integrity</source>
-        <translation type="unfinished"></translation>
+        <translation>Ověřit integritu</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1510"/>
         <source>Decode the selected tracks and report file or checksum errors</source>
-        <translation type="unfinished"></translation>
+        <translation>Dekódovat vybrané skladby a nahlásit chyby souborů nebo kontrolních součtů</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1517"/>
         <source>Verify album with AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>Ověřit album pomocí AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1518"/>
         <source>Verify all tracks from one complete lossless CD rip against AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>Ověřit všechny skladby z bezeztrátově extrahovaného CD pomocí AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1762"/>
