@@ -111,6 +111,7 @@
 #include <QAction>
 #include <QApplication>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QDialog>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -576,8 +577,9 @@ CoverRepository* GuiApplication::coverRepository() const
 bool GuiApplication::eventFilter(QObject* watched, QEvent* event)
 {
     if(event->type() == QEvent::Polish) {
-        if(auto* editor = qobject_cast<QWidget*>(watched);
-           qobject_cast<QLineEdit*>(editor) || qobject_cast<QAbstractSpinBox*>(editor)) {
+        if(auto* editor = qobject_cast<QWidget*>(watched); qobject_cast<QComboBox*>(editor)
+                                                           || qobject_cast<QLineEdit*>(editor)
+                                                           || qobject_cast<QAbstractSpinBox*>(editor)) {
             QWidget* editorParent = editor->parentWidget();
             for(QWidget* ancestor = editorParent; ancestor; ancestor = ancestor->parentWidget()) {
                 if(auto* view = qobject_cast<QAbstractItemView*>(ancestor); view && view->viewport() == editorParent) {
