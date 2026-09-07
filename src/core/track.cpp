@@ -1585,7 +1585,7 @@ void Track::setMetadataStore(std::shared_ptr<TrackMetadataStore> store)
         store = std::make_shared<TrackMetadataStore>();
     }
 
-    if(p->metadataStore == store) {
+    if(p.constData()->metadataStore == store) {
         return;
     }
 
