@@ -19,7 +19,10 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/guistyleprovider.h
     ${CMAKE_SOURCE_DIR}/include/gui/guiutils.h
     ${CMAKE_SOURCE_DIR}/include/gui/layoutprovider.h
+    ${CMAKE_SOURCE_DIR}/include/gui/output/outputprofilemanager.h
     ${CMAKE_SOURCE_DIR}/include/gui/playlist/currentplaylistcontroller.h
+    ${CMAKE_SOURCE_DIR}/include/gui/playlist/playlisteditcontroller.h
+    ${CMAKE_SOURCE_DIR}/include/gui/playlist/playlistinteractor.h
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/dspguiplugin.h
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/guiplugin.h
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/guiplugincontext.h
@@ -299,7 +302,6 @@ set(SOURCES
     playlist/playlistdelegate.cpp
     playlist/playlistdelegate.h
     playlist/playlistinteractor.cpp
-    playlist/playlistinteractor.h
     playlist/playlistitem.cpp
     playlist/playlistitem.h
     playlist/playlistitemmodels.cpp
@@ -384,7 +386,6 @@ set(SOURCES
     search/searchwidget.cpp
     search/searchwidget.h
     output/outputprofilemanager.cpp
-    output/outputprofilemanager.h
     selectioninfo/infodelegate.cpp
     selectioninfo/infodelegate.h
     selectioninfo/infoitem.cpp

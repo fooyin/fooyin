@@ -30,7 +30,10 @@ class CurrentPlaylistController;
 class EditableLayout;
 class GuiStyleProvider;
 class LayoutProvider;
+class OutputProfileManager;
 class PropertiesDialog;
+class PlaylistInteractor;
+class PlaylistEditController;
 class SearchController;
 class ScriptCommandHandler;
 class ThemeRegistry;
@@ -49,7 +52,8 @@ struct FYGUI_EXPORT GuiPluginContext
                      ScriptCommandHandler* scriptCommandHandler_, WidgetProvider* widgetProvider_,
                      EditableLayout* editableLayout_, WindowController* windowController_,
                      ThemeRegistry* themeRegistry_, GuiStyleProvider* styleProvider_,
-                     AdvancedSettingsRegistry* advancedSettingsRegistry_, CoverRepository* coverRepository_)
+                     AdvancedSettingsRegistry* advancedSettingsRegistry_, CoverRepository* coverRepository_,
+                     PlaylistInteractor* playlistInteractor_, PlaylistEditController* playlistEditor_)
         : actionManager{actionManager_}
         , layoutProvider{layoutProvider_}
         , trackSelection{trackSelection_}
@@ -64,6 +68,8 @@ struct FYGUI_EXPORT GuiPluginContext
         , styleProvider{styleProvider_}
         , advancedSettingsRegistry{advancedSettingsRegistry_}
         , coverRepository{coverRepository_}
+        , playlistInteractor{playlistInteractor_}
+        , playlistEditor{playlistEditor_}
     { }
 
     ActionManager* actionManager;
@@ -81,5 +87,8 @@ struct FYGUI_EXPORT GuiPluginContext
     AdvancedSettingsRegistry* advancedSettingsRegistry;
     CoverRepository* coverRepository;
     ConversionService* conversionService;
+    PlaylistInteractor* playlistInteractor;
+    PlaylistEditController* playlistEditor;
+    OutputProfileManager* outputProfileManager;
 };
 } // namespace Fooyin

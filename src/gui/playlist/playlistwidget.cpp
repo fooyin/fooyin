@@ -21,7 +21,6 @@
 
 #include "contextmenuids.h"
 #include "internalguisettings.h"
-#include "playlist/playlistinteractor.h"
 #include "playlist/presetregistry.h"
 #include "playlistcolumnregistry.h"
 #include "playlistcontroller.h"
@@ -47,6 +46,7 @@
 #include <gui/guistyleprovider.h>
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
+#include <gui/playlist/playlistinteractor.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/autoheaderview.h>
 #include <gui/widgets/elapsedprogressdialog.h>

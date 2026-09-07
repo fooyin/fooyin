@@ -20,7 +20,6 @@
 #include "searchdialog.h"
 
 #include "playlist/playlistcontroller.h"
-#include "playlist/playlistinteractor.h"
 #include "playlist/playlistitem.h"
 #include "playlist/playlistuicontroller.h"
 #include "playlist/playlistview.h"
@@ -31,6 +30,7 @@
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
+#include <gui/playlist/playlistinteractor.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/signalthrottler.h>
 #include <utils/utils.h>

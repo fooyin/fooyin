@@ -17,7 +17,7 @@
  *
  */
 
-#include "outputprofilemanager.h"
+#include <gui/output/outputprofilemanager.h>
 
 #include "dsp/dsppresetregistry.h"
 #include "internalguisettings.h"
@@ -77,6 +77,7 @@ OutputProfileManager::OutputProfileManager(EngineController* engine, DspChainSto
         this, [this]() { Q_EMIT profilesChanged(currentOutput()); });
     m_settings->subscribe<Settings::Gui::Internal::OutputDeviceRefreshMs>(
         this, &OutputProfileManager::restartDeviceRefreshTimer);
+    QObject::connect(m_chainStore, &DspChainStore::activeChainChanged, this, &OutputProfileManager::dspPresetChanged);
 
     refreshDevices();
     restartDeviceRefreshTimer();
@@ -132,6 +133,21 @@ std::vector<OutputProfileManager::DeviceEntry> OutputProfileManager::deviceEntri
     return entries;
 }
 
+std::vector<OutputProfileManager::DspPresetEntry> OutputProfileManager::dspPresetEntries() const
+{
+    const auto activeChain = m_chainStore->activeChain();
+    const auto presets     = m_presetRegistry->presetsByName();
+
+    std::vector<DspPresetEntry> entries;
+    entries.reserve(presets.size());
+
+    for(const auto& preset : presets) {
+        entries.emplace_back(preset.name, preset.chain == activeChain);
+    }
+
+    return entries;
+}
+
 void OutputProfileManager::setProfiles(const QString& output, const Engine::OutputDeviceProfiles& profilesForOutput)
 {
     auto merged = profiles();
@@ -178,9 +194,7 @@ bool OutputProfileManager::applyProfile(const QString& output, const QString& de
         .chain    = chain,
     });
 
-    if(m_chainStore) {
-        m_chainStore->syncActiveChain(chain);
-    }
+    m_chainStore->syncActiveChain(chain);
 
     const QString setting = output + u"|"_s + device;
     m_settings->setSilently<Settings::Core::AudioOutput>(setting);
@@ -188,6 +202,17 @@ bool OutputProfileManager::applyProfile(const QString& output, const QString& de
     m_settings->setSilently<Settings::Core::OutputDither>(dither);
 
     Q_EMIT currentOutputChanged(output, device);
+    return true;
+}
+
+bool OutputProfileManager::applyDspPreset(int index)
+{
+    const auto presets = m_presetRegistry->presetsByName();
+    if(index < 0 || std::cmp_greater_equal(index, presets.size())) {
+        return false;
+    }
+
+    m_chainStore->setActiveChain(presets.at(index).chain);
     return true;
 }
 
@@ -332,4 +357,4 @@ std::pair<QString, QString> OutputProfileManager::parseCurrentOutput() const
 }
 } // namespace Fooyin
 
-#include "moc_outputprofilemanager.cpp"
+#include "gui/output/moc_outputprofilemanager.cpp"

@@ -206,6 +206,225 @@ void PlaylistController::clearCurrentPlaylist()
     }
 }
 
+bool PlaylistController::insertPlaylistItems(const UId& playlistId, int index, const TrackList& tracks)
+{
+    auto* playlist = m_handler->playlistById(playlistId);
+    if(!playlist || playlist->isAutoPlaylist() || tracks.empty() || index < -1 || index > playlist->trackCount()) {
+        return false;
+    }
+
+    const int insertionBase          = index < 0 ? playlist->trackCount() : index;
+    const PlaylistTrackList inserted = PlaylistTrack::fromTracks(tracks, playlistId);
+
+    m_workspace->addToHistory(playlist, new InsertTracks{m_handler, playlistId, {{insertionBase, inserted}}});
+
+    if(playlist == currentPlaylist()) {
+        Q_EMIT playlistHistoryChanged();
+    }
+
+    return true;
+}
+
+bool PlaylistController::replacePlaylistItem(const UId& playlistId, int index, const TrackList& tracks)
+{
+    auto* playlist = m_handler->playlistById(playlistId);
+    if(!playlist || playlist->isAutoPlaylist() || playlist->isLocked() || tracks.empty() || index < 0
+       || index >= playlist->trackCount()) {
+        return false;
+    }
+
+    const PlaylistTrackList currentTracks = playlist->playlistTracks();
+    PlaylistTrackList replacedTracks{currentTracks};
+    replacedTracks.erase(replacedTracks.begin() + index);
+
+    const PlaylistTrackList replacements = PlaylistTrack::fromTracks(tracks, playlistId);
+    replacedTracks.insert(replacedTracks.begin() + index, replacements.cbegin(), replacements.cend());
+    replacedTracks = PlaylistTrack::updateIndexes(replacedTracks);
+
+    m_workspace->addToHistory(playlist, new ResetTracks{m_handler, playlistId, currentTracks, replacedTracks});
+
+    if(playlist == currentPlaylist()) {
+        Q_EMIT playlistHistoryChanged();
+    }
+
+    return true;
+}
+
+bool PlaylistController::removePlaylistItems(const UId& playlistId, const std::vector<int>& indexes)
+{
+    auto* playlist = m_handler->playlistById(playlistId);
+    if(!playlist || playlist->isAutoPlaylist() || indexes.empty()) {
+        return false;
+    }
+
+    std::vector validatedIndexes{indexes};
+    std::ranges::sort(validatedIndexes);
+    validatedIndexes.erase(std::ranges::unique(validatedIndexes).begin(), validatedIndexes.end());
+    if(std::ranges::any_of(validatedIndexes,
+                           [playlist](int index) { return index < 0 || index >= playlist->trackCount(); })) {
+        return false;
+    }
+
+    m_workspace->addToHistory(playlist, new RemoveTracks{m_handler, playlistId, std::move(validatedIndexes)});
+    if(playlist == currentPlaylist()) {
+        Q_EMIT playlistHistoryChanged();
+    }
+
+    return true;
+}
+
+bool PlaylistController::clearPlaylist(const UId& playlistId)
+{
+    auto* playlist = m_handler->playlistById(playlistId);
+    if(!playlist || playlist->isAutoPlaylist()) {
+        return false;
+    }
+    if(playlist->trackCount() == 0) {
+        return true;
+    }
+
+    m_workspace->addToHistory(playlist,
+                              new ResetTracks{m_handler, playlistId, playlist->playlistTracks(), PlaylistTrackList{}});
+
+    if(playlist == currentPlaylist()) {
+        Q_EMIT playlistHistoryChanged();
+    }
+
+    return true;
+}
+
+bool PlaylistController::movePlaylistItems(const UId& playlistId, const std::vector<int>& indexes, int newIndex)
+{
+    auto* playlist = m_handler->playlistById(playlistId);
+    if(!playlist || (playlist->isAutoPlaylist() && playlist->forceSorted()) || indexes.empty()) {
+        return false;
+    }
+
+    std::vector sortedIndexes{indexes};
+    std::ranges::sort(sortedIndexes);
+    if(std::ranges::unique(sortedIndexes).begin() != sortedIndexes.end()
+       || std::ranges::any_of(sortedIndexes,
+                              [playlist](int index) { return index < 0 || index >= playlist->trackCount(); })) {
+        return false;
+    }
+
+    const int remainingCount = playlist->trackCount() - static_cast<int>(sortedIndexes.size());
+    if(newIndex < 0 || newIndex > remainingCount) {
+        return false;
+    }
+
+    const bool alreadyInPlace = std::ranges::equal(
+        sortedIndexes, std::views::iota(newIndex, newIndex + static_cast<int>(sortedIndexes.size())));
+    if(alreadyInPlace) {
+        return true;
+    }
+
+    int operationIndex{newIndex};
+    for(const int index : sortedIndexes) {
+        if(index <= operationIndex) {
+            ++operationIndex;
+        }
+    }
+
+    TrackIndexRangeList ranges;
+    for(const int index : sortedIndexes) {
+        if(ranges.empty() || index > ranges.back().last + 1) {
+            ranges.emplace_back(index, index);
+        }
+        else {
+            ranges.back().last = index;
+        }
+    }
+
+    MoveOperation operation{{.index = operationIndex, .tracksToMove = std::move(ranges)}};
+    m_workspace->addToHistory(playlist, new MoveTracks{m_handler, playlistId, std::move(operation)});
+
+    if(playlist == currentPlaylist()) {
+        Q_EMIT playlistHistoryChanged();
+    }
+
+    return true;
+}
+
+bool PlaylistController::reorderPlaylistItems(const UId& playlistId, const std::vector<int>& order)
+{
+    auto* playlist = m_handler->playlistById(playlistId);
+    if(!playlist || (playlist->isAutoPlaylist() && playlist->forceSorted())
+       || std::cmp_not_equal(order.size(), playlist->trackCount())) {
+        return false;
+    }
+
+    std::vector seen(order.size(), false);
+    const auto currentTracks = playlist->playlistTracks();
+
+    PlaylistTrackList reorderedTracks;
+    reorderedTracks.reserve(order.size());
+
+    for(const int index : order) {
+        if(index < 0 || std::cmp_greater_equal(index, order.size()) || seen.at(static_cast<size_t>(index))) {
+            return false;
+        }
+        seen.at(static_cast<size_t>(index)) = true;
+        reorderedTracks.push_back(currentTracks.at(static_cast<size_t>(index)));
+    }
+
+    reorderedTracks = PlaylistTrack::updateIndexes(reorderedTracks);
+    if(reorderedTracks == currentTracks) {
+        return true;
+    }
+
+    m_workspace->addToHistory(playlist, new ResetTracks{m_handler, playlistId, currentTracks, reorderedTracks});
+
+    if(playlist == currentPlaylist()) {
+        Q_EMIT playlistHistoryChanged();
+    }
+
+    return true;
+}
+
+bool PlaylistController::canUndo(const UId& playlistId) const
+{
+    auto* playlist = m_handler->playlistById(playlistId);
+    return playlist && m_workspace->canUndo(playlist);
+}
+
+bool PlaylistController::canRedo(const UId& playlistId) const
+{
+    auto* playlist = m_handler->playlistById(playlistId);
+    return playlist && m_workspace->canRedo(playlist);
+}
+
+bool PlaylistController::undo(const UId& playlistId)
+{
+    auto* playlist = m_handler->playlistById(playlistId);
+    if(!playlist || !m_workspace->canUndo(playlist)) {
+        return false;
+    }
+
+    m_workspace->undo(playlist);
+    if(playlist == currentPlaylist()) {
+        Q_EMIT playlistHistoryChanged();
+    }
+
+    return true;
+}
+
+bool PlaylistController::redo(const UId& playlistId)
+{
+    auto* playlist = m_handler->playlistById(playlistId);
+    if(!playlist || !m_workspace->canRedo(playlist)) {
+        return false;
+    }
+
+    m_workspace->redo(playlist);
+
+    if(playlist == currentPlaylist()) {
+        Q_EMIT playlistHistoryChanged();
+    }
+
+    return true;
+}
+
 QString PlaylistController::currentSearch(Playlist* playlist) const
 {
     return m_workspace->currentSearch(playlist);

@@ -21,7 +21,6 @@
 
 #include "internalguisettings.h"
 #include "playlist/playlistcontroller.h"
-#include "playlist/playlistinteractor.h"
 #include "queueviewerconfigwidget.h"
 #include "queueviewerdelegate.h"
 #include "queueviewermodel.h"
@@ -36,6 +35,7 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/guiutils.h>
+#include <gui/playlist/playlistinteractor.h>
 #include <gui/trackmimedata.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/scriptlineedit.h>

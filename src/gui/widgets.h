@@ -71,6 +71,7 @@ public:
     [[nodiscard]] DspSettingsRegistry* dspSettingsRegistry() const;
     [[nodiscard]] DspSettingsController* dspSettingsController() const;
     [[nodiscard]] PluginSettingsRegistry* pluginSettingsRegistry() const;
+    [[nodiscard]] OutputProfileManager* outputProfileManager() const;
 
     void showArtworkDialog(const TrackList& tracks, Track::Cover type, bool quick);
     void removeArtwork(const TrackList& tracks, Track::Cover type);

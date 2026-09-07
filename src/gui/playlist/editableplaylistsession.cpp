@@ -21,7 +21,6 @@
 
 #include "core/library/tracksort.h"
 #include "internalguisettings.h"
-#include "playlist/playlistinteractor.h"
 #include "playlist/presetregistry.h"
 #include "playlistcommands.h"
 #include "playlistcontroller.h"
@@ -33,6 +32,7 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/iconloader.h>
+#include <gui/playlist/playlistinteractor.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>

@@ -20,12 +20,12 @@
 #include "playlistmanagermodel.h"
 
 #include "playlist/playlistcontroller.h"
-#include "playlist/playlistinteractor.h"
 
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
+#include <gui/playlist/playlistinteractor.h>
 #include <gui/trackmimedata.h>
 #include <utils/helpers.h>
 #include <utils/stringutils.h>

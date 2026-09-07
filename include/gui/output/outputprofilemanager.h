@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include <core/engine/enginecontroller.h>
 
 #include <QBasicTimer>
@@ -37,7 +39,7 @@ class DspPresetRegistry;
 class EngineController;
 class SettingsManager;
 
-class OutputProfileManager : public QObject
+class FYGUI_EXPORT OutputProfileManager : public QObject
 {
     Q_OBJECT
 
@@ -53,6 +55,12 @@ public:
         int dspPresetId{-1};
     };
 
+    struct DspPresetEntry
+    {
+        QString name;
+        bool active{false};
+    };
+
     OutputProfileManager(EngineController* engine, DspChainStore* chainStore, DspPresetRegistry* presetRegistry,
                          SettingsManager* settings, QObject* parent = nullptr);
 
@@ -60,10 +68,12 @@ public:
     [[nodiscard]] QString currentOutput() const;
     [[nodiscard]] QString currentDevice() const;
     [[nodiscard]] std::vector<DeviceEntry> deviceEntries(const QString& output) const;
+    [[nodiscard]] std::vector<DspPresetEntry> dspPresetEntries() const;
 
     void setProfiles(const QString& output, const Engine::OutputDeviceProfiles& profiles);
     void clearProfiles();
     bool applyProfile(const QString& output, const QString& device);
+    bool applyDspPreset(int index);
     void reapplyCurrentProfile();
     void watchDeviceRefreshOutput(QObject* watcher, const QString& output);
 
@@ -71,6 +81,7 @@ Q_SIGNALS:
     void profilesChanged(const QString& output);
     void devicesChanged(const QString& output);
     void currentOutputChanged(const QString& output, const QString& device);
+    void dspPresetChanged();
 
 protected:
     void timerEvent(QTimerEvent* event) override;

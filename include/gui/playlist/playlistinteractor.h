@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include <core/library/musiclibrary.h>
 #include <core/track.h>
 
@@ -33,17 +35,19 @@ class PlayerController;
 class Playlist;
 class PlaylistController;
 class PlaylistHandler;
+class PlaylistInteractorPrivate;
 class PlaylistWidget;
 class SettingsManager;
 class UId;
 
-class PlaylistInteractor : public QObject
+class FYGUI_EXPORT PlaylistInteractor : public QObject
 {
     Q_OBJECT
 
 public:
     PlaylistInteractor(PlaylistHandler* handler, PlaylistController* controller, MusicLibrary* library,
                        SettingsManager* settings, QObject* parent = nullptr);
+    ~PlaylistInteractor() override;
 
     [[nodiscard]] PlaylistHandler* handler() const;
     [[nodiscard]] PlaylistController* playlistController() const;
@@ -69,66 +73,12 @@ public:
     void tracksToNewPlaylistReplace(const QString& playlistName, const TrackList& tracks, bool play = false);
     void tracksToActivePlaylist(const TrackList& tracks);
 
-    template <typename Func>
-    void filesToTracks(const QList<QUrl>& urls, Func&& func)
-    {
-        if(urls.empty()) {
-            return;
-        }
-
-        scanFiles(urls, std::forward<Func>(func));
-    }
-
-    template <typename Func>
-    void playlistFilesToTracks(const QList<QUrl>& urls, Func&& func)
-    {
-        if(urls.empty()) {
-            return;
-        }
-
-        loadPlaylistTracks(urls, std::forward<Func>(func));
-    }
+    void filesToTracks(const QList<QUrl>& urls, std::function<void(const TrackList&)> func);
+    void playlistFilesToTracks(const QList<QUrl>& urls, std::function<void(const TrackList&)> func);
 
     void trackIdsToPlaylist(const QByteArray& data, const UId& id);
 
 private:
-    [[nodiscard]] ScanRequest startFileScan(const QList<QUrl>& urls) const;
-    [[nodiscard]] ScanRequest startTrackScan(const TrackList& tracks) const;
-    [[nodiscard]] ScanRequest startPlaylistLoad(const QList<QUrl>& urls) const;
-    void beginTrackScan(const QString& labelText, const ScanRequest& request,
-                        std::function<void(const TrackList&)> func);
-    void activatePlaylist(Playlist* playlist, bool play = false) const;
-    void activatePlaylist(Playlist* playlist, int indexToPlay, bool play = false) const;
-    void appendToPlaylist(Playlist* playlist, const TrackList& tracks) const;
-    [[nodiscard]] TrackList filterDuplicateTracks(const Playlist* playlist, const TrackList& tracks) const;
-    [[nodiscard]] Playlist* appendOrCreateNamedPlaylist(const QString& playlistName, const TrackList& tracks,
-                                                        bool preventDuplicates = false) const;
-    void tracksToNewPlaylist(const QString& playlistName, const TrackList& tracks, int indexToPlay, bool replace,
-                             bool play = false);
-
-    template <typename Func>
-    void scanTracks(const TrackList& tracks, Func&& func)
-    {
-        if(!tracks.empty()) {
-            beginTrackScan(tr("Reading tracks…"), startTrackScan(tracks), std::forward<Func>(func));
-        }
-    }
-
-    template <typename Func>
-    void scanFiles(const QList<QUrl>& urls, Func&& func)
-    {
-        beginTrackScan(tr("Reading tracks…"), startFileScan(urls), std::forward<Func>(func));
-    }
-
-    template <typename Func>
-    void loadPlaylistTracks(const QList<QUrl>& urls, Func&& func)
-    {
-        beginTrackScan(tr("Loading playlist…"), startPlaylistLoad(urls), std::forward<Func>(func));
-    }
-
-    PlaylistHandler* m_handler;
-    PlaylistController* m_controller;
-    MusicLibrary* m_library;
-    SettingsManager* m_settings;
+    std::unique_ptr<PlaylistInteractorPrivate> p;
 };
 } // namespace Fooyin

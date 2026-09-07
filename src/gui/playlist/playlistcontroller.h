@@ -26,6 +26,7 @@
 #include <core/playlist/playlist.h>
 #include <core/playlist/playlistchangeset.h>
 #include <gui/playlist/currentplaylistcontroller.h>
+#include <gui/playlist/playlisteditcontroller.h>
 
 #include <QObject>
 
@@ -55,7 +56,8 @@ struct PlaylistViewState
     int scrollPos{0};
 };
 
-class PlaylistController : public CurrentPlaylistController
+class PlaylistController : public CurrentPlaylistController,
+                           public PlaylistEditController
 {
     Q_OBJECT
 
@@ -87,6 +89,18 @@ public:
     void changePlaylistIndex(const UId& playlistId, int index);
     [[nodiscard]] bool canClearCurrentPlaylist() const;
     void clearCurrentPlaylist();
+
+    bool insertPlaylistItems(const UId& playlistId, int index, const TrackList& tracks) override;
+    bool replacePlaylistItem(const UId& playlistId, int index, const TrackList& tracks) override;
+    bool removePlaylistItems(const UId& playlistId, const std::vector<int>& indexes) override;
+    bool clearPlaylist(const UId& playlistId) override;
+    bool movePlaylistItems(const UId& playlistId, const std::vector<int>& indexes, int newIndex) override;
+    bool reorderPlaylistItems(const UId& playlistId, const std::vector<int>& order) override;
+
+    [[nodiscard]] bool canUndo(const UId& playlistId) const override;
+    [[nodiscard]] bool canRedo(const UId& playlistId) const override;
+    bool undo(const UId& playlistId) override;
+    bool redo(const UId& playlistId) override;
 
     [[nodiscard]] QString currentSearch(Playlist* playlist) const;
     void setSearch(Playlist* playlist, const QString& search);

@@ -24,7 +24,6 @@
 #include "dirproxymodel.h"
 #include "dirtree.h"
 #include "internalguisettings.h"
-#include "playlist/playlistinteractor.h"
 
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlist.h>
@@ -36,6 +35,7 @@
 #include <gui/guisettings.h>
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
+#include <gui/playlist/playlistinteractor.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/autoheaderview.h>
 #include <gui/widgets/toolbutton.h>

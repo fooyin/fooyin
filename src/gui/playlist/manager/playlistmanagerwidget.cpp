@@ -21,7 +21,6 @@
 
 #include "dialog/autoplaylistdialog.h"
 #include "playlist/playlistcontroller.h"
-#include "playlist/playlistinteractor.h"
 #include "playlistmanagerdelegate.h"
 #include "playlistmanagermodel.h"
 
@@ -30,6 +29,7 @@
 #include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
+#include <gui/playlist/playlistinteractor.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/expandedtreeview.h>
 #include <utils/actions/actionmanager.h>

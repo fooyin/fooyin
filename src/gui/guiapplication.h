@@ -22,7 +22,6 @@
 #include "fygui_export.h"
 
 #include "internalguisettings.h"
-#include "playlist/playlistinteractor.h"
 #include "widgets.h"
 
 #include <core/engine/enginedefs.h>
@@ -30,6 +29,7 @@
 #include <core/track.h>
 #include <gui/coverprovider.h>
 #include <gui/layoutprovider.h>
+#include <gui/playlist/playlistinteractor.h>
 #include <gui/plugins/guiplugincontext.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>

@@ -58,10 +58,15 @@ public:
     void savePlaylistState(Playlist* playlist, const PlaylistViewState& state);
 
     void addToHistory(QUndoCommand* command);
+    void addToHistory(Playlist* playlist, QUndoCommand* command);
     [[nodiscard]] bool canUndo() const;
+    [[nodiscard]] bool canUndo(Playlist* playlist) const;
     [[nodiscard]] bool canRedo() const;
+    [[nodiscard]] bool canRedo(Playlist* playlist) const;
     void undo();
+    void undo(Playlist* playlist);
     void redo();
+    void redo(Playlist* playlist);
     void clearHistory();
 
     [[nodiscard]] bool clipboardEmpty() const;

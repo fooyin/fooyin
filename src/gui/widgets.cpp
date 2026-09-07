@@ -46,12 +46,10 @@
 #include "mainwindow.h"
 #include "nowplayingoutput/nowplayingoutputpage.h"
 #include "nowplayingoutput/nowplayingoutputservice.h"
-#include "output/outputprofilemanager.h"
 #include "playlist/manager/playlistmanagerwidget.h"
 #include "playlist/organiser/playlistorganiser.h"
 #include "playlist/playlistbox.h"
 #include "playlist/playlistcontroller.h"
-#include "playlist/playlistinteractor.h"
 #include "playlist/playlisttabs.h"
 #include "playlist/playlistwidget.h"
 #include "queueviewer/queueviewer.h"
@@ -112,6 +110,8 @@
 #include <gui/coverrepository.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/output/outputprofilemanager.h>
+#include <gui/playlist/playlistinteractor.h>
 #include <gui/settings/context/staticcontextmenupage.h>
 #include <gui/theme/themeregistry.h>
 #include <gui/widgetprovider.h>
@@ -782,6 +782,11 @@ DspSettingsController* Widgets::dspSettingsController() const
 PluginSettingsRegistry* Widgets::pluginSettingsRegistry() const
 {
     return m_pluginSettingsRegistry.get();
+}
+
+OutputProfileManager* Widgets::outputProfileManager() const
+{
+    return m_outputProfileManager;
 }
 
 void Widgets::showArtworkDialog(const TrackList& tracks, Track::Cover type, bool quick)

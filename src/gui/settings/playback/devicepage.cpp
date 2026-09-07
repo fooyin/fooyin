@@ -20,11 +20,11 @@
 #include "devicepage.h"
 
 #include "dsp/dsppresetregistry.h"
-#include "output/outputprofilemanager.h"
 #include "outputdevicesdelegate.h"
 #include "outputdevicesmodel.h"
 
 #include <gui/guiconstants.h>
+#include <gui/output/outputprofilemanager.h>
 #include <gui/widgets/expandingcombobox.h>
 #include <utils/settings/settingsmanager.h>
 

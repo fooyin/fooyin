@@ -20,7 +20,6 @@
 #include "playlistmodel.h"
 
 #include "internalguisettings.h"
-#include "playlistinteractor.h"
 #include "playlistitem.h"
 #include "playlistpopulator.h"
 #include "playlistpreset.h"
@@ -39,6 +38,7 @@
 #include <gui/guistyleprovider.h>
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
+#include <gui/playlist/playlistinteractor.h>
 #include <gui/trackmimedata.h>
 #include <gui/widgets/autoheaderview.h>
 #include <utils/datastream.h>

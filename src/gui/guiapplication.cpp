@@ -40,7 +40,6 @@
 #include "metadatalookup/metadatalookupdialog.h"
 #include "playlist/manager/playlistmanagerwidget.h"
 #include "playlist/playlistcontroller.h"
-#include "playlist/playlistinteractor.h"
 #include "playlist/playlistuicontroller.h"
 #include "playlist/playlistwidget.h"
 #include "queueviewer/queueviewer.h"
@@ -52,6 +51,7 @@
 #include "systemtrayicon.h"
 #include "verification/verificationcontroller.h"
 #include "widgets.h"
+#include <gui/playlist/playlistinteractor.h>
 
 #include <core/application.h>
 #include <core/corepaths.h>
@@ -284,7 +284,9 @@ GuiApplication::GuiApplication(Application* core)
                          m_themeRegistry,
                          m_styleProvider,
                          m_advancedSettingsRegistry.get(),
-                         m_coverRepository}
+                         m_coverRepository,
+                         &m_playlistInteractor,
+                         m_playlistController.get()}
     , m_logWidget{std::make_unique<LogWidget>(m_settings)}
     , m_widgets{new Widgets(m_core, this, m_guiPluginContext, m_mainWindow.get(), &m_playlistInteractor, this)}
     , m_conversionController{new ConversionController(
@@ -666,6 +668,8 @@ void GuiApplication::initialise()
     m_widgets->registerDspSettings();
     m_widgets->registerPropertiesTabs();
     m_widgets->registerFontEntries();
+
+    m_guiPluginContext.outputProfileManager = m_widgets->outputProfileManager();
 
     m_actionManager->addContextObject(m_mainContext);
 

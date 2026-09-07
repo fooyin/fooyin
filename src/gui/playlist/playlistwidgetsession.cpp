@@ -19,7 +19,6 @@
 
 #include "playlistwidgetsession.h"
 
-#include "playlist/playlistinteractor.h"
 #include "playlistcontroller.h"
 #include "playlistview.h"
 
@@ -29,6 +28,7 @@
 #include <core/scripting/trackqueryfilter.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/playlist/playlistinteractor.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
