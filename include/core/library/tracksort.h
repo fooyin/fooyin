@@ -129,10 +129,12 @@ public:
         ScriptContext context;
         context.environment = &m_scriptEnvironment;
 
-        for(const auto& item : items) {
-            const Track& track = extractor(item);
-            entries.push_back({item, m_parser.evaluate(sort, track, context)});
-        }
+        m_parser.withContext(context, [&]() {
+            for(const auto& item : items) {
+                const Track& track = extractor(item);
+                entries.push_back({item, m_parser.evaluate(sort, track)});
+            }
+        });
 
         return entries;
     }
@@ -155,10 +157,12 @@ public:
         ScriptContext context;
         context.environment = &m_scriptEnvironment;
 
-        for(auto& item : items) {
-            const Track& track = extractor(item);
-            entries.push_back({std::move(item), m_parser.evaluate(sort, track, context)});
-        }
+        m_parser.withContext(context, [&]() {
+            for(auto& item : items) {
+                const Track& track = extractor(item);
+                entries.push_back({std::move(item), m_parser.evaluate(sort, track)});
+            }
+        });
 
         return entries;
     }
