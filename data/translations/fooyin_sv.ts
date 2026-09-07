@@ -2097,7 +2097,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="355"/>
         <source>Audio CD identity is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Ljud-CD-identitet är otillgänglig</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="374"/>
@@ -2123,12 +2123,12 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/plugins/cdda/drive/cddrivebackend.cpp" line="40"/>
         <source>Secure CD extraction is unavailable for this drive backend</source>
-        <translation type="unfinished"></translation>
+        <translation>Säker CD-extrahering är otillgänglig för denna enhets-backend</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/cddrivebackend.cpp" line="47"/>
         <source>CD read speed control is unavailable for this drive backend</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-läshastighets-kontroll är otillgänglig för denna enhets-backend</translation>
     </message>
 </context>
 <context>
@@ -2141,7 +2141,7 @@ När av bevaras existerande spårordning och endast nytillagda matchande spår �
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="53"/>
         <source>Drive Settings — %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Enhetsinställningar – %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="58"/>
@@ -2211,17 +2211,17 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="119"/>
         <source>Looking up drive…</source>
-        <translation type="unfinished"></translation>
+        <translation>Söker upp enhet…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="129"/>
         <source>Lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Uppsökning misslyckades: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="135"/>
         <source>AccurateRip returned an unexpectedly large drive list.</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip returnerade en oväntad stor enhetslista.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="142"/>
@@ -2507,12 +2507,12 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="73"/>
         <source>Lookup metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök upp metadata…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="74"/>
         <source>Rip…</source>
-        <translation type="unfinished"></translation>
+        <translation>Rippa…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="75"/>
@@ -2562,12 +2562,12 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="179"/>
         <source>Searching for CD drives…</source>
-        <translation type="unfinished"></translation>
+        <translation>Söker efter CD-enheter…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="227"/>
         <source>Reading audio CD…</source>
-        <translation type="unfinished"></translation>
+        <translation>Läser ljud-CD…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="262"/>
@@ -2628,7 +2628,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="476"/>
         <source>Looking up audio CD metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>Söker upp ljud-CD-metadata…</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="500"/>
@@ -2733,12 +2733,12 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="174"/>
         <source>Lookup metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök upp metadata…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="175"/>
         <source>Converter Setup…</source>
-        <translation type="unfinished"></translation>
+        <translation>Konverterar-setup…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="176"/>
@@ -2788,7 +2788,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="215"/>
         <source>#</source>
-        <translation type="unfinished">#</translation>
+        <translation>#</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="215"/>
@@ -2818,7 +2818,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="420"/>
         <source>Looking up disc in AccurateRip…</source>
-        <translation type="unfinished"></translation>
+        <translation>Söker upp skiva i AccurateRip…</translation>
     </message>
 </context>
 <context>
@@ -2898,7 +2898,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="184"/>
         <source>Custom image — %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Egen bild – %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="192"/>
@@ -3091,7 +3091,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="76"/>
         <source>Cancelled</source>
-        <translation type="unfinished">Avbrutet</translation>
+        <translation>Avbrutet</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="113"/>
@@ -3101,12 +3101,12 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="121"/>
         <source>Name</source>
-        <translation type="unfinished">Namn</translation>
+        <translation>Namn</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="121"/>
         <source>Status</source>
-        <translation type="unfinished">Status</translation>
+        <translation>Status</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="122"/>
@@ -3116,7 +3116,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="124"/>
         <source>Details</source>
-        <translation type="unfinished">Detaljer</translation>
+        <translation>Detaljer</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="158"/>
@@ -3283,7 +3283,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="118"/>
         <source>Show converted files when finished</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa konverterade filer när klart</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="120"/>
@@ -3727,7 +3727,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1247"/>
         <source>Show converted files</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa konverterade filer</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1250"/>
@@ -5427,7 +5427,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="74"/>
         <source>Leave empty to group by the displayed values</source>
-        <translation type="unfinished">Lämna tomt för att gruppera efter de visade värdena</translation>
+        <translation>Lämna tomt för att gruppera efter de visade värdena</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="82"/>
@@ -6017,7 +6017,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="485"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished">Fråga inte igen</translation>
+        <translation>Fråga inte igen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="498"/>
@@ -6430,7 +6430,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="59"/>
         <source>Manage columns…</source>
-        <translation type="unfinished"></translation>
+        <translation>Hantera kolumner…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="106"/>
@@ -7825,7 +7825,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="84"/>
         <source>Browse custom image…</source>
-        <translation type="unfinished"></translation>
+        <translation>Bläddra efter egen bild…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="85"/>
@@ -7851,7 +7851,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="197"/>
         <source>Current: Custom image — %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuellt: Egen bild – %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="201"/>
@@ -9108,7 +9108,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="65"/>
         <source>Manage groupings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Hantera grupperingar…</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="82"/>
@@ -9333,7 +9333,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="720"/>
         <source>Manage groupings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Hantera grupperingar…</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="765"/>
@@ -9415,7 +9415,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="41"/>
         <source>Release</source>
-        <translation type="unfinished">Utsläpp</translation>
+        <translation>Utsläpp</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="43"/>
@@ -10645,7 +10645,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1016"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished">Fråga inte igen</translation>
+        <translation>Fråga inte igen</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="594"/>
@@ -18313,7 +18313,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="44"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="50"/>
         <source>Global</source>
-        <translation type="unfinished">Globalt</translation>
+        <translation>Globalt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="68"/>
@@ -18386,7 +18386,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="179"/>
         <source>Configure global shortcuts…</source>
-        <translation type="unfinished"></translation>
+        <translation>Konfigurera globala genvägar…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="183"/>
@@ -18401,7 +18401,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="344"/>
         <source>Global</source>
-        <translation type="unfinished">Globalt</translation>
+        <translation>Globalt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="349"/>
@@ -18431,7 +18431,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="447"/>
         <source>Register globally…</source>
-        <translation type="unfinished"></translation>
+        <translation>Registrera globalt…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="468"/>
@@ -20485,7 +20485,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="77"/>
         <source>OK</source>
-        <translation type="unfinished">Ok</translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="79"/>
@@ -20495,7 +20495,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="81"/>
         <source>Cancelled</source>
-        <translation type="unfinished">Avbrutet</translation>
+        <translation>Avbrutet</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="90"/>
@@ -20610,7 +20610,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="323"/>
         <source>Track %1</source>
-        <translation type="unfinished">Spår %1</translation>
+        <translation>Spår %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="324"/>
@@ -20651,7 +20651,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="350"/>
         <source>Summary</source>
-        <translation type="unfinished">Sammanfattning</translation>
+        <translation>Sammanfattning</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="351"/>
@@ -20704,13 +20704,13 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="395"/>
         <source>Name</source>
-        <translation type="unfinished">Namn</translation>
+        <translation>Namn</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="395"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="457"/>
         <source>Status</source>
-        <translation type="unfinished">Status</translation>
+        <translation>Status</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="396"/>
@@ -20721,7 +20721,7 @@ Detta stödjer inte fullständig skriptning.</translation>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="422"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="506"/>
         <source>Export…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportera…</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="428"/>
@@ -20737,7 +20737,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="457"/>
         <source>Track</source>
-        <translation type="unfinished">Spår</translation>
+        <translation>Spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="458"/>
@@ -20752,12 +20752,12 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="460"/>
         <source>CRC v1</source>
-        <translation type="unfinished"></translation>
+        <translation>CRC v1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="460"/>
         <source>CRC v2</source>
-        <translation type="unfinished"></translation>
+        <translation>CRC v2</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="485"/>
@@ -20780,12 +20780,12 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="541"/>
         <source>Preparing verification…</source>
-        <translation type="unfinished"></translation>
+        <translation>Förbereder verifiering…</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="541"/>
         <source>Cancel</source>
-        <translation type="unfinished">Avbryt</translation>
+        <translation>Avbryt</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="544"/>
@@ -20807,7 +20807,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="663"/>
         <source>Looking up album in AccurateRip…</source>
-        <translation type="unfinished"></translation>
+        <translation>Söker upp album i AccurateRip…</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="677"/>
@@ -20827,7 +20827,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="706"/>
         <source>Verifying album at sample offset %1…</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifierar album vid sampelförskjutning %1…</translation>
     </message>
 </context>
 <context>
@@ -22158,128 +22158,128 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="473"/>
         <source>Artwork file is empty</source>
-        <translation type="unfinished">Konstverksfil är tom</translation>
+        <translation>Konstverksfil är tom</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="872"/>
         <source>Plugins not found</source>
-        <translation type="unfinished">Tillägg hittades inte</translation>
+        <translation>Tillägg hittades inte</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="873"/>
         <source>Some plugins are required for full functionality.</source>
-        <translation type="unfinished">Vissa tillägg behövs för fullständig funktionalitet.</translation>
+        <translation>Vissa tillägg behövs för fullständig funktionalitet.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="874"/>
         <source>Plugin search locations:
 
 </source>
-        <translation type="unfinished">Sökplatser för tillägg:
+        <translation>Sökplatser för tillägg:
 
 </translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="877"/>
         <source>Quit</source>
-        <translation type="unfinished">Avsluta</translation>
+        <translation>Avsluta</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1003"/>
         <source>Volume</source>
-        <translation type="unfinished">Volym</translation>
+        <translation>Volym</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1005"/>
         <source>Volume up</source>
-        <translation type="unfinished">Volym upp</translation>
+        <translation>Volym upp</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1012"/>
         <source>Volume down</source>
-        <translation type="unfinished">Volym ner</translation>
+        <translation>Volym ner</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1019"/>
         <source>Mute</source>
-        <translation type="unfinished">Tystna</translation>
+        <translation>Tystna</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1029"/>
         <source>Clear Current Playlist</source>
-        <translation type="unfinished">Rensa aktuell spellista</translation>
+        <translation>Rensa aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1030"/>
         <source>Remove all tracks from the current playlist</source>
-        <translation type="unfinished">Ta bort alla spår från den aktuella spellistan</translation>
+        <translation>Ta bort alla spår från den aktuella spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1033"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1060"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1133"/>
         <source>Playlist</source>
-        <translation type="unfinished">Spellista</translation>
+        <translation>Spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1056"/>
         <source>Lock playlist</source>
-        <translation type="unfinished">Lås spellista</translation>
+        <translation>Lås spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1058"/>
         <source>Prevent changes to the contents of the current playlist</source>
-        <translation type="unfinished">Förhindra ändringar av den aktuella spellistans innehåll</translation>
+        <translation>Förhindra ändringar av den aktuella spellistans innehåll</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1061"/>
         <source>Lock Current Playlist</source>
-        <translation type="unfinished">Lås aktuell spellista</translation>
+        <translation>Lås aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1082"/>
         <source>Playback</source>
-        <translation type="unfinished">Uppspelning</translation>
+        <translation>Uppspelning</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1082"/>
         <source>Seek</source>
-        <translation type="unfinished">Leta</translation>
+        <translation>Leta</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1084"/>
         <source>Seek forward (small step)</source>
-        <translation type="unfinished">Leta framåt (litet steg)</translation>
+        <translation>Leta framåt (litet steg)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1091"/>
         <source>Seek forward (large step)</source>
-        <translation type="unfinished">Leta framåt (stort steg)</translation>
+        <translation>Leta framåt (stort steg)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1098"/>
         <source>Seek backward (small step)</source>
-        <translation type="unfinished">Leta bakåt (litet steg)</translation>
+        <translation>Leta bakåt (litet steg)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1106"/>
         <source>Seek backward (large step)</source>
-        <translation type="unfinished">Leta bakåt (stort steg)</translation>
+        <translation>Leta bakåt (stort steg)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1131"/>
         <source>Remove Playlist</source>
-        <translation type="unfinished">Ta bort spellista</translation>
+        <translation>Ta bort spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1134"/>
         <source>Remove Current Playlist</source>
-        <translation type="unfinished">Ta bort aktuell spellista</translation>
+        <translation>Ta bort aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1142"/>
         <source>Toggle Menubar</source>
-        <translation type="unfinished">Växla menyruta</translation>
+        <translation>Växla menyruta</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1146"/>
@@ -22308,7 +22308,7 @@ Changes apply to newly opened streams.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1235"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1274"/>
         <source>Tagging</source>
-        <translation type="unfinished">Taggning</translation>
+        <translation>Taggning</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1162"/>
@@ -22328,42 +22328,42 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1194"/>
         <source>Reading tracks…</source>
-        <translation type="unfinished">Läser spår…</translation>
+        <translation>Läser spår…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1194"/>
         <source>Abort</source>
-        <translation type="unfinished">Stoppa</translation>
+        <translation>Stoppa</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1222"/>
         <source>Current file</source>
-        <translation type="unfinished">Aktuell fil</translation>
+        <translation>Aktuell fil</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1237"/>
         <source>Reload tags from files</source>
-        <translation type="unfinished">Ladda om taggar från filer</translation>
+        <translation>Ladda om taggar från filer</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1238"/>
         <source>Reload tags from modified files</source>
-        <translation type="unfinished">Ladda om taggar från modifierade filer</translation>
+        <translation>Ladda om taggar från modifierade filer</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1240"/>
         <source>Replace tags in selected tracks with tags from the files</source>
-        <translation type="unfinished">Ersätt taggarna i de valda spåren med taggar från filerna</translation>
+        <translation>Ersätt taggar i valda spår med taggar från filerna</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1241"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
-        <translation type="unfinished">Ersätt taggarna i de valda spåren med taggar från filerna om modifierade</translation>
+        <translation>Ersätt taggar i valda spår med taggar från filerna om modifierade</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1285"/>
         <source>Choose destination</source>
-        <translation type="unfinished">Välj destination</translation>
+        <translation>Välj destination</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1311"/>
@@ -22374,7 +22374,7 @@ Changes apply to newly opened streams.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1408"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1416"/>
         <source>Convert using preset %1</source>
-        <translation type="unfinished">Konvertera med förinställning %1</translation>
+        <translation>Konvertera med förinställning %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1415"/>
@@ -22384,7 +22384,7 @@ Changes apply to newly opened streams.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1512"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1521"/>
         <source>Tracks</source>
-        <translation type="unfinished">Spår</translation>
+        <translation>Spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1415"/>
@@ -22393,39 +22393,39 @@ Changes apply to newly opened streams.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1467"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1478"/>
         <source>Convert</source>
-        <translation type="unfinished">Konvertera</translation>
+        <translation>Konvertera</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1446"/>
         <source>Converter setup…</source>
-        <translation type="unfinished">Konverterar-setup…</translation>
+        <translation>Konverterar-setup…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1455"/>
         <source>Using default settings</source>
-        <translation type="unfinished">Med default-inställningar</translation>
+        <translation>Med default-inställningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1459"/>
         <source>Convert using default settings</source>
-        <translation type="unfinished">Konvertera med default-inställningar</translation>
+        <translation>Konvertera med default-inställningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1464"/>
         <source>Repeat last conversion</source>
-        <translation type="unfinished">Upprepa senaste konvertering</translation>
+        <translation>Upprepa senaste konvertering</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1495"/>
         <source>Custom conversion…</source>
-        <translation type="unfinished">Anpassad konvertering…</translation>
+        <translation>Anpassad konvertering…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1507"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1512"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1521"/>
         <source>Utilities</source>
-        <translation type="unfinished">Verktyg</translation>
+        <translation>Verktyg</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1509"/>
@@ -22445,92 +22445,92 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1518"/>
         <source>Verify all tracks from one complete lossless CD rip against AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifiera alla spår från en helt förlustfri CD-rippning mot AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1762"/>
         <source>Reload Required</source>
-        <translation type="unfinished">Omladdning krävs</translation>
+        <translation>Omladdning krävs</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1764"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
-        <translation type="unfinished">På grund av en databasändring borde spåren laddas om från disken för att uppdatera dess sparade metadata.</translation>
+        <translation>På grund av en databasändring borde spåren laddas om från disken för att uppdatera dess sparade metadata.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1768"/>
         <source>Reload Now</source>
-        <translation type="unfinished">Ladda om nu</translation>
+        <translation>Ladda om nu</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1771"/>
         <source>OK</source>
-        <translation type="unfinished">Ok</translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1913"/>
         <source>Playback Error</source>
-        <translation type="unfinished">Uppspelningsfel</translation>
+        <translation>Uppspelningsfel</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1938"/>
         <source>Continue</source>
-        <translation type="unfinished">Fortsätt</translation>
+        <translation>Fortsätt</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1940"/>
         <source>Stop</source>
-        <translation type="unfinished">Stopp</translation>
+        <translation>Stopp</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1944"/>
         <source>Always continue playing if a track is unavailable</source>
-        <translation type="unfinished">Fortsätt alltid spela om ett spår är otillgängligt</translation>
+        <translation>Fortsätt alltid spela om ett spår är otillgängligt</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1966"/>
         <source>Track Not Found</source>
-        <translation type="unfinished">Spår hittades inte</translation>
+        <translation>Spår hittades inte</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1971"/>
         <source>No Decoder Available</source>
-        <translation type="unfinished">Inga avkodare tillgängliga</translation>
+        <translation>Ingen avkodare tillgänglig</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2043"/>
         <source>All Supported Media Files (%1)</source>
-        <translation type="unfinished">Alla stödda mediafiler (%1)</translation>
+        <translation>Alla stödda mediafiler (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2044"/>
         <source>Audio Files (%1)</source>
-        <translation type="unfinished">Ljudfiler (%1)</translation>
+        <translation>Ljudfiler (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2055"/>
         <source>Add Files</source>
-        <translation type="unfinished">Lägg till filer</translation>
+        <translation>Lägg till filer</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2069"/>
         <source>Add Folders</source>
-        <translation type="unfinished">Lägg till mappar</translation>
+        <translation>Lägg till mappar</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2081"/>
         <source>Add Stream URL</source>
-        <translation type="unfinished">Lägg till ström-URL</translation>
+        <translation>Lägg till ström-URL</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2081"/>
         <source>Stream URL:</source>
-        <translation type="unfinished">Ström-URL:</translation>
+        <translation>Ström-URL:</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2083"/>
         <source>&amp;Add</source>
-        <translation type="unfinished">L&amp;ägg till</translation>
+        <translation>L&amp;ägg till</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2087"/>
@@ -22540,12 +22540,12 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2148"/>
         <source>All Supported Playlists (%1)</source>
-        <translation type="unfinished">Alla stödda spellistor (%1)</translation>
+        <translation>Alla stödda spellistor (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2158"/>
         <source>Load Playlist</source>
-        <translation type="unfinished">Läs in spellista</translation>
+        <translation>Läs in spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2195"/>
