@@ -537,17 +537,17 @@
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="197"/>
         <source>%1 of %Ln item(s) decoded successfully.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1 of %Ln item decoded successfully.</numerusform>
+            <numerusform>%1 of %Ln items decoded successfully.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="388"/>
         <source>Problems found in %Ln item(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Problems found in %Ln item.</numerusform>
+            <numerusform>Problems found in %Ln items.</numerusform>
         </translation>
     </message>
 </context>
