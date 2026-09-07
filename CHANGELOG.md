@@ -6,6 +6,7 @@
 
 * Audio CD: Add playback and ripping with AccurateRip verification ([#834](https://github.com/fooyin/fooyin/issues/834), [#1558](https://github.com/fooyin/fooyin/pull/1558))
 * Audio Verification: Add file integrity checks and AccurateRip verification for complete discs
+* Global Shortcuts: Add system-wide keyboard shortcuts ([#518](https://github.com/fooyin/fooyin/issues/518), [#1074](https://github.com/fooyin/fooyin/issues/1074))
 * Metadata Lookup: Add MusicBrainz metadata lookup ([#1554](https://github.com/fooyin/fooyin/pull/1554))
 
 ### Improvements
@@ -13,6 +14,7 @@
 * Audio Conversion
   - Add detailed conversion results
   - Add a per-preset option to show output files in a detached playlist
+* Artwork: Cache pending embedded artwork to avoid repeated decoding and repainting ([#1585](https://github.com/fooyin/fooyin/issues/1585))
 * Command Button: Add searchable command and icon pickers
 * Discord: Add local and MusicBrainz artwork to Rich Presence ([#812](https://github.com/fooyin/fooyin/issues/812))
 * FileOps: Add a "Don't ask again" option to destructive action confirmations
@@ -28,6 +30,11 @@
   - Add custom grouping scripts to presets ([#1566](https://github.com/fooyin/fooyin/issues/1566))
   - Replace the default playlist contents when opening external files by default
 * Search: Add keyboard navigation to results
+* Scripting
+  - Add common metadata aliases
+  - Add `$select`
+  - Add `$cut` as alias for `$left`
+  - Improve date parsing and track sorting performance
 
 ### Fixes
 
@@ -55,18 +62,30 @@
   - Flush file changes after tag writes ([#1557](https://github.com/fooyin/fooyin/pull/1557))
 * Lyrics: Fix automatic scrolling for unsynchronised lyrics ([#1556](https://github.com/fooyin/fooyin/issues/1556))
 * Networking: Send a fooyin user agent with all network requests
-* Playlist: Preserve spaces in unquoted CUE `REM` values ([#1548](https://github.com/fooyin/fooyin/issues/1548))
+* Playlist
+  - Fix reordering when temporary playlists are present
+  - Preserve spaces in unquoted CUE `REM` values ([#1548](https://github.com/fooyin/fooyin/issues/1548))
 * Quick Tagger: Avoid file rewrites for rating changes ([#1551](https://github.com/fooyin/fooyin/issues/1551))
 * Search: Fix starting playback from results
 * Settings: Fix user folder actions across platforms
+* Scripting: Fix premature termination of query operator chains ([#1586](https://github.com/fooyin/fooyin/issues/1586))
 * WaveBar: Avoid warnings when playing remote streams
 
 ### Build/System
 
 * CI: Reuse a single pre-release for nightly builds
-* Dependencies: Add libcdio and libcdio-paranoia for Audio CD support
-* Translations: Update translations and translation sources ([#1562](https://github.com/fooyin/fooyin/pull/1562), [#1569](https://github.com/fooyin/fooyin/pull/1569), [#1571](https://github.com/fooyin/fooyin/pull/1571))
+* Dependencies
+  - Add libcdio and libcdio-paranoia for Audio CD support
+  - Remove unused FFmpeg components ([#1582](https://github.com/fooyin/fooyin/pull/1582))
+* Translations: Update translations and translation sources ([#1562](https://github.com/fooyin/fooyin/pull/1562), [#1569](https://github.com/fooyin/fooyin/pull/1569), [#1571](https://github.com/fooyin/fooyin/pull/1571), [#1587](https://github.com/fooyin/fooyin/pull/1587), [#1588](https://github.com/fooyin/fooyin/pull/1588))
 * Windows: Enable MP3, Opus, and Vorbis encoders ([#1542](https://github.com/fooyin/fooyin/issues/1542))
+
+### Dev/API
+
+* Playlist
+  - Add `PlaylistEditController` with shared undo history
+  - Add sorting, purging, and item visibility methods to `PlaylistHandler`
+  - Expose `PlaylistInteractor` and `OutputProfileManager` to GUI plugins
 
 
 ## [0.12.6](https://github.com/fooyin/fooyin/releases/tag/v0.12.6) (2026-08-23)
