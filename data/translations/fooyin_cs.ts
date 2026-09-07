@@ -20632,7 +20632,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="255"/>
         <source>%1 samples</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 vzorků</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="267"/>
