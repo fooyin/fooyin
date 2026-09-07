@@ -51,7 +51,7 @@ QDateTime evalDate(const Expression& expr)
 struct DateRange
 {
     QDateTime start;
-    QDateTime end;
+    QDateTime endExclusive;
 };
 
 DateRange calculateDateRange(const Expression& expr)
@@ -60,37 +60,33 @@ DateRange calculateDateRange(const Expression& expr)
         return {};
     }
 
-    const QString dateString = std::get<QString>(expr.value);
+    const auto parsed = Utils::parseDateTime(std::get<QString>(expr.value));
+    if(!parsed) {
+        return {};
+    }
 
     DateRange range;
+    range.start = parsed->toDateTime();
 
-    const auto formats = Utils::dateFormats();
-    for(const auto& format : formats) {
-        const auto date = QDateTime::fromString(dateString, QLatin1String{format});
-        if(!date.isValid()) {
-            continue;
-        }
-
-        range.start = date;
-
-        if(strcmp(format, "yyyy") == 0) {
-            range.end = range.start.addYears(1).addSecs(-1);
-        }
-        else if(strcmp(format, "yyyy-MM") == 0) {
-            range.end = range.start.addMonths(1).addSecs(-1);
-        }
-        else if(strcmp(format, "yyyy-MM-dd") == 0) {
-            range.end = range.start.addDays(1).addSecs(-1);
-        }
-        else if(strcmp(format, "yyyy-MM-dd hh") == 0) {
-            range.end = range.start.addSecs(3600 - 1);
-        }
-        else if(strcmp(format, "yyyy-MM-dd hh:mm") == 0) {
-            range.end = range.start.addSecs(60 - 1);
-        }
-        else if(strcmp(format, "yyyy-MM-dd hh:mm:ss") == 0) {
-            range.end = range.start;
-        }
+    switch(parsed->precision) {
+        case Utils::DateTimePrecision::Year:
+            range.endExclusive = range.start.addYears(1);
+            break;
+        case Utils::DateTimePrecision::Month:
+            range.endExclusive = range.start.addMonths(1);
+            break;
+        case Utils::DateTimePrecision::Day:
+            range.endExclusive = range.start.addDays(1);
+            break;
+        case Utils::DateTimePrecision::Hour:
+            range.endExclusive = range.start.addSecs(3600);
+            break;
+        case Utils::DateTimePrecision::Minute:
+            range.endExclusive = range.start.addSecs(60);
+            break;
+        case Utils::DateTimePrecision::Second:
+            range.endExclusive = range.start.addSecs(1);
+            break;
     }
 
     return range;
@@ -791,9 +787,9 @@ Expression ScriptRuntime::duringKeyword(const Expression& key)
     else if(!currentToken(TokenType::TokEos)) {
         const Expression argExpr  = expression();
         const DateRange dateRange = calculateDateRange(argExpr);
-        if(dateRange.start.isValid() && dateRange.end.isValid()) {
+        if(dateRange.start.isValid() && dateRange.endExclusive.isValid()) {
             args.emplace_back(Expr::Date, QString::number(dateRange.start.toMSecsSinceEpoch()));
-            args.emplace_back(Expr::Date, QString::number(dateRange.end.toMSecsSinceEpoch()));
+            args.emplace_back(Expr::Date, QString::number(dateRange.endExclusive.toMSecsSinceEpoch()));
         }
     }
 
@@ -1945,7 +1941,7 @@ ScriptResult ScriptRuntime::compareDateRange(const BoundExpression& exp, const a
     const auto max = std::get<QString>(args.at(2).value).toLongLong();
 
     ScriptResult result;
-    result.cond = first.value() > min && first.value() < max;
+    result.cond = first.value() >= min && first.value() < max;
 
     return result;
 }

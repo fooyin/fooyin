@@ -492,13 +492,28 @@ TEST_F(ScriptParserTest, MathTest)
 TEST_F(ScriptParserTest, TimeDateFunctionTest)
 {
     EXPECT_EQ(u"2024", m_parser.evaluate(u"$year(\"2024-03-09 08:07:06\")"_s));
+    EXPECT_EQ(u"2024", m_parser.evaluate(u"$year(2024)"_s));
+    EXPECT_TRUE(m_parser.evaluate(u"$year(0000)"_s).isEmpty());
     EXPECT_EQ(u"03", m_parser.evaluate(u"$month(\"2024-03-09 08:07:06\")"_s));
+    EXPECT_EQ(u"01", m_parser.evaluate(u"$month(2024)"_s));
     EXPECT_EQ(u"09", m_parser.evaluate(u"$day_of_month(\"2024-03-09 08:07:06\")"_s));
+    EXPECT_EQ(u"01", m_parser.evaluate(u"$day_of_month(\"2024-03\")"_s));
     EXPECT_EQ(u"2024-03-09", m_parser.evaluate(u"$date(\"2024-03-09 08:07:06\")"_s));
+    EXPECT_EQ(u"2024-01-01", m_parser.evaluate(u"$date(2024)"_s));
+    EXPECT_EQ(u"2024-02-29", m_parser.evaluate(u"$date(\"2024-02-29\")"_s));
     EXPECT_EQ(u"08:07:06", m_parser.evaluate(u"$time(\"2024-03-09 08:07:06\")"_s));
     EXPECT_EQ(u"08:07", m_parser.evaluate(u"$time(\"2024-03-09 08:07\")"_s));
+    EXPECT_EQ(u"08:00", m_parser.evaluate(u"$time(\"2024-03-09 08\")"_s));
+    EXPECT_EQ(u"23:59:59", m_parser.evaluate(u"$time(\"2024-03-09 23:59:59\")"_s));
     EXPECT_EQ(u"", m_parser.evaluate(u"$time(\"2024-03-09\")"_s));
     EXPECT_EQ(u"", m_parser.evaluate(u"$year(not-a-date)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$date(\"2023-02-29\")"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$date(\"2024-13-01\")"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$date(\"2024/03/09\")"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$date(\"2024-3-09\")"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$time(\"2024-03-09 24:00:00\")"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$time(\"2024-03-09 08:60:00\")"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$time(\"2024-03-09 08:07:60\")"_s));
 }
 
 TEST_F(ScriptParserTest, ConditionalTest)
@@ -949,7 +964,9 @@ TEST_F(ScriptParserTest, ContextPlaybackEnvironmentProvidesPlaybackVariables)
     track.setBitrate(192);
 
     EXPECT_EQ(u"00:45", parser.evaluate(u"%playback_time%"_s, track, context));
+    EXPECT_EQ(u"45", parser.evaluate(u"%playback_time_seconds%"_s, track, context));
     EXPECT_EQ(u"75", parser.evaluate(u"%playback_time_remaining_s%"_s, track, context));
+    EXPECT_EQ(u"75", parser.evaluate(u"%playback_time_remaining_seconds%"_s, track, context));
     EXPECT_EQ(u"1", parser.evaluate(u"%isplaying%"_s, track, context));
     EXPECT_EQ(u"320", parser.evaluate(u"%bitrate%"_s, track, context));
 }
@@ -1230,6 +1247,28 @@ TEST_F(ScriptParserTest, QueryLongLogicalChains)
                   m_filter.filter(
                       u"rating >= 4 AND NOT lastplayed DURING LAST 1 MONTHS AND NOT (%1)"_s.arg(disjunction), tracks));
     }
+}
+
+TEST_F(ScriptParserTest, QueryDateRangesRespectInputPrecision)
+{
+    Track first;
+    first.setFirstPlayed(QDateTime{QDate{2024, 2, 29}, QTime{8, 7, 6}}.toMSecsSinceEpoch());
+
+    Track second;
+    second.setFirstPlayed(QDateTime{QDate{2024, 2, 29}, QTime{8, 7, 59}}.toMSecsSinceEpoch());
+
+    Track third;
+    third.setFirstPlayed(QDateTime{QDate{2024, 2, 29}, QTime{8, 8}}.toMSecsSinceEpoch());
+
+    const TrackList tracks{first, second, third};
+
+    EXPECT_EQ(3, m_filter.filter(u"firstplayed DURING 2024"_s, tracks).size());
+    EXPECT_EQ(3, m_filter.filter(u"firstplayed DURING \"2024-02\""_s, tracks).size());
+    EXPECT_EQ(3, m_filter.filter(u"firstplayed DURING \"2024-02-29\""_s, tracks).size());
+    EXPECT_EQ(3, m_filter.filter(u"firstplayed DURING \"2024-02-29 08\""_s, tracks).size());
+    EXPECT_EQ(2, m_filter.filter(u"firstplayed DURING \"2024-02-29 08:07\""_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"firstplayed DURING \"2024-02-29 08:07:06\""_s, tracks).size());
+    EXPECT_EQ(0, m_filter.filter(u"firstplayed DURING \"2023-02-29\""_s, tracks).size());
 }
 
 TEST_F(ScriptParserTest, QueryAccentInsensitiveSearch)
