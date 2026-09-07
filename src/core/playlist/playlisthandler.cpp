@@ -1029,13 +1029,24 @@ void PlaylistHandler::handleTracksDeleted(const TrackList& tracks)
 
 void PlaylistHandler::changePlaylistIndex(const UId& id, int index)
 {
-    if(auto* playlist = playlistById(id)) {
-        if(!playlist->isTemporary() && index != playlist->index()) {
-            Utils::move(p->m_playlists, playlist->index(), index);
-            p->updateIndices();
-            Q_EMIT playlistIndexChanged(playlist);
-        }
+    auto* playlist = playlistById(id);
+    if(!playlist || playlist->isTemporary() || index < 0 || index >= playlistCount() || index == playlist->index()) {
+        return;
     }
+
+    auto* target        = playlistByIndex(index);
+    const auto sourceIt = std::ranges::find_if(
+        p->m_playlists, [playlist](const auto& candidate) { return candidate.get() == playlist; });
+    const auto targetIt
+        = std::ranges::find_if(p->m_playlists, [target](const auto& candidate) { return candidate.get() == target; });
+    if(sourceIt == p->m_playlists.end() || targetIt == p->m_playlists.end()) {
+        return;
+    }
+
+    Utils::move(p->m_playlists, static_cast<size_t>(std::distance(p->m_playlists.begin(), sourceIt)),
+                static_cast<size_t>(std::distance(p->m_playlists.begin(), targetIt)));
+    p->updateIndices();
+    Q_EMIT playlistIndexChanged(playlist);
 }
 
 void PlaylistHandler::changeActivePlaylist(const UId& id)
