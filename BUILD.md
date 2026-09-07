@@ -45,7 +45,7 @@ sudo apt install \
     g++ git cmake pkg-config ninja-build libglu1-mesa-dev libxkbcommon-dev zlib1g-dev \
     libasound2-dev libtag1-dev libicu-dev libpipewire-0.3-dev libpulse-dev \
     qt6-base-dev libqt6sql6-sqlite libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
-    libavcodec-dev libavformat-dev libavutil-dev libswresample-dev \
+    libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev libswresample-dev \
     libsndfile1-dev libopenmpt-dev libgme-dev libarchive-dev libebur128-dev libcdio-dev \
     libcdio-paranoia-dev libsoundtouch-dev libsoxr-dev
 ```
@@ -67,7 +67,7 @@ sudo dnf update
 sudo dnf install \
     cmake ninja-build glib2-devel libxkbcommon-x11-devel libxkbcommon-devel zlib-ng-compat-devel \
     alsa-lib-devel qt6-qtbase-devel qt6-qtsvg-devel qt6-qttools-devel \
-    libavcodec-free-devel libavformat-free-devel libavutil-free-devel libswresample-free-devel \
+    libavcodec-free-devel libavfilter-free-devel libavformat-free-devel libavutil-free-devel libswresample-free-devel \
     taglib-devel kdsingleapplication-qt6-devel libicu-devel pipewire-devel pulseaudio-libs-devel \
     libsndfile-devel libopenmpt-devel game-music-emu-devel libarchive-devel libebur128-devel libcdio-devel \
     libcdio-paranoia-devel soundtouch-devel soxr-devel
