@@ -585,12 +585,13 @@ Expression ScriptRuntime::group()
     ExpressionList args;
 
     while(!currentToken(TokenType::TokRightParen) && !currentToken(TokenType::TokEos)) {
-        Expression prevExpr = expression();
-        Expression argExpr  = checkOperator(prevExpr);
-
-        while(argExpr.type != prevExpr.type) {
-            prevExpr = argExpr;
-            argExpr  = checkOperator(prevExpr);
+        Expression argExpr = expression();
+        while(true) {
+            const int position = m_current.position;
+            argExpr            = checkOperator(argExpr);
+            if(m_current.position == position) {
+                break;
+            }
         }
 
         if(argExpr.type != Expr::Null) {
@@ -1604,12 +1605,13 @@ ParsedScript ScriptRuntime::parseQuery(const QString& input)
 
     advance();
     while(m_current.type != TokenType::TokEos) {
-        Expression prevExpr = expression();
-        Expression expr     = checkOperator(prevExpr);
-
-        while(expr.type != prevExpr.type) {
-            prevExpr = expr;
-            expr     = checkOperator(prevExpr);
+        Expression expr = expression();
+        while(true) {
+            const int position = m_current.position;
+            expr               = checkOperator(expr);
+            if(m_current.position == position) {
+                break;
+            }
         }
 
         if(expr.type != Expr::Null) {

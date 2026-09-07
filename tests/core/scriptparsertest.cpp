@@ -1195,6 +1195,43 @@ TEST_F(ScriptParserTest, QueryTest)
     EXPECT_EQ(2, m_filter.filter(query, tracks).size());
 }
 
+TEST_F(ScriptParserTest, QueryLongLogicalChains)
+{
+    const QStringList paths{u"(Variants)"_s, u"(Ban)"_s, u"[Mixed]"_s, u"_broken"_s, u"__DEFAULT"_s,
+                            u"Six"_s,        u"Seven"_s, u"Eight"_s,   u"Allowed"_s};
+    TrackList tracks;
+    for(const auto& path : paths) {
+        Track track;
+        track.setId(static_cast<int>(tracks.size()));
+        track.setFilePath(u"/music/%1/song.flac"_s.arg(path));
+        track.setRating(0.8F);
+        track.setLastPlayed(QDateTime::currentDateTime().addMonths(-2).toMSecsSinceEpoch());
+        tracks.push_back(track);
+    }
+
+    QStringList alternatives;
+    QStringList exclusions;
+    for(int count{1}; count < paths.size(); ++count) {
+        SCOPED_TRACE(count);
+        alternatives.push_back(u"path : \"%1\""_s.arg(paths.at(count - 1)));
+        exclusions.push_back(u"NOT path : \"%1\""_s.arg(paths.at(count - 1)));
+
+        const QString disjunction = alternatives.join(u" OR "_s);
+        const QString conjunction = exclusions.join(u" AND "_s);
+        const TrackList included{tracks.begin(), tracks.begin() + count};
+        const TrackList excluded{tracks.begin() + count, tracks.end()};
+
+        EXPECT_EQ(included, m_filter.filter(disjunction, tracks));
+        EXPECT_EQ(included, m_filter.filter(u"(%1)"_s.arg(disjunction), tracks));
+        EXPECT_EQ(excluded, m_filter.filter(u"NOT (%1)"_s.arg(disjunction), tracks));
+        EXPECT_EQ(excluded, m_filter.filter(conjunction, tracks));
+        EXPECT_EQ(excluded, m_filter.filter(u"(%1)"_s.arg(conjunction), tracks));
+        EXPECT_EQ(excluded,
+                  m_filter.filter(
+                      u"rating >= 4 AND NOT lastplayed DURING LAST 1 MONTHS AND NOT (%1)"_s.arg(disjunction), tracks));
+    }
+}
+
 TEST_F(ScriptParserTest, QueryAccentInsensitiveSearch)
 {
     Track track;
