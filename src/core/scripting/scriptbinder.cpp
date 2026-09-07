@@ -77,169 +77,169 @@ VariableKind resolveBuiltInVariableKind(const QString& var)
 {
     using namespace Fooyin::Constants;
 
-    if(var == QLatin1String{MetaData::TrackNumber}) {
+    if(var == QLatin1StringView{MetaData::TrackNumber} || var == "TRACKNUMBER"_L1 || var == "TRACK NUMBER"_L1) {
         return VariableKind::Track;
     }
-    if(var == QLatin1String{MetaData::TrackTotal}) {
+    if(var == QLatin1StringView{MetaData::TrackTotal} || var == "TOTALTRACKS"_L1) {
         return VariableKind::TrackTotal;
     }
-    if(var == QLatin1String{MetaData::Disc}) {
+    if(var == QLatin1StringView{MetaData::Disc} || var == "DISCNUMBER"_L1) {
         return VariableKind::Disc;
     }
-    if(var == QLatin1String{MetaData::DiscTotal}) {
+    if(var == QLatin1StringView{MetaData::DiscTotal} || var == "TOTALDISCS"_L1) {
         return VariableKind::DiscTotal;
     }
-    if(var == QLatin1String{MetaData::Title}) {
+    if(var == QLatin1StringView{MetaData::Title}) {
         return VariableKind::Title;
     }
-    if(var == QLatin1String{MetaData::Artist}) {
+    if(var == QLatin1StringView{MetaData::Artist}) {
         return VariableKind::Artist;
     }
-    if(var == QLatin1String{MetaData::UniqueArtist}) {
+    if(var == QLatin1StringView{MetaData::UniqueArtist}) {
         return VariableKind::UniqueArtist;
     }
-    if(var == QLatin1String{MetaData::Album}) {
+    if(var == QLatin1StringView{MetaData::Album}) {
         return VariableKind::Album;
     }
-    if(var == QLatin1String{MetaData::AlbumArtist}) {
+    if(var == QLatin1StringView{MetaData::AlbumArtist} || var == "ALBUM ARTIST"_L1) {
         return VariableKind::AlbumArtist;
     }
-    if(var == QLatin1String{MetaData::Genre}) {
+    if(var == QLatin1StringView{MetaData::Genre}) {
         return VariableKind::Genre;
     }
     if(var == "GENRES"_L1) {
         return VariableKind::Genres;
     }
-    if(var == QLatin1String{MetaData::Composer}) {
+    if(var == QLatin1StringView{MetaData::Composer}) {
         return VariableKind::Composer;
     }
-    if(var == QLatin1String{MetaData::Performer}) {
+    if(var == QLatin1StringView{MetaData::Performer}) {
         return VariableKind::Performer;
     }
-    if(var == QLatin1String{MetaData::PlayCount}) {
+    if(var == QLatin1StringView{MetaData::PlayCount} || var == "PLAY_COUNT"_L1) {
         return VariableKind::PlayCount;
     }
-    if(var == QLatin1String{MetaData::Duration}) {
+    if(var == QLatin1StringView{MetaData::Duration} || var == "LENGTH"_L1) {
         return VariableKind::Duration;
     }
-    if(var == QLatin1String{MetaData::DurationSecs}) {
+    if(var == QLatin1StringView{MetaData::DurationSecs} || var == "LENGTH_SECONDS"_L1) {
         return VariableKind::DurationSecs;
     }
-    if(var == QLatin1String{MetaData::DurationMSecs}) {
+    if(var == QLatin1StringView{MetaData::DurationMSecs}) {
         return VariableKind::DurationMSecs;
     }
-    if(var == QLatin1String{MetaData::Comment}) {
+    if(var == QLatin1StringView{MetaData::Comment}) {
         return VariableKind::Comment;
     }
-    if(var == QLatin1String{MetaData::Date}) {
+    if(var == QLatin1StringView{MetaData::Date}) {
         return VariableKind::Date;
     }
-    if(var == QLatin1String{MetaData::Year}) {
+    if(var == QLatin1StringView{MetaData::Year}) {
         return VariableKind::Year;
     }
-    if(var == QLatin1String{MetaData::FileSize}) {
+    if(var == QLatin1StringView{MetaData::FileSize}) {
         return VariableKind::FileSize;
     }
-    if(var == QLatin1String{MetaData::FileSizeNatural}) {
+    if(var == QLatin1StringView{MetaData::FileSizeNatural}) {
         return VariableKind::FileSizeNatural;
     }
-    if(var == QLatin1String{MetaData::Bitrate}) {
+    if(var == QLatin1StringView{MetaData::Bitrate}) {
         return VariableKind::Bitrate;
     }
-    if(var == QLatin1String{MetaData::SampleRate}) {
+    if(var == QLatin1StringView{MetaData::SampleRate}) {
         return VariableKind::SampleRate;
     }
-    if(var == QLatin1String{MetaData::BitDepth}) {
+    if(var == QLatin1StringView{MetaData::BitDepth}) {
         return VariableKind::BitDepth;
     }
-    if(var == QLatin1String{MetaData::FirstPlayed}) {
+    if(var == QLatin1StringView{MetaData::FirstPlayed}) {
         return VariableKind::FirstPlayed;
     }
-    if(var == QLatin1String{MetaData::LastPlayed}) {
+    if(var == QLatin1StringView{MetaData::LastPlayed}) {
         return VariableKind::LastPlayed;
     }
-    if(var == QLatin1String{MetaData::Rating}) {
+    if(var == QLatin1StringView{MetaData::Rating}) {
         return VariableKind::Rating;
     }
-    if(var == QLatin1String{MetaData::RatingNormalized}) {
+    if(var == QLatin1StringView{MetaData::RatingNormalized}) {
         return VariableKind::RatingNormalized;
     }
-    if(var == QLatin1String{MetaData::Stars}) {
+    if(var == QLatin1StringView{MetaData::Stars}) {
         return VariableKind::Stars;
     }
-    if(var == QLatin1String{MetaData::RatingStars}) {
+    if(var == QLatin1StringView{MetaData::RatingStars}) {
         return VariableKind::RatingStars;
     }
-    if(var == QLatin1String{MetaData::RatingStarsPadded}) {
+    if(var == QLatin1StringView{MetaData::RatingStarsPadded}) {
         return VariableKind::RatingStarsPadded;
     }
-    if(var == QLatin1String{MetaData::RatingEditor}) {
+    if(var == QLatin1StringView{MetaData::RatingEditor}) {
         return VariableKind::RatingEditor;
     }
-    if(var == QLatin1String{MetaData::Codec}) {
+    if(var == QLatin1StringView{MetaData::Codec}) {
         return VariableKind::Codec;
     }
-    if(var == QLatin1String{MetaData::CodecProfile}) {
+    if(var == QLatin1StringView{MetaData::CodecProfile}) {
         return VariableKind::CodecProfile;
     }
-    if(var == QLatin1String{MetaData::Tool}) {
+    if(var == QLatin1StringView{MetaData::Tool}) {
         return VariableKind::Tool;
     }
-    if(var == QLatin1String{MetaData::TagType}) {
+    if(var == QLatin1StringView{MetaData::TagType}) {
         return VariableKind::TagType;
     }
-    if(var == QLatin1String{MetaData::Encoding}) {
+    if(var == QLatin1StringView{MetaData::Encoding}) {
         return VariableKind::Encoding;
     }
-    if(var == QLatin1String{MetaData::Channels}) {
+    if(var == QLatin1StringView{MetaData::Channels}) {
         return VariableKind::Channels;
     }
-    if(var == QLatin1String{MetaData::CreatedTime}) {
+    if(var == QLatin1StringView{MetaData::CreatedTime}) {
         return VariableKind::CreatedTime;
     }
-    if(var == QLatin1String{MetaData::AddedTime}) {
+    if(var == QLatin1StringView{MetaData::AddedTime}) {
         return VariableKind::AddedTime;
     }
-    if(var == QLatin1String{MetaData::LastModified}) {
+    if(var == QLatin1StringView{MetaData::LastModified}) {
         return VariableKind::LastModified;
     }
-    if(var == QLatin1String{MetaData::FilePath}) {
+    if(var == QLatin1StringView{MetaData::FilePath}) {
         return VariableKind::FilePath;
     }
-    if(var == QLatin1String{MetaData::FileName}) {
+    if(var == QLatin1StringView{MetaData::FileName}) {
         return VariableKind::FileName;
     }
-    if(var == QLatin1String{MetaData::Extension}) {
+    if(var == QLatin1StringView{MetaData::Extension}) {
         return VariableKind::Extension;
     }
-    if(var == QLatin1String{MetaData::FileNameWithExt}) {
+    if(var == QLatin1StringView{MetaData::FileNameWithExt}) {
         return VariableKind::FileNameWithExt;
     }
-    if(var == QLatin1String{MetaData::Directory}) {
+    if(var == QLatin1StringView{MetaData::Directory}) {
         return VariableKind::Directory;
     }
-    if(var == QLatin1String{MetaData::Path}) {
+    if(var == QLatin1StringView{MetaData::Path}) {
         return VariableKind::Path;
     }
-    if(var == QLatin1String{MetaData::Subsong}) {
+    if(var == QLatin1StringView{MetaData::Subsong}) {
         return VariableKind::Subsong;
     }
-    if(var == QLatin1String{MetaData::RGTrackGain}) {
+    if(var == QLatin1StringView{MetaData::RGTrackGain}) {
         return VariableKind::RGTrackGain;
     }
-    if(var == QLatin1String{MetaData::RGTrackPeak}) {
+    if(var == QLatin1StringView{MetaData::RGTrackPeak}) {
         return VariableKind::RGTrackPeak;
     }
-    if(var == QLatin1String{MetaData::RGTrackPeakDB}) {
+    if(var == QLatin1StringView{MetaData::RGTrackPeakDB}) {
         return VariableKind::RGTrackPeakDB;
     }
-    if(var == QLatin1String{MetaData::RGAlbumGain}) {
+    if(var == QLatin1StringView{MetaData::RGAlbumGain}) {
         return VariableKind::RGAlbumGain;
     }
-    if(var == QLatin1String{MetaData::RGAlbumPeak}) {
+    if(var == QLatin1StringView{MetaData::RGAlbumPeak}) {
         return VariableKind::RGAlbumPeak;
     }
-    if(var == QLatin1String{MetaData::RGAlbumPeakDB}) {
+    if(var == QLatin1StringView{MetaData::RGAlbumPeakDB}) {
         return VariableKind::RGAlbumPeakDB;
     }
     if(var == "TRACKCOUNT"_L1) {
@@ -260,13 +260,13 @@ VariableKind resolveBuiltInVariableKind(const QString& var)
     if(var == "PLAYBACK_TIME"_L1) {
         return VariableKind::PlaybackTime;
     }
-    if(var == "PLAYBACK_TIME_S"_L1) {
+    if(var == "PLAYBACK_TIME_S"_L1 || var == "PLAYBACK_TIME_SECONDS"_L1) {
         return VariableKind::PlaybackTimeSeconds;
     }
     if(var == "PLAYBACK_TIME_REMAINING"_L1) {
         return VariableKind::PlaybackTimeRemaining;
     }
-    if(var == "PLAYBACK_TIME_REMAINING_S"_L1) {
+    if(var == "PLAYBACK_TIME_REMAINING_S"_L1 || var == "PLAYBACK_TIME_REMAINING_SECONDS"_L1) {
         return VariableKind::PlaybackTimeRemainingSeconds;
     }
     if(var == "ISPLAYING"_L1) {
