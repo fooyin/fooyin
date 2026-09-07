@@ -157,7 +157,7 @@ private:
     QVBoxLayout* m_shortcutRowsLayout;
     QPushButton* m_resetShortcut;
     QPushButton* m_addShortcut;
-    QPushButton* m_registerGlobalShortcut;
+    QCheckBox* m_globalShortcut;
     QPushButton* m_configureGlobalShortcuts;
     QLabel* m_conflictLabel;
     QPushButton* m_reassignButton;
@@ -175,7 +175,7 @@ ShortcutsPageWidget::ShortcutsPageWidget(ActionManager* actionManager)
     , m_shortcutRowsLayout{new QVBoxLayout(m_shortcutRows)}
     , m_resetShortcut{new QPushButton(tr("Reset to default"), this)}
     , m_addShortcut{new QPushButton(Gui::iconFromTheme(Constants::Icons::Add), tr("Add shortcut"), this)}
-    , m_registerGlobalShortcut{new QPushButton(this)}
+    , m_globalShortcut{new QCheckBox(tr("Global"), this)}
     , m_configureGlobalShortcuts{new QPushButton(tr("Configure global shortcuts…"), this)}
     , m_conflictLabel{new QLabel(this)}
     , m_reassignButton{new QPushButton(tr("Overwrite Shortcut"), this)}
@@ -210,7 +210,7 @@ ShortcutsPageWidget::ShortcutsPageWidget(ActionManager* actionManager)
 
     auto* shortcutActions = new QHBoxLayout();
     shortcutActions->addWidget(m_addShortcut);
-    shortcutActions->addWidget(m_registerGlobalShortcut);
+    shortcutActions->addWidget(m_globalShortcut);
     shortcutActions->addWidget(m_configureGlobalShortcuts);
     shortcutActions->addStretch(1);
     shortcutActions->addWidget(m_resetShortcut);
@@ -230,9 +230,9 @@ ShortcutsPageWidget::ShortcutsPageWidget(ActionManager* actionManager)
 
     QObject::connect(m_resetShortcut, &QAbstractButton::clicked, this, &ShortcutsPageWidget::resetCurrentShortcut);
     QObject::connect(m_addShortcut, &QAbstractButton::clicked, this, [this]() { addShortcutInput({}, true); });
-    QObject::connect(m_registerGlobalShortcut, &QAbstractButton::clicked, this, [this] {
+    QObject::connect(m_globalShortcut, &QCheckBox::toggled, this, [this](bool checked) {
         if(Command* command = selectedCommand()) {
-            m_model->globalShortcutRegistrationChanged(command, !m_model->isGlobalShortcutRegistered(command));
+            m_model->globalShortcutRegistrationChanged(command, checked);
             updateShortcutButtons();
         }
     });
@@ -441,10 +441,14 @@ void ShortcutsPageWidget::updateShortcutButtons()
         row.removeButton->setEnabled(canRemove);
     }
 
-    m_registerGlobalShortcut->setVisible(systemManaged);
-    m_registerGlobalShortcut->setEnabled(systemManaged && eligible);
-    m_registerGlobalShortcut->setText(globalShortcutRegistered ? tr("Disable global shortcut")
-                                                               : tr("Register globally…"));
+    m_globalShortcut->setVisible(systemManaged);
+    m_globalShortcut->setEnabled(systemManaged && eligible);
+
+    {
+        const QSignalBlocker blocker{m_globalShortcut};
+        m_globalShortcut->setChecked(globalShortcutRegistered);
+    }
+
     m_configureGlobalShortcuts->setVisible(systemManaged && configurationAvailable && globalShortcutRegistered);
     m_configureGlobalShortcuts->setEnabled(command && command->isGlobalShortcutRegistered());
 }
