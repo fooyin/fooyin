@@ -1025,6 +1025,15 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
                      &PlaylistWidget::startPlayback);
     QObject::connect(m_searchController, &PlaylistSearchController::queueCurrentRequested, this,
                      [this]() { m_session->queueSelectedTracks(sessionHost(), false, false); });
+    QObject::connect(m_playlistController->playlistHandler(), &PlaylistHandler::playlistItemEnsureVisible, this,
+                     [this](Playlist* playlist, int playlistIndex) {
+                         if(playlist == m_playlistController->currentPlaylist()) {
+                             const QModelIndex index = m_model->indexAtPlaylistIndex(playlistIndex, true);
+                             if(index.isValid()) {
+                                 m_playlistView->scrollTo(index, QAbstractItemView::EnsureVisible);
+                             }
+                         }
+                     });
 
     m_layout->addWidget(m_playlistView);
     m_layout->addWidget(m_searchController->widget());

@@ -59,7 +59,7 @@ public:
     [[nodiscard]] Playlist* playlistByName(const QString& name) const;
 
     [[nodiscard]] PlaylistList playlists() const;
-    /** Returns removed playlists retained for session-lifetime pointer stability. */
+    /** Returns removed playlists retained for restoration until purged. */
     [[nodiscard]] PlaylistList removedPlaylists() const;
     /** Returns removed playlists still pending export or deletion at shutdown. */
     [[nodiscard]] PlaylistList pendingRemovedPlaylists() const;
@@ -118,6 +118,8 @@ public:
     void changeActivePlaylist(const UId& id);
     void changeActivePlaylist(Playlist* playlist);
 
+    bool sortPlaylistsByName(Qt::SortOrder order = Qt::AscendingOrder);
+
     /** Returns the current track in the active playlist with metadata populated if needed. */
     [[nodiscard]] PlaylistTrack currentTrack() const;
     /** Returns a preview track relative to the current index in the active playlist. */
@@ -130,6 +132,10 @@ public:
     void setPlaylistLocked(const UId& id, bool locked);
     void removePlaylist(const UId& id);
     Playlist* restorePlaylist(const UId& id);
+    /** Discards restoration history while preserving pending export or deletion at shutdown. */
+    void purgeRemovedPlaylists(const std::vector<UId>& ids);
+
+    void ensurePlaylistItemVisible(const UId& id, int index);
 
     /** Returns the playlist currently being played (nullptr if not playing) */
     [[nodiscard]] Playlist* activePlaylist() const;
@@ -142,6 +148,7 @@ public:
     void savePlaylist(const UId& id);
 
 Q_SIGNALS:
+    void playlistItemEnsureVisible(Fooyin::Playlist* playlist, int index);
     void playlistsPopulated();
     void playlistAdded(Fooyin::Playlist* playlist);
     void playlistRemoved(Fooyin::Playlist* playlist);
