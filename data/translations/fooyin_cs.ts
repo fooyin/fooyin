@@ -1327,7 +1327,7 @@
     <message>
         <location filename="../../src/core/engine/verification/accuraterip.cpp" line="495"/>
         <source>The selected tracks do not form a correct gapless CD rip.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrané skladby netvoří správně extrahované CD bez mezer.</translation>
     </message>
 </context>
 <context>
@@ -2145,7 +2145,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="53"/>
         <source>Drive Settings — %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení mechaniky — %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="58"/>
@@ -2912,7 +2912,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="184"/>
         <source>Custom image — %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Vlastní obrázek — %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="192"/>
@@ -3085,57 +3085,57 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="69"/>
         <source>Converted and verified</source>
-        <translation type="unfinished"></translation>
+        <translation>Převedeno a ověřeno</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="70"/>
         <source>Converted</source>
-        <translation type="unfinished"></translation>
+        <translation>Převedeno</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="72"/>
         <source>Skipped</source>
-        <translation type="unfinished"></translation>
+        <translation>Přeskočeno</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="74"/>
         <source>Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Selhalo</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="76"/>
         <source>Cancelled</source>
-        <translation type="unfinished">Zrušeno</translation>
+        <translation>Zrušeno</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="113"/>
         <source>Audio Conversion Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Výsledky převodu</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="121"/>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation>Název</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="121"/>
         <source>Status</source>
-        <translation type="unfinished">Stav</translation>
+        <translation>Stav</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="122"/>
         <source>Output</source>
-        <translation type="unfinished">Výstup</translation>
+        <translation>Výstup</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="124"/>
         <source>Details</source>
-        <translation type="unfinished">Podrobnosti</translation>
+        <translation>Podrobnosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="158"/>
         <source>Converted: %1 | Skipped: %2 | Failed: %3 | Cancelled: %4</source>
-        <translation type="unfinished"></translation>
+        <translation>Převedeno: %1 | Přeskočeno: %2 | Selhalo: %3 | Zrušeno: %4</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="475"/>
@@ -3297,7 +3297,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="118"/>
         <source>Show converted files when finished</source>
-        <translation type="unfinished"></translation>
+        <translation>Po dokončení zobrazit převedené soubory</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="120"/>
@@ -3742,7 +3742,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1247"/>
         <source>Show converted files</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit převedené soubory</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1250"/>
@@ -6045,7 +6045,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="485"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished">Příště se neptat</translation>
+        <translation>Příště se neptat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="498"/>
@@ -6165,7 +6165,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="113"/>
         <source>Confirm before deleting source archives after extraction</source>
-        <translation type="unfinished"></translation>
+        <translation>Před smazáním archivů po extrakci požadovat potvrzení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="134"/>
@@ -6459,7 +6459,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="59"/>
         <source>Manage columns…</source>
-        <translation type="unfinished"></translation>
+        <translation>Spravovat sloupce…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="106"/>
@@ -6900,17 +6900,17 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="277"/>
         <source>macOS global shortcuts must contain one key combination</source>
-        <translation type="unfinished"></translation>
+        <translation>Globální zkratky pro macOS musí obsahovat jednu klávesovou kombinaci</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="285"/>
         <source>The shortcut cannot be represented on macOS</source>
-        <translation type="unfinished"></translation>
+        <translation>Zkratku nelze interpretovat na macOS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="297"/>
         <source>macOS rejected this shortcut (error %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zkratka byla macOS odmítnuta (chyba %1)</translation>
     </message>
 </context>
 <context>
@@ -6918,32 +6918,32 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="116"/>
         <source>The shortcut cannot be represented by the Wayland portal</source>
-        <translation type="unfinished"></translation>
+        <translation>Zkratku nelze interpretovat ve Wayland portálu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="275"/>
         <source>Global shortcut registration was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Registrace globálních zkratek byla zrušena</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="276"/>
         <source>The Wayland portal rejected the global shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Globální zkratky byly Wayland portálem odmítnuty</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="284"/>
         <source>The Wayland portal returned an invalid shortcut session</source>
-        <translation type="unfinished"></translation>
+        <translation>Wayland portál vrátil neplatnou relaci zkratek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="308"/>
         <source>The Wayland portal did not bind this shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Wayland portál tuto zkratku nepřiřadil</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="334"/>
         <source>The Wayland global shortcut session was closed</source>
-        <translation type="unfinished"></translation>
+        <translation>Wayland relace globálních zkratek byla ukončena</translation>
     </message>
 </context>
 <context>
@@ -6951,22 +6951,22 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="165"/>
         <source>Windows global shortcuts must contain one key combination</source>
-        <translation type="unfinished"></translation>
+        <translation>Globální zkratky pro Windows musí obsahovat jednu klávesovou kombinaci</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="173"/>
         <source>The shortcut cannot be represented on Windows</source>
-        <translation type="unfinished"></translation>
+        <translation>Zkratku nelze ve Windows interpretovat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="179"/>
         <source>Windows cannot register any more global shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows nemůže zaregistrovat žádné další globální zkratky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="188"/>
         <source>Windows rejected this shortcut (error %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zkratka byla Windows odmítnuta (chyba %1)</translation>
     </message>
 </context>
 <context>
@@ -6974,22 +6974,22 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutx11backend.cpp" line="247"/>
         <source>X11 global shortcuts must contain one key combination</source>
-        <translation type="unfinished"></translation>
+        <translation>Globální zkratky pro X11 musí obsahovat jednu klávesovou kombinaci</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutx11backend.cpp" line="260"/>
         <source>The shortcut cannot be represented on X11</source>
-        <translation type="unfinished"></translation>
+        <translation>Zkratku nelze v X11 interpretovat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutx11backend.cpp" line="263"/>
         <source>The shortcut is already registered</source>
-        <translation type="unfinished"></translation>
+        <translation>Zkratka je již zaregistrována</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutx11backend.cpp" line="267"/>
         <source>Another application has already registered this shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuto zkratku si již zaregistrovala jiná aplikace</translation>
     </message>
 </context>
 <context>
@@ -7880,7 +7880,7 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="197"/>
         <source>Current: Custom image — %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuální: vlastní obrázek — %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="201"/>
@@ -9140,7 +9140,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="65"/>
         <source>Manage groupings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Spravovat seskupení…</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="82"/>
@@ -9365,7 +9365,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="720"/>
         <source>Manage groupings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Spravovat seskupení…</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="765"/>
