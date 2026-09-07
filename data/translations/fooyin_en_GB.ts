@@ -133,44 +133,9 @@
     </message>
 </context>
 <context>
-    <name>Fooyin::ConversionSession</name>
-    <message numerus="yes">
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="208"/>
-        <source>Converted: %Ln track(s)</source>
-        <translation>
-            <numerusform>Converted: %Ln track</numerusform>
-            <numerusform>Converted: %Ln tracks</numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="209"/>
-        <source>Skipped: %Ln track(s)</source>
-        <translation>
-            <numerusform>Skipped: %Ln track</numerusform>
-            <numerusform>Skipped: %Ln tracks</numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="210"/>
-        <source>Failed: %Ln track(s)</source>
-        <translation>
-            <numerusform>Failed: %Ln track</numerusform>
-            <numerusform>Failed: %Ln tracks</numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="211"/>
-        <source>Cancelled: %Ln track(s)</source>
-        <translation>
-            <numerusform>Cancelled: %Ln track</numerusform>
-            <numerusform>Cancelled: %Ln tracks</numerusform>
-        </translation>
-    </message>
-</context>
-<context>
     <name>Fooyin::ConverterSetupDialog</name>
     <message numerus="yes">
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1219"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1230"/>
         <source>%Ln DSP(s)</source>
         <translation>
             <numerusform>%Ln DSP</numerusform>
@@ -227,8 +192,8 @@
 <context>
     <name>Fooyin::FileOps::FileOpsDialog</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="497"/>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="513"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="511"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="527"/>
         <source>Pending operation(s): %Ln</source>
         <translation>
             <numerusform>Pending operation: %Ln</numerusform>
@@ -236,7 +201,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="530"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="544"/>
         <source>Aborted: %Ln operation(s) not run</source>
         <translation>
             <numerusform>Aborted: %Ln operation not run</numerusform>
@@ -244,7 +209,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="536"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="550"/>
         <source>Completed %Ln operation(s)</source>
         <translation>
             <numerusform>Completed %Ln operation</numerusform>
@@ -252,7 +217,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="543"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="557"/>
         <source>%Ln succeeded</source>
         <translation>
             <numerusform>%Ln succeeded</numerusform>
@@ -260,7 +225,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="546"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="560"/>
         <source>%Ln failed</source>
         <translation>
             <numerusform>%Ln failed</numerusform>
@@ -268,7 +233,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="549"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="563"/>
         <source>%Ln skipped</source>
         <translation>
             <numerusform>%Ln skipped</numerusform>
@@ -276,7 +241,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="552"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="566"/>
         <source>%Ln cancelled</source>
         <translation>
             <numerusform>%Ln cancelled</numerusform>
@@ -284,7 +249,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="557"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="571"/>
         <source>Completed %Ln operation(s): %1</source>
         <translation>
             <numerusform>Completed %Ln operation: %1</numerusform>
@@ -295,7 +260,7 @@
 <context>
     <name>Fooyin::FileOps::FileOpsPlugin</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="204"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="234"/>
         <source>Deleted %Ln track(s)</source>
         <translation>
             <numerusform>Deleted %Ln track</numerusform>
@@ -363,7 +328,7 @@
 <context>
     <name>Fooyin::MetadataLookupDialog</name>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="522"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="524"/>
         <source>Found %Ln release(s).</source>
         <translation>
             <numerusform>Found %Ln release.</numerusform>
@@ -371,7 +336,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="909"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="911"/>
         <source>Metadata will be applied to %Ln track(s).</source>
         <translation>
             <numerusform>Metadata will be applied to %Ln track.</numerusform>
@@ -379,7 +344,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="911"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="913"/>
         <source>%Ln track(s) will be updated.</source>
         <translation>
             <numerusform>%Ln track will be updated.</numerusform>
@@ -387,7 +352,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="959"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="961"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
@@ -395,8 +360,8 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="980"/>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="985"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="982"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="987"/>
         <source>%Ln succeeded</source>
         <translation>
             <numerusform>%Ln succeeded</numerusform>
@@ -404,8 +369,8 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="981"/>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="986"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="983"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="988"/>
         <source>%Ln failed</source>
         <translation>
             <numerusform>%Ln failed</numerusform>
@@ -413,7 +378,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="991"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="993"/>
         <source>Metadata was updated in %Ln track(s).</source>
         <translation>
             <numerusform>Metadata was updated in %Ln track.</numerusform>
@@ -454,7 +419,7 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1696"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1715"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
@@ -559,11 +524,30 @@
 <context>
     <name>Fooyin::SearchDialog</name>
     <message numerus="yes">
-        <location filename="../../src/gui/dialog/searchdialog.cpp" line="148"/>
+        <location filename="../../src/gui/dialog/searchdialog.cpp" line="215"/>
         <source>%Ln result(s)</source>
         <translation>
             <numerusform>%Ln result</numerusform>
             <numerusform>%Ln results</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::VerificationController</name>
+    <message numerus="yes">
+        <location filename="../../src/gui/verification/verificationcontroller.cpp" line="197"/>
+        <source>%1 of %Ln item(s) decoded successfully.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/verification/verificationcontroller.cpp" line="388"/>
+        <source>Problems found in %Ln item(s).</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
 </context>
