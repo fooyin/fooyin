@@ -2196,7 +2196,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="88"/>
         <source>Read offset correction</source>
-        <translation type="unfinished"></translation>
+        <translation>Läsförskjutningskorrigering</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="91"/>
@@ -2206,7 +2206,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="93"/>
         <source>Drive speed limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Enhetshastighetsgräns</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="119"/>
@@ -2282,12 +2282,12 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="350"/>
         <source>Could not limit CD read speed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte begränsa CD-läshastighet: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="362"/>
         <source>The selected CD drive became unavailable; extraction settings for %1 are being used</source>
-        <translation type="unfinished"></translation>
+        <translation>Den valda CD-enheten blev otillgänglig; extraheringsinställningar för %1 används</translation>
     </message>
 </context>
 <context>
@@ -2322,12 +2322,12 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="199"/>
         <source>AccurateRip lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip-uppsökning misslyckades: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="206"/>
         <source>AccurateRip returned an unexpectedly large disc record.</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip returnerade en oväntad stor skivuppgift.</translation>
     </message>
 </context>
 <context>
@@ -2377,12 +2377,12 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="261"/>
         <source>The selected optical drive is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Den valda optiska enheten är otillgänglig</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="269"/>
         <source>The selected optical drive is unavailable: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Den valda optiska enheten är otillgänglig: %1</translation>
     </message>
 </context>
 <context>
@@ -2395,14 +2395,14 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="104"/>
         <source>Check the disk drive device permissions.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kontrollera skivenhetens enhetsrättigheter.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="306"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="384"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="523"/>
         <source>Failed to access audio CD drive %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Misslyckades att komma åt ljud-CD-enhet %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="316"/>
