@@ -425,11 +425,11 @@ QImage loadImageFromEmbedded(const CoverLoader& loader, const QString& cachePath
 
     QImage cover = loader.originalSize ? readImageOriginal(coverData) : readImage(coverData);
 
-    if(loader.isThumb && !cover.isNull() && !QFileInfo::exists(cachePath)) {
-        if(!saveThumbnail(cover, loader.key)) {
+    if(loader.isThumb && !cover.isNull()) {
+        if(!QFileInfo::exists(cachePath) && !saveThumbnail(cover, loader.key)) {
             qCInfo(COV_REPO) << "Failed to save cover thumbnail for track:" << loader.track.filepath();
         }
-        cover = Fooyin::Utils::scaleImage(cover, coverThumbnailPixelSize(loader.size), Fooyin::Utils::windowDpr());
+        cover = Utils::scaleImage(cover, coverThumbnailPixelSize(loader.size), Utils::windowDpr());
     }
 
     return cover;
@@ -450,8 +450,8 @@ QImage loadImageFromRemoteArtworkData(const CoverLoader& loader, const QString& 
         return {};
     }
 
-    if(loader.isThumb && !QFileInfo::exists(cachePath)) {
-        if(!saveThumbnail(cover, loader.key)) {
+    if(loader.isThumb) {
+        if(!QFileInfo::exists(cachePath) && !saveThumbnail(cover, loader.key)) {
             qCInfo(COV_REPO) << "Failed to save remote cover thumbnail for track:" << loader.track.filepath();
         }
         cover = Utils::scaleImage(cover, coverThumbnailPixelSize(loader.size), Utils::windowDpr());
