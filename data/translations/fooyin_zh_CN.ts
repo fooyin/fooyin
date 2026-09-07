@@ -394,7 +394,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Normalised rating</source>
-        <translation type="unfinished"></translation>
+        <translation>标准化评级</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="161"/>
@@ -1306,12 +1306,12 @@
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="58"/>
         <source>Five star compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>五星兼容性</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="60"/>
         <source>Raw 0–255 byte scale</source>
-        <translation type="unfinished"></translation>
+        <translation>原始 0–255 字节量</translation>
     </message>
 </context>
 <context>
@@ -2072,22 +2072,22 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="76"/>
         <source>AccurateRip verification of mixed-mode discs is not supported</source>
-        <translation type="unfinished"></translation>
+        <translation>不支持混合模式光盘的 AccurateRip 验证</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="126"/>
         <source>Truncated AccurateRip response header</source>
-        <translation type="unfinished"></translation>
+        <translation>截断的 AccurateRip 响应头</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="138"/>
         <source>Invalid AccurateRip response record</source>
-        <translation type="unfinished"></translation>
+        <translation>无效的 AccurateRip 响应记录</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="158"/>
         <source>AccurateRip response did not contain the requested disc</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip 响应不包含请求的光盘</translation>
     </message>
 </context>
 <context>
@@ -2095,30 +2095,30 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="61"/>
         <source>The CD drive is already in use</source>
-        <translation type="unfinished"></translation>
+        <translation>光驱正在使用中</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="355"/>
         <source>Audio CD identity is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>音频 CD 标识不可用</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="374"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="586"/>
         <source>The disc in the CD drive has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>CD 驱动器中的光盘已损坏</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="466"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="521"/>
         <source>Invalid CD disc identity</source>
-        <translation type="unfinished"></translation>
+        <translation>无效的 CD 光盘标识</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="498"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="609"/>
         <source>The requested audio CD is not inserted</source>
-        <translation type="unfinished"></translation>
+        <translation>请求的音频 CD 未插入</translation>
     </message>
 </context>
 <context>
@@ -2126,12 +2126,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/cdda/drive/cddrivebackend.cpp" line="40"/>
         <source>Secure CD extraction is unavailable for this drive backend</source>
-        <translation type="unfinished"></translation>
+        <translation>此驱动器后端不支持安全 CD 提取</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/cddrivebackend.cpp" line="47"/>
         <source>CD read speed control is unavailable for this drive backend</source>
-        <translation type="unfinished"></translation>
+        <translation>此驱动器后端不支持 CD 读取速度控制</translation>
     </message>
 </context>
 <context>
@@ -2139,19 +2139,21 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="49"/>
         <source>Lookup with AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 AccurateRip 进行查找</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="53"/>
         <source>Drive Settings - %1</source>
-        <translation type="unfinished"></translation>
+        <translation>驱动设置 - %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="58"/>
         <source>Compensates for a drive that reads slightly before or after the requested CD position.
 Positive values read later; negative values read earlier.
 Use AccurateRip to look up the correction for this drive model, or enter a known value manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>补偿驱动器读取位置略早或略晚于所请求的 CD 位置。
+正数值表示读取时间较晚；负数值表示读取时间较早。
+请使用 AccurateRip 查找此驱动器型号的校正值，或手动输入已知值。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="62"/>
@@ -2161,12 +2163,12 @@ Use AccurateRip to look up the correction for this drive model, or enter a known
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="63"/>
         <source>Standard</source>
-        <translation type="unfinished"></translation>
+        <translation>标准</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="64"/>
         <source>Paranoid</source>
-        <translation type="unfinished"></translation>
+        <translation>偏执</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="66"/>
@@ -2174,7 +2176,10 @@ Use AccurateRip to look up the correction for this drive model, or enter a known
 Disabled: direct reads with no verification (fastest).
 Standard: verifies overlapping reads and retries inconsistencies (slower).
 Paranoid: performs the most thorough available checking and additional retries (slowest).</source>
-        <translation type="unfinished"></translation>
+        <translation>在刻录过程中进行错误检测和纠正，播放不受影响。
+禁用：直接读取，不进行验证（最快）。
+标准：验证重叠读取并重试不一致情况（较慢）。
+谨慎：执行最全面的检查并增加额外重试（最慢）。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="71"/>
@@ -2184,59 +2189,59 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="77"/>
         <source>Limits the drive&apos;s read speed while ripping; playback is unaffected.</source>
-        <translation type="unfinished"></translation>
+        <translation>在刻录时限制驱动器的读取速度，播放不受影响。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="78"/>
         <source>This drive doesn&apos;t support read-speed control.</source>
-        <translation type="unfinished"></translation>
+        <translation>此驱动不支持读取速度控制。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="88"/>
         <source>Read offset correction</source>
-        <translation type="unfinished"></translation>
+        <translation>读取偏移校正</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="91"/>
         <source>Ripping security</source>
-        <translation type="unfinished"></translation>
+        <translation>抓轨安全性</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="93"/>
         <source>Drive speed limit</source>
-        <translation type="unfinished"></translation>
+        <translation>驱动速度限制</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="119"/>
         <source>Looking up drive…</source>
-        <translation type="unfinished"></translation>
+        <translation>正在查找驱动器…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="129"/>
         <source>Lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>查找失败：%1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="135"/>
         <source>AccurateRip returned an unexpectedly large drive list.</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip 返回了一个意外地庞大的驱动器列表。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="142"/>
         <source>No unambiguous entry was found for this drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>未找到此驱动器的明确条目。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="147"/>
         <source>This drive was purged because its offset is not consistent.</source>
-        <translation type="unfinished"></translation>
+        <translation>此驱动程序被清除，因为其偏移量不一致。</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="154"/>
         <source>Found correction: %1 (%Ln submission(s), %2% agreement).</source>
         <extracomment>Correction = CD Drive read offset correction</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>发现修正：%1（%Ln 提交，%2% 一致）。</numerusform>
         </translation>
     </message>
 </context>
@@ -2245,12 +2250,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="42"/>
         <source>CD sector conversion overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>CD 扇区转换溢出</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="88"/>
         <source>The CD has an invalid TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>CD 的目录表无效</translation>
     </message>
 </context>
 <context>
@@ -2258,33 +2263,33 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="180"/>
         <source>Audio CD decoder is not initialised</source>
-        <translation type="unfinished"></translation>
+        <translation>音频 CD 解码器未初始化</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="187"/>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="321"/>
         <source>Audio CD read was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>音频 CD 读取已取消</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="268"/>
         <source>CD drive returned no audio data</source>
-        <translation type="unfinished"></translation>
+        <translation>CD 驱动器没有返回音频数据</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="335"/>
         <source>The disc in the CD drive has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>CD 驱动器中的光盘已损坏</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="350"/>
         <source>Could not limit CD read speed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>无法限制 CD 读取速度：%1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="362"/>
         <source>The selected CD drive became unavailable; extraction settings for %1 are being used</source>
-        <translation type="unfinished"></translation>
+        <translation>所选的 CD 驱动器已不可用；正在使用 %1 的提取设置</translation>
     </message>
 </context>
 <context>

@@ -394,7 +394,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Normalised rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalisierte Bewertung</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="161"/>
@@ -570,12 +570,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="350"/>
         <source>Returns the platform path separator</source>
-        <translation type="unfinished"></translation>
+        <translation>Gibt den Pfadtrenner der Plattform zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="408"/>
         <source>Returns the CRC-32 checksum of the text</source>
-        <translation type="unfinished"></translation>
+        <translation>Gibt die CRC-32-Prüfsumme des Textes zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="470"/>
@@ -822,7 +822,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="292"/>
         <source>Formats a number in hexadecimal with leading zeroes</source>
-        <translation type="unfinished"></translation>
+        <translation>Formatiert eine Nummer in hexadezimal mit vorangestellten Nullen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="294"/>
@@ -879,17 +879,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="297"/>
         <source>Returns the first match or capture; group 0 is the full match</source>
-        <translation type="unfinished"></translation>
+        <translation>Gibt die erste Übereinstimmung oder Erfassung; Gruppe 0 ist die ganze Übereinstimmung</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="300"/>
         <source>Returns all matches or captures; group 0 is the full match</source>
-        <translation type="unfinished"></translation>
+        <translation>Gibt alle Übereinstimmungen oder Erfassungen zurück; Gruppe 0 ist die ganze Übereinstimmung</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="303"/>
         <source>Replaces all regular expression matches; flags: i, m, s, x, U</source>
-        <translation type="unfinished"></translation>
+        <translation>Ersetzt alle Treffer des regulären Ausdrucks; Flags: i, m, s, x, U</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="305"/>
@@ -974,7 +974,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="346"/>
         <source>Tests a regular expression match; flags: i, m, s, x, U</source>
-        <translation type="unfinished"></translation>
+        <translation>Testet Übereinstimmungen des regulären Ausdrucks; Flags: i, m, s, x, U</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="348"/>
@@ -1296,22 +1296,22 @@
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="34"/>
         <source>Automatic detection</source>
-        <translation type="unfinished">Automatische Erkennung</translation>
+        <translation>Automatische Erkennung</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="56"/>
         <source>Default</source>
-        <translation type="unfinished">Standard</translation>
+        <translation>Standard</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="58"/>
         <source>Five star compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Fünf-Stern-Kompatibilität</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="60"/>
         <source>Raw 0–255 byte scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Rohwertskala von 0 bis 255 Byte</translation>
     </message>
 </context>
 <context>
@@ -2076,22 +2076,22 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="76"/>
         <source>AccurateRip verification of mixed-mode discs is not supported</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip-Verifizierung von CDs im gemischten Modus wird nicht unterstützt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="126"/>
         <source>Truncated AccurateRip response header</source>
-        <translation type="unfinished"></translation>
+        <translation>Gekürzter AccurateRip-Antwort-Header</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="138"/>
         <source>Invalid AccurateRip response record</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültiger AccurateRip-Antwortdatensatz</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="158"/>
         <source>AccurateRip response did not contain the requested disc</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip-Antwort enthielt nicht die angeforderte CD</translation>
     </message>
 </context>
 <context>
@@ -2099,30 +2099,30 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="61"/>
         <source>The CD drive is already in use</source>
-        <translation type="unfinished"></translation>
+        <translation>Das CD-Laufwerk ist bereits in Verwendung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="355"/>
         <source>Audio CD identity is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio-CD-Identität ist nicht verfügbar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="374"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="586"/>
         <source>The disc in the CD drive has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Die CD im CD-Laufwerk hat sich geändert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="466"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="521"/>
         <source>Invalid CD disc identity</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige CD-Identität</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="498"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="609"/>
         <source>The requested audio CD is not inserted</source>
-        <translation type="unfinished"></translation>
+        <translation>Die angeforderte Audio-CD ist nicht eingelegt</translation>
     </message>
 </context>
 <context>
@@ -2130,12 +2130,12 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/plugins/cdda/drive/cddrivebackend.cpp" line="40"/>
         <source>Secure CD extraction is unavailable for this drive backend</source>
-        <translation type="unfinished"></translation>
+        <translation>Sichere CD-Extrahierung ist für dieses CD-Laufwerk-Backend nicht verfügbar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/cddrivebackend.cpp" line="47"/>
         <source>CD read speed control is unavailable for this drive backend</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellung der CD-Lesegeschwindigkeit ist für dieses CD-Laufwerk-Backend nicht verfügbar</translation>
     </message>
 </context>
 <context>
@@ -2143,34 +2143,36 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="49"/>
         <source>Lookup with AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit AccurateRip nachschlagen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="53"/>
         <source>Drive Settings - %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen: Laufwerk – %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="58"/>
         <source>Compensates for a drive that reads slightly before or after the requested CD position.
 Positive values read later; negative values read earlier.
 Use AccurateRip to look up the correction for this drive model, or enter a known value manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kompensiert, wenn das Laufwerk die CD etwas vor oder nach der angeforderten Position liest.
+Positive Werte verzögern das Lesen; negative Werte ziehen es vor.
+Verwende AccurateRip, um den Korrekturwert dieses Laufwerkmodells zu finden, oder gib einen bekannten Wert ein.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="62"/>
         <source>Disabled</source>
-        <translation type="unfinished">Deaktiviert</translation>
+        <translation>Deaktiviert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="63"/>
         <source>Standard</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="64"/>
         <source>Paranoid</source>
-        <translation type="unfinished"></translation>
+        <translation>Paranoid</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="66"/>
@@ -2178,70 +2180,73 @@ Use AccurateRip to look up the correction for this drive model, or enter a known
 Disabled: direct reads with no verification (fastest).
 Standard: verifies overlapping reads and retries inconsistencies (slower).
 Paranoid: performs the most thorough available checking and additional retries (slowest).</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrolliert die Fehlererkennung und -korrektur während des Rippens; die Wiedergabe ist nicht betroffen.
+Deaktiviert: direkte Lesevorgänge ohne Verifizierung (am schnellsten).
+Standard: verifiziert überlappende Lesevorgänge und unternimmt bei Unregelmäßigkeiten Neuversuche (langsamer).
+Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche durch (am langsamsten).</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="71"/>
         <source>Maximum</source>
-        <translation type="unfinished">Maximum</translation>
+        <translation>Maximum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="77"/>
         <source>Limits the drive&apos;s read speed while ripping; playback is unaffected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Begrenzt die Lesegeschwindigkeit des Laufwerks während des Rippens; die Wiedergabe ist nicht betroffen.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="78"/>
         <source>This drive doesn&apos;t support read-speed control.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieses Laufwerk unterstützt das Einstellen der Lesegeschwindigkeit nicht.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="88"/>
         <source>Read offset correction</source>
-        <translation type="unfinished"></translation>
+        <translation>Lese-Offset-Korrektur</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="91"/>
         <source>Ripping security</source>
-        <translation type="unfinished"></translation>
+        <translation>Rip-Sicherheit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="93"/>
         <source>Drive speed limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Laufwerk-Geschwindigkeitsbegrenzung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="119"/>
         <source>Looking up drive…</source>
-        <translation type="unfinished"></translation>
+        <translation>Laufwerk wird nachgeschlagen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="129"/>
         <source>Lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nachschlagen fehlgeschlagen: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="135"/>
         <source>AccurateRip returned an unexpectedly large drive list.</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip gab eine unerwartet große Laufwerkliste zurück.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="142"/>
         <source>No unambiguous entry was found for this drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>Für dieses Laufwerk wurde kein eindeutiger Eintrag gefunden.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="147"/>
         <source>This drive was purged because its offset is not consistent.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieses Laufwerk wurde gelöscht, weil das Offset nicht gleichmäßig war.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="154"/>
         <source>Found correction: %1 (%Ln submission(s), %2% agreement).</source>
         <extracomment>Correction = CD Drive read offset correction</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Korrektur gefunden: %1 (%Ln Einreichung, %2% Zustimmung).</numerusform>
+            <numerusform>Korrektur gefunden: %1 (%Ln Einreichungen, %2% Zustimmung).</numerusform>
         </translation>
     </message>
 </context>
@@ -2250,12 +2255,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="42"/>
         <source>CD sector conversion overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>Überlauf bei der CD-Sektor-Konvertierung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="88"/>
         <source>The CD has an invalid TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese CD hat ein ungültiges Inhaltsverzeichnis</translation>
     </message>
 </context>
 <context>
@@ -2263,33 +2268,33 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="180"/>
         <source>Audio CD decoder is not initialised</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio-CD-Decoder ist nicht initialisiert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="187"/>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="321"/>
         <source>Audio CD read was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio-CD-Lesevorgang wurde abgebrochen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="268"/>
         <source>CD drive returned no audio data</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Laufwerk hat keine Audiodaten zurückgegeben</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="335"/>
         <source>The disc in the CD drive has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Die CD im Laufwerk hat sich geändert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="350"/>
         <source>Could not limit CD read speed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte CD-Lesegeschwindigkeit nicht begrenzen: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="362"/>
         <source>The selected CD drive became unavailable; extraction settings for %1 are being used</source>
-        <translation type="unfinished"></translation>
+        <translation>Das ausgewählte CD-Laufwerk ist nicht mehr verfügbar; verwende Extrahierungseinstellungen für %1</translation>
     </message>
 </context>
 <context>
@@ -2297,39 +2302,39 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="71"/>
         <source>Open audio &amp;CD…</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne Audio-&amp;CD…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="72"/>
         <source>Open an audio CD for playback or ripping</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne eine Audio-CD für die Wiedergabe oder zum Rippen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="74"/>
         <source>File</source>
-        <translation type="unfinished">Datei</translation>
+        <translation>Datei</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="102"/>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="117"/>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="243"/>
         <source>Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio-CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="193"/>
         <source>This disc is not present in AccurateRip.</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese CD ist nicht in AccurateRip vorhanden.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="194"/>
         <source>AccurateRip lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nachschlagen in AccurateRip fehlgeschlagen: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="201"/>
         <source>AccurateRip returned an unexpectedly large disc record.</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip hat einen unerwartet großen CD-Eintrag zurückgegeben.</translation>
     </message>
 </context>
 <context>
@@ -2337,17 +2342,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="49"/>
         <source>Track %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="53"/>
         <source>Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio-CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="111"/>
         <source>Invalid audio CD identity</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige Audio-CD-Identität</translation>
     </message>
 </context>
 <context>
@@ -2355,23 +2360,23 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="129"/>
         <source>CD read offset correction padded %Ln frame(s) with silence before the readable audio range</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Die CD-Lese-Offset-Korrektur hat %Ln Frame Stille vor dem lesbaren Audiobereich eingefügt</numerusform>
+            <numerusform>Die CD-Lese-Offset-Korrektur hat %Ln Frames Stille vor dem lesbaren Audiobereich eingefügt</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="169"/>
         <source>CD read offset correction padded %Ln frame(s) with silence after the readable audio range</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Die CD-Lese-Offset-Korrektur hat %Ln Frame Stille an den lesbaren Audiobereich angehängt</numerusform>
+            <numerusform>Die CD-Lese-Offset-Korrektur hat %Ln Frames Stille an den lesbaren Audiobereich angehängt</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="233"/>
         <source>CD extraction was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Extrahierung wurde abgebrochen</translation>
     </message>
 </context>
 <context>
@@ -2379,12 +2384,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="261"/>
         <source>The selected optical drive is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Das ausgewählte optische Laufwerk ist nicht verfügbar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="269"/>
         <source>The selected optical drive is unavailable: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Das ausgewählte optische Laufwerk ist nicht verfügbar: %1</translation>
     </message>
 </context>
 <context>
@@ -2392,91 +2397,91 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="99"/>
         <source>Details: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Details: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="104"/>
         <source>Check the disk drive device permissions.</source>
-        <translation type="unfinished"></translation>
+        <translation>Überprüfe die Geräteberechtigungen des CD-Laufwerks.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="306"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="384"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="523"/>
         <source>Failed to access audio CD drive %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte nicht auf Audio-CD-Laufwerk %1 zugreifen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="316"/>
         <source>Failed to read the CD TOC from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte das CD-Inhaltsverzeichnis nicht von %1 lesen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="329"/>
         <source>Failed to read a CD track boundary from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte eine CD-Titelgrenze nicht von %1 lesen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="392"/>
         <source>Failed to read CD audio sectors from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte Audiosektoren nicht von %1 lesen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="421"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="534"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="545"/>
         <source>Failed to initialise secure CD extraction for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte sichere CD-Extrahierung für %1 nicht initialisieren</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="436"/>
         <source>Failed to seek the secure CD reader for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte den sicheren CD-Leser für %1 nicht spulen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="456"/>
         <source>Failed to read securely from audio CD drive %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte nicht sicher vom Audio-CD-Laufwerk %1 lesen</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="467"/>
         <source>CD extraction corrected %Ln read inconsistency event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD-Extraktion korrigierte %Ln Leseinkonsistenz</numerusform>
+            <numerusform>CD-Extraktion korrigierte %Ln Leseinkonsistenzen</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="470"/>
         <source>CD extraction encountered %Ln read error event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD-Extraktion begegnete %Ln Lesefehler</numerusform>
+            <numerusform>CD-Extraktion begegnete %Ln Lesefehlern</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="473"/>
         <source>CD extraction exhausted retries and concealed %Ln unreadable sector event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD-Extraktion hat Wiederholversuche erschöpft und %Ln Vorkommnis unlesbarer Sektoren verborgen</numerusform>
+            <numerusform>CD-Extraktion hat Wiederholversuche erschöpft und %Ln Vorkommnisse unlesbarer Sektoren verborgen</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="484"/>
         <source>The requested CD read-speed limit is invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>Die angeforderte CD-Lesegeschwindigkeitsbegrenzung ist ungültig</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="491"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="496"/>
         <source>Failed to limit the CD read speed for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte die CD-Lesegeschwindigkeit für %1 nicht begrenzen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="554"/>
         <source>CD operation was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Vorgang wurde abgebrochen</translation>
     </message>
 </context>
 <context>
@@ -2484,173 +2489,173 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="68"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Neu laden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="69"/>
         <source>Drive settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Laufwerkeinstellungen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="70"/>
         <source>Metadata</source>
-        <translation type="unfinished">Metadaten</translation>
+        <translation>Metadaten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="71"/>
         <source>Read CD-Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Lies CD-Text</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="72"/>
         <source>Auto lookup metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadaten automatisch nachschlagen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="73"/>
         <source>Lookup metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadaten nachschlagen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="74"/>
         <source>Rip…</source>
-        <translation type="unfinished"></translation>
+        <translation>Rippen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="75"/>
         <source>Play</source>
-        <translation type="unfinished">Abspielen</translation>
+        <translation>Abspielen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="76"/>
         <source>Add to playlist</source>
-        <translation type="unfinished">Zur Wiedergabeliste hinzufügen</translation>
+        <translation>Zur Wiedergabeliste hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="78"/>
         <source>Open Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio-CD öffnen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Titelnummer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Duration</source>
-        <translation type="unfinished">Dauer</translation>
+        <translation>Dauer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="105"/>
         <source>CD drive</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Laufwerk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="143"/>
         <source>Check all</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle auswählen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="144"/>
         <source>Uncheck all</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle abwählen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="179"/>
         <source>Searching for CD drives…</source>
-        <translation type="unfinished"></translation>
+        <translation>Suche nach CD-Laufwerken…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="227"/>
         <source>Reading audio CD…</source>
-        <translation type="unfinished"></translation>
+        <translation>Lese Audio-CD…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="262"/>
         <source>No CD drives found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine CD-Laufwerke gefunden.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="287"/>
         <source>No audio CD is available in this drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>In diesem Laufwerk ist keine Audio-CD verfügbar.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="305"/>
         <source>Found %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln Audiospur gefunden.</numerusform>
+            <numerusform>%Ln Audiospuren gefunden.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="337"/>
         <source>Reading CD-Text…</source>
-        <translation type="unfinished"></translation>
+        <translation>Lese CD-Text…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="360"/>
         <source>Failed to read CD-Text: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte CD-Text nicht lesen: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="374"/>
         <source>No CD-Text found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein CD-Text gefunden.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="384"/>
         <source>CD-Text was read; existing metadata was kept.</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Text wurde gelesen; vorhandene Metadaten wurden behalten.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="392"/>
         <source>Applied CD-Text to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD-Text auf %Ln Audiospur angewandt.</numerusform>
+            <numerusform>CD-Text auf %Ln Audiospuren angewandt.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="461"/>
         <source>Automatic metadata lookup needs review.</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisches Nachschlagen von Metadaten muss überprüft werden.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="471"/>
         <source>Automatic metadata lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisches Nachschlagen von Metadaten fehlgeschlagen: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="476"/>
         <source>Looking up audio CD metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlage Audio-CD-Metadaten nach…</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="500"/>
         <source>Applied automatic metadata to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Automatische Metadaten auf %Ln Audiospur angewandt.</numerusform>
+            <numerusform>Automatische Metadaten auf %Ln Audiospuren angewandt.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="504"/>
         <source>No automatic metadata match found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Es wurde keine automatische Metadaten-Übereinstimmung gefunden.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="549"/>
         <source>Applied metadata to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Metadaten auf %Ln Audiospur angewandt.</numerusform>
+            <numerusform>Metadaten auf %Ln Audiospuren angewandt.</numerusform>
         </translation>
     </message>
 </context>
@@ -2659,168 +2664,168 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="76"/>
         <source>Accurately ripped</source>
-        <translation type="unfinished"></translation>
+        <translation>Akkurat gerippt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="78"/>
         <source>Mismatch</source>
-        <translation type="unfinished"></translation>
+        <translation>Nichtübereinstimmung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="80"/>
         <source>Incomplete</source>
-        <translation type="unfinished"></translation>
+        <translation>Unvollständig</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="82"/>
         <source>Unsupported format</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht unterstütztes Format</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="92"/>
         <source>AccurateRip Verification</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip Verifizierung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="104"/>
         <source>Verified: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifiziert: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="105"/>
         <source>Mismatched: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht übereinstimmend: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="115"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Titelnummer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="115"/>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="214"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="116"/>
         <source>Result</source>
-        <translation type="unfinished">Ergebnis</translation>
+        <translation>Ergebnis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="116"/>
         <source>Confidence</source>
-        <translation type="unfinished"></translation>
+        <translation>Zuversicht</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="117"/>
         <source>AR v1 CRC</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v1 CRC</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="117"/>
         <source>AR v2 CRC</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v2 CRC</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="118"/>
         <source>Database CRCs</source>
-        <translation type="unfinished"></translation>
+        <translation>Datenbank CRCs</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="171"/>
         <source>Verify with AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit AccurateRip verifizieren</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="173"/>
         <source>Lookup metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadaten nachschlagen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="174"/>
         <source>Converter Setup…</source>
-        <translation type="unfinished"></translation>
+        <translation>Konverter-Einrichtung…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="175"/>
         <source>Rip</source>
-        <translation type="unfinished"></translation>
+        <translation>Rippen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="178"/>
         <source>Rip Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio-CD rippen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="182"/>
         <source>Album information</source>
-        <translation type="unfinished"></translation>
+        <translation>Albuminformation</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="198"/>
         <source>Album artist</source>
-        <translation type="unfinished">Albumkünstler</translation>
+        <translation>Albumkünstler</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="199"/>
         <source>Album title</source>
-        <translation type="unfinished">Albumname</translation>
+        <translation>Albumname</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="200"/>
         <source>Genre</source>
-        <translation type="unfinished">Genre</translation>
+        <translation>Genre</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="201"/>
         <source>Date</source>
-        <translation type="unfinished">Datum</translation>
+        <translation>Datum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="203"/>
         <source>Disc number</source>
-        <translation type="unfinished">CD-Nummer</translation>
+        <translation>CD-Nummer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="211"/>
         <source>Track information</source>
-        <translation type="unfinished"></translation>
+        <translation>Titelinformation</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="214"/>
         <source>#</source>
-        <translation type="unfinished"></translation>
+        <translation>#</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="214"/>
         <source>Artist</source>
-        <translation type="unfinished">Künstler</translation>
+        <translation>Künstler</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="259"/>
         <source>Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Voreinstellung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="275"/>
         <source>Check all</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle auswählen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="276"/>
         <source>Uncheck all</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle abwählen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="304"/>
         <source>Drive offset has not been configured. Check Drive settings before ripping.</source>
-        <translation type="unfinished"></translation>
+        <translation>Laufwerk-Offset wurde nicht eingestellt. Überprüfe die Einstellungen des Laufwerks vor dem Rippen.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="419"/>
         <source>Looking up disc in AccurateRip…</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlage CD in AccurateRip nach…</translation>
     </message>
 </context>
 <context>
@@ -2911,12 +2916,12 @@ Paranoid: performs the most thorough available checking and additional retries (
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="45"/>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="50"/>
         <source>Choose…</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle…</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="67"/>
         <source>Choose an icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle ein Symbol</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="75"/>
@@ -2956,17 +2961,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="101"/>
         <source>Selection</source>
-        <translation type="unfinished">Auswahl</translation>
+        <translation>Auswahl</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="115"/>
         <source>No command selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Befehle ausgewählt</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="184"/>
         <source>Custom image - %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzerdefiniertes Bild – %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="116"/>
@@ -2979,42 +2984,42 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="135"/>
         <source>Choose Command</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle Befehl</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="138"/>
         <source>Filter commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Befehle filtern</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="141"/>
         <source>Enter a raw `$cmdlink` id or alias</source>
-        <translation type="unfinished"></translation>
+        <translation>`$cmdlink`-ID oder -Alias im Rohformat eingeben</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="144"/>
         <source>Command</source>
-        <translation type="unfinished">Befehl</translation>
+        <translation>Befehl</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="144"/>
         <source>ID</source>
-        <translation type="unfinished">ID</translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="159"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Auswählen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="162"/>
         <source>Command ID or alias</source>
-        <translation type="unfinished"></translation>
+        <translation>Befehls-ID oder -Alias</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="252"/>
         <source>Other</source>
-        <translation type="unfinished">Andere</translation>
+        <translation>Andere</translation>
     </message>
 </context>
 <context>
@@ -3073,7 +3078,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="339"/>
         <source>Choose destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle Ziel</translation>
     </message>
 </context>
 <context>
@@ -3110,17 +3115,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="109"/>
         <source>%1%</source>
-        <translation type="unfinished">%1 %</translation>
+        <translation>%1 %</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="110"/>
         <source>Calculating…</source>
-        <translation type="unfinished">Berechnung…</translation>
+        <translation>Berechne…</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="111"/>
         <source>Converting %1 of %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>Konvertiere %1 von %2 (%3)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="115"/>
@@ -4089,7 +4094,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="621"/>
         <source>Display</source>
-        <translation type="unfinished">Anzeige</translation>
+        <translation>Anzeige</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="624"/>
@@ -4104,7 +4109,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="646"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Überschriften</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="774"/>
@@ -4188,12 +4193,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="41"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Überschriften</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="42"/>
         <source>Remember sort column</source>
-        <translation type="unfinished"></translation>
+        <translation>Merke Sortierspalte</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="44"/>
@@ -4228,7 +4233,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="54"/>
         <source>Restore the sort column on startup and when changing directories.</source>
-        <translation type="unfinished"></translation>
+        <translation>Stelle die Sortierspalte bei Programmstart und Verzeichniswechsel wieder her.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="56"/>
@@ -4296,17 +4301,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="196"/>
         <source>Columns</source>
-        <translation type="unfinished">Spalten</translation>
+        <translation>Spalten</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="207"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Überschriften</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="212"/>
         <source>Auto-size sections</source>
-        <translation type="unfinished">Spaltengröße automatisch einstellen</translation>
+        <translation>Automatische Abschnittgröße</translation>
     </message>
 </context>
 <context>
@@ -4362,17 +4367,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="86"/>
         <source>Show artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Artwork</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="87"/>
         <source>Source</source>
-        <translation type="unfinished">Quelle</translation>
+        <translation>Quelle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="89"/>
         <source>Retention</source>
-        <translation type="unfinished"></translation>
+        <translation>Beibehaltung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="92"/>
@@ -4387,47 +4392,47 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="115"/>
         <source>Artwork</source>
-        <translation type="unfinished">Artwork</translation>
+        <translation>Artwork</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="118"/>
         <source>1 hour</source>
-        <translation type="unfinished"></translation>
+        <translation>1 Stunde</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="119"/>
         <source>12 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>12 Stunden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="120"/>
         <source>24 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>24 Stunden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="121"/>
         <source>72 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>72 Stunden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="125"/>
         <source>Search for artwork via MusicBrainz ID only</source>
-        <translation type="unfinished"></translation>
+        <translation>Suche nur per MusicBrainz-ID nach Artwork</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="126"/>
         <source>Search via MusicBrainz ID, or upload if not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Suche per MusicBrainz-ID oder lade hoch, wenn nichts gefunden wurde</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="128"/>
         <source>Upload artwork only</source>
-        <translation type="unfinished"></translation>
+        <translation>Artwork nur hochladen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="129"/>
         <source>Upload artwork, or search via MusicBrainz ID if not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Artwork hoch oder suche per MusicBrainz-ID, falls nichts gefunden wurde</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="142"/>
@@ -4499,7 +4504,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dsp/dsplayouteditor.cpp" line="42"/>
         <source>Restore Defaults</source>
-        <translation type="unfinished">Grundeinstellungen wiederherstellen</translation>
+        <translation>Standardeinstellungen wiederherstellen</translation>
     </message>
 </context>
 <context>
@@ -5142,77 +5147,77 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="269"/>
         <source>Enabled</source>
-        <translation type="unfinished">Aktiviert</translation>
+        <translation>Aktiviert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="270"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="436"/>
         <source>Zero level</source>
-        <translation type="unfinished"></translation>
+        <translation>Nullpegel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="271"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="449"/>
         <source>Auto level</source>
-        <translation type="unfinished">Automatischer Pegel</translation>
+        <translation>Automatischer Pegel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="273"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
         <source>Save preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Voreinstellung speichern</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="310"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="515"/>
         <source> dB</source>
-        <translation type="unfinished"> dB</translation>
+        <translation> dB</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="324"/>
         <source>Preamp</source>
-        <translation type="unfinished">Vorverstärker</translation>
+        <translation>Vorverstärker</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="441"/>
         <source>Show controls</source>
-        <translation type="unfinished">Zeige Steuerung</translation>
+        <translation>Zeige Bedienelemente</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="453"/>
         <source>Save preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>Voreinstellung speichern…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="457"/>
         <source>Presets</source>
-        <translation type="unfinished">Voreinstellungen</translation>
+        <translation>Voreinstellungen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="461"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="543"/>
         <source>No presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Voreinstellungen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="546"/>
         <source>Load preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>Voreinstellung laden…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
         <source>Preset name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Voreinstellungsname:</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="583"/>
         <source>Preset already exists</source>
-        <translation type="unfinished">Voreinstellung existiert bereits</translation>
+        <translation>Voreinstellung existiert bereits</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="584"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
-        <translation type="unfinished">Voreinstellung „%1“ existiert bereits. Überschreiben?</translation>
+        <translation>Voreinstellung „%1“ existiert bereits. Überschreiben?</translation>
     </message>
 </context>
 <context>
@@ -5397,12 +5402,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="74"/>
         <source>Leave empty to group by the displayed values</source>
-        <translation type="unfinished"></translation>
+        <translation>Leer lassen, um entsprechend der angezeigten Werte zu gruppieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="82"/>
         <source>Grouping script</source>
-        <translation type="unfinished">Gruppierungs-Skript</translation>
+        <translation>Gruppierungs-Skript</translation>
     </message>
 </context>
 <context>
@@ -6106,12 +6111,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="119"/>
         <source>Remove empty parent folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Entferne leere übergeordnete Ordner</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="120"/>
         <source>Remove empty parent folders after moving or deleting files, stopping at the library root</source>
-        <translation type="unfinished"></translation>
+        <translation>Entferne leere übergeordnete Ordner nach dem Verschieben oder Löschen von Dateien; stoppt im Wurzelverzeichnis der Bibliothek.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="138"/>
@@ -6167,27 +6172,27 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="256"/>
         <source>Copy</source>
-        <translation type="unfinished">Kopieren</translation>
+        <translation>Kopieren</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="259"/>
         <source>Move</source>
-        <translation type="unfinished">Verschieben</translation>
+        <translation>Verschieben</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="262"/>
         <source>Rename</source>
-        <translation type="unfinished">Umbenennen</translation>
+        <translation>Umbenennen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="265"/>
         <source>Extract</source>
-        <translation type="unfinished">Entpacken</translation>
+        <translation>Entpacken</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="268"/>
         <source>Other</source>
-        <translation type="unfinished">Andere</translation>
+        <translation>Andere</translation>
     </message>
 </context>
 <context>
@@ -6408,7 +6413,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="121"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadratisch</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="123"/>
@@ -6438,7 +6443,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="135"/>
         <source>Corner radius</source>
-        <translation type="unfinished"></translation>
+        <translation>Eckradius</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="139"/>
@@ -6775,17 +6780,17 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="108"/>
         <source>User Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzerordner</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
         <source>Open Configuration Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne Einstellungsordner</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="112"/>
         <source>Open Data Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne Datenordner</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
@@ -7342,7 +7347,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="245"/>
         <source>Show in Layout menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Im Layoutmenü zeigen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="287"/>
@@ -7665,48 +7670,48 @@ Wenn der vorgegebene halbe Stern in der eingestellten Systemschrift nicht richti
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="48"/>
         <source>Choose Icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle Symbol</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="51"/>
         <source>Filter icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbole filtern</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="54"/>
         <source>Use command icon</source>
-        <translation type="unfinished">Verwende Befehlssymbol</translation>
+        <translation>Verwende Befehlssymbol</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="58"/>
         <source>Use the icon supplied by the selected command</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende das vom Befehl bereitgestellte Symbol</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="84"/>
         <source>Browse custom image…</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle eigenes Bild…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="85"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Wählen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="157"/>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="158"/>
         <source>All files (*)</source>
-        <translation type="unfinished">Alle Dateien (*)</translation>
+        <translation>Alle Dateien (*)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="157"/>
         <source>Images</source>
-        <translation type="unfinished">Bilder</translation>
+        <translation>Bilder</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="185"/>
         <source>Select Icon</source>
-        <translation type="unfinished">Icon auswählen</translation>
+        <translation>Symbol auswählen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="197"/>
@@ -10245,7 +10250,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="273"/>
         <source>First track, last track, lead-out sector, then track offsets</source>
-        <translation type="unfinished"></translation>
+        <translation>Erster Titel, letzter Titel, Auslaufsektor, dann Titel-Offsets</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="282"/>

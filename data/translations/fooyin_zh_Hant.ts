@@ -394,7 +394,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Normalised rating</source>
-        <translation type="unfinished"></translation>
+        <translation>正規化評分</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="161"/>
@@ -1296,22 +1296,22 @@
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="34"/>
         <source>Automatic detection</source>
-        <translation type="unfinished">自動偵測</translation>
+        <translation>自動偵測</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="56"/>
         <source>Default</source>
-        <translation type="unfinished">預設</translation>
+        <translation>預設</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="58"/>
         <source>Five star compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>五星級相容性</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="60"/>
         <source>Raw 0–255 byte scale</source>
-        <translation type="unfinished"></translation>
+        <translation>原始 0–255 位元組尺度</translation>
     </message>
 </context>
 <context>
@@ -2072,22 +2072,22 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="76"/>
         <source>AccurateRip verification of mixed-mode discs is not supported</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip 對於混合模式光碟的驗證是未支援的</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="126"/>
         <source>Truncated AccurateRip response header</source>
-        <translation type="unfinished"></translation>
+        <translation>截斷的 AccurateRip 回應標頭</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="138"/>
         <source>Invalid AccurateRip response record</source>
-        <translation type="unfinished"></translation>
+        <translation>無效的 AccurateRip 回應記錄</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="158"/>
         <source>AccurateRip response did not contain the requested disc</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip 回應中不包含所要求的光碟</translation>
     </message>
 </context>
 <context>
@@ -2095,30 +2095,30 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="61"/>
         <source>The CD drive is already in use</source>
-        <translation type="unfinished"></translation>
+        <translation>光碟機正在使用中</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="355"/>
         <source>Audio CD identity is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>音訊 CD 識別無可供用</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="374"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="586"/>
         <source>The disc in the CD drive has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>光碟機中的碟片已為更換</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="466"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="521"/>
         <source>Invalid CD disc identity</source>
-        <translation type="unfinished"></translation>
+        <translation>無效的 CD 碟片標識</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="498"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="609"/>
         <source>The requested audio CD is not inserted</source>
-        <translation type="unfinished"></translation>
+        <translation>所要求的音訊 CD 尚未插入</translation>
     </message>
 </context>
 <context>
@@ -2126,12 +2126,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/cdda/drive/cddrivebackend.cpp" line="40"/>
         <source>Secure CD extraction is unavailable for this drive backend</source>
-        <translation type="unfinished"></translation>
+        <translation>安全 CD 解壓縮提取無可供用於此光碟機後端</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/cddrivebackend.cpp" line="47"/>
         <source>CD read speed control is unavailable for this drive backend</source>
-        <translation type="unfinished"></translation>
+        <translation>CD 讀取速度控制無可供用於此光碟機後端</translation>
     </message>
 </context>
 <context>
@@ -2139,34 +2139,36 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="49"/>
         <source>Lookup with AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 AccurateRip 查尋</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="53"/>
         <source>Drive Settings - %1</source>
-        <translation type="unfinished"></translation>
+        <translation>光碟機設定 - %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="58"/>
         <source>Compensates for a drive that reads slightly before or after the requested CD position.
 Positive values read later; negative values read earlier.
 Use AccurateRip to look up the correction for this drive model, or enter a known value manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>補償用於光碟機會在所要求的光碟略微前後的位置上進行讀取。
+正數值是稍後讀取；負數值是提前讀取。
+使用 AccurateRip 來查尋此光碟機型號的校正，或手動輸入已知的數值。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="62"/>
         <source>Disabled</source>
-        <translation type="unfinished">已經停用</translation>
+        <translation>已經停用</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="63"/>
         <source>Standard</source>
-        <translation type="unfinished"></translation>
+        <translation>標準</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="64"/>
         <source>Paranoid</source>
-        <translation type="unfinished"></translation>
+        <translation>偏執</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="66"/>
@@ -2174,69 +2176,72 @@ Use AccurateRip to look up the correction for this drive model, or enter a known
 Disabled: direct reads with no verification (fastest).
 Standard: verifies overlapping reads and retries inconsistencies (slower).
 Paranoid: performs the most thorough available checking and additional retries (slowest).</source>
-        <translation type="unfinished"></translation>
+        <translation>轉檔之時控制錯誤偵測與校正；播放則不受影響。 
+停用：直接讀取，無經驗證(最快)。 
+標準：驗證重疊的讀取與重試差異之處(較慢)。 
+偏執：進行最詳盡的檢查及額外的重試(最慢)。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="71"/>
         <source>Maximum</source>
-        <translation type="unfinished">最大</translation>
+        <translation>最大</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="77"/>
         <source>Limits the drive&apos;s read speed while ripping; playback is unaffected.</source>
-        <translation type="unfinished"></translation>
+        <translation>限制光碟機的讀取速度，在轉錄之時；播放則不受影響。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="78"/>
         <source>This drive doesn&apos;t support read-speed control.</source>
-        <translation type="unfinished"></translation>
+        <translation>此光碟機不支援讀取速度控制。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="88"/>
         <source>Read offset correction</source>
-        <translation type="unfinished"></translation>
+        <translation>讀取偏移校正</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="91"/>
         <source>Ripping security</source>
-        <translation type="unfinished"></translation>
+        <translation>轉錄安全</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="93"/>
         <source>Drive speed limit</source>
-        <translation type="unfinished"></translation>
+        <translation>光碟機速度限制</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="119"/>
         <source>Looking up drive…</source>
-        <translation type="unfinished"></translation>
+        <translation>尋找光碟機…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="129"/>
         <source>Lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>尋找失敗： %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="135"/>
         <source>AccurateRip returned an unexpectedly large drive list.</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip 回傳一個出乎意料龐大的光碟機清單。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="142"/>
         <source>No unambiguous entry was found for this drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>找無與此光碟機相關的明確項目。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="147"/>
         <source>This drive was purged because its offset is not consistent.</source>
-        <translation type="unfinished"></translation>
+        <translation>由於該光碟機的偏移值不一致，因此已將其清除。</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="154"/>
         <source>Found correction: %1 (%Ln submission(s), %2% agreement).</source>
         <extracomment>Correction = CD Drive read offset correction</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>找到校正： %1 (%Ln 提交、%2% 同意)。</numerusform>
         </translation>
     </message>
 </context>
@@ -2245,12 +2250,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="42"/>
         <source>CD sector conversion overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>CD 區段轉換溢出</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="88"/>
         <source>The CD has an invalid TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>該光碟具有無效的 TOC</translation>
     </message>
 </context>
 <context>
@@ -2258,33 +2263,33 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="180"/>
         <source>Audio CD decoder is not initialised</source>
-        <translation type="unfinished"></translation>
+        <translation>音訊光碟解碼器尚未初始化</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="187"/>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="321"/>
         <source>Audio CD read was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>音訊光碟讀取作業已被取消</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="268"/>
         <source>CD drive returned no audio data</source>
-        <translation type="unfinished"></translation>
+        <translation>光碟機回傳無音訊資料</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="335"/>
         <source>The disc in the CD drive has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>光磁機中的碟片已經變更</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="350"/>
         <source>Could not limit CD read speed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>無法限制光碟讀取速度： %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="362"/>
         <source>The selected CD drive became unavailable; extraction settings for %1 are being used</source>
-        <translation type="unfinished"></translation>
+        <translation>所選的光碟機無法使用；正在使用 % 1 的提取設定</translation>
     </message>
 </context>
 <context>
@@ -2292,39 +2297,39 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="71"/>
         <source>Open audio &amp;CD…</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟音訊 &amp;CD…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="72"/>
         <source>Open an audio CD for playback or ripping</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟音訊光碟以播放或轉錄</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="74"/>
         <source>File</source>
-        <translation type="unfinished">檔案</translation>
+        <translation>檔案</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="102"/>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="117"/>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="243"/>
         <source>Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>音訊 CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="193"/>
         <source>This disc is not present in AccurateRip.</source>
-        <translation type="unfinished"></translation>
+        <translation>此光碟未出現於 AccurateRip 。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="194"/>
         <source>AccurateRip lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip 找尋失敗：%1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="201"/>
         <source>AccurateRip returned an unexpectedly large disc record.</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip 回傳出乎意料龐大的碟片記錄。</translation>
     </message>
 </context>
 <context>
@@ -2332,17 +2337,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="49"/>
         <source>Track %1</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目 %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="53"/>
         <source>Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>音訊 CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="111"/>
         <source>Invalid audio CD identity</source>
-        <translation type="unfinished"></translation>
+        <translation>音訊 CD 識別無效</translation>
     </message>
 </context>
 <context>
@@ -2350,21 +2355,21 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="129"/>
         <source>CD read offset correction padded %Ln frame(s) with silence before the readable audio range</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD 讀取偏移校正 %Ln 個影格，在可供讀取音訊範圍之前以靜音方式呈現</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="169"/>
         <source>CD read offset correction padded %Ln frame(s) with silence after the readable audio range</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD 讀取偏移校正疊加 %Ln 個影格，在可供讀取音訊範圍之後以靜音呈現</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="233"/>
         <source>CD extraction was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>CD 解壓縮提取已被取消</translation>
     </message>
 </context>
 <context>
@@ -2372,12 +2377,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="261"/>
         <source>The selected optical drive is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>所選光碟機無法供用</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="269"/>
         <source>The selected optical drive is unavailable: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>所選的光碟機無法供用： % 1</translation>
     </message>
 </context>
 <context>
@@ -2385,88 +2390,88 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="99"/>
         <source>Details: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>詳細資訊： %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="104"/>
         <source>Check the disk drive device permissions.</source>
-        <translation type="unfinished"></translation>
+        <translation>檢查光碟機設備的讀寫權限。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="306"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="384"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="523"/>
         <source>Failed to access audio CD drive %1</source>
-        <translation type="unfinished"></translation>
+        <translation>無法存取音訊光碟機 % 1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="316"/>
         <source>Failed to read the CD TOC from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>失敗讀取 CD TOC 來自 %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="329"/>
         <source>Failed to read a CD track boundary from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>失敗讀取 CD 曲目邊界來自 %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="392"/>
         <source>Failed to read CD audio sectors from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>失敗讀取 CD 音訊區段來自 %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="421"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="534"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="545"/>
         <source>Failed to initialise secure CD extraction for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>失敗初始化安全 CD 解壓縮提取來自 %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="436"/>
         <source>Failed to seek the secure CD reader for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>失敗尋找到安全 CD 讀取器用於 %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="456"/>
         <source>Failed to read securely from audio CD drive %1</source>
-        <translation type="unfinished"></translation>
+        <translation>失敗安全地讀取來自音訊 CD 光碟機 %1</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="467"/>
         <source>CD extraction corrected %Ln read inconsistency event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD 解壓縮提取校正了 %Ln 個讀取不一致事件</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="470"/>
         <source>CD extraction encountered %Ln read error event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD 解壓縮提取時遭遇到 %Ln 個讀取錯誤事件</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="473"/>
         <source>CD extraction exhausted retries and concealed %Ln unreadable sector event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD 解壓縮提取時竭盡地重試並隱蔽了 %Ln 個無法讀取區段事件</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="484"/>
         <source>The requested CD read-speed limit is invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>所要求的 CD 讀取速度限制是無效的</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="491"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="496"/>
         <source>Failed to limit the CD read speed for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>失敗限制 CD 讀取速度用於 %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="554"/>
         <source>CD operation was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>CD 操作已被取消</translation>
     </message>
 </context>
 <context>
@@ -2474,169 +2479,169 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="68"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>重新整理</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="69"/>
         <source>Drive settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>光碟機設定…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="70"/>
         <source>Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>詮釋資料</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="71"/>
         <source>Read CD-Text</source>
-        <translation type="unfinished"></translation>
+        <translation>讀取 CD-文字</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="72"/>
         <source>Auto lookup metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>自動尋找詮釋資料</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="73"/>
         <source>Lookup metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>尋找詮釋資料…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="74"/>
         <source>Rip…</source>
-        <translation type="unfinished"></translation>
+        <translation>轉錄…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="75"/>
         <source>Play</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="76"/>
         <source>Add to playlist</source>
-        <translation type="unfinished">添加至播放清單</translation>
+        <translation>添加至播放清單</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="78"/>
         <source>Open Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟音訊 CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Track</source>
-        <translation type="unfinished">曲目</translation>
+        <translation>曲目</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Title</source>
-        <translation type="unfinished">標題</translation>
+        <translation>標題</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>時長</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="105"/>
         <source>CD drive</source>
-        <translation type="unfinished"></translation>
+        <translation>CD 光碟機</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="143"/>
         <source>Check all</source>
-        <translation type="unfinished"></translation>
+        <translation>勾選全部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="144"/>
         <source>Uncheck all</source>
-        <translation type="unfinished"></translation>
+        <translation>不要勾選全部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="179"/>
         <source>Searching for CD drives…</source>
-        <translation type="unfinished"></translation>
+        <translation>搜尋 CD 光碟機…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="227"/>
         <source>Reading audio CD…</source>
-        <translation type="unfinished"></translation>
+        <translation>讀取音訊 CD…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="262"/>
         <source>No CD drives found.</source>
-        <translation type="unfinished"></translation>
+        <translation>找無 CD 光碟機。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="287"/>
         <source>No audio CD is available in this drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>光碟機中無音訊 CD 可供使用。</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="305"/>
         <source>Found %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>找到 %Ln 個音訊曲目。</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="337"/>
         <source>Reading CD-Text…</source>
-        <translation type="unfinished"></translation>
+        <translation>讀取 CD-文字…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="360"/>
         <source>Failed to read CD-Text: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>失敗讀取 CD-文字： %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="374"/>
         <source>No CD-Text found.</source>
-        <translation type="unfinished"></translation>
+        <translation>找無 CD-文字。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="384"/>
         <source>CD-Text was read; existing metadata was kept.</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-文字 已被讀取；現有的詮釋資料已被保留。</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="392"/>
         <source>Applied CD-Text to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已經套用 CD-文字 至 %Ln 個曲目。</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="461"/>
         <source>Automatic metadata lookup needs review.</source>
-        <translation type="unfinished"></translation>
+        <translation>自動詮釋資料找尋需要審查。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="471"/>
         <source>Automatic metadata lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>自動詮釋資料找尋失敗： %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="476"/>
         <source>Looking up audio CD metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>找尋音訊 CD 詮釋資料…</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="500"/>
         <source>Applied automatic metadata to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>套用自動詮釋資料至 %Ln 個曲目。</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="504"/>
         <source>No automatic metadata match found.</source>
-        <translation type="unfinished"></translation>
+        <translation>找無自動詮釋資料。</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="549"/>
         <source>Applied metadata to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>套用自動詮釋資料至 %Ln 個音訊曲目。</numerusform>
         </translation>
     </message>
 </context>
@@ -2645,168 +2650,168 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="76"/>
         <source>Accurately ripped</source>
-        <translation type="unfinished"></translation>
+        <translation>精準地轉錄</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="78"/>
         <source>Mismatch</source>
-        <translation type="unfinished"></translation>
+        <translation>不符合</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="80"/>
         <source>Incomplete</source>
-        <translation type="unfinished"></translation>
+        <translation>未完整</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="82"/>
         <source>Unsupported format</source>
-        <translation type="unfinished"></translation>
+        <translation>非支援格式</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="92"/>
         <source>AccurateRip Verification</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip 驗證</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="104"/>
         <source>Verified: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>已經驗證： %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="105"/>
         <source>Mismatched: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>不符合： %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="115"/>
         <source>Track</source>
-        <translation type="unfinished">曲目</translation>
+        <translation>曲目</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="115"/>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="214"/>
         <source>Title</source>
-        <translation type="unfinished">標題</translation>
+        <translation>標題</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="116"/>
         <source>Result</source>
-        <translation type="unfinished">結果</translation>
+        <translation>結果</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="116"/>
         <source>Confidence</source>
-        <translation type="unfinished"></translation>
+        <translation>機密</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="117"/>
         <source>AR v1 CRC</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v1 CRC</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="117"/>
         <source>AR v2 CRC</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v2 CRC</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="118"/>
         <source>Database CRCs</source>
-        <translation type="unfinished"></translation>
+        <translation>資料庫 CRCs</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="171"/>
         <source>Verify with AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>進行驗證使用 AccurareRip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="173"/>
         <source>Lookup metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>找尋詮釋資料…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="174"/>
         <source>Converter Setup…</source>
-        <translation type="unfinished"></translation>
+        <translation>轉換設定…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="175"/>
         <source>Rip</source>
-        <translation type="unfinished"></translation>
+        <translation>轉錄</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="178"/>
         <source>Rip Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>轉錄音訊 CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="182"/>
         <source>Album information</source>
-        <translation type="unfinished"></translation>
+        <translation>轉輯資訊</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="198"/>
         <source>Album artist</source>
-        <translation type="unfinished">專輯藝人</translation>
+        <translation>專輯藝人</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="199"/>
         <source>Album title</source>
-        <translation type="unfinished">專輯標題</translation>
+        <translation>專輯標題</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="200"/>
         <source>Genre</source>
-        <translation type="unfinished">曲風</translation>
+        <translation>曲風</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="201"/>
         <source>Date</source>
-        <translation type="unfinished">日期</translation>
+        <translation>日期</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="203"/>
         <source>Disc number</source>
-        <translation type="unfinished">光碟編號</translation>
+        <translation>碟片編號</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="211"/>
         <source>Track information</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目資訊</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="214"/>
         <source>#</source>
-        <translation type="unfinished"></translation>
+        <translation>#</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="214"/>
         <source>Artist</source>
-        <translation type="unfinished">藝人</translation>
+        <translation>藝人</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="259"/>
         <source>Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>預設集</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="275"/>
         <source>Check all</source>
-        <translation type="unfinished"></translation>
+        <translation>勾選全部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="276"/>
         <source>Uncheck all</source>
-        <translation type="unfinished"></translation>
+        <translation>不要勾選全部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="304"/>
         <source>Drive offset has not been configured. Check Drive settings before ripping.</source>
-        <translation type="unfinished"></translation>
+        <translation>光碟機偏移尚未調整設定。在轉錄之前，先檢查光碟機設定。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="419"/>
         <source>Looking up disc in AccurateRip…</source>
-        <translation type="unfinished"></translation>
+        <translation>找尋碟片於 AccurateRip…</translation>
     </message>
 </context>
 <context>
@@ -2897,12 +2902,12 @@ Paranoid: performs the most thorough available checking and additional retries (
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="45"/>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="50"/>
         <source>Choose…</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇…</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="67"/>
         <source>Choose an icon</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇一個圖示</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="75"/>
@@ -2942,17 +2947,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="101"/>
         <source>Selection</source>
-        <translation type="unfinished">區段</translation>
+        <translation>區段</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="115"/>
         <source>No command selected</source>
-        <translation type="unfinished"></translation>
+        <translation>尚無選擇指令</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="184"/>
         <source>Custom image - %1</source>
-        <translation type="unfinished"></translation>
+        <translation>自訂圖片 - %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="116"/>
@@ -2965,42 +2970,42 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="135"/>
         <source>Choose Command</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇指令</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="138"/>
         <source>Filter commands</source>
-        <translation type="unfinished"></translation>
+        <translation>篩選指令</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="141"/>
         <source>Enter a raw `$cmdlink` id or alias</source>
-        <translation type="unfinished"></translation>
+        <translation>輸入原始的 &apos;$cmdlink&apos; ID 或別名</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="144"/>
         <source>Command</source>
-        <translation type="unfinished">指令</translation>
+        <translation>指令</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="144"/>
         <source>ID</source>
-        <translation type="unfinished">ID</translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="159"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>選用</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="162"/>
         <source>Command ID or alias</source>
-        <translation type="unfinished"></translation>
+        <translation>指令 ID 或別名</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="252"/>
         <source>Other</source>
-        <translation type="unfinished">其他</translation>
+        <translation>其他</translation>
     </message>
 </context>
 <context>
@@ -3059,7 +3064,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="339"/>
         <source>Choose destination</source>
-        <translation type="unfinished">選擇目的地</translation>
+        <translation>選擇目的地</translation>
     </message>
 </context>
 <context>
@@ -3096,17 +3101,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="109"/>
         <source>%1%</source>
-        <translation type="unfinished">%1%</translation>
+        <translation>%1%</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="110"/>
         <source>Calculating…</source>
-        <translation type="unfinished">計算中…</translation>
+        <translation>計算中…</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="111"/>
         <source>Converting %1 of %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>轉換 %1 / %2 (%3)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="115"/>
@@ -4343,17 +4348,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="86"/>
         <source>Show artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示圖面</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="87"/>
         <source>Source</source>
-        <translation type="unfinished">來源</translation>
+        <translation>來源</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="89"/>
         <source>Retention</source>
-        <translation type="unfinished"></translation>
+        <translation>保留</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="92"/>
@@ -4368,47 +4373,47 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="115"/>
         <source>Artwork</source>
-        <translation type="unfinished">圖面</translation>
+        <translation>圖面</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="118"/>
         <source>1 hour</source>
-        <translation type="unfinished"></translation>
+        <translation>1 小時</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="119"/>
         <source>12 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>12 小時</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="120"/>
         <source>24 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>24 小時</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="121"/>
         <source>72 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>72 小時</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="125"/>
         <source>Search for artwork via MusicBrainz ID only</source>
-        <translation type="unfinished"></translation>
+        <translation>搜尋圖面僅透過 MusicBrainz ID</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="126"/>
         <source>Search via MusicBrainz ID, or upload if not found</source>
-        <translation type="unfinished"></translation>
+        <translation>搜尋透過 MusicBrainz ID，或是若無找到則進行上傳</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="128"/>
         <source>Upload artwork only</source>
-        <translation type="unfinished"></translation>
+        <translation>僅上傳圖面</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="129"/>
         <source>Upload artwork, or search via MusicBrainz ID if not found</source>
-        <translation type="unfinished"></translation>
+        <translation>上傳圖面，或是若無找到則透過 MusicBrainz ID 搜尋</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="142"/>
@@ -5375,12 +5380,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="74"/>
         <source>Leave empty to group by the displayed values</source>
-        <translation type="unfinished"></translation>
+        <translation>留下空白至群組，依照其所顯示的值</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="82"/>
         <source>Grouping script</source>
-        <translation type="unfinished">群組腳本</translation>
+        <translation>群組腳本</translation>
     </message>
 </context>
 <context>
@@ -6074,12 +6079,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="119"/>
         <source>Remove empty parent folders</source>
-        <translation type="unfinished"></translation>
+        <translation>移除空的上層資料夾</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="120"/>
         <source>Remove empty parent folders after moving or deleting files, stopping at the library root</source>
-        <translation type="unfinished"></translation>
+        <translation>移除空的上層資料夾，在移除或刪除檔案之後，停置於音樂庫根部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="138"/>
@@ -6742,17 +6747,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="108"/>
         <source>User Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>使用者資料夾</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
         <source>Open Configuration Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟調整設定資料夾</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="112"/>
         <source>Open Data Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟資料資料夾</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
@@ -7309,7 +7314,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="245"/>
         <source>Show in Layout menu</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示於配置選單</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="287"/>
@@ -7632,63 +7637,63 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="48"/>
         <source>Choose Icon</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇圖示</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="51"/>
         <source>Filter icons</source>
-        <translation type="unfinished"></translation>
+        <translation>篩選圖示</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="54"/>
         <source>Use command icon</source>
-        <translation type="unfinished">使用指令的圖示</translation>
+        <translation>使用指令圖示</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="58"/>
         <source>Use the icon supplied by the selected command</source>
-        <translation type="unfinished"></translation>
+        <translation>使用依照所選用的指令提供的圖示</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="84"/>
         <source>Browse custom image…</source>
-        <translation type="unfinished"></translation>
+        <translation>瀏覽自訂圖片…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="85"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>選用</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="157"/>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="158"/>
         <source>All files (*)</source>
-        <translation type="unfinished">全部檔案 (*)</translation>
+        <translation>全部檔案 (*)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="157"/>
         <source>Images</source>
-        <translation type="unfinished">圖片</translation>
+        <translation>圖片</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="185"/>
         <source>Select Icon</source>
-        <translation type="unfinished">選擇圖示</translation>
+        <translation>選用圖示</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="197"/>
         <source>Current: Custom image - %1</source>
-        <translation type="unfinished"></translation>
+        <translation>目前：自訂圖片 - %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="201"/>
         <source>Current: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>目前： %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="205"/>
         <source>Current: Use command icon</source>
-        <translation type="unfinished"></translation>
+        <translation>目前：使用指令圖示</translation>
     </message>
 </context>
 <context>
@@ -8312,7 +8317,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="67"/>
         <source>Reduce disk usage and improve query performance</source>
-        <translation>減少磁碟佔用且提高查詢效能</translation>
+        <translation>降低磁碟佔用量且提高查詢效能</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="71"/>
@@ -9239,27 +9244,27 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="41"/>
         <source>Release</source>
-        <translation type="unfinished"></translation>
+        <translation>發行</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="43"/>
         <source>Artist</source>
-        <translation type="unfinished">藝人</translation>
+        <translation>藝人</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="45"/>
         <source>Date/Country</source>
-        <translation type="unfinished"></translation>
+        <translation>日期/國家</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="47"/>
         <source>Format</source>
-        <translation type="unfinished">格式</translation>
+        <translation>格式</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="49"/>
         <source>Discs</source>
-        <translation type="unfinished"></translation>
+        <translation>碟片</translation>
     </message>
 </context>
 <context>
@@ -9572,12 +9577,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="125"/>
         <source>Rewind line (−100 ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>倒轉 (-100 ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="126"/>
         <source>Forward line (+100 ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>快轉 (-100 ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="127"/>
@@ -10123,77 +10128,77 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="37"/>
         <source>Metadata Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>詮釋資料變更</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="48"/>
         <source>%Ln metadata change(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 個詮釋資料變更</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="49"/>
         <source>%Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 檔案</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="50"/>
         <source>%1 across %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 跨越 %2。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="54"/>
         <source>File</source>
-        <translation type="unfinished">檔案</translation>
+        <translation>檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="54"/>
         <source>Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>變更</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
         <source>Change</source>
-        <translation type="unfinished"></translation>
+        <translation>變更</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
         <source>Tag</source>
-        <translation type="unfinished">標記</translation>
+        <translation>標記</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
         <source>Current value</source>
-        <translation type="unfinished"></translation>
+        <translation>目前數值</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
         <source>New value</source>
-        <translation type="unfinished"></translation>
+        <translation>新建數值</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="137"/>
         <source>Added</source>
-        <translation type="unfinished">已經添加</translation>
+        <translation>已經添加</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="138"/>
         <source>Removed</source>
-        <translation type="unfinished"></translation>
+        <translation>已經移除</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="139"/>
         <source>Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>已經修改</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="146"/>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="150"/>
         <source>(empty)</source>
-        <translation type="unfinished"></translation>
+        <translation>(空白)</translation>
     </message>
 </context>
 <context>
@@ -10201,220 +10206,220 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="166"/>
         <source>Metadata Lookup</source>
-        <translation type="unfinished"></translation>
+        <translation>詮釋資料尋找</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="273"/>
         <source>First track, last track, lead-out sector, then track offsets</source>
-        <translation type="unfinished"></translation>
+        <translation>首個曲目、最後曲目、引出區段、然後是曲目偏移</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="282"/>
         <source>Search</source>
-        <translation type="unfinished">搜尋</translation>
+        <translation>搜尋</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="293"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="360"/>
         <source>Artist</source>
-        <translation type="unfinished">藝人</translation>
+        <translation>藝人</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="295"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="361"/>
         <source>Album</source>
-        <translation type="unfinished">專輯</translation>
+        <translation>專輯</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="301"/>
         <source>TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>TOC</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="311"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="369"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>類型</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="313"/>
         <source>ID</source>
-        <translation type="unfinished">ID</translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="324"/>
         <source>Source</source>
-        <translation type="unfinished">來源</translation>
+        <translation>來源</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="326"/>
         <source>Lookup by</source>
-        <translation type="unfinished"></translation>
+        <translation>尋找依照</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="332"/>
         <source>Search for a release to see matching results</source>
-        <translation type="unfinished"></translation>
+        <translation>搜尋發行以查看符合結果</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="345"/>
         <source>Release information</source>
-        <translation type="unfinished"></translation>
+        <translation>發行資訊</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="362"/>
         <source>Date</source>
-        <translation type="unfinished">日期</translation>
+        <translation>日期</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="363"/>
         <source>Original release date</source>
-        <translation type="unfinished"></translation>
+        <translation>原始發行日期</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="364"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>國家</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="365"/>
         <source>Label</source>
-        <translation type="unfinished"></translation>
+        <translation>標籤</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="366"/>
         <source>Catalogue number</source>
-        <translation type="unfinished"></translation>
+        <translation>型錄號碼</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="367"/>
         <source>Barcode</source>
-        <translation type="unfinished"></translation>
+        <translation>條碼</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="368"/>
         <source>Format</source>
-        <translation type="unfinished">格式</translation>
+        <translation>格式</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="370"/>
         <source>Status</source>
-        <translation type="unfinished">狀態</translation>
+        <translation>狀態</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="371"/>
         <source>Comment</source>
-        <translation type="unfinished">備註</translation>
+        <translation>備註</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="376"/>
         <source>Releases</source>
-        <translation type="unfinished"></translation>
+        <translation>發行</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="386"/>
         <source>Select a release above to load its tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇上方一個發行以載入其曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="397"/>
         <source>No local tracks were selected</source>
-        <translation type="unfinished"></translation>
+        <translation>無本機曲目被選用</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="418"/>
         <source>Retrieved tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>已經找回的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="429"/>
         <source>Drag rows to align tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>拖放行列以對齊曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="432"/>
         <source>Local tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>本機曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="453"/>
         <source>Fill missing metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>填補遺失的詮釋資料</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="454"/>
         <source>Replace lookup fields</source>
-        <translation type="unfinished"></translation>
+        <translation>取代尋找欄位</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="455"/>
         <source>Wipe writable tags, then apply</source>
-        <translation type="unfinished"></translation>
+        <translation>抹除可寫的標籤，然後套用</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="456"/>
         <source>Choose how retrieved metadata is combined with the track&apos;s existing tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇如何將已經找回的詮釋資料與曲目現有的標籤加以合併。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="458"/>
         <source>Allow applying unresolved tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>允許套用尚未解析的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="459"/>
         <source>Allow updating unresolved tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>允許更新尚未解析的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="461"/>
         <source>Write genres</source>
-        <translation type="unfinished"></translation>
+        <translation>寫入曲風</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="462"/>
         <source>Write provider IDs</source>
-        <translation type="unfinished"></translation>
+        <translation>寫入提供者 IDs</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="464"/>
         <source>Use original date for Date</source>
-        <translation type="unfinished"></translation>
+        <translation>使用原始日期用於日期</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="467"/>
         <source>Allow applying metadata when local tracks are unmatched or have an ambiguous match.</source>
-        <translation type="unfinished"></translation>
+        <translation>允許進行套用詮釋資料，當本地曲目是不符合的、或符合不甚明確時。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="468"/>
         <source>Allow writing when local tracks are unmatched or have an ambiguous match.</source>
-        <translation type="unfinished"></translation>
+        <translation>允許進行寫入，當本地曲目是不符合的、或符合不甚明確時。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="469"/>
         <source>Write genres supplied by the selected metadata provider when available.</source>
-        <translation type="unfinished"></translation>
+        <translation>寫入曲風，由所選的詮釋資料提供者所供應的，當有可用之時。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="470"/>
         <source>Write identifiers supplied by the selected metadata provider.</source>
-        <translation type="unfinished"></translation>
+        <translation>寫入識別碼，由所選詮釋資料提供者所供應的。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="472"/>
         <source>Use the original release date for the Date tag instead of this specific release&apos;s date.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用原始發行日期用於日期標籤，而非此次特定的發行日期。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="478"/>
         <source>Metadata options</source>
-        <translation type="unfinished"></translation>
+        <translation>詮釋資料選項</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="481"/>
         <source>Existing metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>現存詮釋資料</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="488"/>
@@ -10423,129 +10428,129 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="782"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="848"/>
         <source>Changes…</source>
-        <translation type="unfinished"></translation>
+        <translation>變更…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="491"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="572"/>
         <source>Ready.</source>
-        <translation type="unfinished"></translation>
+        <translation>準備妥當。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="496"/>
         <source>Apply</source>
-        <translation type="unfinished">套用</translation>
+        <translation>套用</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="496"/>
         <source>Update files</source>
-        <translation type="unfinished"></translation>
+        <translation>更新檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="521"/>
         <source>No matching releases found.</source>
-        <translation type="unfinished"></translation>
+        <translation>找無符合的發行。</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="522"/>
         <source>Found %Ln release(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>找到 %Ln 個發行。</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="543"/>
         <source>Contacting %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>聯絡 %1 ...</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="592"/>
         <source>Artist and album</source>
-        <translation type="unfinished"></translation>
+        <translation>藝人與專輯</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="595"/>
         <source>Disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>碟片 TOC</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="598"/>
         <source>Release</source>
-        <translation type="unfinished"></translation>
+        <translation>發行</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="601"/>
         <source>Release group</source>
-        <translation type="unfinished"></translation>
+        <translation>發行群組</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="604"/>
         <source>%1 ID</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="783"/>
         <source>The selected release does not contain the queried disc.</source>
-        <translation type="unfinished"></translation>
+        <translation>所選用的發行不包含所要求的碟片。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="854"/>
         <source>Changes (%1)…</source>
-        <translation type="unfinished"></translation>
+        <translation>變更 (%1)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="898"/>
         <source>One or more selected tracks cannot be updated.</source>
-        <translation type="unfinished"></translation>
+        <translation>一個或多個所選用的曲目無法更新。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="902"/>
         <source>Review unmatched or ambiguous tracks before applying metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>審查不符合或不明確的曲目，在套用詮釋資料之前。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="903"/>
         <source>Review unmatched or ambiguous tracks before updating files.</source>
-        <translation type="unfinished"></translation>
+        <translation>審查不符合或求明確的曲目，在更新檔案之前。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="906"/>
         <source>The selected release produces no metadata changes.</source>
-        <translation type="unfinished"></translation>
+        <translation>所選用的發行產生無任何詮釋資料變更。</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="909"/>
         <source>Metadata will be applied to %Ln track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>詮釋資料將會套用至 %Ln 個曲目。</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="911"/>
         <source>%Ln track(s) will be updated.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 個曲目將會被更新。</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="951"/>
         <source>Writing metadata…</source>
-        <translation type="unfinished">寫入詳釋資料…</translation>
+        <translation>寫入詮釋資料…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="951"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>關於</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="957"/>
         <source>Writing Metadata</source>
-        <translation type="unfinished">寫入詮釋資料</translation>
+        <translation>寫入詮釋資料</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="959"/>
         <source>Writing metadata to %Ln track(s)…</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>寫入詮釋資料至 %Ln 曲目…</numerusform>
         </translation>
     </message>
@@ -10553,7 +10558,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="980"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="985"/>
         <source>%Ln succeeded</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 已經成功</numerusform>
         </translation>
     </message>
@@ -10561,36 +10566,36 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="981"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="986"/>
         <source>%Ln failed</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 執行失敗</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="982"/>
         <source>Metadata writing was cancelled.</source>
-        <translation type="unfinished"></translation>
+        <translation>詮釋資料寫入已被取消。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="987"/>
         <source>Metadata writing finished:</source>
-        <translation type="unfinished"></translation>
+        <translation>詮釋資料寫入完成：</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="991"/>
         <source>Metadata was updated in %Ln track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>詮釋資料已被更新於 %Ln 個曲目。</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1000"/>
         <source>Wipe existing tags?</source>
-        <translation type="unfinished"></translation>
+        <translation>抹除現存標籤？</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1001"/>
         <source>Existing metadata and custom tags will be removed before applying the selected release. Ratings, ReplayGain, technical information, playback statistics, and artwork will be preserved.</source>
-        <translation type="unfinished"></translation>
+        <translation>現存詮釋資料及自訂標籤將會陂移除，在套用所選用的發行之前。評分、播放增益、技術資訊、播放統計，及封面圖面將會被保留。</translation>
     </message>
 </context>
 <context>
@@ -10598,42 +10603,42 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="234"/>
         <source>MusicBrainz</source>
-        <translation type="unfinished"></translation>
+        <translation>MusicBrainz</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="251"/>
         <source>Enter an artist or album.</source>
-        <translation type="unfinished"></translation>
+        <translation>輸入藝人或專輯。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="252"/>
         <source>Enter a disc TOC.</source>
-        <translation type="unfinished"></translation>
+        <translation>輸入碟片 TOC。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="253"/>
         <source>Enter a MusicBrainz ID.</source>
-        <translation type="unfinished"></translation>
+        <translation>輸入 MusicBrainz ID。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="267"/>
         <source>The selected result has no release identifier.</source>
-        <translation type="unfinished"></translation>
+        <translation>所選結果沒有發行識別。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="541"/>
         <source>MusicBrainz request failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>MusicBrainz 要求失敗： %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="555"/>
         <source>Could not read the MusicBrainz search response: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>無法讀取 MusicBrainz 搜尋回應： %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="566"/>
         <source>Could not read the MusicBrainz release response: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>無法讀取 MusicBrainz 發行回應： %1</translation>
     </message>
 </context>
 <context>
@@ -10753,7 +10758,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="79"/>
         <source>Notify when repeating a track</source>
-        <translation type="unfinished"></translation>
+        <translation>當重覆曲目時進行通知</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="80"/>
@@ -11825,7 +11830,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="111"/>
         <source>If the current track has been playing for more than 5 s, restart it instead of moving to the previous track</source>
-        <translation type="unfinished"></translation>
+        <translation>如果目前曲目已播放超過 5 秒，則重新開始播放，而非移至上一首曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="114"/>
@@ -13189,12 +13194,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="281"/>
         <source>Leave empty to group by the displayed values</source>
-        <translation type="unfinished"></translation>
+        <translation>留下空白至群組，依照所顯示的數值</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="288"/>
         <source>Grouping script</source>
-        <translation type="unfinished">群組腳本</translation>
+        <translation>群組腳本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="294"/>
@@ -13801,7 +13806,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="460"/>
         <source>Remove dead (non-existent) tracks from the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>移除佚失(不存在)的曲目，來自播放清單</translation>
     </message>
 </context>
 <context>
@@ -13844,7 +13849,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="46"/>
         <source>Licence</source>
-        <translation type="unfinished"></translation>
+        <translation>授權</translation>
     </message>
 </context>
 <context>
@@ -14466,23 +14471,23 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="110"/>
         <source>Writing changes…</source>
-        <translation type="unfinished"></translation>
+        <translation>寫入變更…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="110"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>關於</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="118"/>
         <source>Writing Metadata</source>
-        <translation type="unfinished">寫入詮釋資料</translation>
+        <translation>寫入詮釋資料</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="119"/>
         <source>Writing changes to %Ln track(s)…</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>寫入變更至 %Ln 個曲目…</numerusform>
         </translation>
     </message>
 </context>
@@ -16411,42 +16416,42 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="396"/>
         <source>Countries unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>國家地區不可用 — 選擇重試</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="397"/>
         <source>Countries unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>國家地區不可用： %1 — 選擇重試</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="404"/>
         <source>Languages unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>語言不可用 — 選擇重試</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="405"/>
         <source>Languages unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>語言不可用：%1 — 選擇重試</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="412"/>
         <source>Tags unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>標籤不可用 — 選擇重試</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="413"/>
         <source>Tags unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>標籤不可用：%1 — 選擇重試</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="420"/>
         <source>Codecs unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>編碼不可用 — 選擇重試</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="421"/>
         <source>Codecs unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>編碼不可用：%1 — 選擇重試</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="826"/>
@@ -16740,7 +16745,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="166"/>
         <source>Configure ReplayGain…</source>
-        <translation type="unfinished"></translation>
+        <translation>調整設定 播放增益 …</translation>
     </message>
 </context>
 <context>
@@ -17003,17 +17008,17 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="109"/>
         <source>#</source>
-        <translation type="unfinished"></translation>
+        <translation>#</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="111"/>
         <source>Title</source>
-        <translation type="unfinished">標題</translation>
+        <translation>標題</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="113"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>時長</translation>
     </message>
 </context>
 <context>
@@ -17362,7 +17367,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="100"/>
         <source>Enter a query — tracks that match the query will NOT be scrobbled</source>
-        <translation type="unfinished"></translation>
+        <translation>輸入查詢 － 符合查詢的曲目將不會被記錄</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="77"/>
@@ -19932,78 +19937,78 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="157"/>
         <source>No local track</source>
-        <translation type="unfinished"></translation>
+        <translation>無本機曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="160"/>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="219"/>
         <source>Unmatched</source>
-        <translation type="unfinished"></translation>
+        <translation>無符合的</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="181"/>
         <source>This local track is not matched to a retrieved track.</source>
-        <translation type="unfinished"></translation>
+        <translation>此本機曲目不符合所找回的曲目。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="184"/>
         <source>This match was set manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>此項符合是手動設定的。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="187"/>
         <source>Automatic match confidence: %1%.</source>
-        <translation type="unfinished"></translation>
+        <translation>自動符合信任度： %1%。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="191"/>
         <source>The local and retrieved durations differ by more than 10 seconds.</source>
-        <translation type="unfinished"></translation>
+        <translation>本機與所找回的時長差異，依照超過10秒以上的。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="195"/>
         <source>This automatic match is ambiguous.</source>
-        <translation type="unfinished"></translation>
+        <translation>此項自動符合是不明確的。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="198"/>
         <source>Drag this row to match it with a retrieved track.</source>
-        <translation type="unfinished"></translation>
+        <translation>拖放此行列至符合它，使用所找回的曲目。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="221"/>
         <source>Manual</source>
-        <translation type="unfinished">手動</translation>
+        <translation>手動</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="221"/>
         <source>%1%</source>
-        <translation type="unfinished">%1%</translation>
+        <translation>%1%</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="223"/>
         <source>%1 / %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 / %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="248"/>
         <source>Current #</source>
-        <translation type="unfinished"></translation>
+        <translation>目前 #</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="250"/>
         <source>Title / file</source>
-        <translation type="unfinished"></translation>
+        <translation>標題 / 檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="252"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>時長</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="254"/>
         <source>Match / Δ</source>
-        <translation type="unfinished"></translation>
+        <translation>符合 / Δ</translation>
     </message>
 </context>
 <context>
@@ -20885,7 +20890,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="227"/>
         <source>Disk cache usage</source>
-        <translation>磁碟快取用量</translation>
+        <translation>磁碟快取使用量</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="548"/>
@@ -21517,163 +21522,163 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="388"/>
         <source>Searching for artwork…</source>
-        <translation type="unfinished">搜尋圖面中…</translation>
+        <translation>搜尋圖面中…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="402"/>
         <source>Artwork search finished</source>
-        <translation type="unfinished">圖面搜尋結束</translation>
+        <translation>圖面搜尋結束</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="456"/>
         <source>Failed to open artwork file</source>
-        <translation type="unfinished">開啟圖面檔案失敗</translation>
+        <translation>開啟圖面檔案失敗</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="462"/>
         <source>Artwork file is empty</source>
-        <translation type="unfinished">圖面檔案空白</translation>
+        <translation>圖面檔案空白</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="859"/>
         <source>Plugins not found</source>
-        <translation type="unfinished">找不到外掛</translation>
+        <translation>找無外掛</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="860"/>
         <source>Some plugins are required for full functionality.</source>
-        <translation type="unfinished">用於完整功能，有些外掛是必需的。</translation>
+        <translation>用於完整功能，有些外掛是必需的。</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="861"/>
         <source>Plugin search locations:
 
 </source>
-        <translation type="unfinished">外掛搜尋位置：
+        <translation>外掛搜尋位置：
 
 </translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="864"/>
         <source>Quit</source>
-        <translation type="unfinished">退出</translation>
+        <translation>退出</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="990"/>
         <source>Volume</source>
-        <translation type="unfinished">音量</translation>
+        <translation>音量</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="992"/>
         <source>Volume up</source>
-        <translation type="unfinished">調大音量</translation>
+        <translation>音量調大</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="999"/>
         <source>Volume down</source>
-        <translation type="unfinished">調小音量</translation>
+        <translation>音量調小</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1006"/>
         <source>Mute</source>
-        <translation type="unfinished">靜音</translation>
+        <translation>靜音</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1016"/>
         <source>Clear Current Playlist</source>
-        <translation type="unfinished">清除目前的播放清單</translation>
+        <translation>清除目前的播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1017"/>
         <source>Remove all tracks from the current playlist</source>
-        <translation type="unfinished">移除全部曲目 從目前播放清單</translation>
+        <translation>移除全部曲目，從目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1020"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1047"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1120"/>
         <source>Playlist</source>
-        <translation type="unfinished">播放清單</translation>
+        <translation>播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1043"/>
         <source>Lock playlist</source>
-        <translation type="unfinished">鎖定播放清單</translation>
+        <translation>鎖定播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1045"/>
         <source>Prevent changes to the contents of the current playlist</source>
-        <translation type="unfinished">對目前播放清單內容防止進行變更</translation>
+        <translation>對目前播放清單內容防止進行變更</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1048"/>
         <source>Lock Current Playlist</source>
-        <translation type="unfinished">鎖定目前播放清單</translation>
+        <translation>鎖定目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1069"/>
         <source>Playback</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1069"/>
         <source>Seek</source>
-        <translation type="unfinished">查尋</translation>
+        <translation>查尋</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1071"/>
         <source>Seek forward (small step)</source>
-        <translation type="unfinished">向前查尋(小步)</translation>
+        <translation>向前查尋(小步)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1078"/>
         <source>Seek forward (large step)</source>
-        <translation type="unfinished">向前查尋(大步)</translation>
+        <translation>向前查尋(大步)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1085"/>
         <source>Seek backward (small step)</source>
-        <translation type="unfinished">向後查尋(小步)</translation>
+        <translation>向後查尋(小步)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1093"/>
         <source>Seek backward (large step)</source>
-        <translation type="unfinished">向後查尋(大步)</translation>
+        <translation>向後查尋(大步)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1118"/>
         <source>Remove Playlist</source>
-        <translation type="unfinished">移除播放清單</translation>
+        <translation>移除播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1121"/>
         <source>Remove Current Playlist</source>
-        <translation type="unfinished">移除目前播放清單</translation>
+        <translation>移除目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1129"/>
         <source>Toggle Menubar</source>
-        <translation type="unfinished">切換選單列</translation>
+        <translation>切換選單列</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1133"/>
         <source>View</source>
-        <translation type="unfinished">檢視</translation>
+        <translation>檢視</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1140"/>
         <source>Look up metadata by artist and album…</source>
-        <translation type="unfinished"></translation>
+        <translation>尋找詮釋資料，按照藝人與專輯…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1141"/>
         <source>Look up metadata using the selected tracks&apos; artist and album</source>
-        <translation type="unfinished"></translation>
+        <translation>尋找詮釋資料，使用所選曲目的藝人與專輯</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1146"/>
         <source>Look up metadata by artist and album</source>
-        <translation type="unfinished"></translation>
+        <translation>尋找詮釋資料，依照藝人與專輯</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1147"/>
@@ -21682,68 +21687,68 @@ Changes apply to newly opened streams.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1222"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1261"/>
         <source>Tagging</source>
-        <translation type="unfinished"></translation>
+        <translation>進行標記</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1149"/>
         <source>Look up metadata by MusicBrainz ID…</source>
-        <translation type="unfinished"></translation>
+        <translation>尋找詮釋資料，依照 MusicBrainz ID…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1150"/>
         <source>Look up metadata using a MusicBrainz release identifier</source>
-        <translation type="unfinished"></translation>
+        <translation>尋找詮釋資料，使用 MusicBrainz 發行識別</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1153"/>
         <source>Look up metadata by MusicBrainz ID</source>
-        <translation type="unfinished"></translation>
+        <translation>尋找詮釋資料，依照 MusicBrainz ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1181"/>
         <source>Reading tracks…</source>
-        <translation type="unfinished">正在讀取曲目…</translation>
+        <translation>進行讀取曲目…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1181"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>關於</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1209"/>
         <source>Current file</source>
-        <translation type="unfinished">目前檔案</translation>
+        <translation>目前檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1224"/>
         <source>Reload tags from files</source>
-        <translation type="unfinished">從檔案中重新載入標籤</translation>
+        <translation>重新載入標籤來自檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1225"/>
         <source>Reload tags from modified files</source>
-        <translation type="unfinished">從已經修改的檔案中重新載入標籤</translation>
+        <translation>重新載入標籤來自已經修改的檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1227"/>
         <source>Replace tags in selected tracks with tags from the files</source>
-        <translation type="unfinished">重新載入所選曲目的標籤</translation>
+        <translation>取代所選曲目的標籤，使用來自檔案的標籤</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1228"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
-        <translation type="unfinished">重新載入選中曲目中已經修改的標籤</translation>
+        <translation>取代所選曲目的標籤，使用標籤來自檔案，若有修改過</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1272"/>
         <source>Choose destination</source>
-        <translation type="unfinished">選擇目的地</translation>
+        <translation>選擇目的地</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1353"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1361"/>
         <source>Convert using preset %1</source>
-        <translation type="unfinished">轉換使用預設集 %1</translation>
+        <translation>轉換使用預設集 %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1360"/>
@@ -21751,7 +21756,7 @@ Changes apply to newly opened streams.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1403"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1412"/>
         <source>Tracks</source>
-        <translation type="unfinished">曲目</translation>
+        <translation>曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1360"/>
@@ -21760,147 +21765,147 @@ Changes apply to newly opened streams.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1412"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1423"/>
         <source>Convert</source>
-        <translation type="unfinished">轉換</translation>
+        <translation>轉換</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1391"/>
         <source>Converter setup…</source>
-        <translation type="unfinished">轉換器設定…</translation>
+        <translation>轉換器設定…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1400"/>
         <source>Using default settings</source>
-        <translation type="unfinished">使用預設設定</translation>
+        <translation>使用預設設定</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1404"/>
         <source>Convert using default settings</source>
-        <translation type="unfinished">轉換使用預設設定</translation>
+        <translation>轉換使用預設設定</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1409"/>
         <source>Repeat last conversion</source>
-        <translation type="unfinished">重複上次的轉換</translation>
+        <translation>重複上次的轉換</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1440"/>
         <source>Custom conversion…</source>
-        <translation type="unfinished">自訂轉換…</translation>
+        <translation>自訂轉換…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1452"/>
         <source>Utilities</source>
-        <translation type="unfinished"></translation>
+        <translation>工具</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1677"/>
         <source>Reload Required</source>
-        <translation type="unfinished">需要重新載入</translation>
+        <translation>需要重新載入</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1679"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
-        <translation type="unfinished">由於資料庫改變，曲目需要重新載入以更新其儲存的資料。</translation>
+        <translation>由於資料庫變更，曲目需要重新載入以更新其儲存的詮釋資料。</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1683"/>
         <source>Reload Now</source>
-        <translation type="unfinished">立即重新載入</translation>
+        <translation>立即重新載入</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1686"/>
         <source>OK</source>
-        <translation type="unfinished">確定</translation>
+        <translation>確定</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1828"/>
         <source>Playback Error</source>
-        <translation type="unfinished">播放錯誤</translation>
+        <translation>播放錯誤</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1853"/>
         <source>Continue</source>
-        <translation type="unfinished">繼續</translation>
+        <translation>繼續</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1855"/>
         <source>Stop</source>
-        <translation type="unfinished">停止</translation>
+        <translation>停止</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1859"/>
         <source>Always continue playing if a track is unavailable</source>
-        <translation type="unfinished">如果曲目無法作用則繼續播放下一首</translation>
+        <translation>如果曲目無法作用，則繼續播放下一首</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1881"/>
         <source>Track Not Found</source>
-        <translation type="unfinished">未找到曲目</translation>
+        <translation>找無曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1886"/>
         <source>No Decoder Available</source>
-        <translation type="unfinished">解碼器無可作用</translation>
+        <translation>解碼器無可供用</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1958"/>
         <source>All Supported Media Files (%1)</source>
-        <translation type="unfinished">全部支援的媒體檔案 (%1)</translation>
+        <translation>全部支援的多媒體檔案 (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1959"/>
         <source>Audio Files (%1)</source>
-        <translation type="unfinished">音訊檔案 (%1)</translation>
+        <translation>音訊檔案 (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1970"/>
         <source>Add Files</source>
-        <translation type="unfinished">添加檔案</translation>
+        <translation>添加檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1984"/>
         <source>Add Folders</source>
-        <translation type="unfinished">添加資料夾</translation>
+        <translation>添加資料夾</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1996"/>
         <source>Add Stream URL</source>
-        <translation type="unfinished">添加串流 URL</translation>
+        <translation>添加串流 URL</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1996"/>
         <source>Stream URL:</source>
-        <translation type="unfinished">串流 URL:</translation>
+        <translation>串流 URL：</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1998"/>
         <source>&amp;Add</source>
-        <translation type="unfinished">添加(&amp;A)</translation>
+        <translation>添加(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2002"/>
         <source>Enter a valid http:// or https:// URL.</source>
-        <translation type="unfinished">輸入有效的 http:// 或 https:// URL 。</translation>
+        <translation>輸入有效的 URL http:// 或 https:// 。</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2063"/>
         <source>All Supported Playlists (%1)</source>
-        <translation type="unfinished">全部支援的播放清單 (%1)</translation>
+        <translation>全部支援的播放清單 (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2073"/>
         <source>Load Playlist</source>
-        <translation type="unfinished">載入播放清單</translation>
+        <translation>載入播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2110"/>
         <source>Save Playlist</source>
-        <translation type="unfinished">儲存播放清單</translation>
+        <translation>儲存播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="455"/>
         <source>Display</source>
-        <translation type="unfinished">顯示</translation>
+        <translation>顯示</translation>
     </message>
 </context>
 <context>
@@ -22348,8 +22353,8 @@ Changes apply to newly opened streams.</source>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="91"/>
         <source>Use fooyin&apos;s default POPM byte conversion when reading and writing MP3 ratings.
 This supports intermediate rating steps, but does not treat the POPM byte as a fully linear 0–255 scale.</source>
-        <translation type="unfinished">使用 fooyin 預設的 POPM 位元組轉換，當讀寫 MP3 評分級時。
-這項支援中間的評分步驟，但不會將 POPM 位元組視為完全線性的 0-255 範圍。 {3 ?} {0–255 ?}</translation>
+        <translation>使用 fooyin 預設的 POPM 位元組轉換，當讀寫 MP3 評分級時。
+這項支援中間的評分步驟，但不會將 POPM 位元組視為完全線性的 0-255 範圍。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="97"/>
@@ -22516,7 +22521,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1809"/>
         <source>Quick Search</source>
-        <translation type="unfinished">快速搜尋</translation>
+        <translation>快速搜尋</translation>
     </message>
 </context>
 <context>

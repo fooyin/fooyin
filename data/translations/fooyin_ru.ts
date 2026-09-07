@@ -394,7 +394,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Normalised rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Нормализованная оценка</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="161"/>
@@ -1296,22 +1296,22 @@
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="34"/>
         <source>Automatic detection</source>
-        <translation type="unfinished">Автоматическое определение</translation>
+        <translation>Автоматическое определение</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="56"/>
         <source>Default</source>
-        <translation type="unfinished">По умолчанию</translation>
+        <translation>По умолчанию</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="58"/>
         <source>Five star compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Совместимость с пятизвёздочной шкалой</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="60"/>
         <source>Raw 0–255 byte scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Сырая байтовая шкала 0–255</translation>
     </message>
 </context>
 <context>
@@ -2080,22 +2080,22 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="76"/>
         <source>AccurateRip verification of mixed-mode discs is not supported</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверка AccurateRip для дисков смешанного режима не поддерживается</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="126"/>
         <source>Truncated AccurateRip response header</source>
-        <translation type="unfinished"></translation>
+        <translation>Обрезанный заголовок ответа AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="138"/>
         <source>Invalid AccurateRip response record</source>
-        <translation type="unfinished"></translation>
+        <translation>Недействительная запись ответа AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="158"/>
         <source>AccurateRip response did not contain the requested disc</source>
-        <translation type="unfinished"></translation>
+        <translation>Ответ AccurateRip не содержит запрошенный диск</translation>
     </message>
 </context>
 <context>
@@ -2103,30 +2103,30 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="61"/>
         <source>The CD drive is already in use</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-привод уже используется</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="355"/>
         <source>Audio CD identity is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Идентификатор аудио-CD недоступен</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="374"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="586"/>
         <source>The disc in the CD drive has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Диск в CD-приводе изменился</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="466"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="521"/>
         <source>Invalid CD disc identity</source>
-        <translation type="unfinished"></translation>
+        <translation>Недействительный идентификатор CD-диска</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="498"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="609"/>
         <source>The requested audio CD is not inserted</source>
-        <translation type="unfinished"></translation>
+        <translation>Запрошенный аудио-CD не вставлен</translation>
     </message>
 </context>
 <context>
@@ -2134,12 +2134,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/cdda/drive/cddrivebackend.cpp" line="40"/>
         <source>Secure CD extraction is unavailable for this drive backend</source>
-        <translation type="unfinished"></translation>
+        <translation>Безопасное извлечение CD недоступно для этого бэкенда привода</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/cddrivebackend.cpp" line="47"/>
         <source>CD read speed control is unavailable for this drive backend</source>
-        <translation type="unfinished"></translation>
+        <translation>Управление скоростью чтения CD недоступно для этого бэкенда привода</translation>
     </message>
 </context>
 <context>
@@ -2147,34 +2147,36 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="49"/>
         <source>Lookup with AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск через AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="53"/>
         <source>Drive Settings - %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки привода — %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="58"/>
         <source>Compensates for a drive that reads slightly before or after the requested CD position.
 Positive values read later; negative values read earlier.
 Use AccurateRip to look up the correction for this drive model, or enter a known value manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Компенсирует смещение привода, который читает немного раньше или позже запрошенной позиции CD.
+Положительные значения читают позже; отрицательные — раньше.
+Используйте AccurateRip для поиска коррекции для этой модели привода или введите известное значение вручную.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="62"/>
         <source>Disabled</source>
-        <translation type="unfinished">Отключено</translation>
+        <translation>Отключено</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="63"/>
         <source>Standard</source>
-        <translation type="unfinished"></translation>
+        <translation>Стандартный</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="64"/>
         <source>Paranoid</source>
-        <translation type="unfinished"></translation>
+        <translation>Параноидальный</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="66"/>
@@ -2182,71 +2184,74 @@ Use AccurateRip to look up the correction for this drive model, or enter a known
 Disabled: direct reads with no verification (fastest).
 Standard: verifies overlapping reads and retries inconsistencies (slower).
 Paranoid: performs the most thorough available checking and additional retries (slowest).</source>
-        <translation type="unfinished"></translation>
+        <translation>Управляет обнаружением и исправлением ошибок при риппинге; воспроизведение не затрагивается.
+Отключено: прямое чтение без проверки (самый быстрый).
+Стандартный: проверяет перекрывающиеся чтения и повторяет при расхождениях (медленнее).
+Параноидальный: выполняет наиболее тщательную проверку и дополнительные повторы (самый медленный).</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="71"/>
         <source>Maximum</source>
-        <translation type="unfinished">Максимум</translation>
+        <translation>Максимум</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="77"/>
         <source>Limits the drive&apos;s read speed while ripping; playback is unaffected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ограничивает скорость чтения привода во время риппинга; воспроизведение не затрагивается.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="78"/>
         <source>This drive doesn&apos;t support read-speed control.</source>
-        <translation type="unfinished"></translation>
+        <translation>Этот привод не поддерживает управление скоростью чтения.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="88"/>
         <source>Read offset correction</source>
-        <translation type="unfinished"></translation>
+        <translation>Коррекция смещения чтения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="91"/>
         <source>Ripping security</source>
-        <translation type="unfinished"></translation>
+        <translation>Надёжность риппинга</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="93"/>
         <source>Drive speed limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Ограничение скорости привода</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="119"/>
         <source>Looking up drive…</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск привода…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="129"/>
         <source>Lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск не удался: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="135"/>
         <source>AccurateRip returned an unexpectedly large drive list.</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip вернул неожиданно большой список приводов.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="142"/>
         <source>No unambiguous entry was found for this drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>Для этого привода не найдено однозначной записи.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="147"/>
         <source>This drive was purged because its offset is not consistent.</source>
-        <translation type="unfinished"></translation>
+        <translation>Этот привод был исключён, так как его смещение не согласовано.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="154"/>
         <source>Found correction: %1 (%Ln submission(s), %2% agreement).</source>
         <extracomment>Correction = CD Drive read offset correction</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Найдена коррекция: %1 (%Ln запись, согласие %2%).</numerusform>
+            <numerusform>Найдена коррекция: %1 (%Ln записи, согласие %2%).</numerusform>
+            <numerusform>Найдена коррекция: %1 (%Ln записей, согласие %2%).</numerusform>
         </translation>
     </message>
 </context>
@@ -2255,12 +2260,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="42"/>
         <source>CD sector conversion overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>Переполнение при преобразовании секторов CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="88"/>
         <source>The CD has an invalid TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>CD имеет недействительную таблицу содержания (TOC)</translation>
     </message>
 </context>
 <context>
@@ -2268,33 +2273,33 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="180"/>
         <source>Audio CD decoder is not initialised</source>
-        <translation type="unfinished"></translation>
+        <translation>Декодер аудио-CD не инициализирован</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="187"/>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="321"/>
         <source>Audio CD read was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Чтение аудио-CD было отменено</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="268"/>
         <source>CD drive returned no audio data</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-привод не вернул аудиоданных</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="335"/>
         <source>The disc in the CD drive has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Диск в CD-приводе изменился</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="350"/>
         <source>Could not limit CD read speed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось ограничить скорость чтения CD: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="362"/>
         <source>The selected CD drive became unavailable; extraction settings for %1 are being used</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбранный CD-привод стал недоступен; используются настройки извлечения для %1</translation>
     </message>
 </context>
 <context>
@@ -2302,39 +2307,39 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="71"/>
         <source>Open audio &amp;CD…</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть аудио-&amp;CD…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="72"/>
         <source>Open an audio CD for playback or ripping</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть аудио-CD для воспроизведения или риппинга</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="74"/>
         <source>File</source>
-        <translation type="unfinished">Файл</translation>
+        <translation>Файл</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="102"/>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="117"/>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="243"/>
         <source>Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>Аудио-CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="193"/>
         <source>This disc is not present in AccurateRip.</source>
-        <translation type="unfinished"></translation>
+        <translation>Этот диск отсутствует в AccurateRip.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="194"/>
         <source>AccurateRip lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск в AccurateRip не удался: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="201"/>
         <source>AccurateRip returned an unexpectedly large disc record.</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip вернул неожиданно большую запись диска.</translation>
     </message>
 </context>
 <context>
@@ -2342,17 +2347,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="49"/>
         <source>Track %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Дорожка %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="53"/>
         <source>Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>Аудио-CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="111"/>
         <source>Invalid audio CD identity</source>
-        <translation type="unfinished"></translation>
+        <translation>Недействительный идентификатор аудио-CD</translation>
     </message>
 </context>
 <context>
@@ -2360,25 +2365,25 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="129"/>
         <source>CD read offset correction padded %Ln frame(s) with silence before the readable audio range</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Коррекция смещения чтения CD дополнила %Ln кадр тишиной перед читаемым аудиодиапазоном</numerusform>
+            <numerusform>Коррекция смещения чтения CD дополнила %Ln кадра тишиной перед читаемым аудиодиапазоном</numerusform>
+            <numerusform>Коррекция смещения чтения CD дополнила %Ln кадров тишиной перед читаемым аудиодиапазоном</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="169"/>
         <source>CD read offset correction padded %Ln frame(s) with silence after the readable audio range</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Коррекция смещения чтения CD дополнила %Ln кадр тишиной после читаемого аудиодиапазона</numerusform>
+            <numerusform>Коррекция смещения чтения CD дополнила %Ln кадра тишиной после читаемого аудиодиапазона</numerusform>
+            <numerusform>Коррекция смещения чтения CD дополнила %Ln кадров тишиной после читаемого аудиодиапазона</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="233"/>
         <source>CD extraction was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Извлечение CD было отменено</translation>
     </message>
 </context>
 <context>
@@ -2386,12 +2391,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="261"/>
         <source>The selected optical drive is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбранный оптический привод недоступен</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="269"/>
         <source>The selected optical drive is unavailable: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбранный оптический привод недоступен: %1</translation>
     </message>
 </context>
 <context>
@@ -2399,94 +2404,94 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="99"/>
         <source>Details: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Подробности: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="104"/>
         <source>Check the disk drive device permissions.</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверьте права доступа к устройству дисковода.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="306"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="384"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="523"/>
         <source>Failed to access audio CD drive %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось получить доступ к приводу аудио-CD %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="316"/>
         <source>Failed to read the CD TOC from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось прочитать TOC CD с %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="329"/>
         <source>Failed to read a CD track boundary from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось прочитать границу дорожки CD с %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="392"/>
         <source>Failed to read CD audio sectors from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось прочитать аудиосекторы CD с %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="421"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="534"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="545"/>
         <source>Failed to initialise secure CD extraction for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось инициализировать безопасное извлечение CD для %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="436"/>
         <source>Failed to seek the secure CD reader for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось выполнить позиционирование безопасного чтения CD для %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="456"/>
         <source>Failed to read securely from audio CD drive %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось выполнить безопасное чтение с привода аудио-CD %1</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="467"/>
         <source>CD extraction corrected %Ln read inconsistency event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Извлечение CD исправило %Ln случай несоответствия чтения</numerusform>
+            <numerusform>Извлечение CD исправило %Ln случая несоответствия чтения</numerusform>
+            <numerusform>Извлечение CD исправило %Ln случаев несоответствия чтения</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="470"/>
         <source>CD extraction encountered %Ln read error event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Извлечение CD столкнулось с %Ln ошибкой чтения</numerusform>
+            <numerusform>Извлечение CD столкнулось с %Ln ошибками чтения</numerusform>
+            <numerusform>Извлечение CD столкнулось с %Ln ошибками чтения</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="473"/>
         <source>CD extraction exhausted retries and concealed %Ln unreadable sector event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Извлечение CD исчерпало повторы и скрыло %Ln случай нечитаемого сектора</numerusform>
+            <numerusform>Извлечение CD исчерпало повторы и скрыло %Ln случая нечитаемого сектора</numerusform>
+            <numerusform>Извлечение CD исчерпало повторы и скрыло %Ln случаев нечитаемого сектора</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="484"/>
         <source>The requested CD read-speed limit is invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>Запрошенное ограничение скорости чтения CD недействительно</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="491"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="496"/>
         <source>Failed to limit the CD read speed for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось ограничить скорость чтения CD для %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="554"/>
         <source>CD operation was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Операция с CD была отменена</translation>
     </message>
 </context>
 <context>
@@ -2494,177 +2499,177 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="68"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Обновить</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="69"/>
         <source>Drive settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки привода…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="70"/>
         <source>Metadata</source>
-        <translation type="unfinished">Метаданные</translation>
+        <translation>Метаданные</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="71"/>
         <source>Read CD-Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Читать CD-Text</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="72"/>
         <source>Auto lookup metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматический поиск метаданных</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="73"/>
         <source>Lookup metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск метаданных…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="74"/>
         <source>Rip…</source>
-        <translation type="unfinished"></translation>
+        <translation>Извлечь…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="75"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Играть</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="76"/>
         <source>Add to playlist</source>
-        <translation type="unfinished">Добавить в плейлист</translation>
+        <translation>Добавить в плейлист</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="78"/>
         <source>Open Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть аудио-CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Дорожка</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Название</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Длительность</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="105"/>
         <source>CD drive</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-привод</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="143"/>
         <source>Check all</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать все</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="144"/>
         <source>Uncheck all</source>
-        <translation type="unfinished"></translation>
+        <translation>Снять все</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="179"/>
         <source>Searching for CD drives…</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск CD-приводов…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="227"/>
         <source>Reading audio CD…</source>
-        <translation type="unfinished"></translation>
+        <translation>Чтение аудио-CD…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="262"/>
         <source>No CD drives found.</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-приводы не найдены.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="287"/>
         <source>No audio CD is available in this drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>В этом приводе нет аудио-CD.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="305"/>
         <source>Found %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Найдена %Ln аудиодорожка.</numerusform>
+            <numerusform>Найдено %Ln аудиодорожки.</numerusform>
+            <numerusform>Найдено %Ln аудиодорожек.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="337"/>
         <source>Reading CD-Text…</source>
-        <translation type="unfinished"></translation>
+        <translation>Чтение CD-Text…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="360"/>
         <source>Failed to read CD-Text: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось прочитать CD-Text: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="374"/>
         <source>No CD-Text found.</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Text не найден.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="384"/>
         <source>CD-Text was read; existing metadata was kept.</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Text прочитан; существующие метаданные сохранены.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="392"/>
         <source>Applied CD-Text to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Применён CD-Text к %Ln аудиодорожке.</numerusform>
+            <numerusform>Применён CD-Text к %Ln аудиодорожкам.</numerusform>
+            <numerusform>Применён CD-Text к %Ln аудиодорожкам.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="461"/>
         <source>Automatic metadata lookup needs review.</source>
-        <translation type="unfinished"></translation>
+        <translation>Требуется проверка результатов автоматического поиска метаданных.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="471"/>
         <source>Automatic metadata lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматический поиск метаданных не удался: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="476"/>
         <source>Looking up audio CD metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск метаданных аудио-CD…</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="500"/>
         <source>Applied automatic metadata to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Применены автоматические метаданные к %Ln аудиодорожке.</numerusform>
+            <numerusform>Применены автоматические метаданные к %Ln аудиодорожкам.</numerusform>
+            <numerusform>Применены автоматические метаданные к %Ln аудиодорожкам.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="504"/>
         <source>No automatic metadata match found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматическое сопоставление метаданных не найдено.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="549"/>
         <source>Applied metadata to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Применены метаданные к %Ln аудиодорожке.</numerusform>
+            <numerusform>Применены метаданные к %Ln аудиодорожкам.</numerusform>
+            <numerusform>Применены метаданные к %Ln аудиодорожкам.</numerusform>
         </translation>
     </message>
 </context>
@@ -2673,168 +2678,168 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="76"/>
         <source>Accurately ripped</source>
-        <translation type="unfinished"></translation>
+        <translation>Точно извлечено</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="78"/>
         <source>Mismatch</source>
-        <translation type="unfinished"></translation>
+        <translation>Несовпадение</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="80"/>
         <source>Incomplete</source>
-        <translation type="unfinished"></translation>
+        <translation>Неполное</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="82"/>
         <source>Unsupported format</source>
-        <translation type="unfinished"></translation>
+        <translation>Неподдерживаемый формат</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="92"/>
         <source>AccurateRip Verification</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверка AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="104"/>
         <source>Verified: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверено: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="105"/>
         <source>Mismatched: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не совпадает: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="115"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Дорожка</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="115"/>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="214"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Название</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="116"/>
         <source>Result</source>
-        <translation type="unfinished">Результат</translation>
+        <translation>Результат</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="116"/>
         <source>Confidence</source>
-        <translation type="unfinished"></translation>
+        <translation>Достоверность</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="117"/>
         <source>AR v1 CRC</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v1 CRC</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="117"/>
         <source>AR v2 CRC</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v2 CRC</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="118"/>
         <source>Database CRCs</source>
-        <translation type="unfinished"></translation>
+        <translation>CRC базы данных</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="171"/>
         <source>Verify with AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверить через AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="173"/>
         <source>Lookup metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск метаданных…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="174"/>
         <source>Converter Setup…</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройка преобразователя…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="175"/>
         <source>Rip</source>
-        <translation type="unfinished"></translation>
+        <translation>Извлечь</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="178"/>
         <source>Rip Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>Извлечь аудио-CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="182"/>
         <source>Album information</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация об альбоме</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="198"/>
         <source>Album artist</source>
-        <translation type="unfinished">Исполнитель альбома</translation>
+        <translation>Исполнитель альбома</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="199"/>
         <source>Album title</source>
-        <translation type="unfinished">Название альбома</translation>
+        <translation>Название альбома</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="200"/>
         <source>Genre</source>
-        <translation type="unfinished">Жанр</translation>
+        <translation>Жанр</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="201"/>
         <source>Date</source>
-        <translation type="unfinished">Дата</translation>
+        <translation>Дата</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="203"/>
         <source>Disc number</source>
-        <translation type="unfinished">Номер диска</translation>
+        <translation>Номер диска</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="211"/>
         <source>Track information</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация о дорожках</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="214"/>
         <source>#</source>
-        <translation type="unfinished"></translation>
+        <translation>#</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="214"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="259"/>
         <source>Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Предустановка</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="275"/>
         <source>Check all</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать все</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="276"/>
         <source>Uncheck all</source>
-        <translation type="unfinished"></translation>
+        <translation>Снять все</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="304"/>
         <source>Drive offset has not been configured. Check Drive settings before ripping.</source>
-        <translation type="unfinished"></translation>
+        <translation>Смещение привода не настроено. Проверьте настройки привода перед извлечением.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="419"/>
         <source>Looking up disc in AccurateRip…</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск диска в AccurateRip…</translation>
     </message>
 </context>
 <context>
@@ -2925,12 +2930,12 @@ Paranoid: performs the most thorough available checking and additional retries (
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="45"/>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="50"/>
         <source>Choose…</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать…</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="67"/>
         <source>Choose an icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Выберите значок</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="75"/>
@@ -2970,17 +2975,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="101"/>
         <source>Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбор</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="115"/>
         <source>No command selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Команда не выбрана</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="184"/>
         <source>Custom image - %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Пользовательское изображение — %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="116"/>
@@ -2993,42 +2998,42 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="135"/>
         <source>Choose Command</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбор команды</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="138"/>
         <source>Filter commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Фильтр команд</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="141"/>
         <source>Enter a raw `$cmdlink` id or alias</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите необработанный идентификатор или псевдоним `$cmdlink`</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="144"/>
         <source>Command</source>
-        <translation type="unfinished">Команда</translation>
+        <translation>Команда</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="144"/>
         <source>ID</source>
-        <translation type="unfinished">ID</translation>
+        <translation>Идентификатор</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="159"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="162"/>
         <source>Command ID or alias</source>
-        <translation type="unfinished"></translation>
+        <translation>Идентификатор или псевдоним команды</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="252"/>
         <source>Other</source>
-        <translation type="unfinished">Другое</translation>
+        <translation>Другое</translation>
     </message>
 </context>
 <context>
@@ -3087,7 +3092,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="339"/>
         <source>Choose destination</source>
-        <translation type="unfinished">Выбрать папку назначения</translation>
+        <translation>Выбрать папку назначения</translation>
     </message>
 </context>
 <context>
@@ -3124,17 +3129,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="109"/>
         <source>%1%</source>
-        <translation type="unfinished">%1%</translation>
+        <translation>%1%</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="110"/>
         <source>Calculating…</source>
-        <translation type="unfinished">Вычисление…</translation>
+        <translation>Вычисление…</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="111"/>
         <source>Converting %1 of %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>Преобразование %1 из %2 (%3)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="115"/>
@@ -4381,17 +4386,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="86"/>
         <source>Show artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать обложку</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="87"/>
         <source>Source</source>
-        <translation type="unfinished">Источник</translation>
+        <translation>Источник</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="89"/>
         <source>Retention</source>
-        <translation type="unfinished"></translation>
+        <translation>Срок хранения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="92"/>
@@ -4406,47 +4411,47 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="115"/>
         <source>Artwork</source>
-        <translation type="unfinished">Обложка</translation>
+        <translation>Обложка</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="118"/>
         <source>1 hour</source>
-        <translation type="unfinished"></translation>
+        <translation>1 час</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="119"/>
         <source>12 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>12 часов</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="120"/>
         <source>24 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>24 часа</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="121"/>
         <source>72 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>72 часа</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="125"/>
         <source>Search for artwork via MusicBrainz ID only</source>
-        <translation type="unfinished"></translation>
+        <translation>Искать обложку только по MusicBrainz ID</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="126"/>
         <source>Search via MusicBrainz ID, or upload if not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Искать по MusicBrainz ID или загрузить, если не найдено</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="128"/>
         <source>Upload artwork only</source>
-        <translation type="unfinished"></translation>
+        <translation>Только загружать обложку</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="129"/>
         <source>Upload artwork, or search via MusicBrainz ID if not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Загружать обложку или искать по MusicBrainz ID, если не найдена</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="142"/>
@@ -5419,12 +5424,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="74"/>
         <source>Leave empty to group by the displayed values</source>
-        <translation type="unfinished"></translation>
+        <translation>Оставьте пустым для группировки по отображаемым значениям</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="82"/>
         <source>Grouping script</source>
-        <translation type="unfinished">Сценарий группировки</translation>
+        <translation>Сценарий группировки</translation>
     </message>
 </context>
 <context>
@@ -6138,12 +6143,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="119"/>
         <source>Remove empty parent folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалять пустые родительские папки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="120"/>
         <source>Remove empty parent folders after moving or deleting files, stopping at the library root</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалять пустые родительские папки после перемещения или удаления файлов, останавливаясь на корне фонотеки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="138"/>
@@ -6808,17 +6813,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="108"/>
         <source>User Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Пользовательские папки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
         <source>Open Configuration Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть папку конфигурации</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="112"/>
         <source>Open Data Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть папку с данными</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
@@ -7375,7 +7380,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="245"/>
         <source>Show in Layout menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать в меню «Макет»</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="287"/>
@@ -7698,63 +7703,63 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="48"/>
         <source>Choose Icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбор значка</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="51"/>
         <source>Filter icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Фильтр значков</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="54"/>
         <source>Use command icon</source>
-        <translation type="unfinished">Использовать значок команды</translation>
+        <translation>Использовать значок команды</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="58"/>
         <source>Use the icon supplied by the selected command</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать значок, предоставляемый выбранной командой</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="84"/>
         <source>Browse custom image…</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать пользовательское изображение…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="85"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="157"/>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="158"/>
         <source>All files (*)</source>
-        <translation type="unfinished">Все файлы (*)</translation>
+        <translation>Все файлы (*)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="157"/>
         <source>Images</source>
-        <translation type="unfinished">Изображения</translation>
+        <translation>Изображения</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="185"/>
         <source>Select Icon</source>
-        <translation type="unfinished">Выбрать значок</translation>
+        <translation>Выбрать значок</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="197"/>
         <source>Current: Custom image - %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Текущий: пользовательское изображение — %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="201"/>
         <source>Current: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Текущий: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="205"/>
         <source>Current: Use command icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Текущий: использовать значок команды</translation>
     </message>
 </context>
 <context>
@@ -9311,27 +9316,27 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="41"/>
         <source>Release</source>
-        <translation type="unfinished"></translation>
+        <translation>Релиз</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="43"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="45"/>
         <source>Date/Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата/Страна</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="47"/>
         <source>Format</source>
-        <translation type="unfinished">Формат</translation>
+        <translation>Формат</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="49"/>
         <source>Discs</source>
-        <translation type="unfinished"></translation>
+        <translation>Диски</translation>
     </message>
 </context>
 <context>
@@ -9644,12 +9649,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="125"/>
         <source>Rewind line (−100 ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемотка строки назад (−100 мс)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="126"/>
         <source>Forward line (+100 ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемотка строки вперёд (+100 мс)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="127"/>
@@ -10197,81 +10202,81 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="37"/>
         <source>Metadata Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменения метаданных</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="48"/>
         <source>%Ln metadata change(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln изменение метаданных</numerusform>
+            <numerusform>%Ln изменения метаданных</numerusform>
+            <numerusform>%Ln изменений метаданных</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="49"/>
         <source>%Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln файл</numerusform>
+            <numerusform>%Ln файла</numerusform>
+            <numerusform>%Ln файлов</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="50"/>
         <source>%1 across %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 в %2.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="54"/>
         <source>File</source>
-        <translation type="unfinished">Файл</translation>
+        <translation>Файл</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="54"/>
         <source>Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменения</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
         <source>Change</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменение</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
         <source>Tag</source>
-        <translation type="unfinished">Тег</translation>
+        <translation>Тег</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
         <source>Current value</source>
-        <translation type="unfinished"></translation>
+        <translation>Текущее значение</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
         <source>New value</source>
-        <translation type="unfinished"></translation>
+        <translation>Новое значение</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="137"/>
         <source>Added</source>
-        <translation type="unfinished">Время добавления</translation>
+        <translation>Время добавления</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="138"/>
         <source>Removed</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалено</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="139"/>
         <source>Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменено</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="146"/>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="150"/>
         <source>(empty)</source>
-        <translation type="unfinished"></translation>
+        <translation>(пусто)</translation>
     </message>
 </context>
 <context>
@@ -10279,220 +10284,220 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="166"/>
         <source>Metadata Lookup</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск метаданных</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="273"/>
         <source>First track, last track, lead-out sector, then track offsets</source>
-        <translation type="unfinished"></translation>
+        <translation>Первая дорожка, последняя дорожка, сектор вывода, затем смещения дорожек</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="282"/>
         <source>Search</source>
-        <translation type="unfinished">Поиск</translation>
+        <translation>Поиск</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="293"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="360"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="295"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="361"/>
         <source>Album</source>
-        <translation type="unfinished">Альбом</translation>
+        <translation>Альбом</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="301"/>
         <source>TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>TOC</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="311"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="369"/>
         <source>Type</source>
-        <translation type="unfinished">Тип</translation>
+        <translation>Тип</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="313"/>
         <source>ID</source>
-        <translation type="unfinished">ID</translation>
+        <translation>Идентификатор</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="324"/>
         <source>Source</source>
-        <translation type="unfinished">Источник</translation>
+        <translation>Источник</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="326"/>
         <source>Lookup by</source>
-        <translation type="unfinished"></translation>
+        <translation>Искать по</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="332"/>
         <source>Search for a release to see matching results</source>
-        <translation type="unfinished"></translation>
+        <translation>Найдите релиз, чтобы увидеть результаты</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="345"/>
         <source>Release information</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация о релизе</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="362"/>
         <source>Date</source>
-        <translation type="unfinished">Дата</translation>
+        <translation>Дата</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="363"/>
         <source>Original release date</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата оригинального релиза</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="364"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Страна</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="365"/>
         <source>Label</source>
-        <translation type="unfinished"></translation>
+        <translation>Лейбл</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="366"/>
         <source>Catalogue number</source>
-        <translation type="unfinished"></translation>
+        <translation>Каталожный номер</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="367"/>
         <source>Barcode</source>
-        <translation type="unfinished"></translation>
+        <translation>Штрихкод</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="368"/>
         <source>Format</source>
-        <translation type="unfinished">Формат</translation>
+        <translation>Формат</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="370"/>
         <source>Status</source>
-        <translation type="unfinished">Состояние</translation>
+        <translation>Состояние</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="371"/>
         <source>Comment</source>
-        <translation type="unfinished">Комментарий</translation>
+        <translation>Комментарий</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="376"/>
         <source>Releases</source>
-        <translation type="unfinished"></translation>
+        <translation>Релизы</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="386"/>
         <source>Select a release above to load its tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Выберите релиз выше, чтобы загрузить его дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="397"/>
         <source>No local tracks were selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Не выбрано ни одной локальной дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="418"/>
         <source>Retrieved tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Полученные дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="429"/>
         <source>Drag rows to align tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Перетащите строки, чтобы сопоставить дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="432"/>
         <source>Local tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Локальные дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="453"/>
         <source>Fill missing metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Заполнить недостающие метаданные</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="454"/>
         <source>Replace lookup fields</source>
-        <translation type="unfinished"></translation>
+        <translation>Заменить поля поиска</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="455"/>
         <source>Wipe writable tags, then apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить изменяемые теги, затем применить</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="456"/>
         <source>Choose how retrieved metadata is combined with the track&apos;s existing tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выберите, как полученные метаданные объединяются с существующими тегами дорожки.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="458"/>
         <source>Allow applying unresolved tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Разрешить применение для неразрешённых дорожек</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="459"/>
         <source>Allow updating unresolved tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Разрешить обновление неразрешённых дорожек</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="461"/>
         <source>Write genres</source>
-        <translation type="unfinished"></translation>
+        <translation>Записывать жанры</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="462"/>
         <source>Write provider IDs</source>
-        <translation type="unfinished"></translation>
+        <translation>Записывать идентификаторы провайдера</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="464"/>
         <source>Use original date for Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать оригинальную дату для поля Date</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="467"/>
         <source>Allow applying metadata when local tracks are unmatched or have an ambiguous match.</source>
-        <translation type="unfinished"></translation>
+        <translation>Разрешить применение метаданных, когда локальные дорожки не сопоставлены или имеют неоднозначное сопоставление.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="468"/>
         <source>Allow writing when local tracks are unmatched or have an ambiguous match.</source>
-        <translation type="unfinished"></translation>
+        <translation>Разрешить запись, когда локальные дорожки не сопоставлены или имеют неоднозначное сопоставление.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="469"/>
         <source>Write genres supplied by the selected metadata provider when available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Записывать жанры, предоставленные выбранным поставщиком метаданных, если они доступны.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="470"/>
         <source>Write identifiers supplied by the selected metadata provider.</source>
-        <translation type="unfinished"></translation>
+        <translation>Записывать идентификаторы, предоставленные выбранным поставщиком метаданных.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="472"/>
         <source>Use the original release date for the Date tag instead of this specific release&apos;s date.</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать дату оригинального релиза для тега Date вместо даты этого конкретного релиза.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="478"/>
         <source>Metadata options</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры метаданных</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="481"/>
         <source>Existing metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Существующие метаданные</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="488"/>
@@ -10501,135 +10506,135 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="782"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="848"/>
         <source>Changes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменения…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="491"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="572"/>
         <source>Ready.</source>
-        <translation type="unfinished"></translation>
+        <translation>Готово.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="496"/>
         <source>Apply</source>
-        <translation type="unfinished">Применить</translation>
+        <translation>Применить</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="496"/>
         <source>Update files</source>
-        <translation type="unfinished"></translation>
+        <translation>Обновить файлы</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="521"/>
         <source>No matching releases found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Подходящих релизов не найдено.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="522"/>
         <source>Found %Ln release(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Найден %Ln релиз.</numerusform>
+            <numerusform>Найдено %Ln релиза.</numerusform>
+            <numerusform>Найдено %Ln релизов.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="543"/>
         <source>Contacting %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>Подключение к %1…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="592"/>
         <source>Artist and album</source>
-        <translation type="unfinished"></translation>
+        <translation>Исполнитель и альбом</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="595"/>
         <source>Disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>TOC диска</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="598"/>
         <source>Release</source>
-        <translation type="unfinished"></translation>
+        <translation>Релиз</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="601"/>
         <source>Release group</source>
-        <translation type="unfinished"></translation>
+        <translation>Группа релизов</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="604"/>
         <source>%1 ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="783"/>
         <source>The selected release does not contain the queried disc.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбранный релиз не содержит запрошенный диск.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="854"/>
         <source>Changes (%1)…</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменения (%1)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="898"/>
         <source>One or more selected tracks cannot be updated.</source>
-        <translation type="unfinished"></translation>
+        <translation>Одна или несколько выбранных дорожек не могут быть обновлены.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="902"/>
         <source>Review unmatched or ambiguous tracks before applying metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверьте не сопоставленные или неоднозначные дорожки перед применением метаданных.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="903"/>
         <source>Review unmatched or ambiguous tracks before updating files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверьте не сопоставленные или неоднозначные дорожки перед обновлением файлов.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="906"/>
         <source>The selected release produces no metadata changes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбранный релиз не вносит изменений в метаданные.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="909"/>
         <source>Metadata will be applied to %Ln track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Метаданные будут применены к %Ln дорожке.</numerusform>
+            <numerusform>Метаданные будут применены к %Ln дорожкам.</numerusform>
+            <numerusform>Метаданные будут применены к %Ln дорожкам.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="911"/>
         <source>%Ln track(s) will be updated.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln дорожка будет обновлена.</numerusform>
+            <numerusform>%Ln дорожки будут обновлены.</numerusform>
+            <numerusform>%Ln дорожек будет обновлено.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="951"/>
         <source>Writing metadata…</source>
-        <translation type="unfinished">Запись метаданных…</translation>
+        <translation>Запись метаданных…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="951"/>
         <source>Abort</source>
-        <translation type="unfinished">Прервать</translation>
+        <translation>Прервать</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="957"/>
         <source>Writing Metadata</source>
-        <translation type="unfinished">Запись метаданных</translation>
+        <translation>Запись метаданных</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="959"/>
         <source>Writing metadata to %Ln track(s)…</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Запись метаданных в %Ln дорожку…</numerusform>
             <numerusform>Запись метаданных в %Ln дорожки…</numerusform>
             <numerusform>Запись метаданных в %Ln дорожек…</numerusform>
@@ -10639,7 +10644,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="980"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="985"/>
         <source>%Ln succeeded</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln успешно</numerusform>
             <numerusform>%Ln успешно</numerusform>
             <numerusform>%Ln успешно</numerusform>
@@ -10649,7 +10654,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="981"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="986"/>
         <source>%Ln failed</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln с ошибкой</numerusform>
             <numerusform>%Ln с ошибкой</numerusform>
             <numerusform>%Ln с ошибкой</numerusform>
@@ -10658,31 +10663,31 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="982"/>
         <source>Metadata writing was cancelled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Запись метаданных была отменена.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="987"/>
         <source>Metadata writing finished:</source>
-        <translation type="unfinished"></translation>
+        <translation>Запись метаданных завершена:</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="991"/>
         <source>Metadata was updated in %Ln track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Метаданные обновлены в %Ln дорожке.</numerusform>
+            <numerusform>Метаданные обновлены в %Ln дорожках.</numerusform>
+            <numerusform>Метаданные обновлены в %Ln дорожках.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1000"/>
         <source>Wipe existing tags?</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить существующие теги?</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1001"/>
         <source>Existing metadata and custom tags will be removed before applying the selected release. Ratings, ReplayGain, technical information, playback statistics, and artwork will be preserved.</source>
-        <translation type="unfinished"></translation>
+        <translation>Существующие метаданные и пользовательские теги будут удалены перед применением выбранного релиза. Оценки, ReplayGain, техническая информация, статистика воспроизведения и обложки будут сохранены.</translation>
     </message>
 </context>
 <context>
@@ -10690,42 +10695,42 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="234"/>
         <source>MusicBrainz</source>
-        <translation type="unfinished"></translation>
+        <translation>MusicBrainz</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="251"/>
         <source>Enter an artist or album.</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите исполнителя или альбом.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="252"/>
         <source>Enter a disc TOC.</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите TOC диска.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="253"/>
         <source>Enter a MusicBrainz ID.</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите MusicBrainz ID.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="267"/>
         <source>The selected result has no release identifier.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбранный результат не имеет идентификатора релиза.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="541"/>
         <source>MusicBrainz request failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Запрос к MusicBrainz не удался: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="555"/>
         <source>Could not read the MusicBrainz search response: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось прочитать ответ поиска MusicBrainz: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="566"/>
         <source>Could not read the MusicBrainz release response: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось прочитать ответ релиза MusicBrainz: %1</translation>
     </message>
 </context>
 <context>
@@ -10845,7 +10850,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="79"/>
         <source>Notify when repeating a track</source>
-        <translation type="unfinished"></translation>
+        <translation>Уведомлять при повторении дорожки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="80"/>
@@ -11921,7 +11926,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="111"/>
         <source>If the current track has been playing for more than 5 s, restart it instead of moving to the previous track</source>
-        <translation type="unfinished"></translation>
+        <translation>Если текущая дорожка играет более 5 с, перезапустить её вместо перехода к предыдущей</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="114"/>
@@ -13287,12 +13292,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="281"/>
         <source>Leave empty to group by the displayed values</source>
-        <translation type="unfinished"></translation>
+        <translation>Оставьте пустым для группировки по отображаемым значениям</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="288"/>
         <source>Grouping script</source>
-        <translation type="unfinished">Сценарий группировки</translation>
+        <translation>Сценарий группировки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="294"/>
@@ -13901,7 +13906,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="460"/>
         <source>Remove dead (non-existent) tracks from the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить недоступные (несуществующие) дорожки из плейлиста</translation>
     </message>
 </context>
 <context>
@@ -13944,7 +13949,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="46"/>
         <source>Licence</source>
-        <translation type="unfinished"></translation>
+        <translation>Лицензия</translation>
     </message>
 </context>
 <context>
@@ -14572,25 +14577,25 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="110"/>
         <source>Writing changes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Запись изменений…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="110"/>
         <source>Abort</source>
-        <translation type="unfinished">Прервать</translation>
+        <translation>Прервать</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="118"/>
         <source>Writing Metadata</source>
-        <translation type="unfinished">Запись метаданных</translation>
+        <translation>Запись метаданных</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="119"/>
         <source>Writing changes to %Ln track(s)…</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Запись изменений в %Ln дорожку…</numerusform>
+            <numerusform>Запись изменений в %Ln дорожки…</numerusform>
+            <numerusform>Запись изменений в %Ln дорожек…</numerusform>
         </translation>
     </message>
 </context>
@@ -16521,42 +16526,42 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="396"/>
         <source>Countries unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Страны недоступны — нажмите для повторной попытки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="397"/>
         <source>Countries unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Страны недоступны: %1 — нажмите для повторной попытки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="404"/>
         <source>Languages unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Языки недоступны — нажмите для повторной попытки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="405"/>
         <source>Languages unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Языки недоступны: %1 — нажмите для повторной попытки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="412"/>
         <source>Tags unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Теги недоступны — нажмите для повторной попытки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="413"/>
         <source>Tags unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Теги недоступны: %1 — нажмите для повторной попытки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="420"/>
         <source>Codecs unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Кодеки недоступны — нажмите для повторной попытки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="421"/>
         <source>Codecs unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Кодеки недоступны: %1 — нажмите для повторной попытки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="826"/>
@@ -16858,7 +16863,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="166"/>
         <source>Configure ReplayGain…</source>
-        <translation type="unfinished"></translation>
+        <translation>Настроить ReplayGain…</translation>
     </message>
 </context>
 <context>
@@ -17121,17 +17126,17 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="109"/>
         <source>#</source>
-        <translation type="unfinished"></translation>
+        <translation>#</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="111"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Название</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="113"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Длительность</translation>
     </message>
 </context>
 <context>
@@ -17480,7 +17485,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="100"/>
         <source>Enter a query — tracks that match the query will NOT be scrobbled</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите запрос — дорожки, соответствующие запросу, НЕ будут скробблиться</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="77"/>
@@ -20052,78 +20057,78 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="157"/>
         <source>No local track</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет локальной дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="160"/>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="219"/>
         <source>Unmatched</source>
-        <translation type="unfinished"></translation>
+        <translation>Не сопоставлено</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="181"/>
         <source>This local track is not matched to a retrieved track.</source>
-        <translation type="unfinished"></translation>
+        <translation>Эта локальная дорожка не сопоставлена с полученной дорожкой.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="184"/>
         <source>This match was set manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Это сопоставление установлено вручную.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="187"/>
         <source>Automatic match confidence: %1%.</source>
-        <translation type="unfinished"></translation>
+        <translation>Достоверность автоматического сопоставления: %1%.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="191"/>
         <source>The local and retrieved durations differ by more than 10 seconds.</source>
-        <translation type="unfinished"></translation>
+        <translation>Длительность локальной и полученной дорожек отличается более чем на 10 секунд.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="195"/>
         <source>This automatic match is ambiguous.</source>
-        <translation type="unfinished"></translation>
+        <translation>Это автоматическое сопоставление неоднозначно.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="198"/>
         <source>Drag this row to match it with a retrieved track.</source>
-        <translation type="unfinished"></translation>
+        <translation>Перетащите эту строку, чтобы сопоставить её с полученной дорожкой.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="221"/>
         <source>Manual</source>
-        <translation type="unfinished">Вручную</translation>
+        <translation>Вручную</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="221"/>
         <source>%1%</source>
-        <translation type="unfinished">%1%</translation>
+        <translation>%1%</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="223"/>
         <source>%1 / %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 / %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="248"/>
         <source>Current #</source>
-        <translation type="unfinished"></translation>
+        <translation>Текущий #</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="250"/>
         <source>Title / file</source>
-        <translation type="unfinished"></translation>
+        <translation>Название / файл</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="252"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Длительность</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="254"/>
         <source>Match / Δ</source>
-        <translation type="unfinished"></translation>
+        <translation>Сопоставление / Δ</translation>
     </message>
 </context>
 <context>
@@ -21637,163 +21642,163 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="388"/>
         <source>Searching for artwork…</source>
-        <translation type="unfinished">Идёт поиск обложек…</translation>
+        <translation>Идёт поиск обложек…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="402"/>
         <source>Artwork search finished</source>
-        <translation type="unfinished">Поиск обложек завершён</translation>
+        <translation>Поиск обложек завершён</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="456"/>
         <source>Failed to open artwork file</source>
-        <translation type="unfinished">Не удалось открыть файл изображения</translation>
+        <translation>Не удалось открыть файл изображения</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="462"/>
         <source>Artwork file is empty</source>
-        <translation type="unfinished">Файл изображения пуст</translation>
+        <translation>Файл обложки пуст</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="859"/>
         <source>Plugins not found</source>
-        <translation type="unfinished">Модули не найдены</translation>
+        <translation>Модули не найдены</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="860"/>
         <source>Some plugins are required for full functionality.</source>
-        <translation type="unfinished">Без некоторых модулей функциональность будет ограничена.</translation>
+        <translation>Без некоторых модулей функциональность будет ограничена.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="861"/>
         <source>Plugin search locations:
 
 </source>
-        <translation type="unfinished">Каталоги для поиска модулей:
+        <translation>Каталоги для поиска модулей:
 
 </translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="864"/>
         <source>Quit</source>
-        <translation type="unfinished">Выход</translation>
+        <translation>Выход</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="990"/>
         <source>Volume</source>
-        <translation type="unfinished">Громкость</translation>
+        <translation>Громкость</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="992"/>
         <source>Volume up</source>
-        <translation type="unfinished">Увеличить громкость</translation>
+        <translation>Увеличить громкость</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="999"/>
         <source>Volume down</source>
-        <translation type="unfinished">Уменьшить громкость</translation>
+        <translation>Уменьшить громкость</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1006"/>
         <source>Mute</source>
-        <translation type="unfinished">Приглушить звук</translation>
+        <translation>Приглушить звук</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1016"/>
         <source>Clear Current Playlist</source>
-        <translation type="unfinished">Очистить текущий плейлист</translation>
+        <translation>Очистить текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1017"/>
         <source>Remove all tracks from the current playlist</source>
-        <translation type="unfinished">Удалить все дорожки из текущего плейлиста</translation>
+        <translation>Удалить все дорожки из текущего плейлиста</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1020"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1047"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1120"/>
         <source>Playlist</source>
-        <translation type="unfinished">Плейлист</translation>
+        <translation>Плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1043"/>
         <source>Lock playlist</source>
-        <translation type="unfinished">Блокировать плейлист</translation>
+        <translation>Блокировать плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1045"/>
         <source>Prevent changes to the contents of the current playlist</source>
-        <translation type="unfinished">Предотвращать изменения содержимого текущего плейлиста</translation>
+        <translation>Предотвращать изменения содержимого текущего плейлиста</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1048"/>
         <source>Lock Current Playlist</source>
-        <translation type="unfinished">Блокировать текущий плейлист</translation>
+        <translation>Блокировать текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1069"/>
         <source>Playback</source>
-        <translation type="unfinished">Воспроизведение</translation>
+        <translation>Воспроизведение</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1069"/>
         <source>Seek</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемотка</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1071"/>
         <source>Seek forward (small step)</source>
-        <translation type="unfinished">Перемотать вперёд (малый шаг)</translation>
+        <translation>Перемотать вперёд (малый шаг)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1078"/>
         <source>Seek forward (large step)</source>
-        <translation type="unfinished">Перемотать вперёд (большой шаг)</translation>
+        <translation>Перемотать вперёд (большой шаг)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1085"/>
         <source>Seek backward (small step)</source>
-        <translation type="unfinished">Перемотать назад (малый шаг)</translation>
+        <translation>Перемотать назад (малый шаг)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1093"/>
         <source>Seek backward (large step)</source>
-        <translation type="unfinished">Перемотать назад (большой шаг)</translation>
+        <translation>Перемотать назад (большой шаг)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1118"/>
         <source>Remove Playlist</source>
-        <translation type="unfinished">Удалить плейлист</translation>
+        <translation>Удалить плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1121"/>
         <source>Remove Current Playlist</source>
-        <translation type="unfinished">Удалить текущий плейлист</translation>
+        <translation>Удалить текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1129"/>
         <source>Toggle Menubar</source>
-        <translation type="unfinished">Переключить панель меню</translation>
+        <translation>Переключить панель меню</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1133"/>
         <source>View</source>
-        <translation type="unfinished">Вид</translation>
+        <translation>Вид</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1140"/>
         <source>Look up metadata by artist and album…</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск метаданных по исполнителю и альбому…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1141"/>
         <source>Look up metadata using the selected tracks&apos; artist and album</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск метаданных с использованием исполнителя и альбома выбранных дорожек</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1146"/>
         <source>Look up metadata by artist and album</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск метаданных по исполнителю и альбому</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1147"/>
@@ -21802,68 +21807,68 @@ Changes apply to newly opened streams.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1222"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1261"/>
         <source>Tagging</source>
-        <translation type="unfinished"></translation>
+        <translation>Тегирование</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1149"/>
         <source>Look up metadata by MusicBrainz ID…</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск метаданных по MusicBrainz ID…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1150"/>
         <source>Look up metadata using a MusicBrainz release identifier</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск метаданных с использованием идентификатора релиза MusicBrainz</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1153"/>
         <source>Look up metadata by MusicBrainz ID</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск метаданных по MusicBrainz ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1181"/>
         <source>Reading tracks…</source>
-        <translation type="unfinished">Чтение треков…</translation>
+        <translation>Чтение треков…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1181"/>
         <source>Abort</source>
-        <translation type="unfinished">Прервать</translation>
+        <translation>Прервать</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1209"/>
         <source>Current file</source>
-        <translation type="unfinished">Текущий файл</translation>
+        <translation>Текущий файл</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1224"/>
         <source>Reload tags from files</source>
-        <translation type="unfinished">Перезагрузить теги из файлов</translation>
+        <translation>Перезагрузить теги из файлов</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1225"/>
         <source>Reload tags from modified files</source>
-        <translation type="unfinished">Перезагрузить теги из изменённых файлов</translation>
+        <translation>Перезагрузить теги из изменённых файлов</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1227"/>
         <source>Replace tags in selected tracks with tags from the files</source>
-        <translation type="unfinished">Заменить теги в выбранных треках на теги из файлов</translation>
+        <translation>Заменить теги в выбранных треках на теги из файлов</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1228"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
-        <translation type="unfinished">Заменить теги в выбранных треках тегами из файлов, если они были изменены</translation>
+        <translation>Заменить теги в выбранных треках тегами из файлов, если они были изменены</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1272"/>
         <source>Choose destination</source>
-        <translation type="unfinished">Выбрать папку назначения</translation>
+        <translation>Выбрать папку назначения</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1353"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1361"/>
         <source>Convert using preset %1</source>
-        <translation type="unfinished">Преобразовать с предустановкой %1</translation>
+        <translation>Преобразовать с предустановкой %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1360"/>
@@ -21871,7 +21876,7 @@ Changes apply to newly opened streams.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1403"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1412"/>
         <source>Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1360"/>
@@ -21880,147 +21885,147 @@ Changes apply to newly opened streams.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1412"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1423"/>
         <source>Convert</source>
-        <translation type="unfinished">Преобразовать</translation>
+        <translation>Преобразовать</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1391"/>
         <source>Converter setup…</source>
-        <translation type="unfinished">Настройка преобразователя…</translation>
+        <translation>Настройка преобразователя…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1400"/>
         <source>Using default settings</source>
-        <translation type="unfinished">Использовать настройки по умолчанию</translation>
+        <translation>Использовать настройки по умолчанию</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1404"/>
         <source>Convert using default settings</source>
-        <translation type="unfinished">Преобразовать с настройками по умолчанию</translation>
+        <translation>Преобразовать с настройками по умолчанию</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1409"/>
         <source>Repeat last conversion</source>
-        <translation type="unfinished">Повторить последнее преобразование</translation>
+        <translation>Повторить последнее преобразование</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1440"/>
         <source>Custom conversion…</source>
-        <translation type="unfinished">Пользовательское преобразование…</translation>
+        <translation>Пользовательское преобразование…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1452"/>
         <source>Utilities</source>
-        <translation type="unfinished">Утилиты</translation>
+        <translation>Утилиты</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1677"/>
         <source>Reload Required</source>
-        <translation type="unfinished">Необходима перезагрузка</translation>
+        <translation>Необходима перезагрузка</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1679"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
-        <translation type="unfinished">Из-за изменения базы данных треки необходимо перезагрузить с диска, чтобы обновить сохранённые метаданные.</translation>
+        <translation>Из-за изменения базы данных треки необходимо перезагрузить с диска, чтобы обновить сохранённые метаданные.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1683"/>
         <source>Reload Now</source>
-        <translation type="unfinished">Перезагрузить сейчас</translation>
+        <translation>Перезагрузить сейчас</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1686"/>
         <source>OK</source>
-        <translation type="unfinished">ОК</translation>
+        <translation>ОК</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1828"/>
         <source>Playback Error</source>
-        <translation type="unfinished">Ошибка воспроизведения</translation>
+        <translation>Ошибка воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1853"/>
         <source>Continue</source>
-        <translation type="unfinished">Продолжить</translation>
+        <translation>Продолжить</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1855"/>
         <source>Stop</source>
-        <translation type="unfinished">Стоп</translation>
+        <translation>Стоп</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1859"/>
         <source>Always continue playing if a track is unavailable</source>
-        <translation type="unfinished">Всегда продолжать проигрывание, если трек недоступен</translation>
+        <translation>Всегда продолжать проигрывание, если трек недоступен</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1881"/>
         <source>Track Not Found</source>
-        <translation type="unfinished">Трек не найден</translation>
+        <translation>Трек не найден</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1886"/>
         <source>No Decoder Available</source>
-        <translation type="unfinished">Не удалось декодировать файл</translation>
+        <translation>Не удалось декодировать файл</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1958"/>
         <source>All Supported Media Files (%1)</source>
-        <translation type="unfinished">Все поддерживаемые медиафайлы (%1)</translation>
+        <translation>Все поддерживаемые медиафайлы (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1959"/>
         <source>Audio Files (%1)</source>
-        <translation type="unfinished">Аудиофайлы (%1)</translation>
+        <translation>Аудиофайлы (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1970"/>
         <source>Add Files</source>
-        <translation type="unfinished">Добавить файлы</translation>
+        <translation>Добавить файлы</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1984"/>
         <source>Add Folders</source>
-        <translation type="unfinished">Добавить папки</translation>
+        <translation>Добавить папки</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1996"/>
         <source>Add Stream URL</source>
-        <translation type="unfinished">Добавить адрес потока</translation>
+        <translation>Добавить адрес потока</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1996"/>
         <source>Stream URL:</source>
-        <translation type="unfinished">Адрес потока:</translation>
+        <translation>Адрес потока:</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1998"/>
         <source>&amp;Add</source>
-        <translation type="unfinished">&amp;Добавить</translation>
+        <translation>&amp;Добавить</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2002"/>
         <source>Enter a valid http:// or https:// URL.</source>
-        <translation type="unfinished">Введите верный http:// или https:// URL-адрес.</translation>
+        <translation>Введите верный http:// или https:// URL-адрес.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2063"/>
         <source>All Supported Playlists (%1)</source>
-        <translation type="unfinished">Все поддерживаемые плейлисты (%1)</translation>
+        <translation>Все поддерживаемые плейлисты (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2073"/>
         <source>Load Playlist</source>
-        <translation type="unfinished">Загрузить плейлист</translation>
+        <translation>Загрузить плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2110"/>
         <source>Save Playlist</source>
-        <translation type="unfinished">Сохранить плейлист</translation>
+        <translation>Сохранить плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="455"/>
         <source>Display</source>
-        <translation type="unfinished">Отображение</translation>
+        <translation>Отображение</translation>
     </message>
 </context>
 <context>
@@ -22472,8 +22477,8 @@ Changes apply to newly opened streams.</source>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="91"/>
         <source>Use fooyin&apos;s default POPM byte conversion when reading and writing MP3 ratings.
 This supports intermediate rating steps, but does not treat the POPM byte as a fully linear 0–255 scale.</source>
-        <translation type="unfinished">Использовать стандартное преобразование байтов POPM в fooyin при чтении и записи оценок MP3.
-Это поддерживает промежуточные значения оценки, но не рассматривает байт POPM как полностью линейную шкалу 0–255. {3 ?} {0–255 ?}</translation>
+        <translation>Использовать стандартное преобразование байтов POPM в fooyin при чтении и записи оценок MP3.
+Это поддерживает промежуточные значения оценки, но не рассматривает байт POPM как полностью линейную шкалу 0–255.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="97"/>
@@ -22640,7 +22645,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1809"/>
         <source>Quick Search</source>
-        <translation type="unfinished">Быстрый поиск</translation>
+        <translation>Быстрый поиск</translation>
     </message>
 </context>
 <context>
