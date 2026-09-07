@@ -684,6 +684,7 @@ void ScriptRegistry::addDefaultFunctions()
     registerFunction(u"div"_s, makeScriptFunctionInvoker<Scripting::div>());
     registerFunction(u"min"_s, makeScriptFunctionInvoker<Scripting::min>());
     registerFunction(u"max"_s, makeScriptFunctionInvoker<Scripting::max>());
+    registerFunction(u"select"_s, makeScriptFunctionInvoker<Scripting::select>());
     registerFunction(u"mod"_s, makeScriptFunctionInvoker<Scripting::mod>());
     registerFunction(u"rand"_s, makeScriptFunctionInvoker<Scripting::rand>());
     registerFunction(u"round"_s, makeScriptFunctionInvoker<Scripting::round>());
@@ -698,6 +699,7 @@ void ScriptRegistry::addDefaultFunctions()
     registerFunction(u"slice"_s, makeScriptFunctionInvoker<Scripting::slice>());
     registerFunction(u"chop"_s, makeScriptFunctionInvoker<Scripting::chop>());
     registerFunction(u"left"_s, makeScriptFunctionInvoker<Scripting::left>());
+    registerFunction(u"cut"_s, makeScriptFunctionInvoker<Scripting::left>());
     registerFunction(u"right"_s, makeScriptFunctionInvoker<Scripting::right>());
     registerFunction(u"insert"_s, makeScriptFunctionInvoker<Scripting::insert>());
     registerFunction(u"substr"_s, makeScriptFunctionInvoker<Scripting::substr>());

@@ -71,6 +71,7 @@ enum class FunctionKind : uint8_t
     IfEqual,
     IfGreater,
     IfLonger,
+    Select,
     Add,
     Sub,
     Mul,

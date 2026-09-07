@@ -1093,6 +1093,19 @@ ScriptResult ScriptRuntime::evalFunction(const BoundExpression& exp, const auto&
             }
             return evalExpression(func.args.at(3), tracks);
         }
+        case FunctionKind::Select: {
+            if(func.args.size() < 2) {
+                return {};
+            }
+
+            bool ok{false};
+            const int index = evalExpression(func.args.front(), tracks).value.toInt(&ok);
+            if(!ok || index < 1 || std::cmp_greater_equal(index, func.args.size())) {
+                return {};
+            }
+
+            return evalExpression(func.args.at(index), tracks);
+        }
         case FunctionKind::Add:
         case FunctionKind::Sub:
         case FunctionKind::Mul:

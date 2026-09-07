@@ -98,6 +98,17 @@ QString max(const QStringList& vec)
     return *result;
 }
 
+QString select(const QStringList& vec)
+{
+    if(vec.size() < 2) {
+        return {};
+    }
+
+    bool ok{false};
+    const int index = vec.front().toInt(&ok) - 1;
+    return ok && index >= 0 && index + 1 < vec.size() ? vec.at(index + 1) : QString{};
+}
+
 QString mod(const QStringList& vec)
 {
     if(vec.size() < 2) {

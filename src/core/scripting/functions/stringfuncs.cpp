@@ -349,11 +349,8 @@ QString left(const QStringList& vec)
     bool numSuccess{false};
 
     const int num = vec.at(1).toInt(&numSuccess);
-    if(numSuccess && num >= 0) {
-        const QStringView str = vec.at(0);
-        if(num <= str.size()) {
-            return str.first(num).toString();
-        }
+    if(numSuccess) {
+        return vec.at(0).left(num);
     }
 
     return {};

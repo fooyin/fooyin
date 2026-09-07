@@ -484,6 +484,9 @@ TEST_F(ScriptParserTest, MathTest)
     EXPECT_EQ(u"1", m_parser.evaluate(u"[$mod(10,3)]"_s));
     EXPECT_EQ(2, m_parser.evaluate(u"$min(3,2,3,9,23,100,4)"_s).toInt());
     EXPECT_EQ(100, m_parser.evaluate(u"$max(3,2,3,9,23,100,4)"_s).toInt());
+    EXPECT_EQ(u"0", m_parser.evaluate(u"$select(2,-10,0,10)"_s));
+    EXPECT_TRUE(m_parser.evaluate(u"$select(0,-10,0,10)"_s).isEmpty());
+    EXPECT_TRUE(m_parser.evaluate(u"$select(4,-10,0,10)"_s).isEmpty());
 }
 
 TEST_F(ScriptParserTest, TimeDateFunctionTest)
@@ -518,6 +521,11 @@ TEST_F(ScriptParserTest, ConditionalTest)
     EXPECT_EQ(u"true", m_parser.evaluate(u"[$ifgreater(5,3,true,false)]"_s));
     EXPECT_EQ(u"true", m_parser.evaluate(u"[$iflonger(aaa,2,true,false)]"_s));
     EXPECT_EQ(u"false", m_parser.evaluate(u"[$iflonger(aaa,3,true,false)]"_s));
+    EXPECT_EQ(u"one", m_parser.evaluate(u"$select(1,one,two,three)"_s));
+    EXPECT_EQ(u"three", m_parser.evaluate(u"$select(3,one,two,three)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$select(0,one,two,three)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$select(4,one,two,three)"_s));
+    EXPECT_EQ(u"oneone", m_parser.evaluate(u"$select(1,$put(value,one),$put(value,two))$get(value)"_s));
     EXPECT_EQ(u"<A", m_parser.evaluate(u"$if(1,<A,X)"_s));
     EXPECT_EQ(u"<rgb=255,0,0>A", m_parser.evaluate(u"$if(1,<rgb=255,0,0>A,X)"_s));
     EXPECT_EQ(u"\\<A", m_parser.evaluate(u"$if(1,\\<A,X)"_s));

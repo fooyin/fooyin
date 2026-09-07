@@ -322,6 +322,9 @@ FunctionKind resolveBuiltInFunctionKind(const QString& name)
     if(name == "iflonger"_L1) {
         return Kind::IfLonger;
     }
+    if(name == "select"_L1) {
+        return Kind::Select;
+    }
     if(name == "add"_L1) {
         return Kind::Add;
     }
