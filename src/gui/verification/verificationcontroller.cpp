@@ -249,11 +249,10 @@ QString accurateRipDiscId(const AccurateRip::DiscId& id)
 
 QString pressingOffsetText(int sampleOffset)
 {
-    if(sampleOffset == 0) {
-        return VerificationController::tr("0 samples");
+    if(sampleOffset > 0) {
+        return VerificationController::tr("+%Ln sample(s)", nullptr, sampleOffset);
     }
-    return VerificationController::tr("%1 samples")
-        .arg(sampleOffset > 0 ? u"+%1"_s.arg(sampleOffset) : QString::number(sampleOffset));
+    return VerificationController::tr("%Ln sample(s)", nullptr, sampleOffset);
 }
 
 QStringList matchedDatabaseCrcs(const AccurateRip::TrackResult& result)
