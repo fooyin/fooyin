@@ -1327,7 +1327,7 @@
     <message>
         <location filename="../../src/core/engine/verification/accuraterip.cpp" line="495"/>
         <source>The selected tracks do not form a correct gapless CD rip.</source>
-        <translation type="unfinished"></translation>
+        <translation>所選曲目無法形成正確的無縫 CD 轉錄。</translation>
     </message>
 </context>
 <context>
@@ -2137,7 +2137,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="53"/>
         <source>Drive Settings — %1</source>
-        <translation type="unfinished"></translation>
+        <translation>光碟機設定 — %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="58"/>
@@ -2884,7 +2884,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="184"/>
         <source>Custom image — %1</source>
-        <translation type="unfinished"></translation>
+        <translation>自訂圖片 — %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="192"/>
@@ -3057,57 +3057,57 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="69"/>
         <source>Converted and verified</source>
-        <translation type="unfinished"></translation>
+        <translation>已經轉換且經過驗證</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="70"/>
         <source>Converted</source>
-        <translation type="unfinished"></translation>
+        <translation>已經轉換</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="72"/>
         <source>Skipped</source>
-        <translation type="unfinished"></translation>
+        <translation>已經忽略</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="74"/>
         <source>Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>失敗</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="76"/>
         <source>Cancelled</source>
-        <translation type="unfinished">已經取消</translation>
+        <translation>已經取消</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="113"/>
         <source>Audio Conversion Results</source>
-        <translation type="unfinished"></translation>
+        <translation>音訊轉換結果</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="121"/>
         <source>Name</source>
-        <translation type="unfinished">名稱</translation>
+        <translation>名稱</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="121"/>
         <source>Status</source>
-        <translation type="unfinished">狀態</translation>
+        <translation>狀態</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="122"/>
         <source>Output</source>
-        <translation type="unfinished">輸出</translation>
+        <translation>輸出</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="124"/>
         <source>Details</source>
-        <translation type="unfinished">詳細資訊</translation>
+        <translation>詳細資訊</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="158"/>
         <source>Converted: %1 | Skipped: %2 | Failed: %3 | Cancelled: %4</source>
-        <translation type="unfinished"></translation>
+        <translation>轉換： %1 | 忽略： %2 | 失敗： %3 | 取消： %4</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="475"/>
@@ -3269,7 +3269,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="118"/>
         <source>Show converted files when finished</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示已經轉換的檔案當結束之時</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="120"/>
@@ -3712,7 +3712,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1247"/>
         <source>Show converted files</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示已經轉換的檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1250"/>
@@ -5989,7 +5989,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="485"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished">不再顯示此訊息</translation>
+        <translation>不再顯示此訊息</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="498"/>
@@ -6109,7 +6109,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="113"/>
         <source>Confirm before deleting source archives after extraction</source>
-        <translation type="unfinished"></translation>
+        <translation>於解壓縮提取之後，在刪除來源封存檔之前進行確認</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="134"/>
@@ -6401,7 +6401,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="59"/>
         <source>Manage columns…</source>
-        <translation type="unfinished"></translation>
+        <translation>管理欄位…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="106"/>
@@ -6842,17 +6842,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="277"/>
         <source>macOS global shortcuts must contain one key combination</source>
-        <translation type="unfinished"></translation>
+        <translation>macOS 整體快速鍵必須包含一個按鍵組合</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="285"/>
         <source>The shortcut cannot be represented on macOS</source>
-        <translation type="unfinished"></translation>
+        <translation>此快速鍵無法呈現於 macOS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="297"/>
         <source>macOS rejected this shortcut (error %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>macOS 拒絕此快速鍵 (錯誤 %1)</translation>
     </message>
 </context>
 <context>
@@ -6860,27 +6860,27 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="116"/>
         <source>The shortcut cannot be represented by the Wayland portal</source>
-        <translation type="unfinished"></translation>
+        <translation>此快速鍵無法呈現，由 Wayland 接口</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="275"/>
         <source>Global shortcut registration was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>整體快速鍵錄註已被取消</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="276"/>
         <source>The Wayland portal rejected the global shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Wayland 接口拒絕整體快速鍵</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="284"/>
         <source>The Wayland portal returned an invalid shortcut session</source>
-        <translation type="unfinished"></translation>
+        <translation>Wayland 接口回傳無效的快速鍵工作階段</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="308"/>
         <source>The Wayland portal did not bind this shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Wayland 接口並未綁定此快速鍵</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="334"/>
