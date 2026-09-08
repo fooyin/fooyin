@@ -235,6 +235,20 @@ std::vector<RichText> splitRichTextLines(const RichText& richText)
     return lines;
 }
 
+int richTextHeight(const RichText& richText, const QFont& baseFont)
+{
+    int height{0};
+    const auto baseMetrics = textBaselineMetrics(baseFont);
+    for(const auto& line : splitRichTextLines(richText)) {
+        auto baseline = baseMetrics;
+        for(const auto& block : line.blocks) {
+            baseline.expand(QFontMetrics{resolvedRichTextFont(block.format, baseFont)});
+        }
+        height += baseline.height();
+    }
+    return height;
+}
+
 int richTextExtraLineHeight(const RichText& richText, const QFont& baseFont)
 {
     return measureRichText(richText, baseFont).extraLineHeight;

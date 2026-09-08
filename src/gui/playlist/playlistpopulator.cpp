@@ -120,14 +120,17 @@ public:
 
     PlaylistItem m_root;
     PendingData m_data;
+
     struct ContainerState
     {
         UId itemKey;
         TrackList tracks;
         int scriptIndex{-1};
         bool emitted{false};
+        bool dirty{false};
     };
     using ContainerKeyMap = std::unordered_map<UId, ContainerState, UId::UIdHash>;
+
     ContainerKeyMap m_headers;
     PlaylistTrackList m_tracks;
     Playlist* m_playlist{nullptr};
@@ -330,7 +333,10 @@ void PlaylistPopulatorPrivate::updateContainerText(PlaylistContainerItem& contai
 
 void PlaylistPopulatorPrivate::updateContainers()
 {
-    for(const auto& state : m_headers | std::views::values) {
+    for(auto& state : m_headers | std::views::values) {
+        if(!state.dirty) {
+            continue;
+        }
         if(auto itemIt = m_data.items.find(state.itemKey); itemIt != m_data.items.end()) {
             auto& item      = itemIt->second;
             auto& container = std::get<PlaylistContainerItem>(item.data());
@@ -338,6 +344,7 @@ void PlaylistPopulatorPrivate::updateContainers()
             if(state.emitted) {
                 m_data.updatedItems.insert_or_assign(state.itemKey, item);
             }
+            state.dirty = false;
         }
     }
 }
@@ -357,10 +364,15 @@ void PlaylistPopulatorPrivate::iterateHeader(const Track& track, PlaylistItem*& 
     const auto baseKey = !m_currentPreset.header.grouping.isEmpty()
                            ? Utils::generateMd5Hash(m_parser.evaluate(m_parsedHeader.grouping, track, context))
                            : Utils::generateMd5Hash(titleScript, subtitleScript, sideScript, infoScript);
-    UId key{UId::create()};
+
+    UId key;
     if(m_prevHeaderKey.isValid() && m_prevBaseHeaderKey == baseKey && index == m_prevIndex + 1) {
         key = m_prevHeaderKey;
     }
+    else {
+        key = UId::create();
+    }
+
     m_prevBaseHeaderKey = baseKey;
     m_prevHeaderKey     = key;
 
@@ -379,6 +391,7 @@ void PlaylistPopulatorPrivate::iterateHeader(const Track& track, PlaylistItem*& 
 
     auto& headerState = m_headers.at(key);
     headerState.tracks.emplace_back(track);
+    headerState.dirty = true;
     m_data.trackParents[track.id()].push_back(key);
 
     auto* headerItem = &m_data.items.at(key);
@@ -410,11 +423,16 @@ void PlaylistPopulatorPrivate::iterateSubheaders(const Track& track, PlaylistIte
                                    ? m_parser.evaluate(parsedSubheader.grouping, track, context)
                                    : subheaderKey;
         const auto baseKey     = Utils::generateMd5Hash(parent->baseKey(), groupingKey);
-        UId key{UId::create()};
+
+        UId key;
         if(std::cmp_greater(m_prevSubheaderKey.size(), i) && m_prevBaseSubheaderKey.at(i) == baseKey
            && index == m_prevIndex + 1) {
             key = m_prevSubheaderKey.at(i);
         }
+        else {
+            key = UId::create();
+        }
+
         m_prevBaseSubheaderKey[i] = baseKey;
         m_prevSubheaderKey[i]     = key;
 
@@ -431,6 +449,7 @@ void PlaylistPopulatorPrivate::iterateSubheaders(const Track& track, PlaylistIte
         }
         auto& subheaderState = m_headers.at(key);
         subheaderState.tracks.emplace_back(track);
+        subheaderState.dirty = true;
         m_data.trackParents[track.id()].push_back(key);
 
         auto* subheaderItem = &m_data.items.at(key);

@@ -2388,9 +2388,11 @@ QVariant PlaylistModel::headerData(PlaylistItem* item, int column, int role) con
         return {};
     }
 
+    const auto height = header.height();
+
     switch(role) {
         case PlaylistItem::Role::UniformHeightKey:
-            return uniformHeightKey(PlaylistItem::Header, header.size().height());
+            return uniformHeightKey(PlaylistItem::Header, height);
         case PlaylistItem::Role::Title:
             return header.title();
         case PlaylistItem::Role::Simple:
@@ -2406,13 +2408,15 @@ QVariant PlaylistModel::headerData(PlaylistItem* item, int column, int role) con
                 return {};
             }
             if(header.coverTrack().has_value()) {
-                return m_coverProvider->trackCoverThumbnail(*header.coverTrack(), header.size(), Track::Cover::Front);
+                return m_coverProvider->trackCoverThumbnail(*header.coverTrack(), QSize{height, height},
+                                                            Track::Cover::Front);
             }
             return {};
         }
         case PlaylistItem::Role::CoverKey:
             if(!m_currentPreset.header.simple && m_currentPreset.header.showCover && header.coverTrack().has_value()) {
-                return m_coverProvider->thumbnailCacheKey(*header.coverTrack(), header.size(), Track::Cover::Front);
+                return m_coverProvider->thumbnailCacheKey(*header.coverTrack(), QSize{height, height},
+                                                          Track::Cover::Front);
             }
             break;
         default:
@@ -2436,7 +2440,7 @@ QVariant PlaylistModel::subheaderData(PlaylistItem* item, int column, int role) 
 
     switch(role) {
         case PlaylistItem::Role::UniformHeightKey:
-            return uniformHeightKey(PlaylistItem::Subheader, header.size().height());
+            return uniformHeightKey(PlaylistItem::Subheader, header.height());
         case PlaylistItem::Role::Title:
             return header.title();
         case PlaylistItem::Role::Subtitle:

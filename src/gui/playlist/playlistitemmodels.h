@@ -49,6 +49,7 @@ public:
     [[nodiscard]] LayoutKind layoutKind() const;
     [[nodiscard]] int rowHeight() const;
     [[nodiscard]] QSize size() const;
+    [[nodiscard]] int height() const;
     [[nodiscard]] int scriptIndex() const;
     [[nodiscard]] const std::optional<Track>& coverTrack() const;
 
@@ -64,13 +65,16 @@ public:
     void calculateSize();
 
 private:
+    [[nodiscard]] QSize calculateSize(bool measureWidth) const;
+
     RichText m_title;
     RichText m_subtitle;
     RichText m_sideText;
     RichText m_info;
 
     LayoutKind m_layoutKind;
-    QSize m_size;
+    mutable QSize m_size;
+    mutable bool m_widthCalculated{false};
     int m_rowHeight;
     int m_scriptIndex{-1};
     std::optional<Track> m_coverTrack;

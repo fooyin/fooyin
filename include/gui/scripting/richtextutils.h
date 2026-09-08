@@ -72,6 +72,7 @@ FYGUI_EXPORT QFont resolvedRichTextFont(const RichFormatting& formatting, const 
 FYGUI_EXPORT TextBaselineMetrics textBaselineMetrics(const QFont& font);
 FYGUI_EXPORT QString richTextToHtml(const RichText& richText, const QColor& linkColour = {});
 FYGUI_EXPORT bool richTextHasLineBreaks(const RichText& richText);
+FYGUI_EXPORT int richTextHeight(const RichText& richText, const QFont& baseFont = {});
 FYGUI_EXPORT int richTextExtraLineHeight(const RichText& richText, const QFont& baseFont = {});
 FYGUI_EXPORT std::vector<RichText> splitRichTextLines(const RichText& richText);
 FYGUI_EXPORT RichTextMetrics measureRichText(const RichText& richText, const QFont& baseFont = {});
