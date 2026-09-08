@@ -6885,7 +6885,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="334"/>
         <source>The Wayland global shortcut session was closed</source>
-        <translation type="unfinished"></translation>
+        <translation>Wayland 整體快速鍵工作階段已被關閉</translation>
     </message>
 </context>
 <context>
@@ -6893,22 +6893,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="165"/>
         <source>Windows global shortcuts must contain one key combination</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows 整體快速鍵必須包含一個按鍵組合</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="173"/>
         <source>The shortcut cannot be represented on Windows</source>
-        <translation type="unfinished"></translation>
+        <translation>此快速鍵無法呈現於 Windows</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="179"/>
         <source>Windows cannot register any more global shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows 無法登錄更多的整體快速鍵</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="188"/>
         <source>Windows rejected this shortcut (error %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows 拒絕此快速鍵 (錯誤 %1)</translation>
     </message>
 </context>
 <context>
@@ -6916,22 +6916,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutx11backend.cpp" line="247"/>
         <source>X11 global shortcuts must contain one key combination</source>
-        <translation type="unfinished"></translation>
+        <translation>X11 整體快速捷鍵必須包含一個按鍵組合</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutx11backend.cpp" line="260"/>
         <source>The shortcut cannot be represented on X11</source>
-        <translation type="unfinished"></translation>
+        <translation>此快速鍵無法呈現於 X11</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutx11backend.cpp" line="263"/>
         <source>The shortcut is already registered</source>
-        <translation type="unfinished"></translation>
+        <translation>此快速鍵已為登錄</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutx11backend.cpp" line="267"/>
         <source>Another application has already registered this shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>其他應用程式已為登錄此快速鍵</translation>
     </message>
 </context>
 <context>
@@ -7822,7 +7822,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="197"/>
         <source>Current: Custom image — %1</source>
-        <translation type="unfinished"></translation>
+        <translation>目前：自訂圖片 — %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="201"/>
@@ -9076,7 +9076,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="65"/>
         <source>Manage groupings…</source>
-        <translation type="unfinished"></translation>
+        <translation>管理進行群組…</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="82"/>
@@ -9301,7 +9301,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="720"/>
         <source>Manage groupings…</source>
-        <translation type="unfinished"></translation>
+        <translation>管理進行群組…</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="765"/>
@@ -9574,17 +9574,17 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="140"/>
         <source>Centring</source>
-        <translation type="unfinished"></translation>
+        <translation>中央對準</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="158"/>
         <source>Top and bottom margins apply to lyrics that are not centred at that edge.</source>
-        <translation type="unfinished"></translation>
+        <translation>上下邊距套用至歌詞，其未在邊緣對準中央。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="168"/>
         <source>These options apply to synced lyrics and automatically scrolling unsynced lyrics.</source>
-        <translation type="unfinished"></translation>
+        <translation>這些選項套用至同步歌詞，並自動地捲動非同步的歌詞。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="182"/>
@@ -9626,12 +9626,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="56"/>
         <source>Centre first line</source>
-        <translation type="unfinished"></translation>
+        <translation>對準中央第一行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="57"/>
         <source>Centre last line</source>
-        <translation type="unfinished"></translation>
+        <translation>對準中央最後一行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="149"/>
@@ -10604,12 +10604,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="545"/>
         <source>Contacting %1…</source>
-        <translation type="unfinished"></translation>
+        <translation>進行聯絡 %1…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1016"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished">不再顯示此訊息</translation>
+        <translation>不再顯示此訊息</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="594"/>
@@ -18257,7 +18257,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="44"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="50"/>
         <source>Global</source>
-        <translation type="unfinished">整體</translation>
+        <translation>整體</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="68"/>
@@ -18268,22 +18268,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="421"/>
         <source>Only one global shortcut can be assigned to an action.</source>
-        <translation type="unfinished"></translation>
+        <translation>只能將一項整體快速鍵指派給一個動作。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="431"/>
         <source>%1 is not available as a global action.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 無可供用作為整體動作。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="434"/>
         <source>Global shortcuts must contain exactly one key combination.</source>
-        <translation type="unfinished"></translation>
+        <translation>整體快速鍵必須包含一個準確地按鍵組合。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="441"/>
         <source>Global shortcuts using printable keys must include Ctrl, Alt, or Meta.</source>
-        <translation type="unfinished"></translation>
+        <translation>整體快速鍵使用可列印按鍵必須包含 Ctrl、Alt 或 Meta 鍵。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="458"/>
@@ -18330,7 +18330,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="179"/>
         <source>Configure global shortcuts…</source>
-        <translation type="unfinished"></translation>
+        <translation>調整設定整體快速鍵…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="183"/>
@@ -18345,7 +18345,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="344"/>
         <source>Global</source>
-        <translation type="unfinished">整體</translation>
+        <translation>整體</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="349"/>
@@ -18360,22 +18360,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="431"/>
         <source>Global shortcuts are not available on this platform</source>
-        <translation type="unfinished"></translation>
+        <translation>整體快速鍵無可供用於此平台</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="434"/>
         <source>This action is only available within an application context</source>
-        <translation type="unfinished"></translation>
+        <translation>此操作僅在應用程式情境中可供使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="446"/>
         <source>Disable global shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>停用整體快速鍵</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="447"/>
         <source>Register globally…</source>
-        <translation type="unfinished"></translation>
+        <translation>登錄整體…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="468"/>
@@ -20429,85 +20429,85 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="77"/>
         <source>OK</source>
-        <translation type="unfinished">確定</translation>
+        <translation>確定</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="79"/>
         <source>Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>失敗</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="81"/>
         <source>Cancelled</source>
-        <translation type="unfinished">已經取消</translation>
+        <translation>已經取消</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="90"/>
         <source>Accurately ripped</source>
-        <translation type="unfinished">精準地轉錄</translation>
+        <translation>精準地轉錄</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="92"/>
         <source>No match</source>
-        <translation type="unfinished"></translation>
+        <translation>不符合</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="94"/>
         <source>Incomplete</source>
-        <translation type="unfinished">未完整</translation>
+        <translation>不完整</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="96"/>
         <source>Unsupported format</source>
-        <translation type="unfinished">非支援格式</translation>
+        <translation>非支援的格式</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="168"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="292"/>
         <source>Generated: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>已經生成： %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="173"/>
         <source>Item: &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>項目： &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="174"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="325"/>
         <source>Status: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>狀態： %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="176"/>
         <source>Decoded audio MD5: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>解碼音訊 MD5：% 1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="177"/>
         <source>Decoded audio CRC32: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>解碼音訊 CRC32：% 1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="180"/>
         <source>Warning: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>警告： %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="187"/>
         <source>Error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>錯錯： %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="194"/>
         <source>All items decoded successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>全部項目已經解碼成功。</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="197"/>
         <source>%1 of %Ln item(s) decoded successfully.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1 / %Ln 個項目已經解碼成功。</numerusform>
         </translation>
     </message>
     <message>
@@ -21850,7 +21850,7 @@ Set to 0 to choose automatically from the remote buffer length.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="590"/>
         <source>Preferred resampler DSP names, in order. Other registered resamplers are used as fallbacks.</source>
-        <translation>偏好重新取樣 DSP 名稱(依序)。其他已經註冊的重新取樣器作為後備之用。</translation>
+        <translation>偏好重新取樣 DSP 名稱，依照順序。其他已經登錄的重新取樣器作為後備之用。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="456"/>
