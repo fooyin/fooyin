@@ -10547,57 +10547,57 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="461"/>
         <source>Allow updating unresolved tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Erlaube das Aktualisieren von unaufgelösten Titeln</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="463"/>
         <source>Write genres</source>
-        <translation type="unfinished"></translation>
+        <translation>Schreibe Genres</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="464"/>
         <source>Write provider IDs</source>
-        <translation type="unfinished"></translation>
+        <translation>Schreibe Provider-IDs</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="466"/>
         <source>Use original date for Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende das Originaldatum als Datum</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="469"/>
         <source>Allow applying metadata when local tracks are unmatched or have an ambiguous match.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erlaube das Anwenden von Metadaten, selbst wenn lokale Titel nicht übereinstimmen oder uneindeutige Übereinstimmungen vorliegen.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="470"/>
         <source>Allow writing when local tracks are unmatched or have an ambiguous match.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erlaube Schreiben, selbst wenn lokale Titel nicht übereinstimmen oder uneindeutige Übereinstimmungen vorliegen.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="471"/>
         <source>Write genres supplied by the selected metadata provider when available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenn verfügbar, schreibe die vom ausgewählten Metadaten-Provider bereitgestellten Genres.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="472"/>
         <source>Write identifiers supplied by the selected metadata provider.</source>
-        <translation type="unfinished"></translation>
+        <translation>Schreibe die vom ausgewählten Metadaten-Provider bereitgestellten IDs.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="474"/>
         <source>Use the original release date for the Date tag instead of this specific release&apos;s date.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende das ursprüngliche Veröffentlichungsdatum für das Datum-Schlagwort, anstatt das Veröffentlichungsdatum dieser Veröffentlichung.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="480"/>
         <source>Metadata options</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadaten-Optionen</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="483"/>
         <source>Existing metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Bestehende Metadaten</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="490"/>
@@ -10606,96 +10606,96 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="784"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="850"/>
         <source>Changes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Änderungen…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="493"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="574"/>
         <source>Ready.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bereit.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="498"/>
         <source>Apply</source>
-        <translation type="unfinished">Anwenden</translation>
+        <translation>Anwenden</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="498"/>
         <source>Update files</source>
-        <translation type="unfinished"></translation>
+        <translation>Dateien aktualisieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="523"/>
         <source>No matching releases found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine übereinstimmenden Veröffentlichungen gefunden.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="524"/>
         <source>Found %Ln release(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln Veröffentlichung gefunden.</numerusform>
+            <numerusform>%Ln Veröffentlichungen gefunden.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="545"/>
         <source>Contacting %1…</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontaktiere %1…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1016"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished">Nicht erneut fragen</translation>
+        <translation>Nicht erneut fragen</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="594"/>
         <source>Artist and album</source>
-        <translation type="unfinished"></translation>
+        <translation>Künstler und Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="597"/>
         <source>Disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>Inhaltsverzeichnis der CD</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="600"/>
         <source>Release</source>
-        <translation type="unfinished"></translation>
+        <translation>Veröffentlichung</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="603"/>
         <source>Release group</source>
-        <translation type="unfinished"></translation>
+        <translation>Veröffentlichungsgruppe</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="606"/>
         <source>%1 ID</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="785"/>
         <source>The selected release does not contain the queried disc.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die ausgewählte Veröffentlichung enthält die abgefragte CD nicht.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="856"/>
         <source>Changes (%1)…</source>
-        <translation type="unfinished"></translation>
+        <translation>Änderungen (%1)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="900"/>
         <source>One or more selected tracks cannot be updated.</source>
-        <translation type="unfinished"></translation>
+        <translation>Einer oder mehrere ausgewählte Titel können nicht aktualisiert werden.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="904"/>
         <source>Review unmatched or ambiguous tracks before applying metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>Überprüfe nicht übereinstimmende oder uneindeutige Titel vor dem Anwenden von Metadaten.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="905"/>
         <source>Review unmatched or ambiguous tracks before updating files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Überprüfe nicht übereinstimmende oder uneindeutige Titel vor dem Aktualisieren von Dateien.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="908"/>
