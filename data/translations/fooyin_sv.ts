@@ -2723,7 +2723,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="119"/>
         <source>Database CRCs</source>
-        <translation type="unfinished"></translation>
+        <translation>Databas-CRC:n</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="172"/>
@@ -2743,17 +2743,17 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="176"/>
         <source>Rip</source>
-        <translation type="unfinished"></translation>
+        <translation>Rippa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="179"/>
         <source>Rip Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>Rippa ljud-CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="183"/>
         <source>Album information</source>
-        <translation type="unfinished"></translation>
+        <translation>Albuminformation</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="199"/>
@@ -2783,7 +2783,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="212"/>
         <source>Track information</source>
-        <translation type="unfinished"></translation>
+        <translation>Spårinformation</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="215"/>
@@ -2798,7 +2798,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="260"/>
         <source>Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Förinställning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="276"/>
@@ -2813,7 +2813,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="305"/>
         <source>Drive offset has not been configured. Check Drive settings before ripping.</source>
-        <translation type="unfinished"></translation>
+        <translation>Enhetsförskjutning har inte konfigurerats. Kontrollera enhetsinställningar innan rippning.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="420"/>
@@ -2964,7 +2964,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="115"/>
         <source>No command selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Inget kommando valt</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="116"/>
@@ -2977,12 +2977,12 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="135"/>
         <source>Choose Command</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj kommando</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="138"/>
         <source>Filter commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrera kommandon</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="141"/>
@@ -3002,12 +3002,12 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="159"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="162"/>
         <source>Command ID or alias</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommando-ID eller -alias</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="252"/>
@@ -3071,12 +3071,12 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="69"/>
         <source>Converted and verified</source>
-        <translation type="unfinished"></translation>
+        <translation>Konverterat och verifierat</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="70"/>
         <source>Converted</source>
-        <translation type="unfinished"></translation>
+        <translation>Konverterat</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="72"/>
@@ -3096,7 +3096,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="113"/>
         <source>Audio Conversion Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Ljudkonverteringsresultat</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="121"/>
@@ -3111,7 +3111,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="122"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Utmatning</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="124"/>
@@ -3121,7 +3121,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="158"/>
         <source>Converted: %1 | Skipped: %2 | Failed: %3 | Cancelled: %4</source>
-        <translation type="unfinished"></translation>
+        <translation>Konverterade: %1 | Skippade: %2 | Misslyckade: %3 | Avbrutna: %4</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="475"/>
@@ -3172,7 +3172,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="245"/>
         <source>Converting %1 of %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>Konverterar %1 av %2 (%3)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="249"/>
@@ -4442,22 +4442,22 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="125"/>
         <source>Search for artwork via MusicBrainz ID only</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök efter konstverk endast via MusicBrainz-ID</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="126"/>
         <source>Search via MusicBrainz ID, or upload if not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök via MusicBrainz-ID eller ladda upp om inte hittad</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="128"/>
         <source>Upload artwork only</source>
-        <translation type="unfinished"></translation>
+        <translation>Ladda endast upp konstverk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="129"/>
         <source>Upload artwork, or search via MusicBrainz ID if not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Ladda upp konstverk eller sök via MusicBrainz-ID om inte hittad</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="142"/>
@@ -6137,7 +6137,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="113"/>
         <source>Confirm before deleting source archives after extraction</source>
-        <translation type="unfinished"></translation>
+        <translation>Bekräfta innan radering av källarkiver efter extrahering</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="134"/>
@@ -6871,17 +6871,17 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="277"/>
         <source>macOS global shortcuts must contain one key combination</source>
-        <translation type="unfinished"></translation>
+        <translation>macOS-globala genvägar måste innehålla en tangentkombination</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="285"/>
         <source>The shortcut cannot be represented on macOS</source>
-        <translation type="unfinished"></translation>
+        <translation>Genvägen kan inte representeras på macOS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="297"/>
         <source>macOS rejected this shortcut (error %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>macOS nekade den här genvägen (fel %1)</translation>
     </message>
 </context>
 <context>
@@ -6889,17 +6889,17 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="116"/>
         <source>The shortcut cannot be represented by the Wayland portal</source>
-        <translation type="unfinished"></translation>
+        <translation>Genvägen kan inte representeras av Wayland-portalen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="275"/>
         <source>Global shortcut registration was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Global genvägsregistrering var avbrutet</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="276"/>
         <source>The Wayland portal rejected the global shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Wayland-portalen nekade de globala genvägarna</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="284"/>
@@ -10492,37 +10492,37 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="378"/>
         <source>Releases</source>
-        <translation type="unfinished"></translation>
+        <translation>Utsläpp</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="388"/>
         <source>Select a release above to load its tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj ett utsläpp ovan för att läsa in dess spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="399"/>
         <source>No local tracks were selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Inga lokala spår var valda</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="420"/>
         <source>Retrieved tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Hämtade spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="431"/>
         <source>Drag rows to align tracks</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dra rader för att positionera spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="434"/>
         <source>Local tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Lokala spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="455"/>
         <source>Fill missing metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Fyll i saknad metadata</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="456"/>
@@ -10552,7 +10552,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="463"/>
         <source>Write genres</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv genrer</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="464"/>
@@ -18329,17 +18329,17 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="431"/>
         <source>%1 is not available as a global action.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 är inte tillgänglig som en global handling.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="434"/>
         <source>Global shortcuts must contain exactly one key combination.</source>
-        <translation type="unfinished"></translation>
+        <translation>Globala genvägar måste innehålla exakt en tangentkombination.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="441"/>
         <source>Global shortcuts using printable keys must include Ctrl, Alt, or Meta.</source>
-        <translation type="unfinished"></translation>
+        <translation>Globala genvägar med skrivbara tangenter måste inkludera Ctrl, Alt eller Meta.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="458"/>
@@ -18416,7 +18416,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="431"/>
         <source>Global shortcuts are not available on this platform</source>
-        <translation type="unfinished"></translation>
+        <translation>Globala genvägar är inte tillgängliga på den här plattformen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="434"/>
@@ -18426,7 +18426,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="446"/>
         <source>Disable global shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Stäng av global genväg</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="447"/>
@@ -23173,7 +23173,7 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1894"/>
         <source>Quick Search</source>
-        <translation type="unfinished">Snabbsök</translation>
+        <translation>Snabbsök</translation>
     </message>
 </context>
 <context>
