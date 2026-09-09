@@ -928,11 +928,24 @@ bool TrackDatabase::insertOrUpdateStats(const Track& track, StoredTrackStats* me
 
 void TrackDatabase::removeUnmanagedTracks() const
 {
-    static const QString statement
-        = u"DELETE FROM Tracks WHERE LibraryID = -1 AND TrackID NOT IN (SELECT TrackID FROM PlaylistTracks);"_s;
+    static const QString statement = uR"(
+        DELETE FROM Tracks
+        WHERE
+            (
+                LibraryID = -1
+                OR NOT EXISTS (
+                    SELECT 1
+                    FROM Libraries
+                    WHERE Libraries.LibraryID = Tracks.LibraryID
+                )
+            )
+            AND TrackID NOT IN (
+                SELECT TrackID
+                FROM PlaylistTracks
+            );
+    )"_s;
 
     DbQuery query{db(), statement};
-
     query.exec();
 }
 
