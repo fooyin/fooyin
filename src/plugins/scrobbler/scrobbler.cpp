@@ -33,6 +33,7 @@
 #include <QIODevice>
 
 #include <algorithm>
+#include <ranges>
 
 using namespace Qt::StringLiterals;
 
