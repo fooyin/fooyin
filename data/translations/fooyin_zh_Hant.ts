@@ -2694,7 +2694,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="117"/>
         <source>Confidence</source>
-        <translation>機密</translation>
+        <translation>信賴度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="118"/>
@@ -20162,7 +20162,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="187"/>
         <source>Automatic match confidence: %1%.</source>
-        <translation>自動符合信任度： %1%。</translation>
+        <translation>自動符合信賴度： %1%。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="191"/>
@@ -20513,208 +20513,208 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="253"/>
         <source>0 samples</source>
-        <translation type="unfinished"></translation>
+        <translation>0 採樣</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="255"/>
         <source>%1 samples</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 採樣</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="267"/>
         <source>%1 (AR v1/v2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (AR v1/v2)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="270"/>
         <source>%1 (AR v1)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (AR v1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="273"/>
         <source>%1 (AR v2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (AR v2)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="281"/>
         <source>Accurately ripped: %1 | No match: %2 | Incomplete: %3 | Unsupported: %4</source>
-        <translation type="unfinished"></translation>
+        <translation>準確轉錄： %1 | 不符合： %2 | 不完整： %3 | 不支援： %4</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="314"/>
         <source>AccurateRip disc ID: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip 碟片 ID： %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="315"/>
         <source>Tracks: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目： %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="323"/>
         <source>Track %1</source>
-        <translation type="unfinished">曲目 %1</translation>
+        <translation>曲目 %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="324"/>
         <source>Filename: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>檔案名稱： %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="326"/>
         <source>AR v1 CRC: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v1 CRC: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="327"/>
         <source>AR v2 CRC: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v2 CRC: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="330"/>
         <source>Confidence: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>信賴度： %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="333"/>
         <source>Pressing offset: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>壓制偏移量： %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="335"/>
         <source>Matched database CRC: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>符合的資料庫 CRC: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="344"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="474"/>
         <source>Database CRCs: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>資料庫 CRCs: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="350"/>
         <source>Summary</source>
-        <translation type="unfinished">摘要</translation>
+        <translation>摘要</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="351"/>
         <source>Accurately ripped: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>準確確地轉錄： %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="352"/>
         <source>No match: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>不符合： %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="353"/>
         <source>Incomplete: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>不完整： %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="354"/>
         <source>Unsupported: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>不支援： %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="361"/>
         <source>Export Results</source>
-        <translation type="unfinished"></translation>
+        <translation>輸出結果</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="370"/>
         <source>The results file could not be written.</source>
-        <translation type="unfinished"></translation>
+        <translation>此結果檔案無法被寫入。</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="378"/>
         <source>File Integrity Verification</source>
-        <translation type="unfinished"></translation>
+        <translation>檔案完整性驗證</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="387"/>
         <source>No problems found.</source>
-        <translation type="unfinished"></translation>
+        <translation>找無問題。</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="388"/>
         <source>Problems found in %Ln item(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>找到問題於 %Ln 個項目。</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="395"/>
         <source>Name</source>
-        <translation type="unfinished">名稱</translation>
+        <translation>名稱</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="395"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="457"/>
         <source>Status</source>
-        <translation type="unfinished">狀態</translation>
+        <translation>狀態</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="396"/>
         <source>Warnings</source>
-        <translation type="unfinished"></translation>
+        <translation>警告</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="422"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="506"/>
         <source>Export…</source>
-        <translation type="unfinished"></translation>
+        <translation>輸出…</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="428"/>
         <source>Text Files (*.txt)</source>
-        <translation type="unfinished"></translation>
+        <translation>文字檔案 (*.txt)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="446"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="750"/>
         <source>AccurateRip Verification</source>
-        <translation type="unfinished">AccurateRip 驗證</translation>
+        <translation>AccurateRip 驗證</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="457"/>
         <source>Track</source>
-        <translation type="unfinished">曲目</translation>
+        <translation>曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="458"/>
         <source>Confidence</source>
-        <translation type="unfinished">機密</translation>
+        <translation>機密</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="459"/>
         <source>Pressing offset</source>
-        <translation type="unfinished"></translation>
+        <translation>壓制偏移</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="460"/>
         <source>CRC v1</source>
-        <translation type="unfinished"></translation>
+        <translation>CRC v1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="460"/>
         <source>CRC v2</source>
-        <translation type="unfinished"></translation>
+        <translation>CRC v2</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="485"/>
         <source>Matches the AccurateRip database (AR v1)</source>
-        <translation type="unfinished"></translation>
+        <translation>符合 AccurateRip 資料庫 (AR v1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="494"/>
         <source>Matches the AccurateRip database (AR v2)</source>
-        <translation type="unfinished"></translation>
+        <translation>符合 AccurateRip 資料庫 (AR v2)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="514"/>
         <source>Log Files (*.log);;Text Files (*.txt)</source>
-        <translation type="unfinished"></translation>
+        <translation>記錄檔案 (&amp;.log);;文字檔案 (*.txt)</translation>
     </message>
 </context>
 <context>
@@ -20722,54 +20722,55 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="541"/>
         <source>Preparing verification…</source>
-        <translation type="unfinished"></translation>
+        <translation>準備進行驗證…</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="541"/>
         <source>Cancel</source>
-        <translation type="unfinished">取消</translation>
+        <translation>取消</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="544"/>
         <source>File Integrity Verification</source>
-        <translation type="unfinished"></translation>
+        <translation>檔案完整性驗證</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="545"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="604"/>
         <source>AccurateRip Verification</source>
-        <translation type="unfinished">AccurateRip 驗證</translation>
+        <translation>AccurateRip 驗證</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="591"/>
         <source>Current file:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>目前檔案： 
+%1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="663"/>
         <source>Looking up album in AccurateRip…</source>
-        <translation type="unfinished"></translation>
+        <translation>尋找專輯於 AccurateRip…</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="677"/>
         <source>This album is not present in AccurateRip.</source>
-        <translation type="unfinished"></translation>
+        <translation>此專輯未呈現於 AccurateRip。</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="678"/>
         <source>AccurateRip lookup failed: %1</source>
-        <translation type="unfinished">AccurateRip 找尋失敗：%1</translation>
+        <translation>AccurateRip 找尋失敗：%1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="685"/>
         <source>AccurateRip returned an unexpectedly large disc record.</source>
-        <translation type="unfinished">AccurateRip 回傳出乎意料龐大的碟片記錄。</translation>
+        <translation>AccurateRip 回傳一個出乎意料龐大的碟片記錄。</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="706"/>
         <source>Verifying album at sample offset %1…</source>
-        <translation type="unfinished"></translation>
+        <translation>進行驗證專輯在採樣偏差 %1…</translation>
     </message>
 </context>
 <context>
@@ -21692,12 +21693,12 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="456"/>
         <source>Metadata Lookup</source>
-        <translation type="unfinished">詮釋資料尋找</translation>
+        <translation>詮釋資料尋找</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="457"/>
         <source>Confirm before wiping writable tags</source>
-        <translation type="unfinished"></translation>
+        <translation>在抹除可寫的標籤之前進行請確</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="476"/>
@@ -22310,7 +22311,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1311"/>
         <source>Converter Output</source>
-        <translation type="unfinished"></translation>
+        <translation>轉換輸出</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1408"/>
@@ -22372,22 +22373,22 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1509"/>
         <source>Verify integrity</source>
-        <translation type="unfinished"></translation>
+        <translation>驗證完整性</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1510"/>
         <source>Decode the selected tracks and report file or checksum errors</source>
-        <translation type="unfinished"></translation>
+        <translation>解碼所選的曲目，並提出報告檔案或校驗和錯誤</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1517"/>
         <source>Verify album with AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>驗證專輯使用 AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1518"/>
         <source>Verify all tracks from one complete lossless CD rip against AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 AccurateRip 對一張完整的無損 CD 轉錄的全部曲目進行驗證</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1762"/>
