@@ -29,6 +29,7 @@
         <file>icons/dark/scalable/actions/go-up.svg</file>
         <file>icons/dark/scalable/actions/list-add.svg</file>
         <file>icons/dark/scalable/actions/list-remove.svg</file>
+        <file>icons/dark/scalable/actions/love.svg</file>
         <file>icons/dark/scalable/actions/media-playback-pause.svg</file>
         <file>icons/dark/scalable/actions/media-playback-start.svg</file>
         <file>icons/dark/scalable/actions/media-playback-stop.svg</file>
@@ -52,6 +53,7 @@
         <file>icons/dark/scalable/actions/script-variable.svg</file>
         <file>icons/dark/scalable/actions/scrobble.svg</file>
         <file>icons/dark/scalable/actions/sidebar-right.svg</file>
+        <file>icons/dark/scalable/actions/unlove.svg</file>
         <file>icons/dark/scalable/actions/user-bookmarks.svg</file>
         <file>icons/dark/scalable/actions/view-filter.svg</file>
         <file>icons/dark/scalable/actions/view-log.svg</file>
@@ -84,6 +86,7 @@
         <file>icons/light/scalable/actions/go-up.svg</file>
         <file>icons/light/scalable/actions/list-add.svg</file>
         <file>icons/light/scalable/actions/list-remove.svg</file>
+        <file>icons/light/scalable/actions/love.svg</file>
         <file>icons/light/scalable/actions/media-playback-pause.svg</file>
         <file>icons/light/scalable/actions/media-playback-start.svg</file>
         <file>icons/light/scalable/actions/media-playback-stop.svg</file>
@@ -107,6 +110,7 @@
         <file>icons/light/scalable/actions/script-variable.svg</file>
         <file>icons/light/scalable/actions/scrobble.svg</file>
         <file>icons/light/scalable/actions/sidebar-right.svg</file>
+        <file>icons/light/scalable/actions/unlove.svg</file>
         <file>icons/light/scalable/actions/user-bookmarks.svg</file>
         <file>icons/light/scalable/actions/view-filter.svg</file>
         <file>icons/light/scalable/actions/view-log.svg</file>

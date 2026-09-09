@@ -137,13 +137,13 @@ void StarEditor::keyPressEvent(QKeyEvent* event)
     if(key == Qt::Key_Return || key == Qt::Key_Enter || key == Qt::Key_Escape) {
         Q_EMIT editingFinished();
     }
-    else if(event->key() == Qt::Key_Left) {
+    else if(key == Qt::Key_Left) {
         if(rating > 0) {
             m_rating.setRating(rating - 0.1F);
             update();
         }
     }
-    else if(event->key() == Qt::Key_Right) {
+    else if(key == Qt::Key_Right) {
         if(rating < static_cast<float>(m_rating.maxStarCount())) {
             m_rating.setRating(rating + 0.1F);
             update();

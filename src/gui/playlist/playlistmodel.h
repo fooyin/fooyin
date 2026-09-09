@@ -133,6 +133,7 @@ public:
     {
         TrackList tracks;
         bool ratingField{false};
+        bool loveField{false};
     };
     [[nodiscard]] std::expected<BulkEditResult, BulkEditError> setBulkData(const QModelIndexList& indexes,
                                                                            const QVariant& value);
@@ -178,6 +179,7 @@ public:
 
 Q_SIGNALS:
     void metadataWriteRequested(const Fooyin::TrackList& tracks);
+    void tracksLoved(const Fooyin::TrackList& tracks);
     void tracksRated(const Fooyin::TrackList& tracks);
     void loadingStateChanged();
     void playlistLoaded();
@@ -207,6 +209,7 @@ private:
         int column{-1};
         QString writeField;
         bool ratingField{false};
+        bool loveField{false};
     };
     [[nodiscard]] std::optional<EditableTrackContext> editableTrackContextForColumn(int column) const;
     [[nodiscard]] std::expected<EditableTrackContext, BulkEditError>
@@ -348,6 +351,7 @@ private:
     int m_pixmapPadding;
     int m_pixmapPaddingTop;
     int m_starRatingSize;
+    int m_loveHeartSize;
 
     std::set<int> m_positionColumns;
     std::set<int> m_bitrateColumns;

@@ -61,7 +61,7 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr auto CurrentSchemaVersion = 19;
+constexpr auto CurrentSchemaVersion = 20;
 
 namespace {
 QCoreApplication* ensureCoreApplication()
@@ -991,7 +991,7 @@ TEST_F(UnifiedMusicLibraryTest, RestoresStatsWhenUnmanagedTrackIsReadded)
     auto tracks = scannedSpy.takeLast().at(1).value<TrackList>();
     ASSERT_EQ(tracks.size(), 1);
 
-    Track track = tracks.front();
+    const Track& track = tracks.front();
     ASSERT_GE(track.id(), 0);
 
     {
@@ -1000,7 +1000,7 @@ TEST_F(UnifiedMusicLibraryTest, RestoresStatsWhenUnmanagedTrackIsReadded)
         DbQuery query{
             dbProvider.db(),
             u"UPDATE TrackStats "
-            "SET PlayCount = 5, FirstPlayed = 100, LastPlayed = 500 "
+            "SET Loved = 1, PlayCount = 5, FirstPlayed = 100, LastPlayed = 500 "
             "WHERE TrackHash = :hash;"_s,
         };
         query.bindValue(u":hash"_s, track.hash());
@@ -1033,6 +1033,7 @@ TEST_F(UnifiedMusicLibraryTest, RestoresStatsWhenUnmanagedTrackIsReadded)
     tracks = scannedSpy.takeLast().at(1).value<TrackList>();
 
     ASSERT_EQ(tracks.size(), 1);
+    EXPECT_TRUE(tracks.front().isLoved());
     EXPECT_EQ(tracks.front().playCount(), 5);
     EXPECT_EQ(tracks.front().firstPlayed(), 100);
     EXPECT_EQ(tracks.front().lastPlayed(), 500);

@@ -205,11 +205,11 @@ public:
     void updateLibraryTracks(const TrackList& updatedTracks);
     void updateTracksMetadata(TrackList tracksToUpdate);
     void updateTracksAvailability(TrackList tracksToUpdate);
-    void updateTracksStats(TrackList tracksToUpdate);
+    void updateTracksStats(TrackList tracksToUpdate, Track::Stats stats);
     void updateTracks(TrackList tracksToUpdate);
     QCoro::Task<> commitUpdateTracksMetadata(TrackList tracksToUpdate);
     QCoro::Task<> commitUpdateTracksAvailability(TrackList tracksToUpdate);
-    QCoro::Task<> commitUpdateTracksStats(TrackList tracksToUpdate);
+    QCoro::Task<> commitUpdateTracksStats(TrackList tracksToUpdate, Track::Stats stats);
     QCoro::Task<> commitUpdateTracks(TrackList tracksToUpdate);
     QCoro::Task<> commitRemoveTracks(TrackList tracksToRemove);
     void removeTracks(const TrackList& tracksToRemove);
@@ -463,10 +463,10 @@ void UnifiedMusicLibraryPrivate::updateTracksAvailability(TrackList tracksToUpda
     });
 }
 
-void UnifiedMusicLibraryPrivate::updateTracksStats(TrackList tracksToUpdate)
+void UnifiedMusicLibraryPrivate::updateTracksStats(TrackList tracksToUpdate, Track::Stats stats)
 {
-    enqueueCommit([this, tracksToUpdate = std::move(tracksToUpdate)]() mutable {
-        return commitUpdateTracksStats(std::move(tracksToUpdate));
+    enqueueCommit([this, tracksToUpdate = std::move(tracksToUpdate), stats]() mutable {
+        return commitUpdateTracksStats(std::move(tracksToUpdate), stats);
     });
 }
 
@@ -527,16 +527,51 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksAvailability(TrackLi
     setupLibraryWatchers();
 }
 
-QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksStats(TrackList tracksToUpdate)
+QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksStats(TrackList tracksToUpdate, Track::Stats stats)
 {
     attachMetadataStore(tracksToUpdate);
     TrackList mergedTracks = mergeTrackUpdates(tracksToUpdate, LibraryTrackUpdateType::Stats);
 
     const TrackList sortedTracks = co_await sortTracks(librarySortScript(), std::move(mergedTracks));
 
+    TrackList ratingsChanged;
+    TrackList playcountsChanged;
+    TrackList lovedChanged;
+
+    TrackLookup lookup{m_tracks};
+
+    for(const Track& track : sortedTracks) {
+        const auto index          = lookup.findById(track);
+        const Track* currentTrack = index ? &m_tracks.at(*index) : nullptr;
+
+        if(stats.testFlag(Track::Stat::Rating) && (!currentTrack || currentTrack->rating() != track.rating())) {
+            ratingsChanged.push_back(track);
+        }
+        if(stats.testFlag(Track::Stat::Playcount)
+           && (!currentTrack || currentTrack->playCount() != track.playCount()
+               || currentTrack->firstPlayed() != track.firstPlayed()
+               || currentTrack->lastPlayed() != track.lastPlayed())) {
+            playcountsChanged.push_back(track);
+        }
+        if(stats.testFlag(Track::Stat::Loved) && (!currentTrack || currentTrack->isLoved() != track.isLoved())) {
+            lovedChanged.push_back(track);
+        }
+    }
+
     updateLibraryTracks(sortedTracks);
     co_await resortLibraryTracks();
+
     Q_EMIT m_self->tracksUpdated(sortedTracks);
+    if(!ratingsChanged.empty()) {
+        Q_EMIT m_self->tracksStatsChanged(ratingsChanged, Track::Stat::Rating);
+    }
+    if(!playcountsChanged.empty()) {
+        Q_EMIT m_self->tracksStatsChanged(playcountsChanged, Track::Stat::Playcount);
+    }
+    if(!lovedChanged.empty()) {
+        Q_EMIT m_self->tracksStatsChanged(lovedChanged, Track::Stat::Loved);
+    }
+
     setupLibraryWatchers();
 }
 
@@ -743,7 +778,7 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConne
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksAvailabilityUpdated, this,
                      [this](const TrackList& tracks) { p->updateTracksAvailability(tracks); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksStatsUpdated, this,
-                     [this](const TrackList& tracks) { p->updateTracksStats(tracks); });
+                     [this](const TrackList& tracks, Track::Stats stats) { p->updateTracksStats(tracks, stats); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksRemoved, this,
                      [this](const TrackList& tracks) { p->removeTracks(tracks); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::gotTracks, this,

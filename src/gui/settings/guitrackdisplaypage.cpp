@@ -65,6 +65,7 @@ private:
     QRadioButton* m_preferSelection;
 
     QSpinBox* m_starRatingSize;
+    QSpinBox* m_loveHeartSize;
     QLineEdit* m_fullStarSymbol;
     QLineEdit* m_halfStarSymbol;
     QLineEdit* m_emptyStarSymbol;
@@ -78,6 +79,7 @@ GuiTrackDisplayPageWidget::GuiTrackDisplayPageWidget(SettingsManager* settings)
     , m_preferPlaying{new QRadioButton(tr("Prefer currently playing track"), this)}
     , m_preferSelection{new QRadioButton(tr("Prefer current selection"), this)}
     , m_starRatingSize{new QSpinBox(this)}
+    , m_loveHeartSize{new QSpinBox(this)}
     , m_fullStarSymbol{new QLineEdit(this)}
     , m_halfStarSymbol{new QLineEdit(this)}
     , m_emptyStarSymbol{new QLineEdit(this)}
@@ -129,6 +131,17 @@ GuiTrackDisplayPageWidget::GuiTrackDisplayPageWidget(SettingsManager* settings)
     ratingsLayout->addWidget(m_ratingPreview, row++, 1);
     ratingsLayout->setColumnStretch(3, 1);
 
+    m_loveHeartSize->setRange(5, 30);
+    m_loveHeartSize->setSuffix(u" px"_s);
+    m_loveHeartSize->setToolTip(tr("Controls the heart size used by the love editor widget"));
+
+    auto* loveGroupBox = new QGroupBox(tr("Love"), this);
+    auto* loveLayout   = new QGridLayout(loveGroupBox);
+
+    loveLayout->addWidget(new QLabel(tr("Love editor heart size") + u":"_s, this), 0, 0);
+    loveLayout->addWidget(m_loveHeartSize, 0, 1);
+    loveLayout->setColumnStretch(2, 1);
+
     auto* selectionGroupBox    = new QGroupBox(tr("Selection Display"), this);
     auto* selectionGroup       = new QButtonGroup(this);
     auto* selectionGroupLayout = new QGridLayout(selectionGroupBox);
@@ -149,6 +162,7 @@ GuiTrackDisplayPageWidget::GuiTrackDisplayPageWidget(SettingsManager* settings)
     mainLayout->addWidget(propertiesDialogGroup, row++, 0, 1, 2);
     mainLayout->addWidget(selectionGroupBox, row++, 0, 1, 2);
     mainLayout->addWidget(ratingsGroupBox, row++, 0, 1, 2);
+    mainLayout->addWidget(loveGroupBox, row++, 0, 1, 2);
     mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
@@ -184,6 +198,7 @@ void GuiTrackDisplayPageWidget::load()
     }
 
     m_starRatingSize->setValue(m_settings->value<StarRatingSize>());
+    m_loveHeartSize->setValue(m_settings->value<LoveHeartSize>());
     m_fullStarSymbol->setText(m_settings->value<RatingFullStarSymbol>());
     m_halfStarSymbol->setText(m_settings->value<RatingHalfStarSymbol>());
     m_emptyStarSymbol->setText(m_settings->value<RatingEmptyStarSymbol>());
@@ -201,6 +216,7 @@ void GuiTrackDisplayPageWidget::apply()
 
     const auto& defaultSymbols = defaultRatingStarSymbols();
     m_settings->set<StarRatingSize>(m_starRatingSize->value());
+    m_settings->set<LoveHeartSize>(m_loveHeartSize->value());
     m_settings->set<RatingFullStarSymbol>(m_fullStarSymbol->text().isEmpty() ? defaultSymbols.fullStarSymbol
                                                                              : m_fullStarSymbol->text());
     m_settings->set<RatingHalfStarSymbol>(m_halfStarSymbol->text().isEmpty() ? defaultSymbols.halfStarSymbol
@@ -215,6 +231,7 @@ void GuiTrackDisplayPageWidget::reset()
     m_settings->reset<PropertiesSidebarTrackScript>();
     m_settings->reset<InfoDisplayPrefer>();
     m_settings->reset<StarRatingSize>();
+    m_settings->reset<LoveHeartSize>();
     m_settings->reset<RatingFullStarSymbol>();
     m_settings->reset<RatingHalfStarSymbol>();
     m_settings->reset<RatingEmptyStarSymbol>();

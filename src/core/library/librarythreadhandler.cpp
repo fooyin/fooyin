@@ -352,7 +352,7 @@ ScanRequest LibraryThreadHandlerPrivate::addTracksScanRequest(const TrackList& t
     m_scanRequests.emplace_front(libraryRequest);
 
     // Track scans take precedence over library scans
-    const auto currRequest = currentRequest();
+    const auto* currRequest = currentRequest();
     if(currRequest && currRequest->type == ScanRequest::Library) {
         m_scanner.pauseThread();
         execNextRequest();
@@ -378,7 +378,7 @@ ScanRequest LibraryThreadHandlerPrivate::addFilesScanRequest(const QList<QUrl>& 
     m_scanRequests.emplace_front(libraryRequest);
 
     // File scans take precedence over library and track scans
-    const auto currRequest = currentRequest();
+    const auto* currRequest = currentRequest();
     if(currRequest && (currRequest->type == ScanRequest::Library || currRequest->type == ScanRequest::Tracks)) {
         m_scanner.pauseThread();
         execNextRequest();
@@ -455,7 +455,7 @@ ScanRequest LibraryThreadHandlerPrivate::addPlaylistRequest(const QList<QUrl>& f
     m_scanRequests.emplace_front(libraryRequest);
 
     // Playlist scans take precedence over library and track scans
-    const auto currRequest = currentRequest();
+    const auto* currRequest = currentRequest();
     if(currRequest && (currRequest->type == ScanRequest::Library || currRequest->type == ScanRequest::Tracks)) {
         m_scanner.pauseThread();
         execNextRequest();
@@ -553,7 +553,7 @@ void LibraryThreadHandlerPrivate::flushPendingProgress()
 
 void LibraryThreadHandlerPrivate::finishScanRequest()
 {
-    const auto request = currentRequest();
+    auto* request = currentRequest();
     if(!request) {
         m_currentRequestId = -1;
         execNextRequest();

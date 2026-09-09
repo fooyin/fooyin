@@ -168,12 +168,18 @@ bool LastFmService::isAuthenticated() const
     return !m_username.isEmpty() && !m_sessionKey.isEmpty();
 }
 
+bool LastFmService::supportsLoved() const
+{
+    return true;
+}
+
 void LastFmService::saveSession()
 {
     FySettings settings;
     settings.beginGroup(isCustom() ? u"Scrobbler-"_s + name() : name());
 
     settings.setValue("IsEnabled", details().isEnabled);
+    settings.setValue("SubmitLoved", details().submitLoved);
     settings.setValue("Username", m_username);
     settings.setValue("SessionKey", m_sessionKey);
 
@@ -188,8 +194,9 @@ void LastFmService::loadSession()
     if(settings.contains("IsEnabled")) {
         detailsRef().isEnabled = settings.value("IsEnabled").toBool();
     }
-    m_username   = settings.value("Username").toString();
-    m_sessionKey = settings.value("SessionKey").toString();
+    detailsRef().submitLoved = settings.value("SubmitLoved", false).toBool();
+    m_username               = settings.value("Username").toString();
+    m_sessionKey             = settings.value("SessionKey").toString();
 
     settings.endGroup();
 }
@@ -300,6 +307,16 @@ void LastFmService::submit()
     QNetworkReply* reply = createRequest(params);
     QObject::connect(reply, &QNetworkReply::finished, this,
                      [this, reply, sentItems]() { scrobbleFinished(reply, sentItems); });
+}
+
+void LastFmService::submitLoved(const LovedItem& item)
+{
+    const std::map<QString, QString> params{{u"method"_s, item.loved ? u"track.love"_s : u"track.unlove"_s},
+                                            {u"artist"_s, item.metadata.artist},
+                                            {u"track"_s, item.metadata.title}};
+
+    QNetworkReply* reply = createRequest(params);
+    QObject::connect(reply, &QNetworkReply::finished, this, [this, reply, item]() { lovedFinished(reply, item); });
 }
 
 void LastFmService::setupAuthQuery(ScrobblerAuthSession* session, QUrlQuery& query)
@@ -690,5 +707,30 @@ void LastFmService::scrobbleFinished(QNetworkReply* reply, const CacheItemList& 
     }
 
     doDelayedSubmit();
+}
+
+void LastFmService::lovedFinished(QNetworkReply* reply, const LovedItem& item)
+{
+    if(!removeReply(reply)) {
+        return;
+    }
+
+    QJsonObject object;
+    QString error;
+    const ReplyResult result = getJsonFromReply(reply, &object, &error);
+    if(result == ReplyResult::Success) {
+        lovedUpdateFinished(item, LovedUpdateResult::Success);
+        return;
+    }
+
+    const ReplyErrorInfo errorInfo = getReplyErrorInfo(reply, object);
+    const auto apiError            = static_cast<ScrobbleError>(errorInfo.apiErrorCode);
+    const bool retry               = result == ReplyResult::ServerError || apiError == ScrobbleError::OperationFailed
+                                  || apiError == ScrobbleError::ServiceOffline || apiError == ScrobbleError::TempUnavailable
+                                  || apiError == ScrobbleError::RateLimitExceeded;
+
+    qCWarning(SCROBBLER) << "Unable to update Loved state for" << name() << item.metadata.artist << u"-"_s
+                         << item.metadata.title << ':' << error;
+    lovedUpdateFinished(item, retry ? LovedUpdateResult::Retry : LovedUpdateResult::Discard);
 }
 } // namespace Fooyin::Scrobbler

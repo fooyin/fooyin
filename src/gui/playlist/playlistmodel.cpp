@@ -42,6 +42,7 @@
 #include <gui/trackmimedata.h>
 #include <gui/widgets/autoheaderview.h>
 #include <utils/datastream.h>
+#include <utils/heartdelegate.h>
 #include <utils/modelutils.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/starrating.h>
@@ -98,11 +99,17 @@ QString normaliseWriteField(QString field)
     return field;
 }
 
+bool isLoveWriteField(const QString& field)
+{
+    return field.compare(QLatin1StringView{Constants::MetaData::Loved}, Qt::CaseInsensitive) == 0
+        || field.compare(QLatin1StringView{Constants::MetaData::LoveEditor}, Qt::CaseInsensitive) == 0;
+}
+
 bool isRatingWriteField(const QString& field)
 {
-    return field.compare(QLatin1String{Constants::MetaData::RatingEditor}, Qt::CaseInsensitive) == 0
-        || field.compare(QLatin1String{Constants::MetaData::Rating}, Qt::CaseInsensitive) == 0
-        || field.compare(QLatin1String{Constants::MetaData::Stars}, Qt::CaseInsensitive) == 0;
+    return field.compare(QLatin1StringView{Constants::MetaData::RatingEditor}, Qt::CaseInsensitive) == 0
+        || field.compare(QLatin1StringView{Constants::MetaData::Rating}, Qt::CaseInsensitive) == 0
+        || field.compare(QLatin1StringView{Constants::MetaData::Stars}, Qt::CaseInsensitive) == 0;
 }
 
 QList<int> playlistTrackChangedRoles()
@@ -163,6 +170,9 @@ ScriptFieldValue trackValueForEdit(const QString& writeField, const QVariant& va
 {
     const QString normalisedField = normaliseWriteField(writeField);
 
+    if(isLoveWriteField(normalisedField)) {
+        return value.canConvert<HeartValue>() ? QString::number(value.value<HeartValue>().loved()) : value.toString();
+    }
     if(isRatingWriteField(normalisedField)) {
         if(value.canConvert<StarRating>()) {
             const float rating = value.value<StarRating>().rating();
@@ -712,6 +722,7 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     , m_pixmapPadding{settings->value<Settings::Gui::Internal::PlaylistImagePadding>()}
     , m_pixmapPaddingTop{settings->value<Settings::Gui::Internal::PlaylistImagePaddingTop>()}
     , m_starRatingSize{settings->value<Settings::Gui::StarRatingSize>()}
+    , m_loveHeartSize{settings->value<Settings::Gui::LoveHeartSize>()}
     , m_singleColumnHasPositionDependency{false}
     , m_singleColumnHasBitrateDependency{false}
     , m_singleColumnHasPlaybackStateDependency{false}
@@ -729,6 +740,10 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     });
     m_settings->subscribe<Settings::Gui::Internal::PlaylistImagePaddingTop>(this, [this](int padding) {
         m_pixmapPaddingTop = padding;
+        invalidateData();
+    });
+    m_settings->subscribe<Settings::Gui::LoveHeartSize>(this, [this](int size) {
+        m_loveHeartSize = size;
         invalidateData();
     });
     m_settings->subscribe<Settings::Gui::StarRatingSize>(this, [this](int size) {
@@ -867,7 +882,10 @@ bool PlaylistModel::setData(const QModelIndex& index, const QVariant& value, int
         return false;
     }
 
-    if(context->ratingField) {
+    if(context->loveField) {
+        Q_EMIT tracksLoved({*updatedTrack});
+    }
+    else if(context->ratingField) {
         Q_EMIT tracksRated({*updatedTrack});
     }
     else {
@@ -1067,7 +1085,9 @@ PlaylistModel::setBulkData(const QModelIndexList& indexes, const QVariant& value
         Q_EMIT dataChanged(changedIndex, changedIndex, {Qt::EditRole});
     }
 
-    return BulkEditResult{.tracks = std::move(tracksToWrite), .ratingField = bulkEditContext->ratingField};
+    return BulkEditResult{.tracks      = std::move(tracksToWrite),
+                          .ratingField = bulkEditContext->ratingField,
+                          .loveField   = bulkEditContext->loveField};
 }
 
 MoveOperation PlaylistModel::moveTracks(const MoveOperation& operation)
@@ -1786,26 +1806,28 @@ PlaylistModel::editableTrackContext(const QModelIndex& index) const
 std::optional<PlaylistModel::EditableTrackContext> PlaylistModel::editableTrackContextForColumn(int column) const
 {
     if(m_columns.empty() || column < 0 || std::cmp_greater_equal(column, m_columns.size())) {
-        return std::nullopt;
+        return {};
     }
 
     const PlaylistColumn& playlistColumn = m_columns.at(column);
     if(!isEditablePlaylistColumn(playlistColumn)) {
-        return std::nullopt;
+        return {};
     }
 
     const QString writeField = normaliseWriteField(playlistColumn.writeField);
     if(writeField.isEmpty()) {
-        return std::nullopt;
+        return {};
     }
 
-    return EditableTrackContext{
-        .column = column, .writeField = writeField, .ratingField = isRatingWriteField(writeField)};
+    return EditableTrackContext{.column      = column,
+                                .writeField  = writeField,
+                                .ratingField = isRatingWriteField(writeField),
+                                .loveField   = isLoveWriteField(writeField)};
 }
 
 bool PlaylistModel::canEditTrack(const Track& track, const EditableTrackContext& context) const
 {
-    if(context.ratingField) {
+    if(context.ratingField || context.loveField) {
         return true;
     }
 
@@ -1835,6 +1857,13 @@ PlaylistModel::prepareEditedTrack(const QModelIndex& index, const EditableTrackC
         const float currentRating = track.rating();
         const float nextRating = value.canConvert<StarRating>() ? value.value<StarRating>().rating() : value.toFloat();
         if(qFuzzyCompare(currentRating + 1.0F, nextRating + 1.0F)) {
+            return std::unexpected{BulkEditError::NoChanges};
+        }
+    }
+    else if(context.loveField) {
+        const bool currentLoved = track.isLoved();
+        const bool nextLoved    = value.canConvert<HeartValue>() ? value.value<HeartValue>().loved() : value.toBool();
+        if(currentLoved == nextLoved) {
             return std::unexpected{BulkEditError::NoChanges};
         }
     }
@@ -2227,6 +2256,9 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
         }
 
         const QString writeField = normaliseWriteField(playlistColumn.writeField);
+        if(isLoveWriteField(writeField)) {
+            return QVariant::fromValue(HeartValue{track.isLoved(), m_loveHeartSize});
+        }
         if(isRatingWriteField(writeField)) {
             return QVariant::fromValue(StarRating{track.rating(), 5, m_starRatingSize});
         }
@@ -2234,9 +2266,13 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
         return editStringForTrack(track, writeField);
     }
 
-    if(role == Qt::DisplayRole && !m_columns.empty()
-       && m_columns.at(column).field == QLatin1String{Constants::RatingEditor}) {
-        return StarRating{track.rating(), 5, m_starRatingSize};
+    if(role == Qt::DisplayRole && !m_columns.empty()) {
+        if(m_columns.at(column).field == QLatin1StringView{Constants::RatingEditor}) {
+            return StarRating{track.rating(), 5, m_starRatingSize};
+        }
+        if(m_columns.at(column).field == QLatin1StringView{Constants::LoveEditor}) {
+            return QVariant::fromValue(HeartValue{track.isLoved(), m_loveHeartSize});
+        }
     }
 
     switch(role) {

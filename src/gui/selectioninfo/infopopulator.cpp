@@ -311,6 +311,8 @@ void InfoPopulatorPrivate::addTrackGeneral(int total, const Track& track)
 
 void InfoPopulatorPrivate::addTrackPlayStats(const Track& track)
 {
+    checkAddEntryNode(u"Loved"_s, InfoPopulator::tr("Loved"), ItemParent::PlayStats,
+                      track.isLoved() ? InfoPopulator::tr("Yes") : InfoPopulator::tr("No"));
     if(track.playCount() > 0) {
         checkAddEntryNode(u"PlayCount"_s, InfoPopulator::tr("Playcount"), ItemParent::PlayStats,
                           QString::number(std::max(track.playCount(), 0)), InfoItem::Total);

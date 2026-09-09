@@ -58,12 +58,8 @@ bool anyTrackWasExplicitlyDropped(const Fooyin::TrackList& tracks, const std::se
 
 bool pathIsInDroppedDirectory(const QString& path, const std::set<QString>& explicitDirs)
 {
-    for(const auto& dir : explicitDirs) {
-        if(path == dir || path.startsWith(dir + u"/"_s)) {
-            return true;
-        }
-    }
-    return false;
+    return std::ranges::any_of(explicitDirs,
+                               [&path](const auto& dir) { return path == dir || path.startsWith(dir + u"/"_s); });
 }
 
 bool anyTrackWasCoveredByDroppedDirectory(const Fooyin::TrackList& tracks, const std::set<QString>& explicitDirs)
@@ -422,7 +418,7 @@ bool LibraryScanSession::scanFiles(const TrackList& libraryTracks, const QList<Q
     m_externalExplicitDirs.clear();
     m_externalCueCoveredPaths.clear();
 
-    for(const auto& path : paths) {
+    for(const auto& path : std::as_const(paths)) {
         const QString normalisedPath = normalisePath(path);
         m_externalExplicitPaths.emplace(normalisedPath);
         if(QFileInfo{path}.isDir()) {

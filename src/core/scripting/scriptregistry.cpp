@@ -419,6 +419,9 @@ std::optional<ScriptRegistry::FuncRet> trackMetadataValue(const VariableKind kin
             return formattedRatingStars(track, context, false);
         case VariableKind::RatingStarsPadded:
             return formattedRatingStars(track, context, true);
+        case VariableKind::Loved:
+        case VariableKind::LoveEditor:
+            return track.isLoved() ? u"1"_s : QString{};
         case VariableKind::RatingEditor:
             return track.ratingStars();
         case VariableKind::Codec:

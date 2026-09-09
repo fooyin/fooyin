@@ -206,6 +206,8 @@ const MetaMap& metaMap()
         {QString::fromLatin1(Comment),          [](const Fooyin::Track& track) { return track.comment(); }},
         {QString::fromLatin1(Date),             [](const Fooyin::Track& track) { return track.date(); }},
         {QString::fromLatin1(Year),             [](const Fooyin::Track& track) { return validNum(track.year()); }},
+        {QString::fromLatin1(Loved),            [](const Fooyin::Track& track) { return QString::number(track.isLoved()); }},
+        {QString::fromLatin1(LoveEditor),       [](const Fooyin::Track& track) { return QString::number(track.isLoved()); }},
         {QString::fromLatin1(Rating),           [](const Fooyin::Track& track) { return validNum(track.rating() * 5.0F); }},
         {QString::fromLatin1(RatingNormalized), [](const Fooyin::Track& track) { return validNum(track.rating()); }},
         {QString::fromLatin1(Stars),            [](const Fooyin::Track& track) { return validNum(track.rating() * 5.0F); }},
@@ -381,6 +383,7 @@ public:
     QStringList tagTypes;
     StringPool::StringId encoding{StringPool::EmptyStringId};
 
+    bool loved{false};
     float rating{-1};
     int playcount{0};
     uint64_t createdTime{0};
@@ -645,14 +648,14 @@ bool Track::sameDataAs(const Track& other) const
         && p->codecProfile == other.p->codecProfile && p->tool == other.p->tool && p->tagTypes == other.p->tagTypes
         && resolveString(*p, StringPool::Domain::Encoding, p->encoding)
                == resolveString(*other.p, StringPool::Domain::Encoding, other.p->encoding)
-        && p->rating == other.p->rating && p->playcount == other.p->playcount && p->createdTime == other.p->createdTime
-        && p->addedTime == other.p->addedTime && p->modifiedTime == other.p->modifiedTime
-        && p->firstPlayed == other.p->firstPlayed && p->lastPlayed == other.p->lastPlayed
-        && p->rgTrackGain == other.p->rgTrackGain && p->rgAlbumGain == other.p->rgAlbumGain
-        && p->rgTrackPeak == other.p->rgTrackPeak && p->rgAlbumPeak == other.p->rgAlbumPeak
-        && p->metadataWasRead == other.p->metadataWasRead && p->metadataWasModified == other.p->metadataWasModified
-        && p->isInArchive == other.p->isInArchive && p->archivePath == other.p->archivePath
-        && p->filepathWithinArchive == other.p->filepathWithinArchive;
+        && p->loved == other.p->loved && p->rating == other.p->rating && p->playcount == other.p->playcount
+        && p->createdTime == other.p->createdTime && p->addedTime == other.p->addedTime
+        && p->modifiedTime == other.p->modifiedTime && p->firstPlayed == other.p->firstPlayed
+        && p->lastPlayed == other.p->lastPlayed && p->rgTrackGain == other.p->rgTrackGain
+        && p->rgAlbumGain == other.p->rgAlbumGain && p->rgTrackPeak == other.p->rgTrackPeak
+        && p->rgAlbumPeak == other.p->rgAlbumPeak && p->metadataWasRead == other.p->metadataWasRead
+        && p->metadataWasModified == other.p->metadataWasModified && p->isInArchive == other.p->isInArchive
+        && p->archivePath == other.p->archivePath && p->filepathWithinArchive == other.p->filepathWithinArchive;
 }
 
 QString Track::generateHash()
@@ -1114,6 +1117,16 @@ int Track::ratingStars() const
 QString Track::ratingStarsText() const
 {
     return ::ratingStarsText(ratingStars());
+}
+
+bool Track::isLoved() const
+{
+    return p->loved;
+}
+
+void Track::setLoved(bool loved)
+{
+    p->loved = loved;
 }
 
 bool Track::hasRGInfo() const
@@ -1579,6 +1592,11 @@ std::shared_ptr<TrackMetadataStore> Track::metadataStore() const
     return p->metadataStore;
 }
 
+void Track::setLibraryId(int id)
+{
+    p->libraryId = id;
+}
+
 void Track::setMetadataStore(std::shared_ptr<TrackMetadataStore> store)
 {
     if(!store) {
@@ -1620,11 +1638,6 @@ void Track::setMetadataStore(std::shared_ptr<TrackMetadataStore> store)
     if(!p->extraTags.empty()) {
         p->extraTags = internExtraTags(*p, p->extraTags);
     }
-}
-
-void Track::setLibraryId(int id)
-{
-    p->libraryId = id;
 }
 
 void Track::setIsEnabled(bool enabled)
@@ -1991,27 +2004,6 @@ QString Track::metaValue(const QString& name) const
     return extraTag(tag).join(QLatin1String{Constants::UnitSeparator});
 }
 
-QString Track::rawRatingTag(const QString& tag) const
-{
-    const QString* value = p->extraProps.find(rawRatingTagProperty(tag));
-    return value ? *value : QString{};
-}
-
-void Track::setRawRatingTag(const QString& tag, const QString& value)
-{
-    const QString property = rawRatingTagProperty(tag);
-    if(value.isEmpty()) {
-        p->extraProps.erase(property);
-        return;
-    }
-    p->extraProps.insertOrAssign(property, value);
-}
-
-void Track::removeRawRatingTag(const QString& tag)
-{
-    p->extraProps.erase(rawRatingTagProperty(tag));
-}
-
 QString Track::techInfo(const QString& name) const
 {
     auto validNum = [](auto num) -> QString {
@@ -2090,6 +2082,27 @@ void Track::setIsChapter(bool isChapter)
     else {
         removeExtraProperty(ChapterProperty);
     }
+}
+
+QString Track::rawRatingTag(const QString& tag) const
+{
+    const QString* value = p->extraProps.find(rawRatingTagProperty(tag));
+    return value ? *value : QString{};
+}
+
+void Track::setRawRatingTag(const QString& tag, const QString& value)
+{
+    const QString property = rawRatingTagProperty(tag);
+    if(value.isEmpty()) {
+        p->extraProps.erase(property);
+        return;
+    }
+    p->extraProps.insertOrAssign(property, value);
+}
+
+void Track::removeRawRatingTag(const QString& tag)
+{
+    p->extraProps.erase(rawRatingTagProperty(tag));
 }
 
 void Track::addExtraTag(const QString& tag, const QString& value)
@@ -2486,6 +2499,9 @@ size_t qHash(const Track& track)
 
 void mergeTrackStats(Track& track, const Track& updatedTrack, Track::Stats stats)
 {
+    if(stats.testFlag(Track::Stat::Loved)) {
+        track.setLoved(updatedTrack.isLoved());
+    }
     if(stats.testFlag(Track::Stat::Rating)) {
         track.setRating(updatedTrack.rating());
     }

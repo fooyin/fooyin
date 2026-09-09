@@ -118,6 +118,8 @@ enum class VariableKind : uint8_t
     RatingStars,
     RatingStarsPadded,
     RatingEditor,
+    Loved,
+    LoveEditor,
     Codec,
     CodecProfile,
     Tool,

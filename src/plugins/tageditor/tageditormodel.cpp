@@ -27,6 +27,7 @@
 #include <core/library/libraryutils.h>
 #include <core/scripting/scripttrackwriter.h>
 #include <gui/guisettings.h>
+#include <utils/heartdelegate.h>
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/stardelegate.h>
@@ -39,6 +40,23 @@ constexpr auto MultipleValuesPrefix = "<<multiple values>>";
 
 namespace Fooyin::TagEditor {
 namespace {
+Track::Stat statForField(const QString& scriptField)
+{
+    const auto field = scriptField.toUpper();
+    if(field == QLatin1StringView{Constants::MetaData::Loved}
+       || field == QLatin1StringView{Constants::MetaData::LoveEditor}) {
+        return Track::Stat::Loved;
+    }
+    if(field == QLatin1StringView{Constants::MetaData::RatingEditor}
+       || field == QLatin1StringView{Constants::MetaData::Rating}
+       || field == QLatin1StringView{Constants::MetaData::RatingNormalized}
+       || field == QLatin1StringView{Constants::MetaData::Stars}
+       || field == QLatin1StringView{Constants::MetaData::RatingStars}) {
+        return Track::Stat::Rating;
+    }
+    return Track::Stat::None;
+}
+
 QStringList splitEditorValues(const QString& value, const QStringList& separators)
 {
     return splitMultiValueText(value, separators);
@@ -142,6 +160,7 @@ public:
     QString m_defaultFieldtext{u"<input field name>"_s};
     std::vector<TagEditorField> m_fields;
     int m_ratingRow{-1};
+    int m_loveRow{-1};
 
     TagEditorItem m_root;
     TagEditorTagMap m_tags;
@@ -182,9 +201,10 @@ bool TagEditorModelPrivate::updateTrackMetadata(const TagEditorField& field, con
     QString tag{field.scriptField};
 
     const auto checkTag = [&tag](const char* metadataField) {
-        return tag.compare(QLatin1String{metadataField}, Qt::CaseInsensitive) == 0;
+        return tag.compare(QLatin1StringView{metadataField}, Qt::CaseInsensitive) == 0;
     };
 
+    const bool isLove   = checkTag(Constants::MetaData::Loved) || checkTag(Constants::MetaData::LoveEditor);
     const bool isList   = split || field.multivalue;
     const bool isRating = checkTag(Constants::MetaData::Rating) || checkTag(Constants::MetaData::RatingEditor)
                        || checkTag(Constants::MetaData::RatingNormalized) || checkTag(Constants::MetaData::Stars);
@@ -204,7 +224,7 @@ bool TagEditorModelPrivate::updateTrackMetadata(const TagEditorField& field, con
     }
 
     for(int i{0}; Track& track : m_tracks) {
-        if(track.hasCue() && !isRating) {
+        if(track.hasCue() && !isRating && !isLove) {
             continue;
         }
 
@@ -271,6 +291,11 @@ void TagEditorModel::populate(TagEditorDataPtr data)
     endResetModel();
 }
 
+void TagEditorModel::setLoveRow(int row)
+{
+    p->m_loveRow = row;
+}
+
 void TagEditorModel::setRatingRow(int row)
 {
     p->m_ratingRow = row;
@@ -293,7 +318,7 @@ void TagEditorModel::capitaliseRows(const QModelIndexList& rows)
     bool changed{false};
 
     for(const int row : uniqueRows) {
-        if(row == p->m_ratingRow) {
+        if(row == p->m_ratingRow || row == p->m_loveRow) {
             continue;
         }
 
@@ -450,30 +475,28 @@ bool TagEditorModel::haveChanges()
 
 bool TagEditorModel::haveOnlyStatChanges()
 {
-    auto isRatingField = [](const TagEditorItem& item) {
-        const QString scriptField = item.field().scriptField;
-        return scriptField.compare(QLatin1String{Constants::MetaData::RatingEditor}, Qt::CaseInsensitive) == 0
-            || scriptField.compare(QLatin1String{Constants::MetaData::Rating}, Qt::CaseInsensitive) == 0
-            || scriptField.compare(QLatin1String{Constants::MetaData::RatingNormalized}, Qt::CaseInsensitive) == 0
-            || scriptField.compare(QLatin1String{Constants::MetaData::Stars}, Qt::CaseInsensitive) == 0
-            || scriptField.compare(QLatin1String{Constants::MetaData::RatingStars}, Qt::CaseInsensitive) == 0;
-    };
-
-    bool changedRating{false};
-
+    bool changedStats{false};
     for(const auto& item : p->m_tags | std::views::values) {
         if(item.status() == TagEditorItem::None) {
             continue;
         }
-
-        if(!isRatingField(item)) {
+        if(statForField(item.field().scriptField) == Track::Stat::None) {
             return false;
         }
-
-        changedRating = true;
+        changedStats = true;
     }
+    return changedStats;
+}
 
-    return changedRating;
+Track::Stats TagEditorModel::changedStats() const
+{
+    Track::Stats stats{Track::Stat::None};
+    for(const auto& item : p->m_tags | std::views::values) {
+        if(item.status() != TagEditorItem::None) {
+            stats |= statForField(item.field().scriptField);
+        }
+    }
+    return stats;
 }
 
 void TagEditorModel::applyChanges()
@@ -619,6 +642,11 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
             return title;
         }
 
+        if(index.row() == p->m_loveRow) {
+            return QVariant::fromValue(
+                HeartValue{(item->valueChanged() ? item->changedValue() : item->value()).toInt() != 0,
+                           p->m_settings->value<Settings::Gui::LoveHeartSize>()});
+        }
         if(index.row() == p->m_ratingRow) {
             const bool mixedValues = index.data(StarDelegate::Role::MixedValues).toBool();
             return QVariant::fromValue(StarRating{
@@ -683,7 +711,11 @@ bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, in
         case 1: {
             QString setValue = value.toString();
 
-            if(index.row() == p->m_ratingRow) {
+            if(index.row() == p->m_loveRow) {
+                setValue = value.canConvert<HeartValue>() ? QString::number(value.value<HeartValue>().loved())
+                                                          : value.toString();
+            }
+            else if(index.row() == p->m_ratingRow) {
                 const auto rating = value.value<StarRating>();
                 setValue          = rating.rating() == 0 ? QString{} : QString::number(rating.rating());
             }

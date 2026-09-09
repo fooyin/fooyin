@@ -246,7 +246,7 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, Track::Stat
     }
 
     if(!tracksUpdated.empty()) {
-        Q_EMIT updatedTracksStats(tracksUpdated);
+        Q_EMIT updatedTracksStats(tracksUpdated, updatedStats);
     }
 
     setState(Idle);

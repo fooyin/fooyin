@@ -1565,16 +1565,21 @@ void PlaylistWidget::updateSpans()
     }
 
     int ratingColumn{-1};
+    int loveColumn{-1};
     for(int i{0}; const auto& column : m_layoutState.columns) {
         m_playlistView->setSpan(i, isPixmap(column.field));
 
         if(column.field == QLatin1StringView{Constants::RatingEditor}) {
             ratingColumn = i;
         }
+        else if(column.field == QLatin1StringView{Constants::LoveEditor}) {
+            loveColumn = i;
+        }
         ++i;
     }
 
     m_playlistView->setRatingColumn(ratingColumn);
+    m_playlistView->setLovedColumn(loveColumn);
 }
 
 void PlaylistWidget::applyBackgroundSettings()
@@ -1751,6 +1756,8 @@ void PlaylistWidget::setupConnections()
     });
     QObject::connect(m_playlistView, &PlaylistView::tracksRated, m_library,
                      [this](const TrackList& tracks) { m_library->updateTrackStats(tracks, Track::Stat::Rating); });
+    QObject::connect(m_playlistView, &PlaylistView::tracksLoved, this,
+                     [this](const TrackList& tracks) { m_library->updateTrackStats(tracks, Track::Stat::Loved); });
     QObject::connect(m_playlistView, &PlaylistView::displayChanged, this, &PlaylistWidget::updateVisibleCoverPins);
     QObject::connect(m_playlistView->verticalScrollBar(), &QScrollBar::valueChanged, this, &PlaylistWidget::updateVisibleCoverPins);
     QObject::connect(m_playlistView->horizontalScrollBar(), &QScrollBar::valueChanged, this, &PlaylistWidget::updateVisibleCoverPins);
@@ -1776,6 +1783,8 @@ void PlaylistWidget::setupConnections()
     QObject::connect(m_model, &PlaylistModel::metadataWriteRequested, this, &PlaylistWidget::handleMetadataWriteRequested);
     QObject::connect(m_model, &PlaylistModel::tracksRated, m_library,
                      [this](const TrackList& tracks) { m_library->updateTrackStats(tracks, Track::Stat::Rating); });
+    QObject::connect(m_model, &PlaylistModel::tracksLoved, m_library,
+                     [this](const TrackList& tracks) { m_library->updateTrackStats(tracks, Track::Stat::Loved); });
     QObject::connect(m_playlistView, &PlaylistView::bulkWriteRequested, this, &PlaylistWidget::handleBulkWriteRequested);
     QObject::connect(m_playlistController, &PlaylistController::currentPlaylistTracksUpdated, m_model, [this](const std::vector<int>& indexes) { m_model->refreshTracks(indexes); });
     QObject::connect(m_playlistController, &PlaylistController::currentPlaylistUpdated, this, &PlaylistWidget::resetModelThrottled);

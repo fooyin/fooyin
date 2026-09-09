@@ -22,6 +22,7 @@
 #include "artwork/artworkdialog.h"
 #include "artwork/artworkfinder.h"
 #include "artwork/artworksaveutils.h"
+#include "contextmenuids.h"
 #include "conversion/conversioncontroller.h"
 #include "conversion/convertersettingsstore.h"
 #include "dialog/autoplaylistdialog.h"
@@ -654,7 +655,7 @@ void GuiApplication::initialise()
     setupConnections();
     registerActions();
     setupScanMenu();
-    setupRatingMenu();
+    setupPlaybackStatisticsMenu();
     setupConvertMenu();
     setupUtilitiesMenu();
     setStyle();
@@ -1269,11 +1270,51 @@ void GuiApplication::setupScanMenu()
                                                          Constants::Menus::Context::TaggingReloadSeparator);
 }
 
-void GuiApplication::setupRatingMenu()
+void GuiApplication::setupPlaybackStatisticsMenu()
 {
-    m_selectionController->registerTrackContextSubmenu(
+    auto updateLoved = [this](const std::optional<bool> loved) {
+        auto tracks = m_selectionController->selectedTracks();
+        if(tracks.empty()) {
+            return;
+        }
+
+        const bool newLoved = loved.value_or(!std::ranges::all_of(tracks, &Track::isLoved));
+        for(auto& track : tracks) {
+            track.setLoved(newLoved);
+        }
+        m_core->library()->updateTrackStats(tracks, Track::Stat::Loved);
+    };
+
+    auto registerAction = [this, updateLoved](const QString& text, const QString& description, const char* icon,
+                                              const Id& id, const std::optional<bool> loved) {
+        auto* action  = new QAction(text, m_mainWindow.get());
+        auto* command = m_actionManager->registerAction(action, id);
+        Gui::setThemeIcon(action, icon);
+        command->setCategories({tr("Tracks"), tr("Playback Statistics")});
+        command->setDescription(description);
+
+        QObject::connect(action, &QAction::triggered, m_mainWindow.get(),
+                         [updateLoved, loved]() { updateLoved(loved); });
+
+        m_selectionController->registerTrackContextAction(
+            this, TrackContextMenuArea::Track, Constants::Menus::Context::TrackSelection, id, action->text(),
+            [action](QMenu* menu, const TrackSelection& selection) {
+                action->setEnabled(!selection.tracks.empty());
+                menu->addAction(action);
+            },
+            Constants::Actions::OpenFolder);
+    };
+
+    registerAction(tr("Toggle loved"), tr("Toggle Loved for selected tracks"), Constants::Icons::Love,
+                   Constants::Actions::ToggleLove, {});
+    registerAction(tr("Love"), tr("Love selected tracks"), Constants::Icons::Love, Constants::Actions::LoveTracks,
+                   true);
+    registerAction(tr("Unlove"), tr("Unlove selected tracks"), Constants::Icons::Unlove,
+                   Constants::Actions::UnloveTracks, false);
+
+    m_selectionController->registerTrackContextSeparator(
         this, TrackContextMenuArea::Track, Constants::Menus::Context::TrackSelection,
-        Constants::Menus::Context::Tagging, tr("Tagging"), Constants::Menus::Context::TrackFinalSeparator);
+        ContextMenuIds::TrackSelection::FileActionsSeparator, Constants::Actions::OpenFolder);
 }
 
 void GuiApplication::startConversionPreset(const StoredConversionPreset& stored, const TrackList& tracks)

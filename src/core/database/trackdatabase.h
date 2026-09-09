@@ -69,6 +69,7 @@ private:
         uint64_t lastPlayed{0};
         int playCount{0};
         float rating{-1.0F};
+        bool loved{false};
     };
     std::optional<StoredTrackStats> existingTrackStats(const QString& hash) const;
     bool insertOrUpdateStats(const Track& track, StoredTrackStats* mergedStats = nullptr,

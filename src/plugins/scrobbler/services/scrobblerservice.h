@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "lovedcache.h"
 #include "scrobblercache.h"
 #include "servicedetails.h"
 
@@ -66,6 +67,7 @@ public:
     [[nodiscard]] virtual QString username() const;
     [[nodiscard]] virtual bool requiresAuthentication() const;
     [[nodiscard]] virtual bool isAuthenticated() const;
+    [[nodiscard]] virtual bool supportsLoved() const;
 
     [[nodiscard]] bool isCustom() const;
     [[nodiscard]] ServiceDetails details() const;
@@ -84,6 +86,7 @@ public:
     void updateNowPlaying(const Track& track);
     void refreshNowPlaying();
     void scrobble(const Track& track);
+    void updateLoved(const Track& track);
 
     virtual void testApi()          = 0;
     virtual void updateNowPlaying() = 0;
@@ -105,6 +108,7 @@ protected:
     [[nodiscard]] NetworkAccessManager* network() const;
     [[nodiscard]] ScrobblerAuthSession* authSession() const;
     [[nodiscard]] ScrobblerCache* cache() const;
+    [[nodiscard]] LovedCache* lovedCache() const;
     [[nodiscard]] SettingsManager* settings() const;
 
     ServiceDetails& detailsRef();
@@ -125,12 +129,22 @@ protected:
     virtual ReplyResult getJsonFromReply(QNetworkReply* reply, QJsonObject* obj, QString* errorDesc) = 0;
     bool extractJsonObj(const QByteArray& data, QJsonObject* obj, QString* errorDesc);
 
+    enum class LovedUpdateResult : uint8_t
+    {
+        Success = 0,
+        Retry,
+        Discard,
+    };
+    virtual void submitLoved(const LovedItem& item);
+    void lovedUpdateFinished(const LovedItem& item, LovedUpdateResult result);
+
     void handleTestError(const char* error);
     void handleAuthError(const char* error);
     void cleanupAuth();
     void deleteAll();
 
     void doDelayedSubmit(bool initial = false);
+    void doDelayedLovedSubmit(bool initial = false);
     void setSubmitted(bool submitted);
     void setSubmitError(bool error);
     void setScrobbled(bool scrobbled);
@@ -148,14 +162,18 @@ private:
     ScrobblerAuthSession* m_authSession;
     std::vector<QNetworkReply*> m_replies;
     ScrobblerCache* m_cache;
+    LovedCache* m_lovedCache;
 
     QBasicTimer m_submitTimer;
+    QBasicTimer m_lovedSubmitTimer;
     bool m_submitError;
+    bool m_lovedSubmitError;
 
     Track m_currentTrack;
     uint64_t m_timestamp;
     bool m_scrobbled;
     bool m_submitted;
+    bool m_lovedSubmitted;
 };
 } // namespace Scrobbler
 } // namespace Fooyin

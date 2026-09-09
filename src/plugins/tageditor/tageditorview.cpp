@@ -26,6 +26,8 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
+#include <utils/heartdelegate.h>
+#include <utils/hearteditor.h>
 #include <utils/stardelegate.h>
 #include <utils/stareditor.h>
 
@@ -56,6 +58,8 @@ TagEditorView::TagEditorView(ActionManager* actionManager, QWidget* parent)
     , m_pasteFields{new QAction(tr("Paste fields"), this)}
     , m_ratingRow{-1}
     , m_starDelegate{nullptr}
+    , m_lovedRow{-1}
+    , m_heartDelegate{nullptr}
 {
     actionManager->addContextObject(m_context);
 
@@ -108,6 +112,17 @@ void TagEditorView::setRatingRow(int row)
     }
 }
 
+void TagEditorView::setLovedRow(int row)
+{
+    m_lovedRow = row;
+    if(row >= 0) {
+        m_heartDelegate = qobject_cast<HeartDelegate*>(itemDelegateForRow(row));
+    }
+    else {
+        m_heartDelegate = nullptr;
+    }
+}
+
 int TagEditorView::sizeHintForRow(int row) const
 {
     if(!model()->hasIndex(row, 0, {})) {
@@ -138,6 +153,13 @@ void TagEditorView::mouseMoveEvent(QMouseEvent* event)
         else if(m_starDelegate->hoveredIndex().isValid()) {
             ratingHoverOut();
         }
+
+        if(index.isValid() && index.row() == m_lovedRow && index.column() == 1) {
+            lovedHoverIn(index);
+        }
+        else if(m_heartDelegate->hoveredIndex().isValid()) {
+            lovedHoverOut();
+        }
     }
 
     ExtendableTableView::mouseMoveEvent(event);
@@ -153,16 +175,20 @@ void TagEditorView::mousePressEvent(QMouseEvent* event)
             return;
         }
 
-        if(!index.data().canConvert<StarRating>()) {
-            ExtendableTableView::mousePressEvent(event);
-            return;
+        if(index.data().canConvert<StarRating>()) {
+            auto starRating   = qvariant_cast<StarRating>(index.data());
+            const auto rating = StarEditor::ratingAtPosition(event->pos(), visualRect(index), starRating);
+            starRating.setRating(rating);
+
+            model()->setData(index, QVariant::fromValue(starRating));
         }
+        else if(index.data().canConvert<HeartValue>()) {
+            auto heartValue  = qvariant_cast<HeartValue>(index.data());
+            const auto loved = !heartValue.loved();
+            heartValue.setLoved(loved);
 
-        auto starRating   = qvariant_cast<StarRating>(index.data());
-        const auto rating = StarEditor::ratingAtPosition(event->pos(), visualRect(index), starRating);
-        starRating.setRating(rating);
-
-        model()->setData(index, QVariant::fromValue(starRating));
+            model()->setData(index, QVariant::fromValue(heartValue));
+        }
     }
 
     ExtendableTableView::mousePressEvent(event);
@@ -185,7 +211,8 @@ void TagEditorView::mouseDoubleClickEvent(QMouseEvent* event)
 
     ExtendableTableView::mouseDoubleClickEvent(event);
 
-    if(event->button() == Qt::LeftButton && index.isValid() && index.row() != m_ratingRow) {
+    if(event->button() == Qt::LeftButton && index.isValid() && index.row() != m_ratingRow
+       && index.row() != m_lovedRow) {
         reopenEditor(index);
     }
 }
@@ -216,13 +243,16 @@ void TagEditorView::leaveEvent(QEvent* event)
     if(m_starDelegate && m_starDelegate->hoveredIndex().isValid()) {
         ratingHoverOut();
     }
+    if(m_heartDelegate && m_heartDelegate->hoveredIndex().isValid()) {
+        lovedHoverOut();
+    }
 
     ExtendableTableView::leaveEvent(event);
 }
 
 void TagEditorView::reopenEditor(const QModelIndex& index)
 {
-    if(m_editTrigger == NoEditTriggers || !index.isValid() || index.row() == m_ratingRow
+    if(m_editTrigger == NoEditTriggers || !index.isValid() || index.row() == m_ratingRow || index.row() != m_lovedRow
        || (model()->flags(index) & Qt::ItemIsEditable) == 0) {
         return;
     }
@@ -380,6 +410,26 @@ void TagEditorView::ratingHoverOut()
 {
     const QModelIndex prevIndex = m_starDelegate->hoveredIndex();
     m_starDelegate->setHoverIndex({});
+    setCursor({});
+
+    update(prevIndex);
+}
+
+void TagEditorView::lovedHoverIn(const QModelIndex& index)
+{
+    const QModelIndexList selected = selectedIndexes();
+    const QModelIndex prevIndex    = m_heartDelegate->hoveredIndex();
+    m_heartDelegate->setHoverIndex(index, selected);
+    setCursor(Qt::PointingHandCursor);
+
+    update(prevIndex);
+    update(index);
+}
+
+void TagEditorView::lovedHoverOut()
+{
+    const QModelIndex prevIndex = m_heartDelegate->hoveredIndex();
+    m_heartDelegate->setHoverIndex({});
     setCursor({});
 
     update(prevIndex);

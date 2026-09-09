@@ -137,6 +137,7 @@ bool TagEditorPanel::apply()
     }
 
     const bool statOnly = m_editor->hasOnlyStatChanges();
+    const auto stats    = m_editor->changedStats();
     if(!statOnly && !allDbOnlyTracks(m_currentTracks) && !m_settings->fileValue(DontAskAgain).toBool()) {
         QMessageBox message;
         message.setIcon(QMessageBox::Warning);
@@ -163,7 +164,7 @@ bool TagEditorPanel::apply()
     }
 
     if(statOnly) {
-        m_library->updateTrackStats(changedTracks, Track::Stat::Rating);
+        m_library->updateTrackStats(changedTracks, stats);
     }
     else {
         m_library->writeTrackMetadata(changedTracks);

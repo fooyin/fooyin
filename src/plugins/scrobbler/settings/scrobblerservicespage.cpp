@@ -26,6 +26,7 @@
 
 #include <utils/settings/settingsmanager.h>
 
+#include <QCheckBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
@@ -74,6 +75,7 @@ private:
         QString error;
         // Common
         QGroupBox* groupCheck{nullptr};
+        QCheckBox* submitLoved{nullptr};
         // ListenBrainz
         QLineEdit* tokenInput{nullptr};
         // Custom
@@ -202,6 +204,9 @@ void ScrobblerServicesPageWidget::updateServiceState(ScrobblerService* service)
     if(context->groupCheck) {
         context->groupCheck->setTitle(details.name);
     }
+    if(context->submitLoved) {
+        context->submitLoved->setChecked(details.submitLoved);
+    }
 
     if(context->statusLabel && !context->error.isEmpty()) {
         context->statusLabel->setText(context->error);
@@ -234,6 +239,9 @@ void ScrobblerServicesPageWidget::updateDetails(ScrobblerService* service)
     }
     if(context->tokenInput) {
         details.token = context->tokenInput->text();
+    }
+    if(context->submitLoved) {
+        details.submitLoved = context->submitLoved->isChecked();
     }
 
     service->updateDetails(details);
@@ -303,6 +311,12 @@ void ScrobblerServicesPageWidget::addService(ScrobblerService* service)
             tokenHintLabel->setTextFormat(Qt::RichText);
             layout->addWidget(tokenHintLabel, 2, 0, 1, 2);
         }
+    }
+
+    if(service->supportsLoved()) {
+        context.submitLoved = new QCheckBox(tr("Submit loved changes"), this);
+        context.submitLoved->setToolTip(tr("Submit Love and Unlove changes to this service"));
+        layout->addWidget(context.submitLoved, 3, 0, 1, 2);
     }
 
     m_serviceLayout->addWidget(context.groupCheck, m_serviceLayout->rowCount(), 0);

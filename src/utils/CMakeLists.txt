@@ -21,6 +21,8 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/fileutils.h
     ${CMAKE_SOURCE_DIR}/include/utils/fymath.h
     ${CMAKE_SOURCE_DIR}/include/utils/fypaths.h
+    ${CMAKE_SOURCE_DIR}/include/utils/heartdelegate.h
+    ${CMAKE_SOURCE_DIR}/include/utils/hearteditor.h
     ${CMAKE_SOURCE_DIR}/include/utils/helpers.h
     ${CMAKE_SOURCE_DIR}/include/utils/id.h
     ${CMAKE_SOURCE_DIR}/include/utils/itemregistry.h
@@ -69,6 +71,8 @@ set(SOURCES
     datastream.cpp
     fileutils.cpp
     fypaths.cpp
+    heartdelegate.cpp
+    hearteditor.cpp
     id.cpp
     itemregistry.cpp
     jsonutils.cpp

@@ -33,6 +33,7 @@ class QString;
 
 namespace Fooyin {
 class NetworkAccessManager;
+class MusicLibrary;
 class PlayerController;
 class SettingsManager;
 
@@ -44,7 +45,7 @@ class Scrobbler : public QObject
     Q_OBJECT
 
 public:
-    Scrobbler(PlayerController* playerController, std::shared_ptr<NetworkAccessManager> network,
+    Scrobbler(PlayerController* playerController, MusicLibrary* library, std::shared_ptr<NetworkAccessManager> network,
               SettingsManager* settings);
     ~Scrobbler() override;
 
@@ -64,6 +65,7 @@ protected:
 
 private:
     void handlePlayStateChanged(Player::PlayState state, Player::PlayState previous);
+    void handleTrackStatsChanged(const TrackList& tracks, Track::Stats stats);
 
     [[nodiscard]] int nextNowPlayingRefreshDelay() const;
     void updateNowPlaying(const Track& track);
@@ -74,6 +76,7 @@ private:
     void restoreServices();
 
     PlayerController* m_playerController;
+    MusicLibrary* m_library;
     std::shared_ptr<NetworkAccessManager> m_network;
     SettingsManager* m_settings;
 

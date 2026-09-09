@@ -71,7 +71,8 @@ public:
         None      = 0,
         Rating    = 1 << 0,
         Playcount = 1 << 1,
-        All       = Rating | Playcount,
+        Loved     = 1 << 2,
+        All       = Rating | Playcount | Loved,
     };
     Q_DECLARE_FLAGS(Stats, Stat)
 
@@ -208,10 +209,13 @@ public:
     [[nodiscard]] QString comment() const;
     [[nodiscard]] QString date() const;
     [[nodiscard]] int year() const;
+
     [[nodiscard]] float rating() const;
     //! Returns rating() on the internal 0-10 half-star scale.
     [[nodiscard]] int ratingStars() const;
     [[nodiscard]] QString ratingStarsText() const;
+    [[nodiscard]] bool isLoved() const;
+    void setLoved(bool loved);
 
     [[nodiscard]] bool hasRGInfo() const;
     [[nodiscard]] bool hasTrackGain() const;
@@ -457,4 +461,5 @@ struct TrackCoverData
 
 Q_DECLARE_METATYPE(Fooyin::TrackList)
 Q_DECLARE_METATYPE(Fooyin::TrackIds)
+Q_DECLARE_METATYPE(Fooyin::Track::Stats)
 Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::Track::Stats)

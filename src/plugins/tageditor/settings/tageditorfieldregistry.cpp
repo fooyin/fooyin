@@ -55,6 +55,7 @@ void TagEditorFieldRegistry::loadDefaultFields()
     addDefaultItem({.name = tr("Disc Number"), .scriptField = u"disc"_s}, true);
     addDefaultItem({.name = tr("Total Discs"), .scriptField = u"disctotal"_s}, true);
     addDefaultItem({.name = tr("Comment"), .scriptField = u"comment"_s}, true);
+    addDefaultItem({.name = tr("Love"), .scriptField = u"love_editor"_s}, true);
     addDefaultItem({.name = tr("Rating"), .scriptField = u"rating_editor"_s}, true);
 }
 } // namespace Fooyin::TagEditor

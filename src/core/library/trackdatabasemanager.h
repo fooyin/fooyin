@@ -50,7 +50,7 @@ Q_SIGNALS:
     void gotTracks(const Fooyin::TrackList& tracks);
     void updatedTracks(const Fooyin::TrackList& tracks);
     void availabilityChecked(const Fooyin::TrackList& tracks);
-    void updatedTracksStats(const Fooyin::TrackList& tracks);
+    void updatedTracksStats(const Fooyin::TrackList& tracks, Fooyin::Track::Stats stats);
     void removedTracks(const Fooyin::TrackList& tracks);
     void trackWriteCompleted(int operationId, const Fooyin::TrackList& tracks, int failed, bool cancelled);
     void trackCoverWriteCompleted(int operationId, const Fooyin::TrackList& tracks, int failed, bool cancelled);
@@ -61,16 +61,16 @@ public Q_SLOTS:
     void getAllTracks();
     void checkTrackAvailability(const Fooyin::TrackList& tracks);
     void updateTracks(const Fooyin::TrackList& tracks, bool write);
-    void updateTrackStats(const Fooyin::TrackList& tracks, Track::Stats updatedStats, bool writeToFiles);
+    void updateTrackStats(const Fooyin::TrackList& tracks, Fooyin::Track::Stats updatedStats, bool writeToFiles);
     void writeCovers(const Fooyin::TrackCoverData& tracks);
-    void deleteTracks(const TrackList& tracks);
-    void removeUnavailbleTracks(const TrackList& tracks);
+    void deleteTracks(const Fooyin::TrackList& tracks);
+    void removeUnavailbleTracks(const Fooyin::TrackList& tracks);
     void cleanupTracks();
 
     void updateTracks(const Fooyin::TrackList& tracks, bool write, int operationId, std::stop_token stopToken);
     void writeCovers(const Fooyin::TrackCoverData& tracks, int operationId, std::stop_token stopToken);
-    void deleteTracks(const TrackList& tracks, int operationId, std::stop_token stopToken);
-    void removeUnavailbleTracks(const TrackList& tracks, int operationId, std::stop_token stopToken);
+    void deleteTracks(const Fooyin::TrackList& tracks, int operationId, std::stop_token stopToken);
+    void removeUnavailbleTracks(const Fooyin::TrackList& tracks, int operationId, std::stop_token stopToken);
 
 private:
     DbConnectionPoolPtr m_dbPool;

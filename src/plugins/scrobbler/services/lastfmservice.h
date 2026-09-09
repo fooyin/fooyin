@@ -33,6 +33,7 @@ public:
     [[nodiscard]] QString username() const override;
     [[nodiscard]] bool requiresAuthentication() const override;
     [[nodiscard]] bool isAuthenticated() const override;
+    [[nodiscard]] bool supportsLoved() const override;
 
     void saveSession() override;
     void loadSession() override;
@@ -52,6 +53,7 @@ protected:
     void authFinished(QNetworkReply* reply) override;
 
     ReplyResult getJsonFromReply(QNetworkReply* reply, QJsonObject* obj, QString* errorDesc) override;
+    void submitLoved(const LovedItem& item) override;
 
 private:
     struct ReplyErrorInfo
@@ -66,6 +68,7 @@ private:
     [[nodiscard]] static ReplyErrorInfo getReplyErrorInfo(QNetworkReply* reply, const QJsonObject& obj);
     void updateNowPlayingFinished(QNetworkReply* reply);
     void scrobbleFinished(QNetworkReply* reply, const CacheItemList& items);
+    void lovedFinished(QNetworkReply* reply, const LovedItem& item);
 
     QString m_username;
     QString m_sessionKey;

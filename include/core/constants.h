@@ -63,6 +63,8 @@ constexpr auto Stars             = "STARS";
 constexpr auto RatingStars       = "RATING_STARS";
 constexpr auto RatingStarsPadded = "RATING_STARS_PADDED";
 constexpr auto RatingEditor      = "RATING_EDITOR";
+constexpr auto Loved             = "LOVED";
+constexpr auto LoveEditor        = "LOVE_EDITOR";
 constexpr auto Codec             = "CODEC";
 constexpr auto CodecProfile      = "CODEC_PROFILE";
 constexpr auto Tool              = "TOOL";
@@ -94,4 +96,5 @@ constexpr auto FrontCover    = "%frontcover%";
 constexpr auto BackCover     = "%backcover%";
 constexpr auto ArtistPicture = "%artistpicture%";
 constexpr auto RatingEditor  = "%rating_editor%";
+constexpr auto LoveEditor    = "%love_editor%";
 } // namespace Fooyin::Constants

@@ -151,9 +151,10 @@ TagEditorPropertiesTab* TagEditorPlugin::createEditor(const TrackList& tracks)
                      [this, tagEditor](const TrackList& changedTracks) {
                          Q_EMIT tagEditor->writeRequestStarted(m_library->writeTrackMetadata(changedTracks));
                      });
-    QObject::connect(
-        tagEditor, &TagEditorPropertiesTab::trackStatsChanged, m_library,
-        [this](const TrackList& changedTracks) { m_library->updateTrackStats(changedTracks, Track::Stat::Rating); });
+    QObject::connect(tagEditor, &TagEditorPropertiesTab::trackStatsChanged, m_library,
+                     [this](const TrackList& changedTracks) {
+                         m_library->updateTrackStats(changedTracks, Track::Stat::Rating | Track::Stat::Loved);
+                     });
     return tagEditor;
 }
 

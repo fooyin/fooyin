@@ -173,6 +173,12 @@ VariableKind resolveBuiltInVariableKind(const QString& var)
     if(var == QLatin1StringView{MetaData::RatingStarsPadded}) {
         return VariableKind::RatingStarsPadded;
     }
+    if(var == QLatin1StringView{MetaData::Loved}) {
+        return VariableKind::Loved;
+    }
+    if(var == QLatin1StringView{MetaData::LoveEditor}) {
+        return VariableKind::LoveEditor;
+    }
     if(var == QLatin1StringView{MetaData::RatingEditor}) {
         return VariableKind::RatingEditor;
     }

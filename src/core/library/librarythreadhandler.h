@@ -92,7 +92,7 @@ Q_SIGNALS:
     void scanUpdate(int id, Fooyin::ScanRequest::Type type, const Fooyin::ScanResult& result);
     void tracksUpdated(const Fooyin::TrackList& tracks);
     void tracksAvailabilityUpdated(const Fooyin::TrackList& tracks);
-    void tracksStatsUpdated(const Fooyin::TrackList& tracks);
+    void tracksStatsUpdated(const Fooyin::TrackList& tracks, Fooyin::Track::Stats stats);
     void tracksRemoved(const Fooyin::TrackList& tracks);
 
     void gotTracks(Fooyin::TrackList result);

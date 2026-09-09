@@ -26,6 +26,8 @@
 #include <limits>
 #include <type_traits>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 namespace {
 template <auto Func>
@@ -97,6 +99,21 @@ void setEditorRating(Track& track, const ScriptFieldValue& value)
         value);
 }
 
+void setLoved(Track& track, const ScriptFieldValue& value)
+{
+    std::visit(
+        [&track](const auto& val) {
+            if constexpr(std::is_same_v<std::decay_t<decltype(val)>, QString>) {
+                const auto text = val.trimmed();
+                track.setLoved(text == "1"_L1 || text.compare("true"_L1, Qt::CaseInsensitive) == 0);
+            }
+            else if constexpr(std::is_arithmetic_v<std::decay_t<decltype(val)>>) {
+                track.setLoved(val != 0);
+            }
+        },
+        value);
+}
+
 void setPlayCount(Track& track, const ScriptFieldValue& value)
 {
     std::visit(
@@ -162,8 +179,6 @@ bool setBuiltInTrackValue(const VariableKind kind, const ScriptFieldValue& value
             invokeTrackSetter<&Track::setDate>(track, value);
             return true;
         case VariableKind::RatingNormalized:
-            setNormalizedRating(track, value);
-            return true;
         case VariableKind::RatingEditor:
             setNormalizedRating(track, value);
             return true;
@@ -174,6 +189,10 @@ bool setBuiltInTrackValue(const VariableKind kind, const ScriptFieldValue& value
         case VariableKind::Rating:
         case VariableKind::Stars:
             setStarRating(track, value);
+            return true;
+        case VariableKind::Loved:
+        case VariableKind::LoveEditor:
+            setLoved(track, value);
             return true;
         case VariableKind::PlayCount:
             setPlayCount(track, value);

@@ -245,6 +245,8 @@ Q_SIGNALS:
     void tracksAdded(const Fooyin::TrackList& tracks);
     void tracksMetadataChanged(const Fooyin::TrackList& tracks);
     void tracksUpdated(const Fooyin::TrackList& tracks);
+    /** Emitted after changed playback statistics have been committed to the database and library. */
+    void tracksStatsChanged(const Fooyin::TrackList& tracks, Fooyin::Track::Stats stats);
     void tracksDeleted(const Fooyin::TrackList& tracks);
     void tracksSorted(const Fooyin::TrackList& tracks);
 };

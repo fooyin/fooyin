@@ -136,6 +136,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<RatingEmptyStarSymbol>(defaultRatingEmptyStarSymbol(),
                                                      u"Interface/RatingEmptyStarSymbol"_s);
     m_settings->createSetting<SeekBarMouseFocus>(false, u"Interface/SeekBarMouseFocus"_s);
+    m_settings->createSetting<LoveHeartSize>(15, u"Interface/LoveHeartSize"_s);
 
     m_settings->createSetting<Internal::EditingMenuLevels>(2, u"Interface/EditingMenuLevels"_s);
     m_settings->createSetting<Internal::PlaylistAltColours>(true, u"PlaylistWidget/AlternatingColours"_s);
@@ -208,7 +209,10 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::PlaylistInlineTagEditing>(false, u"PlaylistWidget/InlineTagEditing"_s);
     m_settings->createSetting<Internal::ContextMenuTrackDisabledSections>(
         QStringList{QString::fromLatin1(Constants::Actions::CopyLocation),
-                    QString::fromLatin1(Constants::Actions::CopyDirectoryPath)},
+                    QString::fromLatin1(Constants::Actions::CopyDirectoryPath),
+                    QString::fromLatin1(Constants::Actions::ToggleLove),
+                    QString::fromLatin1(Constants::Actions::LoveTracks),
+                    QString::fromLatin1(Constants::Actions::UnloveTracks)},
         u"Interface/ContextMenuTrackDisabledSections"_s);
     m_settings->createSetting<Internal::ContextMenuPlaylistDisabledSections>(
         QStringList{QString::fromLatin1(Constants::Actions::AddToPlaylist)},

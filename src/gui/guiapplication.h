@@ -145,7 +145,7 @@ private:
     void rescanTracks(const TrackList& tracks, bool onlyModified) const;
 
     void setupScanMenu();
-    void setupRatingMenu();
+    void setupPlaybackStatisticsMenu();
     void setupConvertMenu();
     void refreshConversionPresetActions();
     void setupUtilitiesMenu();

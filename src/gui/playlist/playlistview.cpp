@@ -22,6 +22,8 @@
 #include "playlistmodel.h"
 #include "widgets/pixmapfadecontroller.h"
 
+#include <utils/heartdelegate.h>
+#include <utils/hearteditor.h>
 #include <utils/stardelegate.h>
 #include <utils/stareditor.h>
 
@@ -80,6 +82,8 @@ PlaylistView::PlaylistView(QWidget* parent)
     , m_playlistLoaded{false}
     , m_starDelegate{new StarDelegate(this)}
     , m_ratingColumn{-1}
+    , m_heartDelegate{new HeartDelegate(this)}
+    , m_lovedColumn{-1}
     , m_bgFadeController{new PixmapFadeController(this)}
     , m_bulkEditor{nullptr}
     , m_bulkEditColumnIndex{-1}
@@ -106,15 +110,15 @@ PlaylistView::PlaylistView(QWidget* parent)
     m_bgFadeController->setUpdateCallback([this] { viewport()->update(); });
 }
 
-void PlaylistView::setEmptyText(const QString& text)
-{
-    m_emptyText = text;
-    viewport()->update();
-}
-
 void PlaylistView::setLoadingText(const QString& text)
 {
     m_loadingText = text;
+    viewport()->update();
+}
+
+void PlaylistView::setEmptyText(const QString& text)
+{
+    m_emptyText = text;
     viewport()->update();
 }
 
@@ -139,6 +143,29 @@ void PlaylistView::setRatingColumn(int column)
     }
 
     setMouseTracking(m_ratingColumn >= 0);
+}
+
+void PlaylistView::setLovedColumn(int column)
+{
+    if(m_lovedColumn == column) {
+        return;
+    }
+
+    m_heartDelegate->setHoverIndex({});
+    unsetCursor();
+    viewport()->update();
+
+    if(m_lovedColumn >= 0) {
+        setItemDelegateForColumn(m_lovedColumn, nullptr);
+    }
+
+    m_lovedColumn = column;
+
+    if(m_lovedColumn >= 0) {
+        setItemDelegateForColumn(m_lovedColumn, m_heartDelegate);
+    }
+
+    setMouseTracking(m_lovedColumn >= 0);
 }
 
 void PlaylistView::setBackgroundOptions(const BackgroundOptions& options)
@@ -257,6 +284,16 @@ void PlaylistView::mouseMoveEvent(QMouseEvent* event)
         }
     }
 
+    if(m_heartDelegate) {
+        const QModelIndex index = indexAt(event->pos());
+        if(index.isValid() && index.column() == m_lovedColumn) {
+            loveHoverIn(index);
+        }
+        else if(m_heartDelegate->hoveredIndex().isValid()) {
+            loveHoverOut();
+        }
+    }
+
     ExpandedTreeView::mouseMoveEvent(event);
 }
 
@@ -285,83 +322,31 @@ void PlaylistView::mousePressEvent(QMouseEvent* event)
         return;
     }
 
-    if(index.isValid() && index.column() != m_ratingColumn && (index.flags() & Qt::ItemIsEditable) != 0
-       && selectionModel() && selectionModel()->isSelected(index)) {
+    const int column = index.column();
+
+    if(index.isValid() && column != m_ratingColumn && column != m_lovedColumn
+       && (index.flags() & Qt::ItemIsEditable) != 0 && selectionModel() && selectionModel()->isSelected(index)) {
         m_pressedSelectedIndex = index;
     }
 
-    if(!index.isValid() || index.column() != m_ratingColumn) {
+    if(!index.isValid() || (column != m_ratingColumn && column != m_lovedColumn)) {
         ExpandedTreeView::mousePressEvent(event);
         return;
     }
 
-    const auto starRating = index.data().value<StarRating>();
-    const auto align      = static_cast<Qt::Alignment>(index.data(Qt::TextAlignmentRole).toInt());
-    const auto rating     = StarEditor::ratingAtPosition(event->pos(), visualRect(index), starRating, align);
+    if(column == m_ratingColumn) {
+        const auto starRating = index.data().value<StarRating>();
+        const auto align      = static_cast<Qt::Alignment>(index.data(Qt::TextAlignmentRole).toInt());
+        const auto rating     = StarEditor::ratingAtPosition(event->pos(), visualRect(index), starRating, align);
 
-    if(index.flags().testFlag(Qt::ItemIsEditable)) {
-        const auto setRating = [this, rating](const QModelIndex& modelIndex) {
-            auto modelRating = modelIndex.data().value<StarRating>();
-            modelRating.setRating(rating);
-            model()->setData(modelIndex, QVariant::fromValue(modelRating), Qt::EditRole);
-        };
-
-        if(selectedIndexes().contains(index)) {
-            const QModelIndexList selected = selectionModel()->selectedRows();
-            QModelIndexList ratingIndexes;
-
-            for(const QModelIndex& selectedIndex : selected) {
-                if(selectedIndex.data(PlaylistItem::Type).toInt() != PlaylistItem::Track) {
-                    continue;
-                }
-
-                const QModelIndex ratingIndex = selectedIndex.siblingAtColumn(m_ratingColumn);
-                if(ratingIndex.isValid()) {
-                    ratingIndexes.push_back(ratingIndex);
-                }
-            }
-
-            auto* playlistModel = qobject_cast<PlaylistModel*>(model());
-            if(playlistModel && ratingIndexes.size() > 1) {
-                auto modelRating = index.data().value<StarRating>();
-                modelRating.setRating(rating);
-
-                const auto bulkEdit = playlistModel->setBulkData(ratingIndexes, QVariant::fromValue(modelRating));
-                if(bulkEdit.has_value()) {
-                    Q_EMIT tracksRated(bulkEdit->tracks);
-                }
-                else {
-                    for(const QModelIndex& ratingIndex : std::as_const(ratingIndexes)) {
-                        setRating(ratingIndex);
-                    }
-                }
-            }
-            else {
-                for(const QModelIndex& ratingIndex : std::as_const(ratingIndexes)) {
-                    setRating(ratingIndex);
-                }
-            }
-        }
-        else {
-            setRating(index);
-        }
+        auto modelRating{starRating};
+        modelRating.setRating(rating);
+        editTrackStat(index, QVariant::fromValue(modelRating), Track::Stat::Rating);
     }
-    else if(selectedIndexes().contains(index)) {
-        TrackList tracks;
-        const QModelIndexList selected = selectionModel()->selectedRows();
-        for(const QModelIndex& selectedIndex : selected) {
-            if(selectedIndex.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
-                auto track = selectedIndex.data(PlaylistItem::PersistentItemData).value<PlaylistTrack>().track;
-                track.setRating(rating);
-                tracks.push_back(track);
-            }
-        }
-        Q_EMIT tracksRated(tracks);
-    }
-    else {
-        auto track = index.data(PlaylistItem::PersistentItemData).value<PlaylistTrack>().track;
-        track.setRating(rating);
-        Q_EMIT tracksRated({track});
+    else if(column == m_lovedColumn) {
+        auto heartValue = index.data().value<HeartValue>();
+        heartValue.setLoved(!heartValue.loved());
+        editTrackStat(index, QVariant::fromValue(heartValue), Track::Stat::Loved);
     }
 
     ExpandedTreeView::mousePressEvent(event);
@@ -428,6 +413,9 @@ void PlaylistView::leaveEvent(QEvent* event)
     if(m_starDelegate && m_starDelegate->hoveredIndex().isValid()) {
         ratingHoverOut();
     }
+    if(m_heartDelegate && m_heartDelegate->hoveredIndex().isValid()) {
+        loveHoverOut();
+    }
 
     ExpandedTreeView::leaveEvent(event);
 }
@@ -461,6 +449,560 @@ void PlaylistView::paintEvent(QPaintEvent* event)
         }
         else {
             drawCentreText(m_emptyText);
+        }
+    }
+}
+
+QAbstractItemView::DropIndicatorPosition PlaylistView::dropPosition(const QPoint& pos, const QRect& rect,
+                                                                    const QModelIndex& index)
+{
+    DropIndicatorPosition dropPos{OnViewport};
+    const int midpoint = static_cast<int>(std::round(static_cast<double>((rect.height())) / 2));
+    const auto type    = index.data(PlaylistItem::Type).toInt();
+
+    if(type == PlaylistItem::Subheader) {
+        dropPos = OnItem;
+    }
+    else if(pos.y() - rect.top() < midpoint || type == PlaylistItem::Header) {
+        dropPos = AboveItem;
+    }
+    else if(rect.bottom() - pos.y() < midpoint) {
+        dropPos = BelowItem;
+    }
+
+    return dropPos;
+}
+
+bool PlaylistView::eventFilter(QObject* watched, QEvent* event)
+{
+    if(!m_bulkEditor || watched != m_bulkEditor) {
+        return ExpandedTreeView::eventFilter(watched, event);
+    }
+
+    if(event->type() == QEvent::KeyPress) {
+        auto* keyEvent = static_cast<QKeyEvent*>(event);
+
+        switch(keyEvent->key()) {
+            case Qt::Key_Tab:
+                if((keyEvent->modifiers() & ~Qt::ShiftModifier) == Qt::NoModifier) {
+                    advanceBulkEditColumn((keyEvent->modifiers() & Qt::ShiftModifier) != 0 ? -1 : 1);
+                    return true;
+                }
+                break;
+            case Qt::Key_Backtab:
+                advanceBulkEditColumn(-1);
+                return true;
+            case Qt::Key_Return:
+            case Qt::Key_Enter:
+                endBulkEditSession(true);
+                return true;
+            case Qt::Key_Escape:
+                endBulkEditSession(false);
+                return true;
+            default:
+                break;
+        }
+    }
+    else if(event->type() == QEvent::FocusOut && m_bulkEditor->isVisible()) {
+        if(m_bulkEditor && m_bulkEditor->isVisible() && !m_bulkEditor->hasFocus()) {
+            endBulkEditSession(true);
+        }
+    }
+
+    return ExpandedTreeView::eventFilter(watched, event);
+}
+
+QModelIndexList PlaylistView::selectedTrackRows() const
+{
+    if(!selectionModel()) {
+        return {};
+    }
+
+    QModelIndexList rows;
+
+    const auto selected = selectionModel()->selectedRows();
+    for(const QModelIndex& index : selected) {
+        if(index.isValid() && index.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
+            rows.push_back(index);
+        }
+    }
+
+    std::ranges::sort(rows, [](const QModelIndex& lhs, const QModelIndex& rhs) {
+        return lhs.data(PlaylistItem::Index).toInt() < rhs.data(PlaylistItem::Index).toInt();
+    });
+
+    return rows;
+}
+
+void PlaylistView::editTrackStat(const QModelIndex& index, const QVariant& value, Track::Stat stat)
+{
+    QModelIndexList indexes;
+
+    if(selectedIndexes().contains(index)) {
+        for(const QModelIndex& selectedIndex : selectedTrackRows()) {
+            const QModelIndex statIndex = selectedIndex.siblingAtColumn(index.column());
+            if(statIndex.isValid()) {
+                indexes.push_back(statIndex);
+            }
+        }
+    }
+    else {
+        indexes.push_back(index);
+    }
+
+    if(index.flags().testFlag(Qt::ItemIsEditable)) {
+        auto* playlistModel = qobject_cast<PlaylistModel*>(model());
+        if(playlistModel && indexes.size() > 1) {
+            const auto bulkEdit = playlistModel->setBulkData(indexes, value);
+            if(bulkEdit.has_value()) {
+                emitTrackStatChanged(bulkEdit->tracks, stat);
+                return;
+            }
+        }
+
+        for(const QModelIndex& statIndex : std::as_const(indexes)) {
+            model()->setData(statIndex, value, Qt::EditRole);
+        }
+        return;
+    }
+
+    TrackList tracks;
+    for(const QModelIndex& statIndex : std::as_const(indexes)) {
+        auto track = statIndex.data(PlaylistItem::PersistentItemData).value<PlaylistTrack>().track;
+        if(stat == Track::Stat::Rating) {
+            track.setRating(value.value<StarRating>().rating());
+        }
+        else if(stat == Track::Stat::Loved) {
+            track.setLoved(value.value<HeartValue>().loved());
+        }
+        tracks.push_back(track);
+    }
+    emitTrackStatChanged(tracks, stat);
+}
+
+void PlaylistView::emitTrackStatChanged(const TrackList& tracks, Track::Stat stat)
+{
+    if(stat == Track::Stat::Rating) {
+        Q_EMIT tracksRated(tracks);
+    }
+    else if(stat == Track::Stat::Loved) {
+        Q_EMIT tracksLoved(tracks);
+    }
+}
+
+std::vector<int> PlaylistView::bulkEditableColumns() const
+{
+    if(!header()) {
+        return {};
+    }
+
+    const QModelIndexList rows = selectedTrackRows();
+    if(rows.empty()) {
+        return {};
+    }
+
+    const QModelIndex& anchorRow = rows.front();
+
+    std::vector<int> columns;
+
+    for(int visualIndex{0}; visualIndex < header()->count(); ++visualIndex) {
+        const int logicalIndex = header()->logicalIndex(visualIndex);
+
+        if(logicalIndex < 0 || header()->isSectionHidden(logicalIndex) || logicalIndex == m_ratingColumn
+           || logicalIndex == m_lovedColumn) {
+            continue;
+        }
+
+        const QModelIndex probeIndex = anchorRow.siblingAtColumn(logicalIndex);
+        if(probeIndex.isValid() && (model()->flags(probeIndex) & Qt::ItemIsEditable) != 0) {
+            columns.push_back(logicalIndex);
+        }
+    }
+
+    return columns;
+}
+
+QModelIndex PlaylistView::bulkEditAnchorIndex(int column) const
+{
+    if(m_bulkEditRows.empty()) {
+        return {};
+    }
+
+    return m_bulkEditRows.front().siblingAtColumn(column);
+}
+
+QRect PlaylistView::bulkEditRect(int column) const
+{
+    if(m_bulkEditRows.empty() || !header() || header()->isSectionHidden(column)) {
+        return {};
+    }
+
+    const int x     = header()->sectionViewportPosition(column);
+    const int width = header()->sectionSize(column);
+    if(x < 0 || width <= 0) {
+        return {};
+    }
+
+    QRect rowsRect;
+
+    for(const QModelIndex& rowIndex : m_bulkEditRows) {
+        const QModelIndex index = rowIndex.siblingAtColumn(column);
+        if(!index.isValid()) {
+            continue;
+        }
+
+        const QRect visualIndexRect = visualRect(index);
+        if(!visualIndexRect.isValid()) {
+            continue;
+        }
+
+        rowsRect = rowsRect.isNull() ? visualIndexRect : rowsRect.united(visualIndexRect);
+    }
+
+    if(!rowsRect.isValid()) {
+        return {};
+    }
+
+    return QRect{x, rowsRect.top(), width, rowsRect.height()}.adjusted(0, 0, -1, -1);
+}
+
+QString PlaylistView::bulkEditValueForColumn(int column, bool& mixedValues) const
+{
+    mixedValues = false;
+
+    QString currentValue;
+    QStringList distinctValues;
+
+    for(const QModelIndex& rowIndex : m_bulkEditRows) {
+        const QModelIndex index = rowIndex.siblingAtColumn(column);
+        if(!index.isValid()) {
+            continue;
+        }
+
+        const QString value = index.data(Qt::EditRole).toString();
+        if(!distinctValues.contains(value)) {
+            distinctValues.push_back(value);
+        }
+
+        if(distinctValues.size() == 1) {
+            currentValue = value;
+            continue;
+        }
+
+        mixedValues = true;
+    }
+
+    if(mixedValues) {
+        QStringList nonEmptyValues{distinctValues};
+        nonEmptyValues.removeAll(QString{});
+        return QString{MultipleValuesPrefix} + u' ' + nonEmptyValues.join("; "_L1);
+    }
+
+    return currentValue;
+}
+
+bool PlaylistView::startBulkEditSession()
+{
+    if(m_bulkWriteInProgress || editTriggers() == NoEditTriggers || state() == EditingState) {
+        return false;
+    }
+
+    const QModelIndexList rows = selectedTrackRows();
+    if(rows.size() < 2) {
+        return false;
+    }
+
+    const std::vector<int> columns = bulkEditableColumns();
+    if(columns.empty()) {
+        return false;
+    }
+
+    cancelPendingEditor();
+
+    if(!m_bulkEditor) {
+        m_bulkEditor = new QLineEdit(viewport());
+        m_bulkEditor->hide();
+        m_bulkEditor->installEventFilter(this);
+    }
+
+    m_bulkEditRows        = rows;
+    m_bulkEditColumns     = columns;
+    m_bulkEditColumnIndex = 0;
+
+    showBulkEditor();
+    return true;
+}
+
+bool PlaylistView::commitBulkEdit(int columnIndex)
+{
+    const int resolvedColumnIndex = columnIndex >= 0 ? columnIndex : m_bulkEditColumnIndex;
+    if(!m_bulkEditor || !m_bulkEditor->isModified() || m_bulkEditRows.empty() || resolvedColumnIndex < 0
+       || std::cmp_greater_equal(resolvedColumnIndex, m_bulkEditColumns.size())) {
+        return false;
+    }
+
+    auto* playlistModel = qobject_cast<PlaylistModel*>(model());
+    if(!playlistModel) {
+        return false;
+    }
+
+    QModelIndexList indexes;
+    const int column = m_bulkEditColumns.at(resolvedColumnIndex);
+
+    for(const QModelIndex& rowIndex : std::as_const(m_bulkEditRows)) {
+        const QModelIndex index = rowIndex.siblingAtColumn(column);
+        if(index.isValid()) {
+            indexes.push_back(index);
+        }
+    }
+
+    const auto bulkEdit = playlistModel->setBulkData(indexes, normaliseBulkEditorValue(m_bulkEditor->text()));
+    if(!bulkEdit.has_value()) {
+        return false;
+    }
+
+    if(bulkEdit->loveField) {
+        Q_EMIT tracksLoved(bulkEdit->tracks);
+    }
+    else if(bulkEdit->ratingField) {
+        Q_EMIT tracksRated(bulkEdit->tracks);
+    }
+    else {
+        Q_EMIT bulkWriteRequested(bulkEdit->tracks);
+    }
+    return true;
+}
+
+void PlaylistView::advanceBulkEditColumn(int offset)
+{
+    if(m_bulkEditColumns.empty() || m_bulkEditColumnIndex < 0) {
+        return;
+    }
+
+    const int count           = static_cast<int>(m_bulkEditColumns.size());
+    const int nextColumnIndex = (m_bulkEditColumnIndex + offset + count) % count;
+
+    if(!m_bulkEditor || !m_bulkEditor->isModified()) {
+        m_bulkEditColumnIndex = nextColumnIndex;
+        showBulkEditor();
+        return;
+    }
+
+    if(m_bulkEditor) {
+        m_bulkEditor->hide();
+    }
+
+    if(commitBulkEdit(m_bulkEditColumnIndex)) {
+        return;
+    }
+
+    m_bulkEditColumnIndex = nextColumnIndex;
+    showBulkEditor();
+}
+
+void PlaylistView::centreRectInView(const QRect& rect)
+{
+    if(!rect.isValid()) {
+        return;
+    }
+
+    const QPoint viewportCentre = viewport()->rect().center();
+
+    if(auto* hBar = horizontalScrollBar()) {
+        hBar->setValue(hBar->value() + rect.center().x() - viewportCentre.x());
+    }
+
+    if(auto* vBar = verticalScrollBar()) {
+        vBar->setValue(vBar->value() + rect.center().y() - viewportCentre.y());
+    }
+}
+
+void PlaylistView::endBulkEditSession(bool commitChanges)
+{
+    if(m_bulkEditor) {
+        m_bulkEditor->hide();
+    }
+
+    if(commitChanges) {
+        commitBulkEdit();
+    }
+
+    if(m_bulkEditor) {
+        m_bulkEditor->clear();
+        m_bulkEditor->setModified(false);
+    }
+
+    m_bulkEditRows.clear();
+    m_bulkEditColumns.clear();
+    m_bulkEditColumnIndex = -1;
+}
+
+void PlaylistView::showBulkEditor()
+{
+    if(!m_bulkEditor || m_bulkEditRows.empty() || m_bulkEditColumnIndex < 0
+       || std::cmp_greater_equal(m_bulkEditColumnIndex, m_bulkEditColumns.size())) {
+        return;
+    }
+
+    const int column        = m_bulkEditColumns.at(m_bulkEditColumnIndex);
+    const QModelIndex index = bulkEditAnchorIndex(column);
+    if(!index.isValid()) {
+        endBulkEditSession(false);
+        return;
+    }
+
+    setCurrentIndex(index);
+
+    bool mixedValues{false};
+    const QString value = bulkEditValueForColumn(column, mixedValues);
+
+    m_bulkEditor->blockSignals(true);
+    m_bulkEditor->setText(value);
+    m_bulkEditor->setModified(false);
+    m_bulkEditor->blockSignals(false);
+
+    m_bulkEditor->show();
+    m_bulkEditor->raise();
+    updateBulkEditorGeometry();
+
+    centreRectInView(m_bulkEditor->geometry());
+    m_bulkEditor->setFocus();
+    m_bulkEditor->selectAll();
+}
+
+void PlaylistView::updateBulkEditorGeometry()
+{
+    if(!m_bulkEditor || !m_bulkEditor->isVisible() || m_bulkEditColumnIndex < 0
+       || std::cmp_greater_equal(m_bulkEditColumnIndex, m_bulkEditColumns.size())) {
+        return;
+    }
+
+    const QModelIndex index = bulkEditAnchorIndex(m_bulkEditColumns.at(m_bulkEditColumnIndex));
+    if(!index.isValid()) {
+        m_bulkEditor->hide();
+        return;
+    }
+
+    const QRect editorRect = bulkEditRect(m_bulkEditColumns.at(m_bulkEditColumnIndex));
+    if(!editorRect.isValid()) {
+        m_bulkEditor->hide();
+        return;
+    }
+
+    m_bulkEditor->setGeometry(editorRect);
+}
+
+void PlaylistView::queueEditor(const QModelIndex& index)
+{
+    if(m_bulkWriteInProgress || (m_bulkEditor && m_bulkEditor->isVisible()) || editTriggers() == NoEditTriggers
+       || !index.isValid() || index.column() == m_ratingColumn || index.column() == m_lovedColumn
+       || (model()->flags(index) & Qt::ItemIsEditable) == 0 || state() == EditingState) {
+        return;
+    }
+
+    m_pendingEditIndex = index;
+    m_editTimer.start(EditorDelay, this);
+}
+
+void PlaylistView::cancelPendingEditor()
+{
+    m_editTimer.stop();
+    m_pendingEditIndex = QPersistentModelIndex{};
+}
+
+void PlaylistView::reopenEditor(const QModelIndex& index)
+{
+    if(m_bulkWriteInProgress || (m_bulkEditor && m_bulkEditor->isVisible()) || editTriggers() == NoEditTriggers
+       || !index.isValid() || index.column() == m_ratingColumn || index.column() == m_lovedColumn
+       || (model()->flags(index) & Qt::ItemIsEditable) == 0) {
+        return;
+    }
+
+    setCurrentIndex(index);
+
+    if(state() != EditingState && currentIndex() == index && selectionModel() && selectionModel()->isSelected(index)) {
+        edit(index);
+    }
+}
+
+void PlaylistView::ratingHoverIn(const QModelIndex& index, const QPoint& pos)
+{
+    if(editTriggers() & NoEditTriggers) {
+        return;
+    }
+
+    const QModelIndexList selected = selectedIndexes();
+    const QModelIndex prevIndex    = m_starDelegate->hoveredIndex();
+    m_starDelegate->setHoverIndex(index, pos, selected);
+    setCursor(Qt::PointingHandCursor);
+
+    update(prevIndex);
+    update(index);
+
+    for(const QModelIndex& selectedIndex : selected) {
+        if(selectedIndex.column() == m_ratingColumn) {
+            update(selectedIndex);
+        }
+    }
+}
+
+void PlaylistView::ratingHoverOut()
+{
+    if(editTriggers() & NoEditTriggers) {
+        return;
+    }
+
+    const QModelIndex prevIndex = m_starDelegate->hoveredIndex();
+    m_starDelegate->setHoverIndex({});
+    setCursor({});
+
+    update(prevIndex);
+
+    const QModelIndexList selected = selectedIndexes();
+    for(const QModelIndex& selectedIndex : selected) {
+        if(selectedIndex.column() == m_ratingColumn) {
+            update(selectedIndex);
+        }
+    }
+}
+
+void PlaylistView::loveHoverIn(const QModelIndex& index)
+{
+    if(editTriggers() & NoEditTriggers) {
+        return;
+    }
+
+    const QModelIndexList selected = selectedIndexes();
+    const QModelIndex prevIndex    = m_heartDelegate->hoveredIndex();
+    m_heartDelegate->setHoverIndex(index, selected);
+    setCursor(Qt::PointingHandCursor);
+
+    update(prevIndex);
+    update(index);
+
+    for(const QModelIndex& selectedIndex : selected) {
+        if(selectedIndex.column() == m_lovedColumn) {
+            update(selectedIndex);
+        }
+    }
+}
+
+void PlaylistView::loveHoverOut()
+{
+    if(editTriggers() & NoEditTriggers) {
+        return;
+    }
+
+    const QModelIndex prevIndex = m_heartDelegate->hoveredIndex();
+    m_heartDelegate->setHoverIndex({});
+    setCursor({});
+
+    update(prevIndex);
+
+    const QModelIndexList selected = selectedIndexes();
+    for(const QModelIndex& selectedIndex : selected) {
+        if(selectedIndex.column() == m_lovedColumn) {
+            update(selectedIndex);
         }
     }
 }
@@ -620,458 +1162,6 @@ QPoint PlaylistView::backgroundPixmapPosition(const QSize& pixmapSize) const
 void PlaylistView::drawBackgroundPixmap(QPainter& painter, const QPixmap& pixmap)
 {
     painter.drawPixmap(backgroundPixmapPosition(pixmap.deviceIndependentSize().toSize()), pixmap);
-}
-
-QAbstractItemView::DropIndicatorPosition PlaylistView::dropPosition(const QPoint& pos, const QRect& rect,
-                                                                    const QModelIndex& index)
-{
-    DropIndicatorPosition dropPos{OnViewport};
-    const int midpoint = static_cast<int>(std::round(static_cast<double>((rect.height())) / 2));
-    const auto type    = index.data(PlaylistItem::Type).toInt();
-
-    if(type == PlaylistItem::Subheader) {
-        dropPos = OnItem;
-    }
-    else if(pos.y() - rect.top() < midpoint || type == PlaylistItem::Header) {
-        dropPos = AboveItem;
-    }
-    else if(rect.bottom() - pos.y() < midpoint) {
-        dropPos = BelowItem;
-    }
-
-    return dropPos;
-}
-
-bool PlaylistView::eventFilter(QObject* watched, QEvent* event)
-{
-    if(!m_bulkEditor || watched != m_bulkEditor) {
-        return ExpandedTreeView::eventFilter(watched, event);
-    }
-
-    if(event->type() == QEvent::KeyPress) {
-        auto* keyEvent = static_cast<QKeyEvent*>(event);
-
-        switch(keyEvent->key()) {
-            case Qt::Key_Tab:
-                if((keyEvent->modifiers() & ~Qt::ShiftModifier) == Qt::NoModifier) {
-                    advanceBulkEditColumn((keyEvent->modifiers() & Qt::ShiftModifier) != 0 ? -1 : 1);
-                    return true;
-                }
-                break;
-            case Qt::Key_Backtab:
-                advanceBulkEditColumn(-1);
-                return true;
-            case Qt::Key_Return:
-            case Qt::Key_Enter:
-                endBulkEditSession(true);
-                return true;
-            case Qt::Key_Escape:
-                endBulkEditSession(false);
-                return true;
-            default:
-                break;
-        }
-    }
-    else if(event->type() == QEvent::FocusOut && m_bulkEditor->isVisible()) {
-        if(m_bulkEditor && m_bulkEditor->isVisible() && !m_bulkEditor->hasFocus()) {
-            endBulkEditSession(true);
-        }
-    }
-
-    return ExpandedTreeView::eventFilter(watched, event);
-}
-
-QModelIndexList PlaylistView::selectedTrackRows() const
-{
-    if(!selectionModel()) {
-        return {};
-    }
-
-    QModelIndexList rows;
-
-    const auto selected = selectionModel()->selectedRows();
-    for(const QModelIndex& index : selected) {
-        if(index.isValid() && index.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
-            rows.push_back(index);
-        }
-    }
-
-    std::ranges::sort(rows, [](const QModelIndex& lhs, const QModelIndex& rhs) {
-        return lhs.data(PlaylistItem::Index).toInt() < rhs.data(PlaylistItem::Index).toInt();
-    });
-
-    return rows;
-}
-
-std::vector<int> PlaylistView::bulkEditableColumns() const
-{
-    if(!header()) {
-        return {};
-    }
-
-    const QModelIndexList rows = selectedTrackRows();
-    if(rows.empty()) {
-        return {};
-    }
-
-    const QModelIndex& anchorRow = rows.front();
-
-    std::vector<int> columns;
-
-    for(int visualIndex{0}; visualIndex < header()->count(); ++visualIndex) {
-        const int logicalIndex = header()->logicalIndex(visualIndex);
-
-        if(logicalIndex < 0 || header()->isSectionHidden(logicalIndex) || logicalIndex == m_ratingColumn) {
-            continue;
-        }
-
-        const QModelIndex probeIndex = anchorRow.siblingAtColumn(logicalIndex);
-        if(probeIndex.isValid() && (model()->flags(probeIndex) & Qt::ItemIsEditable) != 0) {
-            columns.push_back(logicalIndex);
-        }
-    }
-
-    return columns;
-}
-
-QModelIndex PlaylistView::bulkEditAnchorIndex(int column) const
-{
-    if(m_bulkEditRows.empty()) {
-        return {};
-    }
-
-    return m_bulkEditRows.front().siblingAtColumn(column);
-}
-
-QRect PlaylistView::bulkEditRect(int column) const
-{
-    if(m_bulkEditRows.empty() || !header() || header()->isSectionHidden(column)) {
-        return {};
-    }
-
-    const int x     = header()->sectionViewportPosition(column);
-    const int width = header()->sectionSize(column);
-    if(x < 0 || width <= 0) {
-        return {};
-    }
-
-    QRect rowsRect;
-
-    for(const QModelIndex& rowIndex : m_bulkEditRows) {
-        const QModelIndex index = rowIndex.siblingAtColumn(column);
-        if(!index.isValid()) {
-            continue;
-        }
-
-        const QRect visualIndexRect = visualRect(index);
-        if(!visualIndexRect.isValid()) {
-            continue;
-        }
-
-        rowsRect = rowsRect.isNull() ? visualIndexRect : rowsRect.united(visualIndexRect);
-    }
-
-    if(!rowsRect.isValid()) {
-        return {};
-    }
-
-    return QRect{x, rowsRect.top(), width, rowsRect.height()}.adjusted(0, 0, -1, -1);
-}
-
-QString PlaylistView::bulkEditValueForColumn(int column, bool& mixedValues) const
-{
-    mixedValues = false;
-
-    QString currentValue;
-    QStringList distinctValues;
-
-    for(const QModelIndex& rowIndex : m_bulkEditRows) {
-        const QModelIndex index = rowIndex.siblingAtColumn(column);
-        if(!index.isValid()) {
-            continue;
-        }
-
-        const QString value = index.data(Qt::EditRole).toString();
-        if(!distinctValues.contains(value)) {
-            distinctValues.push_back(value);
-        }
-
-        if(distinctValues.size() == 1) {
-            currentValue = value;
-            continue;
-        }
-
-        mixedValues = true;
-    }
-
-    if(mixedValues) {
-        QStringList nonEmptyValues{distinctValues};
-        nonEmptyValues.removeAll(QString{});
-        return QString{MultipleValuesPrefix} + u' ' + nonEmptyValues.join("; "_L1);
-    }
-
-    return currentValue;
-}
-
-bool PlaylistView::startBulkEditSession()
-{
-    if(m_bulkWriteInProgress || editTriggers() == NoEditTriggers || state() == EditingState) {
-        return false;
-    }
-
-    const QModelIndexList rows = selectedTrackRows();
-    if(rows.size() < 2) {
-        return false;
-    }
-
-    const std::vector<int> columns = bulkEditableColumns();
-    if(columns.empty()) {
-        return false;
-    }
-
-    cancelPendingEditor();
-
-    if(!m_bulkEditor) {
-        m_bulkEditor = new QLineEdit(viewport());
-        m_bulkEditor->hide();
-        m_bulkEditor->installEventFilter(this);
-    }
-
-    m_bulkEditRows        = rows;
-    m_bulkEditColumns     = columns;
-    m_bulkEditColumnIndex = 0;
-
-    showBulkEditor();
-    return true;
-}
-
-bool PlaylistView::commitBulkEdit(int columnIndex)
-{
-    const int resolvedColumnIndex = columnIndex >= 0 ? columnIndex : m_bulkEditColumnIndex;
-    if(!m_bulkEditor || !m_bulkEditor->isModified() || m_bulkEditRows.empty() || resolvedColumnIndex < 0
-       || std::cmp_greater_equal(resolvedColumnIndex, m_bulkEditColumns.size())) {
-        return false;
-    }
-
-    auto* playlistModel = qobject_cast<PlaylistModel*>(model());
-    if(!playlistModel) {
-        return false;
-    }
-
-    QModelIndexList indexes;
-    const int column = m_bulkEditColumns.at(resolvedColumnIndex);
-
-    for(const QModelIndex& rowIndex : std::as_const(m_bulkEditRows)) {
-        const QModelIndex index = rowIndex.siblingAtColumn(column);
-        if(index.isValid()) {
-            indexes.push_back(index);
-        }
-    }
-
-    const auto bulkEdit = playlistModel->setBulkData(indexes, normaliseBulkEditorValue(m_bulkEditor->text()));
-    if(!bulkEdit.has_value()) {
-        return false;
-    }
-
-    if(bulkEdit->ratingField) {
-        Q_EMIT tracksRated(bulkEdit->tracks);
-    }
-    else {
-        Q_EMIT bulkWriteRequested(bulkEdit->tracks);
-    }
-    return true;
-}
-
-void PlaylistView::advanceBulkEditColumn(int offset)
-{
-    if(m_bulkEditColumns.empty() || m_bulkEditColumnIndex < 0) {
-        return;
-    }
-
-    const int count           = static_cast<int>(m_bulkEditColumns.size());
-    const int nextColumnIndex = (m_bulkEditColumnIndex + offset + count) % count;
-
-    if(!m_bulkEditor || !m_bulkEditor->isModified()) {
-        m_bulkEditColumnIndex = nextColumnIndex;
-        showBulkEditor();
-        return;
-    }
-
-    if(m_bulkEditor) {
-        m_bulkEditor->hide();
-    }
-
-    if(commitBulkEdit(m_bulkEditColumnIndex)) {
-        return;
-    }
-
-    m_bulkEditColumnIndex = nextColumnIndex;
-    showBulkEditor();
-}
-
-void PlaylistView::centreRectInView(const QRect& rect)
-{
-    if(!rect.isValid()) {
-        return;
-    }
-
-    const QPoint viewportCentre = viewport()->rect().center();
-
-    if(auto* hBar = horizontalScrollBar()) {
-        hBar->setValue(hBar->value() + rect.center().x() - viewportCentre.x());
-    }
-
-    if(auto* vBar = verticalScrollBar()) {
-        vBar->setValue(vBar->value() + rect.center().y() - viewportCentre.y());
-    }
-}
-
-void PlaylistView::endBulkEditSession(bool commitChanges)
-{
-    if(m_bulkEditor) {
-        m_bulkEditor->hide();
-    }
-
-    if(commitChanges) {
-        commitBulkEdit();
-    }
-
-    if(m_bulkEditor) {
-        m_bulkEditor->clear();
-        m_bulkEditor->setModified(false);
-    }
-
-    m_bulkEditRows.clear();
-    m_bulkEditColumns.clear();
-    m_bulkEditColumnIndex = -1;
-}
-
-void PlaylistView::showBulkEditor()
-{
-    if(!m_bulkEditor || m_bulkEditRows.empty() || m_bulkEditColumnIndex < 0
-       || std::cmp_greater_equal(m_bulkEditColumnIndex, m_bulkEditColumns.size())) {
-        return;
-    }
-
-    const int column        = m_bulkEditColumns.at(m_bulkEditColumnIndex);
-    const QModelIndex index = bulkEditAnchorIndex(column);
-    if(!index.isValid()) {
-        endBulkEditSession(false);
-        return;
-    }
-
-    setCurrentIndex(index);
-
-    bool mixedValues{false};
-    const QString value = bulkEditValueForColumn(column, mixedValues);
-
-    m_bulkEditor->blockSignals(true);
-    m_bulkEditor->setText(value);
-    m_bulkEditor->setModified(false);
-    m_bulkEditor->blockSignals(false);
-
-    m_bulkEditor->show();
-    m_bulkEditor->raise();
-    updateBulkEditorGeometry();
-
-    centreRectInView(m_bulkEditor->geometry());
-    m_bulkEditor->setFocus();
-    m_bulkEditor->selectAll();
-}
-
-void PlaylistView::updateBulkEditorGeometry()
-{
-    if(!m_bulkEditor || !m_bulkEditor->isVisible() || m_bulkEditColumnIndex < 0
-       || std::cmp_greater_equal(m_bulkEditColumnIndex, m_bulkEditColumns.size())) {
-        return;
-    }
-
-    const QModelIndex index = bulkEditAnchorIndex(m_bulkEditColumns.at(m_bulkEditColumnIndex));
-    if(!index.isValid()) {
-        m_bulkEditor->hide();
-        return;
-    }
-
-    const QRect editorRect = bulkEditRect(m_bulkEditColumns.at(m_bulkEditColumnIndex));
-    if(!editorRect.isValid()) {
-        m_bulkEditor->hide();
-        return;
-    }
-
-    m_bulkEditor->setGeometry(editorRect);
-}
-
-void PlaylistView::queueEditor(const QModelIndex& index)
-{
-    if(m_bulkWriteInProgress || (m_bulkEditor && m_bulkEditor->isVisible()) || editTriggers() == NoEditTriggers
-       || !index.isValid() || index.column() == m_ratingColumn || (model()->flags(index) & Qt::ItemIsEditable) == 0
-       || state() == EditingState) {
-        return;
-    }
-
-    m_pendingEditIndex = index;
-    m_editTimer.start(EditorDelay, this);
-}
-
-void PlaylistView::cancelPendingEditor()
-{
-    m_editTimer.stop();
-    m_pendingEditIndex = QPersistentModelIndex{};
-}
-
-void PlaylistView::reopenEditor(const QModelIndex& index)
-{
-    if(m_bulkWriteInProgress || (m_bulkEditor && m_bulkEditor->isVisible()) || editTriggers() == NoEditTriggers
-       || !index.isValid() || index.column() == m_ratingColumn || (model()->flags(index) & Qt::ItemIsEditable) == 0) {
-        return;
-    }
-
-    setCurrentIndex(index);
-
-    if(state() != EditingState && currentIndex() == index && selectionModel() && selectionModel()->isSelected(index)) {
-        edit(index);
-    }
-}
-
-void PlaylistView::ratingHoverIn(const QModelIndex& index, const QPoint& pos)
-{
-    if(editTriggers() & NoEditTriggers) {
-        return;
-    }
-
-    const QModelIndexList selected = selectedIndexes();
-    const QModelIndex prevIndex    = m_starDelegate->hoveredIndex();
-    m_starDelegate->setHoverIndex(index, pos, selected);
-    setCursor(Qt::PointingHandCursor);
-
-    update(prevIndex);
-    update(index);
-
-    for(const QModelIndex& selectedIndex : selected) {
-        if(selectedIndex.column() == m_ratingColumn) {
-            update(selectedIndex);
-        }
-    }
-}
-
-void PlaylistView::ratingHoverOut()
-{
-    if(editTriggers() & NoEditTriggers) {
-        return;
-    }
-
-    const QModelIndex prevIndex = m_starDelegate->hoveredIndex();
-    m_starDelegate->setHoverIndex({});
-    setCursor({});
-
-    update(prevIndex);
-
-    const QModelIndexList selected = selectedIndexes();
-    for(const QModelIndex& selectedIndex : selected) {
-        if(selectedIndex.column() == m_ratingColumn) {
-            update(selectedIndex);
-        }
-    }
 }
 } // namespace Fooyin
 

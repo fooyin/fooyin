@@ -24,6 +24,7 @@
 #include "services/listenbrainzservice.h"
 #include "settings/scrobblersettings.h"
 
+#include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -38,9 +39,10 @@ constexpr auto NowPlayingFinalRefreshLeadMs = 180000;
 constexpr auto MinNowPlayingRefreshDelayMs  = 1000;
 
 namespace Fooyin::Scrobbler {
-Scrobbler::Scrobbler(PlayerController* playerController, std::shared_ptr<NetworkAccessManager> network,
-                     SettingsManager* settings)
+Scrobbler::Scrobbler(PlayerController* playerController, MusicLibrary* library,
+                     std::shared_ptr<NetworkAccessManager> network, SettingsManager* settings)
     : m_playerController{playerController}
+    , m_library{library}
     , m_network{std::move(network)}
     , m_settings{settings}
 {
@@ -56,6 +58,7 @@ Scrobbler::Scrobbler(PlayerController* playerController, std::shared_ptr<Network
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &Scrobbler::updateNowPlaying);
     QObject::connect(m_playerController, &PlayerController::trackPlayed, this, &Scrobbler::scrobble);
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &Scrobbler::handlePlayStateChanged);
+    QObject::connect(m_library, &MusicLibrary::tracksStatsChanged, this, &Scrobbler::handleTrackStatsChanged);
 }
 
 Scrobbler::~Scrobbler()
@@ -97,6 +100,22 @@ void Scrobbler::scrobble(const Track& track)
     for(auto& service : m_services) {
         if(service->isEnabled()) {
             service->scrobble(track);
+        }
+    }
+}
+
+void Scrobbler::handleTrackStatsChanged(const TrackList& tracks, const Track::Stats stats)
+{
+    if(!stats.testFlag(Track::Stat::Loved)) {
+        return;
+    }
+
+    for(auto& service : m_services) {
+        if(!service->isEnabled() || !service->supportsLoved()) {
+            continue;
+        }
+        for(const Track& track : tracks) {
+            service->updateLoved(track);
         }
     }
 }
