@@ -10,6 +10,8 @@
 
 #include "lovedcache.h"
 
+#include <core/constants.h>
+
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -50,6 +52,11 @@ void LovedCache::set(Metadata metadata, const bool loved)
     const uint64_t revision = ++m_revision;
     m_items.insert_or_assign(key, LovedItem{key, std::move(metadata), loved, revision});
     scheduleWrite();
+}
+
+bool LovedCache::contains(const Metadata& metadata) const
+{
+    return m_items.contains(itemKey(metadata));
 }
 
 std::optional<LovedItem> LovedCache::first() const
@@ -167,6 +174,7 @@ QString LovedCache::itemKey(const Metadata& metadata)
     if(metadata.artist.isEmpty() || metadata.title.isEmpty()) {
         return {};
     }
-    return u"metadata:"_s + metadata.artist.toCaseFolded() + u'\x1f' + metadata.title.toCaseFolded();
+    return u"metadata:"_s + metadata.artist.toCaseFolded() + QLatin1StringView{Constants::UnitSeparator}
+         + metadata.title.toCaseFolded();
 }
 } // namespace Fooyin::Scrobbler

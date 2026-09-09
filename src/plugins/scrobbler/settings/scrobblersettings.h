@@ -40,6 +40,7 @@ enum ScrobblerSettings : uint32_t
     AlbumField           = 7 | Type::String,
     ArtistField          = 8 | Type::String,
     AlbumArtistField     = 9 | Type::String,
+    SyncPlaybackStats    = 10 | Type::Bool,
 };
 Q_ENUM_NS(ScrobblerSettings)
 } // namespace Settings::Scrobbler

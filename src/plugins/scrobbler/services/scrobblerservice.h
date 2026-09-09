@@ -33,6 +33,8 @@
 #include <QUrl>
 #include <QVariant>
 
+#include <optional>
+
 Q_DECLARE_LOGGING_CATEGORY(SCROBBLER)
 
 class QNetworkReply;
@@ -49,6 +51,13 @@ enum class RequestType : uint8_t
 {
     Get = 0,
     Post
+};
+
+struct RemoteTrackStats
+{
+    Track track;
+    std::optional<bool> loved;
+    std::optional<int> playCount;
 };
 
 class ScrobblerService : public QObject
@@ -68,6 +77,7 @@ public:
     [[nodiscard]] virtual bool requiresAuthentication() const;
     [[nodiscard]] virtual bool isAuthenticated() const;
     [[nodiscard]] virtual bool supportsLoved() const;
+    [[nodiscard]] virtual bool supportsTrackStatsSync() const;
 
     [[nodiscard]] bool isCustom() const;
     [[nodiscard]] ServiceDetails details() const;
@@ -87,6 +97,8 @@ public:
     void refreshNowPlaying();
     void scrobble(const Track& track);
     void updateLoved(const Track& track);
+    [[nodiscard]] bool hasPendingLoved(const Track& track);
+    virtual void fetchTrackStats(const Track& track);
 
     virtual void testApi()          = 0;
     virtual void updateNowPlaying() = 0;
@@ -98,6 +110,7 @@ public:
 Q_SIGNALS:
     void testApiFinished(bool success, const QString& error = {});
     void authenticationFinished(bool success, const QString& error = {});
+    void trackStatsFetched(const Fooyin::Scrobbler::RemoteTrackStats& stats);
 
 protected:
     virtual void setupAuthQuery(ScrobblerAuthSession* session, QUrlQuery& query);
@@ -177,3 +190,5 @@ private:
 };
 } // namespace Scrobbler
 } // namespace Fooyin
+
+Q_DECLARE_METATYPE(Fooyin::Scrobbler::RemoteTrackStats)

@@ -120,6 +120,11 @@ bool ScrobblerService::supportsLoved() const
     return false;
 }
 
+bool ScrobblerService::supportsTrackStatsSync() const
+{
+    return false;
+}
+
 bool ScrobblerService::isCustom() const
 {
     return m_details.isCustom();
@@ -346,6 +351,18 @@ void ScrobblerService::updateLoved(const Track& track)
     m_lovedCache->set(std::move(metadata), track.isLoved());
     doDelayedLovedSubmit(true);
 }
+
+bool ScrobblerService::hasPendingLoved(const Track& track)
+{
+    if(!m_details.submitLoved || !m_lovedCache) {
+        return false;
+    }
+
+    const Metadata metadata{&m_scriptParser, m_settings, track};
+    return m_lovedCache->contains(metadata);
+}
+
+void ScrobblerService::fetchTrackStats(const Track& /*track*/) { }
 
 QString ScrobblerService::tokenSetting() const
 {

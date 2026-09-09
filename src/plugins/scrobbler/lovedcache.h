@@ -35,6 +35,7 @@ public:
     explicit LovedCache(QString filepath, QObject* parent = nullptr);
 
     void set(Metadata metadata, bool loved);
+    [[nodiscard]] bool contains(const Metadata& metadata) const;
     [[nodiscard]] std::optional<LovedItem> first() const;
     void remove(const QString& key, uint64_t revision);
     [[nodiscard]] int count() const;
@@ -47,7 +48,7 @@ protected:
 private:
     void readCache();
     void scheduleWrite();
-    [[nodiscard]] static QString itemKey(const Metadata& metadata);
+    static QString itemKey(const Metadata& metadata);
 
     QString m_filepath;
     std::map<QString, LovedItem> m_items;

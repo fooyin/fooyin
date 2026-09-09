@@ -76,6 +76,7 @@ private:
         // Common
         QGroupBox* groupCheck{nullptr};
         QCheckBox* submitLoved{nullptr};
+        QCheckBox* syncPlaybackStats{nullptr};
         // ListenBrainz
         QLineEdit* tokenInput{nullptr};
         // Custom
@@ -207,6 +208,9 @@ void ScrobblerServicesPageWidget::updateServiceState(ScrobblerService* service)
     if(context->submitLoved) {
         context->submitLoved->setChecked(details.submitLoved);
     }
+    if(context->syncPlaybackStats) {
+        context->syncPlaybackStats->setChecked(details.syncPlaybackStats);
+    }
 
     if(context->statusLabel && !context->error.isEmpty()) {
         context->statusLabel->setText(context->error);
@@ -242,6 +246,9 @@ void ScrobblerServicesPageWidget::updateDetails(ScrobblerService* service)
     }
     if(context->submitLoved) {
         details.submitLoved = context->submitLoved->isChecked();
+    }
+    if(context->syncPlaybackStats) {
+        details.syncPlaybackStats = context->syncPlaybackStats->isChecked();
     }
 
     service->updateDetails(details);
@@ -317,6 +324,12 @@ void ScrobblerServicesPageWidget::addService(ScrobblerService* service)
         context.submitLoved = new QCheckBox(tr("Submit loved changes"), this);
         context.submitLoved->setToolTip(tr("Submit Love and Unlove changes to this service"));
         layout->addWidget(context.submitLoved, 3, 0, 1, 2);
+    }
+    if(service->supportsTrackStatsSync()) {
+        context.syncPlaybackStats = new QCheckBox(tr("Synchronise playback statistics"), this);
+        context.syncPlaybackStats->setToolTip(
+            tr("Import play counts and Loved status from this service when a track starts playing"));
+        layout->addWidget(context.syncPlaybackStats, 4, 0, 1, 2);
     }
 
     m_serviceLayout->addWidget(context.groupCheck, m_serviceLayout->rowCount(), 0);

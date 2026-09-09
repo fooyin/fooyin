@@ -24,10 +24,12 @@
 #include "services/listenbrainzservice.h"
 #include "settings/scrobblersettings.h"
 
+#include <core/constants.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QDateTime>
 #include <QIODevice>
 
 #include <algorithm>
@@ -37,8 +39,25 @@ using namespace Qt::StringLiterals;
 constexpr auto NowPlayingRefreshIntervalMs  = 180000;
 constexpr auto NowPlayingFinalRefreshLeadMs = 180000;
 constexpr auto MinNowPlayingRefreshDelayMs  = 1000;
+constexpr auto TrackStatsSyncIntervalMs     = 60 * 60 * 1000;
+constexpr auto RecentLovedChangeIntervalMs  = 60 * 1000;
 
 namespace Fooyin::Scrobbler {
+namespace {
+QString trackSyncKey(const Track& track)
+{
+    if(!track.hash().isEmpty()) {
+        return track.hash();
+    }
+    return QString::number(track.id()) + u':' + track.uniqueFilepath();
+}
+
+QString trackStatsSyncKey(const ScrobblerService* service, const Fooyin::Track& track)
+{
+    return service->name() + QLatin1StringView{Constants::UnitSeparator} + trackSyncKey(track);
+}
+} // namespace
+
 Scrobbler::Scrobbler(PlayerController* playerController, MusicLibrary* library,
                      std::shared_ptr<NetworkAccessManager> network, SettingsManager* settings)
     : m_playerController{playerController}
@@ -50,6 +69,7 @@ Scrobbler::Scrobbler(PlayerController* playerController, MusicLibrary* library,
     restoreServices();
 
     for(auto& service : m_services) {
+        setupService(service.get());
         service->initialise();
         service->loadSession();
         service->resumePendingSubmissions();
@@ -59,6 +79,12 @@ Scrobbler::Scrobbler(PlayerController* playerController, MusicLibrary* library,
     QObject::connect(m_playerController, &PlayerController::trackPlayed, this, &Scrobbler::scrobble);
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &Scrobbler::handlePlayStateChanged);
     QObject::connect(m_library, &MusicLibrary::tracksStatsChanged, this, &Scrobbler::handleTrackStatsChanged);
+
+    m_settings->subscribe<Settings::Scrobbler::SyncPlaybackStats>(this, [this]() {
+        m_lastTrackStatsSync.clear();
+        m_remoteLovedStates.clear();
+        m_selectedRemoteLoved.clear();
+    });
 }
 
 Scrobbler::~Scrobbler()
@@ -83,39 +109,11 @@ ScrobblerService* Scrobbler::service(const QString& name) const
     return nullptr;
 }
 
-void Scrobbler::handlePlayStateChanged(Player::PlayState state, Player::PlayState previous)
-{
-    if(previous == Player::PlayState::Stopped && state == Player::PlayState::Playing) {
-        const Track track = m_playerController->currentTrack();
-        for(auto& service : m_services) {
-            service->restartScrobbleSession(track);
-        }
-    }
-
-    updateNowPlayingTimer();
-}
-
 void Scrobbler::scrobble(const Track& track)
 {
     for(auto& service : m_services) {
         if(service->isEnabled()) {
             service->scrobble(track);
-        }
-    }
-}
-
-void Scrobbler::handleTrackStatsChanged(const TrackList& tracks, const Track::Stats stats)
-{
-    if(!stats.testFlag(Track::Stat::Loved)) {
-        return;
-    }
-
-    for(auto& service : m_services) {
-        if(!service->isEnabled() || !service->supportsLoved()) {
-            continue;
-        }
-        for(const Track& track : tracks) {
-            service->updateLoved(track);
         }
     }
 }
@@ -153,6 +151,7 @@ ScrobblerService* Scrobbler::addCustomService(const ServiceDetails& details, boo
     }
 
     if(service) {
+        setupService(service);
         if(init) {
             service->initialise();
             service->loadSession();
@@ -198,6 +197,85 @@ void Scrobbler::timerEvent(QTimerEvent* event)
     QObject::timerEvent(event);
 }
 
+void Scrobbler::handlePlayStateChanged(Player::PlayState state, Player::PlayState previous)
+{
+    if(previous == Player::PlayState::Stopped && state == Player::PlayState::Playing) {
+        const Track track = m_playerController->currentTrack();
+        for(auto& service : m_services) {
+            service->restartScrobbleSession(track);
+        }
+    }
+
+    updateNowPlayingTimer();
+}
+
+void Scrobbler::handleTrackStatsChanged(const TrackList& tracks, const Track::Stats stats)
+{
+    if(!stats.testFlag(Track::Stat::Loved)) {
+        return;
+    }
+
+    const auto now = static_cast<int64_t>(QDateTime::currentMSecsSinceEpoch());
+    pruneTrackStatsSyncState(now);
+
+    for(const Track& track : tracks) {
+        const QString key = trackSyncKey(track);
+        if(consumePendingLovedChange(key, track.isLoved())) {
+            continue;
+        }
+
+        m_selectedRemoteLoved.erase(key);
+        m_recentLovedChanges.insert_or_assign(key, now);
+
+        for(auto& service : m_services) {
+            if(!service->isEnabled() || !service->supportsLoved()) {
+                continue;
+            }
+            service->updateLoved(track);
+        }
+    }
+}
+
+void Scrobbler::handleFetchedTrackStats(const RemoteTrackStats& stats)
+{
+    auto* service = qobject_cast<ScrobblerService*>(sender());
+    if(!service) {
+        return;
+    }
+
+    const QString trackKey = trackSyncKey(stats.track);
+    m_lastTrackStatsSync.insert_or_assign(trackStatsSyncKey(service, stats.track), QDateTime::currentMSecsSinceEpoch());
+
+    if(!service->isEnabled() || !service->details().syncPlaybackStats
+       || !m_settings->value<Settings::Scrobbler::SyncPlaybackStats>()) {
+        return;
+    }
+
+    Track track = stats.track.id() >= 0 ? m_library->trackForId(stats.track.id()) : stats.track;
+    if(!track.isValid()) {
+        return;
+    }
+
+    Track::Stats changedStats;
+    if(stats.playCount && *stats.playCount > track.playCount()) {
+        track.setPlayCount(*stats.playCount);
+        changedStats |= Track::Stat::Playcount;
+    }
+
+    if(stats.loved && stats.playCount) {
+        const auto now = static_cast<int64_t>(QDateTime::currentMSecsSinceEpoch());
+        m_remoteLovedStates[trackKey].insert_or_assign(service->name(), RemoteLovedState{.loved     = *stats.loved,
+                                                                                         .playCount = *stats.playCount,
+                                                                                         .serviceName = service->name(),
+                                                                                         .timestamp   = now});
+        applyRemoteLovedState(track, trackKey, changedStats, now);
+    }
+
+    if(changedStats != Track::Stat::None) {
+        m_library->updateTrackStats(track, changedStats);
+    }
+}
+
 int Scrobbler::nextNowPlayingRefreshDelay() const
 {
     const bool shouldRefresh = std::ranges::any_of(m_services, [](const auto& service) { return service->isEnabled(); })
@@ -223,11 +301,127 @@ int Scrobbler::nextNowPlayingRefreshDelay() const
     return static_cast<int>(std::max<uint64_t>(delayMs, MinNowPlayingRefreshDelayMs));
 }
 
+bool Scrobbler::consumePendingLovedChange(const QString& trackKey, const bool loved)
+{
+    const auto pending = m_pendingLovedChanges.find(trackKey);
+    if(pending == m_pendingLovedChanges.end()) {
+        return false;
+    }
+
+    auto& changes    = pending->second;
+    const auto match = std::ranges::find(changes, loved, &PendingImportedLovedChange::loved);
+    if(match == changes.end()) {
+        return false;
+    }
+
+    changes.erase(match);
+    if(changes.empty()) {
+        m_pendingLovedChanges.erase(pending);
+    }
+    return true;
+}
+
+std::optional<Scrobbler::RemoteLovedState> Scrobbler::preferredRemoteLovedState(const QString& trackKey) const
+{
+    const auto states = m_remoteLovedStates.find(trackKey);
+    if(states == m_remoteLovedStates.cend()) {
+        return {};
+    }
+
+    std::optional<RemoteLovedState> selected;
+    for(const auto& candidate : states->second | std::views::values) {
+        const auto* candidateService = service(candidate.serviceName);
+        if(!candidateService || !candidateService->isEnabled() || !candidateService->isAuthenticated()
+           || !candidateService->details().syncPlaybackStats) {
+            continue;
+        }
+        if(!selected || candidate.playCount > selected->playCount
+           || (candidate.playCount == selected->playCount && candidate.serviceName < selected->serviceName)) {
+            selected = candidate;
+        }
+    }
+    return selected;
+}
+
+void Scrobbler::applyRemoteLovedState(Track& track, const QString& trackKey, Track::Stats& changedStats,
+                                      const int64_t now)
+{
+    const auto selected = preferredRemoteLovedState(trackKey);
+    if(!selected) {
+        return;
+    }
+
+    const auto recentChange = m_recentLovedChanges.find(trackKey);
+    if(recentChange != m_recentLovedChanges.end() && now - recentChange->second < RecentLovedChangeIntervalMs) {
+        return;
+    }
+
+    const bool hasPendingChange = std::ranges::any_of(m_services, [&track](const auto& candidateService) {
+        return candidateService->isEnabled() && candidateService->hasPendingLoved(track);
+    });
+    if(hasPendingChange) {
+        return;
+    }
+
+    const auto previous = m_selectedRemoteLoved.find(trackKey);
+    const bool selectionChanged
+        = previous == m_selectedRemoteLoved.cend() || previous->second.serviceName != selected->serviceName
+       || previous->second.playCount != selected->playCount || previous->second.loved != selected->loved;
+    // The previous winner may still be queued for a database write, so a new winner must always be queued after it
+    const bool mayOverrideQueuedImport = previous != m_selectedRemoteLoved.cend() && selectionChanged;
+
+    m_selectedRemoteLoved.insert_or_assign(trackKey, *selected);
+
+    if(selectionChanged && (mayOverrideQueuedImport || track.isLoved() != selected->loved)) {
+        track.setLoved(selected->loved);
+        changedStats |= Track::Stat::Loved;
+        m_pendingLovedChanges[trackKey].push_back({.loved = selected->loved, .timestamp = now});
+    }
+}
+
+void Scrobbler::pruneTrackStatsSyncState(const int64_t now)
+{
+    std::erase_if(m_lastTrackStatsSync,
+                  [now](const auto& item) { return now - item.second >= TrackStatsSyncIntervalMs; });
+    std::erase_if(m_recentLovedChanges,
+                  [now](const auto& item) { return now - item.second >= RecentLovedChangeIntervalMs; });
+
+    for(auto& changes : m_pendingLovedChanges | std::views::values) {
+        std::erase_if(changes,
+                      [now](const auto& change) { return now - change.timestamp >= RecentLovedChangeIntervalMs; });
+    }
+    std::erase_if(m_pendingLovedChanges, [](const auto& item) { return item.second.empty(); });
+
+    for(auto& states : m_remoteLovedStates | std::views::values) {
+        std::erase_if(states,
+                      [now](const auto& item) { return now - item.second.timestamp >= TrackStatsSyncIntervalMs; });
+    }
+    std::erase_if(m_remoteLovedStates, [this](const auto& item) {
+        if(item.second.empty()) {
+            m_selectedRemoteLoved.erase(item.first);
+            return true;
+        }
+        return false;
+    });
+}
+
 void Scrobbler::updateNowPlaying(const Track& track)
 {
+    const auto now = static_cast<int64_t>(QDateTime::currentMSecsSinceEpoch());
+    pruneTrackStatsSyncState(now);
+
     for(auto& service : m_services) {
         if(service->isEnabled()) {
             service->updateNowPlaying(track);
+
+            if(m_settings->value<Settings::Scrobbler::SyncPlaybackStats>() && service->supportsTrackStatsSync()
+               && service->details().syncPlaybackStats && service->isAuthenticated()) {
+                const QString key   = trackStatsSyncKey(service.get(), track);
+                const auto lastSync = m_lastTrackStatsSync.find(key);
+                if(lastSync == m_lastTrackStatsSync.cend() || now - lastSync->second >= TrackStatsSyncIntervalMs) {
+                    service->fetchTrackStats(track);
+                }
+            }
         }
     }
 
@@ -251,6 +445,12 @@ void Scrobbler::updateNowPlayingTimer(const bool reset)
     if(!m_nowPlayingTimer.isActive()) {
         m_nowPlayingTimer.start(delay, this);
     }
+}
+
+void Scrobbler::setupService(ScrobblerService* service)
+{
+    QObject::connect(service, &ScrobblerService::trackStatsFetched, this, &Scrobbler::handleFetchedTrackStats,
+                     Qt::UniqueConnection);
 }
 
 void Scrobbler::addDefaultServices()

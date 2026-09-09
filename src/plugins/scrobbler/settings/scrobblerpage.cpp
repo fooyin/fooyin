@@ -57,6 +57,8 @@ private:
     QLabel* m_delayLabel;
     QSpinBox* m_scrobbleDelay;
 
+    QCheckBox* m_syncPlaybackStats;
+
     QCheckBox* m_filterScrobbles;
     QLabel* m_filterLabel;
     ScriptLineEdit* m_scrobbleFilter;
@@ -76,6 +78,7 @@ ScrobblerPageWidget::ScrobblerPageWidget(SettingsManager* settings)
     , m_scrobblingEnabled{new QCheckBox(tr("Enable scrobbling"), this)}
     , m_delayLabel{new QLabel(tr("Scrobble delay") + ":"_L1, this)}
     , m_scrobbleDelay{new QSpinBox(this)}
+    , m_syncPlaybackStats{new QCheckBox(tr("Synchronise playback statistics"), this)}
     , m_filterScrobbles{new QCheckBox(tr("Filter scrobbles"), this)}
     , m_filterLabel{new QLabel(tr("Query") + ":"_L1, this)}
     , m_scrobbleFilter{new ScriptLineEdit(this)}
@@ -115,6 +118,14 @@ ScrobblerPageWidget::ScrobblerPageWidget(SettingsManager* settings)
     generalLayout->addLayout(delayLayout, row++, 1);
     generalLayout->setColumnStretch(1, 1);
 
+    auto* syncGroup  = new QGroupBox(tr("Synchronisation"), this);
+    auto* syncLayout = new QGridLayout(syncGroup);
+
+    m_syncPlaybackStats->setToolTip(
+        tr("Import play counts and Loved status from enabled services when a track starts playing"));
+    syncLayout->addWidget(m_syncPlaybackStats, 0, 0, 1, 2);
+    syncLayout->setColumnStretch(1, 1);
+
     auto* filterGroup  = new QGroupBox(tr("Filtering"), this);
     auto* filterLayout = new QGridLayout(filterGroup);
 
@@ -142,6 +153,7 @@ ScrobblerPageWidget::ScrobblerPageWidget(SettingsManager* settings)
 
     row = 0;
     layout->addWidget(generalGroup, row++, 0, 1, 2);
+    layout->addWidget(syncGroup, row++, 0, 1, 2);
     layout->addWidget(filterGroup, row++, 0, 1, 2);
     layout->addWidget(paramsGroup, row++, 0, 1, 2);
     layout->setRowStretch(layout->rowCount(), 1);
@@ -161,6 +173,8 @@ void ScrobblerPageWidget::load()
     m_scrobblingEnabled->setChecked(m_settings->value<Settings::Scrobbler::ScrobblingEnabled>());
     m_scrobbleDelay->setValue(m_settings->value<Settings::Scrobbler::ScrobblingDelay>());
 
+    m_syncPlaybackStats->setChecked(m_settings->value<Settings::Scrobbler::SyncPlaybackStats>());
+
     m_titleParam->setText(m_settings->value<Settings::Scrobbler::TitleField>());
     m_artistParam->setText(m_settings->value<Settings::Scrobbler::ArtistField>());
     m_albumParam->setText(m_settings->value<Settings::Scrobbler::AlbumField>());
@@ -177,6 +191,7 @@ void ScrobblerPageWidget::apply()
 {
     m_settings->set<Settings::Scrobbler::ScrobblingEnabled>(m_scrobblingEnabled->isChecked());
     m_settings->set<Settings::Scrobbler::ScrobblingDelay>(m_scrobbleDelay->value());
+    m_settings->set<Settings::Scrobbler::SyncPlaybackStats>(m_syncPlaybackStats->isChecked());
 
     m_settings->set<Settings::Scrobbler::TitleField>(m_titleParam->text());
     m_settings->set<Settings::Scrobbler::ArtistField>(m_artistParam->text());
@@ -192,6 +207,7 @@ void ScrobblerPageWidget::reset()
 {
     m_settings->reset<Settings::Scrobbler::ScrobblingEnabled>();
     m_settings->reset<Settings::Scrobbler::ScrobblingDelay>();
+    m_settings->reset<Settings::Scrobbler::SyncPlaybackStats>();
 
     m_settings->reset<Settings::Scrobbler::TitleField>();
     m_settings->reset<Settings::Scrobbler::ArtistField>();
