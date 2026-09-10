@@ -7,6 +7,7 @@
 * Audio CD: Add playback and ripping with AccurateRip verification ([#834](https://github.com/fooyin/fooyin/issues/834), [#1558](https://github.com/fooyin/fooyin/pull/1558))
 * Audio Verification: Add file integrity checks and AccurateRip verification for complete discs
 * Global Shortcuts: Add system-wide keyboard shortcuts ([#518](https://github.com/fooyin/fooyin/issues/518), [#1074](https://github.com/fooyin/fooyin/issues/1074))
+* Love: Add loved status with playlist and tag editing, scripting, and scrobbling support ([#1035](https://github.com/fooyin/fooyin/issues/1035))
 * Metadata Lookup: Add MusicBrainz metadata lookup ([#1554](https://github.com/fooyin/fooyin/pull/1554))
 
 ### Improvements
@@ -28,7 +29,9 @@
 * Notifications: Make notifications on track repeat optional ([#1545](https://github.com/fooyin/fooyin/issues/1545))
 * Playlist
   - Add custom grouping scripts to presets ([#1566](https://github.com/fooyin/fooyin/issues/1566))
+  - Reduce population and artwork loading overhead
   - Replace the default playlist contents when opening external files by default
+* Scrobbling: Add optional Last.fm playcount and loved status synchronisation at playback start
 * Search: Add keyboard navigation to results
 * Scripting
   - Add common metadata aliases
@@ -38,6 +41,8 @@
 
 ### Fixes
 
+* Artwork: Always scale embedded thumbnails
+* Database: Remove tracks with invalid library references during cleanup
 * Directory Browser
   - Clear stale playback indicators after playlist changes
   - Show playback indicators only in the first column
@@ -64,8 +69,11 @@
 * Networking: Send a fooyin user agent with all network requests
 * Playlist
   - Fix reordering when temporary playlists are present
+  - Normalise native path separators in imported playlists ([#741](https://github.com/fooyin/fooyin/issues/741))
   - Preserve spaces in unquoted CUE `REM` values ([#1548](https://github.com/fooyin/fooyin/issues/1548))
+  - Stop generating item moves after the reset threshold is reached
 * Quick Tagger: Avoid file rewrites for rating changes ([#1551](https://github.com/fooyin/fooyin/issues/1551))
+* Scripting: Treat native path separators equivalently in queries ([#1595](https://github.com/fooyin/fooyin/issues/1595))
 * Search: Fix starting playback from results
 * Settings: Fix user folder actions across platforms
 * Scripting: Fix premature termination of query operator chains ([#1586](https://github.com/fooyin/fooyin/issues/1586))
