@@ -716,6 +716,7 @@ void TreeView::dataChanged(const QModelIndex& topLeft, const QModelIndex& bottom
     }
 
     if(sizeChanged) {
+        m_p->m_itemOffsetsDirty = true;
         updateScrollBars();
         viewport()->update();
     }
@@ -2745,7 +2746,6 @@ bool ExpandedTreeViewPrivate::itemHasChildren(int i) const
 void ExpandedTreeViewPrivate::invalidateHeightCache(int item) const
 {
     m_viewItems[item].height = 0;
-    m_itemOffsetsDirty       = true;
 }
 
 int ExpandedTreeViewPrivate::itemForHomeKey() const
