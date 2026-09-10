@@ -22,6 +22,7 @@
 #include "libraryscanutils.h"
 
 #include <utils/fileutils.h>
+#include <utils/scopeguard.h>
 
 #include <QDir>
 #include <QFileInfo>
@@ -55,15 +56,23 @@ LibraryMonitor::LibraryMonitor(QObject* parent)
     : QObject{parent}
 { }
 
+std::stop_token LibraryMonitor::prepareSetup()
+{
+    const std::scoped_lock lock{m_setupMutex};
+    m_setupStopSource = std::stop_source{};
+    return m_setupStopSource.get_token();
+}
+
 void LibraryMonitor::cancelSetup()
 {
+    const std::scoped_lock lock{m_setupMutex};
     m_setupStopSource.request_stop();
 }
 
 void LibraryMonitor::setupWatchers(const LibraryInfoMap& libraries, const TrackList& tracks, bool monitorDirectories,
-                                   bool monitorTrackFiles)
+                                   bool monitorTrackFiles, std::stop_token stopToken)
 {
-    const std::stop_token stopToken = m_setupStopSource.get_token();
+    const auto finished = scopeGuard([this]() { Q_EMIT setupFinished(); });
     if(stopToken.stop_requested()) {
         return;
     }
