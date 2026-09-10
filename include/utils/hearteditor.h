@@ -21,6 +21,7 @@
 
 #include "fyutils_export.h"
 
+#include <QColor>
 #include <QPainterPath>
 #include <QWidget>
 
@@ -37,6 +38,8 @@ public:
     HeartValue();
     explicit HeartValue(bool loved);
     HeartValue(bool loved, int scale);
+    HeartValue(bool loved, int scale, const QColor& colour);
+    HeartValue(bool loved, int scale, const QColor& lovedColour, const QColor& unlovedColour);
 
     [[nodiscard]] bool loved() const;
     [[nodiscard]] int scale() const;
@@ -57,6 +60,8 @@ private:
     QPainterPath m_heart;
     bool m_loved;
     int m_scale;
+    QColor m_lovedColour;
+    QColor m_unlovedColour;
 };
 
 class FYUTILS_EXPORT HeartEditor : public QWidget

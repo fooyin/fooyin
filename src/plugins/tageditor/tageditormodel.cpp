@@ -27,6 +27,7 @@
 #include <core/library/libraryutils.h>
 #include <core/scripting/scripttrackwriter.h>
 #include <gui/guisettings.h>
+#include <gui/guiutils.h>
 #include <utils/heartdelegate.h>
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
@@ -645,13 +646,15 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
         if(index.row() == p->m_loveRow) {
             return QVariant::fromValue(
                 HeartValue{(item->valueChanged() ? item->changedValue() : item->value()).toInt() != 0,
-                           p->m_settings->value<Settings::Gui::LoveHeartSize>()});
+                           p->m_settings->value<Settings::Gui::LoveHeartSize>(), Gui::loveHeartColour(*p->m_settings),
+                           Gui::unlovedHeartColour(*p->m_settings)});
         }
         if(index.row() == p->m_ratingRow) {
             const bool mixedValues = index.data(StarDelegate::Role::MixedValues).toBool();
             return QVariant::fromValue(StarRating{
                 mixedValues ? 0.0F : (item->valueChanged() ? item->changedValue().toFloat() : item->value().toFloat()),
-                5, p->m_settings->value<Settings::Gui::StarRatingSize>()});
+                5, p->m_settings->value<Settings::Gui::StarRatingSize>(), Gui::ratingStarColours(*p->m_settings),
+                Gui::unratedStarColour(*p->m_settings)});
         }
 
         if(role == Qt::EditRole) {

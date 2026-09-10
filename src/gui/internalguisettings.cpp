@@ -137,6 +137,14 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                                                      u"Interface/RatingEmptyStarSymbol"_s);
     m_settings->createSetting<SeekBarMouseFocus>(false, u"Interface/SeekBarMouseFocus"_s);
     m_settings->createSetting<LoveHeartSize>(15, u"Interface/LoveHeartSize"_s);
+    m_settings->createSetting<LoveHeartColour>(QVariant{}, u"Interface/LoveHeartColour"_s);
+    m_settings->createSetting<RatingOneStarColour>(QVariant{}, u"Interface/RatingOneStarColour"_s);
+    m_settings->createSetting<RatingTwoStarColour>(QVariant{}, u"Interface/RatingTwoStarColour"_s);
+    m_settings->createSetting<RatingThreeStarColour>(QVariant{}, u"Interface/RatingThreeStarColour"_s);
+    m_settings->createSetting<RatingFourStarColour>(QVariant{}, u"Interface/RatingFourStarColour"_s);
+    m_settings->createSetting<RatingFiveStarColour>(QVariant{}, u"Interface/RatingFiveStarColour"_s);
+    m_settings->createSetting<UnlovedHeartColour>(QVariant{}, u"Interface/UnlovedHeartColour"_s);
+    m_settings->createSetting<UnratedStarColour>(QVariant{}, u"Interface/UnratedStarColour"_s);
 
     m_settings->createSetting<Internal::EditingMenuLevels>(2, u"Interface/EditingMenuLevels"_s);
     m_settings->createSetting<Internal::PlaylistAltColours>(true, u"PlaylistWidget/AlternatingColours"_s);

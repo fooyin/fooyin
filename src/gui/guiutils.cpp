@@ -289,6 +289,32 @@ RatingStarSymbols ratingStarSymbols(const SettingsManager& settings)
     };
 }
 
+QColor loveHeartColour(const SettingsManager& settings)
+{
+    return settings.value<Settings::Gui::LoveHeartColour>().value<QColor>();
+}
+
+QColor unlovedHeartColour(const SettingsManager& settings)
+{
+    return settings.value<Settings::Gui::UnlovedHeartColour>().value<QColor>();
+}
+
+QColor unratedStarColour(const SettingsManager& settings)
+{
+    return settings.value<Settings::Gui::UnratedStarColour>().value<QColor>();
+}
+
+RatingStarColours ratingStarColours(const SettingsManager& settings)
+{
+    return {
+        settings.value<Settings::Gui::RatingOneStarColour>().value<QColor>(),
+        settings.value<Settings::Gui::RatingTwoStarColour>().value<QColor>(),
+        settings.value<Settings::Gui::RatingThreeStarColour>().value<QColor>(),
+        settings.value<Settings::Gui::RatingFourStarColour>().value<QColor>(),
+        settings.value<Settings::Gui::RatingFiveStarColour>().value<QColor>(),
+    };
+}
+
 QMap<PaletteKey, QColor> coloursFromPalette()
 {
     return coloursFromPalette(QApplication::palette());

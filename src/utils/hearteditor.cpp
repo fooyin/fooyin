@@ -34,21 +34,30 @@ struct HeartBrushes
     QBrush faded;
 };
 
-[[nodiscard]] HeartBrushes getHeartBrushes(const QPalette& palette, HeartValue::EditMode mode, bool selected)
+[[nodiscard]] HeartBrushes getHeartBrushes(const QPalette& palette, HeartValue::EditMode mode, bool selected,
+                                           const QColor& lovedColour, const QColor& unlovedColour)
 {
     QBrush filled;
 
-    if(mode == HeartValue::EditMode::Editable) {
+    if(lovedColour.isValid()) {
+        filled = lovedColour;
+    }
+    else if(mode == HeartValue::EditMode::Editable) {
         filled = selected ? palette.highlightedText() : palette.highlight();
     }
     else {
         filled = selected ? palette.highlightedText() : palette.text();
     }
 
-    QBrush faded{filled};
-    QColor fadedColour{filled.color()};
-    fadedColour.setAlphaF(fadedColour.alphaF() * 0.2);
-    faded.setColor(fadedColour);
+    QBrush faded;
+    if(unlovedColour.isValid()) {
+        faded = unlovedColour;
+    }
+    else {
+        QColor fadedColour{filled.color()};
+        fadedColour.setAlphaF(fadedColour.alphaF() * 0.2);
+        faded = fadedColour;
+    }
 
     return {.filled = filled, .faded = faded};
 }
@@ -63,8 +72,18 @@ HeartValue::HeartValue(bool loved)
 { }
 
 HeartValue::HeartValue(bool loved, int scale)
+    : HeartValue{loved, scale, {}}
+{ }
+
+HeartValue::HeartValue(bool loved, int scale, const QColor& colour)
+    : HeartValue{loved, scale, colour, {}}
+{ }
+
+HeartValue::HeartValue(bool loved, int scale, const QColor& lovedColour, const QColor& unlovedColour)
     : m_loved{loved}
     , m_scale{scale}
+    , m_lovedColour{lovedColour}
+    , m_unlovedColour{unlovedColour}
 {
     m_heart.moveTo(0.5, 1.0);
     m_heart.lineTo(0.11, 0.56);
@@ -98,7 +117,7 @@ void HeartValue::setScale(int scale)
 void HeartValue::paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode,
                        Qt::Alignment alignment, bool selected) const
 {
-    const auto brushes     = getHeartBrushes(palette, mode, selected);
+    const auto brushes     = getHeartBrushes(palette, mode, selected, m_lovedColour, m_unlovedColour);
     const qreal dpr        = painter->device()->devicePixelRatioF();
     const QString cacheKey = u"HeartValue:%1|%2|%3|%4|%5"_s.arg(m_loved)
                                  .arg(m_scale)

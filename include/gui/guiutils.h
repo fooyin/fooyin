@@ -25,6 +25,7 @@
 #include <core/ratingsymbols.h>
 #include <core/track.h>
 #include <gui/theme/fytheme.h>
+#include <utils/starrating.h>
 
 #include <QByteArray>
 #include <QModelIndexList>
@@ -50,6 +51,10 @@ FYGUI_EXPORT TrackIds sortTrackIdsForLibraryViewerPlaylist(MusicLibrary* library
 FYGUI_EXPORT QByteArray queueTracksToMimeData(const QueueTracks& tracks);
 FYGUI_EXPORT QueueTracks queueTracksFromMimeData(MusicLibrary* library, QByteArray data);
 FYGUI_EXPORT RatingStarSymbols ratingStarSymbols(const SettingsManager& settings);
+FYGUI_EXPORT QColor loveHeartColour(const SettingsManager& settings);
+FYGUI_EXPORT QColor unlovedHeartColour(const SettingsManager& settings);
+FYGUI_EXPORT QColor unratedStarColour(const SettingsManager& settings);
+FYGUI_EXPORT RatingStarColours ratingStarColours(const SettingsManager& settings);
 
 FYGUI_EXPORT QMap<PaletteKey, QColor> coloursFromPalette();
 FYGUI_EXPORT QMap<PaletteKey, QColor> coloursFromStylePalette();

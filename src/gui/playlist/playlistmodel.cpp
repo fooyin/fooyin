@@ -723,6 +723,10 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     , m_pixmapPaddingTop{settings->value<Settings::Gui::Internal::PlaylistImagePaddingTop>()}
     , m_starRatingSize{settings->value<Settings::Gui::StarRatingSize>()}
     , m_loveHeartSize{settings->value<Settings::Gui::LoveHeartSize>()}
+    , m_ratingStarColours{Gui::ratingStarColours(*settings)}
+    , m_unratedStarColour{Gui::unratedStarColour(*settings)}
+    , m_loveHeartColour{Gui::loveHeartColour(*settings)}
+    , m_unlovedHeartColour{Gui::unlovedHeartColour(*settings)}
     , m_singleColumnHasPositionDependency{false}
     , m_singleColumnHasBitrateDependency{false}
     , m_singleColumnHasPlaybackStateDependency{false}
@@ -748,6 +752,27 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     });
     m_settings->subscribe<Settings::Gui::StarRatingSize>(this, [this](int size) {
         m_starRatingSize = size;
+        invalidateData();
+    });
+    const auto updateRatingColours = [this](const QVariant&) {
+        m_ratingStarColours = Gui::ratingStarColours(*m_settings);
+        invalidateData();
+    };
+    m_settings->subscribe<Settings::Gui::RatingOneStarColour>(this, updateRatingColours);
+    m_settings->subscribe<Settings::Gui::RatingTwoStarColour>(this, updateRatingColours);
+    m_settings->subscribe<Settings::Gui::RatingThreeStarColour>(this, updateRatingColours);
+    m_settings->subscribe<Settings::Gui::RatingFourStarColour>(this, updateRatingColours);
+    m_settings->subscribe<Settings::Gui::RatingFiveStarColour>(this, updateRatingColours);
+    m_settings->subscribe<Settings::Gui::UnratedStarColour>(this, [this](const QVariant& colour) {
+        m_unratedStarColour = colour.value<QColor>();
+        invalidateData();
+    });
+    m_settings->subscribe<Settings::Gui::LoveHeartColour>(this, [this](const QVariant& colour) {
+        m_loveHeartColour = colour.value<QColor>();
+        invalidateData();
+    });
+    m_settings->subscribe<Settings::Gui::UnlovedHeartColour>(this, [this](const QVariant& colour) {
+        m_unlovedHeartColour = colour.value<QColor>();
         invalidateData();
     });
     auto refreshRatingStars = [this](const QString&) {
@@ -2257,10 +2282,12 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
 
         const QString writeField = normaliseWriteField(playlistColumn.writeField);
         if(isLoveWriteField(writeField)) {
-            return QVariant::fromValue(HeartValue{track.isLoved(), m_loveHeartSize});
+            return QVariant::fromValue(
+                HeartValue{track.isLoved(), m_loveHeartSize, m_loveHeartColour, m_unlovedHeartColour});
         }
         if(isRatingWriteField(writeField)) {
-            return QVariant::fromValue(StarRating{track.rating(), 5, m_starRatingSize});
+            return QVariant::fromValue(
+                StarRating{track.rating(), 5, m_starRatingSize, m_ratingStarColours, m_unratedStarColour});
         }
 
         return editStringForTrack(track, writeField);
@@ -2268,10 +2295,11 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
 
     if(role == Qt::DisplayRole && !m_columns.empty()) {
         if(m_columns.at(column).field == QLatin1StringView{Constants::RatingEditor}) {
-            return StarRating{track.rating(), 5, m_starRatingSize};
+            return StarRating{track.rating(), 5, m_starRatingSize, m_ratingStarColours, m_unratedStarColour};
         }
         if(m_columns.at(column).field == QLatin1StringView{Constants::LoveEditor}) {
-            return QVariant::fromValue(HeartValue{track.isLoved(), m_loveHeartSize});
+            return QVariant::fromValue(
+                HeartValue{track.isLoved(), m_loveHeartSize, m_loveHeartColour, m_unlovedHeartColour});
         }
     }
 

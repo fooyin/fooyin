@@ -28,10 +28,12 @@
 #include <core/playlist/playlist.h>
 #include <utils/treemodel.h>
 
+#include <QColor>
 #include <QFont>
 #include <QPixmap>
 #include <QThread>
 
+#include <array>
 #include <expected>
 #include <unordered_map>
 
@@ -352,6 +354,10 @@ private:
     int m_pixmapPaddingTop;
     int m_starRatingSize;
     int m_loveHeartSize;
+    std::array<QColor, 5> m_ratingStarColours;
+    QColor m_unratedStarColour;
+    QColor m_loveHeartColour;
+    QColor m_unlovedHeartColour;
 
     std::set<int> m_positionColumns;
     std::set<int> m_bitrateColumns;
