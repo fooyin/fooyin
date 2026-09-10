@@ -98,7 +98,7 @@ public:
     void setWhitespaceMode(WhitespaceMode mode);
 
 private:
-    Token scanNext();
+    Token scanNext(bool insideQuote);
     [[nodiscard]] Token makeToken(TokenType type) const;
     Token literal();
     Token keyword();

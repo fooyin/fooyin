@@ -127,13 +127,26 @@ void ScriptScanner::setup(const QString& input)
     m_currentTokenIndex = 0;
     m_lastToken         = nullptr;
 
+    bool insideQuote{false};
+    bool escapeNext{false};
+
     while(!isAtEnd()) {
-        const Token token = scanNext();
+        const Token token = scanNext(insideQuote);
         if(m_lastToken && m_lastToken->type == TokLiteral && token.type == TokLiteral) {
             m_lastToken->value = QStringView{m_lastToken->value.data(), m_lastToken->value.size() + token.value.size()};
         }
         else {
             m_lastToken = &m_tokens.emplace_back(token);
+        }
+
+        if(escapeNext) {
+            escapeNext = false;
+        }
+        else if(insideQuote && token.type == TokEscape) {
+            escapeNext = true;
+        }
+        else if(token.type == TokQuote) {
+            insideQuote = !insideQuote;
         }
     }
 }
@@ -163,7 +176,7 @@ void ScriptScanner::setWhitespaceMode(WhitespaceMode mode)
     m_whitespaceMode = mode;
 }
 
-ScriptScanner::Token ScriptScanner::scanNext()
+ScriptScanner::Token ScriptScanner::scanNext(bool insideQuote)
 {
     m_start = m_current;
 
@@ -182,7 +195,7 @@ ScriptScanner::Token ScriptScanner::scanNext()
         return false;
     };
 
-    while(shouldSkipWhitespace(c)) {
+    while(!insideQuote && shouldSkipWhitespace(c)) {
         m_start = m_current;
         c       = advance();
     }

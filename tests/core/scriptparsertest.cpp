@@ -1223,6 +1223,16 @@ TEST_F(ScriptParserTest, PathQueriesNormaliseSeparators)
     EXPECT_EQ(1, m_filter.filter(uR"(filepath IS "C:/Music/Second Album/song.flac")"_s, tracks).size());
 }
 
+TEST_F(ScriptParserTest, QueryQuotedLiteralsPreserveWhitespace)
+{
+    Track track{u"C:/Music/2025 - blossom/song.flac"_s};
+    track.setComment(uR"(say " hello + goodbye)"_s);
+    const TrackList tracks{track};
+
+    EXPECT_EQ(1, m_filter.filter(uR"(path HAS "C:/Music/2025 - blossom")"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(uR"(comment HAS "say \" hello + goodbye")"_s, tracks).size());
+}
+
 TEST_F(ScriptParserTest, QueryLongLogicalChains)
 {
     const QStringList paths{u"(Variants)"_s, u"(Ban)"_s, u"[Mixed]"_s, u"_broken"_s, u"__DEFAULT"_s,
