@@ -97,9 +97,14 @@ QString FontButton::labelText() const
 
 void FontButton::setButtonFont(const QFont& font)
 {
-    m_font = font;
+    const bool changed = std::exchange(m_font, font) != font;
+
     m_button->setFont(m_font);
     updateText();
+
+    if(changed) {
+        Q_EMIT fontUpdated(font);
+    }
 }
 
 void FontButton::setButtonFont(const QString& font)
