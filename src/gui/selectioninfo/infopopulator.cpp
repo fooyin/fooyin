@@ -27,6 +27,8 @@
 #include <utils/stringutils.h>
 #include <utils/utils.h>
 
+#include <QDir>
+
 #include <set>
 #include <tuple>
 
@@ -204,19 +206,21 @@ void InfoPopulatorPrivate::addTrackLocation(int total, const Track& track)
     const bool isRemote    = track.isRemote();
     const bool isVirtual   = track.isVirtual();
     const bool isLocalFile = !isRemote && !isVirtual;
+    const QString path     = isLocalFile ? QDir::toNativeSeparators(track.path()) : track.path();
+    const QString filepath = isLocalFile ? QDir::toNativeSeparators(track.prettyFilepath()) : track.prettyFilepath();
 
     checkAddEntryNode(u"FileName"_s, total > 1 ? InfoPopulator::tr("File Names") : InfoPopulator::tr("File Name"),
                       ItemParent::Location, track.filename());
     if(!isRemote) {
         checkAddEntryNode(u"FolderName"_s,
                           total > 1 ? InfoPopulator::tr("Folder Names") : InfoPopulator::tr("Folder Name"),
-                          ItemParent::Location, track.path());
+                          ItemParent::Location, path);
     }
 
     if(total == 1) {
         checkAddEntryNode(isRemote ? u"Url"_s : u"FilePath"_s,
                           isRemote ? InfoPopulator::tr("URL") : InfoPopulator::tr("File Path"), ItemParent::Location,
-                          track.prettyFilepath());
+                          filepath);
         if(track.subsong() > 0 || (isVirtual && track.subsong() >= 0)) {
             const int displayedSubsong = track.subsong() + (isVirtual ? 1 : 0);
             checkAddEntryNode(u"SubsongIndex"_s, InfoPopulator::tr("Subsong Index"), ItemParent::Location,

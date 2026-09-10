@@ -1212,6 +1212,17 @@ TEST_F(ScriptParserTest, QueryTest)
     EXPECT_EQ(2, m_filter.filter(query, tracks).size());
 }
 
+TEST_F(ScriptParserTest, PathQueriesNormaliseSeparators)
+{
+    const Track canonicalPathTrack{u"C:/Music/First Album/song.flac"_s};
+    const Track nativePathTrack{QDir::toNativeSeparators(u"C:/Music/Second Album/song.flac"_s)};
+    const TrackList tracks{canonicalPathTrack, nativePathTrack};
+
+    const QString nativeFolder = QDir::toNativeSeparators(u"C:/Music/First Album"_s);
+    EXPECT_EQ(1, m_filter.filter(uR"(path HAS "%1")"_s.arg(nativeFolder), tracks).size());
+    EXPECT_EQ(1, m_filter.filter(uR"(filepath IS "C:/Music/Second Album/song.flac")"_s, tracks).size());
+}
+
 TEST_F(ScriptParserTest, QueryLongLogicalChains)
 {
     const QStringList paths{u"(Variants)"_s, u"(Ban)"_s, u"[Mixed]"_s, u"_broken"_s, u"__DEFAULT"_s,

@@ -27,6 +27,7 @@
 #include <QBuffer>
 #include <QDir>
 #include <QFile>
+#include <QTemporaryDir>
 
 namespace Fooyin::Testing {
 using namespace Qt::StringLiterals;
@@ -84,6 +85,32 @@ TEST_F(M3uParserTest, ExtendedM3u)
         EXPECT_EQ(u"Alice in Chains", tracks.at(0).artist());
         EXPECT_EQ(u"Nutshell", tracks.at(1).title());
     }
+}
+
+TEST_F(M3uParserTest, NormalisesNativeSeparators)
+{
+    QTemporaryDir tempDir;
+    ASSERT_TRUE(tempDir.isValid());
+
+    const QString trackPath = tempDir.filePath(u"song.flac"_s);
+    QFile trackFile{trackPath};
+    ASSERT_TRUE(trackFile.open(QIODevice::WriteOnly));
+    trackFile.close();
+
+    QByteArray playlistData = QDir::toNativeSeparators(trackPath).toUtf8() + '\n';
+    QBuffer buffer{&playlistData};
+    ASSERT_TRUE(buffer.open(QIODevice::ReadOnly | QIODevice::Text));
+
+    PlaylistParser::ReadPlaylistEntry readEntry;
+    readEntry.readTrack = [](const Track& track) {
+        return track;
+    };
+
+    const auto tracks
+        = m_parser->readPlaylist(&buffer, tempDir.filePath(u"test.m3u"_s), QDir{tempDir.path()}, readEntry, false);
+
+    ASSERT_EQ(1, tracks.size());
+    EXPECT_EQ(QDir::fromNativeSeparators(trackPath), tracks.front().filepath());
 }
 
 TEST_F(M3uParserTest, RemoteEntriesStayRemote)

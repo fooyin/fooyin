@@ -118,11 +118,12 @@ QString resolvePlaylistEntryPath(const QString& playlistPath, const QString& ent
         }
     }
 
-    if(dir.exists() && !QDir::isAbsolutePath(entry)) {
-        return QDir::cleanPath(dir.absoluteFilePath(entry));
+    const QString localEntry = QDir::fromNativeSeparators(entry);
+    if(dir.exists() && !QDir::isAbsolutePath(localEntry)) {
+        return QDir::cleanPath(dir.absoluteFilePath(localEntry));
     }
 
-    return entry;
+    return localEntry;
 }
 
 TrackList readCuePlaylist(const QString& path, const PlaylistParser::ReadPlaylistEntry& readEntry, bool skipNotFound)

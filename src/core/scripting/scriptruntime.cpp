@@ -26,6 +26,8 @@
 #include <utils/stringutils.h>
 #include <utils/utils.h>
 
+#include <QDir>
+
 using namespace Qt::StringLiterals;
 
 using TokenType = Fooyin::ScriptScanner::TokenType;
@@ -181,6 +183,25 @@ ScriptResult evalLiteral(const BoundExpression& exp)
     result.value = std::get<QString>(exp.value);
     result.cond  = true;
     return result;
+}
+
+bool isPathVariable(VariableKind kind)
+{
+    switch(kind) {
+        case VariableKind::FilePath:
+        case VariableKind::Directory:
+        case VariableKind::Path:
+        case VariableKind::LibraryPath:
+        case VariableKind::RelativePath:
+            return true;
+        default:
+            return false;
+    }
+}
+
+QString normaliseQueryValue(const QString& value, VariableKind fieldKind)
+{
+    return isPathVariable(fieldKind) ? QDir::fromNativeSeparators(value) : value;
 }
 
 Expression normaliseQueryField(Expression field)
@@ -1433,7 +1454,8 @@ ScriptResult ScriptRuntime::evalEquals(const BoundExpression& exp, const auto& t
         return {};
     }
 
-    const ScriptResult first = evalExpression(args.at(0), tracks);
+    const BoundExpression& field = args.at(0);
+    const ScriptResult first     = evalExpression(field, tracks);
     if(!first.cond) {
         return {};
     }
@@ -1443,8 +1465,11 @@ ScriptResult ScriptRuntime::evalEquals(const BoundExpression& exp, const auto& t
         return {};
     }
 
+    const QString firstValue  = normaliseQueryValue(first.value, field.variableKind);
+    const QString secondValue = normaliseQueryValue(second.value, field.variableKind);
+
     ScriptResult result;
-    if(first.value.compare(second.value, Qt::CaseInsensitive) == 0) {
+    if(firstValue.compare(secondValue, Qt::CaseInsensitive) == 0) {
         result.cond = true;
     }
 
@@ -1458,7 +1483,8 @@ ScriptResult ScriptRuntime::evalContains(const BoundExpression& exp, const auto&
         return {};
     }
 
-    const ScriptResult first = evalExpression(args.at(0), tracks);
+    const BoundExpression& field = args.at(0);
+    const ScriptResult first     = evalExpression(field, tracks);
     if(!first.cond) {
         return {};
     }
@@ -1468,8 +1494,11 @@ ScriptResult ScriptRuntime::evalContains(const BoundExpression& exp, const auto&
         return {};
     }
 
+    const QString firstValue  = normaliseQueryValue(first.value, field.variableKind);
+    const QString secondValue = normaliseQueryValue(second.value, field.variableKind);
+
     ScriptResult result;
-    result.cond = Utils::foldForSearch(first.value).contains(Utils::foldForSearch(second.value));
+    result.cond = Utils::foldForSearch(firstValue).contains(Utils::foldForSearch(secondValue));
 
     return result;
 }
@@ -1500,7 +1529,9 @@ ScriptResult ScriptRuntime::evalContains(const BoundExpression& exp, const Track
         result.cond = matchSearch(track, second.value, value.type == Expr::QuotedLiteral);
     }
     else {
-        result.cond = Utils::foldForSearch(first.value).contains(Utils::foldForSearch(second.value));
+        const QString firstValue  = normaliseQueryValue(first.value, field.variableKind);
+        const QString secondValue = normaliseQueryValue(second.value, field.variableKind);
+        result.cond               = Utils::foldForSearch(firstValue).contains(Utils::foldForSearch(secondValue));
     }
 
     return result;

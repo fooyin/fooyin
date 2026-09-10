@@ -26,6 +26,7 @@
 #include <QBuffer>
 #include <QDir>
 #include <QFile>
+#include <QTemporaryDir>
 
 #include <algorithm>
 #include <memory>
@@ -126,6 +127,32 @@ TEST_F(PlsParserTest, RelativeRemoteEntriesResolveAgainstPlaylistUrl)
     ASSERT_EQ(2, tracks.size());
     EXPECT_EQ(u"https://example.com/radio/listen/streams/live.mp3"_s, tracks.at(0).filepath());
     EXPECT_EQ(u"https://example.com/radio/backup/live.ogg"_s, tracks.at(1).filepath());
+}
+
+TEST_F(PlsParserTest, NormalisesNativeSeparators)
+{
+    QTemporaryDir tempDir;
+    ASSERT_TRUE(tempDir.isValid());
+
+    const QString trackPath = tempDir.filePath(u"song.flac"_s);
+    QFile trackFile{trackPath};
+    ASSERT_TRUE(trackFile.open(QIODevice::WriteOnly));
+    trackFile.close();
+
+    QByteArray playlistData = "[playlist]\nFile1=" + QDir::toNativeSeparators(trackPath).toUtf8() + '\n';
+    QBuffer buffer{&playlistData};
+    ASSERT_TRUE(buffer.open(QIODevice::ReadOnly | QIODevice::Text));
+
+    PlaylistParser::ReadPlaylistEntry readEntry;
+    readEntry.readTrack = [](const Track& track) {
+        return track;
+    };
+
+    const auto tracks
+        = m_parser->readPlaylist(&buffer, tempDir.filePath(u"test.pls"_s), QDir{tempDir.path()}, readEntry, false);
+
+    ASSERT_EQ(1, tracks.size());
+    EXPECT_EQ(QDir::fromNativeSeparators(trackPath), tracks.front().filepath());
 }
 
 TEST_F(PlsParserTest, ParsesMixedRelativeFixtureAgainstRemoteBase)
