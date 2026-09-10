@@ -32,21 +32,30 @@
 #include <gui/scripting/richtextutils.h>
 #include <gui/scripting/scriptformatter.h>
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgets/colourbutton.h>
+#include <gui/widgets/fontbutton.h>
 #include <utils/utils.h>
 
 #include <QApplication>
 #include <QBasicTimer>
+#include <QCheckBox>
 #include <QCompleter>
 #include <QDesktopServices>
 #include <QDir>
 #include <QFocusEvent>
+#include <QFontDatabase>
 #include <QGridLayout>
+#include <QGroupBox>
 #include <QHeaderView>
 #include <QItemSelection>
 #include <QLineEdit>
+#include <QPainter>
 #include <QPalette>
+#include <QPlainTextEdit>
+#include <QPushButton>
 #include <QRegularExpression>
 #include <QScrollBar>
+#include <QSignalBlocker>
 #include <QSortFilterProxyModel>
 #include <QSplitter>
 #include <QStandardItemModel>
@@ -71,7 +80,19 @@ constexpr auto TextChangeInterval = 1500ms;
 constexpr auto TextChangeInterval = 1500;
 #endif
 
-constexpr auto DialogState = "Interface/ScriptEditorState";
+constexpr auto DialogState             = "Interface/ScriptEditorState";
+constexpr auto VariableColourKey       = "Interface/ScriptEditor/VariableColour";
+constexpr auto FunctionColourKey       = "Interface/ScriptEditor/FunctionColour";
+constexpr auto ConditionalColourKey    = "Interface/ScriptEditor/ConditionalColour";
+constexpr auto OperatorColourKey       = "Interface/ScriptEditor/OperatorColour";
+constexpr auto QuotedTextColourKey     = "Interface/ScriptEditor/QuotedTextColour";
+constexpr auto FontKey                 = "Interface/ScriptEditor/Font";
+constexpr auto WordWrapKey             = "Interface/ScriptEditor/WordWrap";
+constexpr auto AutocompleteKey         = "Interface/ScriptEditor/Autocomplete";
+constexpr auto ShowWhitespaceKey       = "Interface/ScriptEditor/ShowWhitespace";
+constexpr auto HighlightBracketsKey    = "Interface/ScriptEditor/HighlightBrackets";
+constexpr auto HighlightCurrentLineKey = "Interface/ScriptEditor/HighlightCurrentLine";
+constexpr auto ShowLineNumbersKey      = "Interface/ScriptEditor/ShowLineNumbers";
 
 namespace Fooyin {
 enum ScriptReferenceRole : int
@@ -120,16 +141,33 @@ public:
     }
 };
 
-class ScriptEditorTextEdit : public QTextEdit
+class ScriptEditorTextEdit;
+
+class LineNumberArea : public QWidget
+{
+public:
+    explicit LineNumberArea(ScriptEditorTextEdit* editor);
+
+    [[nodiscard]] QSize sizeHint() const override;
+
+protected:
+    void paintEvent(QPaintEvent* event) override;
+
+private:
+    ScriptEditorTextEdit* m_editor;
+};
+
+class ScriptEditorTextEdit : public QPlainTextEdit
 {
     Q_OBJECT
 
 public:
     explicit ScriptEditorTextEdit(QWidget* parent = nullptr)
-        : QTextEdit{parent}
+        : QPlainTextEdit{parent}
         , m_completer{new ScriptCompleter(this)}
         , m_variableModel{new QStandardItemModel(this)}
         , m_functionModel{new QStandardItemModel(this)}
+        , m_lineNumberArea{new LineNumberArea(this)}
     {
         populateCompletionModels();
 
@@ -140,6 +178,86 @@ public:
 
         QObject::connect(m_completer, qOverload<const QModelIndex&>(&QCompleter::activated), this,
                          &ScriptEditorTextEdit::insertCompletion);
+        QObject::connect(this, &QPlainTextEdit::blockCountChanged, this,
+                         &ScriptEditorTextEdit::updateLineNumberAreaWidth);
+        QObject::connect(this, &QPlainTextEdit::updateRequest, this, &ScriptEditorTextEdit::updateLineNumberArea);
+        QObject::connect(this, &QPlainTextEdit::cursorPositionChanged, this,
+                         &ScriptEditorTextEdit::updateExtraSelections);
+
+        updateLineNumberAreaWidth();
+    }
+
+    void setAutocompleteEnabled(bool enabled)
+    {
+        m_autocompleteEnabled = enabled;
+        if(!enabled) {
+            m_completer->popup()->hide();
+        }
+    }
+
+    void setLineNumbersVisible(bool visible)
+    {
+        m_showLineNumbers = visible;
+        m_lineNumberArea->setVisible(visible);
+        updateLineNumberAreaWidth();
+    }
+
+    void setWhitespaceVisible(bool visible)
+    {
+        QTextOption option = document()->defaultTextOption();
+        option.setFlags(
+            visible ? option.flags() | QTextOption::ShowTabsAndSpaces | QTextOption::ShowLineAndParagraphSeparators
+                    : option.flags() & ~QTextOption::ShowTabsAndSpaces & ~QTextOption::ShowLineAndParagraphSeparators);
+        document()->setDefaultTextOption(option);
+    }
+
+    void setCurrentLineHighlighted(bool highlighted)
+    {
+        m_highlightCurrentLine = highlighted;
+        updateExtraSelections();
+    }
+
+    void setMatchingBracketsHighlighted(bool highlighted)
+    {
+        m_highlightMatchingBrackets = highlighted;
+        updateExtraSelections();
+    }
+
+    [[nodiscard]] int lineNumberAreaWidth() const
+    {
+        if(!m_showLineNumbers) {
+            return 0;
+        }
+
+        int digits{1};
+        for(int lines = std::max(1, blockCount()); lines >= 10; lines /= 10) {
+            ++digits;
+        }
+        return 8 + (fontMetrics().horizontalAdvance(u'9') * digits);
+    }
+
+    void paintLineNumbers(QPaintEvent* event)
+    {
+        QPainter painter{m_lineNumberArea};
+        painter.fillRect(event->rect(), palette().alternateBase());
+        painter.setPen(palette().placeholderText().color());
+
+        QTextBlock block = firstVisibleBlock();
+        int blockNumber  = block.blockNumber();
+        int top          = qRound(blockBoundingGeometry(block).translated(contentOffset()).top());
+        int bottom       = top + qRound(blockBoundingRect(block).height());
+
+        while(block.isValid() && top <= event->rect().bottom()) {
+            if(block.isVisible() && bottom >= event->rect().top()) {
+                painter.drawText(0, top, m_lineNumberArea->width() - 4, fontMetrics().height(), Qt::AlignRight,
+                                 QString::number(blockNumber + 1));
+            }
+
+            block  = block.next();
+            top    = bottom;
+            bottom = top + qRound(blockBoundingRect(block).height());
+            ++blockNumber;
+        }
     }
 
     void insertSnippet(const QString& insertText, int cursorOffset = 0,
@@ -185,14 +303,21 @@ protected:
             }
         }
 
-        QTextEdit::keyPressEvent(event);
+        QPlainTextEdit::keyPressEvent(event);
 
-        if(shouldUpdateCompletion(event)) {
+        if(m_autocompleteEnabled && shouldUpdateCompletion(event)) {
             updateCompletion();
         }
         else if(isCompletionDismissKey(event)) {
             m_completer->popup()->hide();
         }
+    }
+
+    void resizeEvent(QResizeEvent* event) override
+    {
+        QPlainTextEdit::resizeEvent(event);
+        const QRect contents = contentsRect();
+        m_lineNumberArea->setGeometry(QRect{contents.left(), contents.top(), lineNumberAreaWidth(), contents.height()});
     }
 
 private:
@@ -319,6 +444,96 @@ private:
         m_completer->complete(rect);
     }
 
+    void updateLineNumberAreaWidth()
+    {
+        setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
+    }
+
+    void updateLineNumberArea(const QRect& rect, int dy)
+    {
+        if(dy != 0) {
+            m_lineNumberArea->scroll(0, dy);
+        }
+        else {
+            m_lineNumberArea->update(0, rect.y(), m_lineNumberArea->width(), rect.height());
+        }
+
+        if(rect.contains(viewport()->rect())) {
+            updateLineNumberAreaWidth();
+        }
+    }
+
+    void updateExtraSelections()
+    {
+        QList<QTextEdit::ExtraSelection> selections;
+
+        if(m_highlightCurrentLine) {
+            QTextEdit::ExtraSelection selection;
+            QColor colour = palette().alternateBase().color();
+            colour.setAlpha(100);
+            selection.format.setBackground(colour);
+            selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+            selection.cursor = textCursor();
+            selection.cursor.clearSelection();
+            selections.push_back(selection);
+        }
+
+        if(m_highlightMatchingBrackets) {
+            appendMatchingBracketSelections(selections);
+        }
+
+        setExtraSelections(selections);
+    }
+
+    void appendMatchingBracketSelections(QList<QTextEdit::ExtraSelection>& selections) const
+    {
+        const QString text = toPlainText();
+        int position       = textCursor().position();
+        if(position >= text.size() || !QStringView{u"()[]"}.contains(text.at(position))) {
+            --position;
+        }
+        if(position < 0 || position >= text.size()) {
+            return;
+        }
+
+        const QChar bracket  = text.at(position);
+        const QString pairs  = u"()[]"_s;
+        const auto pairIndex = pairs.indexOf(bracket);
+        if(pairIndex < 0) {
+            return;
+        }
+
+        const bool opening = pairIndex % 2 == 0;
+        const QChar match  = pairs.at(opening ? pairIndex + 1 : pairIndex - 1);
+        const int step     = opening ? 1 : -1;
+
+        int depth{0};
+        int matchPosition{-1};
+        for(int i{position}; i >= 0 && i < text.size(); i += step) {
+            if(text.at(i) == bracket) {
+                ++depth;
+            }
+            else if(text.at(i) == match && --depth == 0) {
+                matchPosition = i;
+                break;
+            }
+        }
+        if(matchPosition < 0) {
+            return;
+        }
+
+        QColor colour = palette().highlight().color();
+        colour.setAlpha(120);
+        for(const int bracketPosition : {position, matchPosition}) {
+            QTextEdit::ExtraSelection selection;
+            selection.format.setBackground(colour);
+            selection.cursor = textCursor();
+            selection.cursor.setPosition(bracketPosition);
+            selection.cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor);
+            selections.push_back(selection);
+        }
+    }
+
     [[nodiscard]] CompletionContext completionContext() const
     {
         const QTextCursor cursor = textCursor();
@@ -413,9 +628,29 @@ private:
     ScriptCompleter* m_completer;
     QStandardItemModel* m_variableModel;
     QStandardItemModel* m_functionModel;
+    LineNumberArea* m_lineNumberArea;
     int m_completionStart{-1};
     int m_completionEnd{-1};
+    bool m_autocompleteEnabled{true};
+    bool m_showLineNumbers{true};
+    bool m_highlightCurrentLine{true};
+    bool m_highlightMatchingBrackets{true};
 };
+
+LineNumberArea::LineNumberArea(ScriptEditorTextEdit* editor)
+    : QWidget{editor}
+    , m_editor{editor}
+{ }
+
+QSize LineNumberArea::sizeHint() const
+{
+    return {m_editor->lineNumberAreaWidth(), 0};
+}
+
+void LineNumberArea::paintEvent(QPaintEvent* event)
+{
+    m_editor->paintLineNumbers(event);
+}
 
 class ScriptEditorEnvironment : public ScriptEnvironment
 {
@@ -484,6 +719,9 @@ public:
     void setupConnections();
     void setupPlaceholder();
     void setupReference();
+    void setupSettings();
+    void updateSyntaxColours();
+    void updateEditorSettings();
 
     void updateResults();
     void updateResults(const Expression& expression);
@@ -515,6 +753,19 @@ public:
     ScriptEditorTextEdit* m_editor;
     QTextBrowser* m_results;
     ScriptHighlighter m_highlighter;
+
+    FontButton* m_font{nullptr};
+    QCheckBox* m_wordWrap{nullptr};
+    QCheckBox* m_autocomplete{nullptr};
+    QCheckBox* m_showWhitespace{nullptr};
+    QCheckBox* m_highlightBrackets{nullptr};
+    QCheckBox* m_highlightCurrentLine{nullptr};
+    QCheckBox* m_showLineNumbers{nullptr};
+    ColourButton* m_variableColour{nullptr};
+    ColourButton* m_functionColour{nullptr};
+    ColourButton* m_conditionalColour{nullptr};
+    ColourButton* m_operatorColour{nullptr};
+    ColourButton* m_quotedTextColour{nullptr};
 
     QTreeView* m_expressionTree;
     QTabWidget* m_referenceTabs;
@@ -615,6 +866,7 @@ ScriptEditorPrivate::ScriptEditorPrivate(ScriptEditor* self, LibraryManager* lib
 
     m_sideTabs->addTab(structureTab, ScriptEditor::tr("Structure"));
     m_sideTabs->addTab(referenceTab, ScriptEditor::tr("Reference"));
+    setupSettings();
 
     m_mainSplitter->addWidget(m_documentSplitter);
     m_mainSplitter->addWidget(m_sideTabs);
@@ -635,7 +887,7 @@ ScriptEditorPrivate::~ScriptEditorPrivate()
 
 void ScriptEditorPrivate::setupConnections()
 {
-    QObject::connect(m_editor, &QTextEdit::textChanged, this, &ScriptEditorPrivate::textChanged);
+    QObject::connect(m_editor, &QPlainTextEdit::textChanged, this, &ScriptEditorPrivate::textChanged);
     QObject::connect(m_model, &QAbstractItemModel::modelReset, m_expressionTree, &QTreeView::expandAll);
     QObject::connect(m_expressionTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &ScriptEditorPrivate::selectionChanged);
@@ -798,6 +1050,200 @@ void ScriptEditorPrivate::setupReference()
     m_referenceTabs->addTab(m_commandReferenceTree, ScriptEditor::tr("Commands"));
 
     m_referenceSearch->setPlaceholderText(ScriptEditor::tr("Filter"));
+}
+
+void ScriptEditorPrivate::setupSettings()
+{
+    const auto defaults = ScriptHighlighter::defaultColours();
+
+    auto* settingsTab    = new QWidget(m_self);
+    auto* settingsLayout = new QGridLayout(settingsTab);
+    auto* editorGroup    = new QGroupBox(ScriptEditor::tr("Editor"), settingsTab);
+    auto* editorLayout   = new QGridLayout(editorGroup);
+    auto* coloursGroup   = new QGroupBox(ScriptEditor::tr("Syntax highlighting"), settingsTab);
+    auto* coloursLayout  = new QGridLayout(coloursGroup);
+
+    QFont defaultFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+    if(defaultFont.pointSize() <= 0) {
+        defaultFont.setPointSize(QApplication::font().pointSize());
+    }
+
+    m_font                 = new FontButton(ScriptEditor::tr("Font") + u":"_s, true, editorGroup);
+    m_wordWrap             = new QCheckBox(ScriptEditor::tr("Word wrap"), editorGroup);
+    m_autocomplete         = new QCheckBox(ScriptEditor::tr("Autocomplete"), editorGroup);
+    m_showWhitespace       = new QCheckBox(ScriptEditor::tr("Show whitespace"), editorGroup);
+    m_highlightBrackets    = new QCheckBox(ScriptEditor::tr("Highlight matching brackets"), editorGroup);
+    m_highlightCurrentLine = new QCheckBox(ScriptEditor::tr("Highlight current line"), editorGroup);
+    m_showLineNumbers      = new QCheckBox(ScriptEditor::tr("Show line numbers"), editorGroup);
+
+    const QVariant savedFont = m_settings.value(FontKey);
+    const bool customFont    = savedFont.canConvert<QFont>();
+    m_font->setButtonFont(customFont ? savedFont.value<QFont>() : defaultFont);
+    m_font->setChecked(customFont);
+
+    m_wordWrap->setChecked(m_settings.value(WordWrapKey, true).toBool());
+    m_autocomplete->setChecked(m_settings.value(AutocompleteKey, true).toBool());
+    m_showWhitespace->setChecked(m_settings.value(ShowWhitespaceKey, false).toBool());
+    m_highlightBrackets->setChecked(m_settings.value(HighlightBracketsKey, true).toBool());
+    m_highlightCurrentLine->setChecked(m_settings.value(HighlightCurrentLineKey, true).toBool());
+    m_showLineNumbers->setChecked(m_settings.value(ShowLineNumbersKey, false).toBool());
+
+    int row{0};
+    editorLayout->addWidget(m_font, row++, 0, 1, 2);
+    for(auto* option : {m_wordWrap, m_autocomplete, m_showWhitespace, m_highlightBrackets, m_highlightCurrentLine,
+                        m_showLineNumbers}) {
+        editorLayout->addWidget(option, row++, 0, 1, 2);
+    }
+    editorLayout->setColumnStretch(2, 1);
+
+    QObject::connect(m_font, &FontButton::fontUpdated, this, [this](const QFont& font) {
+        if(m_font->isChecked()) {
+            m_settings.setValue(FontKey, font);
+            updateEditorSettings();
+        }
+    });
+    QObject::connect(m_font, &FontButton::toggled, this, [this](bool checked) {
+        if(checked) {
+            m_settings.setValue(FontKey, m_font->buttonFont());
+        }
+        else {
+            m_settings.remove(FontKey);
+        }
+        updateEditorSettings();
+    });
+
+    const auto connectOption = [this](QCheckBox* option, const char* key) {
+        QObject::connect(option, &QCheckBox::clicked, this, [this, key](bool checked) {
+            m_settings.setValue(key, checked);
+            updateEditorSettings();
+        });
+    };
+
+    connectOption(m_wordWrap, WordWrapKey);
+    connectOption(m_autocomplete, AutocompleteKey);
+    connectOption(m_showWhitespace, ShowWhitespaceKey);
+    connectOption(m_highlightBrackets, HighlightBracketsKey);
+    connectOption(m_highlightCurrentLine, HighlightCurrentLineKey);
+    connectOption(m_showLineNumbers, ShowLineNumbersKey);
+
+    auto* resetEditor = new QPushButton(ScriptEditor::tr("Reset editor settings"), editorGroup);
+    editorLayout->addWidget(resetEditor, row++, 0, 1, 2, Qt::AlignLeft);
+    QObject::connect(resetEditor, &QPushButton::clicked, this, [this, defaultFont]() {
+        const QSignalBlocker fontBlocker{m_font};
+
+        m_font->setButtonFont(defaultFont);
+        m_font->setChecked(false);
+        m_wordWrap->setChecked(true);
+        m_autocomplete->setChecked(true);
+        m_showWhitespace->setChecked(false);
+        m_highlightBrackets->setChecked(true);
+        m_highlightCurrentLine->setChecked(true);
+        m_showLineNumbers->setChecked(false);
+
+        for(const char* key : {FontKey, WordWrapKey, AutocompleteKey, ShowWhitespaceKey, HighlightBracketsKey,
+                               HighlightCurrentLineKey, ShowLineNumbersKey}) {
+            m_settings.remove(key);
+        }
+        m_settings.remove(u"Interface/ScriptEditor/FontFamily"_s);
+        m_settings.remove(u"Interface/ScriptEditor/FontSize"_s);
+
+        updateEditorSettings();
+    });
+
+    const auto createColourButton
+        = [this, coloursGroup](const QString& label, const char* key, const QColor& defaultColour) {
+              const QVariant savedColour = m_settings.value(key);
+              const bool custom          = savedColour.canConvert<QColor>() && savedColour.value<QColor>().isValid();
+              auto* button = new ColourButton(label + u":"_s, custom ? savedColour.value<QColor>() : defaultColour,
+                                              true, coloursGroup);
+              button->setChecked(custom);
+
+              QObject::connect(button, &ColourButton::colourUpdated, this, [this, button, key](const QColor& colour) {
+                  if(button->isChecked()) {
+                      m_settings.setValue(key, colour);
+                      updateSyntaxColours();
+                  }
+              });
+              QObject::connect(button, &ColourButton::toggled, this, [this, button, key](bool checked) {
+                  if(checked) {
+                      m_settings.setValue(key, button->colour());
+                  }
+                  else {
+                      m_settings.remove(key);
+                  }
+                  updateSyntaxColours();
+              });
+
+              return button;
+          };
+
+    m_variableColour = createColourButton(ScriptEditor::tr("Variables"), VariableColourKey, defaults.variable);
+    m_functionColour = createColourButton(ScriptEditor::tr("Functions"), FunctionColourKey, defaults.function);
+    m_conditionalColour
+        = createColourButton(ScriptEditor::tr("Conditionals"), ConditionalColourKey, defaults.conditional);
+    m_operatorColour   = createColourButton(ScriptEditor::tr("Operators"), OperatorColourKey, defaults.operatorColour);
+    m_quotedTextColour = createColourButton(ScriptEditor::tr("Quoted text"), QuotedTextColourKey, defaults.quotedText);
+
+    ColourButton::alignLabels(
+        {m_variableColour, m_functionColour, m_conditionalColour, m_operatorColour, m_quotedTextColour});
+
+    row = 0;
+    for(auto* button :
+        {m_variableColour, m_functionColour, m_conditionalColour, m_operatorColour, m_quotedTextColour}) {
+        coloursLayout->addWidget(button, row++, 0);
+    }
+
+    auto* resetColours = new QPushButton(ScriptEditor::tr("Reset colours"), coloursGroup);
+    coloursLayout->addWidget(resetColours, row++, 0, Qt::AlignLeft);
+    coloursLayout->setRowStretch(row, 1);
+
+    QObject::connect(resetColours, &QPushButton::clicked, this, [this]() {
+        const auto resetButton = [this](ColourButton* button, const char* key, const QColor& colour) {
+            const QSignalBlocker blocker{button};
+            button->setChecked(false);
+            button->setColour(colour);
+            m_settings.remove(key);
+        };
+
+        const auto defaultColours = ScriptHighlighter::defaultColours();
+        resetButton(m_variableColour, VariableColourKey, defaultColours.variable);
+        resetButton(m_functionColour, FunctionColourKey, defaultColours.function);
+        resetButton(m_conditionalColour, ConditionalColourKey, defaultColours.conditional);
+        resetButton(m_operatorColour, OperatorColourKey, defaultColours.operatorColour);
+        resetButton(m_quotedTextColour, QuotedTextColourKey, defaultColours.quotedText);
+        updateSyntaxColours();
+    });
+
+    settingsLayout->addWidget(editorGroup, 0, 0);
+    settingsLayout->addWidget(coloursGroup, 1, 0);
+    settingsLayout->setRowStretch(2, 1);
+    m_sideTabs->addTab(settingsTab, ScriptEditor::tr("Settings"));
+
+    updateSyntaxColours();
+    updateEditorSettings();
+}
+
+void ScriptEditorPrivate::updateSyntaxColours()
+{
+    const auto defaults = ScriptHighlighter::defaultColours();
+    m_highlighter.setColours({
+        .variable       = m_variableColour->isChecked() ? m_variableColour->colour() : defaults.variable,
+        .function       = m_functionColour->isChecked() ? m_functionColour->colour() : defaults.function,
+        .conditional    = m_conditionalColour->isChecked() ? m_conditionalColour->colour() : defaults.conditional,
+        .operatorColour = m_operatorColour->isChecked() ? m_operatorColour->colour() : defaults.operatorColour,
+        .quotedText     = m_quotedTextColour->isChecked() ? m_quotedTextColour->colour() : defaults.quotedText,
+    });
+}
+
+void ScriptEditorPrivate::updateEditorSettings()
+{
+    m_editor->setFont(m_font->buttonFont());
+    m_editor->setLineWrapMode(m_wordWrap->isChecked() ? QPlainTextEdit::WidgetWidth : QPlainTextEdit::NoWrap);
+    m_editor->setAutocompleteEnabled(m_autocomplete->isChecked());
+    m_editor->setWhitespaceVisible(m_showWhitespace->isChecked());
+    m_editor->setMatchingBracketsHighlighted(m_highlightBrackets->isChecked());
+    m_editor->setCurrentLineHighlighted(m_highlightCurrentLine->isChecked());
+    m_editor->setLineNumbersVisible(m_showLineNumbers->isChecked());
 }
 
 void ScriptEditorPrivate::updateResults()

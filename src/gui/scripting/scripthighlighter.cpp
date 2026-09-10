@@ -25,15 +25,30 @@ namespace Fooyin {
 ScriptHighlighter::ScriptHighlighter(QTextDocument* parent)
     : QSyntaxHighlighter{parent}
 {
+    setColours(defaultColours());
+}
+
+ScriptHighlightColours ScriptHighlighter::defaultColours()
+{
     const bool isDarkMode = Utils::isDarkMode();
 
-    // TODO: Make colours user configurable
-    m_varFormat.setForeground(isDarkMode ? QColor{0x87cefa} : QColor{0x4682b4});
-    m_functionFormat.setForeground(isDarkMode ? QColor{0xff8c00} : QColor{0x804000});
-    m_conditionalFormat.setForeground(isDarkMode ? QColor{0xffff00} : QColor{0x808000});
-    m_operatorFormat.setForeground(isDarkMode ? QColor{0xffffff} : QColor{0xa0a0a0});
-    m_commentFormat.setForeground(isDarkMode ? QColor{0x808080} : QColor{0x404040});
-    m_errorFormat.setBackground(QColor{0xff0000});
+    return {
+        .variable       = isDarkMode ? QColor{0x61afef} : QColor{0x0969da},
+        .function       = isDarkMode ? QColor{0xe5c07b} : QColor{0x8250df},
+        .conditional    = isDarkMode ? QColor{0xc678dd} : QColor{0x9a6700},
+        .operatorColour = isDarkMode ? QColor{0xabb2bf} : QColor{0x57606a},
+        .quotedText     = isDarkMode ? QColor{0x98c379} : QColor{0x1a7f37},
+    };
+}
+
+void ScriptHighlighter::setColours(const ScriptHighlightColours& colours)
+{
+    m_varFormat.setForeground(colours.variable);
+    m_functionFormat.setForeground(colours.function);
+    m_conditionalFormat.setForeground(colours.conditional);
+    m_operatorFormat.setForeground(colours.operatorColour);
+    m_commentFormat.setForeground(colours.quotedText);
+    rehighlight();
 }
 
 void ScriptHighlighter::highlightBlock(const QString& text)
