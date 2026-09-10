@@ -252,7 +252,7 @@ void TagEditorView::leaveEvent(QEvent* event)
 
 void TagEditorView::reopenEditor(const QModelIndex& index)
 {
-    if(m_editTrigger == NoEditTriggers || !index.isValid() || index.row() == m_ratingRow || index.row() != m_lovedRow
+    if(m_editTrigger == NoEditTriggers || !index.isValid() || index.row() == m_ratingRow || index.row() == m_lovedRow
        || (model()->flags(index) & Qt::ItemIsEditable) == 0) {
         return;
     }
