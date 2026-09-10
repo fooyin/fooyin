@@ -955,7 +955,8 @@ ScriptResult strcmp(const QStringList& vec)
         return {};
     }
 
-    return {.value = {}, .cond = QString::compare(vec.at(0), vec.at(1), Qt::CaseSensitive) == 0};
+    const bool equal = QString::compare(vec.at(0), vec.at(1), Qt::CaseSensitive) == 0;
+    return {.value = equal ? u"1"_s : QString{}, .cond = equal};
 }
 
 ScriptResult stricmp(const QStringList& vec)
@@ -964,7 +965,8 @@ ScriptResult stricmp(const QStringList& vec)
         return {};
     }
 
-    return {.value = {}, .cond = QString::compare(vec.at(0), vec.at(1), Qt::CaseInsensitive) == 0};
+    const bool equal = QString::compare(vec.at(0), vec.at(1), Qt::CaseInsensitive) == 0;
+    return {.value = equal ? u"1"_s : QString{}, .cond = equal};
 }
 
 ScriptResult regexTest(const QStringList& vec)

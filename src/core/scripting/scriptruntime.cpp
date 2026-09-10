@@ -1245,12 +1245,12 @@ ScriptResult ScriptRuntime::evalFunctionArg(const BoundExpression& exp, const au
     }
 
     ScriptResult result;
-    bool allPassed{true};
+    bool conditionPassed{false};
 
     for(const BoundExpression& subArg : arg) {
         const auto subExpr = evalExpression(subArg, tracks);
-        if(!subExpr.cond) {
-            allPassed = false;
+        if(subArg.type != Expr::Literal && subArg.type != Expr::QuotedLiteral) {
+            conditionPassed |= subExpr.cond;
         }
         if(subExpr.value.contains(QLatin1String{Constants::UnitSeparator})) {
             QStringList newResult;
@@ -1263,7 +1263,7 @@ ScriptResult ScriptRuntime::evalFunctionArg(const BoundExpression& exp, const au
             result.value = result.value + subExpr.value;
         }
     }
-    result.cond = allPassed;
+    result.cond = conditionPassed;
     return result;
 }
 
@@ -1276,35 +1276,25 @@ ScriptResult ScriptRuntime::evalConditional(const BoundExpression& exp, const au
 
     if(arg.size() == 1) {
         const BoundExpression& subArg = arg.front();
-        const ScriptResult subExpr    = evalExpression(subArg, tracks);
-
-        if(subArg.type != Expr::Literal && subArg.type != Expr::QuotedLiteral) {
-            if(!subExpr.cond || subExpr.value.isEmpty()) {
-                return {};
-            }
+        if(subArg.type == Expr::Literal || subArg.type == Expr::QuotedLiteral) {
+            return {};
         }
 
-        ScriptResult result;
-        result.value = subExpr.value;
-        result.cond  = true;
-        return result;
+        const ScriptResult subExpr = evalExpression(subArg, tracks);
+        return subExpr.cond ? subExpr : ScriptResult{};
     }
 
     ScriptResult result;
     QStringList exprResult;
-    result.cond = true;
+    bool hasCondition{false};
+    bool conditionPassed{false};
 
     for(const BoundExpression& subArg : arg) {
         const auto subExpr = evalExpression(subArg, tracks);
 
-        // Literals return false
         if(subArg.type != Expr::Literal && subArg.type != Expr::QuotedLiteral) {
-            if(!subExpr.cond || subExpr.value.isEmpty()) {
-                // No need to evaluate rest
-                result.value.clear();
-                result.cond = false;
-                return result;
-            }
+            hasCondition = true;
+            conditionPassed |= subExpr.cond;
         }
         if(subExpr.value.contains(QLatin1String{Constants::UnitSeparator})) {
             const QStringList evalList = evalStringList(subExpr, exprResult);
@@ -1328,6 +1318,12 @@ ScriptResult ScriptRuntime::evalConditional(const BoundExpression& exp, const au
     else if(exprResult.size() > 1) {
         result.value = exprResult.join(QLatin1String{Constants::UnitSeparator});
     }
+
+    result.cond = hasCondition && conditionPassed;
+    if(!result.cond) {
+        result.value.clear();
+    }
+
     return result;
 }
 

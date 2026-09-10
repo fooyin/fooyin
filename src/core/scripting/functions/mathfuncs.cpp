@@ -173,4 +173,18 @@ QString round(const QStringList& vec)
     }
     return str;
 }
+
+ScriptResult greater(const QStringList& vec)
+{
+    if(vec.size() != 2) {
+        return {};
+    }
+
+    bool firstOk{false};
+    bool secondOk{false};
+    const qlonglong first  = vec.at(0).toLongLong(&firstOk);
+    const qlonglong second = vec.at(1).toLongLong(&secondOk);
+
+    return {.value = {}, .cond = firstOk && secondOk && first > second};
+}
 } // namespace Fooyin::Scripting

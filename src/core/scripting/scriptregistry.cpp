@@ -691,6 +691,7 @@ void ScriptRegistry::addDefaultFunctions()
     registerFunction(u"mod"_s, makeScriptFunctionInvoker<Scripting::mod>());
     registerFunction(u"rand"_s, makeScriptFunctionInvoker<Scripting::rand>());
     registerFunction(u"round"_s, makeScriptFunctionInvoker<Scripting::round>());
+    registerFunction(u"greater"_s, makeScriptFunctionInvoker<Scripting::greater>());
 
     registerFunction(u"num"_s, makeScriptFunctionInvoker<Scripting::num>());
     registerFunction(u"hex"_s, makeScriptFunctionInvoker<Scripting::hex>());

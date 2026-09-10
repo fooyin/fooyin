@@ -435,6 +435,9 @@ TEST_F(ScriptParserTest, StringTest)
     EXPECT_EQ(u"winnerwinner",
               m_parser.evaluate(u"$if3(,$put(choice,winner),$put(choice,wrong),fallback)$get(choice)"_s));
     EXPECT_EQ(u"          X", m_parser.evaluate(u"$padright(,$mul($sub(3,1),5))X"_s));
+    EXPECT_EQ(u"1", m_parser.evaluate(u"$strcmp(cmp,cmp)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$strcmp(cmp,cMp)"_s));
+    EXPECT_EQ(u"1", m_parser.evaluate(u"$stricmp(cmp,cMp)"_s));
     EXPECT_EQ(u"true", m_parser.evaluate(u"$if($stricmp(cmp,cMp),true,false)"_s));
     EXPECT_EQ(u"false", m_parser.evaluate(u"$if($strcmp(cmp,cMp),true,false)"_s));
     EXPECT_EQ(u"", m_parser.evaluate(u"$split(a;b;c,;)"_s));
@@ -518,6 +521,10 @@ TEST_F(ScriptParserTest, TimeDateFunctionTest)
 
 TEST_F(ScriptParserTest, ConditionalTest)
 {
+    EXPECT_EQ(u"", m_parser.evaluate(u"[literal]"_s));
+    EXPECT_EQ(u"1shown", m_parser.evaluate(u"[$strcmp(a,a)shown]"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"[$strcmp(a,b)shown]"_s));
+    EXPECT_EQ(u"yes", m_parser.evaluate(u"$if([$strcmp(a,a)],yes,no)"_s));
     EXPECT_EQ(u"", m_parser.evaluate(u"$and(1,1)"_s));
     EXPECT_EQ(u"true", m_parser.evaluate(u"$if($and(1,$strcmp(a,a),$stricmp(B,b)),true,false)"_s));
     EXPECT_EQ(u"false", m_parser.evaluate(u"$if($and(1,,2),true,false)"_s));
@@ -574,6 +581,9 @@ TEST_F(ScriptParserTest, MetadataTest)
 
     track.setTrackNumber(u"7"_s);
     EXPECT_EQ(u"7", m_parser.evaluate(u"[%track%]"_s, track));
+    EXPECT_EQ(u"yes", m_parser.evaluate(u"$if(%disc%%track%,yes,no)"_s, track));
+    EXPECT_EQ(u"no", m_parser.evaluate(u"$if(%disc%literal,yes,no)"_s, track));
+    EXPECT_EQ(u"yes", m_parser.evaluate(u"$if($strcmp(a,a)literal,yes,no)"_s, track));
     EXPECT_EQ(u"07", m_parser.evaluate(u"$num(%track%,2)"_s, track));
     EXPECT_EQ(u"07", m_parser.evaluate(u"[$num(%track%,2)]"_s, track));
     EXPECT_EQ(u"07.  ", m_parser.evaluate(u"[$num(%track%,2).  ]"_s, track));
@@ -604,7 +614,7 @@ TEST_F(ScriptParserTest, MetadataTest)
     EXPECT_EQ(u"true", m_parser.evaluate(u"$if(%replaygain_track_gain%,true,false)"_s, track));
     EXPECT_EQ(u"true", m_parser.evaluate(u"$if(%replaygain_album_gain%,true,false)"_s, track));
 
-    EXPECT_EQ(u"", m_parser.evaluate(u"[%disc% - %track%]"_s, track));
+    EXPECT_EQ(u" - 7", m_parser.evaluate(u"[%disc% - %track%]"_s, track));
 }
 
 TEST_F(ScriptParserTest, RegexTest)
@@ -864,6 +874,7 @@ TEST_F(ScriptParserTest, ContextEnvironmentVariables)
     EXPECT_EQ(u"1", parser.evaluate(u"%queue_index%"_s, track, context));
     EXPECT_EQ(u"1, 3", parser.evaluate(u"%queueindexes%"_s, track, context));
     EXPECT_EQ(u"1, 3", parser.evaluate(u"%queue_indexes%"_s, track, context));
+    EXPECT_EQ(u"[1, 3]", parser.evaluate(uR"([\[%queueindexes%\]])"_s, track, context));
     EXPECT_EQ(u"7", parser.evaluate(u"%queuetotal%"_s, track, context));
     EXPECT_EQ(u"7", parser.evaluate(u"%queue_total%"_s, track, context));
 }
