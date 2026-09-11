@@ -26,6 +26,7 @@
 #include <QDir>
 #include <QRegularExpression>
 #include <QUrl>
+#include <QUrlQuery>
 
 #include <optional>
 
@@ -900,6 +901,24 @@ QString cmdlink(const QStringList& vec)
 
     const QString commandId = QString::fromUtf8(QUrl::toPercentEncoding(vec.at(1)));
     return u"<a href=\"fooyin://command/%1\">%2</a>"_s.arg(commandId, vec.at(0));
+}
+
+QString applink(const QStringList& vec)
+{
+    if(vec.size() < 2 || vec.size() > 4 || vec.at(0).isEmpty() || vec.at(1).isEmpty()) {
+        return {};
+    }
+
+    QUrlQuery query;
+    query.addQueryItem(u"application"_s, vec.at(1));
+    if(vec.size() >= 3) {
+        query.addQueryItem(u"arguments"_s, vec.at(2));
+    }
+    if(vec.size() == 4) {
+        query.addQueryItem(u"directory"_s, vec.at(3));
+    }
+
+    return u"<a href=\"fooyin://application/run?%1\">%2</a>"_s.arg(query.toString(QUrl::FullyEncoded), vec.at(0));
 }
 
 QString urlencode(const QStringList& vec)

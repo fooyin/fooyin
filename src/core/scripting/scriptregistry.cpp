@@ -742,6 +742,7 @@ void ScriptRegistry::addDefaultFunctions()
     registerFunction(u"progress2"_s, makeScriptFunctionInvoker<Scripting::progress2>());
     registerFunction(u"doclink"_s, makeScriptFunctionInvoker<Scripting::doclink>());
     registerFunction(u"cmdlink"_s, makeScriptFunctionInvoker<Scripting::cmdlink>());
+    registerFunction(u"applink"_s, makeScriptFunctionInvoker<Scripting::applink>());
     registerFunction(u"urlencode"_s, makeScriptFunctionInvoker<Scripting::urlencode>());
     registerFunction(u"crc32"_s, makeScriptFunctionInvoker<Scripting::crc32>());
     registerFunction(u"isalpha"_s, makeScriptFunctionInvoker<Scripting::isalpha>());

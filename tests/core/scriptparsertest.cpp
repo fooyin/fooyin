@@ -473,6 +473,21 @@ TEST_F(ScriptParserTest, StringTest)
     EXPECT_EQ(u"FFFF", m_parser.evaluate(u"$hex(65535,2)"_s));
 }
 
+TEST_F(ScriptParserTest, ApplicationLinkTest)
+{
+    EXPECT_EQ(uR"(<a href="fooyin://application/run?application=player">Player</a>)",
+              m_parser.evaluate(u"$applink(Player,player)"_s));
+    EXPECT_EQ(uR"(<a href="fooyin://application/run?application=player&arguments=--play">Player</a>)",
+              m_parser.evaluate(u"$applink(Player,player,--play)"_s));
+    EXPECT_EQ(
+        uR"(<a href="fooyin://application/run?application=/usr/bin/player&arguments=--play&directory=/tmp/Music">Player</a>)",
+        m_parser.evaluate(u"$applink(Player,/usr/bin/player,--play,/tmp/Music)"_s));
+    EXPECT_TRUE(m_parser.evaluate(u"$applink()"_s).isEmpty());
+    EXPECT_TRUE(m_parser.evaluate(u"$applink(Player)"_s).isEmpty());
+    EXPECT_TRUE(m_parser.evaluate(u"$applink(Player,)"_s).isEmpty());
+    EXPECT_TRUE(m_parser.evaluate(u"$applink(Player,player,args,directory,extra)"_s).isEmpty());
+}
+
 TEST_F(ScriptParserTest, MathTest)
 {
     EXPECT_EQ(3, m_parser.evaluate(u"$add(1,2)"_s).toInt());
