@@ -31,7 +31,6 @@
 #include <cstdint>
 #include <set>
 #include <unordered_map>
-#include <unordered_set>
 
 namespace Fooyin::GlobalHotkeys {
 namespace {
@@ -132,7 +131,6 @@ public:
             XSync(display, False);
         }
         shortcuts.clear();
-        pressedKeys.clear();
     }
 
     bool grab(KeyCode keycode, unsigned int modifiers)
@@ -178,22 +176,6 @@ public:
             XEvent event;
             XNextEvent(display, &event);
 
-            if(event.type == KeyRelease) {
-                bool autoRepeat{false};
-                if(XPending(display) > 0) {
-                    XEvent nextEvent;
-                    XPeekEvent(display, &nextEvent);
-                    autoRepeat = nextEvent.type == KeyPress && nextEvent.xkey.keycode == event.xkey.keycode
-                              && nextEvent.xkey.time == event.xkey.time;
-                }
-
-                if(!autoRepeat) {
-                    pressedKeys.erase(event.xkey.keycode);
-                }
-
-                continue;
-            }
-
             if(event.type != KeyPress) {
                 continue;
             }
@@ -202,11 +184,10 @@ public:
             const unsigned int modifiers = event.xkey.state & RelevantModifiers;
             const uint64_t key           = shortcutKey(keycode, modifiers);
 
-            if(pressedKeys.contains(keycode) || !shortcuts.contains(key)) {
+            if(!shortcuts.contains(key)) {
                 continue;
             }
 
-            pressedKeys.insert(keycode);
             Q_EMIT m_self->activated(shortcuts.at(key).commandId);
         }
     }
@@ -218,7 +199,6 @@ public:
     unsigned int scrollMask{0};
     std::unique_ptr<QSocketNotifier> notifier;
     std::unordered_map<std::uint64_t, GlobalShortcutDescriptor> shortcuts;
-    std::unordered_set<unsigned int> pressedKeys;
 };
 
 GlobalShortcutX11Backend::GlobalShortcutX11Backend(QObject* parent)

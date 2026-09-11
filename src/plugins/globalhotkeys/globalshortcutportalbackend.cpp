@@ -63,6 +63,8 @@ GlobalShortcutPortalBackend::GlobalShortcutPortalBackend(QObject* parent)
     qDBusRegisterMetaType<PortalShortcut>();
     qDBusRegisterMetaType<PortalShortcutList>();
 
+    QObject::connect(&m_repeater, &GlobalShortcutRepeater::activated, this, &GlobalShortcutBackend::activated);
+
     QDBusConnection bus = QDBusConnection::sessionBus();
     m_available         = bus.isConnected() && m_portal->isValid();
     if(!m_available) {
@@ -75,6 +77,8 @@ GlobalShortcutPortalBackend::GlobalShortcutPortalBackend(QObject* parent)
     bus.connect(PortalService, PortalPath, PortalInterface, u"Activated"_s, this,
                 // clang-format off
                 SLOT(shortcutActivated(QDBusObjectPath,QString,qulonglong,QVariantMap)));
+    bus.connect(PortalService, PortalPath, PortalInterface, u"Deactivated"_s, this,
+                SLOT(shortcutDeactivated(QDBusObjectPath,QString,qulonglong,QVariantMap)));
     // clang-format on
 }
 
@@ -235,6 +239,8 @@ void GlobalShortcutPortalBackend::closeRequest()
 
 void GlobalShortcutPortalBackend::closeSession()
 {
+    m_repeater.clear();
+
     if(m_sessionPath.isEmpty()) {
         m_boundShortcutIds.clear();
         return;
@@ -322,11 +328,21 @@ void GlobalShortcutPortalBackend::shortcutActivated(const QDBusObjectPath& sessi
        || binding == m_shortcutDescriptors.cend()) {
         return;
     }
-    Q_EMIT activated(binding->second.commandId);
+
+    m_repeater.press(shortcutId, binding->second.commandId);
+}
+
+void GlobalShortcutPortalBackend::shortcutDeactivated(const QDBusObjectPath& sessionHandle, const QString& shortcutId,
+                                                      qulonglong /*timestamp*/, const QVariantMap& /*options*/)
+{
+    if(sessionHandle.path() == m_sessionPath) {
+        m_repeater.release(shortcutId);
+    }
 }
 
 void GlobalShortcutPortalBackend::sessionClosed()
 {
+    m_repeater.clear();
     m_sessionPath.clear();
     m_boundShortcutIds.clear();
 

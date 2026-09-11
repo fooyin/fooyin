@@ -20,11 +20,11 @@
 #pragma once
 
 #include "globalshortcutbackend.h"
+#include "globalshortcutrepeater.h"
 
 #include <Carbon/Carbon.h>
 
 #include <unordered_map>
-#include <unordered_set>
 
 namespace Fooyin::GlobalHotkeys {
 class GlobalShortcutMacosBackend : public GlobalShortcutBackend
@@ -43,7 +43,7 @@ private:
     EventHandlerRef m_eventHandler;
     std::unordered_map<std::uint32_t, EventHotKeyRef> m_hotKeys;
     std::unordered_map<std::uint32_t, GlobalShortcutDescriptor> m_bindings;
-    std::unordered_set<std::uint32_t> m_pressedHotKeys;
+    GlobalShortcutRepeater m_repeater;
     std::uint32_t m_nextNativeId;
 };
 } // namespace Fooyin::GlobalHotkeys

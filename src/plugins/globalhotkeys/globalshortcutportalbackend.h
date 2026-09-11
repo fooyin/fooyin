@@ -22,6 +22,7 @@
 #include "globalshortcutportaltypes.h"
 
 #include "globalshortcutbackend.h"
+#include "globalshortcutrepeater.h"
 
 #include <QDBusObjectPath>
 
@@ -51,6 +52,8 @@ private Q_SLOTS:
     void requestResponse(uint response, const QVariantMap& results);
     void shortcutActivated(const QDBusObjectPath& sessionHandle, const QString& shortcutId, qulonglong timestamp,
                            const QVariantMap& options);
+    void shortcutDeactivated(const QDBusObjectPath& sessionHandle, const QString& shortcutId, qulonglong timestamp,
+                             const QVariantMap& options);
     void sessionClosed();
 
 private:
@@ -77,6 +80,7 @@ private:
     PortalShortcutList m_portalShortcuts;
     std::map<QString, GlobalShortcutDescriptor> m_shortcutDescriptors;
     std::set<QString> m_boundShortcutIds;
+    GlobalShortcutRepeater m_repeater;
     QString m_requestPath;
     QString m_sessionPath;
     RequestStage m_requestStage;

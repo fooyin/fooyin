@@ -6,6 +6,8 @@ set(SOURCES
     globalshortcutkeyutils.h
     globalshortcutmanager.cpp
     globalshortcutmanager.h
+    globalshortcutrepeater.cpp
+    globalshortcutrepeater.h
 )
 
 set(DEPENDS Fooyin::Gui)

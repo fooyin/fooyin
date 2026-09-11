@@ -120,7 +120,7 @@ NativeKey nativeKey(Qt::Key key)
 
 UINT nativeModifiers(Qt::KeyboardModifiers modifiers)
 {
-    UINT native{MOD_NOREPEAT};
+    UINT native{0};
     if(modifiers.testFlag(Qt::AltModifier)) {
         native |= MOD_ALT;
     }

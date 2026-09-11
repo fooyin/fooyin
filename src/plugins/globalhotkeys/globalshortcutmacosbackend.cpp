@@ -242,6 +242,8 @@ GlobalShortcutMacosBackend::GlobalShortcutMacosBackend(QObject* parent)
     , m_eventHandler{nullptr}
     , m_nextNativeId{1}
 {
+    QObject::connect(&m_repeater, &GlobalShortcutRepeater::activated, this, &GlobalShortcutBackend::activated);
+
     const EventTypeSpec eventTypes[]{
         {kEventClassKeyboard, kEventHotKeyPressed},
         {kEventClassKeyboard, kEventHotKeyReleased},
@@ -310,7 +312,7 @@ void GlobalShortcutMacosBackend::clearBindings()
     }
     m_hotKeys.clear();
     m_bindings.clear();
-    m_pressedHotKeys.clear();
+    m_repeater.clear();
 }
 
 OSStatus GlobalShortcutMacosBackend::handleEvent(EventHandlerCallRef nextHandler, EventRef event, void* context)
@@ -321,12 +323,13 @@ OSStatus GlobalShortcutMacosBackend::handleEvent(EventHandlerCallRef nextHandler
     const OSStatus status = GetEventParameter(event, kEventParamDirectObject, typeEventHotKeyID, nullptr,
                                               sizeof(hotKeyId), nullptr, &hotKeyId);
     if(status == noErr && hotKeyId.signature == HotKeySignature && self->m_bindings.contains(hotKeyId.id)) {
+        const Id commandId       = self->m_bindings.at(hotKeyId.id).commandId;
+        const QString shortcutId = QString::number(hotKeyId.id);
         if(GetEventKind(event) == kEventHotKeyReleased) {
-            self->m_pressedHotKeys.erase(hotKeyId.id);
+            self->m_repeater.release(shortcutId);
         }
-        else if(!self->m_pressedHotKeys.contains(hotKeyId.id)) {
-            self->m_pressedHotKeys.insert(hotKeyId.id);
-            Q_EMIT self->activated(self->m_bindings.at(hotKeyId.id).commandId);
+        else {
+            self->m_repeater.press(shortcutId, commandId);
         }
         return noErr;
     }
