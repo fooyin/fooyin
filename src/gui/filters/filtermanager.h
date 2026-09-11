@@ -19,33 +19,29 @@
 
 #pragma once
 
-#include <core/plugins/coreplugin.h>
-#include <core/plugins/plugin.h>
+#include "fygui_export.h"
 
-#include <gui/plugins/guiplugin.h>
+#include <QObject>
 
-namespace Fooyin::Filters {
+namespace Fooyin {
+class EditableLayout;
+
+namespace Filters {
 class FilterController;
+class FilterManagerPrivate;
 
-class FiltersPlugin : public QObject,
-                      public Plugin,
-                      public CorePlugin,
-                      public GuiPlugin
+class FYGUI_EXPORT FilterManager : public QObject
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "filters.json")
-    Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:
-    void initialise(const CorePluginContext& context) override;
-    void initialise(const GuiPluginContext& context) override;
+    explicit FilterManager(FilterController* controller, EditableLayout* editableLayout, QObject* parent = nullptr);
+    ~FilterManager() override;
+
+    void setupWidgetConnections();
 
 private:
-    void registerLayouts() const;
-
-    std::unique_ptr<CorePluginContext> m_core;
-    LayoutProvider* m_layoutProvider;
-
-    FilterController* m_filterController;
+    std::unique_ptr<FilterManagerPrivate> p;
 };
-} // namespace Fooyin::Filters
+} // namespace Filters
+} // namespace Fooyin

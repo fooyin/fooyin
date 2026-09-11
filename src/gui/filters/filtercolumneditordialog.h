@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <luket@pm.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,12 +19,18 @@
 
 #pragma once
 
-#include <Qt>
+#include "fygui_export.h"
 
-namespace Fooyin::Filters::Constants {
-namespace Page {
-constexpr auto FiltersGeneral    = "Fooyin.Page.Filters.General";
-constexpr auto FiltersAppearance = "Fooyin.Page.Filters.Appearance";
-constexpr auto FiltersFields     = "Fooyin.Page.Filters.Fields";
-} // namespace Page
-} // namespace Fooyin::Filters::Constants
+#include <QDialog>
+
+namespace Fooyin::Filters {
+class FilterColumnRegistry;
+
+class FYGUI_EXPORT FilterColumnEditorDialog : public QDialog
+{
+    Q_OBJECT
+
+public:
+    explicit FilterColumnEditorDialog(FilterColumnRegistry* columnRegistry, QWidget* parent = nullptr);
+};
+} // namespace Fooyin::Filters

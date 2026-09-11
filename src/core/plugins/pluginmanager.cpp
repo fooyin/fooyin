@@ -32,6 +32,13 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
+namespace {
+bool isDepreciatedPlugin(const QString& pluginId)
+{
+    return pluginId == "fooyin.filters"_L1;
+}
+} // namespace
+
 PluginManager::PluginManager(SettingsManager* settings)
     : m_settings{settings}
 { }
@@ -71,7 +78,11 @@ void PluginManager::findPlugins(const QStringList& pluginDirs)
                 continue;
             }
 
-            auto plugin = std::make_unique<PluginInfo>(filepath, metaData);
+            auto plugin         = std::make_unique<PluginInfo>(filepath, metaData);
+            const auto pluginId = plugin->identifier();
+            if(isDepreciatedPlugin(pluginId)) {
+                continue;
+            }
             if(disabledPlugins.contains(plugin->identifier())) {
                 plugin->setDisabled(true);
             }

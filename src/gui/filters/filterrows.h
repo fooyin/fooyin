@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include "filterfwd.h"
 
 #include <core/ratingsymbols.h>
@@ -34,7 +36,7 @@ class LibraryManager;
 namespace Filters {
 using RowKey = Md5Hash;
 
-struct FilterRow
+struct FYGUI_EXPORT FilterRow
 {
     RowKey key;
     QStringList columns;
@@ -45,21 +47,21 @@ struct FilterRow
 
 using FilterRowList = std::vector<FilterRow>;
 
-struct FilterRowBuildContext
+struct FYGUI_EXPORT FilterRowBuildContext
 {
     QFont font;
     RatingStarSymbols ratingSymbols;
     bool useVarious{false};
 };
 
-[[nodiscard]] FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumnList& columns,
-                                            const TrackList& tracks, const FilterRowBuildContext& context);
-[[nodiscard]] FilterRowList patchFilterRows(LibraryManager* libraryManager, const FilterColumnList& columns,
-                                            const FilterRowList& previousRows, const TrackList& previousTracks,
-                                            const TrackList& tracks, const TrackIds& changedTrackIds,
-                                            const FilterRowBuildContext& context);
-[[nodiscard]] TrackList filterTracksBySearch(const QString& search, const TrackList& tracks);
-[[nodiscard]] FilterRowList filterRowsBySearch(const QString& search, const FilterRowList& rows,
-                                               const TrackList& tracks);
+FYGUI_EXPORT FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumnList& columns,
+                                           const TrackList& tracks, const FilterRowBuildContext& context);
+FYGUI_EXPORT FilterRowList patchFilterRows(LibraryManager* libraryManager, const FilterColumnList& columns,
+                                           const FilterRowList& previousRows, const TrackList& previousTracks,
+                                           const TrackList& tracks, const TrackIds& changedTrackIds,
+                                           const FilterRowBuildContext& context);
+FYGUI_EXPORT TrackList filterTracksBySearch(const QString& search, const TrackList& tracks);
+FYGUI_EXPORT FilterRowList filterRowsBySearch(const QString& search, const FilterRowList& rows,
+                                              const TrackList& tracks);
 } // namespace Filters
 } // namespace Fooyin

@@ -19,16 +19,30 @@
 
 #pragma once
 
-#include <QDialog>
+#include "fycore_export.h"
 
-namespace Fooyin::Filters {
-class FilterColumnRegistry;
+#include <QDataStream>
+#include <QString>
 
-class FilterColumnEditorDialog : public QDialog
+#include <vector>
+
+namespace Fooyin {
+struct FYCORE_EXPORT LibraryFilter
 {
-    Q_OBJECT
+    int id{-1};
+    int index{-1};
+    bool isDefault{false};
+    QString name;
+    QString expression;
+    bool enabled{true};
 
-public:
-    explicit FilterColumnEditorDialog(FilterColumnRegistry* columnRegistry, QWidget* parent = nullptr);
+    bool operator==(const LibraryFilter& other) const = default;
+
+    [[nodiscard]] bool isValid() const;
 };
-} // namespace Fooyin::Filters
+
+FYCORE_EXPORT QDataStream& operator<<(QDataStream& stream, const LibraryFilter& preset);
+FYCORE_EXPORT QDataStream& operator>>(QDataStream& stream, LibraryFilter& preset);
+
+using LibraryFilterList = std::vector<LibraryFilter>;
+} // namespace Fooyin

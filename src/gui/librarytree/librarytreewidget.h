@@ -146,8 +146,11 @@ private:
     void dequeueSelectedTracks() const;
 
     void searchChanged(const SearchRequest& request);
+    void refreshSearch();
     [[nodiscard]] bool shouldAutoExpandSearchResults(const TrackList& tracks) const;
     void expandSearchResults();
+
+    [[nodiscard]] TrackList sourceTracks() const;
 
     void handlePlayback(const QModelIndexList& indexes, int row = 0);
     void handlePlaySelection();
@@ -196,6 +199,7 @@ private:
     QString m_currentSearch;
     EmptySearchMode m_currentEmptySearchMode;
     TrackList m_filteredTracks;
+    uint64_t m_searchRevision{0};
 
     bool m_updating;
     QByteArray m_pendingState;

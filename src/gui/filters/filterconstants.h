@@ -19,26 +19,13 @@
 
 #pragma once
 
-#include "filterfwd.h"
+#include <Qt>
 
-#include <utils/itemregistry.h>
-
-namespace Fooyin {
-class SettingsManager;
-
-namespace Filters {
-class FilterColumnRegistry : public ItemRegistry<FilterColumn>
-{
-    Q_OBJECT
-
-public:
-    explicit FilterColumnRegistry(SettingsManager* settings, QObject* parent = nullptr);
-
-Q_SIGNALS:
-    void columnChanged(const Fooyin::Filters::FilterColumn& field);
-
-protected:
-    void loadDefaults() override;
-};
-} // namespace Filters
-} // namespace Fooyin
+namespace Fooyin::Filters::Constants {
+namespace Page {
+constexpr auto FiltersGeneral    = "Fooyin.Page.Filters.General";
+constexpr auto FiltersAppearance = "Fooyin.Page.Filters.Appearance";
+constexpr auto FiltersFields     = "Fooyin.Page.Filters.Fields";
+constexpr auto Filters           = "Fooyin.Page.Library.Filters";
+} // namespace Page
+} // namespace Fooyin::Filters::Constants

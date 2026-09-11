@@ -718,7 +718,7 @@ TrackList FilterControllerPrivate::sourceTracks(const FilterGroupState& group) c
         return {};
     }
 
-    return m_library->libraryTracks();
+    return m_library->visibleLibraryTracks();
 }
 
 void FilterControllerPrivate::publishCurrentPlaylistSelection(const FilterGroupState& group) const
@@ -740,7 +740,7 @@ void FilterControllerPrivate::handleLibraryTracksPatched(const TrackList& change
         return;
     }
 
-    const TrackList sourceTracks = m_library->libraryTracks();
+    const TrackList sourceTracks = m_library->visibleLibraryTracks();
 
     TrackIds changedTrackIds;
     changedTrackIds.reserve(changedTracks.size());
@@ -1184,17 +1184,43 @@ FilterController::FilterController(ActionManager* actionManager, const CorePlugi
     , p{std::make_unique<FilterControllerPrivate>(this, actionManager, core, playlistController, trackSelection,
                                                   editableLayout, coverRepository, settings, styleProvider)}
 {
-    QObject::connect(p->m_library, &MusicLibrary::tracksAdded, this,
-                     [this](const TrackList& tracks) { p->handleLibraryTracksPatched(tracks); });
-    QObject::connect(p->m_library, &MusicLibrary::tracksScanned, this, [this]() { p->scheduleAllRecomputes(); });
-    QObject::connect(p->m_library, &MusicLibrary::tracksMetadataChanged, this,
-                     [this](const TrackList& tracks) { p->handleLibraryTracksPatched(tracks); });
-    QObject::connect(p->m_library, &MusicLibrary::tracksUpdated, this,
-                     [this](const TrackList& tracks) { p->handleLibraryTracksPatched(tracks); });
-    QObject::connect(p->m_library, &MusicLibrary::tracksDeleted, this,
-                     [this](const TrackList& tracks) { p->handleLibraryTracksPatched(tracks); });
-    QObject::connect(p->m_library, &MusicLibrary::tracksLoaded, this, [this]() { p->scheduleAllRecomputes(); });
-    QObject::connect(p->m_library, &MusicLibrary::tracksSorted, this, [this]() { p->scheduleAllRecomputes(); });
+    QObject::connect(p->m_library, &MusicLibrary::visibleLibraryTracksChanged, this,
+                     [this]() { p->scheduleAllRecomputes(); });
+    QObject::connect(p->m_library, &MusicLibrary::tracksAdded, this, [this](const TrackList& tracks) {
+        if(!p->m_library->hasActiveLibraryFilters()) {
+            p->handleLibraryTracksPatched(tracks);
+        }
+    });
+    QObject::connect(p->m_library, &MusicLibrary::tracksScanned, this, [this]() {
+        if(!p->m_library->hasActiveLibraryFilters()) {
+            p->scheduleAllRecomputes();
+        }
+    });
+    QObject::connect(p->m_library, &MusicLibrary::tracksMetadataChanged, this, [this](const TrackList& tracks) {
+        if(!p->m_library->hasActiveLibraryFilters()) {
+            p->handleLibraryTracksPatched(tracks);
+        }
+    });
+    QObject::connect(p->m_library, &MusicLibrary::tracksUpdated, this, [this](const TrackList& tracks) {
+        if(!p->m_library->hasActiveLibraryFilters()) {
+            p->handleLibraryTracksPatched(tracks);
+        }
+    });
+    QObject::connect(p->m_library, &MusicLibrary::tracksDeleted, this, [this](const TrackList& tracks) {
+        if(!p->m_library->hasActiveLibraryFilters()) {
+            p->handleLibraryTracksPatched(tracks);
+        }
+    });
+    QObject::connect(p->m_library, &MusicLibrary::tracksLoaded, this, [this]() {
+        if(!p->m_library->hasActiveLibraryFilters()) {
+            p->scheduleAllRecomputes();
+        }
+    });
+    QObject::connect(p->m_library, &MusicLibrary::tracksSorted, this, [this]() {
+        if(!p->m_library->hasActiveLibraryFilters()) {
+            p->scheduleAllRecomputes();
+        }
+    });
     QObject::connect(p->m_playlistController, &CurrentPlaylistController::currentPlaylistChanged, this,
                      [this]() { p->schedulePlaylistRecomputes(); });
 

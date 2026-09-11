@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include "filteritem.h"
 
 #include <QStyledItemDelegate>
@@ -26,7 +28,7 @@
 namespace Fooyin::Filters {
 struct IconItemLayoutMetrics;
 
-class FilterDelegate : public QStyledItemDelegate
+class FYGUI_EXPORT FilterDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 

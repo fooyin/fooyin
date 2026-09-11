@@ -77,6 +77,7 @@ fooyin_add_test(test_plsparser core/playlist/plsparsertest.cpp data/playlists.qr
 fooyin_add_test(test_playlistchangeset core/playlist/playlistchangesettest.cpp)
 fooyin_add_test(test_playlisthandler core/playlist/playlisthandlertest.cpp)
 fooyin_add_test(test_libraryscanner core/library/libraryscannertest.cpp ${CMAKE_SOURCE_DIR}/data/data.qrc)
+fooyin_add_test(test_musiclibraryfilter core/library/musiclibraryfiltertest.cpp)
 fooyin_add_test(test_unifiedmusiclibrary core/library/unifiedmusiclibrarytest.cpp ${CMAKE_SOURCE_DIR}/data/data.qrc)
 
 fooyin_add_test(test_scriptparser core/scriptparsertest.cpp)
@@ -92,34 +93,14 @@ fooyin_add_test(test_guiutils gui/guiutilstest.cpp)
 fooyin_add_test(test_fythemefile gui/fythemefiletest.cpp)
 fooyin_add_test(test_fysplitter gui/fysplittertest.cpp)
 fooyin_add_test(test_scriptformatter gui/scriptformattertest.cpp)
+fooyin_add_test(test_filtercontroller gui/filters/filtercontrollertest.cpp)
+fooyin_add_test(test_filterpipeline gui/filters/filterpipelinetest.cpp)
 
 fooyin_add_test(test_helpers utils/helperstest.cpp)
 
 set(FILEOPS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/plugins/fileops)
 fooyin_add_test(test_fileopsworker plugins/fileops/fileopsworkertest.cpp ${FILEOPS_SOURCE_DIR}/fileopsworker.cpp)
 target_include_directories(test_fileopsworker PRIVATE ${FILEOPS_SOURCE_DIR})
-
-set(FILTERS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/plugins/filters)
-set(FILTER_PIPELINE_TEST_SOURCES ${FILTERS_SOURCE_DIR}/filterpipeline.cpp ${FILTERS_SOURCE_DIR}/filterrows.cpp)
-set(FILTER_CONTROLLER_TEST_SOURCES
-    ${FILTERS_SOURCE_DIR}/filtercolumnregistry.cpp
-    ${FILTERS_SOURCE_DIR}/filtercolumneditordialog.cpp
-    ${FILTERS_SOURCE_DIR}/filterscolumnmodel.cpp
-    ${FILTERS_SOURCE_DIR}/filtercontroller.cpp
-    ${FILTERS_SOURCE_DIR}/filterdelegate.cpp
-    ${FILTERS_SOURCE_DIR}/filteritem.cpp
-    ${FILTERS_SOURCE_DIR}/filtermanager.cpp
-    ${FILTERS_SOURCE_DIR}/filtermodel.cpp
-    ${FILTERS_SOURCE_DIR}/filterpipeline.cpp
-    ${FILTERS_SOURCE_DIR}/filterrows.cpp
-    ${FILTERS_SOURCE_DIR}/filterwidget.cpp
-    ${FILTERS_SOURCE_DIR}/filterconfigwidget.cpp
-)
-
-fooyin_add_test(test_filtercontroller plugins/filters/filtercontrollertest.cpp ${FILTER_CONTROLLER_TEST_SOURCES})
-target_include_directories(test_filtercontroller PRIVATE ${CMAKE_SOURCE_DIR}/src)
-fooyin_add_test(test_filterpipeline plugins/filters/filterpipelinetest.cpp ${FILTER_PIPELINE_TEST_SOURCES})
-target_include_directories(test_filterpipeline PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
 fooyin_add_test(
     test_tagfillpattern

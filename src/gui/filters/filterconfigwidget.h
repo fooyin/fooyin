@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include "filterwidget.h"
 
 #include <gui/configdialog.h>
@@ -32,7 +34,7 @@ class QSpinBox;
 namespace Fooyin::Filters {
 class FilterColumnRegistry;
 
-class FilterConfigDialog : public WidgetConfigDialog<FilterWidget, FilterWidget::ConfigData>
+class FYGUI_EXPORT FilterConfigDialog : public WidgetConfigDialog<FilterWidget, FilterWidget::ConfigData>
 {
     Q_OBJECT
 

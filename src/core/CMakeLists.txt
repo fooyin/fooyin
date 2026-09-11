@@ -27,6 +27,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/engine/outputplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/pcmframe.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/visualisationservice.h
+    ${CMAKE_SOURCE_DIR}/include/core/library/libraryfilter.h
     ${CMAKE_SOURCE_DIR}/include/core/library/libraryinfo.h
     ${CMAKE_SOURCE_DIR}/include/core/library/libraryutils.h
     ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
@@ -226,8 +227,12 @@ set(SOURCES
     internalcoresettings.h
     library/librarymanager.cpp
     library/librarymanager.h
+    library/musiclibrary.cpp
     library/libraryfileenumerator.cpp
     library/libraryfileenumerator.h
+    library/libraryfilter.cpp
+    library/libraryfilterregistry.cpp
+    library/libraryfilterregistry.h
     library/librarymonitor.cpp
     library/librarymonitor.h
     library/librarycuetrackreloader.cpp

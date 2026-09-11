@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include "filterfwd.h"
 #include "filteritem.h"
 #include "filterrows.h"
@@ -38,7 +40,7 @@ class SettingsManager;
 namespace Filters {
 class FilterModelPrivate;
 
-class FilterSortModel : public QSortFilterProxyModel
+class FYGUI_EXPORT FilterSortModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 
@@ -52,7 +54,7 @@ private:
     StringCollator m_collator;
 };
 
-class FilterModel : public TreeModel<FilterItem>
+class FYGUI_EXPORT FilterModel : public TreeModel<FilterItem>
 {
     Q_OBJECT
 
