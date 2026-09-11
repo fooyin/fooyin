@@ -135,6 +135,8 @@ void registerMinimalGuiSettings(SettingsManager& settings)
     settings.createSetting<Settings::Gui::Internal::TrackCoverPaths>(QVariant::fromValue(CoverPaths{}),
                                                                      u"Artwork/Paths"_s);
     settings.createSetting<Settings::Gui::Internal::TrackCoverSourcePreference>(0, u"Artwork/LocalSourcePreference"_s);
+    settings.createSetting<Settings::Gui::Internal::ArtistCoverFallbackToFront>(false,
+                                                                                u"Artwork/ArtistFallbackToFront"_s);
 }
 } // namespace
 

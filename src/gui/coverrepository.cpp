@@ -360,12 +360,27 @@ struct CoverLoader
     ArtworkSourcePreference sourcePreference{ArtworkSourcePreference::PreferDirectory};
     std::shared_ptr<AudioLoader> audioLoader;
     std::optional<PendingTrackCover> pendingCover;
+    std::optional<Track::Cover> fallbackType;
+    std::optional<PendingTrackCover> fallbackPendingCover;
     CoverPaths paths;
     bool isThumb{false};
     ThumbnailSize size{ThumbnailSize::None};
     bool originalSize{false};
     QImage cover;
 };
+
+std::optional<CoverLoader> fallbackCoverLoader(const CoverLoader& loader)
+{
+    if(!loader.fallbackType) {
+        return {};
+    }
+
+    CoverLoader fallback{loader};
+    fallback.type         = *loader.fallbackType;
+    fallback.pendingCover = loader.fallbackPendingCover;
+    fallback.fallbackType.reset();
+    return fallback;
+}
 
 bool prefersEmbedded(const CoverLoader& loader)
 {
@@ -462,11 +477,34 @@ QImage loadImageFromRemoteArtworkData(const CoverLoader& loader, const QString& 
 
 bool hasCoverImage(const CoverLoader& loader)
 {
-    if(prefersEmbedded(loader)) {
-        return hasRemoteArtwork(loader) || hasEmbeddedCover(loader) || hasImageInDirectory(loader);
+    const auto hasCover = [](const CoverLoader& candidate) {
+        if(prefersEmbedded(candidate)) {
+            return hasRemoteArtwork(candidate) || hasEmbeddedCover(candidate) || hasImageInDirectory(candidate);
+        }
+
+        return hasRemoteArtwork(candidate) || hasImageInDirectory(candidate) || hasEmbeddedCover(candidate);
+    };
+
+    if(hasCover(loader)) {
+        return true;
     }
 
-    return hasRemoteArtwork(loader) || hasImageInDirectory(loader) || hasEmbeddedCover(loader);
+    if(const auto fallback = fallbackCoverLoader(loader)) {
+        return hasCover(*fallback);
+    }
+
+    return false;
+}
+
+QImage loadLocalCoverImage(const CoverLoader& loader, const QString& cachePath)
+{
+    if(prefersEmbedded(loader)) {
+        QImage cover = loadImageFromEmbedded(loader, cachePath);
+        return cover.isNull() ? loadImageFromDirectory(loader) : cover;
+    }
+
+    QImage cover = loadImageFromDirectory(loader);
+    return cover.isNull() ? loadImageFromEmbedded(loader, cachePath) : cover;
 }
 
 CoverLoader loadCoverImage(const CoverLoader& loader)
@@ -480,20 +518,14 @@ CoverLoader loadCoverImage(const CoverLoader& loader)
         result.cover = readImage(cachePath, coverThumbnailPixelSize(loader.size), u"cached"_s);
     }
 
-    if(prefersEmbedded(loader)) {
-        if(result.cover.isNull()) {
-            result.cover = loadImageFromEmbedded(loader, cachePath);
-        }
-        if(result.cover.isNull()) {
-            result.cover = loadImageFromDirectory(loader);
-        }
+    if(result.cover.isNull()) {
+        result.cover = loadLocalCoverImage(loader, cachePath);
     }
-    else {
-        if(result.cover.isNull()) {
-            result.cover = loadImageFromDirectory(loader);
-        }
-        if(result.cover.isNull()) {
-            result.cover = loadImageFromEmbedded(loader, cachePath);
+
+    if(const auto fallback = fallbackCoverLoader(loader); result.cover.isNull() && fallback) {
+        result.cover = loadLocalCoverImage(*fallback, cachePath);
+        if(!result.cover.isNull()) {
+            result.pendingCover = fallback->pendingCover;
         }
     }
 
@@ -574,8 +606,10 @@ public:
                                    bool notifyOnFinished = false);
     void finishPixmapRequest(const CoverRequestKey& requestKey, const CoverLoader& result);
     void finishPixmapRequestFromLocalLoad(const CoverRequestKey& requestKey, const CoverLoader& loader);
-    void requestRemoteArtwork(const CoverRequestKey& requestKey, const CoverLoader& loader, std::vector<QUrl> urls,
-                              size_t index = 0);
+    void requestRemoteArtwork(const CoverRequestKey& requestKey, const CoverLoader& loader,
+                              const CoverLoader& remoteLoader, std::vector<QUrl> urls, size_t index = 0);
+    void requestFallbackRemoteArtwork(const CoverRequestKey& requestKey, const CoverLoader& loader,
+                                      const CoverLoader& fallback);
     void processPixmapQueue();
     void reprioritiseQueuedThumbnails();
     void cancelPendingPixmapRequest(const CoverRequestKey& requestKey);
@@ -597,6 +631,7 @@ public:
     bool shouldRetryNoCover(const QString& key);
     void clearNoCoverRetry(const QString& key);
     void clearPlaceholderCache();
+    void applyCoverFallback(CoverLoader& loader) const;
     void pinLoadedThumbnail(const QString& key, const QPixmap& cover,
                             const std::optional<PendingTrackCover>& pendingCover = {});
     void touchPinnedThumbnail(std::map<QString, PinnedThumbnail>::iterator thumbnail);
@@ -618,6 +653,7 @@ public:
 
     CoverPaths m_paths;
     ArtworkSourcePreference m_sourcePreference;
+    bool m_artistFallbackToFront;
     QString m_thumbnailGroupScript;
     QCache<QString, CachedCover> m_coverCache;
     std::set<QString> m_noCoverKeys;
@@ -635,6 +671,7 @@ CoverRepositoryPrivate::CoverRepositoryPrivate(CoverRepository* self, std::share
     , m_paths{m_settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<CoverPaths>()}
     , m_sourcePreference{static_cast<ArtworkSourcePreference>(
           m_settings->value<Settings::Gui::Internal::TrackCoverSourcePreference>())}
+    , m_artistFallbackToFront{m_settings->value<Settings::Gui::Internal::ArtistCoverFallbackToFront>()}
     , m_thumbnailGroupScript{m_settings->value<Settings::Gui::Internal::TrackCoverThumbnailGroupScript>()}
 {
     auto updateCache = [this](const int sizeMb) {
@@ -651,6 +688,12 @@ CoverRepositoryPrivate::CoverRepositoryPrivate(CoverRepository* self, std::share
     });
     m_settings->subscribe<Settings::Gui::Internal::TrackCoverSourcePreference>(
         m_self, [this](int preference) { m_sourcePreference = static_cast<ArtworkSourcePreference>(preference); });
+    m_settings->subscribe<Settings::Gui::Internal::ArtistCoverFallbackToFront>(m_self, [this](bool enabled) {
+        if(std::exchange(m_artistFallbackToFront, enabled) != enabled) {
+            m_self->clearCache();
+            Q_EMIT m_self->placeholderChanged();
+        }
+    });
     m_settings->subscribe<Settings::Gui::Internal::TrackCoverThumbnailGroupScript>(m_self, [this](QString script) {
         m_thumbnailGroupScript = std::move(script);
         m_noCoverKeys.clear();
@@ -664,6 +707,14 @@ CoverRepositoryPrivate::CoverRepositoryPrivate(CoverRepository* self, std::share
 ArtworkSourcePreference CoverRepositoryPrivate::sourcePreference(std::optional<ArtworkSourcePreference> source) const
 {
     return source.value_or(m_sourcePreference);
+}
+
+void CoverRepositoryPrivate::applyCoverFallback(CoverLoader& loader) const
+{
+    if(m_artistFallbackToFront && loader.type == Track::Cover::Artist) {
+        loader.fallbackType         = Track::Cover::Front;
+        loader.fallbackPendingCover = pendingCover(loader.track, Track::Cover::Front);
+    }
 }
 
 QString CoverRepositoryPrivate::thumbnailCoverKey(const Track& track, Track::Cover type,
@@ -871,7 +922,7 @@ void CoverRepositoryPrivate::finishPixmapRequestFromLocalLoad(const CoverRequest
 }
 
 void CoverRepositoryPrivate::requestRemoteArtwork(const CoverRequestKey& requestKey, const CoverLoader& loader,
-                                                  std::vector<QUrl> urls, size_t index)
+                                                  const CoverLoader& remoteLoader, std::vector<QUrl> urls, size_t index)
 {
     if(index >= urls.size()) {
         finishPixmapRequestFromLocalLoad(requestKey, loader);
@@ -888,8 +939,8 @@ void CoverRepositoryPrivate::requestRemoteArtwork(const CoverRequestKey& request
 
     auto handle = m_remoteIo->download(
         url, m_self,
-        [this, requestKey, loader, urls = std::move(urls), index](std::optional<QByteArray> data,
-                                                                  const QString& error) mutable {
+        [this, requestKey, loader, remoteLoader, urls = std::move(urls), index](std::optional<QByteArray> data,
+                                                                                const QString& error) mutable {
             if(!m_pendingPixmapRequests.contains(requestKey)) {
                 finishPixmapRequest(requestKey, {});
                 return;
@@ -897,8 +948,10 @@ void CoverRepositoryPrivate::requestRemoteArtwork(const CoverRequestKey& request
 
             if(data) {
                 CoverLoader result{loader};
-                result.cover = loadImageFromRemoteArtworkData(loader, coverThumbnailPath(loader.key), data.value());
+                result.cover
+                    = loadImageFromRemoteArtworkData(remoteLoader, coverThumbnailPath(loader.key), data.value());
                 if(!result.cover.isNull()) {
+                    result.pendingCover = remoteLoader.pendingCover;
                     finishPixmapRequest(requestKey, result);
                     return;
                 }
@@ -907,11 +960,28 @@ void CoverRepositoryPrivate::requestRemoteArtwork(const CoverRequestKey& request
                 qCDebug(COV_REPO) << "Could not download remote cover artwork:" << error;
             }
 
-            requestRemoteArtwork(requestKey, loader, std::move(urls), index + 1);
+            requestRemoteArtwork(requestKey, loader, remoteLoader, std::move(urls), index + 1);
         },
         std::chrono::seconds{10});
 
     pendingIt->second.downloads.emplace_back(std::move(handle));
+}
+
+void CoverRepositoryPrivate::requestFallbackRemoteArtwork(const CoverRequestKey& requestKey, const CoverLoader& loader,
+                                                          const CoverLoader& fallback)
+{
+    CoverLoader primary{loader};
+    primary.fallbackType.reset();
+
+    auto loaderResult = Utils::asyncExec([primary]() -> CoverLoader { return loadCoverImage(primary); });
+    loaderResult.then(m_self, [this, requestKey, loader, fallback](const CoverLoader& result) {
+        if(!result.cover.isNull()) {
+            finishPixmapRequest(requestKey, result);
+            return;
+        }
+
+        requestRemoteArtwork(requestKey, loader, fallback, remoteArtworkUrls(fallback.track));
+    });
 }
 
 void CoverRepositoryPrivate::processPixmapQueue()
@@ -934,7 +1004,11 @@ void CoverRepositoryPrivate::processPixmapQueue()
         const bool hasCachedThumbnail
             = request.loader.isThumb && QFileInfo::exists(coverThumbnailPath(request.loader.key));
         if(m_remoteIo && hasRemoteArtwork(request.loader) && !hasCachedThumbnail) {
-            requestRemoteArtwork(request.key, request.loader, remoteArtworkUrls(request.loader.track));
+            requestRemoteArtwork(request.key, request.loader, request.loader, remoteArtworkUrls(request.loader.track));
+        }
+        else if(const auto fallback = fallbackCoverLoader(request.loader);
+                m_remoteIo && fallback && hasRemoteArtwork(*fallback) && !hasCachedThumbnail) {
+            requestFallbackRemoteArtwork(request.key, request.loader, *fallback);
         }
         else {
             finishPixmapRequestFromLocalLoad(request.key, request.loader);
@@ -1027,6 +1101,7 @@ QFuture<QPixmap> CoverRepositoryPrivate::loadCover(const QString& key, const Tra
     loader.audioLoader      = m_audioLoader;
     loader.pendingCover     = pending;
     loader.paths            = m_paths;
+    applyCoverFallback(loader);
     return requestPixmap(CoverRequestKey{.key = key, .kind = CoverRequestKind::Full}, loader, notifyOnFinished);
 }
 
@@ -1042,6 +1117,7 @@ QFuture<QPixmap> CoverRepositoryPrivate::loadOriginalCover(const QString& key, c
     loader.pendingCover     = pendingCover(track, type);
     loader.paths            = m_paths;
     loader.originalSize     = true;
+    applyCoverFallback(loader);
 
     return requestPixmap(CoverRequestKey{.key = key, .kind = CoverRequestKind::Original}, loader);
 }
@@ -1060,6 +1136,7 @@ QFuture<QPixmap> CoverRepositoryPrivate::loadThumbnail(const QString& key, const
     loader.paths            = m_paths;
     loader.isThumb          = true;
     loader.size             = size;
+    applyCoverFallback(loader);
 
     return requestPixmap(CoverRequestKey{.key = key, .kind = CoverRequestKind::Thumbnail, .size = size}, loader,
                          notifyOnFinished);
@@ -1099,6 +1176,7 @@ QFuture<bool> CoverRepositoryPrivate::hasCover(const QString& key, const Track& 
     loader.audioLoader      = m_audioLoader;
     loader.pendingCover     = pendingCover(track, type);
     loader.paths            = m_paths;
+    applyCoverFallback(loader);
 
     auto loaderResult = Utils::asyncExec([loader]() -> bool {
         const bool result = hasCoverImage(loader);
@@ -1240,7 +1318,12 @@ QFuture<bool> CoverRepository::trackHasCover(const Track& track, Track::Cover ty
 
     if(p->m_pendingCoverProvider) {
         if(const auto pendingCover = p->m_pendingCoverProvider->pendingTrackCover(track, type)) {
-            return makeReadyFuture(!pendingCover->image.data.isEmpty());
+            if(!pendingCover->image.data.isEmpty()) {
+                return makeReadyFuture(true);
+            }
+            if(type != Track::Cover::Artist || !p->m_artistFallbackToFront) {
+                return makeReadyFuture(false);
+            }
         }
     }
 

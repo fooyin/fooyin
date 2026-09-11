@@ -81,6 +81,7 @@ private:
     QPlainTextEdit* m_frontCovers;
     QPlainTextEdit* m_backCovers;
     QPlainTextEdit* m_artistCovers;
+    QCheckBox* m_artistFallbackToFront;
     QLineEdit* m_placeholder;
     std::map<Track::Cover, QString> m_placeholders;
     Track::Cover m_placeholderType{Track::Cover::Front};
@@ -96,6 +97,7 @@ ArtworkSourcesPageWidget::ArtworkSourcesPageWidget(ArtworkFinder* finder, Settin
     , m_frontCovers{new QPlainTextEdit(this)}
     , m_backCovers{new QPlainTextEdit(this)}
     , m_artistCovers{new QPlainTextEdit(this)}
+    , m_artistFallbackToFront{new QCheckBox(tr("Use front cover before placeholder"), this)}
     , m_placeholder{new QLineEdit(this)}
     , m_sourceList{new QListView(this)}
     , m_sourceModel{new ArtworkSourcesModel(this)}
@@ -129,7 +131,10 @@ ArtworkSourcesPageWidget::ArtworkSourcesPageWidget(ArtworkFinder* finder, Settin
     m_placeholder->setPlaceholderText(tr("Use built-in icon theme placeholder"));
     m_placeholder->setToolTip(placeholderTooltip);
 
+    m_artistFallbackToFront->setToolTip(tr("Use the track's front cover when artist artwork is unavailable"));
+
     int row{0};
+    placeholderLayout->addWidget(m_artistFallbackToFront, row++, 0, 1, 2);
     placeholderLayout->addWidget(new QLabel(tr("Image file") + ":"_L1, this), row, 0);
     placeholderLayout->addWidget(m_placeholder, row++, 1);
     placeholderLayout->setColumnStretch(1, 1);
@@ -160,8 +165,10 @@ void ArtworkSourcesPageWidget::load()
     m_placeholders[Track::Cover::Front]  = paths.frontPlaceholder;
     m_placeholders[Track::Cover::Back]   = paths.backPlaceholder;
     m_placeholders[Track::Cover::Artist] = paths.artistPlaceholder;
-    m_placeholderType                    = coverTypeForIndex(m_coverPaths->currentIndex());
+    m_artistFallbackToFront->setChecked(m_settings->value<Settings::Gui::Internal::ArtistCoverFallbackToFront>());
+    m_placeholderType = coverTypeForIndex(m_coverPaths->currentIndex());
     m_placeholder->setText(m_placeholders[m_placeholderType]);
+    m_artistFallbackToFront->setVisible(m_placeholderType == Track::Cover::Artist);
 
     m_finder->restoreState();
     m_sourceModel->setup(m_finder->sources());
@@ -182,6 +189,7 @@ void ArtworkSourcesPageWidget::apply()
     paths.artistPlaceholder = m_placeholders[Track::Cover::Artist];
 
     m_settings->set<Settings::Gui::Internal::TrackCoverPaths>(QVariant::fromValue(paths));
+    m_settings->set<Settings::Gui::Internal::ArtistCoverFallbackToFront>(m_artistFallbackToFront->isChecked());
 
     auto existing = m_finder->sources();
     auto sources  = m_sourceModel->sources();
@@ -210,12 +218,14 @@ void ArtworkSourcesPageWidget::finish()
 void ArtworkSourcesPageWidget::reset()
 {
     m_settings->reset<Settings::Gui::Internal::TrackCoverPaths>();
+    m_settings->reset<Settings::Gui::Internal::ArtistCoverFallbackToFront>();
 
     const auto paths = m_settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<CoverPaths>();
 
     m_placeholders[Track::Cover::Front]  = paths.frontPlaceholder;
     m_placeholders[Track::Cover::Back]   = paths.backPlaceholder;
     m_placeholders[Track::Cover::Artist] = paths.artistPlaceholder;
+    m_artistFallbackToFront->setChecked(m_settings->value<Settings::Gui::Internal::ArtistCoverFallbackToFront>());
     m_placeholder->setText(m_placeholders[m_placeholderType]);
 
     m_finder->reset();
@@ -243,6 +253,7 @@ void ArtworkSourcesPageWidget::updatePlaceholderInput(int index)
     storeCurrentPlaceholder();
     m_placeholderType = coverTypeForIndex(index);
     m_placeholder->setText(m_placeholders[m_placeholderType]);
+    m_artistFallbackToFront->setVisible(m_placeholderType == Track::Cover::Artist);
 }
 
 ArtworkSourcesPage::ArtworkSourcesPage(ArtworkFinder* finder, SettingsManager* settings, QObject* parent)
