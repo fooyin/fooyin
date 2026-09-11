@@ -53,6 +53,7 @@ Dummy::Dummy(QString name, SettingsManager* settings, QWidget* parent)
     m_label->setFrameShape(QFrame::StyledPanel);
     m_label->setFrameShadow(QFrame::Sunken);
     m_label->setAlignment(Qt::AlignCenter);
+    m_label->setContentsMargins(5, 5, 5, 5);
 
     layout->addWidget(m_label);
 
