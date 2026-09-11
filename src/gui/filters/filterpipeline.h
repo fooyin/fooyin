@@ -19,24 +19,26 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include "filterrows.h"
 
 #include <functional>
 
 namespace Fooyin::Filters {
-struct FilterSelectionResolution
+struct FYGUI_EXPORT FilterSelectionResolution
 {
     std::vector<RowKey> selectedKeys;
     TrackList selectedTracks;
     bool isActive{false};
 };
 
-struct FilterPipelineStageRequest
+struct FYGUI_EXPORT FilterPipelineStageRequest
 {
     std::vector<RowKey> selectedKeys;
 };
 
-struct FilterPipelineStageResult
+struct FYGUI_EXPORT FilterPipelineStageResult
 {
     TrackList inputTracks;
     FilterRowList rows;
@@ -45,7 +47,7 @@ struct FilterPipelineStageResult
     bool isActive{false};
 };
 
-struct FilterPipelineResult
+struct FYGUI_EXPORT FilterPipelineResult
 {
     std::vector<FilterPipelineStageResult> stages;
     TrackList finalFilteredTracks;
@@ -54,9 +56,9 @@ struct FilterPipelineResult
 
 using FilterRowsBuilder = std::function<FilterRowList(int stageIndex, const TrackList& inputTracks)>;
 
-[[nodiscard]] FilterSelectionResolution resolveFilterSelection(const FilterRowList& rows, const TrackList& inputTracks,
-                                                               const std::vector<RowKey>& selectedKeys);
-[[nodiscard]] FilterPipelineResult runFilterPipeline(const TrackList& sourceTracks,
-                                                     const std::vector<FilterPipelineStageRequest>& stages,
-                                                     const FilterRowsBuilder& rowBuilder);
+FYGUI_EXPORT FilterSelectionResolution resolveFilterSelection(const FilterRowList& rows, const TrackList& inputTracks,
+                                                              const std::vector<RowKey>& selectedKeys);
+FYGUI_EXPORT FilterPipelineResult runFilterPipeline(const TrackList& sourceTracks,
+                                                    const std::vector<FilterPipelineStageRequest>& stages,
+                                                    const FilterRowsBuilder& rowBuilder);
 } // namespace Fooyin::Filters

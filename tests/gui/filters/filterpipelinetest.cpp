@@ -17,8 +17,8 @@
  *
  */
 
-#include "plugins/filters/filterpipeline.h"
-#include "plugins/filters/filterrows.h"
+#include "gui/filters/filterpipeline.h"
+#include "gui/filters/filterrows.h"
 
 #include <core/scripting/trackqueryfilter.h>
 

@@ -19,27 +19,28 @@
 
 #pragma once
 
-#include <QObject>
+#include "fygui_export.h"
+
+#include "filterfwd.h"
+
+#include <utils/itemregistry.h>
 
 namespace Fooyin {
-class EditableLayout;
+class SettingsManager;
 
 namespace Filters {
-class FilterController;
-class FilterManagerPrivate;
-
-class FilterManager : public QObject
+class FYGUI_EXPORT FilterColumnRegistry : public ItemRegistry<FilterColumn>
 {
     Q_OBJECT
 
 public:
-    explicit FilterManager(FilterController* controller, EditableLayout* editableLayout, QObject* parent = nullptr);
-    ~FilterManager() override;
+    explicit FilterColumnRegistry(SettingsManager* settings, QObject* parent = nullptr);
 
-    void setupWidgetConnections();
+Q_SIGNALS:
+    void columnChanged(const Fooyin::Filters::FilterColumn& field);
 
-private:
-    std::unique_ptr<FilterManagerPrivate> p;
+protected:
+    void loadDefaults() override;
 };
 } // namespace Filters
 } // namespace Fooyin

@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include <core/track.h>
 #include <utils/id.h>
 
@@ -53,7 +55,7 @@ struct FilterGroup
 using FilterGroups     = std::unordered_map<Id, FilterGroup, Id::IdHash>;
 using UngroupedFilters = std::unordered_map<Id, FilterWidget*, Id::IdHash>;
 
-class FilterController : public QObject
+class FYGUI_EXPORT FilterController : public QObject
 {
     Q_OBJECT
 
@@ -79,7 +81,6 @@ public:
     void addFilterToGroup(FilterWidget* widget, const Id& groupId);
     bool removeFilter(FilterWidget* widget);
 
-Q_SIGNALS:
 private:
     std::unique_ptr<FilterControllerPrivate> p;
 };

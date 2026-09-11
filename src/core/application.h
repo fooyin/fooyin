@@ -68,6 +68,7 @@ public:
     static void quit();
     static void restart();
 
+    [[nodiscard]] const CorePluginContext& corePluginContext() const;
     [[nodiscard]] Database* database() const;
     [[nodiscard]] DbConnectionPoolPtr databasePool() const;
     [[nodiscard]] PluginManager* pluginManager() const;

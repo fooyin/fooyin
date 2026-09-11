@@ -185,6 +185,37 @@ set(SOURCES
     dsp/skipsilencesettingswidget.h
     editablelayout.cpp
     editablelayout_p.h
+    filters/filtercolumnregistry.cpp
+    filters/filtercolumnregistry.h
+    filters/filtercolumneditordialog.cpp
+    filters/filtercolumneditordialog.h
+    filters/filterscolumnmodel.cpp
+    filters/filterscolumnmodel.h
+    filters/filterconstants.h
+    filters/filtercontroller.cpp
+    filters/filtercontroller.h
+    filters/filtercontextmenu.h
+    filters/filterdelegate.cpp
+    filters/filterdelegate.h
+    filters/filterfwd.h
+    filters/filteritem.cpp
+    filters/filteritem.h
+    filters/filtermanager.cpp
+    filters/filtermanager.h
+    filters/filtermodel.cpp
+    filters/filtermodel.h
+    filters/filterpipeline.cpp
+    filters/filterpipeline.h
+    filters/filterrows.cpp
+    filters/filterrows.h
+    filters/filterwidget.cpp
+    filters/filterwidget.h
+    filters/libraryfilterswitcher.cpp
+    filters/libraryfilterswitcher.h
+    filters/libraryfiltertabs.cpp
+    filters/libraryfiltertabs.h
+    filters/filterconfigwidget.cpp
+    filters/filterconfigwidget.h
     fylayout.cpp
     fywidget.cpp
     guiapplication.cpp
@@ -442,6 +473,10 @@ set(SOURCES
     settings/guithemespage.h
     settings/layouttreemodel.cpp
     settings/layouttreemodel.h
+    settings/library/libraryfiltermodel.cpp
+    settings/library/libraryfiltermodel.h
+    settings/library/libraryfilterpage.cpp
+    settings/library/libraryfilterpage.h
     settings/library/librarygeneralpage.cpp
     settings/library/librarygeneralpage.h
     settings/library/librarymetadatapage.cpp

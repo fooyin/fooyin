@@ -216,6 +216,11 @@ void Application::restart()
         Qt::QueuedConnection);
 }
 
+const CorePluginContext& Application::corePluginContext() const
+{
+    return m_corePluginContext;
+}
+
 Database* Application::database() const
 {
     return m_database;

@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include <core/track.h>
 #include <gui/scripting/richtext.h>
 #include <utils/crypto.h>

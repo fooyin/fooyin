@@ -17,9 +17,9 @@
  *
  */
 
-#include "plugins/filters/filtercontroller.h"
-#include "plugins/filters/filtermodel.h"
-#include "plugins/filters/filterwidget.h"
+#include "gui/filters/filtercontroller.h"
+#include "gui/filters/filtermodel.h"
+#include "gui/filters/filterwidget.h"
 #include "testutils.h"
 
 #include <core/coresettings.h>

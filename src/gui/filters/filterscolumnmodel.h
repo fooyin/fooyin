@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include "filterfwd.h"
 
 #include <gui/widgets/extendabletableview.h>
@@ -42,7 +44,7 @@ private:
     FilterColumn m_column;
 };
 
-class FiltersColumnModel : public ExtendableTableModel
+class FYGUI_EXPORT FiltersColumnModel : public ExtendableTableModel
 {
     Q_OBJECT
 

@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include "filterfwd.h"
 #include "filterrows.h"
 
@@ -55,7 +57,7 @@ enum class FilterSource : uint8_t
     CurrentPlaylist,
 };
 
-class FilterWidget : public FyWidget
+class FYGUI_EXPORT FilterWidget : public FyWidget
 {
     Q_OBJECT
 
