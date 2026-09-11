@@ -10376,7 +10376,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="146"/>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="150"/>
         <source>(empty)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">(tom)</translation>
     </message>
 </context>
 <context>
@@ -10384,7 +10384,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="168"/>
         <source>Metadata Lookup</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadatauppsökning</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="275"/>
@@ -10442,7 +10442,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="347"/>
         <source>Release information</source>
-        <translation type="unfinished"></translation>
+        <translation>Utsläppsinformation</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="364"/>
@@ -10452,7 +10452,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="365"/>
         <source>Original release date</source>
-        <translation type="unfinished"></translation>
+        <translation>Ursprunligt utsläppsdatum</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="366"/>
@@ -10467,7 +10467,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="368"/>
         <source>Catalogue number</source>
-        <translation type="unfinished"></translation>
+        <translation>Katalognummer</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="369"/>
@@ -10640,7 +10640,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="545"/>
         <source>Contacting %1…</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontaktar %1…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1016"/>
@@ -10670,12 +10670,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="606"/>
         <source>%1 ID</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="785"/>
         <source>The selected release does not contain the queried disc.</source>
-        <translation type="unfinished"></translation>
+        <translation>Det valda utsläppet innehåller inte den efterfrågade skiven.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="856"/>
@@ -20600,12 +20600,12 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="314"/>
         <source>AccurateRip disc ID: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip-skiv-ID: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="315"/>
         <source>Tracks: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Spår: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="323"/>
@@ -20615,17 +20615,17 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="324"/>
         <source>Filename: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Filnamn: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="326"/>
         <source>AR v1 CRC: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v1-CRC: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="327"/>
         <source>AR v2 CRC: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v2-CRC: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="330"/>
@@ -20676,29 +20676,29 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="361"/>
         <source>Export Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportera resultat</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="370"/>
         <source>The results file could not be written.</source>
-        <translation type="unfinished"></translation>
+        <translation>Resultatfilen kunde inte skrivas.</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="378"/>
         <source>File Integrity Verification</source>
-        <translation type="unfinished"></translation>
+        <translation>Filintegritetsverifiering</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="387"/>
         <source>No problems found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inga problem hittade.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="388"/>
         <source>Problems found in %Ln item(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Problem hittade i %1 föremål.</numerusform>
+            <numerusform>Problem hittade i %1 föremål.</numerusform>
         </translation>
     </message>
     <message>
@@ -20715,7 +20715,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="396"/>
         <source>Warnings</source>
-        <translation type="unfinished"></translation>
+        <translation>Varningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="422"/>
@@ -20726,13 +20726,13 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="428"/>
         <source>Text Files (*.txt)</source>
-        <translation type="unfinished"></translation>
+        <translation>Textfiler (*.txt)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="446"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="750"/>
         <source>AccurateRip Verification</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip-verifiering</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="457"/>
@@ -20762,17 +20762,17 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="485"/>
         <source>Matches the AccurateRip database (AR v1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Matchar AccurateRip-databasen (AR v1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="494"/>
         <source>Matches the AccurateRip database (AR v2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Matchar AccurateRip-databasen (AR v2)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="514"/>
         <source>Log Files (*.log);;Text Files (*.txt)</source>
-        <translation type="unfinished"></translation>
+        <translation>Loggfiler (.*log);;Textfiler (*.txt)</translation>
     </message>
 </context>
 <context>
@@ -20790,13 +20790,13 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="544"/>
         <source>File Integrity Verification</source>
-        <translation type="unfinished"></translation>
+        <translation>Filintegritetsverifiering</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="545"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="604"/>
         <source>AccurateRip Verification</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip-verifiering</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="591"/>
@@ -20812,12 +20812,12 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="677"/>
         <source>This album is not present in AccurateRip.</source>
-        <translation type="unfinished"></translation>
+        <translation>Det här albumet är inte närvarande i AccurateRip.</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="678"/>
         <source>AccurateRip lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip-uppsökning misslyckades: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="685"/>
@@ -21750,7 +21750,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/widgets.cpp" line="456"/>
         <source>Metadata Lookup</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadatauppsökning</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="457"/>
@@ -22430,17 +22430,17 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1509"/>
         <source>Verify integrity</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifiera integritet­</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1510"/>
         <source>Decode the selected tracks and report file or checksum errors</source>
-        <translation type="unfinished"></translation>
+        <translation>Avkoda de valda spåren och rapportera fil- eller kontrollsummafel</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1517"/>
         <source>Verify album with AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifiera album med AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1518"/>
