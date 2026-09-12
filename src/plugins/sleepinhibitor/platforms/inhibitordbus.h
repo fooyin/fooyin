@@ -27,6 +27,8 @@
 #include <QtDBus/QDBusObjectPath>
 #include <QtDBus/QDBusPendingCallWatcher>
 
+#include <optional>
+
 namespace Fooyin::SleepInhibitor {
 class InhibitorDbus : public InhibitorPrivate
 {
@@ -35,7 +37,7 @@ class InhibitorDbus : public InhibitorPrivate
 public:
     explicit InhibitorDbus(QObject* parent = nullptr);
 
-    void inhibitSleep() override;
+    void inhibitSleep(InhibitionType type) override;
     void uninhibitSleep() override;
 
 private:
@@ -47,12 +49,30 @@ private:
         FreedesktopPortal,
     };
 
+    struct InterfaceState
+    {
+        std::optional<State> desiredState;
+        InhibitionType desiredType;
+        std::optional<InhibitionType> currentType;
+        State currentState{State::Initializing};
+    };
+
     void onInhibitCallFinished(QDBusPendingCallWatcher* watcher);
     void onUninhibitCallFinished(QDBusPendingCallWatcher* watcher);
 
+    [[nodiscard]] bool usingScreenSaverInterface() const;
+    void inhibitScreenSaver();
+    void uninhibitScreenSaver();
+    void onScreenSaverInhibitCallFinished(QDBusPendingCallWatcher* watcher);
+    void onScreenSaverUninhibitCallFinished(QDBusPendingCallWatcher* watcher);
+
     QPointer<QDBusInterface> m_busInterface;
+    QPointer<QDBusInterface> m_screenSaverInterface;
     Interface m_interface{Interface::None};
-    uint32_t m_inhibitCookie{0};     // Used by GnomeSessionManager and FreedesktopPower
-    QDBusObjectPath m_inhibitHandle; // Used by FreedesktopPortal
+    InterfaceState m_powerState;
+    InterfaceState m_screenSaverState;
+    uint32_t m_inhibitCookie{0};            // Used by GnomeSessionManager and FreedesktopPower
+    uint32_t m_screenSaverInhibitCookie{0}; // Used by FreedesktopScreenSaver
+    QDBusObjectPath m_inhibitHandle;        // Used by FreedesktopPortal
 };
 } // namespace Fooyin::SleepInhibitor

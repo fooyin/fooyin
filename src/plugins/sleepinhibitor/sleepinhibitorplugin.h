@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "inhibitor.h"
+
 #include <core/coresettings.h>
 #include <core/plugins/coreplugin.h>
 #include <core/plugins/plugin.h>
@@ -54,5 +56,6 @@ private:
     PlayerController* m_playerController;
     FySettings m_settings;
     Inhibitor* m_inhibitor;
+    InhibitionType m_inhibitionType;
 };
 } // namespace Fooyin::SleepInhibitor
