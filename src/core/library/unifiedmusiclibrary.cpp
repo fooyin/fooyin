@@ -120,25 +120,40 @@ TrackPathKey trackPathKey(const Track& track)
 class TrackLookup
 {
 public:
-    explicit TrackLookup(const TrackList& tracks)
+    enum Type
     {
-        m_byId.reserve(tracks.size());
-        m_byPath.reserve(tracks.size());
-        m_byPathWithoutId.reserve(tracks.size());
+        Id   = 1 << 0,
+        Path = 1 << 1,
+        All  = Id | Path
+    };
+
+    explicit TrackLookup(const TrackList& tracks, Type types = All)
+    {
+        if(types & Id) {
+            m_byId.reserve(tracks.size());
+        }
+        if(types & Path) {
+            m_byPath.reserve(tracks.size());
+            m_byPathWithoutId.reserve(tracks.size());
+        }
 
         for(size_t i{0}; i < tracks.size(); ++i) {
-            add(tracks.at(i), i);
+            add(tracks.at(i), i, types);
         }
     }
 
-    void add(const Track& track, size_t index)
+    void add(const Track& track, size_t index, Type types)
     {
-        m_byId.emplace(track.id(), index);
-
-        if(track.id() < 0) {
-            m_byPathWithoutId.emplace(trackPathKey(track), index);
+        if(types & Id) {
+            m_byId.emplace(track.id(), index);
         }
-        m_byPath.emplace(trackPathKey(track), index);
+
+        if(types & Path) {
+            if(track.id() < 0) {
+                m_byPathWithoutId.emplace(trackPathKey(track), index);
+            }
+            m_byPath.emplace(trackPathKey(track), index);
+        }
     }
 
     std::optional<size_t> findForAdd(const Track& track) const
@@ -160,10 +175,15 @@ public:
         return {};
     }
 
+    std::optional<size_t> findById(int id) const
+    {
+        const auto it = m_byId.find(id);
+        return it != m_byId.cend() ? std::optional{it->second} : std::nullopt;
+    }
+
     std::optional<size_t> findById(const Track& track) const
     {
-        const auto it = m_byId.find(track.id());
-        return it != m_byId.cend() ? std::optional{it->second} : std::nullopt;
+        return findById(track.id());
     }
 
 private:
@@ -420,7 +440,7 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitAddTracks(TrackList newTracks)
         }
         else {
             addedTracks.push_back(track);
-            lookup.add(track, m_tracks.size());
+            lookup.add(track, m_tracks.size(), TrackLookup::Type::All);
             m_tracks.push_back(track);
         }
     }
@@ -903,13 +923,14 @@ Track UnifiedMusicLibrary::trackForId(int id) const
 
 TrackList UnifiedMusicLibrary::tracksForIds(const TrackIds& ids) const
 {
+    const TrackLookup lookup{p->m_tracks, TrackLookup::Id};
+
     TrackList tracks;
     tracks.reserve(ids.size());
 
     for(const int id : ids) {
-        auto trackIt = std::ranges::find_if(p->m_tracks, [id](const Track& track) { return track.id() == id; });
-        if(trackIt != p->m_tracks.cend()) {
-            tracks.push_back(*trackIt);
+        if(const auto index = lookup.findById(id)) {
+            tracks.push_back(p->m_tracks.at(*index));
         }
     }
 
