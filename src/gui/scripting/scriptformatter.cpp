@@ -175,10 +175,30 @@ void ScriptFormatterPrivate::errorAt(const ScriptScanner::Token& token, const QS
     m_errors.emplace_back(currentError);
 }
 
+namespace {
+// The formatter shares the query scanner, which also emits TokLeftAngle/TokRightAngle
+// for the keyword words "LESS"/"GREATER". A real bracket delimiter has the bracket
+// character as its value, so check the value rather than the type alone.
+bool isLiteralAngle(const ScriptScanner::Token& token, QChar bracket)
+{
+    return token.value.size() == 1 && token.value.front() == bracket;
+}
+
+bool isLeftAngle(const ScriptScanner::Token& token)
+{
+    return token.type == ScriptScanner::TokLeftAngle && isLiteralAngle(token, u'<');
+}
+
+bool isRightAngle(const ScriptScanner::Token& token)
+{
+    return token.type == ScriptScanner::TokRightAngle && isLiteralAngle(token, u'>');
+}
+} // namespace
+
 void ScriptFormatterPrivate::expression()
 {
     advance();
-    if(m_previous.type == ScriptScanner::TokLeftAngle) {
+    if(isLeftAngle(m_previous)) {
         formatBlock();
     }
     else if(m_previous.type == ScriptScanner::TokEscape) {
@@ -192,13 +212,29 @@ void ScriptFormatterPrivate::expression()
 
 void ScriptFormatterPrivate::formatBlock()
 {
-    const FormatTag tag = parseFormatTag(readTagContent());
-    consume(ScriptScanner::TokRightAngle, u"Expected '>' after expression"_s);
+    const QString rawContent   = readTagContent();
+    const bool hasClosingAngle = isRightAngle(m_current);
+    const FormatTag tag        = parseFormatTag(rawContent);
 
-    if(tag.name.isEmpty()) {
-        error(u"Format option not found"_s);
+    // A genuine formatting tag opens with '<' immediately followed by a recognised
+    // formatter name and closes with '>'. Anything else (e.g. "<3", "a < b >",
+    // "<notatag>") is literal text the user wants shown verbatim, so emit the original
+    // "<...>" sequence instead of dropping it. Option validity is left to
+    // processFormat() so a known tag with a bad option still renders its inner text.
+    const bool isFormatTag = hasClosingAngle && !rawContent.isEmpty() && !rawContent.front().isSpace()
+                          && ScriptFormatterRegistry::isKnown(tag.name);
+
+    if(!isFormatTag) {
+        m_currentBlock.text += u'<';
+        m_currentBlock.text += rawContent;
+        if(hasClosingAngle) {
+            m_currentBlock.text += u'>';
+            advance();
+        }
         return;
     }
+
+    consume(ScriptScanner::TokRightAngle, u"Expected '>' after expression"_s);
 
     processFormat(tag);
 }
@@ -207,12 +243,15 @@ QString ScriptFormatterPrivate::readTagContent()
 {
     QString content;
 
-    while(m_current.type != ScriptScanner::TokRightAngle && m_current.type != ScriptScanner::TokEos) {
+    // Stop at a nested '<' as well as '>'/EOS: a real formatting tag never contains
+    // a '<' in its content, so encountering one means the current '<' is literal text
+    // and must not consume the following tag's opening delimiter.
+    while(!isRightAngle(m_current) && !isLeftAngle(m_current) && m_current.type != ScriptScanner::TokEos) {
         content.append(m_current.value);
         advance();
     }
 
-    return content.trimmed();
+    return content;
 }
 
 QString ScriptFormatterPrivate::peekClosingTagName()
