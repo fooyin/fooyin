@@ -22,6 +22,7 @@ set(FOOYIN_KNOWN_PLUGINS
     projectm
     rawaudio
     radiobrowser
+    runservices
     rgscanner
     scrobbler
     sdl
@@ -53,6 +54,7 @@ set(FOOYIN_DEFAULT_PLUGINS
     projectm
     rawaudio
     radiobrowser
+    runservices
     rgscanner
     scrobbler
     sdl
@@ -144,6 +146,7 @@ fooyin_add_selected_plugin(quicktagger)
 fooyin_add_selected_plugin(projectm)
 fooyin_add_selected_plugin(rawaudio)
 fooyin_add_selected_plugin(radiobrowser)
+fooyin_add_selected_plugin(runservices)
 fooyin_add_selected_plugin(rgscanner)
 fooyin_add_selected_plugin(scrobbler)
 fooyin_add_selected_plugin(sdl)
