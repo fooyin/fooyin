@@ -37,6 +37,7 @@
 #include <algorithm>
 #include <limits>
 #include <set>
+#include <unordered_set>
 
 using namespace Qt::StringLiterals;
 
@@ -47,6 +48,14 @@ constexpr auto OpaqueAltAlphaThreshold = 185;
 constexpr auto TransparentAltAlpha     = 80;
 
 namespace {
+struct ModelIndexHash
+{
+    size_t operator()(const QModelIndex& index) const noexcept
+    {
+        return qHash(index);
+    }
+};
+
 void makeBaseRowTransparent(QStyleOptionViewItem& option)
 {
     QColor base = option.palette.color(QPalette::Base);
@@ -2849,6 +2858,21 @@ QModelIndexList ExpandedTreeViewPrivate::selectedDraggableIndexes(bool fullRow) 
 
     if(fullRow) {
         const auto selection = m_self->selectionModel()->selection();
+
+        qsizetype indexCount{0};
+        for(const QItemSelectionRange& range : selection) {
+            if(range.isValid()) {
+                indexCount += range.bottom() - range.top() + 1;
+            }
+        }
+        indexes.reserve(indexCount);
+
+        const bool mayOverlap = selection.size() > 1;
+        std::unordered_set<QModelIndex, ModelIndexHash> seenIndexes;
+        if(mayOverlap) {
+            seenIndexes.reserve(indexCount);
+        }
+
         for(const QItemSelectionRange& range : selection) {
             if(!range.isValid()) {
                 continue;
@@ -2859,20 +2883,30 @@ QModelIndexList ExpandedTreeViewPrivate::selectedDraggableIndexes(bool fullRow) 
 
             for(int row{range.top()}; row <= range.bottom(); ++row) {
                 const QModelIndex index = m_model->index(row, column, parent);
-                if(index.isValid() && !indexes.contains(index)) {
+                if(index.isValid() && (m_model->flags(index) & Qt::ItemIsDragEnabled)
+                   && (!mayOverlap || seenIndexes.emplace(index).second)) {
                     indexes.append(index);
                 }
             }
         }
     }
     else {
-        indexes = m_self->selectedIndexes();
-    }
+        const QModelIndexList visibleIndexes = m_view->visibleIndexes(0);
+        indexes.reserve(visibleIndexes.size() * m_header->count());
 
-    auto isNotDragEnabled = [this](const QModelIndex& index) {
-        return !(m_model->flags(index) & Qt::ItemIsDragEnabled);
-    };
-    indexes.removeIf(isNotDragEnabled);
+        for(const QModelIndex& visibleIndex : visibleIndexes) {
+            const QModelIndex parent = visibleIndex.parent();
+            const int columnCount    = m_model->columnCount(parent);
+
+            for(int column{0}; column < columnCount; ++column) {
+                const QModelIndex index = visibleIndex.siblingAtColumn(column);
+                if(!m_self->isIndexHidden(index) && m_self->selectionModel()->isSelected(index)
+                   && (m_model->flags(index) & Qt::ItemIsDragEnabled)) {
+                    indexes.append(index);
+                }
+            }
+        }
+    }
 
     return indexes;
 }
