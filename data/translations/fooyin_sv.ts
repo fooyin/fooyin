@@ -1327,7 +1327,7 @@
     <message>
         <location filename="../../src/core/engine/verification/accuraterip.cpp" line="495"/>
         <source>The selected tracks do not form a correct gapless CD rip.</source>
-        <translation type="unfinished"></translation>
+        <translation>De valda spåren formar inte en korrekt oavbruten CD-rippning.</translation>
     </message>
 </context>
 <context>
@@ -2237,9 +2237,9 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="154"/>
         <source>Found correction: %1 (%Ln submission(s), %2% agreement).</source>
         <extracomment>Correction = CD Drive read offset correction</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Hittade korrigering: %1 (%Ln insändning, %2% enighet).</numerusform>
+            <numerusform>Hittade korrigering: %1 (%Ln insändningar, %2% enighet).</numerusform>
         </translation>
     </message>
 </context>
