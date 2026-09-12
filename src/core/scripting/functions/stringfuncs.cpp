@@ -126,7 +126,7 @@ QString strstrHelper(const QStringList& vec, bool reverse, Qt::CaseSensitivity c
         return {};
     }
 
-    return QString::number(ret);
+    return QString::number(ret + 1);
 }
 } // namespace
 
