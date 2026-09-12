@@ -452,6 +452,24 @@ TEST_F(ScriptParserTest, StringTest)
     EXPECT_EQ(u"Artist", m_parser.evaluate(u"$join( - ,Artist,)"_s));
     EXPECT_EQ(u"Artist - Album", m_parser.evaluate(u"$join( - ,Artist,Album)"_s));
     EXPECT_EQ(u"A / B / C", m_parser.evaluate(u"$join( / ,A,,B,C)"_s));
+    EXPECT_EQ(u"a", m_parser.evaluate(u"$shortest(longer,a,bb)"_s));
+    EXPECT_EQ(u"first", m_parser.evaluate(u"$shortest(first,later)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$shortest()"_s));
+    EXPECT_EQ(u"1", m_parser.evaluate(u"$strchr(abca,a)"_s));
+    EXPECT_EQ(u"4", m_parser.evaluate(u"$strrchr(abca,a)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$strchr(abca,z)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$strrchr(abca,ab)"_s));
+    EXPECT_EQ(u"1", m_parser.evaluate(u"$strstr(abca,a)"_s));
+    EXPECT_EQ(u"3", m_parser.evaluate(u"$strstr(abca,c)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$strstr(abca,A)"_s));
+    EXPECT_EQ(u"4", m_parser.evaluate(u"$strstr(abca,a,1)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$strstr(abca,a,invalid)"_s));
+    EXPECT_EQ(u"1", m_parser.evaluate(u"$stristr(Abca,a)"_s));
+    EXPECT_EQ(u"4", m_parser.evaluate(u"$stristr(Abca,A,1)"_s));
+    EXPECT_EQ(u"4", m_parser.evaluate(u"$strstrlast(abca,a)"_s));
+    EXPECT_EQ(u"1", m_parser.evaluate(u"$strstrlast(abca,a,2)"_s));
+    EXPECT_EQ(u"4", m_parser.evaluate(u"$stristrlast(abcA,a)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$stristrlast(abca,z)"_s));
 
     EXPECT_EQ(u"true", m_parser.evaluate(u"$if($isalpha(abcXYZ),true,false)"_s));
     EXPECT_EQ(u"false", m_parser.evaluate(u"$if($isalpha(abc123),true,false)"_s));

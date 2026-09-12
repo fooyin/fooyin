@@ -715,6 +715,9 @@ void ScriptRegistry::addDefaultFunctions()
     registerFunction(u"join"_s, makeScriptFunctionInvoker<Scripting::join>());
     registerFunction(u"len"_s, makeScriptFunctionInvoker<Scripting::len>());
     registerFunction(u"longest"_s, makeScriptFunctionInvoker<Scripting::longest>());
+    registerFunction(u"shortest"_s, makeScriptFunctionInvoker<Scripting::shortest>());
+    registerFunction(u"strchr"_s, makeScriptFunctionInvoker<Scripting::strchr>());
+    registerFunction(u"strrchr"_s, makeScriptFunctionInvoker<Scripting::strrchr>());
     registerFunction(u"strcmp"_s, makeScriptFunctionInvoker<Scripting::strcmp>());
     registerFunction(u"stricmp"_s, makeScriptFunctionInvoker<Scripting::stricmp>());
     registerFunction(u"regex_test"_s, makeScriptFunctionInvoker<Scripting::regexTest>());

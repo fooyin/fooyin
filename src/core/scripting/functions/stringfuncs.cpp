@@ -29,6 +29,7 @@
 #include <QUrlQuery>
 
 #include <optional>
+#include <ranges>
 
 #include <zlib.h>
 
@@ -127,6 +128,17 @@ QString strstrHelper(const QStringList& vec, bool reverse, Qt::CaseSensitivity c
     }
 
     return QString::number(ret + 1);
+}
+
+QString strchrHelper(const QStringList& vec, bool reverse)
+{
+    if(vec.size() != 2 || vec.at(1).size() != 1) {
+        return {};
+    }
+
+    const QStringView str = vec.at(0);
+    const qsizetype index = reverse ? str.lastIndexOf(vec.at(1).front()) : str.indexOf(vec.at(1).front());
+    return index < 0 ? QString{} : QString::number(index + 1);
 }
 } // namespace
 
@@ -493,6 +505,26 @@ QString longest(const QStringList& vec)
     }
 
     return *std::max_element(vec.cbegin(), vec.cend());
+}
+
+QString shortest(const QStringList& vec)
+{
+    if(vec.empty()) {
+        return {};
+    }
+
+    return *std::ranges::min_element(vec,
+                                     [](const QString& lhs, const QString& rhs) { return lhs.size() < rhs.size(); });
+}
+
+QString strchr(const QStringList& vec)
+{
+    return strchrHelper(vec, false);
+}
+
+QString strrchr(const QStringList& vec)
+{
+    return strchrHelper(vec, true);
 }
 
 QString crlf(const QStringList& vec)
