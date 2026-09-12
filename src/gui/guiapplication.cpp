@@ -22,6 +22,7 @@
 #include "artwork/artworkdialog.h"
 #include "artwork/artworkfinder.h"
 #include "artwork/artworksaveutils.h"
+#include "artwork/artworkviewerdialog.h"
 #include "contextmenuids.h"
 #include "conversion/conversioncontroller.h"
 #include "conversion/convertersettingsstore.h"
@@ -160,6 +161,23 @@ QString commonMetadataValue(const TrackList& tracks, const QString& field)
                                        [&field, &value](const Track& track) { return track.metaValue(field) == value; })
              ? value
              : QString{};
+}
+
+std::optional<Track> commonArtworkTrack(const TrackList& tracks, CoverRepository* coverRepository)
+{
+    if(tracks.empty()) {
+        return {};
+    }
+
+    const Track& firstTrack     = tracks.front();
+    const QString firstCoverKey = coverRepository->thumbnailCoverKey(firstTrack);
+    if(firstCoverKey.isEmpty() || !std::ranges::all_of(tracks, [coverRepository, &firstCoverKey](const Track& track) {
+           return coverRepository->thumbnailCoverKey(track) == firstCoverKey;
+       })) {
+        return {};
+    }
+
+    return firstTrack;
 }
 
 std::optional<LookupMode> musicBrainzLookupMode(const TrackList& tracks)
@@ -655,6 +673,7 @@ void GuiApplication::initialise()
     setupConnections();
     registerActions();
     setupScanMenu();
+    setupArtworkMenu();
     setupPlaybackStatisticsMenu();
     setupConvertMenu();
     setupUtilitiesMenu();
@@ -1268,6 +1287,45 @@ void GuiApplication::setupScanMenu()
     m_selectionController->registerTrackContextSeparator(this, TrackContextMenuArea::Track,
                                                          Constants::Menus::Context::Tagging,
                                                          Constants::Menus::Context::TaggingReloadSeparator);
+}
+
+void GuiApplication::setupArtworkMenu()
+{
+    auto* viewArtwork = new QAction(tr("View full size"), this);
+    viewArtwork->setStatusTip(tr("View the common artwork for the selected tracks at full size"));
+
+    auto* command = m_actionManager->registerAction(viewArtwork, Constants::Actions::ViewArtwork);
+    command->setCategories({tr("Tracks"), tr("Artwork")});
+
+    QObject::connect(viewArtwork, &QAction::triggered, this, [this]() {
+        const auto* selection = m_selectionController->selectedSelection();
+        if(!selection) {
+            return;
+        }
+
+        const auto track = commonArtworkTrack(selection->tracks, m_coverRepository);
+        if(!track) {
+            return;
+        }
+
+        auto* dialog = new ArtworkViewerDialog(*track, m_coverRepository->trackCover(*track), m_mainWindow.get());
+        dialog->show();
+
+        m_coverRepository->trackCoverOriginal(*track).then(dialog, [dialog](const QPixmap& cover) {
+            if(!cover.isNull()) {
+                dialog->setCover(cover);
+            }
+        });
+    });
+
+    m_selectionController->registerTrackContextAction(
+        this, TrackContextMenuArea::Track, Constants::Menus::Context::Artwork, Constants::Actions::ViewArtwork,
+        viewArtwork->text(),
+        [this, viewArtwork](QMenu* menu, const TrackSelection& selection) {
+            viewArtwork->setEnabled(commonArtworkTrack(selection.tracks, m_coverRepository).has_value());
+            menu->addAction(viewArtwork);
+        },
+        Constants::Actions::SearchArtwork);
 }
 
 void GuiApplication::setupPlaybackStatisticsMenu()

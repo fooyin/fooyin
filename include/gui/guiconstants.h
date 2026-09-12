@@ -227,6 +227,7 @@ constexpr auto CopyLocation              = "Tracks.CopyLocation";
 constexpr auto CopyDirectoryPath         = "Tracks.CopyDirectoryPath";
 constexpr auto SearchArtwork             = "Tracks.SearchArtwork";
 constexpr auto SearchArtworkQuick        = "Tracks.SearchArtworkQuick";
+constexpr auto ViewArtwork               = "Tracks.ViewArtwork";
 constexpr auto ExportArtwork             = "Tracks.ExportArtwork";
 constexpr auto RemoveArtwork             = "Tracks.RemoveArtwork";
 constexpr auto Convert                   = "Tracks.Convert";
