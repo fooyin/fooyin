@@ -297,13 +297,20 @@ void ArtworkRow::contextMenuEvent(QContextMenuEvent* event)
     }
 
     if(hasExistingImage) {
-        auto* extractFile = new QAction(tr("Auto-export to file"), menu);
-        auto* extractAs   = new QAction(tr("Export as…"), menu);
+        auto* viewFullSize = new QAction(tr("View full size"), menu);
+        auto* extractFile  = new QAction(tr("Auto-export to file"), menu);
+        auto* extractAs    = new QAction(tr("Export as…"), menu);
+
         extractFile->setStatusTip(
             tr("Export this embedded artwork to a file in the track directory without prompting"));
         extractAs->setStatusTip(tr("Choose where to export this embedded artwork"));
+
         QObject::connect(extractFile, &QAction::triggered, this, &ArtworkRow::requestExtract);
         QObject::connect(extractAs, &QAction::triggered, this, &ArtworkRow::requestExtractAs);
+        QObject::connect(viewFullSize, &QAction::triggered, this, &ArtworkRow::requestView);
+
+        menu->addAction(viewFullSize);
+        menu->addSeparator();
         menu->addAction(extractFile);
         menu->addAction(extractAs);
 

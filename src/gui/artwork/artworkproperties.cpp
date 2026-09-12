@@ -21,16 +21,19 @@
 
 #include "artworkexporter.h"
 #include "artworkrow.h"
+#include "artworkviewerdialog.h"
 #include "sources/artworksource.h"
 
 #include <core/engine/audioloader.h>
 #include <core/library/pendingtrackcoverprovider.h>
 #include <gui/coverrepository.h>
 #include <gui/statusevent.h>
+#include <utils/async.h>
 
 #include <QDir>
 #include <QFutureWatcher>
 #include <QGridLayout>
+#include <QImage>
 #include <QPainter>
 #include <QPointer>
 #include <QtConcurrentRun>
@@ -86,6 +89,17 @@ ArtworkProperties::ArtworkProperties(AudioLoader* loader, MusicLibrary* library,
     int row{0};
     for(ArtworkRow* artworkRow : m_rows) {
         artworkLayout->addWidget(artworkRow, row++, 0);
+        QObject::connect(artworkRow, &ArtworkRow::requestView, this, [this, artworkRow]() {
+            const Track track = m_tracks.empty() ? Track{} : m_tracks.front();
+            Utils::asyncExec([imageData = artworkRow->image()] {
+                return QImage::fromData(imageData);
+            }).then(this, [this, track](const QImage& image) {
+                if(!image.isNull()) {
+                    auto* dialog = new ArtworkViewerDialog(track, QPixmap::fromImage(image), this);
+                    dialog->show();
+                }
+            });
+        });
         QObject::connect(artworkRow, &ArtworkRow::requestExtract, this, [this, artworkRow]() {
             const ArtworkResult artwork{.mimeType = artworkRow->mimeType(), .image = artworkRow->image()};
             const auto summary = ArtworkExporter::extractTracks(m_tracks, artworkRow->type(), artwork);
