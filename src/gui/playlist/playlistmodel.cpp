@@ -1026,8 +1026,32 @@ Qt::DropActions PlaylistModel::supportedDropActions() const
 
 QMimeData* PlaylistModel::mimeData(const QModelIndexList& indexes) const
 {
-    auto* mimeData = new QMimeData();
-    storeMimeData(indexes, mimeData);
+    QModelIndexList sortedIndexes{indexes};
+    std::ranges::sort(sortedIndexes, Utils::sortModelIndexes);
+
+    TrackList tracks;
+    tracks.reserve(sortedIndexes.size());
+
+    for(const QModelIndex& index : std::as_const(sortedIndexes)) {
+        tracks.push_back(index.data(PlaylistItem::Role::PersistentItemData).value<PlaylistTrack>().track);
+    }
+
+    auto* mimeData = new TrackMimeData{std::move(tracks)};
+
+    QByteArray modelId;
+    QDataStream stream{&modelId, QIODevice::WriteOnly};
+    stream << m_id;
+    mimeData->setData(QString::fromLatin1(MimeModelId), modelId);
+
+    Gui::populateExternalTrackMimeData(mimeData->tracks(), mimeData);
+    mimeData->setData(QString::fromLatin1(Constants::Mime::TrackIds), saveTracks(sortedIndexes));
+    if(m_currentPlaylist) {
+        mimeData->setData(QString::fromLatin1(Constants::Mime::PlaylistItems),
+                          saveIndexes(sortedIndexes, m_currentPlaylist));
+        mimeData->setData(QString::fromLatin1(Constants::Mime::QueueTracks),
+                          Gui::queueTracksToMimeData(savePlaylistTracks(m_currentPlaylist->id(), sortedIndexes)));
+    }
+
     return mimeData;
 }
 
@@ -2854,35 +2878,6 @@ void PlaylistModel::handleTrackGroup(PendingData& data)
 
     mergeTrackParents(data.trackParents);
     cleanupHeaders();
-}
-
-void PlaylistModel::storeMimeData(const QModelIndexList& indexes, QMimeData* mimeData) const
-{
-    if(mimeData) {
-        QByteArray modelId;
-        QDataStream stream{&modelId, QIODevice::WriteOnly};
-        stream << m_id;
-        mimeData->setData(QString::fromLatin1(MimeModelId), modelId);
-
-        QModelIndexList sortedIndexes{indexes};
-        std::ranges::sort(sortedIndexes, Utils::sortModelIndexes);
-
-        TrackList tracks;
-        tracks.reserve(sortedIndexes.size());
-
-        for(const QModelIndex& index : std::as_const(sortedIndexes)) {
-            tracks.push_back(index.data(PlaylistItem::Role::PersistentItemData).value<PlaylistTrack>().track);
-        }
-
-        Gui::populateExternalTrackMimeData(tracks, mimeData);
-        mimeData->setData(QString::fromLatin1(Constants::Mime::TrackIds), saveTracks(sortedIndexes));
-        if(m_currentPlaylist) {
-            mimeData->setData(QString::fromLatin1(Constants::Mime::PlaylistItems),
-                              saveIndexes(sortedIndexes, m_currentPlaylist));
-            mimeData->setData(QString::fromLatin1(Constants::Mime::QueueTracks),
-                              Gui::queueTracksToMimeData(savePlaylistTracks(m_currentPlaylist->id(), sortedIndexes)));
-        }
-    }
 }
 
 int PlaylistModel::dropInsertRows(const PlaylistItemList& rows, const QModelIndex& target, int row)

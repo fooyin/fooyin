@@ -262,7 +262,6 @@ private:
     DropTargetResult canBeMerged(PlaylistItem*& currTarget, int& targetRow, PlaylistItemList& sourceParents,
                                  int targetOffset);
     void handleTrackGroup(PendingData& data);
-    void storeMimeData(const QModelIndexList& indexes, QMimeData* mimeData) const;
 
     int dropInsertRows(const PlaylistItemList& rows, const QModelIndex& target, int row);
     int dropMoveRows(const QModelIndex& source, const PlaylistItemList& rows, const QModelIndex& target, int row);
