@@ -4,7 +4,7 @@
 <context>
     <name>Fooyin::ArtworkProperties</name>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="331"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="345"/>
         <source>Exported artwork to %Ln file(s)</source>
         <translation>
             <numerusform>Exported artwork to %Ln file</numerusform>
@@ -12,7 +12,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="339"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="353"/>
         <source>Exported artwork to %Ln file(s); some exports failed</source>
         <translation>
             <numerusform>Exported artwork to %Ln file; some exports failed</numerusform>
@@ -408,7 +408,7 @@
 <context>
     <name>Fooyin::PlaylistModel</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1522"/>
+        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1591"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln track</numerusform>
@@ -419,7 +419,7 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1715"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1729"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
@@ -543,7 +543,23 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/verification/verificationcontroller.cpp" line="388"/>
+        <location filename="../../src/gui/verification/verificationcontroller.cpp" line="253"/>
+        <source>+%Ln sample(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/verification/verificationcontroller.cpp" line="255"/>
+        <source>%Ln sample(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/verification/verificationcontroller.cpp" line="387"/>
         <source>Problems found in %Ln item(s).</source>
         <translation>
             <numerusform>Problems found in %Ln item.</numerusform>
