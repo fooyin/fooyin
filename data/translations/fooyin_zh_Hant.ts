@@ -410,17 +410,17 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="166"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="168"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">播放統計</translation>
+        <translation>播放統計</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="167"/>
         <source>Love flag: 1 when loved, empty otherwise</source>
-        <translation type="unfinished"></translation>
+        <translation>戀愛狀態：1 表示戀愛中，空白則為其他</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="169"/>
         <source>Interactive heart editor for the Love flag</source>
-        <translation type="unfinished"></translation>
+        <translation>互動式愛心編輯器用於戀愛狀態</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="171"/>
