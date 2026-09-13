@@ -58,13 +58,16 @@ public:
     bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
                       const QModelIndex& parent) override;
 
-    void reset(const QueueTracks& tracks);
+    void reset(const PlaybackQueue& queue);
 
+    bool updatePlaybackPosition(const PlaybackQueue& queue);
     void playbackStateChanged();
+    [[nodiscard]] QModelIndex indexForQueueItem(PlaybackQueueItemId queueItemId) const;
     [[nodiscard]] int queueIndex(const QModelIndex& index) const;
 
     void setScripts(const QString& titleScript, const QString& subtitleScript);
     void setShowCurrent(bool showCurrent);
+    void setShowUpcomingTracks(bool showUpcomingTracks);
     void setShowIcon(bool showIcon);
     void setIconSize(const QSize& iconSize);
 
@@ -76,8 +79,11 @@ Q_SIGNALS:
 private:
     std::unique_ptr<QueueViewerItem> makeCurrentTrackItem(const QueueTracks& tracks);
     void regenerateTitles();
+    void removeLeadingItems(int count);
     [[nodiscard]] bool shouldShowCurrentRow() const;
     void updateShowCurrent();
+    [[nodiscard]] int insertionQueueIndex(int row) const;
+    [[nodiscard]] bool showsUpcomingTracks() const;
 
     PlayerController* m_playerController;
     SettingsManager* m_settings;
@@ -88,12 +94,16 @@ private:
 
     std::vector<std::unique_ptr<QueueViewerItem>> m_trackItems;
     std::unordered_map<QString, std::vector<QueueViewerItem*>> m_trackParents;
+    std::unordered_map<PlaybackQueueItemId, QueueViewerItem*> m_itemsById;
 
     QString m_titleScript;
     QString m_subtitleScript;
 
     bool m_showCurrent;
+    bool m_showUpcomingTracks;
     bool m_showIcon;
+    int m_firstQueueIndex;
+    PlaybackQueueItemId m_currentQueueItemId;
     ThumbnailSize m_iconSize;
 
     std::unique_ptr<QueueViewerItem> m_currentTrackItem;

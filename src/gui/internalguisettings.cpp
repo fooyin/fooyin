@@ -145,6 +145,8 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<RatingFiveStarColour>(QVariant{}, u"Interface/RatingFiveStarColour"_s);
     m_settings->createSetting<UnlovedHeartColour>(QVariant{}, u"Interface/UnlovedHeartColour"_s);
     m_settings->createSetting<UnratedStarColour>(QVariant{}, u"Interface/UnratedStarColour"_s);
+    m_settings->createSetting<PlaybackQueueFollowCurrent>(true, u"PlaybackQueue/FollowCurrent"_s);
+    m_settings->createSetting<PlaylistShowQueueIndexes>(false, u"Playlist/ShowQueueIndexes"_s);
 
     m_settings->createSetting<Internal::EditingMenuLevels>(2, u"Interface/EditingMenuLevels"_s);
     m_settings->createSetting<Internal::PlaylistAltColours>(true, u"PlaylistWidget/AlternatingColours"_s);

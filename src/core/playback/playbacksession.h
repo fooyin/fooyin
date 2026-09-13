@@ -48,6 +48,7 @@ public:
     [[nodiscard]] const std::optional<PlaylistTrack>& detachedCurrentPlaylistTrack() const;
     [[nodiscard]] bool hasCurrentTrack() const;
     [[nodiscard]] bool isQueueTrack() const;
+    [[nodiscard]] PlaybackQueueItemId currentQueueItemId() const;
     [[nodiscard]] uint64_t currentItemId() const;
     [[nodiscard]] bool isIdle() const;
 
@@ -65,6 +66,7 @@ public:
     struct CommitResult
     {
         bool isQueueTrack{false};
+        PlaybackQueueItemId queueItemId{0};
         bool matchedPendingRequest{false};
     };
     [[nodiscard]] CommitResult commitRequest(const Player::TrackChangeRequest& request);
@@ -87,6 +89,7 @@ private:
     PlaylistTrack m_scheduledTrack;
     ScheduledTrackKind m_scheduledTrackKind;
     bool m_isQueueTrack;
+    PlaybackQueueItemId m_currentQueueItemId;
     uint64_t m_currentItemId;
     Player::TrackChangeContext m_pendingChangeContext;
     Player::TrackChangeContext m_lastChangeContext;

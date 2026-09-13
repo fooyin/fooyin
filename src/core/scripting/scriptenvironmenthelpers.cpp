@@ -144,6 +144,7 @@ PlaylistScriptEnvironment::PlaylistScriptEnvironment()
     , m_useVariousArtists{false}
     , m_ratingSymbols{defaultRatingStarSymbols()}
     , m_hasDirectQueueState{false}
+    , m_queueIndexesVisible{true}
 { }
 
 void PlaylistScriptEnvironment::setPlaylistData(const Playlist* playlist, const PlaybackQueue* playbackQueue,
@@ -163,6 +164,11 @@ void PlaylistScriptEnvironment::setQueueState(std::span<const int> queueIndexes,
     m_directQueueIndexes.assign(queueIndexes.begin(), queueIndexes.end());
     m_queueTotal          = queueTotal;
     m_hasDirectQueueState = true;
+}
+
+void PlaylistScriptEnvironment::setQueueIndexesVisible(bool visible)
+{
+    m_queueIndexesVisible = visible;
 }
 
 void PlaylistScriptEnvironment::setTrackState(int playlistTrackIndex, int currentPlayingTrackIndex,
@@ -250,7 +256,7 @@ std::span<const int> PlaylistScriptEnvironment::currentQueueIndexes() const
         return m_directQueueIndexes;
     }
 
-    if(!m_playbackQueue || !m_playlist || m_playlistTrackIndex < 0) {
+    if(!m_queueIndexesVisible || !m_playbackQueue || !m_playlist || m_playlistTrackIndex < 0) {
         return Empty;
     }
 

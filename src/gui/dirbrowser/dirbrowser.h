@@ -136,7 +136,7 @@ private:
     [[nodiscard]] QStringList selectedFilePaths() const;
 
     void handleAction(TrackAction action, bool onlySelection);
-    void handlePlayAction(const QList<QUrl>& files, const QString& startingFile);
+    void handlePlayAction(const QList<QUrl>& files, const QString& startingFile, bool onlySelection);
     void addPlaylistMenu(QMenu* menu) const;
     void handleDoubleClick(const QModelIndex& index);
     void handleMiddleClick();

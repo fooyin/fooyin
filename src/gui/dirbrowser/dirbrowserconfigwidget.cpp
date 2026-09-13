@@ -100,7 +100,7 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
     mainLayout->setRowStretch(3, 1);
 
     TrackSelectionController::addAction(m_doubleClick, tr("Expand/collapse"), TrackAction::None);
-    TrackSelectionController::addAction(m_doubleClick, tr("Expand/collapse or play"), TrackAction::Play);
+    TrackSelectionController::addAction(m_doubleClick, tr("Expand/collapse or play now"), TrackAction::Play);
     TrackSelectionController::addStandardActions(m_doubleClick);
 
     TrackSelectionController::addAction(m_middleClick, tr("None"), TrackAction::None);

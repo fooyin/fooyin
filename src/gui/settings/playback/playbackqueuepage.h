@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2026, Luke Taylor <luket@pm.me>
+ * Copyright © 2023, Luke Taylor <luket@pm.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,27 +19,16 @@
 
 #pragma once
 
-#include <utils/database/dbmodule.h>
-
-#include <vector>
+#include <utils/settings/settingspage.h>
 
 namespace Fooyin {
-struct PlaybackQueueInfo
-{
-    int queueIndex{-1};
-    int trackId{-1};
-    int playlistDbId{-1};
-    int playlistTrackIndex{-1};
-    int origin{0};
-    int sourceOrder{-1};
-    bool isCurrent{false};
-};
+class SettingsManager;
 
-class PlaybackQueueDatabase : public DbModule
+class PlaybackQueuePage : public SettingsPage
 {
+    Q_OBJECT
+
 public:
-    [[nodiscard]] std::vector<PlaybackQueueInfo> queue() const;
-    bool replaceQueue(const std::vector<PlaybackQueueInfo>& queue) const;
-    bool clearQueue() const;
+    explicit PlaybackQueuePage(SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Fooyin

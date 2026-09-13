@@ -517,6 +517,8 @@ set(SOURCES
     settings/playback/outputpage.h
     settings/playback/playbackpage.cpp
     settings/playback/playbackpage.h
+    settings/playback/playbackqueuepage.cpp
+    settings/playback/playbackqueuepage.h
     settings/playback/playbacksettingsutils.h
     settings/playback/replaygainpage.cpp
     settings/playback/replaygainpage.h

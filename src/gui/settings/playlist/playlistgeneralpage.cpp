@@ -164,7 +164,7 @@ void PlaylistGeneralPageWidget::load()
     const auto addClickActions = [](QComboBox* box) {
         box->clear();
         TrackSelectionController::addAction(box, tr("None"), TrackAction::None);
-        TrackSelectionController::addAction(box, tr("Play"), TrackAction::Play);
+        TrackSelectionController::addAction(box, tr("Play now"), TrackAction::Play);
         TrackSelectionController::addStandardActions(box, ActionGroup::Queue);
     };
 

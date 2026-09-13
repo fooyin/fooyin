@@ -25,6 +25,7 @@ namespace Fooyin {
 PlaybackSession::PlaybackSession()
     : m_scheduledTrackKind{ScheduledTrackKind::Normal}
     , m_isQueueTrack{false}
+    , m_currentQueueItemId{0}
     , m_currentItemId{0}
 { }
 
@@ -76,6 +77,11 @@ bool PlaybackSession::hasCurrentTrack() const
 bool PlaybackSession::isQueueTrack() const
 {
     return m_isQueueTrack;
+}
+
+PlaybackQueueItemId PlaybackSession::currentQueueItemId() const
+{
+    return m_currentQueueItemId;
 }
 
 uint64_t PlaybackSession::currentItemId() const
@@ -141,6 +147,7 @@ PlaybackSession::CommitResult PlaybackSession::commitRequest(const Player::Track
 
     CommitResult result{
         .isQueueTrack          = request.isQueueTrack,
+        .queueItemId           = request.queueItemId,
         .matchedPendingRequest = false,
     };
 
@@ -150,6 +157,7 @@ PlaybackSession::CommitResult PlaybackSession::commitRequest(const Player::Track
        && m_pendingRequest->itemId == request.itemId) {
         context                      = m_pendingRequest->context;
         result.isQueueTrack          = m_pendingRequest->isQueueTrack;
+        result.queueItemId           = m_pendingRequest->queueItemId;
         result.matchedPendingRequest = true;
         itemId                       = m_pendingRequest->itemId;
     }
@@ -158,6 +166,7 @@ PlaybackSession::CommitResult PlaybackSession::commitRequest(const Player::Track
     m_lastChangeContext    = context;
     m_pendingChangeContext = {};
     m_isQueueTrack         = result.isQueueTrack;
+    m_currentQueueItemId   = result.queueItemId;
     m_currentItemId        = itemId;
     m_scheduledTrack       = {};
     m_scheduledTrackKind   = ScheduledTrackKind::Normal;
@@ -181,8 +190,10 @@ void PlaybackSession::clearCurrentTrack()
 
 void PlaybackSession::resetCurrentTrackState()
 {
-    m_currentTrack  = {};
-    m_currentItemId = 0;
+    m_currentTrack       = {};
+    m_isQueueTrack       = false;
+    m_currentQueueItemId = 0;
+    m_currentItemId      = 0;
     m_detachedCurrentPlaylistTrack.reset();
 }
 

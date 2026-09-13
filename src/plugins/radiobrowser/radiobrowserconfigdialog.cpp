@@ -52,7 +52,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     , m_uniformStationIcons{new QCheckBox(tr("Use uniform station icon frames"), this)}
 {
     TrackSelectionController::addAction(m_doubleClick, tr("None"), TrackAction::None);
-    TrackSelectionController::addAction(m_doubleClick, tr("Play"), TrackAction::Play);
+    TrackSelectionController::addAction(m_doubleClick, tr("Play now"), TrackAction::Play);
     m_doubleClick->addItem(tr("Add or remove from My Stations"), RadioBrowserWidget::ToggleSavedStation);
     TrackSelectionController::addStandardActions(m_doubleClick);
 

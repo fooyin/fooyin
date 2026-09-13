@@ -19,27 +19,17 @@
 
 #pragma once
 
-#include <utils/database/dbmodule.h>
+#include <core/track.h>
+
+#include <QString>
 
 #include <vector>
 
-namespace Fooyin {
-struct PlaybackQueueInfo
-{
-    int queueIndex{-1};
-    int trackId{-1};
-    int playlistDbId{-1};
-    int playlistTrackIndex{-1};
-    int origin{0};
-    int sourceOrder{-1};
-    bool isCurrent{false};
-};
+namespace Fooyin::PlaybackOrder {
+using IndexGroup  = std::vector<int>;
+using IndexGroups = std::vector<IndexGroup>;
 
-class PlaybackQueueDatabase : public DbModule
-{
-public:
-    [[nodiscard]] std::vector<PlaybackQueueInfo> queue() const;
-    bool replaceQueue(const std::vector<PlaybackQueueInfo>& queue) const;
-    bool clearQueue() const;
-};
-} // namespace Fooyin
+std::vector<int> shuffledTrackIndexes(int trackCount, int anchorIndex = -1);
+IndexGroups groupedTrackIndexes(const TrackList& tracks, const QString& groupScript, const QString& sortScript);
+IndexGroups shuffledTrackGroups(IndexGroups groups, int anchorIndex = -1);
+} // namespace Fooyin::PlaybackOrder

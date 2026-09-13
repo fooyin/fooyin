@@ -186,11 +186,11 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     mainLayout->setRowStretch(0, 1);
 
     TrackSelectionController::addAction(m_doubleClick, tr("None"), TrackAction::None);
-    TrackSelectionController::addAction(m_doubleClick, tr("Play"), TrackAction::Play);
+    TrackSelectionController::addAction(m_doubleClick, tr("Play now"), TrackAction::Play);
     TrackSelectionController::addStandardActions(m_doubleClick);
 
     TrackSelectionController::addAction(m_middleClick, tr("None"), TrackAction::None);
-    TrackSelectionController::addAction(m_middleClick, tr("Play"), TrackAction::Play);
+    TrackSelectionController::addAction(m_middleClick, tr("Play now"), TrackAction::Play);
     TrackSelectionController::addStandardActions(m_middleClick);
 
     QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, m_rowHeight, &QWidget::setEnabled);

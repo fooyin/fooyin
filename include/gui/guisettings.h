@@ -102,6 +102,8 @@ enum GuiSettings : uint32_t
     RatingFiveStarColour       = 45 | Type::Variant,
     UnlovedHeartColour         = 46 | Type::Variant,
     UnratedStarColour          = 47 | Type::Variant,
+    PlaybackQueueFollowCurrent = 48 | Type::Bool,
+    PlaylistShowQueueIndexes   = 49 | Type::Bool,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Settings::Gui

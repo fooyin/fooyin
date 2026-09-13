@@ -25,6 +25,8 @@
 
 class QCheckBox;
 class QGroupBox;
+class QLabel;
+class QRadioButton;
 class QSpinBox;
 
 namespace Fooyin {
@@ -35,7 +37,7 @@ class QueueViewerConfigDialog : public WidgetConfigDialog<QueueViewer, QueueView
     Q_OBJECT
 
 public:
-    explicit QueueViewerConfigDialog(QueueViewer* queueViewer, QWidget* parent = nullptr);
+    explicit QueueViewerConfigDialog(QueueViewer* queueViewer, bool showDisplayMode, QWidget* parent = nullptr);
 
 protected:
     void setConfig(const QueueViewer::ConfigData& config) override;
@@ -43,8 +45,13 @@ protected:
     void mergeExternalConfig(const QueueViewer::ConfigData& previous, const QueueViewer::ConfigData& current) override;
 
 private:
+    void setDisplayModeVisible(bool visible) const;
+
     ScriptLineEdit* m_titleScript;
     ScriptLineEdit* m_subtitleScript;
+    QLabel* m_displayModeLabel;
+    QRadioButton* m_playingTracksMode;
+    QRadioButton* m_upcomingTracksMode;
 
     QCheckBox* m_headers;
     QCheckBox* m_scrollBars;

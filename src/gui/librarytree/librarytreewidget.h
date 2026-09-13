@@ -152,7 +152,7 @@ private:
 
     [[nodiscard]] TrackList sourceTracks() const;
 
-    void handlePlayback(const QModelIndexList& indexes, int row = 0);
+    void handlePlayback(const QModelIndexList& indexes, int row = 0, bool singleTrackSelection = false);
     void handlePlaySelection();
     void handlePlayTrack(const QModelIndex& index);
     void handleDoubleClick(const QModelIndex& index);

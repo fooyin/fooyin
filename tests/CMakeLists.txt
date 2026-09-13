@@ -67,6 +67,7 @@ fooyin_add_test(test_remoteioservice core/network/remoteioservicetest.cpp networ
 
 fooyin_add_test(test_playbackcursor core/playback/playbackcursortest.cpp)
 fooyin_add_test(test_playbackprogresstracker core/playback/playbackprogresstrackertest.cpp)
+fooyin_add_test(test_playbackqueue core/playback/playbackqueuetest.cpp)
 fooyin_add_test(test_playbacksession core/playback/playbacksessiontest.cpp)
 fooyin_add_test(test_playercontroller core/playback/playercontrollertest.cpp)
 fooyin_add_test(test_playlistnavigator core/playback/playlistnavigatortest.cpp)
