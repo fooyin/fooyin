@@ -410,17 +410,17 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="166"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="168"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">Статистика воспроизведения</translation>
+        <translation>Статистика воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="167"/>
         <source>Love flag: 1 when loved, empty otherwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Флаг «любимое»: 1, если отмечено как любимое, иначе пусто</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="169"/>
         <source>Interactive heart editor for the Love flag</source>
-        <translation type="unfinished"></translation>
+        <translation>Интерактивный редактор сердечка для флага «любимое»</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="171"/>
@@ -581,27 +581,27 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="293"/>
         <source>Returns true when x is greater than y</source>
-        <translation type="unfinished"></translation>
+        <translation>Возвращает true, когда x больше y</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="328"/>
         <source>Finds the first substring position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Находит позицию первого вхождения подстроки (счёт с 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="331"/>
         <source>Finds the first substring position ignoring case (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Находит позицию первого вхождения подстроки без учёта регистра (счёт с 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="334"/>
         <source>Finds the last substring position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Находит позицию последнего вхождения подстроки (счёт с 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="337"/>
         <source>Finds the last substring position ignoring case (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Находит позицию последнего вхождения подстроки без учёта регистра (счёт с 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="340"/>
@@ -611,22 +611,22 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="350"/>
         <source>Returns the first shortest string</source>
-        <translation type="unfinished"></translation>
+        <translation>Возвращает первую самую короткую строку</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="353"/>
         <source>Finds the first character position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Находит позицию первого символа (счёт с 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="356"/>
         <source>Finds the last character position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Находит позицию последнего символа (счёт с 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="365"/>
         <source>Returns true when a is longer than b</source>
-        <translation type="unfinished"></translation>
+        <translation>Возвращает true, когда a длиннее b</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="367"/>
@@ -636,7 +636,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="422"/>
         <source>Builds a clickable link that launches an application</source>
-        <translation type="unfinished"></translation>
+        <translation>Создаёт кликабельную ссылку, запускающую приложение</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="428"/>
@@ -646,7 +646,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="484"/>
         <source>Returns the value at the one-based index</source>
-        <translation type="unfinished"></translation>
+        <translation>Возвращает значение по индексу с отсчётом от единицы</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="493"/>
@@ -1809,7 +1809,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="300"/>
         <source>View full size</source>
-        <translation type="unfinished">Просмотр в полном размере</translation>
+        <translation>Просмотр в полном размере</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="301"/>
@@ -1921,7 +1921,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="100"/>
         <source>Use front cover before placeholder</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать переднюю обложку вместо заглушки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="114"/>
@@ -1961,7 +1961,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="134"/>
         <source>Use the track&apos;s front cover when artist artwork is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать переднюю обложку трека, когда обложка исполнителя недоступна</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="138"/>
@@ -6846,37 +6846,37 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="52"/>
         <source>Every library filter needs a name.</source>
-        <translation type="unfinished"></translation>
+        <translation>У каждого фильтра фонотеки должно быть имя.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="57"/>
         <source>The expression for library filter &quot;%1&quot; is invalid.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выражение для фильтра фонотеки «%1» недопустимо.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="89"/>
         <source>Enabled</source>
-        <translation type="unfinished">Включено</translation>
+        <translation>Включено</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="91"/>
         <source>Name</source>
-        <translation type="unfinished">Имя</translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="93"/>
         <source>Query</source>
-        <translation type="unfinished">Запрос</translation>
+        <translation>Запрос</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="138"/>
         <source>Enter name</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите имя</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="140"/>
         <source>Enter expression</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите выражение</translation>
     </message>
 </context>
 <context>
@@ -6885,12 +6885,12 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="172"/>
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="173"/>
         <source>Filters</source>
-        <translation type="unfinished">Фильтры</translation>
+        <translation>Фильтры</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="173"/>
         <source>Library</source>
-        <translation type="unfinished">Фонотека</translation>
+        <translation>Фонотека</translation>
     </message>
 </context>
 <context>
@@ -6898,7 +6898,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="77"/>
         <source>Script Editor</source>
-        <translation type="unfinished">Редактор скриптов</translation>
+        <translation>Редактор скриптов</translation>
     </message>
 </context>
 <context>
@@ -6906,32 +6906,32 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="50"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>Все</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="76"/>
         <source>Saved Filter Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключатель сохранённых фильтров</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="165"/>
         <source>Rename &apos;All&apos; filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Переименовать фильтр «Все»</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="168"/>
         <source>Rename &apos;All&apos; Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Переименовать фильтр «Все»</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="168"/>
         <source>Name:</source>
-        <translation type="unfinished">Имя:</translation>
+        <translation>Имя:</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="177"/>
         <source>Manage library filters…</source>
-        <translation type="unfinished"></translation>
+        <translation>Управление фильтрами фонотеки…</translation>
     </message>
 </context>
 <context>
@@ -6939,42 +6939,42 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="52"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>Все</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="63"/>
         <source>Library filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Фильтр фонотеки</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="86"/>
         <source>Saved Filter Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Вкладки сохранённых фильтров</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="465"/>
         <source>Rename tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Переименовать вкладку</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="472"/>
         <source>Tabs position</source>
-        <translation type="unfinished"></translation>
+        <translation>Положение вкладок</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="484"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Сверху</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="485"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Снизу</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="489"/>
         <source>Manage library filters…</source>
-        <translation type="unfinished"></translation>
+        <translation>Управление фильтрами фонотеки…</translation>
     </message>
 </context>
 <context>
@@ -7863,42 +7863,42 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="96"/>
         <source>1 star</source>
-        <translation type="unfinished"></translation>
+        <translation>1 звезда</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="97"/>
         <source>2 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>2 звезды</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="98"/>
         <source>3 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>3 звезды</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="99"/>
         <source>4 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>4 звезды</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="100"/>
         <source>5 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>5 звёзд</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="102"/>
         <source>Unrated</source>
-        <translation type="unfinished"></translation>
+        <translation>Без оценки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="103"/>
         <source>Heart colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Цвет сердечка</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="104"/>
         <source>Unloved heart colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Цвет сердечка для нелюбимого</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="106"/>
@@ -7985,22 +7985,22 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="150"/>
         <source>Editor colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Цвета редактора</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="161"/>
         <source>Controls the heart size used by the love editor widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Управляет размером сердечка, используемого виджетом редактора «любимое»</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="163"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>Любимое</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="167"/>
         <source>Love editor heart size</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер сердечка редактора «любимое»</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="175"/>
@@ -8019,7 +8019,7 @@ If the default half-star does not render correctly with your system font, choose
         <location filename="../../src/utils/heartdelegate.cpp" line="93"/>
         <source>mixed</source>
         <extracomment>Indicates that the selected tracks have different loved values in the tag editor.</extracomment>
-        <translation type="unfinished">разные</translation>
+        <translation>разные</translation>
     </message>
 </context>
 <context>
@@ -8459,17 +8459,17 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="318"/>
         <source>Loved</source>
-        <translation type="unfinished"></translation>
+        <translation>Любимое</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="319"/>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>Да</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="319"/>
         <source>No</source>
-        <translation type="unfinished">Нет</translation>
+        <translation>Нет</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="321"/>
@@ -13029,7 +13029,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="61"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>Любимое</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="62"/>
@@ -14389,7 +14389,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="108"/>
         <source>Configure</source>
-        <translation>Настройки</translation>
+        <translation>Настроить</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="109"/>
@@ -17563,12 +17563,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="301"/>
         <source>Integrations</source>
-        <translation type="unfinished">Интеграции</translation>
+        <translation>Интеграции</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="301"/>
         <source>Run Services</source>
-        <translation type="unfinished"></translation>
+        <translation>Службы запуска</translation>
     </message>
 </context>
 <context>
@@ -17576,87 +17576,87 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="104"/>
         <source>Add</source>
-        <translation type="unfinished">Добавить</translation>
+        <translation>Добавить</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="105"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="106"/>
         <source>Move up</source>
-        <translation type="unfinished">Переместить вверх</translation>
+        <translation>Переместить вверх</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="107"/>
         <source>Move down</source>
-        <translation type="unfinished">Переместить вниз</translation>
+        <translation>Переместить вниз</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="108"/>
         <source>Service properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Свойства службы</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="111"/>
         <source>Browse…</source>
-        <translation type="unfinished">Обзор…</translation>
+        <translation>Обзор…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="115"/>
         <source>Run the service for up to this many selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Запускать службу не более чем для такого числа выбранных треков</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="116"/>
         <source>Name shown in the Run menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя, отображаемое в меню «Запуск»</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="117"/>
         <source>Application and arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Приложение и аргументы</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="129"/>
         <source>Name</source>
-        <translation type="unfinished">Имя</translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="131"/>
         <source>Path</source>
-        <translation type="unfinished">Путь</translation>
+        <translation>Путь</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="134"/>
         <source>Simultaneous runs</source>
-        <translation type="unfinished"></translation>
+        <translation>Одновременные запуски</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="143"/>
         <source>Checked services are shown in the Run menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Отмеченные службы отображаются в меню «Запуск».</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="158"/>
         <source>Select application</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать приложение</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="191"/>
         <source>Service %1: Name is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>Служба %1: требуется имя.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="194"/>
         <source>Service %1: Path is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>Служба %1: требуется путь.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="251"/>
         <source>New service</source>
-        <translation type="unfinished"></translation>
+        <translation>Новая служба</translation>
     </message>
 </context>
 <context>
@@ -17664,26 +17664,26 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="70"/>
         <source>Run</source>
-        <translation type="unfinished"></translation>
+        <translation>Запуск</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="92"/>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="103"/>
         <source>Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Треки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="92"/>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="103"/>
         <source>Run Services</source>
-        <translation type="unfinished"></translation>
+        <translation>Службы запуска</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="102"/>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="139"/>
         <source>Run %1</source>
         <extracomment>%1 is the name of a registered run service</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Запустить %1</translation>
     </message>
 </context>
 <context>
@@ -17910,77 +17910,77 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1061"/>
         <source>Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактор</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1063"/>
         <source>Syntax highlighting</source>
-        <translation type="unfinished"></translation>
+        <translation>Подсветка синтаксиса</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1071"/>
         <source>Font</source>
-        <translation type="unfinished">Шрифт</translation>
+        <translation>Шрифт</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1072"/>
         <source>Word wrap</source>
-        <translation type="unfinished"></translation>
+        <translation>Перенос слов</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1073"/>
         <source>Autocomplete</source>
-        <translation type="unfinished"></translation>
+        <translation>Автодополнение</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1074"/>
         <source>Show whitespace</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать пробельные символы</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1075"/>
         <source>Highlight matching brackets</source>
-        <translation type="unfinished"></translation>
+        <translation>Подсвечивать парные скобки</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1076"/>
         <source>Highlight current line</source>
-        <translation type="unfinished"></translation>
+        <translation>Подсвечивать текущую строку</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1077"/>
         <source>Show line numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать номера строк</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1129"/>
         <source>Reset editor settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Сбросить настройки редактора</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1183"/>
         <source>Conditionals</source>
-        <translation type="unfinished"></translation>
+        <translation>Условные конструкции</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1184"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation>Операторы</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1185"/>
         <source>Quoted text</source>
-        <translation type="unfinished"></translation>
+        <translation>Текст в кавычках</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1196"/>
         <source>Reset colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Сбросить цвета</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1220"/>
         <source>Settings</source>
-        <translation type="unfinished">Настройки</translation>
+        <translation>Настройки</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1415"/>
@@ -18099,7 +18099,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="81"/>
         <source>Synchronise playback statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронизировать статистику воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="82"/>
@@ -18139,12 +18139,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="121"/>
         <source>Synchronisation</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронизация</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="125"/>
         <source>Import play counts and Loved status from enabled services when a track starts playing</source>
-        <translation type="unfinished"></translation>
+        <translation>Импортировать счётчики прослушиваний и статус «любимое» из включённых служб при начале воспроизведения трека</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="129"/>
@@ -18302,22 +18302,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="324"/>
         <source>Submit loved changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Отправлять изменения «любимое»</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="325"/>
         <source>Submit Love and Unlove changes to this service</source>
-        <translation type="unfinished"></translation>
+        <translation>Отправлять изменения «любимое» и «нелюбимое» в эту службу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="329"/>
         <source>Synchronise playback statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронизировать статистику воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="331"/>
         <source>Import play counts and Loved status from this service when a track starts playing</source>
-        <translation type="unfinished"></translation>
+        <translation>Импортировать счётчики прослушиваний и статус «любимое» из этой службы при начале воспроизведения трека</translation>
     </message>
 </context>
 <context>
@@ -20526,7 +20526,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="58"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>Любимое</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="59"/>
@@ -21142,19 +21142,19 @@ This does not support full scripting.</source>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="253"/>
         <source>+%Ln sample(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>+%Ln сэмпл</numerusform>
+            <numerusform>+%Ln сэмпла</numerusform>
+            <numerusform>+%Ln сэмплов</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="255"/>
         <source>%Ln sample(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln сэмпл</numerusform>
+            <numerusform>%Ln сэмпла</numerusform>
+            <numerusform>%Ln сэмплов</numerusform>
         </translation>
     </message>
     <message>
@@ -22332,7 +22332,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="374"/>
         <source>Library Filter</source>
-        <translation type="unfinished">Фильтр фонотеки</translation>
+        <translation>Фильтр фонотеки</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="375"/>
@@ -22340,17 +22340,17 @@ Higher supersampling values work best with higher sample counts.</source>
         <location filename="../../src/gui/widgets.cpp" line="390"/>
         <location filename="../../src/gui/widgets.cpp" line="818"/>
         <source>Filters</source>
-        <translation type="unfinished">Фильтры</translation>
+        <translation>Фильтры</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="382"/>
         <source>Saved Filter Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Вкладки сохранённых фильтров</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="389"/>
         <source>Saved Filter Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключатель сохранённых фильтров</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="504"/>
@@ -22967,52 +22967,52 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1294"/>
         <source>View full size</source>
-        <translation type="unfinished">Просмотр в полном размере</translation>
+        <translation>Просмотр в полном размере</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1295"/>
         <source>View the common artwork for the selected tracks at full size</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотр общей обложки для выбранных треков в полном размере</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1298"/>
         <source>Artwork</source>
-        <translation type="unfinished">Обложка</translation>
+        <translation>Обложка</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1351"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">Статистика воспроизведения</translation>
+        <translation>Статистика воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1366"/>
         <source>Toggle loved</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключить «любимое»</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1366"/>
         <source>Toggle Loved for selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключить статус «любимое» для выбранных треков</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1368"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>Любимое</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1368"/>
         <source>Love selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Отметить выбранные треки как любимые</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1370"/>
         <source>Unlove</source>
-        <translation type="unfinished"></translation>
+        <translation>Нелюбимое</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1370"/>
         <source>Unlove selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Снять отметку «любимое» с выбранных треков</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1386"/>
@@ -23717,7 +23717,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="300"/>
         <source>Run Services</source>
-        <translation type="unfinished"></translation>
+        <translation>Службы запуска</translation>
     </message>
 </context>
 <context>
@@ -23836,22 +23836,22 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="118"/>
         <source>Open Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть каталог</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="122"/>
         <source>Google Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Google: исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="126"/>
         <source>Google Artist + Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Google: исполнитель + название</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="130"/>
         <source>Wikipedia Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Wikipedia: исполнитель</translation>
     </message>
 </context>
 <context>
