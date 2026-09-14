@@ -358,8 +358,8 @@ void GuiApplication::shutdown()
     m_actionManager->saveSettings();
     m_editableLayout->saveLayout();
     m_editableLayout.reset();
-    m_playlistController.reset();
     m_mainWindow.reset();
+    m_playlistController.reset();
 }
 
 void GuiApplication::raise()
