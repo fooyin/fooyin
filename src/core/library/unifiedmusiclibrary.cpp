@@ -37,7 +37,9 @@
 #include <QCoro/QCoroTask>
 
 #include <QDateTime>
+#include <QFuture>
 #include <QLoggingCategory>
+
 #include <deque>
 #include <functional>
 #include <optional>
@@ -210,6 +212,7 @@ public:
     UnifiedMusicLibraryPrivate(UnifiedMusicLibrary* self, LibraryManager* libraryManager, DbConnectionPoolPtr dbPool,
                                std::shared_ptr<PlaylistLoader> playlistLoader, std::shared_ptr<AudioLoader> audioLoader,
                                std::shared_ptr<RemoteIoService> remoteIo, SettingsManager* settings);
+    ~UnifiedMusicLibraryPrivate();
 
     [[nodiscard]] QString librarySortScript() const;
     [[nodiscard]] QString externalSortScript() const;
@@ -266,6 +269,7 @@ public:
 
     LibraryThreadHandler m_threadHandler;
     TrackSorter m_sorter;
+    QFuture<TrackList> m_sortFuture;
 
     TrackList m_tracks;
     std::deque<CommitOperation> m_commitQueue;
@@ -299,6 +303,11 @@ UnifiedMusicLibraryPrivate::UnifiedMusicLibraryPrivate(UnifiedMusicLibrary* self
     m_settings->subscribe<Settings::Core::Internal::MonitorTrackFiles>(m_self, [this]() { setupLibraryWatchers(); });
 }
 
+UnifiedMusicLibraryPrivate::~UnifiedMusicLibraryPrivate()
+{
+    m_sortFuture.waitForFinished();
+}
+
 QString UnifiedMusicLibraryPrivate::librarySortScript() const
 {
     return m_settings->value<Settings::Core::LibrarySortScript>();
@@ -311,14 +320,17 @@ QString UnifiedMusicLibraryPrivate::externalSortScript() const
 
 QCoro::Task<TrackList> UnifiedMusicLibraryPrivate::sortTracks(QString sort, TrackList tracks)
 {
-    co_return co_await sortTracksFuture(sort, std::move(tracks));
+    TrackList sortedTracks = co_await sortTracksFuture(sort, std::move(tracks));
+    m_sortFuture           = {};
+    co_return sortedTracks;
 }
 
 QFuture<TrackList> UnifiedMusicLibraryPrivate::sortTracksFuture(const QString& sort, TrackList tracks)
 {
-    return Utils::asyncExec([this, sort, tracks = std::move(tracks)]() mutable {
+    m_sortFuture = Utils::asyncExec([this, sort, tracks = std::move(tracks)]() mutable {
         return m_sorter.calcSortTracks(sort, std::move(tracks));
     });
+    return m_sortFuture;
 }
 
 void UnifiedMusicLibraryPrivate::attachMetadataStore(TrackList& tracks) const
