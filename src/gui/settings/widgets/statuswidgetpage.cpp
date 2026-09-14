@@ -20,6 +20,7 @@
 #include "statuswidgetpage.h"
 
 #include "internalguisettings.h"
+#include "widgets/statuswidget.h"
 
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
@@ -28,6 +29,7 @@
 #include <utils/utils.h>
 
 #include <QCheckBox>
+#include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
@@ -53,6 +55,8 @@ private:
     QCheckBox* m_showSelection;
     QCheckBox* m_showPlaylist;
     QCheckBox* m_showStatusTips;
+    QComboBox* m_doubleClick;
+    QComboBox* m_middleClick;
     ScriptLineEdit* m_playingScript;
     ScriptLineEdit* m_selectionScript;
     ScriptLineEdit* m_playlistScript;
@@ -64,6 +68,8 @@ StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
     , m_showSelection{new QCheckBox(tr("Show selection info"), this)}
     , m_showPlaylist{new QCheckBox(tr("Show current playlist info"), this)}
     , m_showStatusTips{new QCheckBox(tr("Show action tips"), this)}
+    , m_doubleClick{new QComboBox(this)}
+    , m_middleClick{new QComboBox(this)}
     , m_playingScript{new ScriptLineEdit(this)}
     , m_selectionScript{new ScriptLineEdit(this)}
     , m_playlistScript{new ScriptLineEdit(this)}
@@ -75,6 +81,25 @@ StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
     displayLayout->addWidget(m_showSelection, 1, 0);
     displayLayout->addWidget(m_showPlaylist, 2, 0);
     displayLayout->addWidget(m_showStatusTips, 3, 0);
+
+    auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
+    auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
+
+    const auto addActions = [](QComboBox* box) {
+        box->addItem(tr("None"), static_cast<int>(StatusAction::None));
+        box->addItem(tr("Show track"), static_cast<int>(StatusAction::ShowTrack));
+        box->addItem(tr("Open containing folder"), static_cast<int>(StatusAction::OpenContainingFolder));
+        box->addItem(tr("Open properties"), static_cast<int>(StatusAction::OpenProperties));
+    };
+    addActions(m_doubleClick);
+    addActions(m_middleClick);
+
+    int row{0};
+    clickBehaviourLayout->addWidget(new QLabel(tr("Double-click") + u":"_s, clickBehaviour), row, 0);
+    clickBehaviourLayout->addWidget(m_doubleClick, row++, 1);
+    clickBehaviourLayout->addWidget(new QLabel(tr("Middle-click") + u":"_s, clickBehaviour), row, 0);
+    clickBehaviourLayout->addWidget(m_middleClick, row++, 1);
+    clickBehaviourLayout->setColumnStretch(row, 1);
 
     auto* scriptsGroup  = new QGroupBox(tr("Scripts"), this);
     auto* scriptsLayout = new QGridLayout(scriptsGroup);
@@ -92,11 +117,13 @@ StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
     scriptsLayout->addWidget(playlistHint, 6, 0);
 
     auto* layout = new QGridLayout(this);
-    layout->addWidget(displayGroup, 0, 0);
-    layout->addWidget(scriptsGroup, 1, 0);
 
+    row = 0;
+    layout->addWidget(displayGroup, row++, 0);
+    layout->addWidget(clickBehaviour, row++, 0);
+    layout->addWidget(scriptsGroup, row++, 0);
+    layout->setRowStretch(row, 1);
     layout->setColumnStretch(0, 1);
-    layout->setRowStretch(2, 1);
 
     m_settings->subscribe<Settings::Gui::Internal::StatusShowIcon>(m_showIcon, &QCheckBox::setChecked);
     m_settings->subscribe<Settings::Gui::Internal::StatusShowSelection>(m_showSelection, &QCheckBox::setChecked);
@@ -113,6 +140,10 @@ void StatusWidgetPageWidget::load()
     m_selectionScript->setText(m_settings->value<Settings::Gui::Internal::StatusSelectionScript>());
     m_playlistScript->setText(m_settings->value<Settings::Gui::Internal::StatusPlaylistScript>());
     m_showStatusTips->setChecked(m_settings->value<Settings::Gui::ShowStatusTips>());
+    m_doubleClick->setCurrentIndex(
+        m_doubleClick->findData(m_settings->value<Settings::Gui::Internal::StatusDoubleClick>()));
+    m_middleClick->setCurrentIndex(
+        m_middleClick->findData(m_settings->value<Settings::Gui::Internal::StatusMiddleClick>()));
 }
 
 void StatusWidgetPageWidget::apply()
@@ -124,6 +155,8 @@ void StatusWidgetPageWidget::apply()
     m_settings->set<Settings::Gui::Internal::StatusSelectionScript>(m_selectionScript->text());
     m_settings->set<Settings::Gui::Internal::StatusPlaylistScript>(m_playlistScript->text());
     m_settings->set<Settings::Gui::ShowStatusTips>(m_showStatusTips->isChecked());
+    m_settings->set<Settings::Gui::Internal::StatusDoubleClick>(m_doubleClick->currentData().toInt());
+    m_settings->set<Settings::Gui::Internal::StatusMiddleClick>(m_middleClick->currentData().toInt());
 }
 
 void StatusWidgetPageWidget::reset()
@@ -135,6 +168,8 @@ void StatusWidgetPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::StatusSelectionScript>();
     m_settings->reset<Settings::Gui::Internal::StatusPlaylistScript>();
     m_settings->reset<Settings::Gui::ShowStatusTips>();
+    m_settings->reset<Settings::Gui::Internal::StatusDoubleClick>();
+    m_settings->reset<Settings::Gui::Internal::StatusMiddleClick>();
 }
 
 StatusWidgetPage::StatusWidgetPage(SettingsManager* settings, QObject* parent)

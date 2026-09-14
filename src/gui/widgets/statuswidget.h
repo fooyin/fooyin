@@ -32,6 +32,14 @@ class PlaylistHandler;
 class StatusWidgetPrivate;
 class TrackSelectionController;
 
+enum class StatusAction : uint8_t
+{
+    None = 0,
+    ShowTrack,
+    OpenProperties,
+    OpenContainingFolder,
+};
+
 class StatusWidget : public FyWidget
 {
     Q_OBJECT
@@ -63,6 +71,7 @@ Q_SIGNALS:
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
     void mouseDoubleClickEvent(QMouseEvent* event) override;
     void timerEvent(QTimerEvent* event) override;
 

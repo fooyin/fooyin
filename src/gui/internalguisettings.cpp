@@ -161,6 +161,10 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                                                                u"StatusWidget/SelectionScript"_s);
     m_settings->createSetting<Internal::StatusPlaylistScript>(StatusWidget::defaultPlaylistScript(),
                                                               u"StatusWidget/PlaylistScript"_s);
+    m_settings->createSetting<Internal::StatusDoubleClick>(static_cast<int>(StatusAction::ShowTrack),
+                                                           u"StatusWidget/DoubleClickBehaviour"_s);
+    m_settings->createSetting<Internal::StatusMiddleClick>(static_cast<int>(StatusAction::None),
+                                                           u"StatusWidget/MiddleClickBehaviour"_s);
 
     m_settings->createTempSetting<Internal::SystemIconTheme>(QIcon::themeName());
     m_settings->createTempSetting<Internal::SystemStyle>(QApplication::style()->name());

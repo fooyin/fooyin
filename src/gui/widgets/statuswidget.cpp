@@ -39,12 +39,14 @@
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/clickablelabel.h>
 #include <gui/widgets/elidedlabel.h>
+#include <utils/fileutils.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
 #include <QBasicTimer>
 #include <QContextMenuEvent>
+#include <QFileInfo>
 #include <QHBoxLayout>
 #include <QMenu>
 #include <QSize>
@@ -93,6 +95,7 @@ public:
     static void setRichLabelText(StatusLabel* label, const QString& text, ScriptFormatter& formatter);
 
     void stateChanged(Player::PlayState state);
+    void performAction(StatusAction action);
 
     StatusWidget* m_self;
     EngineController* m_engine;
@@ -501,16 +504,46 @@ void StatusWidgetPrivate::updateSelectionText()
 void StatusWidgetPrivate::stateChanged(const Player::PlayState state)
 {
     switch(state) {
-        case(Player::PlayState::Stopped):
+        case Player::PlayState::Stopped:
             m_streamStatusGeneration = 0;
             m_remoteStreamBuffering  = false;
             updatePlayingText();
             clearMessage();
             break;
-        case(Player::PlayState::Playing):
-        case(Player::PlayState::Paused):
+        case Player::PlayState::Playing:
+        case Player::PlayState::Paused:
             updatePlayingText();
             break;
+    }
+}
+
+void StatusWidgetPrivate::performAction(StatusAction action)
+{
+    const Track track = m_playerController->currentTrack();
+    if(!track.isValid()) {
+        return;
+    }
+
+    switch(action) {
+        case StatusAction::None:
+            break;
+        case StatusAction::ShowTrack:
+            if(auto* activePlaylist = m_playlistController->playlistHandler()->activePlaylist()) {
+                m_playlistController->uiController()->showNowPlaying();
+                m_playlistController->changeCurrentPlaylist(activePlaylist);
+            }
+            break;
+        case StatusAction::OpenProperties:
+            Q_EMIT m_selectionController->requestPropertiesDialog({track});
+            break;
+        case StatusAction::OpenContainingFolder: {
+            const QString directory
+                = track.isInArchive() ? QFileInfo{track.archivePath()}.absolutePath() : track.path();
+            if(!directory.isEmpty()) {
+                Utils::File::openDirectory(directory);
+            }
+            break;
+        }
     }
 }
 
@@ -677,12 +710,21 @@ void StatusWidget::contextMenuEvent(QContextMenuEvent* event)
 void StatusWidget::mouseDoubleClickEvent(QMouseEvent* event)
 {
     if(event->button() == Qt::LeftButton) {
-        if(auto* activePlaylist = p->m_playlistController->playlistHandler()->activePlaylist()) {
-            p->m_playlistController->uiController()->showNowPlaying();
-            p->m_playlistController->changeCurrentPlaylist(activePlaylist);
-        }
+        p->performAction(static_cast<StatusAction>(p->m_settings->value<Settings::Gui::Internal::StatusDoubleClick>()));
+        event->accept();
+        return;
     }
     FyWidget::mouseDoubleClickEvent(event);
+}
+
+void StatusWidget::mousePressEvent(QMouseEvent* event)
+{
+    if(event->button() == Qt::MiddleButton) {
+        p->performAction(static_cast<StatusAction>(p->m_settings->value<Settings::Gui::Internal::StatusMiddleClick>()));
+        event->accept();
+        return;
+    }
+    FyWidget::mousePressEvent(event);
 }
 
 void StatusWidget::timerEvent(QTimerEvent* event)
