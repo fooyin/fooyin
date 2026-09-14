@@ -42,10 +42,12 @@
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
+#include <utils/async.h>
 #include <utils/crypto.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QActionGroup>
 #include <QCloseEvent>
 #include <QContextMenuEvent>
 #include <QDialog>
@@ -60,6 +62,7 @@
 #include <QPushButton>
 #include <QScrollBar>
 #include <QShowEvent>
+#include <QTimer>
 
 #include <random>
 #include <ranges>
@@ -76,9 +79,19 @@ constexpr auto QueueViewerAltColoursKey    = u"PlaybackQueue/AlternatingColours"
 constexpr auto QueueViewerLeftScriptKey    = u"PlaybackQueue/LeftScript";
 constexpr auto QueueViewerRightScriptKey   = u"PlaybackQueue/RightScript";
 constexpr auto QueueViewerShowCurrentKey   = u"PlaybackQueue/ShowCurrent";
+constexpr auto QueueViewerDisplayModeKey   = u"PlaybackQueue/DisplayMode";
 constexpr auto QueueViewerStateKey         = "PlaybackQueue/State"_L1;
 
 namespace Fooyin {
+namespace {
+std::vector<PlaybackQueueItemId> queueItemIds(const PlaybackQueueItems& items)
+{
+    std::vector<PlaybackQueueItemId> ids;
+    ids.reserve(items.size());
+    std::ranges::transform(items, std::back_inserter(ids), &PlaybackQueueItem::id);
+    return ids;
+}
+} // namespace
 
 QueueViewer::QueueViewer(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
                          TrackSelectionController* selectionController, CoverRepository* coverRepository,
@@ -102,6 +115,9 @@ QueueViewer::QueueViewer(ActionManager* actionManager, PlaylistInteractor* playl
     , m_randomise{new QAction(tr("Randomise"), this)}
     , m_reverse{new QAction(tr("Reverse"), this)}
     , m_sortActions{std::make_unique<SortActionHandler>(m_actionManager, m_sortingRegistry, m_context->context(), this)}
+    , m_updatesPausedForTrackChange{false}
+    , m_updatePauseToken{0}
+    , m_sortRequestToken{0}
     , m_topLevelStateLoaded{false}
 {
     setObjectName(QueueViewer::name());
@@ -119,7 +135,7 @@ QueueViewer::QueueViewer(ActionManager* actionManager, PlaylistInteractor* playl
 
     setupActions();
     setupConnections();
-    resetModel();
+    resetModelAndFollowCurrent();
 }
 
 QString QueueViewer::name() const
@@ -152,6 +168,183 @@ bool QueueViewer::isWindowWidget() const
     return parentWidget() == nullptr;
 }
 
+QueueViewer::ConfigData QueueViewer::factoryConfig() const
+{
+    return {
+        .leftScript          = u"%title%$crlf()%album%"_s,
+        .rightScript         = u"%duration%"_s,
+        .showCurrent         = true,
+        .showIcon            = true,
+        .iconSize            = QSize{36, 36},
+        .artworkCornerRadius = 0,
+        .showHeader          = true,
+        .showScrollBar       = true,
+        .alternatingRows     = false,
+        .displayMode         = DisplayMode::PlayingTracks,
+    };
+}
+
+QueueViewer::ConfigData QueueViewer::defaultConfig() const
+{
+    auto config{factoryConfig()};
+
+    config.leftScript          = m_settings->fileValue(QueueViewerLeftScriptKey, config.leftScript).toString();
+    config.rightScript         = m_settings->fileValue(QueueViewerRightScriptKey, config.rightScript).toString();
+    config.showCurrent         = m_settings->fileValue(QueueViewerShowCurrentKey, config.showCurrent).toBool();
+    config.showIcon            = m_settings->fileValue(QueueViewerShowIconKey, config.showIcon).toBool();
+    config.iconSize            = m_settings->fileValue(QueueViewerIconSizeKey, config.iconSize).toSize();
+    config.artworkCornerRadius = m_settings->fileValue(QueueViewerArtworkRadiusKey, config.artworkCornerRadius).toInt();
+    config.showHeader          = m_settings->fileValue(QueueViewerHeaderKey, config.showHeader).toBool();
+    config.showScrollBar       = m_settings->fileValue(QueueViewerScrollBarKey, config.showScrollBar).toBool();
+    config.alternatingRows     = m_settings->fileValue(QueueViewerAltColoursKey, config.alternatingRows).toBool();
+    const int displayMode
+        = m_settings->fileValue(QueueViewerDisplayModeKey, static_cast<int>(config.displayMode)).toInt();
+    config.displayMode = displayMode == static_cast<int>(DisplayMode::UpcomingTracks) ? DisplayMode::UpcomingTracks
+                                                                                      : DisplayMode::PlayingTracks;
+
+    return config;
+}
+
+const QueueViewer::ConfigData& QueueViewer::currentConfig() const
+{
+    return m_config;
+}
+
+void QueueViewer::saveDefaults(const ConfigData& config) const
+{
+    m_settings->fileSet(QueueViewerLeftScriptKey, config.leftScript);
+    m_settings->fileSet(QueueViewerRightScriptKey, config.rightScript);
+    m_settings->fileSet(QueueViewerShowCurrentKey, config.showCurrent);
+    m_settings->fileSet(QueueViewerShowIconKey, config.showIcon);
+    m_settings->fileSet(QueueViewerIconSizeKey, config.iconSize);
+    m_settings->fileSet(QueueViewerArtworkRadiusKey, config.artworkCornerRadius);
+    m_settings->fileSet(QueueViewerHeaderKey, config.showHeader);
+    m_settings->fileSet(QueueViewerScrollBarKey, config.showScrollBar);
+    m_settings->fileSet(QueueViewerAltColoursKey, config.alternatingRows);
+    m_settings->fileSet(QueueViewerDisplayModeKey, static_cast<int>(config.displayMode));
+}
+
+void QueueViewer::clearSavedDefaults() const
+{
+    m_settings->fileRemove(QueueViewerLeftScriptKey);
+    m_settings->fileRemove(QueueViewerRightScriptKey);
+    m_settings->fileRemove(QueueViewerShowCurrentKey);
+    m_settings->fileRemove(QueueViewerShowIconKey);
+    m_settings->fileRemove(QueueViewerIconSizeKey);
+    m_settings->fileRemove(QueueViewerArtworkRadiusKey);
+    m_settings->fileRemove(QueueViewerHeaderKey);
+    m_settings->fileRemove(QueueViewerScrollBarKey);
+    m_settings->fileRemove(QueueViewerAltColoursKey);
+    m_settings->fileRemove(QueueViewerDisplayModeKey);
+}
+
+void QueueViewer::applyConfig(const ConfigData& config)
+{
+    const bool displayModeChanged = m_config.displayMode != config.displayMode;
+    m_config                      = config;
+    m_config.artworkCornerRadius  = std::clamp(m_config.artworkCornerRadius, 0, 100);
+
+    if(isWindowWidget()) {
+        m_config.showHeader = false;
+    }
+
+    m_model->setScripts(m_config.leftScript, m_config.rightScript);
+    m_model->setShowCurrent(m_config.showCurrent);
+    m_model->setShowUpcomingTracks(m_config.displayMode == DisplayMode::UpcomingTracks);
+    m_model->setShowIcon(m_config.showIcon);
+    m_model->setIconSize(m_config.iconSize);
+
+    m_view->changeIconSize(m_config.iconSize);
+    m_delegate->setArtworkCornerRadius(m_config.artworkCornerRadius);
+    m_view->header()->setHidden(!m_config.showHeader);
+    m_view->setVerticalScrollBarPolicy(m_config.showScrollBar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+    m_view->setAlternatingRowColors(m_config.alternatingRows);
+
+    const QVariant resolvedStyleValue = m_settings->value<Settings::Gui::ResolvedAppStyle>();
+    Gui::refreshItemViewPalette(m_view, resolvedStyleValue.value<ResolvedAppStyle>().palette);
+
+    m_view->viewport()->update();
+    QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+
+    if(displayModeChanged) {
+        resetModelAndFollowCurrent();
+    }
+
+    Q_EMIT configChanged();
+}
+
+void QueueViewer::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    const bool headerMenu = m_view->header()->rect().contains(m_view->header()->mapFromGlobal(event->globalPos()));
+
+    if(m_removeCmd && m_view->selectionModel()->hasSelection()) {
+        m_remove->setEnabled(canRemoveSelected());
+        menu->addAction(m_removeCmd->action());
+    }
+    if(m_clearCmd) {
+        m_clear->setEnabled(canClearQueue());
+        menu->addAction(m_clearCmd->action());
+    }
+    if(m_playerController->queuedTracksCount() > 1) {
+        addSortMenu(menu);
+    }
+
+    if(m_playerController->playbackQueueMode() == PlaybackQueueMode::QueueAsPlaybackSource) {
+        menu->addSeparator();
+
+        auto* viewActionGroup = new QActionGroup(menu);
+        viewActionGroup->setExclusive(true);
+
+        auto* playingTracks = menu->addAction(tr("Playing Tracks"));
+        playingTracks->setCheckable(true);
+        playingTracks->setChecked(m_config.displayMode == DisplayMode::PlayingTracks);
+        playingTracks->setStatusTip(tr("Show played, playing and upcoming tracks"));
+        viewActionGroup->addAction(playingTracks);
+
+        auto* upcomingTracks = menu->addAction(tr("Upcoming Tracks"));
+        upcomingTracks->setCheckable(true);
+        upcomingTracks->setChecked(m_config.displayMode == DisplayMode::UpcomingTracks);
+        upcomingTracks->setStatusTip(tr("Show the playing track and tracks that will play next"));
+        viewActionGroup->addAction(upcomingTracks);
+
+        QObject::connect(playingTracks, &QAction::triggered, this, [this]() {
+            auto config{m_config};
+            config.displayMode = DisplayMode::PlayingTracks;
+            applyConfig(config);
+        });
+        QObject::connect(upcomingTracks, &QAction::triggered, this, [this]() {
+            auto config{m_config};
+            config.displayMode = DisplayMode::UpcomingTracks;
+            applyConfig(config);
+        });
+    }
+    else {
+        auto* showCurrent = new QAction(tr("Show playing queue track"), menu);
+        showCurrent->setCheckable(true);
+        showCurrent->setChecked(m_config.showCurrent);
+        QObject::connect(showCurrent, &QAction::triggered, showCurrent, [this](bool enabled) {
+            auto config{m_config};
+            config.showCurrent = enabled;
+            applyConfig(config);
+        });
+
+        menu->addSeparator();
+        menu->addAction(showCurrent);
+    }
+
+    addConfigureAction(menu, false);
+
+    if(!headerMenu) {
+        menu->addSeparator();
+        m_selectionController->addTrackContextMenu(menu, m_context);
+    }
+
+    menu->popup(event->globalPos());
+}
+
 void QueueViewer::showEvent(QShowEvent* event)
 {
     if(isWindowWidget() && !m_topLevelStateLoaded) {
@@ -170,42 +363,10 @@ void QueueViewer::closeEvent(QCloseEvent* event)
     FyWidget::closeEvent(event);
 }
 
-void QueueViewer::contextMenuEvent(QContextMenuEvent* event)
+void QueueViewer::openConfigDialog()
 {
-    auto* menu = new QMenu(this);
-    menu->setAttribute(Qt::WA_DeleteOnClose);
-
-    if(m_removeCmd && m_view->selectionModel()->hasSelection()) {
-        m_remove->setEnabled(canRemoveSelected());
-        menu->addAction(m_removeCmd->action());
-    }
-    if(m_clearCmd) {
-        m_clear->setEnabled(m_playerController->queuedTracksCount() > 0);
-        menu->addAction(m_clearCmd->action());
-    }
-    if(m_playerController->queuedTracksCount() > 1) {
-        addSortMenu(menu);
-    }
-
-    auto* showCurrent = new QAction(tr("Show playing queue track"), menu);
-    showCurrent->setCheckable(true);
-    showCurrent->setChecked(m_config.showCurrent);
-    QObject::connect(showCurrent, &QAction::triggered, showCurrent, [this](bool enabled) {
-        auto config        = m_config;
-        config.showCurrent = enabled;
-        applyConfig(config);
-    });
-
-    menu->addSeparator();
-    menu->addAction(showCurrent);
-    menu->addSeparator();
-
-    addConfigureAction(menu, false);
-
-    menu->addSeparator();
-    m_selectionController->addTrackContextMenu(menu, m_context);
-
-    menu->popup(event->globalPos());
+    const bool showDisplayMode = m_playerController->playbackQueueMode() == PlaybackQueueMode::QueueAsPlaybackSource;
+    showConfigDialog(new QueueViewerConfigDialog(this, showDisplayMode, this), Qt::NonModal);
 }
 
 void QueueViewer::setupActions()
@@ -232,7 +393,7 @@ void QueueViewer::setupActions()
     m_clearCmd = m_actionManager->registerAction(m_clear, Constants::Actions::Clear, actionContext);
     editMenu->addAction(m_clearCmd);
     QObject::connect(m_clear, &QAction::triggered, m_playerController, &PlayerController::clearQueue);
-    m_clear->setEnabled(m_playerController->queuedTracksCount() > 0);
+    m_clear->setEnabled(canClearQueue());
 
     auto* selectAllAction = new QAction(tr("&Select all"), this);
     selectAllAction->setStatusTip(tr("Select all tracks in the playback queue"));
@@ -261,11 +422,50 @@ void QueueViewer::setupConnections()
     QObject::connect(m_model, &QueueViewerModel::tracksDropped, this, &QueueViewer::handleTracksDropped);
     QObject::connect(m_model, &QueueViewerModel::playlistTracksDropped, this,
                      &QueueViewer::handlePlaylistTracksDropped);
-    QObject::connect(m_playerController, &PlayerController::trackQueueChanged, this, &QueueViewer::resetModel);
-    QObject::connect(m_playerController, &PlayerController::trackIndexesDequeued, this, &QueueViewer::resetModel);
-    QObject::connect(m_playerController, &PlayerController::tracksQueued, this, &QueueViewer::resetModel);
-    QObject::connect(m_playerController, &PlayerController::tracksDequeued, this, &QueueViewer::resetModel);
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &QueueViewer::resetModel);
+
+    const auto resetQueueModel = [this](bool followCurrent) {
+        if(!m_updatesPausedForTrackChange) {
+            followCurrent ? resetModelAndFollowCurrent() : resetModel();
+        }
+    };
+
+    QObject::connect(m_playerController, &PlayerController::trackQueueChanged, this,
+                     [resetQueueModel]() { resetQueueModel(true); });
+    QObject::connect(m_playerController, &PlayerController::trackIndexesDequeued, this,
+                     [resetQueueModel]() { resetQueueModel(false); });
+    QObject::connect(m_playerController, &PlayerController::tracksQueued, this,
+                     [resetQueueModel]() { resetQueueModel(false); });
+    QObject::connect(m_playerController, &PlayerController::tracksDequeued, this,
+                     [resetQueueModel]() { resetQueueModel(false); });
+    QObject::connect(m_playerController, &PlayerController::trackChangeRequested, this,
+                     [this](const Player::TrackChangeRequest& request) {
+                         const bool pauseUpdates
+                             = request.isQueueTrack
+                            && m_playerController->playbackQueueMode() == PlaybackQueueMode::QueueAsPlaybackSource;
+                         if(pauseUpdates) {
+                             m_updatesPausedForTrackChange = true;
+                             m_view->setUpdatesEnabled(false);
+
+                             // Just in case the track isn't committed
+                             const int pauseToken = ++m_updatePauseToken;
+                             QTimer::singleShot(1000, this, [this, pauseToken]() {
+                                 if(m_updatesPausedForTrackChange && pauseToken == m_updatePauseToken) {
+                                     resumeUpdatesAfterTrackChange();
+                                 }
+                             });
+                         }
+                     });
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, [this]() {
+        if(m_updatesPausedForTrackChange) {
+            resumeUpdatesAfterTrackChange();
+        }
+        else {
+            if(!m_model->updatePlaybackPosition(m_playerController->playbackQueue())) {
+                resetModel();
+            }
+            scrollToCurrentTrack();
+        }
+    });
     QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this, &QueueViewer::resetModel);
     QObject::connect(m_playerController, &PlayerController::playStateChanged, m_model,
                      &QueueViewerModel::playbackStateChanged);
@@ -286,13 +486,22 @@ void QueueViewer::setupConnections()
         const auto resolvedStyle = var.value<ResolvedAppStyle>();
         Gui::updateItemViewStyle(m_view, resolvedStyle.palette);
     });
+    m_settings->subscribe<Settings::Gui::PlaybackQueueFollowCurrent>(this, [this](bool enabled) {
+        if(enabled) {
+            scrollToCurrentTrack();
+        }
+    });
+    m_settings->subscribe<Settings::Core::PlaybackQueueMode>(this, [this](int mode) {
+        const bool available = static_cast<PlaybackQueueMode>(mode) == PlaybackQueueMode::QueueAsPlaybackSource;
+        Q_EMIT displayModeAvailabilityChanged(available);
+    });
 }
 
 void QueueViewer::resetModel() const
 {
     const auto viewState = captureViewState();
 
-    m_model->reset(m_playerController->playbackQueue().tracks());
+    m_model->reset(m_playerController->playbackQueue());
 
     if(m_view->selectionModel()) {
         restoreViewState(viewState);
@@ -300,6 +509,40 @@ void QueueViewer::resetModel() const
 
     updateSelectedTracks();
     updateSortActionState();
+}
+
+void QueueViewer::resetModelAndFollowCurrent() const
+{
+    resetModel();
+    scrollToCurrentTrack();
+}
+
+void QueueViewer::scrollToCurrentTrack() const
+{
+    if((!m_settings->value<Settings::Gui::PlaybackQueueFollowCurrent>() && !showsUpcomingTracks())
+       || m_playerController->playbackQueueMode() != PlaybackQueueMode::QueueAsPlaybackSource) {
+        return;
+    }
+
+    const QModelIndex index = m_model->indexForQueueItem(m_playerController->currentQueueItemId());
+    if(index.isValid()) {
+        m_view->scrollTo(index, QAbstractItemView::PositionAtTop);
+    }
+}
+
+void QueueViewer::resumeUpdatesAfterTrackChange()
+{
+    if(!m_updatesPausedForTrackChange) {
+        return;
+    }
+
+    m_updatesPausedForTrackChange = false;
+    ++m_updatePauseToken;
+    if(!m_model->updatePlaybackPosition(m_playerController->playbackQueue())) {
+        resetModel();
+    }
+    scrollToCurrentTrack();
+    m_view->setUpdatesEnabled(true);
 }
 
 void QueueViewer::addSortMenu(QMenu* menu) const
@@ -319,8 +562,7 @@ void QueueViewer::refreshSortActions()
 
 void QueueViewer::updateSortActionState() const
 {
-    const auto queueSize     = static_cast<int>(m_playerController->playbackQueue().tracks().size());
-    const bool canSortTracks = queueSize > 1;
+    const bool canSortTracks = queueIndexesToSort(SortScope::All).size() > 1;
 
     m_randomise->setEnabled(canSortTracks);
     m_reverse->setEnabled(canSortTracks);
@@ -328,6 +570,12 @@ void QueueViewer::updateSortActionState() const
     if(m_sortActions) {
         m_sortActions->setEnabled(canSortTracks);
     }
+}
+
+bool QueueViewer::showsUpcomingTracks() const
+{
+    return m_config.displayMode == DisplayMode::UpcomingTracks
+        && m_playerController->playbackQueueMode() == PlaybackQueueMode::QueueAsPlaybackSource;
 }
 
 QueueViewer::ViewState QueueViewer::captureViewState() const
@@ -384,7 +632,7 @@ void QueueViewer::restoreViewState(const ViewState& state) const
     }
 
     m_remove->setEnabled(canRemoveSelected());
-    m_clear->setEnabled(m_playerController->queuedTracksCount() > 0);
+    m_clear->setEnabled(canClearQueue());
 }
 
 QueueViewer::ViewRowState QueueViewer::viewRowState(const QModelIndex& index) const
@@ -394,7 +642,8 @@ QueueViewer::ViewRowState QueueViewer::viewRowState(const QModelIndex& index) co
         return rowState;
     }
 
-    rowState.track = index.data(QueueViewerItem::Track).value<PlaylistTrack>();
+    rowState.track       = index.data(QueueViewerItem::Track).value<PlaylistTrack>();
+    rowState.queueItemId = index.data(QueueViewerItem::QueueItemId).toULongLong();
     if(!rowState.track.isValid()) {
         return {};
     }
@@ -435,11 +684,17 @@ QModelIndex QueueViewer::indexForViewRowState(const ViewRowState& state) const
         }
     }
 
-    QModelIndex firstMatch;
+    QModelIndex fallback;
     int occurrence{0};
+    const int targetOccurrence = std::max(state.occurrence, 1);
+    const int rowCount         = m_model->rowCount({});
 
-    for(int row{0}; row < m_model->rowCount({}); ++row) {
+    for(int row{0}; row < rowCount; ++row) {
         const QModelIndex candidate = m_model->index(row, 0, {});
+
+        if(state.queueItemId != 0 && candidate.data(QueueViewerItem::QueueItemId).toULongLong() == state.queueItemId) {
+            return candidate;
+        }
 
         if(!candidate.isValid() || m_model->queueIndex(candidate) < 0) {
             continue;
@@ -449,27 +704,36 @@ QModelIndex QueueViewer::indexForViewRowState(const ViewRowState& state) const
             continue;
         }
 
-        if(!firstMatch.isValid()) {
-            firstMatch = candidate;
-        }
-
-        ++occurrence;
-
-        if(occurrence == std::max(state.occurrence, 1)) {
-            return candidate;
+        if(++occurrence == targetOccurrence) {
+            if(state.queueItemId == 0) {
+                return candidate;
+            }
+            fallback = candidate;
         }
     }
 
-    return state.currentRow ? firstMatch : QModelIndex{};
+    if(state.queueItemId != 0 && m_playerController->playbackQueue().item(state.queueItemId)) {
+        return {};
+    }
+
+    return fallback;
 }
 
 bool QueueViewer::canRemoveSelected() const
 {
     const auto selected = m_view->selectionModel()->selectedRows();
     return std::ranges::any_of(selected, [this](const QModelIndex& index) {
+        if(m_playerController->playbackQueueMode() == PlaybackQueueMode::QueueAsPlaybackSource) {
+            return index.data(QueueViewerItem::QueueItemId).toULongLong() != 0;
+        }
         const auto track = index.data(QueueViewerItem::Track).value<PlaylistTrack>();
         return !m_playerController->currentIsQueueTrack() || track != m_playerController->currentPlaylistTrack();
     });
+}
+
+bool QueueViewer::canClearQueue() const
+{
+    return !m_playerController->playbackQueue().empty();
 }
 
 void QueueViewer::updateSelectedTracks() const
@@ -518,7 +782,7 @@ void QueueViewer::updateSelectedTracks() const
 
 void QueueViewer::handleRowsChanged() const
 {
-    m_clear->setEnabled(m_playerController->queuedTracksCount() > 0);
+    m_clear->setEnabled(canClearQueue());
     updateSortActionState();
     updateSelectedTracks();
 }
@@ -530,59 +794,40 @@ void QueueViewer::removeSelectedTracks() const
         return;
     }
 
-    std::vector<int> indexes;
-    indexes.reserve(selected.size());
+    std::vector<PlaybackQueueItemId> ids;
+    ids.reserve(selected.size());
 
     for(const QModelIndex& index : selected) {
-        const auto track = index.data(QueueViewerItem::Track).value<PlaylistTrack>();
-        if(!m_playerController->currentIsQueueTrack() || track != m_playerController->currentPlaylistTrack()) {
-            indexes.emplace_back(m_model->queueIndex(index));
+        const auto track      = index.data(QueueViewerItem::Track).value<PlaylistTrack>();
+        const auto id         = index.data(QueueViewerItem::QueueItemId).toULongLong();
+        const bool isSequence = m_playerController->playbackQueueMode() == PlaybackQueueMode::QueueAsPlaybackSource;
+        const bool isCurrent  = !isSequence && m_playerController->currentIsQueueTrack()
+                             && track == m_playerController->currentPlaylistTrack();
+        if(!isCurrent) {
+            if(id != 0) {
+                ids.emplace_back(id);
+            }
         }
     }
 
-    m_playerController->dequeueTracks(indexes);
+    m_playerController->dequeueQueueItems(ids);
 }
 
 void QueueViewer::handleQueueTracksMoved(int row, const QList<int>& indexes) const
 {
-    QueueTracks tracks = m_playerController->playbackQueue().tracks();
-    if(tracks.empty() || indexes.empty()) {
+    const auto& queue = m_playerController->playbackQueue();
+    if(queue.empty() || indexes.empty()) {
         return;
     }
 
-    std::vector<int> sortedIndexes;
-    sortedIndexes.reserve(indexes.size());
-
+    std::vector<PlaybackQueueItemId> ids;
+    ids.reserve(indexes.size());
     for(const int index : indexes) {
-        if(index >= 0 && std::cmp_less(index, tracks.size())) {
-            sortedIndexes.emplace_back(index);
+        if(const auto* item = queue.item(index)) {
+            ids.push_back(item->id);
         }
     }
-
-    if(sortedIndexes.empty()) {
-        return;
-    }
-
-    std::ranges::sort(sortedIndexes);
-    sortedIndexes.erase(std::ranges::unique(sortedIndexes).begin(), sortedIndexes.end());
-
-    QueueTracks movedTracks;
-    movedTracks.reserve(sortedIndexes.size());
-
-    for(const int index : sortedIndexes) {
-        movedTracks.emplace_back(tracks.at(static_cast<size_t>(index)));
-    }
-
-    int insertRow = std::clamp(row, 0, static_cast<int>(tracks.size()));
-    insertRow -= static_cast<int>(std::ranges::count_if(sortedIndexes, [row](int index) { return index < row; }));
-
-    for(int sortedIndex : std::ranges::reverse_view(sortedIndexes)) {
-        tracks.erase(tracks.begin() + sortedIndex);
-    }
-
-    tracks.insert(tracks.begin() + std::clamp(insertRow, 0, static_cast<int>(tracks.size())), movedTracks.begin(),
-                  movedTracks.end());
-    replaceQueueTracks(std::move(tracks));
+    m_playerController->moveQueueItems(row, ids);
 }
 
 void QueueViewer::handleTracksDropped(int row, const QMimeData* mimeData) const
@@ -621,98 +866,126 @@ void QueueViewer::handleQueueDoubleClicked(const QModelIndex& index) const
         return;
     }
 
+    const auto queueItemId = index.data(QueueViewerItem::QueueItemId).toULongLong();
+    if(m_playerController->playbackQueueMode() == PlaybackQueueMode::QueueAsPlaybackSource) {
+        m_playerController->playQueueItem(queueItemId);
+        return;
+    }
+
     std::vector<int> indexes;
     indexes.reserve(queueIndex);
-
     std::ranges::copy(std::views::iota(0, queueIndex), std::back_inserter(indexes));
-
     m_playerController->dequeueTracks(indexes);
-
     m_playerController->next();
 }
 
-void QueueViewer::randomiseTracks(SortScope scope) const
+void QueueViewer::randomiseTracks(SortScope scope)
 {
     reorderTracks(QueueReorder::Randomise, scope);
 }
 
-void QueueViewer::reverseTracks(SortScope scope) const
+void QueueViewer::reverseTracks(SortScope scope)
 {
     reorderTracks(QueueReorder::Reverse, scope);
 }
 
-void QueueViewer::sortTracks(const QString& script, SortScope scope) const
+void QueueViewer::sortTracks(const QString& script, SortScope scope)
 {
-    const QueueTracks tracks = m_playerController->playbackQueue().tracks();
-
     auto indexes = queueIndexesToSort(scope);
     if(indexes.size() < 2) {
         return;
     }
 
-    TrackSorter sorter;
-    reorderTracks(sorter.calcSortTracks(script, tracks, indexes, PlaylistTrack::extractor));
+    const auto& queue        = m_playerController->playbackQueue();
+    const auto items         = queue.items();
+    const auto originalIds   = queueItemIds(items);
+    const auto currentItemId = queue.currentItemId();
+    const auto sortToken     = ++m_sortRequestToken;
+
+    const auto queueItemTrack = [](const PlaybackQueueItem& item) -> const Track& {
+        return item.track.track;
+    };
+
+    Utils::asyncExec([items, script, indexes, queueItemTrack]() {
+        TrackSorter sorter;
+        return queueItemIds(sorter.calcSortTracks(script, items, indexes, queueItemTrack));
+    }).then(this, [this, originalIds, currentItemId, sortToken](std::vector<PlaybackQueueItemId> sortedIds) {
+        const auto& currentQueue = m_playerController->playbackQueue();
+        if(sortToken != m_sortRequestToken || currentQueue.currentItemId() != currentItemId
+           || queueItemIds(currentQueue.items()) != originalIds) {
+            return;
+        }
+
+        reorderTracks(std::move(sortedIds));
+    });
 }
 
-void QueueViewer::reorderTracks(QueueReorder reorder, SortScope scope) const
+void QueueViewer::reorderTracks(QueueReorder reorder, SortScope scope)
 {
-    QueueTracks tracks = m_playerController->playbackQueue().tracks();
+    ++m_sortRequestToken;
 
     auto indexes = queueIndexesToSort(scope);
     if(indexes.size() < 2) {
         return;
     }
 
-    QueueTracks selectedTracks;
-    selectedTracks.reserve(indexes.size());
+    auto ids = queueItemIds(m_playerController->playbackQueue().items());
+
+    std::vector<PlaybackQueueItemId> selectedIds;
+    selectedIds.reserve(indexes.size());
     for(const int index : indexes) {
-        if(index >= 0 && std::cmp_less(index, tracks.size())) {
-            selectedTracks.push_back(tracks.at(index));
+        if(index >= 0 && std::cmp_less(index, ids.size())) {
+            selectedIds.push_back(ids.at(index));
         }
     }
 
-    if(selectedTracks.size() < 2) {
+    if(selectedIds.size() < 2) {
         return;
     }
 
     if(reorder == QueueReorder::Randomise) {
-        const auto originalTracks = selectedTracks;
-        std::ranges::shuffle(selectedTracks, std::mt19937{std::random_device{}()});
-        if(selectedTracks == originalTracks) {
-            std::ranges::rotate(selectedTracks, std::next(selectedTracks.begin()));
+        const auto originalIds{selectedIds};
+        std::ranges::shuffle(selectedIds, std::mt19937{std::random_device{}()});
+        if(selectedIds == originalIds) {
+            std::ranges::rotate(selectedIds, std::next(selectedIds.begin()));
         }
     }
     else {
-        std::ranges::reverse(selectedTracks);
+        std::ranges::reverse(selectedIds);
     }
 
-    for(size_t i{0}; i < selectedTracks.size(); ++i) {
-        tracks.at(indexes.at(i)) = selectedTracks.at(i);
+    for(size_t i{0}; i < selectedIds.size(); ++i) {
+        ids.at(indexes.at(i)) = selectedIds.at(i);
     }
 
-    reorderTracks(std::move(tracks));
+    reorderTracks(std::move(ids));
 }
 
-void QueueViewer::reorderTracks(QueueTracks reorderedTracks) const
+void QueueViewer::reorderTracks(std::vector<PlaybackQueueItemId> reorderedIds)
 {
-    if(reorderedTracks.size() < 2 || reorderedTracks == m_playerController->playbackQueue().tracks()) {
+    if(reorderedIds.size() < 2 || reorderedIds == queueItemIds(m_playerController->playbackQueue().items())) {
         return;
     }
 
-    replaceQueueTracks(std::move(reorderedTracks));
+    m_playerController->reorderQueueItems(reorderedIds);
 }
 
 std::vector<int> QueueViewer::queueIndexesToSort(SortScope scope) const
 {
-    auto indexes = selectedQueueIndexes();
+    auto indexes         = selectedQueueIndexes();
+    const int firstIndex = showsUpcomingTracks() ? m_playerController->playbackQueue().currentIndex() + 1 : 0;
+    std::erase_if(indexes, [firstIndex](int index) { return index < firstIndex; });
+
     if(scope == SortScope::SelectedOrAll
        && (!indexes.empty() || (m_view->selectionModel() && m_view->selectionModel()->hasSelection()))) {
         return indexes;
     }
 
-    const auto& tracks = m_playerController->playbackQueue().tracks();
-    indexes.reserve(tracks.size());
-    for(size_t i{0}; i < tracks.size(); ++i) {
+    indexes.clear();
+
+    const auto itemCount = m_playerController->playbackQueue().items().size();
+    indexes.reserve(itemCount);
+    for(size_t i{static_cast<size_t>(std::max(firstIndex, 0))}; i < itemCount; ++i) {
         indexes.push_back(static_cast<int>(i));
     }
 
@@ -742,114 +1015,13 @@ std::vector<int> QueueViewer::selectedQueueIndexes() const
     return indexes;
 }
 
-void QueueViewer::replaceQueueTracks(QueueTracks tracks) const
-{
-    m_playerController->replaceTracks(tracks);
-}
-
 void QueueViewer::insertQueueTracks(int row, const QueueTracks& tracksToInsert) const
 {
     if(tracksToInsert.empty()) {
         return;
     }
 
-    QueueTracks tracks  = m_playerController->playbackQueue().tracks();
-    const int insertRow = std::clamp(row, 0, static_cast<int>(tracks.size()));
-
-    tracks.insert(tracks.begin() + insertRow, tracksToInsert.begin(), tracksToInsert.end());
-    replaceQueueTracks(std::move(tracks));
-}
-
-QueueViewer::ConfigData QueueViewer::defaultConfig() const
-{
-    auto config{factoryConfig()};
-
-    config.leftScript          = m_settings->fileValue(QueueViewerLeftScriptKey, config.leftScript).toString();
-    config.rightScript         = m_settings->fileValue(QueueViewerRightScriptKey, config.rightScript).toString();
-    config.showCurrent         = m_settings->fileValue(QueueViewerShowCurrentKey, config.showCurrent).toBool();
-    config.showIcon            = m_settings->fileValue(QueueViewerShowIconKey, config.showIcon).toBool();
-    config.iconSize            = m_settings->fileValue(QueueViewerIconSizeKey, config.iconSize).toSize();
-    config.artworkCornerRadius = m_settings->fileValue(QueueViewerArtworkRadiusKey, config.artworkCornerRadius).toInt();
-    config.showHeader          = m_settings->fileValue(QueueViewerHeaderKey, config.showHeader).toBool();
-    config.showScrollBar       = m_settings->fileValue(QueueViewerScrollBarKey, config.showScrollBar).toBool();
-    config.alternatingRows     = m_settings->fileValue(QueueViewerAltColoursKey, config.alternatingRows).toBool();
-
-    return config;
-}
-
-QueueViewer::ConfigData QueueViewer::factoryConfig() const
-{
-    return {
-        .leftScript          = u"%title%$crlf()%album%"_s,
-        .rightScript         = u"%duration%"_s,
-        .showCurrent         = true,
-        .showIcon            = true,
-        .iconSize            = QSize{36, 36},
-        .artworkCornerRadius = 0,
-        .showHeader          = true,
-        .showScrollBar       = true,
-        .alternatingRows     = false,
-    };
-}
-
-const QueueViewer::ConfigData& QueueViewer::currentConfig() const
-{
-    return m_config;
-}
-
-void QueueViewer::saveDefaults(const ConfigData& config) const
-{
-    m_settings->fileSet(QueueViewerLeftScriptKey, config.leftScript);
-    m_settings->fileSet(QueueViewerRightScriptKey, config.rightScript);
-    m_settings->fileSet(QueueViewerShowCurrentKey, config.showCurrent);
-    m_settings->fileSet(QueueViewerShowIconKey, config.showIcon);
-    m_settings->fileSet(QueueViewerIconSizeKey, config.iconSize);
-    m_settings->fileSet(QueueViewerArtworkRadiusKey, config.artworkCornerRadius);
-    m_settings->fileSet(QueueViewerHeaderKey, config.showHeader);
-    m_settings->fileSet(QueueViewerScrollBarKey, config.showScrollBar);
-    m_settings->fileSet(QueueViewerAltColoursKey, config.alternatingRows);
-}
-
-void QueueViewer::clearSavedDefaults() const
-{
-    m_settings->fileRemove(QueueViewerLeftScriptKey);
-    m_settings->fileRemove(QueueViewerRightScriptKey);
-    m_settings->fileRemove(QueueViewerShowCurrentKey);
-    m_settings->fileRemove(QueueViewerShowIconKey);
-    m_settings->fileRemove(QueueViewerIconSizeKey);
-    m_settings->fileRemove(QueueViewerArtworkRadiusKey);
-    m_settings->fileRemove(QueueViewerHeaderKey);
-    m_settings->fileRemove(QueueViewerScrollBarKey);
-    m_settings->fileRemove(QueueViewerAltColoursKey);
-}
-
-void QueueViewer::applyConfig(const ConfigData& config)
-{
-    m_config                     = config;
-    m_config.artworkCornerRadius = std::clamp(m_config.artworkCornerRadius, 0, 100);
-
-    if(isWindowWidget()) {
-        m_config.showHeader = false;
-    }
-
-    m_model->setScripts(m_config.leftScript, m_config.rightScript);
-    m_model->setShowCurrent(m_config.showCurrent);
-    m_model->setShowIcon(m_config.showIcon);
-    m_model->setIconSize(m_config.iconSize);
-
-    m_view->changeIconSize(m_config.iconSize);
-    m_delegate->setArtworkCornerRadius(m_config.artworkCornerRadius);
-    m_view->header()->setHidden(!m_config.showHeader);
-    m_view->setVerticalScrollBarPolicy(m_config.showScrollBar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
-    m_view->setAlternatingRowColors(m_config.alternatingRows);
-
-    const QVariant resolvedStyleValue = m_settings->value<Settings::Gui::ResolvedAppStyle>();
-    Gui::refreshItemViewPalette(m_view, resolvedStyleValue.value<ResolvedAppStyle>().palette);
-
-    m_view->viewport()->update();
-    QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
-
-    Q_EMIT configChanged();
+    m_playerController->insertQueueTracks(row, tracksToInsert);
 }
 
 QueueViewer::ConfigData QueueViewer::configFromLayout(const QJsonObject& layout) const
@@ -883,6 +1055,10 @@ QueueViewer::ConfigData QueueViewer::configFromLayout(const QJsonObject& layout)
     if(layout.contains("AlternatingRows"_L1)) {
         config.alternatingRows = layout.value("AlternatingRows"_L1).toBool();
     }
+    if(layout.contains("DisplayMode"_L1)
+       && layout.value("DisplayMode"_L1).toInt() == static_cast<int>(DisplayMode::UpcomingTracks)) {
+        config.displayMode = DisplayMode::UpcomingTracks;
+    }
 
     if(!config.iconSize.isValid()) {
         config.iconSize = factoryConfig().iconSize;
@@ -904,6 +1080,7 @@ void QueueViewer::saveConfigToLayout(const ConfigData& config, QJsonObject& layo
     layout["ShowHeader"_L1]          = config.showHeader;
     layout["ShowScrollbar"_L1]       = config.showScrollBar;
     layout["AlternatingRows"_L1]     = config.alternatingRows;
+    layout["DisplayMode"_L1]         = static_cast<int>(config.displayMode);
 }
 
 void QueueViewer::saveTopLevelState()
@@ -933,10 +1110,5 @@ void QueueViewer::loadTopLevelState()
     }
 
     m_topLevelStateLoaded = true;
-}
-
-void QueueViewer::openConfigDialog()
-{
-    showConfigDialog(new QueueViewerConfigDialog(this, this), Qt::NonModal);
 }
 } // namespace Fooyin

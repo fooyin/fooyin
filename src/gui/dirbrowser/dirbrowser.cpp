@@ -25,6 +25,7 @@
 #include "dirtree.h"
 #include "internalguisettings.h"
 
+#include <core/coresettings.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlist.h>
 #include <core/playlist/playlisthandler.h>
@@ -804,6 +805,15 @@ void DirBrowser::handleAction(TrackAction action, bool onlySelection)
 
     QString firstPath;
 
+    if(action == TrackAction::Play && !onlySelection) {
+        const auto queueMode = static_cast<PlaybackQueueMode>(m_settings->value<Settings::Core::PlaybackQueueMode>());
+        const auto playNowAction
+            = static_cast<PlayNowAction>(m_settings->value<Settings::Core::PlaybackQueuePlayNowAction>());
+        if(queueMode == PlaybackQueueMode::QueueAsPlaybackSource && playNowAction != PlayNowAction::AllTracks) {
+            onlySelection = true;
+        }
+    }
+
     if(selected.size() == 1) {
         const QModelIndex index = selected.front();
         if(index.isValid()) {
@@ -852,7 +862,7 @@ void DirBrowser::handleAction(TrackAction action, bool onlySelection)
 
     switch(action) {
         case(TrackAction::Play):
-            handlePlayAction(files, firstPath);
+            handlePlayAction(files, firstPath, onlySelection);
             break;
         case(TrackAction::AddCurrentPlaylist):
             m_playlistInteractor->filesToCurrentPlaylist(files);
@@ -889,7 +899,7 @@ void DirBrowser::handleAction(TrackAction action, bool onlySelection)
     }
 }
 
-void DirBrowser::handlePlayAction(const QList<QUrl>& files, const QString& startingFile)
+void DirBrowser::handlePlayAction(const QList<QUrl>& files, const QString& startingFile, bool onlySelection)
 {
     int playIndex{0};
 
@@ -904,6 +914,33 @@ void DirBrowser::handlePlayAction(const QList<QUrl>& files, const QString& start
     TrackList tracks;
     std::ranges::transform(files, std::back_inserter(tracks),
                            [](const QUrl& file) { return Track{file.toLocalFile()}; });
+
+    const auto queueMode = static_cast<PlaybackQueueMode>(m_settings->value<Settings::Core::PlaybackQueueMode>());
+    const auto playNowAction
+        = static_cast<PlayNowAction>(m_settings->value<Settings::Core::PlaybackQueuePlayNowAction>());
+    if(queueMode == PlaybackQueueMode::QueueAsPlaybackSource && playNowAction != PlayNowAction::AllTracks) {
+        m_playlistInteractor->filesToTracks(files, [this, startingFile, onlySelection,
+                                                    playNowAction](const TrackList& loadedTracks) {
+            if(loadedTracks.empty()) {
+                return;
+            }
+
+            const auto selected
+                = std::ranges::find(loadedTracks, startingFile, [](const Track& track) { return track.filepath(); });
+            const int selectedIndex
+                = selected == loadedTracks.end() ? 0 : static_cast<int>(std::distance(loadedTracks.begin(), selected));
+            const Track selectedTrack = loadedTracks.at(selectedIndex);
+            TrackList playTracks      = onlySelection ? loadedTracks : TrackList{selectedTrack};
+            int currentIndex          = onlySelection ? selectedIndex : 0;
+
+            if(playNowAction == PlayNowAction::QueueNext) {
+                m_playlistInteractor->playerController()->queueTracksNextAndPlay(loadQueueTracks(playTracks));
+                return;
+            }
+            startPlayback(playTracks, currentIndex);
+        });
+        return;
+    }
 
     startPlayback(tracks, playIndex);
 }

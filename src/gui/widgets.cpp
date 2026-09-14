@@ -87,6 +87,7 @@
 #include "settings/playback/fadingpage.h"
 #include "settings/playback/outputpage.h"
 #include "settings/playback/playbackpage.h"
+#include "settings/playback/playbackqueuepage.h"
 #include "settings/playback/replaygainpage.h"
 #include "settings/playlist/playlistcolumnpage.h"
 #include "settings/playlist/playlistgeneralpage.h"
@@ -473,6 +474,7 @@ void Widgets::registerPages()
     new LibrarySortingPage(m_core->sortingRegistry(), m_settings, this);
     new Filters::LibraryFilterPage(m_libraryFilterRegistry, m_settings, this);
     new PlaybackPage(m_settings, this);
+    new PlaybackQueuePage(m_settings, this);
     new NowPlayingOutputPage(m_core->playerController(), m_settings, this);
     new DspManagerPage(m_core->dspChainStore(), m_dspPresetRegistry, m_dspSettingsRegistry.get(), m_settings, this);
     new FadingPage(m_settings, this);

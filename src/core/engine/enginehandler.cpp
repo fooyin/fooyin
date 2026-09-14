@@ -647,6 +647,7 @@ void EngineHandler::handleTrackCommitted(const Engine::TrackCommitContext& conte
             .track        = m_upcomingTrack.track,
             .context      = {.reason = Player::AdvanceReason::NaturalEnd, .userInitiated = false},
             .isQueueTrack = m_upcomingTrack.isQueueTrack,
+            .queueItemId  = m_upcomingTrack.queueItemId,
             .itemId       = m_upcomingTrack.itemId,
         });
 

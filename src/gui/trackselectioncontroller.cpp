@@ -24,6 +24,7 @@
 #include "internalguisettings.h"
 #include "playlist/playlistcontroller.h"
 
+#include <core/coresettings.h>
 #include <core/library/libraryutils.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
@@ -1116,7 +1117,22 @@ void TrackSelectionControllerPrivate::startPlayback(PlaylistAction::ActionOption
         return;
     }
 
-    if(options & PlaylistAction::TempPlaylist) {
+    const auto& selection = m_contextSelection.at(m_activeContext);
+    const auto queueMode  = static_cast<PlaybackQueueMode>(m_settings->value<Settings::Core::PlaybackQueueMode>());
+    const auto playNowAction
+        = static_cast<PlayNowAction>(m_settings->value<Settings::Core::PlaybackQueuePlayNowAction>());
+
+    if(queueMode == PlaybackQueueMode::QueueAsPlaybackSource && playNowAction == PlayNowAction::QueueNext) {
+        m_playlistController->playerController()->queueTracksNextAndPlay(queueTracksForSelection(selection));
+        return;
+    }
+
+    const bool playSelectionOnly
+        = queueMode == PlaybackQueueMode::QueueAsPlaybackSource && playNowAction != PlayNowAction::AllTracks;
+    const bool playCurrentView = queueMode == PlaybackQueueMode::QueueAsPlaybackSource
+                              && playNowAction == PlayNowAction::AllTracks && !selection.playbackViewTracks.empty();
+
+    if((options & PlaylistAction::TempPlaylist) || playSelectionOnly || playCurrentView) {
         if(!m_tempPlaylist) {
             m_tempPlaylist = m_playlistHandler->createTempPlaylist(QString::fromLatin1(TempSelectionPlaylist));
             if(!m_tempPlaylist) {
@@ -1124,14 +1140,24 @@ void TrackSelectionControllerPrivate::startPlayback(PlaylistAction::ActionOption
             }
         }
 
-        const auto& selection = m_contextSelection.at(m_activeContext);
-        m_playlistHandler->replacePlaylistTracks(m_tempPlaylist->id(), selection.tracks);
-        m_tempPlaylist->changeCurrentIndex(selection.primaryPlaylistIndex.value_or(0));
-        m_playlistController->playerController()->startPlayback(m_tempPlaylist);
+        PlaylistTrackList tracks = queueTracksForSelection(selection);
+        int currentIndex{0};
+
+        if(playSelectionOnly && playNowAction == PlayNowAction::ContainingGroup
+           && !selection.playbackGroupTracks.empty()) {
+            tracks       = selection.playbackGroupTracks;
+            currentIndex = selection.playbackGroupCurrentIndex.value_or(0);
+        }
+        else if(playCurrentView) {
+            tracks       = selection.playbackViewTracks;
+            currentIndex = selection.playbackViewCurrentIndex.value_or(0);
+        }
+
+        m_playlistHandler->replacePlaylistTracks(m_tempPlaylist->id(), tracks);
+        m_tempPlaylist->changeCurrentIndex(currentIndex);
+        m_playlistController->playerController()->startPlayback(m_tempPlaylist, tracks);
     }
     else {
-        const auto& selection = m_contextSelection.at(m_activeContext);
-
         Playlist* playlist = m_playlistController->currentPlaylist();
         if(selection.playlistId) {
             playlist = m_playlistHandler->playlistById(*selection.playlistId);

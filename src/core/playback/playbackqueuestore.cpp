@@ -24,6 +24,8 @@
 #include <utils/database/dbconnectionprovider.h>
 
 #include <optional>
+#include <unordered_map>
+#include <unordered_set>
 
 namespace Fooyin {
 namespace {
@@ -67,18 +69,23 @@ PlaybackQueueStore::PlaybackQueueStore(DbConnectionPoolPtr dbPool, MusicLibrary*
 
 void PlaybackQueueStore::save(const PlaybackQueue& queue) const
 {
-    const auto& queueTracks = queue.tracks();
+    const auto& queueItems = queue.items();
 
     std::vector<PlaybackQueueInfo> items;
-    items.reserve(queueTracks.size());
+    items.reserve(queueItems.size());
 
-    for(const auto& track : queueTracks) {
+    for(int queueIndex{0}; const auto& queueItem : queueItems) {
+        const auto& track = queueItem.track;
         if(!track.track.isValid() || !track.track.isInDatabase()) {
+            ++queueIndex;
             continue;
         }
 
         PlaybackQueueInfo item;
-        item.trackId = track.track.id();
+        item.trackId     = track.track.id();
+        item.origin      = static_cast<int>(queueItem.origin);
+        item.sourceOrder = queueItem.sourceOrder;
+        item.isCurrent   = queueIndex == queue.currentIndex();
 
         if(track.playlistId.isValid()) {
             if(auto* playlist = m_playlistHandler->playlistById(track.playlistId);
@@ -89,25 +96,46 @@ void PlaybackQueueStore::save(const PlaybackQueue& queue) const
         }
 
         items.emplace_back(item);
+        ++queueIndex;
     }
 
     m_database.replaceQueue(items);
 }
 
-QueueTracks PlaybackQueueStore::load() const
+PlaybackQueueSnapshot PlaybackQueueStore::load() const
 {
     const auto savedQueue = m_database.queue();
 
-    QueueTracks queue;
-    queue.reserve(savedQueue.size());
+    TrackIds trackIds;
+    trackIds.reserve(savedQueue.size());
+
+    std::unordered_set<int> uniqueTrackIds;
+    uniqueTrackIds.reserve(savedQueue.size());
 
     for(const auto& item : savedQueue) {
-        const Track track = m_library->trackForId(item.trackId);
-        if(!track.isValid()) {
+        if(uniqueTrackIds.emplace(item.trackId).second) {
+            trackIds.push_back(item.trackId);
+        }
+    }
+
+    const TrackList tracks = m_library->tracksForIds(trackIds);
+
+    std::unordered_map<int, const Track*> tracksById;
+    tracksById.reserve(tracks.size());
+    for(const Track& track : tracks) {
+        tracksById.emplace(track.id(), &track);
+    }
+
+    PlaybackQueueSnapshot snapshot;
+    snapshot.items.reserve(savedQueue.size());
+
+    for(const auto& item : savedQueue) {
+        const auto trackIt = tracksById.find(item.trackId);
+        if(trackIt == tracksById.cend()) {
             continue;
         }
 
-        PlaylistTrack queueTrack{.track = track, .playlistId = {}, .entryId = {}, .indexInPlaylist = -1};
+        PlaylistTrack queueTrack{.track = *trackIt->second, .playlistId = {}, .entryId = {}, .indexInPlaylist = -1};
 
         if(item.playlistDbId >= 0 && item.playlistTrackIndex >= 0) {
             if(auto* playlist = m_playlistHandler->playlistByDbId(item.playlistDbId)) {
@@ -119,9 +147,15 @@ QueueTracks PlaybackQueueStore::load() const
             }
         }
 
-        queue.emplace_back(queueTrack);
-    }
+        if(item.isCurrent) {
+            snapshot.currentIndex = static_cast<int>(snapshot.items.size());
+        }
 
-    return queue;
+        snapshot.items.push_back({.id          = 0,
+                                  .track       = std::move(queueTrack),
+                                  .origin      = static_cast<PlaybackQueueItemOrigin>(item.origin),
+                                  .sourceOrder = item.sourceOrder});
+    }
+    return snapshot;
 }
 } // namespace Fooyin

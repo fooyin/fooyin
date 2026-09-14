@@ -26,6 +26,7 @@
 #include <core/engine/audioformat.h>
 #include <core/engine/enginedefs.h>
 #include <core/network/networkaccessmanager.h>
+#include <core/player/playbackqueue.h>
 #include <utils/logging/messagehandler.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -114,7 +115,12 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<PreserveTimestamps>(false, u"Tagging/PreserveTimestamps"_s);
     m_settings->createSetting<PlaylistSkipMissing>(true, u"Playlist/SkipMissing"_s);
     m_settings->createSetting<PlaybackQueueStopWhenFinished>(false, u"Playback/PlaybackQueueStopWhenFinished"_s);
-    m_settings->createSetting<ClearPlaybackQueueOnExit>(false, u"Playback/ClearPlaybackQueueOnExit"_s);
+    m_settings->createSetting<ClearPlaybackQueueOnStartup>(false, u"Playback/ClearPlaybackQueueOnStartup"_s);
+    m_settings->createSetting<Settings::Core::PlaybackQueueMode>(
+        static_cast<int>(PlaybackQueueMode::PlaylistWithOverrides), u"Playback/PlaybackQueueMode"_s);
+    m_settings->createSetting<PlaybackQueueHistoryLimit>(5, u"Playback/PlaybackQueueHistoryLimit"_s);
+    m_settings->createSetting<PlaybackQueuePlayNowAction>(static_cast<int>(PlayNowAction::AllTracks),
+                                                          u"Playback/PlaybackQueuePlayNowAction"_s);
     m_settings->createSetting<OverwriteRatingOnReload>(false, u"Library/OverwriteRatingOnReload"_s);
     m_settings->createSetting<OverwritePlaycountOnReload>(false, u"Library/OverwritePlaycountOnReload"_s);
     m_settings->createSetting<OpenFileAddDirectory>(false, u"Playlist/OpenFileAddDirectory"_s);

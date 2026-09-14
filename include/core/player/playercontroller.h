@@ -102,7 +102,9 @@ public:
     void seekBackward(uint64_t delta);
     void startPlayback(const UId& playlistId);
     void startPlayback(Playlist* playlist);
+    void startPlayback(Playlist* playlist, const QueueTracks& trackReferences);
 
+    void restorePlaybackQueue(PlaybackQueueSnapshot snapshot);
     void restoreCurrentPosition(uint64_t ms);
     void restorePlaybackProgress(uint64_t positionMs, uint64_t timeListenedMs);
     void setCurrentPosition(uint64_t ms);
@@ -129,7 +131,11 @@ public:
     [[nodiscard]] Player::PlaybackSnapshot playbackSnapshot() const;
 
     [[nodiscard]] const PlaybackQueue& playbackQueue() const;
+    [[nodiscard]] PlaybackQueueMode playbackQueueMode() const;
     [[nodiscard]] int queuedTracksCount() const;
+    [[nodiscard]] PlaybackQueueItemId currentQueueItemId() const;
+
+    void playQueueItem(PlaybackQueueItemId id);
 
     /** Queues the @p track to be played at the end of the current track. */
     void queueTrack(const Track& track);
@@ -140,12 +146,18 @@ public:
     void queueTrackNext(const PlaylistTrack& track);
     void queueTracksNext(const TrackList& tracks);
     void queueTracksNext(const QueueTracks& tracks);
+    void queueTracksNextAndPlay(const QueueTracks& tracks);
 
     void dequeueTrack(const Track& track);
     void dequeueTrack(const PlaylistTrack& track);
     void dequeueTracks(const TrackList& tracks);
     void dequeueTracks(const QueueTracks& tracks);
     void dequeueTracks(const std::vector<int>& indexes);
+    void dequeueQueueItems(const std::vector<PlaybackQueueItemId>& ids);
+
+    void insertQueueTracks(int index, const QueueTracks& tracks);
+    void moveQueueItems(int index, const std::vector<PlaybackQueueItemId>& ids);
+    void reorderQueueItems(const std::vector<PlaybackQueueItemId>& ids);
 
     void replaceTracks(const TrackList& tracks);
     void replaceTracks(const QueueTracks& tracks);
@@ -189,6 +201,7 @@ Q_SIGNALS:
     void trackQueueChanged(const Fooyin::QueueTracks& removed, const Fooyin::QueueTracks& added);
 
     void playbackSnapshotChanged(const Fooyin::Player::PlaybackSnapshot& snapshot);
+    void playbackQueuePositionChanged(Fooyin::PlaybackQueueItemId currentItemId);
 
 private:
     std::unique_ptr<PlayerControllerPrivate> p;

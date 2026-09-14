@@ -21,7 +21,7 @@
 
 #include "fygui_export.h"
 
-#include <core/track.h>
+#include <core/playlist/playlist.h>
 #include <utils/id.h>
 
 #include <QObject>
@@ -44,6 +44,10 @@ class WidgetContext;
 struct FYGUI_EXPORT TrackSelection
 {
     TrackList tracks;
+    PlaylistTrackList playbackGroupTracks;
+    std::optional<int> playbackGroupCurrentIndex;
+    PlaylistTrackList playbackViewTracks;
+    std::optional<int> playbackViewCurrentIndex;
     std::optional<UId> playlistId;
     std::vector<int> playlistIndexes;
     std::vector<UId> playlistEntryIds;

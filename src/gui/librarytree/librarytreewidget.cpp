@@ -1148,7 +1148,7 @@ void LibraryTreeWidget::expandSearchResults()
     expandChildren(expandChildren, {});
 }
 
-void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, int row)
+void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, int row, bool singleTrackSelection)
 {
     m_playlistGroups.clear();
 
@@ -1183,6 +1183,28 @@ void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, int row)
 
     if(tracks.empty()) {
         return;
+    }
+
+    row                  = std::clamp(row, 0, static_cast<int>(tracks.size()) - 1);
+    const auto queueMode = static_cast<PlaybackQueueMode>(m_settings->value<Settings::Core::PlaybackQueueMode>());
+    const auto playNowAction
+        = static_cast<PlayNowAction>(m_settings->value<Settings::Core::PlaybackQueuePlayNowAction>());
+    if(queueMode == PlaybackQueueMode::QueueAsPlaybackSource && playNowAction != PlayNowAction::AllTracks) {
+        const Track selectedTrack = tracks.at(row);
+        TrackList selectedTracks  = singleTrackSelection ? TrackList{selectedTrack} : tracks;
+
+        if(playNowAction == PlayNowAction::ContainingGroup && singleTrackSelection) {
+            selectedTracks = tracks;
+        }
+        else if(playNowAction != PlayNowAction::ContainingGroup) {
+            row = singleTrackSelection ? 0 : row;
+        }
+
+        if(playNowAction == PlayNowAction::QueueNext) {
+            m_playerController->queueTracksNextAndPlay(PlaylistTrack::fromTracks(selectedTracks, {}));
+            return;
+        }
+        tracks = std::move(selectedTracks);
     }
 
     syncSelectionPlaylist(tracks);
@@ -1229,7 +1251,7 @@ void LibraryTreeWidget::handlePlayTrack(const QModelIndex& index)
         trackIndexes.emplace_back(m_sortProxy->index(i, 0, parent));
     }
 
-    handlePlayback(trackIndexes, row);
+    handlePlayback(trackIndexes, row, true);
 }
 
 void LibraryTreeWidget::handleDoubleClick(const QModelIndex& index)

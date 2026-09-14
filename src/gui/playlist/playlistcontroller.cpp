@@ -29,10 +29,12 @@
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
+#include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <algorithm>
+#include <numeric>
 #include <ranges>
 #include <set>
 
@@ -73,6 +75,17 @@ PlaylistController::PlaylistController(Application* app, QObject* parent)
                      [this](const PlaylistIndexes& indexes) { handleTracksDequeued(indexes); });
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
                      &PlaylistController::playStateChanged);
+
+    m_settings->subscribe<Settings::Gui::PlaylistShowQueueIndexes>(this, [this]() {
+        const auto* playlist = currentPlaylist();
+        if(!playlist) {
+            return;
+        }
+
+        std::vector<int> indexes(playlist->trackCount());
+        std::iota(indexes.begin(), indexes.end(), 0);
+        Q_EMIT currentPlaylistQueueChanged(indexes);
+    });
 }
 
 PlaylistController::~PlaylistController()

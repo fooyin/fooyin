@@ -275,6 +275,8 @@ set(SOURCES
     network/remoteioservice.cpp
     playback/playbackcursor.cpp
     playback/playbackcursor.h
+    playback/playbackorder.cpp
+    playback/playbackorder.h
     playback/playbackqueue.cpp
     playback/playbackqueuestore.cpp
     playback/playbackqueuestore.h

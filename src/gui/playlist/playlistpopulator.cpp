@@ -25,6 +25,7 @@
 
 #include <core/player/playercontroller.h>
 #include <core/scripting/scriptenvironmenthelpers.h>
+#include <gui/guisettings.h>
 #include <gui/guiutils.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -51,6 +52,7 @@ public:
     void resetState();
 
     void prepareScripts();
+    void prepareQueueState();
 
     PlaylistItem* getOrInsertItem(const UId& key, PlaylistItem::ItemType type, const Data& item, PlaylistItem* parent,
                                   const Md5Hash& baseKey);
@@ -135,6 +137,9 @@ public:
     PlaylistTrackList m_tracks;
     Playlist* m_playlist{nullptr};
     qsizetype m_nextTrack{0};
+    PlaylistTrackIndexes m_queueIndexes;
+    int m_queueTotal{0};
+    bool m_queueIndexesVisible{false};
 };
 
 void PlaylistPopulatorPrivate::resetState()
@@ -179,6 +184,20 @@ void PlaylistPopulatorPrivate::prepareScripts()
     else {
         m_parsedTrack.leftText  = m_parser.parse(m_currentPreset.track.leftText.script);
         m_parsedTrack.rightText = m_parser.parse(m_currentPreset.track.rightText.script);
+    }
+
+    prepareQueueState();
+}
+
+void PlaylistPopulatorPrivate::prepareQueueState()
+{
+    m_queueIndexes.clear();
+    const auto& queue     = m_playerController->playbackQueue();
+    m_queueTotal          = queue.trackCount();
+    m_queueIndexesVisible = m_playerController->playbackQueueMode() == PlaybackQueueMode::PlaylistWithOverrides
+                         && m_settings->value<Settings::Gui::PlaylistShowQueueIndexes>();
+    if(m_queueIndexesVisible && m_playlist) {
+        m_queueIndexes = queue.indexesForPlaylist(m_playlist->id());
     }
 }
 
@@ -235,8 +254,14 @@ const ScriptContext& PlaylistPopulatorPrivate::makeContext(int index, int depth)
         }
     }
 
-    m_scriptEnvironment.setPlaylistData(m_playlist, &m_playerController->playbackQueue(), nullptr,
-                                        m_playerController ? m_playerController->queuedTracksCount() : 0);
+    m_scriptEnvironment.setPlaylistData(m_playlist, nullptr, nullptr, m_queueTotal);
+    m_scriptEnvironment.setQueueIndexesVisible(m_queueIndexesVisible);
+    if(const auto queueIndexes = m_queueIndexes.find(index); queueIndexes != m_queueIndexes.cend()) {
+        m_scriptEnvironment.setQueueState(queueIndexes->second, m_queueTotal);
+    }
+    else {
+        m_scriptEnvironment.setQueueState({}, m_queueTotal);
+    }
     m_scriptEnvironment.setTrackState(index, currentPlayingTrackIndex, currentPlayingTrackId, depth);
     m_scriptEnvironment.setPlaybackState(m_playerController ? m_playerController->currentPosition() : 0,
                                          m_playerController ? m_playerController->currentTrack().duration() : 0,

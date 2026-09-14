@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <core/player/playbackqueue.h>
 #include <core/playlist/playlist.h>
 
 #include <optional>
@@ -50,12 +51,14 @@ public:
     {
         PlaylistTrack track;
         bool isQueueTrack{false};
+        PlaybackQueueItemId queueItemId{0};
     };
 
     PlaybackOrderNavigator(SettingsManager* settings, PlaylistHandler* playlistHandler, PlaybackQueue* queue,
                            PlaybackOrderState state);
 
     [[nodiscard]] Playlist* playbackPlaylist() const;
+    [[nodiscard]] const PlaybackQueueItem* sequenceRelativeItem(int delta) const;
     [[nodiscard]] PlaylistTrack previewPlaybackRelativeTrack(int delta) const;
     std::optional<RequestedTrack> selectScheduledTrack();
     std::optional<RequestedTrack> selectPlaybackOrderTrack(int delta);
@@ -63,6 +66,7 @@ public:
     PlaylistTrack restartPlaylist(RestartTarget target);
 
 private:
+    [[nodiscard]] bool queueIsPlaybackSource() const;
     PlaylistTrack advancePlaybackRelativeTrack(int delta);
     [[nodiscard]] Playlist* playlistForTrack(const PlaylistTrack& track) const;
     PlaylistTrack restartPlaylistFromBeginning();
