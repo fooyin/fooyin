@@ -134,6 +134,9 @@ PlaylistManagerWidget::PlaylistManagerWidget(ActionManager* actionManager, Playl
     , m_renameCmd{m_actionManager->registerAction(m_renameAction, Constants::Actions::Rename, m_context->context())}
     , m_removeAction{new QAction(tr("&Remove playlist"), this)}
     , m_removeCmd{m_actionManager->registerAction(m_removeAction, Constants::Actions::Remove, m_context->context())}
+    , m_savePlaylistAction{new QAction(tr("&Save playlist…"), this)}
+    , m_savePlaylistCmd{m_actionManager->registerAction(m_savePlaylistAction, Constants::Actions::SavePlaylist,
+                                                        m_context->context())}
     , m_newPlaylistAction{new QAction(tr("Add &new playlist"), this)}
     , m_newPlaylistCmd{m_actionManager->registerAction(m_newPlaylistAction, Constants::Actions::NewPlaylist,
                                                        m_context->context())}
@@ -343,6 +346,14 @@ void PlaylistManagerWidget::setupActions()
     m_removeCmd->setDefaultShortcut(QKeySequence::Delete);
     QObject::connect(m_removeAction, &QAction::triggered, this, &PlaylistManagerWidget::removeCurrentPlaylist);
 
+    m_savePlaylistAction->setStatusTip(tr("Save the selected playlist to the specified file"));
+    m_savePlaylistCmd->setAttribute(ProxyAction::UpdateText);
+    QObject::connect(m_savePlaylistAction, &QAction::triggered, this, [this]() {
+        if(const auto* playlist = actionPlaylist()) {
+            Q_EMIT savePlaylistRequested(playlist->id());
+        }
+    });
+
     m_newPlaylistAction->setStatusTip(tr("Create a new empty playlist"));
     m_newPlaylistAction->setShortcutVisibleInContextMenu(true);
     QObject::connect(m_newPlaylistAction, &QAction::triggered, this, [this]() {
@@ -392,6 +403,9 @@ void PlaylistManagerWidget::updateActionState() const
         }
         m_removeAction->setText(isAuto ? tr("&Remove autoplaylist") : tr("&Remove playlist"));
         m_removeAction->setEnabled(hasPlaylist);
+    }
+    if(m_savePlaylistAction) {
+        m_savePlaylistAction->setEnabled(hasPlaylist && playlist->trackCount() > 0);
     }
     if(m_newPlaylistAction && m_newPlaylistCmd) {
         m_newPlaylistAction->setShortcut(m_newPlaylistCmd->shortcut());
@@ -527,6 +541,16 @@ void PlaylistManagerWidget::showPlaylistContextMenu(const QPoint& pos)
         }
 
         menu->addMenu(restoreMenu);
+    }
+
+    menu->addSeparator();
+
+    if(playlist) {
+        menu->addAction(m_savePlaylistCmd->action());
+    }
+
+    if(auto* saveAllPlaylists = m_actionManager->command(Constants::Actions::SaveAllPlaylists)) {
+        menu->addAction(saveAllPlaylists->action());
     }
 
     if(playlist) {

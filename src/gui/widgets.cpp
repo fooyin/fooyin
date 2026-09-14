@@ -231,8 +231,12 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"PlaylistManager"_s,
         [this]() {
-            return new PlaylistManagerWidget(m_gui->actionManager(), m_playlistController, m_playlistInteractor,
-                                             m_gui->trackSelection(), m_settings, m_window);
+            auto* playlistManager
+                = new PlaylistManagerWidget(m_gui->actionManager(), m_playlistController, m_playlistInteractor,
+                                            m_gui->trackSelection(), m_settings, m_window);
+            QObject::connect(playlistManager, &PlaylistManagerWidget::savePlaylistRequested, m_gui,
+                             &GuiApplication::savePlaylist);
+            return playlistManager;
         },
         tr("Playlist Manager"));
     provider->setSubMenus(u"PlaylistManager"_s, {tr("Playlist")});

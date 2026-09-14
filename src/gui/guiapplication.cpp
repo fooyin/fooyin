@@ -1991,6 +1991,9 @@ void GuiApplication::showPlaylistManager()
     m_playlistManagerWidget->setAttribute(Qt::WA_DeleteOnClose);
     m_playlistManagerWidget->finalise();
 
+    QObject::connect(m_playlistManagerWidget, &PlaylistManagerWidget::savePlaylistRequested, this,
+                     &GuiApplication::savePlaylist);
+
     m_playlistManagerWidget->show();
     m_playlistManagerWidget->raise();
     m_playlistManagerWidget->activateWindow();
