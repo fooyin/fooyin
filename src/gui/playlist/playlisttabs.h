@@ -28,16 +28,20 @@
 #include <QPointer>
 
 class QHBoxLayout;
+class QAction;
 class QEvent;
 class QVBoxLayout;
 
 namespace Fooyin {
+class ActionManager;
+class Command;
 class Playlist;
 class PlaylistController;
 class PlaylistHandler;
 class SettingsManager;
 class SingleTabbedWidget;
 class TrackSelectionController;
+class WidgetContext;
 
 enum class PlaylistTabPosition : uint8_t
 {
@@ -60,9 +64,9 @@ public:
         bool closeOnMiddleClick{false};
     };
 
-    explicit PlaylistTabs(WidgetProvider* widgetProvider, PlaylistController* playlistController,
-                          TrackSelectionController* selectionController, SettingsManager* settings,
-                          QWidget* parent = nullptr);
+    explicit PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetProvider,
+                          PlaylistController* playlistController, TrackSelectionController* selectionController,
+                          SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] ConfigData factoryConfig() const;
     [[nodiscard]] ConfigData defaultConfig() const;
@@ -105,7 +109,6 @@ Q_SIGNALS:
     void tracksDropped(const QByteArray& data, const Fooyin::UId& playlistId);
     void trackListDropped(const Fooyin::TrackList& tracks, const Fooyin::UId& playlistId);
     void savePlaylistRequested(const Fooyin::UId& playlistId);
-    void saveAllPlaylistsRequested();
 
 protected:
     void changeEvent(QEvent* event) override;
@@ -137,11 +140,16 @@ private:
     void updateTabIcon(int i, Player::PlayState state) const;
     void createEmptyPlaylist() const;
 
+    ActionManager* m_actionManager;
     PlaylistController* m_playlistController;
     PlaylistHandler* m_playlistHandler;
     TrackSelectionController* m_selectionController;
     SettingsManager* m_settings;
+
     ConfigData m_config;
+    WidgetContext* m_context;
+    QAction* m_savePlaylistAction;
+    Command* m_savePlaylistCmd;
 
     QVBoxLayout* m_layout;
     SingleTabbedWidget* m_tabs;
@@ -157,5 +165,6 @@ private:
     QIcon m_lockedIcon;
 
     UId m_lastActivePlaylist;
+    UId m_contextMenuPlaylist;
 };
 } // namespace Fooyin

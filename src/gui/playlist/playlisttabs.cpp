@@ -33,6 +33,10 @@
 #include <gui/widgets/editabletabbar.h>
 #include <gui/widgets/singletabbedwidget.h>
 #include <gui/widgets/toolbutton.h>
+#include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
+#include <utils/actions/proxyaction.h>
+#include <utils/actions/widgetcontext.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
@@ -65,13 +69,19 @@ constexpr auto PlaylistTabsCloseButtonKey = u"PlaylistTabs/ShowCloseButton";
 constexpr auto PlaylistTabsMiddleCloseKey = u"PlaylistTabs/CloseOnMiddleClick";
 
 namespace Fooyin {
-PlaylistTabs::PlaylistTabs(WidgetProvider* widgetProvider, PlaylistController* playlistController,
-                           TrackSelectionController* selectionController, SettingsManager* settings, QWidget* parent)
+PlaylistTabs::PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetProvider,
+                           PlaylistController* playlistController, TrackSelectionController* selectionController,
+                           SettingsManager* settings, QWidget* parent)
     : WidgetContainer{widgetProvider, settings, parent}
+    , m_actionManager{actionManager}
     , m_playlistController{playlistController}
     , m_playlistHandler{m_playlistController->playlistHandler()}
     , m_selectionController{selectionController}
     , m_settings{settings}
+    , m_context{new WidgetContext(this, Context{IdList{Id{"Fooyin.Context.PlaylistTabs."}.append(id())}}, this)}
+    , m_savePlaylistAction{new QAction(tr("&Save playlist…"), this)}
+    , m_savePlaylistCmd{m_actionManager->registerAction(m_savePlaylistAction, Constants::Actions::SavePlaylist,
+                                                        m_context->context())}
     , m_layout{new QVBoxLayout(this)}
     , m_tabs{new SingleTabbedWidget(this)}
     , m_buttonsWidget{nullptr}
@@ -82,6 +92,18 @@ PlaylistTabs::PlaylistTabs(WidgetProvider* widgetProvider, PlaylistController* p
     , m_lockedIcon{Gui::iconFromTheme(Constants::Icons::ReadOnly)}
 {
     QObject::setObjectName(PlaylistTabs::name());
+
+    m_actionManager->addContextObject(m_context);
+
+    m_savePlaylistAction->setStatusTip(tr("Save the selected playlist to the specified file"));
+    m_savePlaylistCmd->setAttribute(ProxyAction::UpdateText);
+    QObject::connect(m_savePlaylistAction, &QAction::triggered, this, [this]() {
+        const UId playlistId
+            = m_contextMenuPlaylist.isValid() ? m_contextMenuPlaylist : m_playlistController->currentPlaylistId();
+        if(playlistId.isValid()) {
+            Q_EMIT savePlaylistRequested(playlistId);
+        }
+    });
 
     m_layout->setContentsMargins({});
     m_layout->setAlignment(Qt::AlignTop);
@@ -96,6 +118,9 @@ PlaylistTabs::PlaylistTabs(WidgetProvider* widgetProvider, PlaylistController* p
 
     setupConnections();
     setupTabs();
+
+    const auto* currentPlaylist = m_playlistController->currentPlaylist();
+    m_savePlaylistAction->setEnabled(currentPlaylist && currentPlaylist->trackCount() > 0);
 }
 
 PlaylistTabs::ConfigData PlaylistTabs::factoryConfig() const
@@ -408,6 +433,7 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
 
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
+    Utils::forwardMenuStatusTips(menu);
     QObject::connect(menu, &QMenu::aboutToHide, tabBar, &EditableTabBar::clearHoverState);
 
     auto* createPlaylist = new QAction(tr("Add new playlist"), menu);
@@ -431,8 +457,16 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
         autoDialog->show();
     });
 
-    const auto id  = tabBar->tabData(index).value<UId>();
-    auto* playlist = m_playlistHandler->playlistById(id);
+    const auto id         = tabBar->tabData(index).value<UId>();
+    auto* playlist        = m_playlistHandler->playlistById(id);
+    m_contextMenuPlaylist = playlist ? id : UId{};
+    m_savePlaylistAction->setEnabled(playlist && playlist->trackCount() > 0);
+
+    QObject::connect(menu, &QObject::destroyed, this, [this]() {
+        m_contextMenuPlaylist = {};
+        const auto* current   = m_playlistController->currentPlaylist();
+        m_savePlaylistAction->setEnabled(current && current->trackCount() > 0);
+    });
 
     if(playlist) {
         if(playlist->isAutoPlaylist()) {
@@ -497,14 +531,10 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
 
         menu->addSeparator();
 
-        auto* savePlaylist = new QAction(tr("Save playlist…"), menu);
-        savePlaylist->setEnabled(playlist->trackCount() > 0);
-        QObject::connect(savePlaylist, &QAction::triggered, this, [this, id]() { Q_EMIT savePlaylistRequested(id); });
-        menu->addAction(savePlaylist);
-
-        auto* saveAllPlaylists = new QAction(tr("Save all playlists…"), menu);
-        QObject::connect(saveAllPlaylists, &QAction::triggered, this, [this]() { Q_EMIT saveAllPlaylistsRequested(); });
-        menu->addAction(saveAllPlaylists);
+        menu->addAction(m_savePlaylistAction);
+        if(auto* saveAllPlaylists = m_actionManager->command(Constants::Actions::SaveAllPlaylists)) {
+            menu->addAction(saveAllPlaylists->action());
+        }
 
         menu->addSeparator();
 
@@ -816,6 +846,10 @@ void PlaylistTabs::tabMoved(int /*from*/, int to) const
 
 void PlaylistTabs::playlistChanged(Playlist* /*oldPlaylist*/, Playlist* playlist)
 {
+    if(!m_contextMenuPlaylist.isValid()) {
+        m_savePlaylistAction->setEnabled(playlist && playlist->trackCount() > 0);
+    }
+
     if(!playlist) {
         return;
     }
@@ -878,6 +912,9 @@ void PlaylistTabs::playlistUpdated(const Playlist* playlist)
 
     if(playlist->id() == m_playlistController->currentPlaylistId()) {
         setAcceptDrops(!playlist->isAutoPlaylist() && !playlist->isLocked());
+        if(!m_contextMenuPlaylist.isValid()) {
+            m_savePlaylistAction->setEnabled(playlist->trackCount() > 0);
+        }
     }
 
     const int count = m_tabs->tabBar()->count();
