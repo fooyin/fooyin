@@ -353,6 +353,15 @@ void PlaylistBox::showContextMenu(const QPoint& pos)
             }
         }
         menu->addAction(m_removeCmd->action());
+
+        menu->addSeparator();
+
+        if(auto* savePlaylist = m_actionManager->command(Constants::Actions::SavePlaylist)) {
+            menu->addAction(savePlaylist->action());
+        }
+        if(auto* saveAllPlaylists = m_actionManager->command(Constants::Actions::SaveAllPlaylists)) {
+            menu->addAction(saveAllPlaylists->action());
+        }
     }
 
     menu->popup(m_playlistBox->mapToGlobal(pos));
