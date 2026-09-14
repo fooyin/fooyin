@@ -23,8 +23,32 @@
 #include <unordered_set>
 
 namespace Fooyin::Filters {
+void FilterRowLookup::rebuildRows(const FilterRowList& rows)
+{
+    m_rowIndexes.clear();
+    m_rowIndexes.reserve(rows.size());
+
+    for(std::size_t index{0}; index < rows.size(); ++index) {
+        m_rowIndexes.emplace(rows.at(index).key, index);
+    }
+}
+
+std::optional<size_t> FilterRowLookup::rowIndex(const RowKey& key) const
+{
+    const auto it = m_rowIndexes.find(key);
+    return it != m_rowIndexes.cend() ? std::optional{it->second} : std::nullopt;
+}
+
 FilterSelectionResolution resolveFilterSelection(const FilterRowList& rows, const TrackList& inputTracks,
                                                  const std::vector<RowKey>& selectedKeys)
+{
+    FilterRowLookup lookup;
+    lookup.rebuildRows(rows);
+    return resolveFilterSelection(rows, inputTracks, selectedKeys, lookup);
+}
+
+FilterSelectionResolution resolveFilterSelection(const FilterRowList& rows, const TrackList& inputTracks,
+                                                 const std::vector<RowKey>& selectedKeys, const FilterRowLookup& lookup)
 {
     FilterSelectionResolution resolution;
     resolution.selectedKeys = selectedKeys;
@@ -45,8 +69,8 @@ FilterSelectionResolution resolveFilterSelection(const FilterRowList& rows, cons
             selectedTrackIds.reserve(inputTracks.size());
 
             for(const FilterRow& row : rows) {
-                for(const int trackId : row.trackIds) {
-                    selectedTrackIds.emplace(trackId);
+                for(const Track& track : row.tracks) {
+                    selectedTrackIds.emplace(track.id());
                 }
             }
 
@@ -61,34 +85,19 @@ FilterSelectionResolution resolveFilterSelection(const FilterRowList& rows, cons
         }
     }
 
-    std::unordered_map<int, Track> tracksById;
-    tracksById.reserve(inputTracks.size());
-    for(const Track& track : inputTracks) {
-        tracksById.emplace(track.id(), track);
-    }
-
-    std::unordered_map<RowKey, const FilterRow*> rowsByKey;
-    rowsByKey.reserve(rows.size());
-    for(const FilterRow& row : rows) {
-        rowsByKey.emplace(row.key, &row);
-    }
-
     std::vector<RowKey> prunedKeys;
     prunedKeys.reserve(resolution.selectedKeys.size());
 
     for(const RowKey& key : resolution.selectedKeys) {
-        const auto rowIt = rowsByKey.find(key);
-        if(rowIt == rowsByKey.cend()) {
+        const auto rowIndex = lookup.rowIndex(key);
+        if(!rowIndex || *rowIndex >= rows.size()) {
             continue;
         }
 
         prunedKeys.push_back(key);
 
-        for(const int trackId : rowIt->second->trackIds) {
-            if(const auto trackIt = tracksById.find(trackId); trackIt != tracksById.cend()) {
-                resolution.selectedTracks.push_back(trackIt->second);
-            }
-        }
+        const TrackList& rowTracks = rows.at(*rowIndex).tracks;
+        std::ranges::copy(rowTracks, std::back_inserter(resolution.selectedTracks));
     }
 
     resolution.selectedKeys = std::move(prunedKeys);

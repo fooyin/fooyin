@@ -203,7 +203,7 @@ FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumn
                 }
             }
 
-            row.trackIds.push_back(track.id());
+            row.tracks.push_back(track);
         };
 
         const bool pairSortRows = hasCustomSortField && columnValues.size() == sortValues.size();
@@ -298,9 +298,10 @@ FilterRowList patchFilterRows(LibraryManager* libraryManager, const FilterColumn
 
     for(const FilterRow& previousRow : previousRows) {
         FilterRow row = previousRow;
-        std::erase_if(row.trackIds, [&removedTrackIds](int trackId) { return removedTrackIds.contains(trackId); });
+        std::erase_if(row.tracks,
+                      [&removedTrackIds](const Track& track) { return removedTrackIds.contains(track.id()); });
 
-        if(!row.trackIds.empty()) {
+        if(!row.tracks.empty()) {
             patchedRows.emplace(row.key, std::move(row));
         }
     }
@@ -311,7 +312,7 @@ FilterRowList patchFilterRows(LibraryManager* libraryManager, const FilterColumn
             it->second.columns     = row.columns;
             it->second.sortColumns = row.sortColumns;
             it->second.richColumns = row.richColumns;
-            std::ranges::copy(row.trackIds, std::back_inserter(it->second.trackIds));
+            std::ranges::copy(row.tracks, std::back_inserter(it->second.tracks));
         }
     }
 
@@ -325,8 +326,8 @@ FilterRowList patchFilterRows(LibraryManager* libraryManager, const FilterColumn
     rows.reserve(patchedRows.size());
 
     for(auto& row : patchedRows | std::views::values) {
-        std::ranges::stable_sort(row.trackIds, [&trackPositions](int left, int right) {
-            return trackPositions.at(left) < trackPositions.at(right);
+        std::ranges::stable_sort(row.tracks, [&trackPositions](const Track& left, const Track& right) {
+            return trackPositions.at(left.id()) < trackPositions.at(right.id());
         });
         rows.push_back(std::move(row));
     }
@@ -370,21 +371,21 @@ FilterRowList filterRowsBySearch(const QString& search, const FilterRowList& row
     filteredRows.reserve(rows.size());
 
     for(const FilterRow& row : rows) {
-        TrackIds matchedTrackIds;
-        matchedTrackIds.reserve(row.trackIds.size());
+        TrackList matchedTracks;
+        matchedTracks.reserve(row.tracks.size());
 
-        for(const int trackId : row.trackIds) {
-            if(matchingTrackIds.contains(trackId)) {
-                matchedTrackIds.push_back(trackId);
+        for(const Track& track : row.tracks) {
+            if(matchingTrackIds.contains(track.id())) {
+                matchedTracks.push_back(track);
             }
         }
 
-        if(matchedTrackIds.empty()) {
+        if(matchedTracks.empty()) {
             continue;
         }
 
         FilterRow filteredRow = row;
-        filteredRow.trackIds  = std::move(matchedTrackIds);
+        filteredRow.tracks    = std::move(matchedTracks);
         filteredRows.push_back(std::move(filteredRow));
     }
 

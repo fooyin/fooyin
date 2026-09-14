@@ -42,7 +42,7 @@ struct FYGUI_EXPORT FilterRow
     QStringList columns;
     QStringList sortColumns;
     std::vector<RichText> richColumns;
-    TrackIds trackIds;
+    TrackList tracks;
 };
 
 using FilterRowList = std::vector<FilterRow>;

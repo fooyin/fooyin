@@ -127,6 +127,7 @@ public:
 
         FilterRowList rows;
         std::optional<FilterRowList> searchedRows;
+        FilterRowLookup rowLookup;
 
         std::vector<RowKey> selectedKeys;
         QString searchText;
@@ -524,7 +525,7 @@ void FilterControllerPrivate::handleSelectionChanged(FilterWidget* filter, const
     }
 
     const FilterSelectionResolution selection
-        = resolveFilterSelection(rowsForSelection(*stage), stage->inputTracks, keys);
+        = resolveFilterSelection(rowsForSelection(*stage), stage->inputTracks, keys, stage->rowLookup);
     stage->selectedKeys   = selection.selectedKeys;
     stage->selectedTracks = selection.selectedTracks;
     stage->isActive       = selection.isActive;
@@ -555,7 +556,6 @@ void FilterControllerPrivate::handleSelectionChanged(FilterWidget* filter, const
     if(stage->searchText.isEmpty()) {
         stage->searchedRows.reset();
     }
-    publishStage(group->id, stageIndex);
 
     ++group->revision;
     markStagesCurrent(*group, stageIndex);
@@ -783,9 +783,10 @@ bool FilterControllerPrivate::patchGroup(const Id& groupId, const TrackList& sou
         stage.rows     = patchFilterRows(m_libraryManager, columns, stage.rows, previousInputTracks, stage.inputTracks,
                                          changedTrackIds, context);
         stage.revision = group.revision;
+        stage.rowLookup.rebuildRows(stage.rows);
 
         const FilterSelectionResolution selection
-            = resolveFilterSelection(stage.rows, stage.inputTracks, stage.selectedKeys);
+            = resolveFilterSelection(stage.rows, stage.inputTracks, stage.selectedKeys, stage.rowLookup);
         stage.selectedKeys   = selection.selectedKeys;
         stage.selectedTracks = selection.selectedTracks;
         stage.isActive       = selection.isActive;
@@ -872,9 +873,10 @@ void FilterControllerPrivate::recomputeStage(const Id& groupId, int stageIndex, 
             }
 
             currentStage.rows = rows;
+            currentStage.rowLookup.rebuildRows(currentStage.rows);
 
-            const FilterSelectionResolution selection
-                = resolveFilterSelection(currentStage.rows, currentStage.inputTracks, currentStage.selectedKeys);
+            const FilterSelectionResolution selection = resolveFilterSelection(
+                currentStage.rows, currentStage.inputTracks, currentStage.selectedKeys, currentStage.rowLookup);
             currentStage.selectedKeys   = selection.selectedKeys;
             currentStage.selectedTracks = selection.selectedTracks;
             currentStage.isActive       = selection.isActive;
@@ -904,8 +906,12 @@ void FilterControllerPrivate::refreshStageSearch(const Id& groupId, int stageInd
         return;
     }
 
-    auto& stage = group.stages.at(stageIndex);
+    auto& stage                = group.stages.at(stageIndex);
+    const bool hadSearchedRows = stage.searchedRows.has_value();
     stage.searchedRows.reset();
+    if(hadSearchedRows) {
+        stage.rowLookup.rebuildRows(stage.rows);
+    }
     const uint64_t searchRevision = ++stage.searchRevision;
 
     if(stage.searchText.isEmpty()) {
@@ -937,10 +943,12 @@ void FilterControllerPrivate::refreshStageSearch(const Id& groupId, int stageInd
                   }
 
                   currentStage.searchedRows = searchedRows;
+                  currentStage.rowLookup.rebuildRows(*currentStage.searchedRows);
 
                   if(containsSummaryKey(currentStage.selectedKeys)) {
-                      const FilterSelectionResolution selection = resolveFilterSelection(
-                          *currentStage.searchedRows, currentStage.inputTracks, currentStage.selectedKeys);
+                      const FilterSelectionResolution selection
+                          = resolveFilterSelection(*currentStage.searchedRows, currentStage.inputTracks,
+                                                   currentStage.selectedKeys, currentStage.rowLookup);
                       currentStage.selectedKeys   = selection.selectedKeys;
                       currentStage.selectedTracks = selection.selectedTracks;
                       currentStage.isActive       = selection.isActive;

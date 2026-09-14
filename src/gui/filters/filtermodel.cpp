@@ -83,7 +83,8 @@ Fooyin::RichText summaryRichText(const QString& text, const std::vector<Fooyin::
 
 bool rowMatchesItem(const Fooyin::Filters::FilterRow& row, const Fooyin::Filters::FilterItem& item)
 {
-    if(row.columns != item.columns() || row.trackIds != item.trackIds()) {
+    if(row.columns != item.columns() || row.tracks.size() != item.trackIds().size()
+       || !std::ranges::equal(row.tracks, item.trackIds(), {}, &Fooyin::Track::id)) {
         return false;
     }
 
@@ -666,7 +667,7 @@ void FilterModel::setRows(const FilterColumnList& columns, const FilterRowList& 
 
             item.setSortColumns(row.sortColumns);
             item.setRichColumns(row.richColumns);
-            item.setTrackIds(row.trackIds);
+            item.setTrackIds(Track::trackIdsForTracks(row.tracks));
             parent->appendChild(&item);
         }
 
@@ -716,7 +717,7 @@ void FilterModel::setRows(const FilterColumnList& columns, const FilterRowList& 
         auto& newItem = it->second;
         newItem.setSortColumns(row.sortColumns);
         newItem.setRichColumns(row.richColumns);
-        newItem.setTrackIds(row.trackIds);
+        newItem.setTrackIds(Track::trackIdsForTracks(row.tracks));
         parent->insertChild(rowOffset + rowIndex, &newItem);
         endInsertRows();
     }
@@ -739,7 +740,7 @@ void FilterModel::setRows(const FilterColumnList& columns, const FilterRowList& 
         item->setColumns(row.columns);
         item->setSortColumns(row.sortColumns);
         item->setRichColumns(row.richColumns);
-        item->setTrackIds(row.trackIds);
+        item->setTrackIds(Track::trackIdsForTracks(row.tracks));
 
         if(columnCount > 0) {
             const QModelIndex topLeft     = indexOfItem(item);

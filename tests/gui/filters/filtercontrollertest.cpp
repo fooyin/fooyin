@@ -39,6 +39,7 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QAbstractItemView>
 #include <QApplication>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -109,9 +110,13 @@ Filters::RowKey keyFor(const QString& value)
 Filters::FilterRow makeDisplayRow(const Filters::RowKey& key, const QStringList& columns, const TrackIds& trackIds)
 {
     Filters::FilterRow row;
-    row.key      = key;
-    row.columns  = columns;
-    row.trackIds = trackIds;
+    row.key     = key;
+    row.columns = columns;
+    for(const int trackId : trackIds) {
+        Track track;
+        track.setId(trackId);
+        row.tracks.push_back(std::move(track));
+    }
     return row;
 }
 
@@ -122,7 +127,11 @@ Filters::FilterColumnList simpleColumns()
 
 void registerMinimalGuiSettings(SettingsManager& settings)
 {
+    ResolvedAppStyle style;
+    style.revision = 1;
+
     settings.createTempSetting<Settings::Gui::LayoutEditing>(false);
+    settings.createTempSetting<Settings::Gui::ResolvedAppStyle>(QVariant::fromValue(style));
     settings.createSetting<Settings::Gui::IconTheme>(0, u"Theme/IconTheme"_s);
     settings.createSetting<Settings::Gui::RatingFullStarSymbol>(defaultRatingFullStarSymbol(),
                                                                 u"Interface/RatingFullStarSymbol"_s);
@@ -298,6 +307,37 @@ TEST_F(FilterControllerTest, LoadingUngroupedWidgetWithReplacementIdPreservesUng
     EXPECT_EQ(filter, ungrouped.at(filter->id()));
 
     EXPECT_TRUE(m_controller->filterGroups().empty());
+}
+
+TEST_F(FilterControllerTest, SelectingFilterRowDoesNotRepublishSourceModel)
+{
+    Track track{u"/music/one.flac"_s};
+    track.setId(1);
+    track.setLibraryId(1);
+    track.setGenres({u"Rock"_s});
+    m_library.setLibraryTracks({track});
+
+    auto* filter = m_controller->createFilter();
+    ASSERT_NE(nullptr, filter);
+
+    auto config            = filter->currentConfig();
+    config.playlistEnabled = false;
+
+    auto* model = filter->findChild<Filters::FilterModel*>();
+    auto* view  = filter->findChild<QAbstractItemView*>();
+    ASSERT_NE(nullptr, model);
+    ASSERT_NE(nullptr, view);
+
+    QSignalSpy resetSpy{model, &QAbstractItemModel::modelReset};
+    filter->applyConfig(config);
+    ASSERT_TRUE(resetSpy.wait(1000));
+    ASSERT_EQ(2, model->rowCount({}));
+
+    const QSignalSpy dataChangedSpy{model, &QAbstractItemModel::dataChanged};
+    view->selectionModel()->select(view->model()->index(1, 0),
+                                   QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+
+    EXPECT_EQ(0, dataChangedSpy.count());
 }
 
 TEST_F(FilterControllerTest, FilterModelSetRowsInsertsWithoutModelResetWhenColumnsUnchanged)

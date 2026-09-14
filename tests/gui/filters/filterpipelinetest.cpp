@@ -46,7 +46,9 @@ Filters::FilterRow makeRow(const Filters::RowKey& key, std::initializer_list<int
 {
     Filters::FilterRow row;
     row.key = key;
-    row.trackIds.assign(trackIds.begin(), trackIds.end());
+    for(const int trackId : trackIds) {
+        row.tracks.push_back(makeTrack(trackId, u"/music/%1.flac"_s.arg(trackId)));
+    }
     return row;
 }
 } // namespace
@@ -74,6 +76,42 @@ TEST(FilterPipelineTest, ResolveFilterSelectionPrunesMissingKeysAndKeepsMatching
     EXPECT_EQ(1, selection.selectedTracks.at(0).id());
     EXPECT_EQ(2, selection.selectedTracks.at(1).id());
     EXPECT_EQ(3, selection.selectedTracks.at(2).id());
+}
+
+TEST(FilterPipelineTest, ResolveFilterSelectionUsesRebuiltRowLookup)
+{
+    const TrackList initialTracks{
+        makeTrack(1, u"/music/one.flac"_s),
+        makeTrack(2, u"/music/two.flac"_s),
+    };
+    const Filters::FilterRowList initialRows{
+        makeRow(keyFor(u"A"_s), {1}),
+    };
+
+    Filters::FilterRowLookup lookup;
+    lookup.rebuildRows(initialRows);
+
+    const auto initialSelection = Filters::resolveFilterSelection(initialRows, initialTracks, {keyFor(u"A"_s)}, lookup);
+    ASSERT_EQ(1, initialSelection.selectedTracks.size());
+    EXPECT_EQ(1, initialSelection.selectedTracks.front().id());
+
+    const TrackList updatedTracks{
+        makeTrack(2, u"/music/two.flac"_s),
+        makeTrack(3, u"/music/three.flac"_s),
+    };
+    const Filters::FilterRowList updatedRows{
+        makeRow(keyFor(u"B"_s), {3, 2}),
+    };
+
+    lookup.rebuildRows(updatedRows);
+
+    const auto updatedSelection
+        = Filters::resolveFilterSelection(updatedRows, updatedTracks, {keyFor(u"A"_s), keyFor(u"B"_s)}, lookup);
+    ASSERT_EQ(1, updatedSelection.selectedKeys.size());
+    EXPECT_EQ(keyFor(u"B"_s), updatedSelection.selectedKeys.front());
+    ASSERT_EQ(2, updatedSelection.selectedTracks.size());
+    EXPECT_EQ(3, updatedSelection.selectedTracks.at(0).id());
+    EXPECT_EQ(2, updatedSelection.selectedTracks.at(1).id());
 }
 
 TEST(FilterPipelineTest, ResolveFilterSelectionUsesVisibleRowsForSummaryRow)
@@ -114,7 +152,7 @@ TEST(FilterPipelineTest, ResolveFilterSelectionFallsBackToInputTracksForEmptySum
     EXPECT_TRUE(selection.selectedKeys.front().isEmpty());
 }
 
-TEST(FilterPipelineTest, FilterRowsBySearchNarrowsMatchingTrackIdsWithoutRebuildingColumns)
+TEST(FilterPipelineTest, FilterRowsBySearchNarrowsMatchingTracksWithoutRebuildingColumns)
 {
     const TrackList inputTracks{
         makeTrack(1, u"/music/one.flac"_s),
@@ -123,14 +161,14 @@ TEST(FilterPipelineTest, FilterRowsBySearchNarrowsMatchingTrackIdsWithoutRebuild
     };
 
     Filters::FilterRow groupedRow;
-    groupedRow.key      = keyFor(u"grouped"_s);
-    groupedRow.columns  = {u"Shared Label"_s};
-    groupedRow.trackIds = {1, 2};
+    groupedRow.key     = keyFor(u"grouped"_s);
+    groupedRow.columns = {u"Shared Label"_s};
+    groupedRow.tracks  = {inputTracks.at(0), inputTracks.at(1)};
 
     Filters::FilterRow singleRow;
-    singleRow.key      = keyFor(u"single"_s);
-    singleRow.columns  = {u"Single Label"_s};
-    singleRow.trackIds = {3};
+    singleRow.key     = keyFor(u"single"_s);
+    singleRow.columns = {u"Single Label"_s};
+    singleRow.tracks  = {inputTracks.at(2)};
 
     const Filters::FilterRowList filteredRows
         = Filters::filterRowsBySearch(u"one"_s, {groupedRow, singleRow}, inputTracks);
@@ -138,8 +176,8 @@ TEST(FilterPipelineTest, FilterRowsBySearchNarrowsMatchingTrackIdsWithoutRebuild
     ASSERT_EQ(1, filteredRows.size());
     EXPECT_EQ(groupedRow.key, filteredRows.at(0).key);
     EXPECT_EQ(groupedRow.columns, filteredRows.at(0).columns);
-    ASSERT_EQ(1, filteredRows.at(0).trackIds.size());
-    EXPECT_EQ(1, filteredRows.at(0).trackIds.at(0));
+    ASSERT_EQ(1, filteredRows.at(0).tracks.size());
+    EXPECT_EQ(1, filteredRows.at(0).tracks.at(0).id());
 }
 
 TEST(FilterPipelineTest, FilterRowsBySearchKeepsCanonicalRowsWhenEveryTrackMatches)
@@ -158,9 +196,9 @@ TEST(FilterPipelineTest, FilterRowsBySearchKeepsCanonicalRowsWhenEveryTrackMatch
 
     ASSERT_EQ(rows.size(), filteredRows.size());
     EXPECT_EQ(rows.at(0).key, filteredRows.at(0).key);
-    EXPECT_EQ(rows.at(0).trackIds, filteredRows.at(0).trackIds);
+    EXPECT_EQ(rows.at(0).tracks, filteredRows.at(0).tracks);
     EXPECT_EQ(rows.at(1).key, filteredRows.at(1).key);
-    EXPECT_EQ(rows.at(1).trackIds, filteredRows.at(1).trackIds);
+    EXPECT_EQ(rows.at(1).tracks, filteredRows.at(1).tracks);
 }
 
 TEST(FilterPipelineTest, PatchFilterRowsMovesUpdatedTrackBetweenBucketsAndPrunesEmptyRows)
@@ -202,9 +240,38 @@ TEST(FilterPipelineTest, PatchFilterRowsMovesUpdatedTrackBetweenBucketsAndPrunes
 
     ASSERT_EQ(1, patchedRows.size());
     EXPECT_EQ(QStringList{u"Jazz"_s}, patchedRows.at(0).columns);
-    ASSERT_EQ(2, patchedRows.at(0).trackIds.size());
-    EXPECT_EQ(1, patchedRows.at(0).trackIds.at(0));
-    EXPECT_EQ(2, patchedRows.at(0).trackIds.at(1));
+    ASSERT_EQ(2, patchedRows.at(0).tracks.size());
+    EXPECT_EQ(1, patchedRows.at(0).tracks.at(0).id());
+    EXPECT_EQ(2, patchedRows.at(0).tracks.at(1).id());
+}
+
+TEST(FilterPipelineTest, PatchFilterRowsRefreshesTrackMetadataWithinExistingBucket)
+{
+    Track oldTrack{u"/music/one.flac"_s};
+    oldTrack.setId(1);
+    oldTrack.setLibraryId(1);
+    oldTrack.setGenres({u"Rock"_s});
+    oldTrack.setTitle(u"Old title"_s);
+
+    Track updatedTrack = oldTrack;
+    updatedTrack.setTitle(u"Updated title"_s);
+
+    const Filters::FilterColumnList columns{
+        {.id = 0, .name = u"Genre"_s, .field = u"%<genre>%"_s, .sortField = {}},
+    };
+    const Filters::FilterRowBuildContext context{
+        .font          = {},
+        .ratingSymbols = {u"*"_s, u"/"_s, u"-"_s},
+        .useVarious    = false,
+    };
+
+    const Filters::FilterRowList previousRows = Filters::buildFilterRows(nullptr, columns, {oldTrack}, context);
+    const Filters::FilterRowList patchedRows
+        = Filters::patchFilterRows(nullptr, columns, previousRows, {oldTrack}, {updatedTrack}, {1}, context);
+
+    ASSERT_EQ(1, patchedRows.size());
+    ASSERT_EQ(1, patchedRows.front().tracks.size());
+    EXPECT_EQ(u"Updated title"_s, patchedRows.front().tracks.front().title());
 }
 
 TEST(FilterPipelineTest, PatchFilterRowsAddsNewTrackIntoExistingBucketInCurrentOrder)
@@ -239,9 +306,9 @@ TEST(FilterPipelineTest, PatchFilterRowsAddsNewTrackIntoExistingBucketInCurrentO
 
     ASSERT_EQ(1, patchedRows.size());
     EXPECT_EQ(QStringList{u"Rock"_s}, patchedRows.at(0).columns);
-    ASSERT_EQ(2, patchedRows.at(0).trackIds.size());
-    EXPECT_EQ(2, patchedRows.at(0).trackIds.at(0));
-    EXPECT_EQ(1, patchedRows.at(0).trackIds.at(1));
+    ASSERT_EQ(2, patchedRows.at(0).tracks.size());
+    EXPECT_EQ(2, patchedRows.at(0).tracks.at(0).id());
+    EXPECT_EQ(1, patchedRows.at(0).tracks.at(1).id());
 }
 
 TEST(FilterPipelineTest, RunFilterPipelinePropagatesUpstreamSelectionToDownstreamInputs)
@@ -268,10 +335,8 @@ TEST(FilterPipelineTest, RunFilterPipelinePropagatesUpstreamSelectionToDownstrea
               }
 
               Filters::FilterRow row;
-              row.key = keyFor(u"downstream"_s);
-              for(const Track& track : inputTracks) {
-                  row.trackIds.push_back(track.id());
-              }
+              row.key    = keyFor(u"downstream"_s);
+              row.tracks = inputTracks;
               return Filters::FilterRowList{row};
           });
 
@@ -305,10 +370,8 @@ TEST(FilterPipelineTest, RunFilterPipelineWithNoActiveStagesLeavesFinalFilteredT
         = Filters::runFilterPipeline(sourceTracks, requests, [](int stageIndex, const TrackList& inputTracks) {
               Q_UNUSED(stageIndex);
               Filters::FilterRow row;
-              row.key = keyFor(u"all"_s);
-              for(const Track& track : inputTracks) {
-                  row.trackIds.push_back(track.id());
-              }
+              row.key    = keyFor(u"all"_s);
+              row.tracks = inputTracks;
               return Filters::FilterRowList{row};
           });
 
@@ -341,10 +404,8 @@ TEST(FilterPipelineTest, RunFilterPipelinePrunesStaleSelectionAndRemovesConstrai
               }
 
               Filters::FilterRow row;
-              row.key = keyFor(u"downstream"_s);
-              for(const Track& track : inputTracks) {
-                  row.trackIds.push_back(track.id());
-              }
+              row.key    = keyFor(u"downstream"_s);
+              row.tracks = inputTracks;
               return Filters::FilterRowList{row};
           });
 
@@ -421,7 +482,8 @@ TEST(FilterPipelineTest, RunFilterPipelineChainsMultipleActiveStagesLeftToRight)
               }();
 
               for(Filters::FilterRow& row : rows) {
-                  std::erase_if(row.trackIds, [&allowedIds](int id) { return !allowedIds.contains(id); });
+                  std::erase_if(row.tracks,
+                                [&allowedIds](const Track& track) { return !allowedIds.contains(track.id()); });
               }
 
               return rows;

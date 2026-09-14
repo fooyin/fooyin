@@ -24,6 +24,8 @@
 #include "filterrows.h"
 
 #include <functional>
+#include <optional>
+#include <unordered_map>
 
 namespace Fooyin::Filters {
 struct FYGUI_EXPORT FilterSelectionResolution
@@ -31,6 +33,17 @@ struct FYGUI_EXPORT FilterSelectionResolution
     std::vector<RowKey> selectedKeys;
     TrackList selectedTracks;
     bool isActive{false};
+};
+
+class FYGUI_EXPORT FilterRowLookup
+{
+public:
+    void rebuildRows(const FilterRowList& rows);
+
+    [[nodiscard]] std::optional<size_t> rowIndex(const RowKey& key) const;
+
+private:
+    std::unordered_map<RowKey, size_t> m_rowIndexes;
 };
 
 struct FYGUI_EXPORT FilterPipelineStageRequest
@@ -58,6 +71,9 @@ using FilterRowsBuilder = std::function<FilterRowList(int stageIndex, const Trac
 
 FYGUI_EXPORT FilterSelectionResolution resolveFilterSelection(const FilterRowList& rows, const TrackList& inputTracks,
                                                               const std::vector<RowKey>& selectedKeys);
+FYGUI_EXPORT FilterSelectionResolution resolveFilterSelection(const FilterRowList& rows, const TrackList& inputTracks,
+                                                              const std::vector<RowKey>& selectedKeys,
+                                                              const FilterRowLookup& lookup);
 FYGUI_EXPORT FilterPipelineResult runFilterPipeline(const TrackList& sourceTracks,
                                                     const std::vector<FilterPipelineStageRequest>& stages,
                                                     const FilterRowsBuilder& rowBuilder);
