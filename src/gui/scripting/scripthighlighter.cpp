@@ -47,7 +47,9 @@ void ScriptHighlighter::setColours(const ScriptHighlightColours& colours)
     m_functionFormat.setForeground(colours.function);
     m_conditionalFormat.setForeground(colours.conditional);
     m_operatorFormat.setForeground(colours.operatorColour);
-    m_commentFormat.setForeground(colours.quotedText);
+    m_quotedTextFormat.setForeground(colours.quotedText);
+    m_commentFormat.setForeground(colours.operatorColour);
+    m_commentFormat.setFontItalic(true);
     rehighlight();
 }
 
@@ -76,6 +78,9 @@ void ScriptHighlighter::expression()
             break;
         case ScriptScanner::TokQuote:
             quote();
+            break;
+        case ScriptScanner::TokComment:
+            setTokenFormat(m_commentFormat);
             break;
         case ScriptScanner::TokLeftSquare:
             conditional();
@@ -125,7 +130,7 @@ void ScriptHighlighter::expression()
 
 void ScriptHighlighter::quote()
 {
-    setTokenFormat(m_commentFormat);
+    setTokenFormat(m_quotedTextFormat);
 }
 
 void ScriptHighlighter::variable()

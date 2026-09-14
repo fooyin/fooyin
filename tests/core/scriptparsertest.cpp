@@ -389,6 +389,29 @@ TEST_F(ScriptParserTest, EscapeComment)
     EXPECT_EQ(u"I am an \"escape test.", m_parser.evaluate(escapedQuote));
 }
 
+TEST_F(ScriptParserTest, LineComments)
+{
+    EXPECT_EQ(u"beforeafter", m_parser.evaluate(u"before\nafter"_s));
+    EXPECT_EQ(u"beforeafter", m_parser.evaluate(u"before\n// ignored FooScript: $invalid(%field%\nafter"_s));
+    EXPECT_EQ(u"beforeafter", m_parser.evaluate(u"before\r\n// ignored\r\nafter"_s));
+    EXPECT_EQ(u"01", m_parser.evaluate(u"$num(\n// first argument\n1,2)"_s));
+    EXPECT_EQ(u"// quoted", m_parser.evaluate(uR"("// quoted")"_s));
+    EXPECT_EQ(u"// escaped", m_parser.evaluate(uR"(\// escaped)"_s));
+    EXPECT_EQ(u"inline // text", m_parser.evaluate(u"inline // text"_s));
+    EXPECT_EQ(u"  // indented", m_parser.evaluate(u"  // indented"_s));
+
+    const ParsedScript commentOnly = m_parser.parse(u"// ignored"_s);
+    EXPECT_TRUE(commentOnly.errors.empty());
+    EXPECT_EQ(u"", m_parser.evaluate(commentOnly));
+}
+
+TEST_F(ScriptParserTest, LineCommentsPreserveLineEndings)
+{
+    const ScriptEvaluationOptions options{.whitespaceMode = ScriptWhitespaceMode::Preserve};
+
+    EXPECT_EQ(u"before\n\nafter", m_parser.evaluate(u"before\n// ignored\nafter"_s, ScriptContext{}, options));
+}
+
 TEST_F(ScriptParserTest, Quote)
 {
     EXPECT_EQ(u"I %am% a $test$.", m_parser.evaluate(uR"("I %am% a $test$.")"_s));

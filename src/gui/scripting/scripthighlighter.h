@@ -66,6 +66,7 @@ private:
     QTextCharFormat m_functionFormat;
     QTextCharFormat m_conditionalFormat;
     QTextCharFormat m_operatorFormat;
+    QTextCharFormat m_quotedTextFormat;
     QTextCharFormat m_commentFormat;
 
     ScriptScanner m_scanner;

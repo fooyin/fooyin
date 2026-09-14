@@ -243,6 +243,10 @@ void ScriptRuntime::advance()
     m_previous = m_current;
 
     m_current = m_scanner.next();
+    while(m_current.type == TokenType::TokComment) {
+        m_current = m_scanner.next();
+    }
+
     if(m_current.type == TokenType::TokError) {
         errorAtCurrent(m_current.value.toString());
     }
@@ -360,6 +364,7 @@ Expression ScriptRuntime::expression()
         case TokenType::TokPlus:
         case TokenType::TokMinus:
             return literal();
+        case TokenType::TokComment:
         case TokenType::TokEos:
         case TokenType::TokError:
             break;
