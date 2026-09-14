@@ -25,6 +25,7 @@
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <gui/guiapplication.h>
+#include <utils/logging/messagehandler.h>
 
 #include <kdsingleapplication.h>
 
@@ -188,6 +189,8 @@ int main(int argc, char** argv)
     }
 
     const QApplication app{argc, argv};
+    Fooyin::MessageHandler::install(nullptr);
+
     KDSingleApplication instance{QCoreApplication::applicationName(),
                                  KDSingleApplication::Option::IncludeUsernameInSocketName};
     if(!checkInstance(instance)) {
