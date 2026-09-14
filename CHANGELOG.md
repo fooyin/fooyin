@@ -9,6 +9,7 @@
 * Global Shortcuts: Add system-wide keyboard shortcuts ([#518](https://github.com/fooyin/fooyin/issues/518), [#1074](https://github.com/fooyin/fooyin/issues/1074))
 * Love: Add loved status with playlist and tag editing, scripting, and scrobbling support ([#1035](https://github.com/fooyin/fooyin/issues/1035))
 * Metadata Lookup: Add MusicBrainz metadata lookup ([#1554](https://github.com/fooyin/fooyin/pull/1554))
+* Playback: Add playlist-led and queue-led playback modes ([#1618](https://github.com/fooyin/fooyin/pull/1618))
 * Run Services: Add configurable commands for opening tracks in external applications
 * Saved Filters: Add reusable library filters ([#1605](https://github.com/fooyin/fooyin/pull/1605))
 
@@ -19,12 +20,15 @@
   - Add a per-preset option to show output files in a detached playlist
 * Artwork
   - Add full-size artwork actions to track context menus and Properties ([#1603](https://github.com/fooyin/fooyin/issues/1603))
+  - Add configurable double and middle-click actions to Artwork widgets
   - Cache pending embedded artwork to avoid repeated decoding and repainting ([#1585](https://github.com/fooyin/fooyin/issues/1585))
   - Add option to fall back to the front cover when artist artwork is unavailable
 * Command Button: Add searchable command and icon pickers
 * Discord: Add local and MusicBrainz artwork to Rich Presence ([#812](https://github.com/fooyin/fooyin/issues/812))
 * FileOps: Add a "Don't ask again" option to destructive action confirmations
-* Filters: Use tabs in the configuration dialog
+* Filters
+  - Improve selection performance for large libraries
+  - Use tabs in the configuration dialog
 * Interface
   - Add configurable Love and rating editor colours
   - Add configurable Script Editor appearance and behaviour
@@ -39,12 +43,15 @@
 * Notifications: Make notifications on track repeat optional ([#1545](https://github.com/fooyin/fooyin/issues/1545))
 * Playlist
   - Add custom grouping scripts to presets ([#1566](https://github.com/fooyin/fooyin/issues/1566))
+  - Add Save and Save All actions to playlist widget context menus ([#1602](https://github.com/fooyin/fooyin/issues/1602))
   - Avoid track ID lookups during drag and drop
   - Reduce population and artwork loading overhead
   - Replace the default playlist contents when opening external files by default
+* Queue Viewer: Scroll by item instead of by pixel
 * Scrobbling: Add optional Last.fm playcount and loved status synchronisation at playback start
 * Search: Add keyboard navigation to results
 * Scripting
+  - Add line comments
   - Add common metadata aliases
   - Add `$applink` for launching external applications
   - Add `$greater`, `$shortest`, `$strchr`, and `$strrchr`
@@ -52,10 +59,13 @@
   - Add `$cut` as alias for `$left`
   - Improve conditional evaluation for concatenated expressions
   - Improve date parsing and track sorting performance
+* Status Widget: Add configurable double and middle-click actions
 
 ### Fixes
 
-* Artwork: Always scale embedded thumbnails
+* Artwork
+  - Always scale embedded thumbnails
+  - Find valid images when path wildcards match non-images first ([#1622](https://github.com/fooyin/fooyin/issues/1622))
 * Database: Remove tracks with invalid library references during cleanup
 * Directory Browser
   - Clear stale playback indicators after playlist changes
@@ -78,6 +88,7 @@
   - Clear stale playback indicators after playlist changes
   - Keep the existing tree visible until replacement population completes ([#1559](https://github.com/fooyin/fooyin/issues/1559))
 * Library/Metadata
+  - Resolve crash when sorting during shutdown ([#1620](https://github.com/fooyin/fooyin/issues/1620))
   - Prevent stale playcount updates overwriting newer ratings ([#1563](https://github.com/fooyin/fooyin/issues/1563))
   - Prevent filesystem watcher setup blocking metadata writes ([#1584](https://github.com/fooyin/fooyin/issues/1584))
   - Refresh the raw rating tag after rating writes ([#1607](https://github.com/fooyin/fooyin/issues/1607))
@@ -90,10 +101,13 @@
   - Fix reordering when temporary playlists are present
   - Normalise native path separators in imported playlists ([#741](https://github.com/fooyin/fooyin/issues/741))
   - Preserve spaces in unquoted CUE `REM` values ([#1548](https://github.com/fooyin/fooyin/issues/1548))
+  - Show status tips in Playlist Tabs context menu
   - Stop generating item moves after the reset threshold is reached
 * Quick Tagger: Avoid file rewrites for rating changes ([#1551](https://github.com/fooyin/fooyin/issues/1551))
 * Radio Browser: Prevent oversized icons overlapping columns ([#1604](https://github.com/fooyin/fooyin/issues/1604))
-* Search: Fix starting playback from results
+* Search
+  - Fix a crash on exit when the search dialog is open ([#1619](https://github.com/fooyin/fooyin/issues/1619))
+  - Fix starting playback from results
 * Settings: Fix user folder actions across platforms
 * Scripting
   - Fix premature termination of query operator chains ([#1586](https://github.com/fooyin/fooyin/issues/1586))
@@ -109,7 +123,7 @@
 * Dependencies
   - Add libcdio and libcdio-paranoia for Audio CD support
   - Remove unused FFmpeg components ([#1582](https://github.com/fooyin/fooyin/pull/1582))
-* Translations: Update translations and translation sources ([#1562](https://github.com/fooyin/fooyin/pull/1562), [#1569](https://github.com/fooyin/fooyin/pull/1569), [#1571](https://github.com/fooyin/fooyin/pull/1571), [#1587](https://github.com/fooyin/fooyin/pull/1587), [#1588](https://github.com/fooyin/fooyin/pull/1588))
+* Translations: Update translations and translation sources ([#1562](https://github.com/fooyin/fooyin/pull/1562), [#1569](https://github.com/fooyin/fooyin/pull/1569), [#1571](https://github.com/fooyin/fooyin/pull/1571), [#1587](https://github.com/fooyin/fooyin/pull/1587), [#1588](https://github.com/fooyin/fooyin/pull/1588), [#1611](https://github.com/fooyin/fooyin/pull/1611), [#1612](https://github.com/fooyin/fooyin/pull/1612))
 * Windows: Enable MP3, Opus, and Vorbis encoders ([#1542](https://github.com/fooyin/fooyin/issues/1542))
 
 ### Dev/API
