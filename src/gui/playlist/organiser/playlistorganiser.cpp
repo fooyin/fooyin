@@ -494,6 +494,9 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
         if(auto* savePlaylist = m_actionManager->command(Constants::Actions::SavePlaylist)) {
             menu->addSeparator();
             menu->addAction(savePlaylist->action());
+            if(auto* saveAllPlaylists = m_actionManager->command(Constants::Actions::SaveAllPlaylists)) {
+                menu->addAction(saveAllPlaylists->action());
+            }
         }
     }
 

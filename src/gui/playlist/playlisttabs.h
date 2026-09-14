@@ -105,6 +105,7 @@ Q_SIGNALS:
     void tracksDropped(const QByteArray& data, const Fooyin::UId& playlistId);
     void trackListDropped(const Fooyin::TrackList& tracks, const Fooyin::UId& playlistId);
     void savePlaylistRequested(const Fooyin::UId& playlistId);
+    void saveAllPlaylistsRequested();
 
 protected:
     void changeEvent(QEvent* event) override;

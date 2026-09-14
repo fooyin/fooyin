@@ -214,6 +214,8 @@ void Widgets::registerWidgets()
             QObject::connect(playlistTabs, &PlaylistTabs::trackListDropped, m_playlistInteractor,
                              &PlaylistInteractor::tracksToPlaylist);
             QObject::connect(playlistTabs, &PlaylistTabs::savePlaylistRequested, m_gui, &GuiApplication::savePlaylist);
+            QObject::connect(playlistTabs, &PlaylistTabs::saveAllPlaylistsRequested, m_gui,
+                             &GuiApplication::saveAllPlaylist);
             return playlistTabs;
         },
         tr("Playlist Tabs"));

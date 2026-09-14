@@ -99,6 +99,7 @@ public:
     void raise();
     void openFiles(const QList<QUrl>& files);
     void savePlaylist(const UId& playlistId) const;
+    void saveAllPlaylist() const;
 
     void createNewLayout();
 
@@ -200,7 +201,6 @@ private:
     void loadPlaylist();
     void saveCurrentPlaylist() const;
     void savePlaylistToFile(const Playlist* playlist) const;
-    void saveAllPlaylist() const;
 
     Application* m_core;
 

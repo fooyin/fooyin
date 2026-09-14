@@ -502,6 +502,10 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
         QObject::connect(savePlaylist, &QAction::triggered, this, [this, id]() { Q_EMIT savePlaylistRequested(id); });
         menu->addAction(savePlaylist);
 
+        auto* saveAllPlaylists = new QAction(tr("Save all playlists…"), menu);
+        QObject::connect(saveAllPlaylists, &QAction::triggered, this, [this]() { Q_EMIT saveAllPlaylistsRequested(); });
+        menu->addAction(saveAllPlaylists);
+
         menu->addSeparator();
 
         if(playlist) {
