@@ -122,6 +122,7 @@
 #include <gui/playlist/playlistinteractor.h>
 #include <gui/settings/context/staticcontextmenupage.h>
 #include <gui/theme/themeregistry.h>
+#include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
 #include <utils/settings/advancedsettingsregistry.h>
 #include <utils/stringutils.h>
@@ -321,11 +322,13 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"ArtworkPanel"_s,
         [this]() {
-            auto* coverWidget
-                = new CoverWidget(m_core->playerController(), m_core->playlistHandler(), m_gui->trackSelection(),
-                                  m_core->audioLoader(), m_coverRepository, m_settings, m_window);
+            auto* coverWidget = new CoverWidget(m_gui->actionManager(), m_core->playerController(),
+                                                m_core->playlistHandler(), m_gui->trackSelection(),
+                                                m_core->audioLoader(), m_coverRepository, m_settings, m_window);
             QObject::connect(m_core->library(), &MusicLibrary::tracksMetadataChanged, coverWidget,
                              &CoverWidget::reloadCover);
+            QObject::connect(coverWidget, &CoverWidget::requestPropertiesDialog, m_gui->trackSelection(),
+                             &TrackSelectionController::requestPropertiesDialog);
             QObject::connect(coverWidget, &CoverWidget::requestArtworkSearch, this, &Widgets::showArtworkDialog);
             QObject::connect(coverWidget, &CoverWidget::requestArtworkRemoval, this, &Widgets::removeArtwork);
             return coverWidget;
