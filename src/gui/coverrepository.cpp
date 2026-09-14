@@ -227,8 +227,10 @@ QString findDirectoryCover(const CoverPaths& paths, const Track& track, Track::C
 
     for(const auto& filter : filters) {
         const QStringList coverPaths = Utils::File::filesFromWildcardPath(filter);
-        if(!coverPaths.empty()) {
-            return coverPaths.constFirst();
+        for(const QString& coverPath : coverPaths) {
+            if(QImageReader{coverPath}.canRead()) {
+                return coverPath;
+            }
         }
     }
 
