@@ -2189,6 +2189,40 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, ManualChangeCrossfadeToRemote
     EXPECT_EQ(harness.outputStats->uninitCalls.load(), outputUninitBefore);
 }
 
+FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, QueueLedUpcomingChangeDoesNotCancelManualRemoteCrossfade)
+{
+    ensureCoreApplication();
+    EngineHarness harness{/*enablePauseStopFade=*/false, /*enableManualCrossfade=*/true};
+
+    const Track firstTrack    = harness.createTrack(u"queue-led-first.fyt"_s, 0, 120000);
+    const Track remoteTrack   = makeRemoteTrack(u"https://example.test/slow-prebuffer-remote.fyt"_s, 0);
+    const Track localTrack    = harness.createTrack(u"slow-prebuffer-local.fyt"_s, 0, 120000);
+    const Track upcomingTrack = harness.createTrack(u"queue-led-upcoming.fyt"_s, 0, 120000);
+
+    harness.engine.loadTrack(makePlaybackItem(firstTrack, 1), false);
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.trackStatus() == Engine::TrackStatus::Loaded; }));
+
+    harness.engine.play();
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.playbackState() == Engine::PlaybackState::Playing; }));
+
+    harness.engine.loadTrack(makePlaybackItem(remoteTrack, 2), true);
+    harness.engine.setUpcomingTrackCandidate(makePlaybackItem(upcomingTrack, 3));
+
+    ASSERT_TRUE(
+        pumpUntil([&harness]() { return AudioEngineTestAccessor::currentTrackItemId(harness.engine) == 2; }, 4000ms));
+    EXPECT_TRUE(AudioEngineTestAccessor::currentTrackIsRemote(harness.engine));
+    ASSERT_TRUE(pumpUntil(
+        [&harness]() { return AudioEngineTestAccessor::playbackPhase(harness.engine) == Playback::Phase::Playing; },
+        4000ms));
+
+    harness.engine.loadTrack(makePlaybackItem(localTrack, 4), true);
+    harness.engine.setUpcomingTrackCandidate(makePlaybackItem(upcomingTrack, 5));
+
+    ASSERT_TRUE(
+        pumpUntil([&harness]() { return AudioEngineTestAccessor::currentTrackItemId(harness.engine) == 4; }, 4000ms));
+    EXPECT_FALSE(AudioEngineTestAccessor::currentTrackIsRemote(harness.engine));
+}
+
 FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, NonCueTracksDoNotForceEndAtMetadataDurationBoundary)
 {
     ensureCoreApplication();

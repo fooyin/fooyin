@@ -576,8 +576,6 @@ void AudioEngine::setUpcomingTrackCandidate(const Engine::PlaybackItem& item)
         discardPreparedGaplessTransition(false);
     }
 
-    cancelPendingPrepareJobs();
-
     m_upcomingTrackCandidate                 = track;
     m_upcomingTrackCandidateItemId           = itemId;
     m_autoAdvanceState.generation            = m_trackGeneration;
@@ -590,6 +588,25 @@ void AudioEngine::setUpcomingTrackCandidate(const Engine::PlaybackItem& item)
                     << "currentItemId=" << m_currentTrackItemId << "candidateTrackId=" << track.id()
                     << "candidateItemId=" << itemId << "sameAsCurrent=" << samePlaybackItem(item, currentPlaybackItem())
                     << "configuredMode=" << Utils::Enum::toString(configuredMode);
+
+    if(m_pendingManualRemoteCrossfade) {
+        qCDebug(ENGINE) << "Deferring upcoming track preparation until manual remote crossfade commits:"
+                        << "candidateTrackId=" << track.id() << "candidateItemId=" << itemId
+                        << "manualTargetTrackId=" << m_pendingManualRemoteCrossfade->item.track.id()
+                        << "manualTargetItemId=" << m_pendingManualRemoteCrossfade->item.itemId;
+        return;
+    }
+
+    cancelPendingPrepareJobs();
+    prepareUpcomingTrackCandidate();
+}
+
+void AudioEngine::prepareUpcomingTrackCandidate()
+{
+    const Engine::PlaybackItem item = upcomingTrackCandidateItem();
+    const Track& track              = item.track;
+    const uint64_t itemId           = item.itemId;
+    const auto configuredMode       = configuredTrackEndAutoTransitionMode();
 
     if(!track.isValid() || samePlaybackItem(item, currentPlaybackItem())) {
         qCDebug(ENGINE) << "Upcoming track candidate will not be prepared immediately:"
@@ -5155,6 +5172,11 @@ void AudioEngine::handleManualRemoteCrossfadePreparationResult(uint64_t requestI
                           << "targetTrackId=" << item.track.id() << "targetItemId=" << item.itemId
                           << "target=" << item.track.filenameExt();
         clearPreparedNextTrack();
+        return;
+    }
+
+    if(m_trackStatus.load(std::memory_order_relaxed) == Engine::TrackStatus::Buffered) {
+        prepareUpcomingTrackCandidate();
     }
 }
 

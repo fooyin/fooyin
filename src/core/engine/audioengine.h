@@ -366,6 +366,7 @@ private:
     void handleManualRemoteCrossfadePreparationResult(uint64_t requestId, const Engine::PlaybackItem& item,
                                                       NextTrackPreparationState prepared);
     void clearPendingManualRemoteCrossfade(bool cancelJobs = false);
+    void prepareUpcomingTrackCandidate();
 
     void cancelPendingPrepareJobs();
     void enqueuePrepareNextTrack(const Engine::PlaybackItem& item, uint64_t requestId, uint64_t prefillTargetMs);
