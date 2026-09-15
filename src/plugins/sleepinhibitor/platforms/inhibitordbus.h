@@ -51,16 +51,21 @@ private:
 
     struct InterfaceState
     {
-        std::optional<State> desiredState;
-        InhibitionType desiredType;
+        std::optional<InhibitionType> desiredType;
         std::optional<InhibitionType> currentType;
-        State currentState{State::Initializing};
+        std::optional<InhibitionType> pendingType;
     };
+
+    void reconcilePowerState();
+    void reconcileScreenSaverState();
+
+    void startInhibitSleep(InhibitionType type);
+    void startUninhibitSleep();
 
     void onInhibitCallFinished(QDBusPendingCallWatcher* watcher);
     void onUninhibitCallFinished(QDBusPendingCallWatcher* watcher);
 
-    [[nodiscard]] bool usingScreenSaverInterface() const;
+    [[nodiscard]] bool wantsScreenSaverInhibited() const;
     void inhibitScreenSaver();
     void uninhibitScreenSaver();
     void onScreenSaverInhibitCallFinished(QDBusPendingCallWatcher* watcher);
@@ -70,7 +75,7 @@ private:
     QPointer<QDBusInterface> m_screenSaverInterface;
     Interface m_interface{Interface::None};
     InterfaceState m_powerState;
-    InterfaceState m_screenSaverState;
+    State m_screenSaverState{State::Uninhibited};
     uint32_t m_inhibitCookie{0};            // Used by GnomeSessionManager and FreedesktopPower
     uint32_t m_screenSaverInhibitCookie{0}; // Used by FreedesktopScreenSaver
     QDBusObjectPath m_inhibitHandle;        // Used by FreedesktopPortal

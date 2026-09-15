@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2026, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  * Copyright © 2026, Gustav Oechler <gustavoechler@gmail.com>
  *
  * Fooyin is free software: you can redistribute it and/or modify
@@ -22,9 +22,11 @@
 
 #include "inhibitor.h"
 
-#include <optional>
+#include <QFuture>
 
-#include <IOKit/pwr_mgt/IOPMLib.h>
+#include <memory>
+#include <optional>
+#include <vector>
 
 namespace Fooyin::SleepInhibitor {
 class InhibitorMacOs : public InhibitorPrivate
@@ -33,13 +35,20 @@ class InhibitorMacOs : public InhibitorPrivate
 
 public:
     explicit InhibitorMacOs(QObject* parent = nullptr);
+    ~InhibitorMacOs() override;
 
     void inhibitSleep(InhibitionType type) override;
     void uninhibitSleep() override;
 
 private:
-    IOPMAssertionID m_assertionId{};
-    std::optional<State> m_desiredState;
-    InhibitionType m_desiredType;
+    struct AssertionState;
+
+    void setDesiredType(std::optional<InhibitionType> type);
+    void startReconciliation();
+    static void reconcile(const std::shared_ptr<AssertionState>& assertionState, InhibitorMacOs* inhibitor);
+
+    std::shared_ptr<AssertionState> m_assertionState;
+    std::vector<QFuture<void>> m_operations;
+    std::optional<InhibitionType> m_desiredType;
 };
 } // namespace Fooyin::SleepInhibitor
