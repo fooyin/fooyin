@@ -86,6 +86,7 @@ using namespace Qt::StringLiterals;
 
 constexpr auto PlaylistLayoutProperty = "gui/playlist-layout"_L1;
 constexpr auto PlaylistLayoutVersion  = 1;
+constexpr auto PlayingColumnId        = 8;
 
 namespace Fooyin {
 using namespace Settings::Gui::Internal;
@@ -99,7 +100,7 @@ struct DefaultPlaylistColumn
 };
 
 constexpr std::array DefaultPlaylistColumns{
-    DefaultPlaylistColumn{.id = 8, .alignment = Qt::AlignCenter, .width = 0.06},
+    DefaultPlaylistColumn{.id = PlayingColumnId, .alignment = Qt::AlignCenter, .width = 0.06},
     DefaultPlaylistColumn{.id = 3, .alignment = Qt::AlignLeft, .width = 0.38},
     DefaultPlaylistColumn{.id = 0, .alignment = Qt::AlignRight, .width = 0.08},
     DefaultPlaylistColumn{.id = 1, .alignment = Qt::AlignLeft, .width = 0.38},
@@ -381,6 +382,8 @@ void PlaylistWidget::saveLayoutData(QJsonObject& layout)
 
 void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
 {
+    bool removedUnavailableColumn{false};
+
     if(layout.contains("Preset"_L1)) {
         const int presetId = layout.value("Preset"_L1).toInt();
         if(const auto preset = m_presetRegistry->itemById(presetId)) {
@@ -400,30 +403,31 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
 
         const QString columnData    = layout.value("Columns"_L1).toString();
         const QStringList columnIds = columnData.split(u'|');
-
-        for(int i{0}; const auto& columnId : columnIds) {
+        for(const auto& columnId : columnIds) {
             const auto column = columnId.split(u':');
 
-            if(const auto columnItem = m_columnRegistry->itemById(column.at(0).toInt())) {
+            const auto columnItem = m_columnRegistry->itemById(column.at(0).toInt());
+            if(columnItem && columnAvailable(columnItem.value())) {
+                const int index = static_cast<int>(m_layoutState.columns.size());
                 m_layoutState.columns.push_back(columnItem.value());
 
                 if(column.size() > 1) {
                     const auto alignment = static_cast<Qt::Alignment>(column.at(1).toInt());
                     m_layoutState.columnAlignments.push_back(alignment);
-                    m_model->changeColumnAlignment(i, alignment);
+                    m_model->changeColumnAlignment(index, alignment);
                 }
                 else {
                     m_layoutState.columnAlignments.emplace_back(Qt::AlignLeft);
-                    m_model->changeColumnAlignment(i, Qt::AlignLeft);
+                    m_model->changeColumnAlignment(index, Qt::AlignLeft);
                 }
             }
-            ++i;
+            else if(columnItem) {
+                removedUnavailableColumn = true;
+            }
         }
-
-        updateSpans();
     }
 
-    if(layout.contains("HeaderState"_L1)) {
+    if(!removedUnavailableColumn && layout.contains("HeaderState"_L1)) {
         const auto headerState = layout.value("HeaderState"_L1).toString().toUtf8();
 
         if(!headerState.isEmpty() && headerState.isValidUtf8()) {
@@ -431,6 +435,11 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
             m_layoutState.headerState = qUncompress(state);
         }
     }
+
+    if(removedUnavailableColumn) {
+        m_layoutState.headerState.clear();
+    }
+    updateSpans();
 }
 
 void PlaylistWidget::finalise()
@@ -722,6 +731,11 @@ void PlaylistWidget::applyLayoutState(const PlaylistWidgetLayoutState& state)
     }
 
     updateSpans();
+}
+
+bool PlaylistWidget::columnAvailable(const PlaylistColumn& column) const
+{
+    return m_session->capabilities().editablePlaylist || column.id != PlayingColumnId;
 }
 
 void PlaylistWidget::saveRememberedLayout(Playlist* playlist)
@@ -1041,8 +1055,10 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     applyInitialViewSettings();
     applyBackgroundSettings();
 
-    m_model->playingTrackChanged(m_playerController->currentPlaylistTrack());
-    m_model->playStateChanged(m_playlistController->playState());
+    if(modeCaps.editablePlaylist) {
+        m_model->playingTrackChanged(m_playerController->currentPlaylistTrack());
+        m_model->playStateChanged(m_playlistController->playState());
+    }
     applySessionTexts();
     setObjectName(PlaylistWidget::name());
     setFeature(ExclusiveSearch);
@@ -1331,6 +1347,10 @@ void PlaylistWidget::addColumnsMenu(QMenu* parent)
     };
 
     for(const auto& column : m_columnRegistry->items()) {
+        if(!columnAvailable(column)) {
+            continue;
+        }
+
         const bool columnVisible = hasColumn(column.id);
         if(!column.enabled && !columnVisible) {
             continue;
@@ -1459,7 +1479,7 @@ void PlaylistWidget::setColumnVisible(int columnId, bool visible)
             return;
         }
 
-        if(const auto column = m_columnRegistry->itemById(columnId)) {
+        if(const auto column = m_columnRegistry->itemById(columnId); column && columnAvailable(column.value())) {
             m_layoutState.columns.push_back(column.value());
             updateSpans();
             changePreset(m_layoutState.currentPreset);
@@ -1529,7 +1549,8 @@ void PlaylistWidget::ensureDefaultColumns(PlaylistWidgetLayoutState& state) cons
     }
 
     for(const auto& defaultColumn : DefaultPlaylistColumns) {
-        if(const auto column = m_columnRegistry->itemById(defaultColumn.id)) {
+        if(const auto column = m_columnRegistry->itemById(defaultColumn.id);
+           column && columnAvailable(column.value())) {
             state.columns.push_back(column.value());
             state.columnAlignments.push_back(defaultColumn.alignment);
         }
@@ -1542,10 +1563,18 @@ void PlaylistWidget::applyDefaultHeaderConfiguration()
     m_header->resetSectionPositions();
 
     std::map<int, double> widths;
-    for(int i{0}; const auto& defaultColumn : DefaultPlaylistColumns) {
-        widths.emplace(i, defaultColumn.width);
-        m_model->changeColumnAlignment(i++, defaultColumn.alignment);
+    const bool showPlayingColumn = m_session->capabilities().editablePlaylist;
+    const double totalWidth      = showPlayingColumn ? 1.0 : 1.0 - DefaultPlaylistColumns.front().width;
+
+    int columnIndex{0};
+    for(const auto& defaultColumn : DefaultPlaylistColumns) {
+        if(defaultColumn.id == PlayingColumnId && !showPlayingColumn) {
+            continue;
+        }
+        widths.emplace(columnIndex, defaultColumn.width / totalWidth);
+        m_model->changeColumnAlignment(columnIndex++, defaultColumn.alignment);
     }
+
     m_header->setHeaderSectionWidths(widths);
 }
 

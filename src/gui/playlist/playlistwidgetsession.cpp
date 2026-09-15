@@ -204,6 +204,8 @@ void PlaylistWidgetSession::handleTracksChanged(PlaylistWidgetSessionHost& /*hos
 
 void PlaylistWidgetSession::searchEvent(PlaylistWidgetSessionHost& host, const SearchRequest& request)
 {
+    const uint64_t requestToken = ++m_searchRequestToken;
+
     setEmptyMode(request.emptyMode);
     handleSearchChanged(host, request.text);
 
@@ -236,14 +238,16 @@ void PlaylistWidgetSession::searchEvent(PlaylistWidgetSessionHost& host, const S
     Utils::asyncExec([search = request.text, sourceTracks]() {
         TrackQueryFilter filter;
         return filter.filter(search, sourceTracks);
-    }).then(receiver, [this, search = request.text, hostPtr = &host](const PlaylistTrackList& filteredTracks) {
-        if(this->search() != search) {
-            return;
-        }
+    })
+        .then(receiver,
+              [this, search = request.text, requestToken, hostPtr = &host](const PlaylistTrackList& filteredTracks) {
+                  if(requestToken != m_searchRequestToken || this->search() != search) {
+                      return;
+                  }
 
-        setFilteredTracks(filteredTracks);
-        hostPtr->resetModelThrottled();
-    });
+                  setFilteredTracks(filteredTracks);
+                  hostPtr->resetModelThrottled();
+              });
 }
 
 void PlaylistWidgetSession::handleSearchChanged(PlaylistWidgetSessionHost& /*host*/, const QString& /*search*/) { }

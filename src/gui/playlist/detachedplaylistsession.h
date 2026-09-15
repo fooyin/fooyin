@@ -65,6 +65,8 @@ public:
                                                        const MusicLibrary* library) const override;
     [[nodiscard]] bool canResetWithoutPlaylist() const override;
     [[nodiscard]] PlaylistAction::ActionOptions playbackOptions() const override;
+
+    void setupConnections(PlaylistWidgetSessionHost& host) override;
 };
 
 class DetachedTrackListSession final : public DetachedSearchSession

@@ -164,6 +164,7 @@ protected:
 
 private:
     State m_state;
+    uint64_t m_searchRequestToken{0};
 };
 
 } // namespace Fooyin

@@ -207,6 +207,7 @@ private:
     [[nodiscard]] QString serialiseLayoutState(const PlaylistWidgetLayoutState& state) const;
     [[nodiscard]] std::optional<PlaylistWidgetLayoutState> deserialiseLayoutState(const QString& encoded) const;
     void applyLayoutState(const PlaylistWidgetLayoutState& state);
+    [[nodiscard]] bool columnAvailable(const PlaylistColumn& column) const;
     void saveRememberedLayout(Playlist* playlist);
     [[nodiscard]] bool remembersLayout(const Playlist* playlist) const;
     void updateSpans();

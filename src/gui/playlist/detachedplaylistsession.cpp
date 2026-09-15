@@ -73,7 +73,7 @@ bool DetachedSearchSession::canResetWithoutPlaylist() const
 void DetachedSearchSession::handleTracksChanged(PlaylistWidgetSessionHost& host, const std::vector<int>& /*indexes*/,
                                                 bool /*allNew*/)
 {
-    if(search().isEmpty() && filteredTracks().empty()) {
+    if(search().isEmpty() && emptyMode() == EmptySearchMode::Clear) {
         return;
     }
 
@@ -169,6 +169,23 @@ bool DetachedLibrarySession::canResetWithoutPlaylist() const
 PlaylistAction::ActionOptions DetachedLibrarySession::playbackOptions() const
 {
     return PlaylistAction::TempPlaylist;
+}
+
+void DetachedLibrarySession::setupConnections(PlaylistWidgetSessionHost& host)
+{
+    auto* widget  = host.sessionWidget();
+    auto* hostPtr = &host;
+    auto refresh  = [this, hostPtr]() {
+        handleTracksChanged(*hostPtr, {}, false);
+    };
+
+    auto* library = host.musicLibrary();
+    QObject::connect(library, &MusicLibrary::tracksLoaded, widget, refresh);
+    QObject::connect(library, &MusicLibrary::tracksAdded, widget, refresh);
+    QObject::connect(library, &MusicLibrary::tracksMetadataChanged, widget, refresh);
+    QObject::connect(library, &MusicLibrary::tracksUpdated, widget, refresh);
+    QObject::connect(library, &MusicLibrary::tracksDeleted, widget, refresh);
+    QObject::connect(library, &MusicLibrary::tracksSorted, widget, refresh);
 }
 
 DetachedTrackListSession::DetachedTrackListSession(const TrackList& tracks)
