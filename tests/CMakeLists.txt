@@ -99,20 +99,26 @@ fooyin_add_test(test_filterpipeline gui/filters/filterpipelinetest.cpp)
 
 fooyin_add_test(test_helpers utils/helperstest.cpp)
 
-set(FILEOPS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/plugins/fileops)
-fooyin_add_test(test_fileopsworker plugins/fileops/fileopsworkertest.cpp ${FILEOPS_SOURCE_DIR}/fileopsworker.cpp)
-target_include_directories(test_fileopsworker PRIVATE ${FILEOPS_SOURCE_DIR})
+if(TARGET fileops)
+    set(FILEOPS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/plugins/fileops)
+    fooyin_add_test(test_fileopsworker plugins/fileops/fileopsworkertest.cpp ${FILEOPS_SOURCE_DIR}/fileopsworker.cpp)
+    target_include_directories(test_fileopsworker PRIVATE ${FILEOPS_SOURCE_DIR})
+endif()
 
-fooyin_add_test(
-    test_tagfillpattern
-    plugins/tageditor/tagfillpatterntest.cpp ${CMAKE_SOURCE_DIR}/src/plugins/tageditor/tagfillpattern.cpp
-    ${CMAKE_SOURCE_DIR}/src/plugins/tageditor/tageditorsettings.cpp
-)
+if(TARGET tageditor)
+    fooyin_add_test(
+        test_tagfillpattern
+        plugins/tageditor/tagfillpatterntest.cpp ${CMAKE_SOURCE_DIR}/src/plugins/tageditor/tagfillpattern.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/tageditor/tageditorsettings.cpp
+    )
+endif()
 
-fooyin_add_test(
-    test_lyricsparser plugins/lyrics/lyricsparsertest.cpp ${CMAKE_SOURCE_DIR}/src/plugins/lyrics/lyricsparser.cpp
-)
-target_include_directories(test_lyricsparser PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/lyrics)
+if(TARGET lyrics)
+    fooyin_add_test(
+        test_lyricsparser plugins/lyrics/lyricsparsertest.cpp ${CMAKE_SOURCE_DIR}/src/plugins/lyrics/lyricsparser.cpp
+    )
+    target_include_directories(test_lyricsparser PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/lyrics)
+endif()
 
 fooyin_add_test(test_metadatamatcher gui/metadatalookup/metadatamatchertest.cpp)
 fooyin_add_test(test_metadataapply gui/metadatalookup/metadataapplytest.cpp)
