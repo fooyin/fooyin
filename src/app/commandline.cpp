@@ -66,7 +66,7 @@ std::optional<uint64_t> parseUnsigned(const QStringView value)
         }
 
         const uint64_t digit = character.digitValue();
-        if(result > (std::numeric_limits<uint64_t>::max() - digit) / 10) {
+        if(result > ((std::numeric_limits<uint64_t>::max)() - digit) / 10) {
             return {};
         }
         result = (result * 10) + digit;
@@ -76,7 +76,7 @@ std::optional<uint64_t> parseUnsigned(const QStringView value)
 
 std::optional<uint64_t> multiply(const uint64_t value, const uint64_t multiplier)
 {
-    if(value > std::numeric_limits<uint64_t>::max() / multiplier) {
+    if(value > (std::numeric_limits<uint64_t>::max)() / multiplier) {
         return {};
     }
     return value * multiplier;
@@ -435,7 +435,7 @@ std::optional<uint64_t> CommandLine::parseSeekTime(const QStringView value)
             if(!part || (i > 0 && *part >= 60)) {
                 return {};
             }
-            if(seconds > (std::numeric_limits<uint64_t>::max() - *part) / 60) {
+            if(seconds > ((std::numeric_limits<uint64_t>::max)() - *part) / 60) {
                 return {};
             }
             seconds = (seconds * 60) + *part;
