@@ -91,7 +91,11 @@ public:
     [[nodiscard]] virtual uint64_t currentPosition() const      = 0;
     [[nodiscard]] virtual uint64_t currentTrackDuration() const = 0;
     [[nodiscard]] virtual int bitrate() const                   = 0;
-    [[nodiscard]] virtual Player::PlayState playState() const   = 0;
+    [[nodiscard]] virtual QString decoder() const
+    {
+        return {};
+    }
+    [[nodiscard]] virtual Player::PlayState playState() const = 0;
 };
 
 /*!

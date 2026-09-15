@@ -678,7 +678,8 @@ public:
                                                playerController ? playerController->currentTrack().duration() : 0,
                                                playerController ? playerController->bitrate() : 0,
                                                playerController ? playerController->playState()
-                                                                : Player::PlayState::Stopped);
+                                                                : Player::PlayState::Stopped,
+                                               playerController ? playerController->decoder() : QString{});
     }
 
     [[nodiscard]] const ScriptPlaybackEnvironment* playbackEnvironment() const override

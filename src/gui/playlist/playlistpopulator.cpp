@@ -267,7 +267,8 @@ const ScriptContext& PlaylistPopulatorPrivate::makeContext(int index, int depth)
                                          m_playerController ? m_playerController->currentTrack().duration() : 0,
                                          m_playerController ? m_playerController->bitrate() : 0,
                                          m_playerController ? m_playerController->playState()
-                                                            : Player::PlayState::Stopped);
+                                                            : Player::PlayState::Stopped,
+                                         m_playerController ? m_playerController->decoder() : QString{});
     m_scriptContext.playlist = m_playlist;
     return m_scriptContext;
 }

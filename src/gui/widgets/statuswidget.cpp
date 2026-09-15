@@ -410,9 +410,9 @@ PlaybackScriptContext StatusWidgetPrivate::makeSelectionContext(const TrackSelec
     contextData.environment.setPlaylistData(currentPlaylist, &m_playerController->playbackQueue(), trackList,
                                             m_playerController->queuedTracksCount());
     contextData.environment.setTrackState(playlistTrackIndex, currentPlayingTrackIndex, currentPlayingTrackId, 0);
-    contextData.environment.setPlaybackState(m_playerController->currentPosition(),
-                                             m_playerController->currentTrack().duration(),
-                                             m_playerController->bitrate(), m_playerController->playState());
+    contextData.environment.setPlaybackState(
+        m_playerController->currentPosition(), m_playerController->currentTrack().duration(),
+        m_playerController->bitrate(), m_playerController->playState(), m_playerController->decoder());
     contextData.environment.setRatingStarSymbols(ratingSymbols());
     contextData.environment.setEvaluationPolicy(TrackListContextPolicy::Fallback, {}, true);
 

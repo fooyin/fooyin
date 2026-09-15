@@ -530,6 +530,9 @@ std::optional<QString> playbackVariableValue(const VariableKind kind, const Scri
             return registry.playbackValueAvailableForTrack(track)
                      ? std::optional{registry.playbackTimeRemainingSeconds()}
                      : std::optional<QString>{};
+        case VariableKind::InputDecoder:
+            return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.decoder()}
+                                                                  : std::optional<QString>{};
         case VariableKind::IsPlaying:
             return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.isPlaying()}
                                                                   : std::optional<QString>{};
@@ -630,6 +633,17 @@ QString ScriptRegistry::isPlaying() const
     if(const auto* environment = playbackEnvironment(m_context);
        environment != nullptr && environment->playState() == Player::PlayState::Playing) {
         return u"1"_s;
+    }
+    return {};
+}
+
+QString ScriptRegistry::decoder() const
+{
+    if(!playbackValueAvailableForTrack()) {
+        return {};
+    }
+    if(const auto* environment = playbackEnvironment(m_context); environment != nullptr) {
+        return environment->decoder();
     }
     return {};
 }

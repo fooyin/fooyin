@@ -239,6 +239,8 @@ const std::vector<ScriptReferenceEntry>& scriptReferenceEntries()
                       QT_TRANSLATE_NOOP("Fooyin", "Remaining playback time formatted as time")),
         variableEntry("playback_time_remaining_s", QT_TRANSLATE_NOOP("Fooyin", "Playback"),
                       QT_TRANSLATE_NOOP("Fooyin", "Remaining playback time in seconds")),
+        variableEntry("input_decoder", QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                      QT_TRANSLATE_NOOP("Fooyin", "Input decoder backend used for the current playing track")),
         variableEntry("isplaying", QT_TRANSLATE_NOOP("Fooyin", "Playback"),
                       QT_TRANSLATE_NOOP("Fooyin", "Returns 1 while playback is active")),
         variableEntry("ispaused", QT_TRANSLATE_NOOP("Fooyin", "Playback"),

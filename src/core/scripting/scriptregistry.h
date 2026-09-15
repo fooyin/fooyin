@@ -131,6 +131,7 @@ public:
     [[nodiscard]] QString playbackTimeSeconds() const;
     [[nodiscard]] QString playbackTimeRemaining() const;
     [[nodiscard]] QString playbackTimeRemainingSeconds() const;
+    [[nodiscard]] QString decoder() const;
     [[nodiscard]] QString isPlaying() const;
     [[nodiscard]] QString isPaused() const;
     [[nodiscard]] QString isStopped() const;

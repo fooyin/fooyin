@@ -275,6 +275,9 @@ VariableKind resolveBuiltInVariableKind(const QString& var)
     if(var == "PLAYBACK_TIME_REMAINING_S"_L1 || var == "PLAYBACK_TIME_REMAINING_SECONDS"_L1) {
         return VariableKind::PlaybackTimeRemainingSeconds;
     }
+    if(var == "INPUT_DECODER"_L1) {
+        return VariableKind::InputDecoder;
+    }
     if(var == "ISPLAYING"_L1) {
         return VariableKind::IsPlaying;
     }
