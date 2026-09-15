@@ -410,17 +410,17 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="166"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="168"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Statistiche di riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="167"/>
         <source>Love flag: 1 when loved, empty otherwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Brano del cuore: 1 se è tra i preferiti, vuoto altrimenti</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="169"/>
         <source>Interactive heart editor for the Love flag</source>
-        <translation type="unfinished"></translation>
+        <translation>Editor interattivo a cuore per il flag Preferiti</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="171"/>
@@ -581,27 +581,27 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="293"/>
         <source>Returns true when x is greater than y</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce vero quando x è maggiore di y</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="328"/>
         <source>Finds the first substring position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Trova la posizione della prima occorrenza della sottostringa (a partire da 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="331"/>
         <source>Finds the first substring position ignoring case (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Trova la posizione della prima occorrenza della sottostringa ignorando maiuscole/minuscole (a partire da 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="334"/>
         <source>Finds the last substring position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Trova la posizione dell&apos;ultima occorrenza della sottostringa (a partire da 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="337"/>
         <source>Finds the last substring position ignoring case (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Trova la posizione dell&apos;ultima occorrenza della sottostringa ignorando maiuscole/minuscole (a partire da 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="340"/>
@@ -611,22 +611,22 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="350"/>
         <source>Returns the first shortest string</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce la prima stringa più corta</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="353"/>
         <source>Finds the first character position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Trova la posizione del primo carattere (a partire da 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="356"/>
         <source>Finds the last character position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Trova la posizione dell&apos;ultimo carattere (a partire da 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="365"/>
         <source>Returns true when a is longer than b</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce vero quando a è più lunga di b</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="367"/>
@@ -636,7 +636,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="422"/>
         <source>Builds a clickable link that launches an application</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea un collegamento cliccabile che avvia un&apos;applicazione</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="428"/>
@@ -646,7 +646,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="484"/>
         <source>Returns the value at the one-based index</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce il valore all&apos;indice in base uno</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="493"/>
@@ -1379,7 +1379,7 @@
     <message>
         <location filename="../../src/core/engine/verification/accuraterip.cpp" line="495"/>
         <source>The selected tracks do not form a correct gapless CD rip.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le tracce selezionate non formano un&apos;estrazione CD gapless corretta.</translation>
     </message>
 </context>
 <context>
@@ -1805,7 +1805,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="300"/>
         <source>View full size</source>
-        <translation type="unfinished"></translation>
+        <translation>Visualizza a dimensione intera</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="301"/>
@@ -1917,7 +1917,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="100"/>
         <source>Use front cover before placeholder</source>
-        <translation type="unfinished"></translation>
+        <translation>Usa la copertina anteriore prima del segnaposto</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="114"/>
@@ -1957,7 +1957,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="134"/>
         <source>Use the track&apos;s front cover when artist artwork is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Usa la copertina anteriore del brano quando l&apos;illustrazione dell&apos;artista non è disponibile</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="138"/>
@@ -2208,7 +2208,7 @@ Quando disabilitata, l&apos;ordine esistente dei brani viene mantenuto e solo i 
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="53"/>
         <source>Drive Settings — %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Impostazioni unità — %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="58"/>
@@ -2700,9 +2700,9 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="500"/>
         <source>Applied automatic metadata to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Metadati automatici applicati a %Ln traccia audio.</numerusform>
+            <numerusform>Metadati automatici applicati a %Ln tracce audio.</numerusform>
         </translation>
     </message>
     <message>
