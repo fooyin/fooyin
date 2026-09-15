@@ -35,6 +35,8 @@
 
 #include <QSurfaceFormat>
 
+#include <iostream>
+
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif
@@ -122,6 +124,68 @@ void parseCmdOptions(Fooyin::Application& app, Fooyin::GuiApplication& guiApp, C
         }
     }
 
+    switch(cmdLine.volumeAction()) {
+        case CommandLine::VolumeAction::Set:
+            guiApp.setVolume(cmdLine.volume());
+            break;
+        case CommandLine::VolumeAction::Increase:
+            guiApp.increaseVolume();
+            break;
+        case CommandLine::VolumeAction::Decrease:
+            guiApp.decreaseVolume();
+            break;
+        case CommandLine::VolumeAction::ToggleMute:
+            guiApp.toggleMute();
+            break;
+        case CommandLine::VolumeAction::None:
+            break;
+    }
+
+    auto playMode = app.playerController()->playMode();
+    bool playModeChanged{false};
+
+    if(cmdLine.repeatMode() != CommandLine::RepeatMode::Unchanged) {
+        playMode &= ~(Fooyin::Playlist::RepeatTrack | Fooyin::Playlist::RepeatAlbum | Fooyin::Playlist::RepeatPlaylist);
+        switch(cmdLine.repeatMode()) {
+            case CommandLine::RepeatMode::Playlist:
+                playMode |= Fooyin::Playlist::RepeatPlaylist;
+                break;
+            case CommandLine::RepeatMode::Album:
+                playMode |= Fooyin::Playlist::RepeatAlbum;
+                break;
+            case CommandLine::RepeatMode::Track:
+                playMode |= Fooyin::Playlist::RepeatTrack;
+                break;
+            case CommandLine::RepeatMode::Off:
+            case CommandLine::RepeatMode::Unchanged:
+                break;
+        }
+        playModeChanged = true;
+    }
+
+    if(cmdLine.shuffleMode() != CommandLine::ShuffleMode::Unchanged) {
+        playMode &= ~(Fooyin::Playlist::ShuffleTracks | Fooyin::Playlist::ShuffleAlbums | Fooyin::Playlist::Random);
+        switch(cmdLine.shuffleMode()) {
+            case CommandLine::ShuffleMode::Tracks:
+                playMode |= Fooyin::Playlist::ShuffleTracks;
+                break;
+            case CommandLine::ShuffleMode::Albums:
+                playMode |= Fooyin::Playlist::ShuffleAlbums;
+                break;
+            case CommandLine::ShuffleMode::Random:
+                playMode |= Fooyin::Playlist::Random;
+                break;
+            case CommandLine::ShuffleMode::Off:
+            case CommandLine::ShuffleMode::Unchanged:
+                break;
+        }
+        playModeChanged = true;
+    }
+
+    if(playModeChanged) {
+        app.playerController()->setPlayMode(playMode);
+    }
+
     const auto files = cmdLine.files();
     if(!files.empty()) {
         guiApp.openFiles(files);
@@ -180,8 +244,16 @@ int main(int argc, char** argv)
         const QCoreApplication app{argc, argv};
         KDSingleApplication instance{QCoreApplication::applicationName(),
                                      KDSingleApplication::Option::IncludeUsernameInSocketName};
-        if(!commandLine.parse()) {
-            return 1;
+        const auto parseResult = commandLine.parse();
+        if(parseResult != CommandLine::ParseResult::Run) {
+            const QByteArray message = commandLine.message().toLocal8Bit();
+            if(parseResult == CommandLine::ParseResult::ExitSuccess) {
+                std::cout << message.constData() << '\n';
+                return 0;
+            }
+
+            std::cerr << message.constData() << '\n';
+            return 2;
         }
         if(!checkInstance(instance)) {
             return 0;
@@ -212,13 +284,19 @@ int main(int argc, char** argv)
     }
 
     QObject::connect(&instance, &KDSingleApplication::messageReceived, &guiApp, [&](const QByteArray& options) {
+        if(options.isEmpty()) {
+            guiApp.raise();
+            return;
+        }
+
         CommandLine command;
-        command.loadOptions(options);
+        if(!command.loadOptions(options)) {
+            QLoggingCategory log{"Main"};
+            qCWarning(log) << "Received an invalid command line message";
+            return;
+        }
         if(!command.empty()) {
             parseCmdOptions(coreApp, guiApp, command);
-        }
-        else {
-            guiApp.raise();
         }
     });
 

@@ -384,6 +384,26 @@ void GuiApplication::savePlaylist(const UId& playlistId) const
     savePlaylistToFile(m_playlistHandler->playlistById(playlistId));
 }
 
+void GuiApplication::setVolume(const double volume) const
+{
+    m_settings->set<Settings::Core::OutputVolume>(std::clamp(volume, 0.0, 1.0));
+}
+
+void GuiApplication::increaseVolume() const
+{
+    changeVolume(m_settings->value<Settings::Gui::VolumeStep>());
+}
+
+void GuiApplication::decreaseVolume() const
+{
+    changeVolume(-m_settings->value<Settings::Gui::VolumeStep>());
+}
+
+void GuiApplication::toggleMute() const
+{
+    mute();
+}
+
 void Fooyin::GuiApplication::createNewLayout()
 {
     const QString defaultName = m_layoutProvider->uniqueLayoutName(tr("New Layout"));
@@ -2252,26 +2272,63 @@ void GuiApplication::addStreamUrl()
 
 void GuiApplication::openFilesNow(const QList<QUrl>& urls)
 {
-    QList<QUrl> files{urls};
-    QUrl fileToPlay;
+    QList<QUrl> localFiles;
+    TrackList remoteTracks;
 
-    if(m_settings->value<Settings::Core::OpenFileAddDirectory>() && urls.size() == 1 && urls.front().isLocalFile()) {
-        const QFileInfo fileInfo{urls.front().toLocalFile()};
-        if(fileInfo.isFile()) {
-            QStringList supportedExtensions
-                = Utils::extensionsToWildcards(m_core->audioLoader()->supportedFileExtensions());
-            supportedExtensions.append(u"*.cue"_s);
-
-            const QList<QUrl> dirFiles = Utils::File::getUrlsInDir(QDir{fileInfo.absolutePath()}, supportedExtensions);
-            if(!dirFiles.empty()) {
-                files      = dirFiles;
-                fileToPlay = urls.front();
-            }
+    for(const QUrl& url : urls) {
+        if(url.isLocalFile()) {
+            localFiles.push_back(url);
+        }
+        else {
+            remoteTracks.emplace_back(url.toString());
         }
     }
 
     const QString playlistName = m_settings->value<Settings::Core::OpenFilesPlaylist>();
     const bool replacePlaylist = m_settings->value<Settings::Core::OpenFilesSendTo>();
+
+    if(!remoteTracks.empty()) {
+        const auto openTracks = [this, playlistName, replacePlaylist,
+                                 remoteTracks = std::move(remoteTracks)](const TrackList& scannedTracks) {
+            TrackList tracks;
+            tracks.reserve(scannedTracks.size() + remoteTracks.size());
+            tracks.insert(tracks.end(), scannedTracks.cbegin(), scannedTracks.cend());
+            tracks.insert(tracks.end(), remoteTracks.cbegin(), remoteTracks.cend());
+
+            if(replacePlaylist) {
+                m_playlistInteractor.tracksToNewPlaylistReplace(playlistName, tracks, true);
+            }
+            else {
+                m_playlistInteractor.tracksToNewPlaylist(playlistName, tracks, true);
+            }
+        };
+
+        if(localFiles.empty()) {
+            openTracks({});
+        }
+        else {
+            m_playlistInteractor.filesToTracks(localFiles, openTracks);
+        }
+        return;
+    }
+
+    QList<QUrl> files{urls};
+    QUrl fileToPlay;
+
+    if(m_settings->value<Settings::Core::OpenFileAddDirectory>() && urls.size() == 1) {
+        const QFileInfo fileInfo{urls.front().toLocalFile()};
+        if(fileInfo.isFile()) {
+            QStringList extensions = Utils::extensionsToWildcards(m_core->audioLoader()->supportedFileExtensions());
+            extensions.append(u"*.cue"_s);
+
+            auto dirFiles = Utils::File::getUrlsInDir(QDir{fileInfo.absolutePath()}, extensions);
+            if(!dirFiles.empty()) {
+                files      = std::move(dirFiles);
+                fileToPlay = urls.front();
+            }
+        }
+    }
+
     if(!fileToPlay.isEmpty()) {
         m_playlistInteractor.filesToNewPlaylist(playlistName, files, fileToPlay, replacePlaylist, true);
     }

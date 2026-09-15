@@ -99,6 +99,10 @@ public:
     void raise();
     void openFiles(const QList<QUrl>& files);
     void savePlaylist(const UId& playlistId) const;
+    void setVolume(double volume) const;
+    void increaseVolume() const;
+    void decreaseVolume() const;
+    void toggleMute() const;
 
     void createNewLayout();
 

@@ -1846,13 +1846,16 @@ void PlayerController::startPlayback(Playlist* playlist, const QueueTracks& trac
     const PlaylistTrack currentTrack = p->m_playlistHandler->currentTrack();
 
     if(p->isQueueSourceMode()) {
-        if(!p->m_session.canAcceptRequest()) {
-            return;
-        }
-
         auto order = materialisePlaybackOrder(*playlist, currentTrack.indexInPlaylist, p->m_playMode, *p->m_settings);
         if(order.currentIndex < 0 || order.tracks.empty()) {
             return;
+        }
+
+        if(!p->m_session.canAcceptRequest()) {
+            if(p->m_session.pendingChangeContext().reason != Player::AdvanceReason::StartupRestore) {
+                return;
+            }
+            p->m_session.clearPendingRequest();
         }
 
         if(!trackReferences.empty()) {
