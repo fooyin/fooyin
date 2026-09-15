@@ -194,6 +194,7 @@ protected:
     void invalidateData() override;
 
 public Q_SLOTS:
+    void playingTrackChangeRequested(const Fooyin::PlaylistTrack& track);
     void playingTrackChanged(const Fooyin::PlaylistTrack& track);
     void playStateChanged(Fooyin::Player::PlayState state);
     void refreshPlayingTrackPositionData();
@@ -230,6 +231,7 @@ private:
     void updateTracks(const ItemList& tracks, const std::set<int>& columnsUpdated);
     void notifyDataChangedForSubtree(const QModelIndex& parent, const QList<int>& roles);
     void mergeTrackParents(const TrackIdNodeMap& parents);
+    void updatePlayingTrack(const PlaylistTrack& track, bool changeRequested);
     [[nodiscard]] bool tryUpdateTrackGroupInPlace(const PendingData& data);
     [[nodiscard]] bool hasSameParentChain(const PlaylistItem* currentItem, const PlaylistItem* updatedItem) const;
 
@@ -368,6 +370,7 @@ private:
     Playlist* m_currentPlaylist;
     Player::PlayState m_currentPlayState;
     PlaylistTrack m_playingTrack;
+    PlaylistTrack m_preRequestPlayingTrack;
     PlaylistTrack m_stopAtTrack;
     QPersistentModelIndex m_playingIndex;
     QPersistentModelIndex m_stopAtIndex;

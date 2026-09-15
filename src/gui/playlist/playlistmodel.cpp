@@ -618,8 +618,10 @@ PlaylistModel::PlaybackDependency dependencyForVariable(const QString& variable)
 
     if(variable.compare(u"PLAYBACK_TIME"_s, Qt::CaseInsensitive) == 0
        || variable.compare(u"PLAYBACK_TIME_S"_s, Qt::CaseInsensitive) == 0
+       || variable.compare(u"PLAYBACK_TIME_SECONDS"_s, Qt::CaseInsensitive) == 0
        || variable.compare(u"PLAYBACK_TIME_REMAINING"_s, Qt::CaseInsensitive) == 0
-       || variable.compare(u"PLAYBACK_TIME_REMAINING_S"_s, Qt::CaseInsensitive) == 0) {
+       || variable.compare(u"PLAYBACK_TIME_REMAINING_S"_s, Qt::CaseInsensitive) == 0
+       || variable.compare(u"PLAYBACK_TIME_REMAINING_SECONDS"_s, Qt::CaseInsensitive) == 0) {
         return Dependency::Position;
     }
     if(variable.compare(QLatin1String{MetaData::Bitrate}, Qt::CaseInsensitive) == 0) {
@@ -799,6 +801,11 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
         m_loadingTextPending          = false;
         syncPlayingTrackIndex();
         syncStopAtTrackIndex();
+
+        if(m_currentPlaylist && m_playingTrack.playlistId == m_currentPlaylist->id()
+           && m_playingTrack.indexInPlaylist >= 0) {
+            refreshTracksForDependencies({m_playingTrack.indexInPlaylist}, PlaybackDependency::All);
+        }
         if(loadingTextVisible) {
             Q_EMIT loadingStateChanged();
         }
@@ -1743,10 +1750,24 @@ void PlaylistModel::notifyDataChangedForSubtree(const QModelIndex& parent, const
     }
 }
 
+void PlaylistModel::playingTrackChangeRequested(const PlaylistTrack& track)
+{
+    updatePlayingTrack(track, true);
+}
+
 void PlaylistModel::playingTrackChanged(const PlaylistTrack& track)
+{
+    updatePlayingTrack(track, false);
+}
+
+void PlaylistModel::updatePlayingTrack(const PlaylistTrack& track, bool changeRequested)
 {
     const QPersistentModelIndex previousPlayingIndex = m_playingIndex;
     const PlaylistTrack previousTrack                = m_playingTrack;
+
+    if(changeRequested && !m_preRequestPlayingTrack.isValid()) {
+        m_preRequestPlayingTrack = previousTrack;
+    }
 
     PlaylistTrack updatedTrack{track};
     const auto resolution = resolvePlayingTrackIndex(updatedTrack);
@@ -1788,6 +1809,13 @@ void PlaylistModel::playingTrackChanged(const PlaylistTrack& track)
     if(m_currentPlaylist && m_playingTrack.playlistId == m_currentPlaylist->id()
        && m_playingTrack.indexInPlaylist >= 0) {
         indexesToRefresh.push_back(m_playingTrack.indexInPlaylist);
+    }
+    if(!changeRequested) {
+        if(m_currentPlaylist && m_preRequestPlayingTrack.playlistId == m_currentPlaylist->id()
+           && m_preRequestPlayingTrack.indexInPlaylist >= 0) {
+            indexesToRefresh.push_back(m_preRequestPlayingTrack.indexInPlaylist);
+        }
+        m_preRequestPlayingTrack = {};
     }
 
     const bool removedEntryPatchPending = m_currentPlaylist && previousTrack.playlistId == m_currentPlaylist->id()
