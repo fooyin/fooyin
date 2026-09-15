@@ -23,6 +23,7 @@
   - Add configurable double and middle-click actions to Artwork widgets
   - Cache pending embedded artwork to avoid repeated decoding and repainting ([#1585](https://github.com/fooyin/fooyin/issues/1585))
   - Add option to fall back to the front cover when artist artwork is unavailable
+* CLI: Add volume, mute, repeat, and shuffle controls; richer seek times; and directory and remote URL support
 * Command Button: Add searchable command and icon pickers
 * Discord: Add local and MusicBrainz artwork to Rich Presence ([#812](https://github.com/fooyin/fooyin/issues/812))
 * FileOps: Add a "Don't ask again" option to destructive action confirmations
@@ -44,12 +45,15 @@
 * Playlist
   - Add custom grouping scripts to presets ([#1566](https://github.com/fooyin/fooyin/issues/1566))
   - Add Save and Save All actions to playlist widget context menus ([#1602](https://github.com/fooyin/fooyin/issues/1602))
+  - Add options to show rating and Love editors only on active rows
   - Avoid track ID lookups during drag and drop
   - Reduce population and artwork loading overhead
   - Replace the default playlist contents when opening external files by default
 * Queue Viewer: Scroll by item instead of by pixel
 * Scrobbling: Add optional Last.fm playcount and loved status synchronisation at playback start
-* Search: Add keyboard navigation to results
+* Search
+  - Add keyboard navigation to results
+  - Keep detached library search results updated when the library changes ([#1613](https://github.com/fooyin/fooyin/issues/1613))
 * Scripting
   - Add line comments
   - Add common metadata aliases
@@ -59,6 +63,7 @@
   - Add `$cut` as alias for `$left`
   - Improve conditional evaluation for concatenated expressions
   - Improve date parsing and track sorting performance
+* Sleep Inhibitor: Add an option to prevent the display turning off ([#1406](https://github.com/fooyin/fooyin/pull/1406))
 * Status Widget: Add configurable double and middle-click actions
 
 ### Fixes
@@ -97,6 +102,7 @@
   - Fix automatic scrolling for unsynchronised lyrics ([#1556](https://github.com/fooyin/fooyin/issues/1556))
   - Throttle LRCLIB requests and honour `Retry-After`
 * Networking: Send a fooyin user agent with all network requests
+* Oscilloscope: Preserve configured colours between sessions
 * Playlist
   - Fix reordering when temporary playlists are present
   - Normalise native path separators in imported playlists ([#741](https://github.com/fooyin/fooyin/issues/741))
