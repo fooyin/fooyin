@@ -410,17 +410,17 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="166"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="168"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">播放统计</translation>
+        <translation>播放统计</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="167"/>
         <source>Love flag: 1 when loved, empty otherwise</source>
-        <translation type="unfinished"></translation>
+        <translation>“喜爱”标志：喜爱时为 1，否则为空</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="169"/>
         <source>Interactive heart editor for the Love flag</source>
-        <translation type="unfinished"></translation>
+        <translation>喜爱标志的互动式心形编辑器</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="171"/>
@@ -581,27 +581,27 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="293"/>
         <source>Returns true when x is greater than y</source>
-        <translation type="unfinished"></translation>
+        <translation>当 x 大于 y 时返回 true</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="328"/>
         <source>Finds the first substring position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>查找第一个子字符串的位置（从 1 开始计数）</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="331"/>
         <source>Finds the first substring position ignoring case (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>查找第一个子字符串的位置（忽略大小写，从 1 开始计数）</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="334"/>
         <source>Finds the last substring position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>查找最后一个子字符串的位置（从 1 开始计数）</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="337"/>
         <source>Finds the last substring position ignoring case (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>查找最后一个子字符串的位置（忽略大小写，索引从 1 开始）</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="340"/>
@@ -611,22 +611,22 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="350"/>
         <source>Returns the first shortest string</source>
-        <translation type="unfinished"></translation>
+        <translation>返回第一个最短字符串</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="353"/>
         <source>Finds the first character position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>查找第一个字符的位置（从 1 开始计数）</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="356"/>
         <source>Finds the last character position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>查找最后一个字符的位置（从 1 开始计数）</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="365"/>
         <source>Returns true when a is longer than b</source>
-        <translation type="unfinished"></translation>
+        <translation>当 a 比 b 长时，返回 true</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="367"/>
@@ -636,7 +636,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="422"/>
         <source>Builds a clickable link that launches an application</source>
-        <translation type="unfinished"></translation>
+        <translation>生成一个可点击的链接用于启动应用程序</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="428"/>
@@ -646,7 +646,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="484"/>
         <source>Returns the value at the one-based index</source>
-        <translation type="unfinished"></translation>
+        <translation>返回基于 1 的索引处的值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="493"/>
@@ -1801,7 +1801,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="300"/>
         <source>View full size</source>
-        <translation type="unfinished">查看完整尺寸</translation>
+        <translation>查看完整尺寸</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="301"/>
@@ -1913,7 +1913,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="100"/>
         <source>Use front cover before placeholder</source>
-        <translation type="unfinished"></translation>
+        <translation>在占位符之前使用封面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="114"/>
@@ -1953,7 +1953,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="134"/>
         <source>Use the track&apos;s front cover when artist artwork is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>当没有艺人图片时，使用曲目的封面图片</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="138"/>
@@ -6788,37 +6788,37 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="52"/>
         <source>Every library filter needs a name.</source>
-        <translation type="unfinished"></translation>
+        <translation>每个库筛选都需要一个名称。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="57"/>
         <source>The expression for library filter &quot;%1&quot; is invalid.</source>
-        <translation type="unfinished"></translation>
+        <translation>库筛选“%1”的表达式无效。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="89"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>已启用</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="91"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="93"/>
         <source>Query</source>
-        <translation type="unfinished">查询</translation>
+        <translation>查询</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="138"/>
         <source>Enter name</source>
-        <translation type="unfinished"></translation>
+        <translation>输入名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="140"/>
         <source>Enter expression</source>
-        <translation type="unfinished"></translation>
+        <translation>输入表达式</translation>
     </message>
 </context>
 <context>
@@ -6827,12 +6827,12 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="172"/>
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="173"/>
         <source>Filters</source>
-        <translation type="unfinished">筛选器</translation>
+        <translation>筛选器</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="173"/>
         <source>Library</source>
-        <translation type="unfinished">媒体库</translation>
+        <translation>媒体库</translation>
     </message>
 </context>
 <context>
@@ -6840,7 +6840,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="77"/>
         <source>Script Editor</source>
-        <translation type="unfinished">脚本编辑器</translation>
+        <translation>脚本编辑器</translation>
     </message>
 </context>
 <context>
@@ -6848,32 +6848,32 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="50"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>全部</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="76"/>
         <source>Saved Filter Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>已保存筛选选择器</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="165"/>
         <source>Rename &apos;All&apos; filter</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名“全部”筛选器</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="168"/>
         <source>Rename &apos;All&apos; Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名“全部”筛选器</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="168"/>
         <source>Name:</source>
-        <translation type="unfinished">名称：</translation>
+        <translation>名称：</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="177"/>
         <source>Manage library filters…</source>
-        <translation type="unfinished"></translation>
+        <translation>管理库筛选器…</translation>
     </message>
 </context>
 <context>
@@ -6881,42 +6881,42 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="52"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>全部</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="63"/>
         <source>Library filter</source>
-        <translation type="unfinished"></translation>
+        <translation>库筛选器</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="86"/>
         <source>Saved Filter Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>已保存筛选标签页</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="465"/>
         <source>Rename tab</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名标签页</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="472"/>
         <source>Tabs position</source>
-        <translation type="unfinished"></translation>
+        <translation>标签页位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="484"/>
         <source>Top</source>
-        <translation type="unfinished">顶部</translation>
+        <translation>顶部</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="485"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="489"/>
         <source>Manage library filters…</source>
-        <translation type="unfinished"></translation>
+        <translation>管理库筛选器…</translation>
     </message>
 </context>
 <context>
@@ -7805,42 +7805,42 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="96"/>
         <source>1 star</source>
-        <translation type="unfinished"></translation>
+        <translation>1 星</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="97"/>
         <source>2 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>2 星</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="98"/>
         <source>3 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>3 星</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="99"/>
         <source>4 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>4 星</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="100"/>
         <source>5 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>5 星</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="102"/>
         <source>Unrated</source>
-        <translation type="unfinished"></translation>
+        <translation>未评级</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="103"/>
         <source>Heart colour</source>
-        <translation type="unfinished"></translation>
+        <translation>心形颜色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="104"/>
         <source>Unloved heart colour</source>
-        <translation type="unfinished"></translation>
+        <translation>不喜爱心形颜色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="106"/>
@@ -7927,22 +7927,22 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="150"/>
         <source>Editor colours</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑器颜色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="161"/>
         <source>Controls the heart size used by the love editor widget</source>
-        <translation type="unfinished"></translation>
+        <translation>控制喜爱编辑器小部件使用的心形大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="163"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>喜爱</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="167"/>
         <source>Love editor heart size</source>
-        <translation type="unfinished"></translation>
+        <translation>喜爱编辑器的爱心尺寸</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="175"/>
@@ -7961,7 +7961,7 @@ If the default half-star does not render correctly with your system font, choose
         <location filename="../../src/utils/heartdelegate.cpp" line="93"/>
         <source>mixed</source>
         <extracomment>Indicates that the selected tracks have different loved values in the tag editor.</extracomment>
-        <translation type="unfinished">混合</translation>
+        <translation>混合</translation>
     </message>
 </context>
 <context>
@@ -8401,17 +8401,17 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="318"/>
         <source>Loved</source>
-        <translation type="unfinished"></translation>
+        <translation>最爱</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="319"/>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>是</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="319"/>
         <source>No</source>
-        <translation type="unfinished">编号</translation>
+        <translation>编号</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="321"/>
@@ -12941,7 +12941,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="61"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>喜爱</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="62"/>
@@ -17453,12 +17453,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="301"/>
         <source>Integrations</source>
-        <translation type="unfinished">集成</translation>
+        <translation>集成</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="301"/>
         <source>Run Services</source>
-        <translation type="unfinished"></translation>
+        <translation>运行服务</translation>
     </message>
 </context>
 <context>
@@ -17466,87 +17466,87 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="104"/>
         <source>Add</source>
-        <translation type="unfinished">添加</translation>
+        <translation>添加</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="105"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>移除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="106"/>
         <source>Move up</source>
-        <translation type="unfinished">上移</translation>
+        <translation>上移</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="107"/>
         <source>Move down</source>
-        <translation type="unfinished">下移</translation>
+        <translation>下移</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="108"/>
         <source>Service properties</source>
-        <translation type="unfinished"></translation>
+        <translation>服务属性</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="111"/>
         <source>Browse…</source>
-        <translation type="unfinished">浏览…</translation>
+        <translation>浏览…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="115"/>
         <source>Run the service for up to this many selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>针对最多指定数量的曲目运行该服务</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="116"/>
         <source>Name shown in the Run menu</source>
-        <translation type="unfinished"></translation>
+        <translation>“运行”菜单中显示的名称</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="117"/>
         <source>Application and arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>应用并论证</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="129"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="131"/>
         <source>Path</source>
-        <translation type="unfinished">路径</translation>
+        <translation>路径</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="134"/>
         <source>Simultaneous runs</source>
-        <translation type="unfinished"></translation>
+        <translation>同步运行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="143"/>
         <source>Checked services are shown in the Run menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>已勾选的服务显示在“运行”菜单中。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="158"/>
         <source>Select application</source>
-        <translation type="unfinished"></translation>
+        <translation>选择应用程序</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="191"/>
         <source>Service %1: Name is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>服务 %1：名称为必填项。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="194"/>
         <source>Service %1: Path is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>服务 %1：必须指定路径。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="251"/>
         <source>New service</source>
-        <translation type="unfinished"></translation>
+        <translation>新建服务</translation>
     </message>
 </context>
 <context>
@@ -17554,26 +17554,26 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="70"/>
         <source>Run</source>
-        <translation type="unfinished"></translation>
+        <translation>运行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="92"/>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="103"/>
         <source>Tracks</source>
-        <translation type="unfinished">音轨</translation>
+        <translation>音轨</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="92"/>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="103"/>
         <source>Run Services</source>
-        <translation type="unfinished"></translation>
+        <translation>运行服务</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="102"/>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="139"/>
         <source>Run %1</source>
         <extracomment>%1 is the name of a registered run service</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>运行 %1</translation>
     </message>
 </context>
 <context>
@@ -17800,77 +17800,77 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1061"/>
         <source>Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑器</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1063"/>
         <source>Syntax highlighting</source>
-        <translation type="unfinished"></translation>
+        <translation>语法高亮</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1071"/>
         <source>Font</source>
-        <translation type="unfinished">字体</translation>
+        <translation>字体</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1072"/>
         <source>Word wrap</source>
-        <translation type="unfinished"></translation>
+        <translation>自动换行</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1073"/>
         <source>Autocomplete</source>
-        <translation type="unfinished"></translation>
+        <translation>自动完成</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1074"/>
         <source>Show whitespace</source>
-        <translation type="unfinished"></translation>
+        <translation>显示空白</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1075"/>
         <source>Highlight matching brackets</source>
-        <translation type="unfinished"></translation>
+        <translation>高亮显示匹配的括号</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1076"/>
         <source>Highlight current line</source>
-        <translation type="unfinished"></translation>
+        <translation>高亮当前行</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1077"/>
         <source>Show line numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>显示行号</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1129"/>
         <source>Reset editor settings</source>
-        <translation type="unfinished"></translation>
+        <translation>重置编辑器设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1183"/>
         <source>Conditionals</source>
-        <translation type="unfinished"></translation>
+        <translation>条件句</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1184"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation>操作</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1185"/>
         <source>Quoted text</source>
-        <translation type="unfinished"></translation>
+        <translation>引用文本</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1196"/>
         <source>Reset colours</source>
-        <translation type="unfinished"></translation>
+        <translation>重置颜色</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1220"/>
         <source>Settings</source>
-        <translation type="unfinished">设置</translation>
+        <translation>设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1415"/>
@@ -17989,7 +17989,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="81"/>
         <source>Synchronise playback statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>同步播放统计数据</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="82"/>
@@ -18029,12 +18029,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="121"/>
         <source>Synchronisation</source>
-        <translation type="unfinished"></translation>
+        <translation>同步</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="125"/>
         <source>Import play counts and Loved status from enabled services when a track starts playing</source>
-        <translation type="unfinished"></translation>
+        <translation>当曲目开始播放时，从已启用的服务导入播放次数和“喜爱”状态</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="129"/>
@@ -18192,22 +18192,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="324"/>
         <source>Submit loved changes</source>
-        <translation type="unfinished"></translation>
+        <translation>提交喜爱的更改</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="325"/>
         <source>Submit Love and Unlove changes to this service</source>
-        <translation type="unfinished"></translation>
+        <translation>向此服务提交“喜爱”与“取消喜爱”的更改</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="329"/>
         <source>Synchronise playback statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>同步播放统计数据</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="331"/>
         <source>Import play counts and Loved status from this service when a track starts playing</source>
-        <translation type="unfinished"></translation>
+        <translation>当曲目开始播放时，从该服务导入播放次数和“喜爱”状态</translation>
     </message>
 </context>
 <context>
@@ -20414,7 +20414,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="58"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>喜爱</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="59"/>
@@ -21028,15 +21028,15 @@ This does not support full scripting.</source>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="253"/>
         <source>+%Ln sample(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>+%Ln 采样</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="255"/>
         <source>%Ln sample(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 采样</numerusform>
         </translation>
     </message>
     <message>
@@ -22212,7 +22212,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="374"/>
         <source>Library Filter</source>
-        <translation type="unfinished">媒体库筛选器</translation>
+        <translation>媒体库筛选器</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="375"/>
@@ -22220,17 +22220,17 @@ Higher supersampling values work best with higher sample counts.</source>
         <location filename="../../src/gui/widgets.cpp" line="390"/>
         <location filename="../../src/gui/widgets.cpp" line="818"/>
         <source>Filters</source>
-        <translation type="unfinished">筛选器</translation>
+        <translation>筛选器</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="382"/>
         <source>Saved Filter Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>已保存筛选标签页</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="389"/>
         <source>Saved Filter Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>已保存筛选选择器</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="504"/>
@@ -22847,52 +22847,52 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1294"/>
         <source>View full size</source>
-        <translation type="unfinished">查看完整尺寸</translation>
+        <translation>查看完整尺寸</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1295"/>
         <source>View the common artwork for the selected tracks at full size</source>
-        <translation type="unfinished"></translation>
+        <translation>以全尺寸查看所选曲目的通用封面图像</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1298"/>
         <source>Artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>艺术品</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1351"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">播放统计</translation>
+        <translation>播放统计</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1366"/>
         <source>Toggle loved</source>
-        <translation type="unfinished"></translation>
+        <translation>切换喜爱</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1366"/>
         <source>Toggle Loved for selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>切换所选曲目的“喜爱”状态</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1368"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>喜爱</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1368"/>
         <source>Love selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>喜爱所选曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1370"/>
         <source>Unlove</source>
-        <translation type="unfinished"></translation>
+        <translation>取消喜爱</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1370"/>
         <source>Unlove selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>取消喜爱所选曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1386"/>
@@ -23593,7 +23593,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="300"/>
         <source>Run Services</source>
-        <translation type="unfinished"></translation>
+        <translation>运行服务</translation>
     </message>
 </context>
 <context>
@@ -23712,22 +23712,22 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="118"/>
         <source>Open Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>打开目录</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="122"/>
         <source>Google Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Google 艺术家</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="126"/>
         <source>Google Artist + Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Google 搜索 艺人 + 歌名</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="130"/>
         <source>Wikipedia Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>维基百科艺人</translation>
     </message>
 </context>
 <context>
