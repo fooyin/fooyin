@@ -48,6 +48,17 @@ TEST_F(ScriptFormatterTest, Bold)
     EXPECT_FALSE(result.blocks.back().format.font.bold());
 }
 
+TEST_F(ScriptFormatterTest, LineLeadingSlashesAreText)
+{
+    const auto result = m_formattter.evaluate(u"//<b>text</b>"_s);
+
+    ASSERT_EQ(2, result.size());
+    EXPECT_EQ(u"//"_s, result.blocks.front().text);
+    EXPECT_FALSE(result.blocks.front().format.font.bold());
+    EXPECT_EQ(u"text"_s, result.blocks.back().text);
+    EXPECT_TRUE(result.blocks.back().format.font.bold());
+}
+
 TEST_F(ScriptFormatterTest, Italic)
 {
     const auto result = m_formattter.evaluate(u"<i>I</i> am a test."_s);

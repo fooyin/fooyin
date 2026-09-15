@@ -153,6 +153,29 @@ int RealFft::binCount() const
     return m_impl->binCount();
 }
 
+int RealFft::nearestValidSize(int fftSize)
+{
+    if(fftSize < 2) {
+        return 0;
+    }
+
+    if(pffft_is_valid_size(fftSize, PFFFT_REAL) != 0) {
+        return fftSize;
+    }
+
+    const int lower = pffft_nearest_transform_size(fftSize, PFFFT_REAL, 0);
+    const int upper = pffft_nearest_transform_size(fftSize, PFFFT_REAL, 1);
+
+    if(lower <= 0) {
+        return std::max(0, upper);
+    }
+    if(upper <= 0) {
+        return lower;
+    }
+
+    return (fftSize - lower) <= (upper - fftSize) ? lower : upper;
+}
+
 bool RealFft::transformMagnitudes(std::span<const float> input, std::span<float> output) const
 {
     const int fftSize = this->fftSize();

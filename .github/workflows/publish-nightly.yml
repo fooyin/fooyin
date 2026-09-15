@@ -1,0 +1,214 @@
+name: Publish nightly
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: publish-nightly
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    name: Prepare nightly build
+    if: github.repository == 'fooyin/fooyin'
+    runs-on: ubuntu-latest
+    outputs:
+      short_sha: ${{ steps.version.outputs.short_sha }}
+      version_suffix: ${{ steps.version.outputs.version_suffix }}
+    steps:
+      - name: Set nightly version suffix
+        id: version
+        shell: bash
+        run: |
+          short_sha="${GITHUB_SHA:0:8}"
+          {
+            echo "short_sha=${short_sha}"
+            echo "version_suffix=.g${short_sha}"
+          } >> "$GITHUB_OUTPUT"
+
+  build:
+    name: Build nightly artifacts
+    needs: prepare
+    uses: ./.github/workflows/build.yml
+    with:
+      version_suffix: ${{ needs.prepare.outputs.version_suffix }}
+    secrets: inherit
+
+  publish:
+    name: Publish nightly build
+    if: github.repository == 'fooyin/fooyin'
+    needs:
+      - prepare
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout nightly configuration
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Generate release metadata
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUILD_SHA: ${{ github.sha }}
+          SHORT_SHA: ${{ needs.prepare.outputs.short_sha }}
+          CI_RUN_ID: ${{ github.run_id }}
+        shell: bash
+        run: |
+          date="$(date -u +'%Y-%m-%d')"
+          short_sha="$SHORT_SHA"
+          tag="nightly"
+          version="$(awk '$1 == "VERSION" { print $2; exit }' CMakeLists.txt)"
+          nightly_version="${version}.g${short_sha}"
+          latest_release_tag="$(gh api "/repos/${GITHUB_REPOSITORY}/releases/latest" --jq '.tag_name')"
+
+          if [[ -z "$version" || -z "$latest_release_tag" ]]; then
+            echo "Unable to determine the fooyin or latest release version" >&2
+            exit 1
+          fi
+
+          sed \
+            -e "s|LATEST_RELEASE_TAG|${latest_release_tag}|g" \
+            -e "s|RELEASE_TAG|${tag}|g" \
+            -e "s|FOOYIN_VERSION|${nightly_version}|g" \
+            -e "s|COMMIT_SHA|${BUILD_SHA}|g" \
+            -e "s|SHORT_SHA|${short_sha}|g" \
+            -e "s|CI_BUILD_DATE|${date}|g" \
+            -e "s|CI_RUN_ID|${CI_RUN_ID}|g" \
+            .github/ci-nightly-body.md > ci-nightly-body.md
+
+          {
+            echo "tag=${tag}"
+            echo "name=Nightly build ${date} (${short_sha})"
+            echo "version=${version}"
+            echo "nightly_version=${nightly_version}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: artifacts
+
+      - name: Ensure package filenames include commit
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+          NIGHTLY_VERSION: ${{ steps.release.outputs.nightly_version }}
+        shell: bash
+        run: |
+          while IFS= read -r -d '' file; do
+            directory="$(dirname "$file")"
+            filename="$(basename "$file")"
+
+            if [[ "$filename" == *"$NIGHTLY_VERSION"* ]]; then
+              continue
+            elif [[ "$filename" == *"$VERSION"* ]]; then
+              nightly_filename="${filename/"$VERSION"/"$NIGHTLY_VERSION"}"
+            elif [[ "$filename" == fooyin-* ]]; then
+              nightly_filename="fooyin-${NIGHTLY_VERSION}-${filename#fooyin-}"
+            else
+              echo "Cannot add nightly version to unexpected artifact: $filename" >&2
+              exit 1
+            fi
+
+            mv -- "$file" "$directory/$nightly_filename"
+          done < <(find artifacts -type f -print0)
+
+      - name: Update nightly tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUILD_SHA: ${{ github.sha }}
+          NIGHTLY_TAG: ${{ steps.release.outputs.tag }}
+        shell: bash
+        run: |
+          if gh api "/repos/${GITHUB_REPOSITORY}/git/ref/tags/${NIGHTLY_TAG}" >/dev/null 2>&1; then
+            gh api --method PATCH "/repos/${GITHUB_REPOSITORY}/git/refs/tags/${NIGHTLY_TAG}" \
+              -f sha="$BUILD_SHA" \
+              -F force=true >/dev/null
+          else
+            gh api --method POST "/repos/${GITHUB_REPOSITORY}/git/refs" \
+              -f ref="refs/tags/${NIGHTLY_TAG}" \
+              -f sha="$BUILD_SHA" >/dev/null
+          fi
+
+      - name: Reuse previous nightly pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NIGHTLY_TAG: ${{ steps.release.outputs.tag }}
+        shell: bash
+        run: |
+          if gh api "/repos/${GITHUB_REPOSITORY}/releases/tags/${NIGHTLY_TAG}" >/dev/null 2>&1; then
+            exit 0
+          fi
+
+          previous_release="$(gh api "/repos/${GITHUB_REPOSITORY}/releases?per_page=100" \
+            --jq 'map(select(.prerelease == true and (.tag_name | startswith("nightly-")))) | first | if . then [.id, .tag_name] | @tsv else empty end')"
+
+          if [[ -z "$previous_release" ]]; then
+            exit 0
+          fi
+
+          IFS=$'\t' read -r release_id previous_tag <<< "$previous_release"
+          echo "Reusing nightly pre-release: $previous_tag"
+          gh api --method PATCH "/repos/${GITHUB_REPOSITORY}/releases/${release_id}" \
+            -f tag_name="$NIGHTLY_TAG" >/dev/null
+          gh api --method DELETE "/repos/${GITHUB_REPOSITORY}/git/refs/tags/${previous_tag}"
+
+      - name: Update pre-release
+        id: publish
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ steps.release.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: ${{ steps.release.outputs.name }}
+          prerelease: true
+          make_latest: false
+          overwrite_files: true
+          fail_on_unmatched_files: true
+          body_path: ci-nightly-body.md
+          files: |
+            artifacts/**/*.deb
+            artifacts/**/*.rpm
+            artifacts/**/*.pkg
+            artifacts/**/*.exe
+            artifacts/**/*.zip
+            artifacts/**/*.flatpak
+            artifacts/**/*.AppImage
+
+      - name: Remove superseded nightly assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_ID: ${{ steps.publish.outputs.id }}
+        shell: bash
+        run: |
+          declare -A current_assets=()
+          while IFS= read -r -d '' file; do
+            current_assets["$(basename "$file")"]=1
+          done < <(find artifacts -type f -print0)
+
+          gh api --paginate "/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/assets?per_page=100" \
+            --jq '.[] | [.id, .name] | @tsv' |
+            while IFS=$'\t' read -r asset_id asset_name; do
+              if [[ -z "${current_assets[$asset_name]+x}" ]]; then
+                echo "Deleting superseded nightly asset: $asset_name"
+                gh api --method DELETE "/repos/${GITHUB_REPOSITORY}/releases/assets/${asset_id}"
+              fi
+            done
+
+      - name: Remove legacy nightly pre-releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh api --paginate "/repos/${GITHUB_REPOSITORY}/releases?per_page=100" \
+            --jq '.[] | select(.prerelease == true) | .tag_name | select(startswith("nightly-"))' |
+            while IFS= read -r tag; do
+              echo "Deleting legacy nightly pre-release: $tag"
+              gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --cleanup-tag --yes
+            done

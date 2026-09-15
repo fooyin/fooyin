@@ -62,6 +62,61 @@ bool isRemoteTrackPath(const QString& path)
     return scheme == "http"_L1 || scheme == "https"_L1;
 }
 
+bool isWindowsAbsolutePath(const QString& path)
+{
+    return (path.size() >= 3 && path.at(0).isLetter() && path.at(1) == u':'
+            && (path.at(2) == u'/' || path.at(2) == u'\\'))
+        || path.startsWith(uR"(\\)"_s) || path.startsWith("//"_L1);
+}
+
+bool isVirtualTrackPath(const QString& path)
+{
+    if(path.isEmpty() || Fooyin::Track::isArchivePath(path) || isRemoteTrackPath(path) || isWindowsAbsolutePath(path)) {
+        return false;
+    }
+
+    const QUrl url{path, QUrl::StrictMode};
+    return url.isValid() && !url.scheme().isEmpty() && url.scheme().compare(u"file"_s, Qt::CaseInsensitive) != 0;
+}
+
+QString virtualUrlName(const QString& path)
+{
+    const QUrl url{path, QUrl::StrictMode};
+    if(const QString name = QFileInfo{url.path()}.fileName(); !name.isEmpty()) {
+        return name;
+    }
+
+    const qsizetype separator = path.indexOf("://"_L1);
+    if(separator < 0) {
+        return {};
+    }
+
+    const QStringView authority = QStringView{path}.sliced(separator + 3);
+    const qsizetype slash       = authority.indexOf(u'/');
+    return (slash < 0 ? authority : authority.first(slash)).toString();
+}
+
+QString virtualUrlPath(const QString& path)
+{
+    const qsizetype separator = path.indexOf("://"_L1);
+    if(separator < 0) {
+        return {};
+    }
+
+    const qsizetype prefixEnd = separator + 3;
+    const qsizetype lastSlash = path.lastIndexOf(u'/');
+    return lastSlash < prefixEnd ? path.first(prefixEnd) : path.first(lastSlash);
+}
+
+QString prettyVirtualUrl(const QString& path)
+{
+    const qsizetype separator = path.indexOf(":///"_L1);
+    if(separator < 0) {
+        return path;
+    }
+    return path.first(separator + 3) + path.sliced(separator + 4);
+}
+
 QString remoteTrackFilename(const QString& path)
 {
     const QUrl url{path};
@@ -151,6 +206,8 @@ const MetaMap& metaMap()
         {QString::fromLatin1(Comment),          [](const Fooyin::Track& track) { return track.comment(); }},
         {QString::fromLatin1(Date),             [](const Fooyin::Track& track) { return track.date(); }},
         {QString::fromLatin1(Year),             [](const Fooyin::Track& track) { return validNum(track.year()); }},
+        {QString::fromLatin1(Loved),            [](const Fooyin::Track& track) { return QString::number(track.isLoved()); }},
+        {QString::fromLatin1(LoveEditor),       [](const Fooyin::Track& track) { return QString::number(track.isLoved()); }},
         {QString::fromLatin1(Rating),           [](const Fooyin::Track& track) { return validNum(track.rating() * 5.0F); }},
         {QString::fromLatin1(RatingNormalized), [](const Fooyin::Track& track) { return validNum(track.rating()); }},
         {QString::fromLatin1(Stars),            [](const Fooyin::Track& track) { return validNum(track.rating() * 5.0F); }},
@@ -326,6 +383,7 @@ public:
     QStringList tagTypes;
     StringPool::StringId encoding{StringPool::EmptyStringId};
 
+    bool loved{false};
     float rating{-1};
     int playcount{0};
     uint64_t createdTime{0};
@@ -369,6 +427,11 @@ QString TrackPrivate::directory() const
     if(isRemoteTrackPath(filepath)) {
         return remoteTrackDirectory(filepath);
     }
+    if(isVirtualTrackPath(filepath)) {
+        const QString parent = virtualUrlPath(filepath);
+        const QString name   = virtualUrlName(parent);
+        return !name.isEmpty() ? name : parent;
+    }
 
     const QFileInfo info{isInArchive ? filepathWithinArchive : filepath};
     QString dir = info.dir().dirName();
@@ -383,6 +446,9 @@ QString TrackPrivate::filename() const
     if(isRemoteTrackPath(filepath)) {
         return remoteTrackFilename(filepath);
     }
+    if(isVirtualTrackPath(filepath)) {
+        return virtualUrlName(filepath);
+    }
 
     return QFileInfo{isInArchive ? filepathWithinArchive : filepath}.completeBaseName();
 }
@@ -391,6 +457,9 @@ QString TrackPrivate::extension() const
 {
     if(isRemoteTrackPath(filepath)) {
         return remoteTrackExtension(filepath);
+    }
+    if(isVirtualTrackPath(filepath)) {
+        return QUrl{filepath, QUrl::StrictMode}.scheme().toLower();
     }
 
     return QFileInfo{isInArchive ? filepathWithinArchive : filepath}.suffix().toLower();
@@ -579,14 +648,14 @@ bool Track::sameDataAs(const Track& other) const
         && p->codecProfile == other.p->codecProfile && p->tool == other.p->tool && p->tagTypes == other.p->tagTypes
         && resolveString(*p, StringPool::Domain::Encoding, p->encoding)
                == resolveString(*other.p, StringPool::Domain::Encoding, other.p->encoding)
-        && p->rating == other.p->rating && p->playcount == other.p->playcount && p->createdTime == other.p->createdTime
-        && p->addedTime == other.p->addedTime && p->modifiedTime == other.p->modifiedTime
-        && p->firstPlayed == other.p->firstPlayed && p->lastPlayed == other.p->lastPlayed
-        && p->rgTrackGain == other.p->rgTrackGain && p->rgAlbumGain == other.p->rgAlbumGain
-        && p->rgTrackPeak == other.p->rgTrackPeak && p->rgAlbumPeak == other.p->rgAlbumPeak
-        && p->metadataWasRead == other.p->metadataWasRead && p->metadataWasModified == other.p->metadataWasModified
-        && p->isInArchive == other.p->isInArchive && p->archivePath == other.p->archivePath
-        && p->filepathWithinArchive == other.p->filepathWithinArchive;
+        && p->loved == other.p->loved && p->rating == other.p->rating && p->playcount == other.p->playcount
+        && p->createdTime == other.p->createdTime && p->addedTime == other.p->addedTime
+        && p->modifiedTime == other.p->modifiedTime && p->firstPlayed == other.p->firstPlayed
+        && p->lastPlayed == other.p->lastPlayed && p->rgTrackGain == other.p->rgTrackGain
+        && p->rgAlbumGain == other.p->rgAlbumGain && p->rgTrackPeak == other.p->rgTrackPeak
+        && p->rgAlbumPeak == other.p->rgAlbumPeak && p->metadataWasRead == other.p->metadataWasRead
+        && p->metadataWasModified == other.p->metadataWasModified && p->isInArchive == other.p->isInArchive
+        && p->archivePath == other.p->archivePath && p->filepathWithinArchive == other.p->filepathWithinArchive;
 }
 
 QString Track::generateHash()
@@ -634,7 +703,7 @@ bool Track::metadataWasModified() const
 
 bool Track::exists() const
 {
-    if(isRemote()) {
+    if(isRemote() || isVirtual()) {
         return true;
     }
 
@@ -657,6 +726,11 @@ bool Track::isInArchive() const
 bool Track::isRemote() const
 {
     return isRemotePath(p->filepath);
+}
+
+bool Track::isVirtual() const
+{
+    return isVirtualPath(p->filepath);
 }
 
 QString Track::archivePath() const
@@ -761,6 +835,9 @@ QString Track::prettyFilepath() const
     if(isInArchive()) {
         return archivePath() + "/"_L1 + pathInArchive();
     }
+    if(isVirtual()) {
+        return prettyVirtualUrl(p->filepath);
+    }
 
     return p->filepath;
 }
@@ -774,6 +851,10 @@ QString Track::path() const
 {
     if(isRemote()) {
         return {};
+    }
+
+    if(isVirtual()) {
+        return virtualUrlPath(p->filepath);
     }
 
     if(isInArchive()) {
@@ -799,6 +880,9 @@ QString Track::filenameExt() const
         const QUrl remoteUrl{p->filepath};
         const QString filename = QFileInfo{remoteUrl.path()}.fileName();
         return !filename.isEmpty() ? filename : remoteUrl.host();
+    }
+    if(isVirtual()) {
+        return virtualUrlName(p->filepath);
     }
 
     return QFileInfo{p->filepath}.fileName();
@@ -1025,12 +1109,24 @@ float Track::rating() const
 
 int Track::ratingStars() const
 {
-    return static_cast<int>(std::floor(p->rating * MaxStarCount));
+    // Round the product to binary32 before flooring, otherwise x87 may retain excess precision
+    const float scaledRating = std::fma(p->rating, static_cast<float>(MaxStarCount), 0.0F);
+    return static_cast<int>(std::floor(scaledRating));
 }
 
 QString Track::ratingStarsText() const
 {
     return ::ratingStarsText(ratingStars());
+}
+
+bool Track::isLoved() const
+{
+    return p->loved;
+}
+
+void Track::setLoved(bool loved)
+{
+    p->loved = loved;
 }
 
 bool Track::hasRGInfo() const
@@ -1223,6 +1319,11 @@ bool Track::isArchivePath(const QString& path)
 bool Track::isRemotePath(const QString& path)
 {
     return isRemoteTrackPath(path);
+}
+
+bool Track::isVirtualPath(const QString& path)
+{
+    return isVirtualTrackPath(path);
 }
 
 bool Track::isMultiValueTag(const QString& tag)
@@ -1491,13 +1592,18 @@ std::shared_ptr<TrackMetadataStore> Track::metadataStore() const
     return p->metadataStore;
 }
 
+void Track::setLibraryId(int id)
+{
+    p->libraryId = id;
+}
+
 void Track::setMetadataStore(std::shared_ptr<TrackMetadataStore> store)
 {
     if(!store) {
         store = std::make_shared<TrackMetadataStore>();
     }
 
-    if(p->metadataStore == store) {
+    if(p.constData()->metadataStore == store) {
         return;
     }
 
@@ -1532,11 +1638,6 @@ void Track::setMetadataStore(std::shared_ptr<TrackMetadataStore> store)
     if(!p->extraTags.empty()) {
         p->extraTags = internExtraTags(*p, p->extraTags);
     }
-}
-
-void Track::setLibraryId(int id)
-{
-    p->libraryId = id;
 }
 
 void Track::setIsEnabled(bool enabled)
@@ -1809,6 +1910,24 @@ void Track::setRatingStars(int rating)
     }
 }
 
+void Track::clearWritableTags()
+{
+    setTitle({});
+    setArtists({});
+    setAlbum({});
+    setAlbumArtists({});
+    setTrackNumber({});
+    setTrackTotal({});
+    setDiscNumber({});
+    setDiscTotal({});
+    setGenres({});
+    setComposers({});
+    setPerformers({});
+    setComment({});
+    setDate({});
+    clearExtraTags();
+}
+
 void Track::setRGTrackGain(float gain)
 {
     p->rgTrackGain = std::isfinite(gain) ? gain : Constants::InvalidGain;
@@ -1883,27 +2002,6 @@ QString Track::metaValue(const QString& name) const
     }
 
     return extraTag(tag).join(QLatin1String{Constants::UnitSeparator});
-}
-
-QString Track::rawRatingTag(const QString& tag) const
-{
-    const QString* value = p->extraProps.find(rawRatingTagProperty(tag));
-    return value ? *value : QString{};
-}
-
-void Track::setRawRatingTag(const QString& tag, const QString& value)
-{
-    const QString property = rawRatingTagProperty(tag);
-    if(value.isEmpty()) {
-        p->extraProps.erase(property);
-        return;
-    }
-    p->extraProps.insertOrAssign(property, value);
-}
-
-void Track::removeRawRatingTag(const QString& tag)
-{
-    p->extraProps.erase(rawRatingTagProperty(tag));
 }
 
 QString Track::techInfo(const QString& name) const
@@ -1984,6 +2082,27 @@ void Track::setIsChapter(bool isChapter)
     else {
         removeExtraProperty(ChapterProperty);
     }
+}
+
+QString Track::rawRatingTag(const QString& tag) const
+{
+    const QString* value = p->extraProps.find(rawRatingTagProperty(tag));
+    return value ? *value : QString{};
+}
+
+void Track::setRawRatingTag(const QString& tag, const QString& value)
+{
+    const QString property = rawRatingTagProperty(tag);
+    if(value.isEmpty()) {
+        p->extraProps.erase(property);
+        return;
+    }
+    p->extraProps.insertOrAssign(property, value);
+}
+
+void Track::removeRawRatingTag(const QString& tag)
+{
+    p->extraProps.erase(rawRatingTagProperty(tag));
 }
 
 void Track::addExtraTag(const QString& tag, const QString& value)
@@ -2376,5 +2495,20 @@ Track prepareOpusRGWriteTrack(const Track& track, OpusRGWriteMode mode)
 size_t qHash(const Track& track)
 {
     return qHash(track.uniqueFilepath());
+}
+
+void mergeTrackStats(Track& track, const Track& updatedTrack, Track::Stats stats)
+{
+    if(stats.testFlag(Track::Stat::Loved)) {
+        track.setLoved(updatedTrack.isLoved());
+    }
+    if(stats.testFlag(Track::Stat::Rating)) {
+        track.setRating(updatedTrack.rating());
+    }
+    if(stats.testFlag(Track::Stat::Playcount)) {
+        track.setPlayCount(updatedTrack.playCount());
+        track.setFirstPlayed(updatedTrack.firstPlayed());
+        track.setLastPlayed(updatedTrack.lastPlayed());
+    }
 }
 } // namespace Fooyin

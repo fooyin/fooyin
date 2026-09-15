@@ -38,7 +38,9 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
     , m_listMode{new QRadioButton(tr("List"), this)}
     , m_showIcons{new QCheckBox(tr("Show icons"), this)}
     , m_indentList{new QCheckBox(tr("Show indent"), this)}
-    , m_showHorizScrollbar{new QCheckBox(tr("Show horizontal scrollbar"), this)}
+    , m_showHeader{new QCheckBox(tr("Show header"), this)}
+    , m_restoreSort{new QCheckBox(tr("Remember sort column"), this)}
+    , m_controlsPosition{new QComboBox(this)}
     , m_showControls{new QCheckBox(tr("Show controls"), this)}
     , m_showLocation{new QCheckBox(tr("Show location"), this)}
     , m_showSymLinks{new QCheckBox(tr("Show symlinks"), this)}
@@ -49,6 +51,7 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
 {
     m_playbackOnSend->setToolTip(
         tr("For \"Replace current playlist\" and \"Create new playlist\", start playback immediately."));
+    m_restoreSort->setToolTip(tr("Restore the sort column on startup and when changing directories."));
 
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
@@ -71,13 +74,21 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
     browserFiltersLayout->addWidget(m_showSymLinks);
     browserFiltersLayout->addWidget(m_showHidden);
 
+    m_controlsPosition->addItem(tr("Top"), static_cast<int>(DirBrowser::ControlsPosition::Top));
+    m_controlsPosition->addItem(tr("Bottom"), static_cast<int>(DirBrowser::ControlsPosition::Bottom));
+
     auto* displayOptions       = new QGroupBox(tr("Display Options"), this);
     auto* displayOptionsLayout = new QGridLayout(displayOptions);
-    displayOptionsLayout->addWidget(m_showIcons, 0, 0);
-    displayOptionsLayout->addWidget(m_indentList, 1, 0);
-    displayOptionsLayout->addWidget(m_showHorizScrollbar, 2, 0);
-    displayOptionsLayout->addWidget(m_showControls, 3, 0);
-    displayOptionsLayout->addWidget(m_showLocation, 4, 0);
+    displayOptionsLayout->addWidget(m_showIcons, 0, 0, 1, 2);
+    displayOptionsLayout->addWidget(m_indentList, 0, 2, 1, 2);
+    displayOptionsLayout->addWidget(m_showHeader, 1, 0, 1, 2);
+    displayOptionsLayout->addWidget(m_showControls, 1, 2, 1, 2);
+    displayOptionsLayout->addWidget(m_showLocation, 2, 0, 1, 2);
+    displayOptionsLayout->addWidget(new QLabel(tr("Path and controls position") + u":"_s, this), 2, 2);
+    displayOptionsLayout->addWidget(m_controlsPosition, 2, 3);
+    displayOptionsLayout->addWidget(m_restoreSort, 3, 0, 1, 4);
+    displayOptionsLayout->setColumnStretch(1, 1);
+    displayOptionsLayout->setColumnStretch(3, 1);
 
     auto* mainLayout = contentLayout();
     mainLayout->addWidget(clickBehaviour, 0, 0, 1, 2);
@@ -89,7 +100,7 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
     mainLayout->setRowStretch(3, 1);
 
     TrackSelectionController::addAction(m_doubleClick, tr("Expand/collapse"), TrackAction::None);
-    TrackSelectionController::addAction(m_doubleClick, tr("Expand/collapse or play"), TrackAction::Play);
+    TrackSelectionController::addAction(m_doubleClick, tr("Expand/collapse or play now"), TrackAction::Play);
     TrackSelectionController::addStandardActions(m_doubleClick);
 
     TrackSelectionController::addAction(m_middleClick, tr("None"), TrackAction::None);
@@ -98,24 +109,28 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
     QObject::connect(m_treeMode, &QRadioButton::toggled, this,
                      [this](bool checked) { m_indentList->setEnabled(!checked); });
 
+    QObject::connect(browser, &DirBrowser::configChanged, this, &DirBrowserConfigDialog::syncCurrentConfig);
+
     loadCurrentConfig();
 }
 
 DirBrowser::ConfigData DirBrowserConfigDialog::config() const
 {
     return {
-        .doubleClickAction  = m_doubleClick->currentData().toInt(),
-        .middleClickAction  = m_middleClick->currentData().toInt(),
-        .sendPlayback       = m_playbackOnSend->isChecked(),
-        .showIcons          = m_showIcons->isChecked(),
-        .indentList         = m_indentList->isChecked(),
-        .showHorizScrollbar = m_showHorizScrollbar->isChecked(),
-        .mode               = m_listMode->isChecked() ? DirBrowser::Mode::List : DirBrowser::Mode::Tree,
-        .showControls       = m_showControls->isChecked(),
-        .showLocation       = m_showLocation->isChecked(),
-        .showSymLinks       = m_showSymLinks->isChecked(),
-        .showHidden         = m_showHidden->isChecked(),
-        .rootPath           = widget()->currentConfig().rootPath,
+        .doubleClickAction = m_doubleClick->currentData().toInt(),
+        .middleClickAction = m_middleClick->currentData().toInt(),
+        .sendPlayback      = m_playbackOnSend->isChecked(),
+        .showIcons         = m_showIcons->isChecked(),
+        .indentList        = m_indentList->isChecked(),
+        .showHeader        = m_showHeader->isChecked(),
+        .restoreSort       = m_restoreSort->isChecked(),
+        .mode              = m_listMode->isChecked() ? DirBrowser::Mode::List : DirBrowser::Mode::Tree,
+        .controlsPosition  = static_cast<DirBrowser::ControlsPosition>(m_controlsPosition->currentData().toInt()),
+        .showControls      = m_showControls->isChecked(),
+        .showLocation      = m_showLocation->isChecked(),
+        .showSymLinks      = m_showSymLinks->isChecked(),
+        .showHidden        = m_showHidden->isChecked(),
+        .rootPath          = widget()->currentConfig().rootPath,
     };
 }
 
@@ -123,7 +138,9 @@ void DirBrowserConfigDialog::setConfig(const DirBrowser::ConfigData& config)
 {
     m_showIcons->setChecked(config.showIcons);
     m_indentList->setChecked(config.indentList);
-    m_showHorizScrollbar->setChecked(config.showHorizScrollbar);
+    m_showHeader->setChecked(config.showHeader);
+    m_restoreSort->setChecked(config.restoreSort);
+    m_controlsPosition->setCurrentIndex(m_controlsPosition->findData(static_cast<int>(config.controlsPosition)));
     m_showControls->setChecked(config.showControls);
     m_showLocation->setChecked(config.showLocation);
     m_showSymLinks->setChecked(config.showSymLinks);
@@ -139,5 +156,17 @@ void DirBrowserConfigDialog::setConfig(const DirBrowser::ConfigData& config)
 
     TrackSelectionController::setCurrentAction(m_doubleClick, config.doubleClickAction);
     TrackSelectionController::setCurrentAction(m_middleClick, config.middleClickAction);
+}
+
+void DirBrowserConfigDialog::mergeExternalConfig(const DirBrowser::ConfigData& previous,
+                                                 const DirBrowser::ConfigData& current)
+{
+    mergeExternalFields(
+        previous, current, &DirBrowser::ConfigData::doubleClickAction, &DirBrowser::ConfigData::middleClickAction,
+        &DirBrowser::ConfigData::sendPlayback, &DirBrowser::ConfigData::showIcons, &DirBrowser::ConfigData::indentList,
+        &DirBrowser::ConfigData::showHeader, &DirBrowser::ConfigData::restoreSort, &DirBrowser::ConfigData::mode,
+        &DirBrowser::ConfigData::controlsPosition, &DirBrowser::ConfigData::showControls,
+        &DirBrowser::ConfigData::showLocation, &DirBrowser::ConfigData::showSymLinks,
+        &DirBrowser::ConfigData::showHidden, &DirBrowser::ConfigData::rootPath);
 }
 } // namespace Fooyin

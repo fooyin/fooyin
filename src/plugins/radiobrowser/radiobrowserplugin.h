@@ -70,6 +70,7 @@ private:
 
     RadioStationStore* m_store;
     RadioBrowserController* m_controller;
+    QPointer<RadioBrowserDialog> m_radioBrowserDialog;
 };
 } // namespace RadioBrowser
 } // namespace Fooyin

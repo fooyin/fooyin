@@ -21,6 +21,7 @@
 
 #include <QAbstractListModel>
 #include <QDateTime>
+#include <QIcon>
 
 #include <deque>
 
@@ -51,6 +52,7 @@ public:
     void addEntry(ConsoleEntry entry);
     void addEntries(std::vector<ConsoleEntry> entries);
     void clear();
+    void refreshIcons();
 
     [[nodiscard]] std::deque<ConsoleEntry> entries();
 
@@ -65,6 +67,10 @@ public:
     [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
 
 private:
+    QIcon m_infoIcon;
+    QIcon m_warningIcon;
+    QIcon m_criticalIcon;
+
     std::deque<ConsoleEntry> m_items;
     int m_maxEntries;
 };

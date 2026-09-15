@@ -21,8 +21,12 @@
 
 #include "scriptbinder.h"
 
+#include <cmath>
 #include <functional>
+#include <limits>
 #include <type_traits>
+
+using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 namespace {
@@ -32,6 +36,21 @@ void invokeTrackSetter(Track& track, const ScriptFieldValue& arg)
     std::visit(
         [&]<typename Param>(Param&& value) {
             if constexpr(std::is_invocable_v<decltype(Func), Track&, Param>) {
+                std::invoke(Func, track, value);
+            }
+        },
+        arg);
+}
+
+template <auto Func>
+void invokeTrackListSetter(Track& track, const ScriptFieldValue& arg)
+{
+    std::visit(
+        [&]<typename Param>(Param&& value) {
+            if constexpr(std::is_same_v<std::decay_t<Param>, QString>) {
+                std::invoke(Func, track, QStringList{value});
+            }
+            else if constexpr(std::is_invocable_v<decltype(Func), Track&, Param>) {
                 std::invoke(Func, track, value);
             }
         },
@@ -80,6 +99,39 @@ void setEditorRating(Track& track, const ScriptFieldValue& value)
         value);
 }
 
+void setLoved(Track& track, const ScriptFieldValue& value)
+{
+    std::visit(
+        [&track](const auto& val) {
+            if constexpr(std::is_same_v<std::decay_t<decltype(val)>, QString>) {
+                const auto text = val.trimmed();
+                track.setLoved(text == "1"_L1 || text.compare("true"_L1, Qt::CaseInsensitive) == 0);
+            }
+            else if constexpr(std::is_arithmetic_v<std::decay_t<decltype(val)>>) {
+                track.setLoved(val != 0);
+            }
+        },
+        value);
+}
+
+void setPlayCount(Track& track, const ScriptFieldValue& value)
+{
+    std::visit(
+        [&track](const auto& val) {
+            if constexpr(std::is_arithmetic_v<std::decay_t<decltype(val)>>) {
+                const auto count = static_cast<long double>(val);
+                if(std::isnan(count)) {
+                    return;
+                }
+
+                static constexpr long double Min = std::numeric_limits<int>::min();
+                static constexpr long double Max = std::numeric_limits<int>::max();
+                track.setPlayCount(static_cast<int>(std::clamp(count, Min, Max)));
+            }
+        },
+        value);
+}
+
 bool setBuiltInTrackValue(const VariableKind kind, const ScriptFieldValue& value, Track& track)
 {
     switch(kind) {
@@ -87,13 +139,13 @@ bool setBuiltInTrackValue(const VariableKind kind, const ScriptFieldValue& value
             invokeTrackSetter<&Track::setTitle>(track, value);
             return true;
         case VariableKind::Artist:
-            invokeTrackSetter<&Track::setArtists>(track, value);
+            invokeTrackListSetter<&Track::setArtists>(track, value);
             return true;
         case VariableKind::Album:
             invokeTrackSetter<&Track::setAlbum>(track, value);
             return true;
         case VariableKind::AlbumArtist:
-            invokeTrackSetter<&Track::setAlbumArtists>(track, value);
+            invokeTrackListSetter<&Track::setAlbumArtists>(track, value);
             return true;
         case VariableKind::Track:
             invokeTrackSetter<&Track::setTrackNumber>(track, value);
@@ -109,13 +161,13 @@ bool setBuiltInTrackValue(const VariableKind kind, const ScriptFieldValue& value
             return true;
         case VariableKind::Genre:
         case VariableKind::Genres:
-            invokeTrackSetter<&Track::setGenres>(track, value);
+            invokeTrackListSetter<&Track::setGenres>(track, value);
             return true;
         case VariableKind::Composer:
-            invokeTrackSetter<&Track::setComposers>(track, value);
+            invokeTrackListSetter<&Track::setComposers>(track, value);
             return true;
         case VariableKind::Performer:
-            invokeTrackSetter<&Track::setPerformers>(track, value);
+            invokeTrackListSetter<&Track::setPerformers>(track, value);
             return true;
         case VariableKind::Duration:
             invokeTrackSetter<&Track::setDuration>(track, value);
@@ -127,8 +179,6 @@ bool setBuiltInTrackValue(const VariableKind kind, const ScriptFieldValue& value
             invokeTrackSetter<&Track::setDate>(track, value);
             return true;
         case VariableKind::RatingNormalized:
-            setNormalizedRating(track, value);
-            return true;
         case VariableKind::RatingEditor:
             setNormalizedRating(track, value);
             return true;
@@ -140,8 +190,12 @@ bool setBuiltInTrackValue(const VariableKind kind, const ScriptFieldValue& value
         case VariableKind::Stars:
             setStarRating(track, value);
             return true;
+        case VariableKind::Loved:
+        case VariableKind::LoveEditor:
+            setLoved(track, value);
+            return true;
         case VariableKind::PlayCount:
-            invokeTrackSetter<&Track::setPlayCount>(track, value);
+            setPlayCount(track, value);
             return true;
         case VariableKind::FirstPlayed:
             invokeTrackSetter<&Track::setFirstPlayed>(track, value);

@@ -20,6 +20,7 @@
 #include "qqlyrics.h"
 
 #include <core/network/networkaccessmanager.h>
+#include <core/network/networkutils.h>
 
 #include <QJsonArray>
 #include <QJsonObject>
@@ -33,16 +34,16 @@ using namespace Qt::StringLiterals;
 constexpr auto SearchUrl = "https://c.y.qq.com/splcloud/fcgi-bin/smartbox_new.fcg";
 constexpr auto LyricUrl  = "https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg";
 
+namespace Fooyin::Lyrics {
 namespace {
 QNetworkRequest setupRequest(const char* url)
 {
-    QNetworkRequest req{QString::fromLatin1(url)};
+    QNetworkRequest req = makeNetworkRequest(QString::fromLatin1(url));
     req.setRawHeader("Referer", "https://y.qq.com/portal/player.html");
     return req;
 }
 } // namespace
 
-namespace Fooyin::Lyrics {
 QString QQLyrics::name() const
 {
     return u"QQ Music"_s;

@@ -34,5 +34,10 @@ public:
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     void setEditorData(QWidget* editor, const QModelIndex& index) const override;
+
+    void setArtworkCornerRadius(int radius);
+
+private:
+    int m_artworkCornerRadius{0};
 };
 } // namespace Fooyin

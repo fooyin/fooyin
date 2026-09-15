@@ -8,13 +8,13 @@ dnf -y install --skip-broken \
      rpmdevtools \
      tar \
      desktop-file-utils \
-     ccache \
      zstd \
      bison \
      flex \
      cmake \
      ninja-build \
      glib2-devel \
+     glm-devel \
      libicu-devel \
      libxkbcommon-x11-devel \
      libxkbcommon-devel \
@@ -39,6 +39,8 @@ dnf -y install --skip-broken \
      libarchive-devel \
      libsndfile-devel \
      libebur128-devel \
+     libcdio-devel \
+     libcdio-paranoia-devel \
      soundtouch-devel \
      soxr-devel \
      gtest-devel

@@ -33,8 +33,7 @@ QSize singleLineTrackSize(const RichText& richText)
 
     for(const auto& [blockText, format] : richText.blocks) {
         const QFontMetrics fm{format.font};
-        const QRect br = fm.boundingRect(blockText);
-        blockSize.setWidth(blockSize.width() + br.width());
+        blockSize.rwidth() += fm.horizontalAdvance(blockText);
     }
 
     return blockSize;
@@ -42,15 +41,15 @@ QSize singleLineTrackSize(const RichText& richText)
 
 int singleLineTrackHeight(const RichText& richText)
 {
-    int height{0};
+    TextBaselineMetrics baseline = textBaselineMetrics({});
 
     for(const auto& block : richText.blocks) {
         const QFont font = resolvedRichTextFont(block.format, {});
         const QFontMetrics fm{font};
-        height = std::max(height, fm.height());
+        baseline.expand(fm);
     }
 
-    return std::max(height, QFontMetrics{QFont{}}.height());
+    return baseline.height();
 }
 
 int trackExtraLineHeight(const RichText& richText)
@@ -109,7 +108,16 @@ int PlaylistContainerItem::rowHeight() const
 
 QSize PlaylistContainerItem::size() const
 {
+    if(!m_widthCalculated) {
+        m_size            = calculateSize(true);
+        m_widthCalculated = true;
+    }
     return m_size;
+}
+
+int PlaylistContainerItem::height() const
+{
+    return m_size.height();
 }
 
 int PlaylistContainerItem::scriptIndex() const
@@ -164,15 +172,20 @@ void PlaylistContainerItem::clearCoverTrack()
 
 void PlaylistContainerItem::calculateSize()
 {
+    m_size            = calculateSize(false);
+    m_widthCalculated = m_rowHeight > 0;
+}
+
+QSize PlaylistContainerItem::calculateSize(bool measureWidth) const
+{
     if(m_rowHeight > 0) {
-        m_size.setHeight(m_rowHeight);
-        return;
+        return {m_size.width(), m_rowHeight};
     }
 
     QSize totalSize;
 
-    auto addSize = [&totalSize](const RichText& text, bool addToTotal = true) {
-        const auto metrics = measureRichText(text);
+    auto addSize = [&totalSize, measureWidth](const RichText& text, bool addToTotal = true) {
+        const auto metrics = measureWidth ? measureRichText(text) : RichTextMetrics{.height = richTextHeight(text)};
         const QSize blockSize{metrics.width, metrics.height};
 
         if(addToTotal) {
@@ -225,7 +238,7 @@ void PlaylistContainerItem::calculateSize()
         }
     }
 
-    m_size = totalSize;
+    return totalSize;
 }
 
 PlaylistTrackItem::PlaylistTrackItem(std::vector<RichText> columns, PlaylistTrack track)

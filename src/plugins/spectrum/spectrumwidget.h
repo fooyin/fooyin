@@ -62,6 +62,8 @@ public:
         int peakGravity{DefaultPeakGravity};
         int updateFps{DefaultUpdateFps};
         int fftSize{DefaultFftSize};
+        int fftDurationMs{DefaultFftDurationMs};
+        FftSizingMode fftSizingMode{FftSizingMode::Duration};
         WindowFunction windowFunction{WindowFunction::BlackmanHarris};
         GradientOrientation gradientOrientation{GradientOrientation::Vertical};
         LabelMode labelMode{LabelMode::Frequency};
@@ -98,6 +100,9 @@ public:
 
     [[nodiscard]] QSize minimumSizeHint() const override;
     [[nodiscard]] QSize sizeHint() const override;
+
+Q_SIGNALS:
+    void configChanged();
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

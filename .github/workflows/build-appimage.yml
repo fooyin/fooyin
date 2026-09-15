@@ -1,0 +1,61 @@
+name: Build AppImage
+
+on:
+  workflow_call:
+    inputs:
+      version_suffix:
+        required: false
+        type: string
+        default: ''
+
+env:
+  FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
+  BUILD_CCACHE: OFF
+  BUILD_PCH: ON
+
+jobs:
+  appimage:
+    name: AppImage (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-latest
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    container:
+      image: debian:bookworm
+    steps:
+      - name: Install git
+        run: |
+          apt-get update -qq
+          apt-get install -qq --yes ca-certificates git
+
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Install build dependencies
+        run: |
+          ./ci/ubuntu-depends.sh
+          apt-get install -y \
+            curl \
+            file \
+            patchelf \
+            qt6-wayland
+
+      - name: Build AppImage
+        run: |
+          ./ci/appimage-build.sh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: appimage-${{ matrix.arch }}
+          path: build-appimage/output/*.AppImage
+          compression-level: 0
+          if-no-files-found: error

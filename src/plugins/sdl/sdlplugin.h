@@ -22,7 +22,11 @@
 #include <core/engine/outputplugin.h>
 #include <core/plugins/plugin.h>
 
+#include <memory>
+
 namespace Fooyin::Sdl {
+class SdlAudioSubsystem;
+
 class SdlPlugin : public QObject,
                   public Plugin,
                   public OutputPlugin
@@ -33,7 +37,12 @@ class SdlPlugin : public QObject,
     Q_INTERFACES(Fooyin::OutputPlugin)
 
 public:
+    SdlPlugin();
+
     [[nodiscard]] QString name() const override;
     [[nodiscard]] OutputCreator creator() const override;
+
+private:
+    std::shared_ptr<SdlAudioSubsystem> m_audioSubsystem;
 };
 } // namespace Fooyin::Sdl

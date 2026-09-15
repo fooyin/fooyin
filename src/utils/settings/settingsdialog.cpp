@@ -35,6 +35,7 @@
 #include <QPushButton>
 #include <QResizeEvent>
 #include <QScrollArea>
+#include <QScrollBar>
 #include <QStackedLayout>
 #include <QTreeView>
 #include <QVBoxLayout>
@@ -149,7 +150,7 @@ SimpleTreeView::SimpleTreeView(QWidget* parent)
 QSize SimpleTreeView::sizeHint() const
 {
     const int maxWidth = calculateMaxItemWidth({});
-    return {maxWidth, 100};
+    return {maxWidth + verticalScrollBar()->sizeHint().width() + (2 * frameWidth()), 100};
 }
 
 int SimpleTreeView::calculateMaxItemWidth(const QModelIndex& index) const
@@ -180,7 +181,6 @@ SettingsDialog::SettingsDialog(PageList pages, QWidget* parent)
     , m_pages{std::move(pages)}
 {
     setWindowTitle(tr("Settings"));
-    setModal(true);
 
     m_stackedLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -215,7 +215,8 @@ SettingsDialog::SettingsDialog(PageList pages, QWidget* parent)
 
 void SettingsDialog::openSettings()
 {
-    open();
+    setWindowModality(Qt::NonModal);
+    show();
 }
 
 void SettingsDialog::openPage(const Id& id)

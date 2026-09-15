@@ -83,7 +83,9 @@ TEST(PlaybackSessionTest, CommitRequestUsesPendingMetadataAndClearsPendingState)
 {
     PlaybackSession session;
     const PlaylistTrack track = makePlaylistTrack(u"/tmp/commit.flac"_s, 2, 1200, 1);
-    session.scheduleTrack(makePlaylistTrack(u"/tmp/scheduled.flac"_s, 3, 900, 4));
+    session.scheduleTrack(makePlaylistTrack(u"/tmp/scheduled.flac"_s, 3, 900, 4),
+                          PlaybackSession::ScheduledTrackKind::StopAfterCurrentResume);
+    EXPECT_EQ(session.scheduledTrackKind(), PlaybackSession::ScheduledTrackKind::StopAfterCurrentResume);
 
     const auto pendingRequest = session.requestTrackChange({
         .track        = track,
@@ -109,6 +111,7 @@ TEST(PlaybackSessionTest, CommitRequestUsesPendingMetadataAndClearsPendingState)
     EXPECT_FALSE(session.hasPendingRequest());
     EXPECT_TRUE(session.canAcceptRequest());
     EXPECT_FALSE(session.scheduledTrack().isValid());
+    EXPECT_EQ(session.scheduledTrackKind(), PlaybackSession::ScheduledTrackKind::Normal);
     EXPECT_TRUE(session.isQueueTrack());
     EXPECT_EQ(session.currentItemId(), 77);
 }

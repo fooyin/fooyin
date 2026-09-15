@@ -192,6 +192,8 @@ ProjectMConfigDialog::ProjectMConfigDialog(ProjectMWidget* widget, QWidget* pare
     QObject::connect(m_hardCutsEnabled, &QCheckBox::toggled, m_beatSensitivity, &QWidget::setEnabled);
     QObject::connect(m_presetDir, &QLineEdit::editingFinished, this, &ProjectMConfigDialog::updateSummary);
 
+    QObject::connect(widget, &ProjectMWidget::configChanged, this, &ProjectMConfigDialog::syncCurrentConfig);
+
     loadCurrentConfig();
 }
 
@@ -230,6 +232,20 @@ void ProjectMConfigDialog::setConfig(const ProjectMWidget::ConfigData& config)
     m_hardCutSensitivity->setEnabled(config.settings.hardCutsEnabled);
     m_beatSensitivity->setEnabled(config.settings.hardCutsEnabled);
     updateSummary();
+}
+
+void ProjectMConfigDialog::mergeExternalConfig(const ProjectMWidget::ConfigData& previous,
+                                               const ProjectMWidget::ConfigData& current)
+{
+    auto draft{config()};
+    mergeExternalFieldValues(previous, current, draft, &ProjectMWidget::ConfigData::presetDir);
+    mergeExternalFieldValues(previous.settings, current.settings, draft.settings, &ProjectMSettings::scanRecursive,
+                             &ProjectMSettings::maxFps, &ProjectMSettings::meshWidth, &ProjectMSettings::meshHeight,
+                             &ProjectMSettings::aspectCorrection, &ProjectMSettings::presetDuration,
+                             &ProjectMSettings::softCutDuration, &ProjectMSettings::hardCutsEnabled,
+                             &ProjectMSettings::hardCutDuration, &ProjectMSettings::hardCutSensitivity,
+                             &ProjectMSettings::beatSensitivity);
+    setConfig(draft);
 }
 
 void ProjectMConfigDialog::browsePresetDir()

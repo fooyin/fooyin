@@ -216,13 +216,13 @@ Lyrics LyricsSaver::savedLyrics(const Lyrics& lyrics, const Track& track)
     return savedLyrics;
 }
 
-void LyricsSaver::writeLyricsToTags(const TrackList& tracks)
+WriteRequest LyricsSaver::writeLyricsToTags(const TrackList& tracks)
 {
     if(tracks.empty()) {
-        return;
+        return {};
     }
 
-    m_library->writeTrackMetadata(tracks);
+    return m_library->writeTrackMetadata(tracks);
 }
 
 bool LyricsSaver::saveLyricsToFile(const Lyrics& lyrics, const Track& track)

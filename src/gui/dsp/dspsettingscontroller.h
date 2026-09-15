@@ -22,8 +22,10 @@
 #include <core/engine/enginedefs.h>
 
 #include <QObject>
+#include <QPointer>
 
 #include <optional>
+#include <unordered_map>
 #include <vector>
 
 namespace Fooyin {
@@ -65,16 +67,21 @@ public:
     [[nodiscard]] std::optional<Target> targetForInstance(const QString& dspId, uint64_t instanceId) const;
 
     void bindEditor(DspSettingsDialog* editor, const Target& target, bool persistPreview);
-    bool updateDspSettings(Engine::DspChainScope scope, uint64_t instanceId, const QByteArray& settings, bool persist);
-    bool setDspEnabled(Engine::DspChainScope scope, uint64_t instanceId, bool enabled);
+    bool updateDspSettings(Engine::DspChainScope scope, uint64_t instanceId, const QByteArray& settings, bool persist,
+                           QObject* source = nullptr);
+    bool setDspEnabled(Engine::DspChainScope scope, uint64_t instanceId, bool enabled, QObject* source = nullptr);
 
 Q_SIGNALS:
     void dspInstancesChanged();
+    void dspSettingsChanged(uint64_t instanceId, const QByteArray& settings, QObject* source);
+    void dspEnabledChanged(uint64_t instanceId, bool enabled, QObject* source);
 
 private:
     [[nodiscard]] DspSettingsProvider* providerFor(const QString& dspId) const;
 
     DspChainStore* m_chainStore;
     DspSettingsRegistry* m_registry;
+    std::unordered_map<QString, QPointer<DspSettingsDialog>> m_dialogs;
+    bool m_settingEnabled;
 };
 } // namespace Fooyin

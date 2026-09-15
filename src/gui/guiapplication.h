@@ -22,7 +22,6 @@
 #include "fygui_export.h"
 
 #include "internalguisettings.h"
-#include "playlist/playlistinteractor.h"
 #include "widgets.h"
 
 #include <core/engine/enginedefs.h>
@@ -30,6 +29,7 @@
 #include <core/track.h>
 #include <gui/coverprovider.h>
 #include <gui/layoutprovider.h>
+#include <gui/playlist/playlistinteractor.h>
 #include <gui/plugins/guiplugincontext.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
@@ -61,6 +61,8 @@ class LibraryMenu;
 class LogWidget;
 class MainMenuBar;
 class MainWindow;
+class MetadataLookupDialog;
+enum class LookupMode : uint8_t;
 class Playlist;
 class PlaylistController;
 class PlaylistManagerWidget;
@@ -71,6 +73,7 @@ class SearchController;
 class ScriptCommandHandler;
 class SystemTrayIcon;
 class ThemeRegistry;
+class VerificationController;
 class UId;
 class ViewMenu;
 class WindowController;
@@ -142,7 +145,8 @@ private:
     void rescanTracks(const TrackList& tracks, bool onlyModified) const;
 
     void setupScanMenu();
-    void setupRatingMenu();
+    void setupArtworkMenu();
+    void setupPlaybackStatisticsMenu();
     void setupConvertMenu();
     void refreshConversionPresetActions();
     void setupUtilitiesMenu();
@@ -150,11 +154,13 @@ private:
     void startConversionPreset(const StoredConversionPreset& preset, const TrackList& tracks);
     void startDefaultConversion(const TrackList& tracks);
     void startLastUsedConversion(const TrackList& tracks);
+    void showConvertedFiles(const TrackList& tracks);
 
     void close();
     void changeVolume(double delta) const;
     void mute() const;
     void setStyle() const;
+    void updateColourScheme() const;
     void scheduleThemeUpdate(bool refreshSystemBaseline = false);
     void applyTheme();
     void handleSystemThemeChanged();
@@ -179,6 +185,9 @@ private:
     void showMessage(const QString& title, const Track& track) const;
     void showTrackNotFoundMessage(const Track& track) const;
     void showTrackUnreableMessage(const Track& track) const;
+
+    void showMetadataLookupDialog(LookupMode mode);
+    void showMetadataLookupById();
 
     void createNewPlaylist() const;
     void createNewAutoPlaylist();
@@ -237,6 +246,7 @@ private:
     QPointer<PlaylistManagerWidget> m_playlistManagerWidget;
     Widgets* m_widgets;
     ConversionController* m_conversionController;
+    VerificationController* m_verificationController;
 
     struct ConversionPresetAction
     {
@@ -249,6 +259,10 @@ private:
     QAction* m_lastUsedConversionAction;
     Command* m_lastUsedConversionCommand;
     std::vector<ConversionPresetAction> m_conversionPresetActions;
+
+    QAction* m_lookupArtistAlbumAction;
+    QAction* m_lookupIdAction;
+    QPointer<MetadataLookupDialog> m_metadataLookupDialog;
 
     ScriptParser m_scriptParser;
     CoverProvider m_coverProvider;

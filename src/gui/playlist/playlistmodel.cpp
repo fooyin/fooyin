@@ -20,7 +20,6 @@
 #include "playlistmodel.h"
 
 #include "internalguisettings.h"
-#include "playlistinteractor.h"
 #include "playlistitem.h"
 #include "playlistpopulator.h"
 #include "playlistpreset.h"
@@ -39,9 +38,11 @@
 #include <gui/guistyleprovider.h>
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
+#include <gui/playlist/playlistinteractor.h>
 #include <gui/trackmimedata.h>
 #include <gui/widgets/autoheaderview.h>
 #include <utils/datastream.h>
+#include <utils/heartdelegate.h>
 #include <utils/modelutils.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/starrating.h>
@@ -66,14 +67,15 @@ constexpr auto MaxPlaylistTracks         = 250;
 constexpr int UniformHeightValueMask     = 0xFFFF;
 constexpr auto LoadingTextTrackThreshold = 10000;
 
+namespace Fooyin {
 namespace {
-int loadingTextClearTrackCount(const Fooyin::SettingsManager& settings, qsizetype trackCount)
+int loadingTextClearTrackCount(const SettingsManager& settings, qsizetype trackCount)
 {
     if(trackCount <= LoadingTextTrackThreshold) {
         return 0;
     }
 
-    const int preloadCount = settings.value<Fooyin::Settings::Gui::Internal::PlaylistTrackPreloadCount>();
+    const int preloadCount = settings.value<Settings::Gui::Internal::PlaylistTrackPreloadCount>();
     if(preloadCount > 0 && preloadCount < LoadingTextTrackThreshold) {
         return 0;
     }
@@ -97,37 +99,38 @@ QString normaliseWriteField(QString field)
     return field;
 }
 
+bool isLoveWriteField(const QString& field)
+{
+    return field.compare(QLatin1StringView{Constants::MetaData::Loved}, Qt::CaseInsensitive) == 0
+        || field.compare(QLatin1StringView{Constants::MetaData::LoveEditor}, Qt::CaseInsensitive) == 0;
+}
+
 bool isRatingWriteField(const QString& field)
 {
-    return field.compare(QLatin1String{Fooyin::Constants::MetaData::RatingEditor}, Qt::CaseInsensitive) == 0
-        || field.compare(QLatin1String{Fooyin::Constants::MetaData::Rating}, Qt::CaseInsensitive) == 0
-        || field.compare(QLatin1String{Fooyin::Constants::MetaData::Stars}, Qt::CaseInsensitive) == 0;
+    return field.compare(QLatin1StringView{Constants::MetaData::RatingEditor}, Qt::CaseInsensitive) == 0
+        || field.compare(QLatin1StringView{Constants::MetaData::Rating}, Qt::CaseInsensitive) == 0
+        || field.compare(QLatin1StringView{Constants::MetaData::Stars}, Qt::CaseInsensitive) == 0;
 }
 
 QList<int> playlistTrackChangedRoles()
 {
-    return {Fooyin::PlaylistItem::Role::Column,
-            Qt::DisplayRole,
-            Qt::EditRole,
-            Qt::DecorationRole,
-            Qt::BackgroundRole,
-            Qt::SizeHintRole};
+    return {PlaylistItem::Role::Column, Qt::DisplayRole,    Qt::EditRole,
+            Qt::DecorationRole,         Qt::BackgroundRole, Qt::SizeHintRole};
 }
 
-Fooyin::Data mergeUpdatedItemData(const Fooyin::Data& currentData, const Fooyin::Data& updatedData,
-                                  const std::set<int>& columnsUpdated)
+Data mergeUpdatedItemData(const Data& currentData, const Data& updatedData, const std::set<int>& columnsUpdated)
 {
     if(columnsUpdated.empty()) {
         return updatedData;
     }
 
-    const auto* currentTrack = std::get_if<Fooyin::PlaylistTrackItem>(&currentData);
-    const auto* updatedTrack = std::get_if<Fooyin::PlaylistTrackItem>(&updatedData);
+    const auto* currentTrack = std::get_if<PlaylistTrackItem>(&currentData);
+    const auto* updatedTrack = std::get_if<PlaylistTrackItem>(&updatedData);
     if(!currentTrack || !updatedTrack) {
         return updatedData;
     }
 
-    Fooyin::PlaylistTrackItem mergedTrack{*currentTrack};
+    PlaylistTrackItem mergedTrack{*currentTrack};
     mergedTrack.setTrack(updatedTrack->track());
     mergedTrack.setIndex(updatedTrack->index());
     mergedTrack.setRowHeight(updatedTrack->rowHeight());
@@ -150,29 +153,30 @@ Fooyin::Data mergeUpdatedItemData(const Fooyin::Data& currentData, const Fooyin:
     return mergedTrack;
 }
 
-bool isEditablePlaylistColumn(const Fooyin::PlaylistColumn& column)
+bool isEditablePlaylistColumn(const PlaylistColumn& column)
 {
     const QString writeField = normaliseWriteField(column.writeField);
-    return !writeField.isEmpty() && !column.isPixmap && column.field != QString::fromLatin1(Fooyin::PlayingIcon);
+    return !writeField.isEmpty() && !column.isPixmap && column.field != QString::fromLatin1(PlayingIcon);
 }
 
-QString editStringForTrack(const Fooyin::Track& track, const QString& writeField)
+QString editStringForTrack(const Track& track, const QString& writeField)
 {
     QString value = track.metaValue(writeField);
-    value.replace(QLatin1String{Fooyin::Constants::UnitSeparator}, u"; "_s);
+    value.replace(QLatin1String{Constants::UnitSeparator}, u"; "_s);
     return value;
 }
 
-Fooyin::ScriptFieldValue trackValueForEdit(const QString& writeField, const QVariant& value)
+ScriptFieldValue trackValueForEdit(const QString& writeField, const QVariant& value)
 {
     const QString normalisedField = normaliseWriteField(writeField);
 
+    if(isLoveWriteField(normalisedField)) {
+        return value.canConvert<HeartValue>() ? QString::number(value.value<HeartValue>().loved()) : value.toString();
+    }
     if(isRatingWriteField(normalisedField)) {
-        if(value.canConvert<Fooyin::StarRating>()) {
-            const float rating = value.value<Fooyin::StarRating>().rating();
-            return normalisedField.compare(QLatin1String{Fooyin::Constants::MetaData::RatingEditor},
-                                           Qt::CaseInsensitive)
-                        == 0
+        if(value.canConvert<StarRating>()) {
+            const float rating = value.value<StarRating>().rating();
+            return normalisedField.compare(QLatin1String{Constants::MetaData::RatingEditor}, Qt::CaseInsensitive) == 0
                      ? rating
                      : rating * 5.0F;
         }
@@ -182,7 +186,7 @@ Fooyin::ScriptFieldValue trackValueForEdit(const QString& writeField, const QVar
         return ok ? rating : -1.0F;
     }
 
-    if(Fooyin::Track::isMultiValueTag(normalisedField)) {
+    if(Track::isMultiValueTag(normalisedField)) {
         QStringList listValue = value.toString().split(u';', Qt::SkipEmptyParts);
         std::ranges::transform(listValue, listValue.begin(), [](const QString& val) { return val.trimmed(); });
         return listValue;
@@ -191,10 +195,10 @@ Fooyin::ScriptFieldValue trackValueForEdit(const QString& writeField, const QVar
     return value.toString();
 }
 
-bool cmpItemsPlaylistItems(Fooyin::PlaylistItem* pItem1, Fooyin::PlaylistItem* pItem2, bool reverse = false)
+bool cmpItemsPlaylistItems(PlaylistItem* pItem1, PlaylistItem* pItem2, bool reverse = false)
 {
-    const Fooyin::PlaylistItem* item1{pItem1};
-    const Fooyin::PlaylistItem* item2{pItem2};
+    const PlaylistItem* item1{pItem1};
+    const PlaylistItem* item2{pItem2};
 
     while(item1->parent() && item2->parent() && item1->parent() != item2->parent()) {
         if(item1->parent() == item2) {
@@ -203,10 +207,10 @@ bool cmpItemsPlaylistItems(Fooyin::PlaylistItem* pItem1, Fooyin::PlaylistItem* p
         if(item2->parent() == item1) {
             return false;
         }
-        if(item1->parent()->type() != Fooyin::PlaylistItem::Root) {
+        if(item1->parent()->type() != PlaylistItem::Root) {
             item1 = item1->parent();
         }
-        if(item2->parent()->type() != Fooyin::PlaylistItem::Root) {
+        if(item2->parent()->type() != PlaylistItem::Root) {
             item2 = item2->parent();
         }
     }
@@ -216,7 +220,7 @@ bool cmpItemsPlaylistItems(Fooyin::PlaylistItem* pItem1, Fooyin::PlaylistItem* p
 
 struct cmpItems
 {
-    bool operator()(Fooyin::PlaylistItem* pItem1, Fooyin::PlaylistItem* pItem2) const
+    bool operator()(PlaylistItem* pItem1, PlaylistItem* pItem2) const
     {
         return cmpItemsPlaylistItems(pItem1, pItem2);
     }
@@ -224,13 +228,13 @@ struct cmpItems
 
 struct cmpItemsReverse
 {
-    bool operator()(Fooyin::PlaylistItem* pItem1, Fooyin::PlaylistItem* pItem2) const
+    bool operator()(PlaylistItem* pItem1, PlaylistItem* pItem2) const
     {
         return cmpItemsPlaylistItems(pItem1, pItem2, true);
     }
 };
 
-using ItemPtrSet = std::set<Fooyin::PlaylistItem*, cmpItemsReverse>;
+using ItemPtrSet = std::set<PlaylistItem*, cmpItemsReverse>;
 
 int determineDropIndex(const QAbstractItemModel* model, const QModelIndex& parent, int row)
 {
@@ -239,7 +243,7 @@ int determineDropIndex(const QAbstractItemModel* model, const QModelIndex& paren
     }
 
     const auto getPlaylistIndex = [](const QModelIndex& index) {
-        return index.data(Fooyin::PlaylistItem::Index).toInt();
+        return index.data(PlaylistItem::Index).toInt();
     };
 
     if(parent.isValid() && model->hasIndex(row, 0, parent)) {
@@ -259,9 +263,9 @@ int determineDropIndex(const QAbstractItemModel* model, const QModelIndex& paren
     return getPlaylistIndex(current);
 }
 
-Fooyin::PlaylistItem* cloneParent(Fooyin::ItemKeyMap& nodes, Fooyin::PlaylistItem* parent)
+PlaylistItem* cloneParent(ItemKeyMap& nodes, PlaylistItem* parent)
 {
-    const auto parentKey{Fooyin::UId::create()};
+    const auto parentKey{UId::create()};
     auto* newParent = &nodes.emplace(parentKey, *parent).first->second;
     newParent->setKey(parentKey);
     newParent->resetRow();
@@ -317,8 +321,6 @@ QModelIndexList optimiseSelection(QAbstractItemModel* model, const QModelIndexLi
 
 ItemPtrSet optimiseSelection(const ItemPtrSet& selection)
 {
-    using Fooyin::PlaylistItem;
-
     std::queue<PlaylistItem*> stack;
 
     for(PlaylistItem* index : selection) {
@@ -332,7 +334,7 @@ ItemPtrSet optimiseSelection(const ItemPtrSet& selection)
         PlaylistItem* current = stack.front();
         stack.pop();
         PlaylistItem* parent    = current->parent();
-        const bool parentIsRoot = parent->type() == Fooyin::PlaylistItem::Root;
+        const bool parentIsRoot = parent->type() == PlaylistItem::Root;
 
         if(selection.contains(parent) || selectedParents.contains(parent)) {
             continue;
@@ -363,15 +365,13 @@ ItemPtrSet optimiseSelection(const ItemPtrSet& selection)
     return optimisedSelection;
 }
 
-Fooyin::TrackIndexRangeList determineTrackIndexGroups(const QModelIndexList& indexes, const QModelIndex& target = {},
-                                                      int row = -1)
+TrackIndexRangeList determineTrackIndexGroups(const QModelIndexList& indexes, const QModelIndex& target = {},
+                                              int row = -1)
 {
-    using Fooyin::PlaylistItem;
-
-    Fooyin::TrackIndexRangeList indexGroups;
+    TrackIndexRangeList indexGroups;
 
     QModelIndexList sortedIndexes{indexes};
-    std::ranges::sort(sortedIndexes, Fooyin::Utils::sortModelIndexes);
+    std::ranges::sort(sortedIndexes, Utils::sortModelIndexes);
 
     const auto getIndex = [](const QModelIndex& index) {
         return index.data(PlaylistItem::Index).toInt();
@@ -425,7 +425,7 @@ IndexGroupsList determineIndexGroups(const QModelIndexList& indexes)
     IndexGroupsList indexGroups;
 
     QModelIndexList sortedIndexes{indexes};
-    std::ranges::sort(sortedIndexes, Fooyin::Utils::sortModelIndexes);
+    std::ranges::sort(sortedIndexes, Utils::sortModelIndexes);
 
     QModelIndexList group;
 
@@ -454,11 +454,11 @@ IndexGroupsList determineIndexGroups(const QModelIndexList& indexes)
 
 struct SplitParent
 {
-    Fooyin::PlaylistItem* source;
-    Fooyin::PlaylistItem* target;
+    PlaylistItem* source;
+    PlaylistItem* target;
     int firstRow{0};
     int finalRow{0};
-    std::vector<Fooyin::PlaylistItem*> children;
+    std::vector<PlaylistItem*> children;
 };
 
 QByteArray saveTracks(const QModelIndexList& indexes)
@@ -466,11 +466,11 @@ QByteArray saveTracks(const QModelIndexList& indexes)
     QByteArray result;
     QDataStream stream(&result, QIODevice::WriteOnly);
 
-    Fooyin::TrackIds trackIds;
+    TrackIds trackIds;
     trackIds.reserve(indexes.size());
 
     std::ranges::transform(indexes, std::back_inserter(trackIds), [](const QModelIndex& index) {
-        return index.data(Fooyin::PlaylistItem::Role::PersistentItemData).value<Fooyin::PlaylistTrack>().track.id();
+        return index.data(PlaylistItem::Role::PersistentItemData).value<PlaylistTrack>().track.id();
     });
 
     stream << trackIds;
@@ -478,14 +478,14 @@ QByteArray saveTracks(const QModelIndexList& indexes)
     return result;
 }
 
-Fooyin::QueueTracks savePlaylistTracks(const Fooyin::UId& playlistId, const QModelIndexList& indexes)
+QueueTracks savePlaylistTracks(const UId& playlistId, const QModelIndexList& indexes)
 {
-    Fooyin::QueueTracks tracks;
+    QueueTracks tracks;
 
     for(const QModelIndex& index : indexes) {
-        auto track       = index.data(Fooyin::PlaylistItem::Role::PersistentItemData).value<Fooyin::PlaylistTrack>();
-        track.playlistId = playlistId;
-        track.indexInPlaylist = index.data(Fooyin::PlaylistItem::Role::Index).toInt();
+        auto track            = index.data(PlaylistItem::Role::PersistentItemData).value<PlaylistTrack>();
+        track.playlistId      = playlistId;
+        track.indexInPlaylist = index.data(PlaylistItem::Role::Index).toInt();
         tracks.emplace_back(track);
 
         if(std::cmp_greater_equal(tracks.size(), MaxPlaylistTracks)) {
@@ -496,7 +496,7 @@ Fooyin::QueueTracks savePlaylistTracks(const Fooyin::UId& playlistId, const QMod
     return tracks;
 }
 
-QByteArray saveIndexes(const QModelIndexList& indexes, Fooyin::Playlist* playlist)
+QByteArray saveIndexes(const QModelIndexList& indexes, Playlist* playlist)
 {
     if(!playlist) {
         return {};
@@ -526,7 +526,7 @@ QByteArray saveIndexes(const QModelIndexList& indexes, Fooyin::Playlist* playlis
     return result;
 }
 
-bool dropOnSamePlaylist(QByteArray data, Fooyin::Playlist* playlist)
+bool dropOnSamePlaylist(QByteArray data, Playlist* playlist)
 {
     if(!playlist) {
         return {};
@@ -534,13 +534,13 @@ bool dropOnSamePlaylist(QByteArray data, Fooyin::Playlist* playlist)
 
     QDataStream stream(&data, QIODevice::ReadOnly);
 
-    Fooyin::UId playlistId;
+    UId playlistId;
     stream >> playlistId;
 
     return playlistId == playlist->id();
 }
 
-QModelIndexList restoreIndexes(QAbstractItemModel* model, QByteArray data, Fooyin::Playlist* playlist)
+QModelIndexList restoreIndexes(QAbstractItemModel* model, QByteArray data, Playlist* playlist)
 {
     if(!playlist) {
         return {};
@@ -549,7 +549,7 @@ QModelIndexList restoreIndexes(QAbstractItemModel* model, QByteArray data, Fooyi
     QModelIndexList result;
     QDataStream stream(&data, QIODevice::ReadOnly);
 
-    Fooyin::UId playlistId;
+    UId playlistId;
     stream >> playlistId;
 
     if(playlistId != playlist->id()) {
@@ -573,22 +573,22 @@ QModelIndexList restoreIndexes(QAbstractItemModel* model, QByteArray data, Fooyi
     return result;
 }
 
-Fooyin::TrackList collectHeaderTracks(Fooyin::PlaylistItem* header)
+TrackList collectHeaderTracks(PlaylistItem* header)
 {
-    Fooyin::TrackList tracks;
+    TrackList tracks;
 
     if(!header) {
         return tracks;
     }
 
     const auto type = header->type();
-    if(type != Fooyin::PlaylistItem::Header && type != Fooyin::PlaylistItem::Subheader) {
+    if(type != PlaylistItem::Header && type != PlaylistItem::Subheader) {
         return tracks;
     }
 
     const auto& children = header->children();
-    for(Fooyin::PlaylistItem* child : children) {
-        if(child->type() == Fooyin::PlaylistItem::Track) {
+    for(PlaylistItem* child : children) {
+        if(child->type() == PlaylistItem::Track) {
             tracks.emplace_back(std::get<0>(child->data()).track().track);
         }
         else {
@@ -602,7 +602,7 @@ Fooyin::TrackList collectHeaderTracks(Fooyin::PlaylistItem* header)
 
 QStyleOptionViewItem::Position getIconPosition(const QString& text)
 {
-    const auto iconPos = text.indexOf(QLatin1String(Fooyin::PlayingIcon));
+    const auto iconPos = text.indexOf(QLatin1String(PlayingIcon));
 
     if(iconPos <= 0) {
         return QStyleOptionViewItem::Left;
@@ -611,10 +611,10 @@ QStyleOptionViewItem::Position getIconPosition(const QString& text)
     return QStyleOptionViewItem::Right;
 }
 
-Fooyin::PlaylistModel::PlaybackDependency dependencyForVariable(const QString& variable)
+PlaylistModel::PlaybackDependency dependencyForVariable(const QString& variable)
 {
-    using namespace Fooyin::Constants;
-    using Dependency = Fooyin::PlaylistModel::PlaybackDependency;
+    using namespace Constants;
+    using Dependency = PlaylistModel::PlaybackDependency;
 
     if(variable.compare(u"PLAYBACK_TIME"_s, Qt::CaseInsensitive) == 0
        || variable.compare(u"PLAYBACK_TIME_S"_s, Qt::CaseInsensitive) == 0
@@ -635,7 +635,7 @@ Fooyin::PlaylistModel::PlaybackDependency dependencyForVariable(const QString& v
     return Dependency::None;
 }
 
-Fooyin::PlaylistModel::PlaybackDependencies dependenciesForExpression(const Fooyin::Expression& expression)
+PlaylistModel::PlaybackDependencies dependenciesForExpression(const Expression& expression)
 {
     using namespace Fooyin;
     using Dependencies = PlaylistModel::PlaybackDependencies;
@@ -662,11 +662,11 @@ Fooyin::PlaylistModel::PlaybackDependencies dependenciesForExpression(const Fooy
     return dependencies;
 }
 
-Fooyin::PlaylistModel::PlaybackDependencies dependenciesForScript(const Fooyin::ParsedScript& script)
+PlaylistModel::PlaybackDependencies dependenciesForScript(const ParsedScript& script)
 {
-    using Dependencies = Fooyin::PlaylistModel::PlaybackDependencies;
+    using Dependencies = PlaylistModel::PlaybackDependencies;
 
-    Dependencies dependencies{Fooyin::PlaylistModel::None};
+    Dependencies dependencies{PlaylistModel::None};
     for(const auto& expression : script.expressions) {
         dependencies |= dependenciesForExpression(expression);
     }
@@ -679,20 +679,18 @@ void mergeColumnSets(std::set<int>& target, const std::set<int>& source)
     target.insert(source.cbegin(), source.cend());
 }
 
-// TODO: make these colours configurable
-QColor playingRowColor()
+QColor defaultPlayingRowColour()
 {
-    QColor base = QApplication::palette().color(QPalette::Inactive, QPalette::Highlight);
+    QColor colour = QApplication::palette().color(QPalette::Inactive, QPalette::Highlight);
+    colour        = Utils::isDarkMode() ? colour.lighter(150) : colour.darker(150);
+    colour.setAlpha(110);
+    return colour;
+}
 
-    if(Fooyin::Utils::isDarkMode()) {
-        base = base.lighter(150);
-    }
-    else {
-        base = base.darker(150);
-    }
-
-    base.setAlpha(110);
-    return base;
+QColor playingRowColour(const SettingsManager& settings)
+{
+    const QVariant configured = settings.value<Settings::Gui::Internal::PlaylistPlayingRowColour>();
+    return configured.isNull() ? defaultPlayingRowColour() : configured.value<QColor>();
 }
 
 QColor disabledRowColor()
@@ -704,7 +702,6 @@ QColor disabledRowColor()
 }
 } // namespace
 
-namespace Fooyin {
 PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader* audioLoader,
                              CoverProvider* coverProvider, SettingsManager* settings, GuiStyleProvider* styleProvider,
                              QObject* parent)
@@ -716,7 +713,8 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     , m_coverProvider{coverProvider}
     , m_id{UId::create()}
     , m_resetting{false}
-    , m_playingColour{playingRowColor()}
+    , m_playingColour{playingRowColour(*settings)}
+    , m_playingFont{settings->value<Settings::Gui::Internal::PlaylistPlayingRowFont>()}
     , m_disabledColour{disabledRowColor()}
     , m_populator{playlistInteractor->playerController(), settings}
     , m_playlistLoaded{false}
@@ -724,6 +722,11 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     , m_pixmapPadding{settings->value<Settings::Gui::Internal::PlaylistImagePadding>()}
     , m_pixmapPaddingTop{settings->value<Settings::Gui::Internal::PlaylistImagePaddingTop>()}
     , m_starRatingSize{settings->value<Settings::Gui::StarRatingSize>()}
+    , m_loveHeartSize{settings->value<Settings::Gui::LoveHeartSize>()}
+    , m_ratingStarColours{Gui::ratingStarColours(*settings)}
+    , m_unratedStarColour{Gui::unratedStarColour(*settings)}
+    , m_loveHeartColour{Gui::loveHeartColour(*settings)}
+    , m_unlovedHeartColour{Gui::unlovedHeartColour(*settings)}
     , m_singleColumnHasPositionDependency{false}
     , m_singleColumnHasBitrateDependency{false}
     , m_singleColumnHasPlaybackStateDependency{false}
@@ -743,8 +746,33 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
         m_pixmapPaddingTop = padding;
         invalidateData();
     });
+    m_settings->subscribe<Settings::Gui::LoveHeartSize>(this, [this](int size) {
+        m_loveHeartSize = size;
+        invalidateData();
+    });
     m_settings->subscribe<Settings::Gui::StarRatingSize>(this, [this](int size) {
         m_starRatingSize = size;
+        invalidateData();
+    });
+    const auto updateRatingColours = [this](const QVariant&) {
+        m_ratingStarColours = Gui::ratingStarColours(*m_settings);
+        invalidateData();
+    };
+    m_settings->subscribe<Settings::Gui::RatingOneStarColour>(this, updateRatingColours);
+    m_settings->subscribe<Settings::Gui::RatingTwoStarColour>(this, updateRatingColours);
+    m_settings->subscribe<Settings::Gui::RatingThreeStarColour>(this, updateRatingColours);
+    m_settings->subscribe<Settings::Gui::RatingFourStarColour>(this, updateRatingColours);
+    m_settings->subscribe<Settings::Gui::RatingFiveStarColour>(this, updateRatingColours);
+    m_settings->subscribe<Settings::Gui::UnratedStarColour>(this, [this](const QVariant& colour) {
+        m_unratedStarColour = colour.value<QColor>();
+        invalidateData();
+    });
+    m_settings->subscribe<Settings::Gui::LoveHeartColour>(this, [this](const QVariant& colour) {
+        m_loveHeartColour = colour.value<QColor>();
+        invalidateData();
+    });
+    m_settings->subscribe<Settings::Gui::UnlovedHeartColour>(this, [this](const QVariant& colour) {
+        m_unlovedHeartColour = colour.value<QColor>();
         invalidateData();
     });
     auto refreshRatingStars = [this](const QString&) {
@@ -757,6 +785,11 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     m_settings->subscribe<Settings::Gui::RatingEmptyStarSymbol>(this, refreshRatingStars);
 
     m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, &PlaylistModel::updateColours);
+    m_settings->subscribe<Settings::Gui::Internal::PlaylistPlayingRowColour>(this, &PlaylistModel::updateColours);
+    m_settings->subscribe<Settings::Gui::Internal::PlaylistPlayingRowFont>(this, [this](const QVariant& font) {
+        m_playingFont = font;
+        notifyDataChangedForSubtree({}, {Qt::FontRole});
+    });
     m_settings->subscribe<Settings::Gui::IconTheme>(
         this, [this]() { notifyDataChangedForSubtree({}, {Qt::DecorationRole, Qt::SizeHintRole}); });
 
@@ -874,7 +907,15 @@ bool PlaylistModel::setData(const QModelIndex& index, const QVariant& value, int
         return false;
     }
 
-    Q_EMIT metadataWriteRequested({*updatedTrack});
+    if(context->loveField) {
+        Q_EMIT tracksLoved({*updatedTrack});
+    }
+    else if(context->ratingField) {
+        Q_EMIT tracksRated({*updatedTrack});
+    }
+    else {
+        Q_EMIT metadataWriteRequested({*updatedTrack});
+    }
 
     Q_EMIT dataChanged(index, index, {Qt::EditRole});
     return true;
@@ -985,8 +1026,32 @@ Qt::DropActions PlaylistModel::supportedDropActions() const
 
 QMimeData* PlaylistModel::mimeData(const QModelIndexList& indexes) const
 {
-    auto* mimeData = new QMimeData();
-    storeMimeData(indexes, mimeData);
+    QModelIndexList sortedIndexes{indexes};
+    std::ranges::sort(sortedIndexes, Utils::sortModelIndexes);
+
+    TrackList tracks;
+    tracks.reserve(sortedIndexes.size());
+
+    for(const QModelIndex& index : std::as_const(sortedIndexes)) {
+        tracks.push_back(index.data(PlaylistItem::Role::PersistentItemData).value<PlaylistTrack>().track);
+    }
+
+    auto* mimeData = new TrackMimeData{std::move(tracks)};
+
+    QByteArray modelId;
+    QDataStream stream{&modelId, QIODevice::WriteOnly};
+    stream << m_id;
+    mimeData->setData(QString::fromLatin1(MimeModelId), modelId);
+
+    Gui::populateExternalTrackMimeData(mimeData->tracks(), mimeData);
+    mimeData->setData(QString::fromLatin1(Constants::Mime::TrackIds), saveTracks(sortedIndexes));
+    if(m_currentPlaylist) {
+        mimeData->setData(QString::fromLatin1(Constants::Mime::PlaylistItems),
+                          saveIndexes(sortedIndexes, m_currentPlaylist));
+        mimeData->setData(QString::fromLatin1(Constants::Mime::QueueTracks),
+                          Gui::queueTracksToMimeData(savePlaylistTracks(m_currentPlaylist->id(), sortedIndexes)));
+    }
+
     return mimeData;
 }
 
@@ -1024,8 +1089,8 @@ bool PlaylistModel::shouldShowLoadingText() const
     return m_loadingTextPending || std::cmp_less(m_trackIndexes.size(), clearTrackCount);
 }
 
-std::expected<TrackList, PlaylistModel::BulkEditError> PlaylistModel::setBulkData(const QModelIndexList& indexes,
-                                                                                  const QVariant& value)
+std::expected<PlaylistModel::BulkEditResult, PlaylistModel::BulkEditError>
+PlaylistModel::setBulkData(const QModelIndexList& indexes, const QVariant& value)
 {
     if(indexes.empty()) {
         return std::unexpected{BulkEditError::InvalidRequest};
@@ -1069,7 +1134,9 @@ std::expected<TrackList, PlaylistModel::BulkEditError> PlaylistModel::setBulkDat
         Q_EMIT dataChanged(changedIndex, changedIndex, {Qt::EditRole});
     }
 
-    return tracksToWrite;
+    return BulkEditResult{.tracks      = std::move(tracksToWrite),
+                          .ratingField = bulkEditContext->ratingField,
+                          .loveField   = bulkEditContext->loveField};
 }
 
 MoveOperation PlaylistModel::moveTracks(const MoveOperation& operation)
@@ -1210,7 +1277,7 @@ void PlaylistModel::setPixmapColumnSizes(const std::vector<int>& sizes)
 
 void PlaylistModel::updateColours()
 {
-    m_playingColour = playingRowColor();
+    m_playingColour = playingRowColour(*m_settings);
     notifyDataChangedForSubtree({}, {Qt::BackgroundRole});
 }
 
@@ -1607,7 +1674,7 @@ void PlaylistModel::tracksChanged()
 
         if(const auto bottomRight = rightIndex(index); bottomRight.isValid()) {
             Q_EMIT dataChanged(index, bottomRight,
-                               {PlaylistItem::Role::Column, Qt::DecorationRole, Qt::BackgroundRole});
+                               {PlaylistItem::Role::Column, Qt::DecorationRole, Qt::BackgroundRole, Qt::FontRole});
         }
     };
 
@@ -1700,7 +1767,7 @@ void PlaylistModel::playingTrackChanged(const PlaylistTrack& track)
 
             if(const auto bottomRight = rightIndex(index); bottomRight.isValid()) {
                 Q_EMIT dataChanged(index, bottomRight,
-                                   {PlaylistItem::Role::Column, Qt::DecorationRole, Qt::BackgroundRole});
+                                   {PlaylistItem::Role::Column, Qt::DecorationRole, Qt::BackgroundRole, Qt::FontRole});
             }
         };
 
@@ -1746,7 +1813,7 @@ void PlaylistModel::playStateChanged(Player::PlayState state)
     if(std::exchange(m_currentPlayState, state) != state) {
         if(m_playingIndex.isValid()) {
             if(const auto bottomRight = rightIndex(m_playingIndex); bottomRight.isValid()) {
-                Q_EMIT dataChanged(m_playingIndex, bottomRight, {Qt::DecorationRole, Qt::BackgroundRole});
+                Q_EMIT dataChanged(m_playingIndex, bottomRight, {Qt::DecorationRole, Qt::BackgroundRole, Qt::FontRole});
             }
         }
     }
@@ -1788,26 +1855,28 @@ PlaylistModel::editableTrackContext(const QModelIndex& index) const
 std::optional<PlaylistModel::EditableTrackContext> PlaylistModel::editableTrackContextForColumn(int column) const
 {
     if(m_columns.empty() || column < 0 || std::cmp_greater_equal(column, m_columns.size())) {
-        return std::nullopt;
+        return {};
     }
 
     const PlaylistColumn& playlistColumn = m_columns.at(column);
     if(!isEditablePlaylistColumn(playlistColumn)) {
-        return std::nullopt;
+        return {};
     }
 
     const QString writeField = normaliseWriteField(playlistColumn.writeField);
     if(writeField.isEmpty()) {
-        return std::nullopt;
+        return {};
     }
 
-    return EditableTrackContext{
-        .column = column, .writeField = writeField, .ratingField = isRatingWriteField(writeField)};
+    return EditableTrackContext{.column      = column,
+                                .writeField  = writeField,
+                                .ratingField = isRatingWriteField(writeField),
+                                .loveField   = isLoveWriteField(writeField)};
 }
 
 bool PlaylistModel::canEditTrack(const Track& track, const EditableTrackContext& context) const
 {
-    if(context.ratingField) {
+    if(context.ratingField || context.loveField) {
         return true;
     }
 
@@ -1837,6 +1906,13 @@ PlaylistModel::prepareEditedTrack(const QModelIndex& index, const EditableTrackC
         const float currentRating = track.rating();
         const float nextRating = value.canConvert<StarRating>() ? value.value<StarRating>().rating() : value.toFloat();
         if(qFuzzyCompare(currentRating + 1.0F, nextRating + 1.0F)) {
+            return std::unexpected{BulkEditError::NoChanges};
+        }
+    }
+    else if(context.loveField) {
+        const bool currentLoved = track.isLoved();
+        const bool nextLoved    = value.canConvert<HeartValue>() ? value.value<HeartValue>().loved() : value.toBool();
+        if(currentLoved == nextLoved) {
             return std::unexpected{BulkEditError::NoChanges};
         }
     }
@@ -2229,16 +2305,26 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
         }
 
         const QString writeField = normaliseWriteField(playlistColumn.writeField);
+        if(isLoveWriteField(writeField)) {
+            return QVariant::fromValue(
+                HeartValue{track.isLoved(), m_loveHeartSize, m_loveHeartColour, m_unlovedHeartColour});
+        }
         if(isRatingWriteField(writeField)) {
-            return QVariant::fromValue(StarRating{track.rating(), 5, m_starRatingSize});
+            return QVariant::fromValue(
+                StarRating{track.rating(), 5, m_starRatingSize, m_ratingStarColours, m_unratedStarColour});
         }
 
         return editStringForTrack(track, writeField);
     }
 
-    if(role == Qt::DisplayRole && !m_columns.empty()
-       && m_columns.at(column).field == QLatin1String{Constants::RatingEditor}) {
-        return StarRating{track.rating(), 5, m_starRatingSize};
+    if(role == Qt::DisplayRole && !m_columns.empty()) {
+        if(m_columns.at(column).field == QLatin1StringView{Constants::RatingEditor}) {
+            return StarRating{track.rating(), 5, m_starRatingSize, m_ratingStarColours, m_unratedStarColour};
+        }
+        if(m_columns.at(column).field == QLatin1StringView{Constants::LoveEditor}) {
+            return QVariant::fromValue(
+                HeartValue{track.isLoved(), m_loveHeartSize, m_loveHeartColour, m_unlovedHeartColour});
+        }
     }
 
     switch(role) {
@@ -2314,10 +2400,16 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
             if(!track.isEnabled()) {
                 return m_disabledColour;
             }
-            if(isPlaying) {
+            if(isPlaying && m_playingColour.alpha() > 0) {
                 return m_playingColour;
             }
 
+            break;
+        }
+        case Qt::FontRole: {
+            if(isPlaying && !m_playingFont.isNull()) {
+                return m_playingFont;
+            }
             break;
         }
         case PlaylistItem::Role::CoverKey: {
@@ -2384,9 +2476,11 @@ QVariant PlaylistModel::headerData(PlaylistItem* item, int column, int role) con
         return {};
     }
 
+    const auto height = header.height();
+
     switch(role) {
         case PlaylistItem::Role::UniformHeightKey:
-            return uniformHeightKey(PlaylistItem::Header, header.size().height());
+            return uniformHeightKey(PlaylistItem::Header, height);
         case PlaylistItem::Role::Title:
             return header.title();
         case PlaylistItem::Role::Simple:
@@ -2402,13 +2496,15 @@ QVariant PlaylistModel::headerData(PlaylistItem* item, int column, int role) con
                 return {};
             }
             if(header.coverTrack().has_value()) {
-                return m_coverProvider->trackCoverThumbnail(*header.coverTrack(), header.size(), Track::Cover::Front);
+                return m_coverProvider->trackCoverThumbnail(*header.coverTrack(), QSize{height, height},
+                                                            Track::Cover::Front);
             }
             return {};
         }
         case PlaylistItem::Role::CoverKey:
             if(!m_currentPreset.header.simple && m_currentPreset.header.showCover && header.coverTrack().has_value()) {
-                return m_coverProvider->thumbnailCacheKey(*header.coverTrack(), header.size(), Track::Cover::Front);
+                return m_coverProvider->thumbnailCacheKey(*header.coverTrack(), QSize{height, height},
+                                                          Track::Cover::Front);
             }
             break;
         default:
@@ -2432,7 +2528,7 @@ QVariant PlaylistModel::subheaderData(PlaylistItem* item, int column, int role) 
 
     switch(role) {
         case PlaylistItem::Role::UniformHeightKey:
-            return uniformHeightKey(PlaylistItem::Subheader, header.size().height());
+            return uniformHeightKey(PlaylistItem::Subheader, header.height());
         case PlaylistItem::Role::Title:
             return header.title();
         case PlaylistItem::Role::Subtitle:
@@ -2782,35 +2878,6 @@ void PlaylistModel::handleTrackGroup(PendingData& data)
 
     mergeTrackParents(data.trackParents);
     cleanupHeaders();
-}
-
-void PlaylistModel::storeMimeData(const QModelIndexList& indexes, QMimeData* mimeData) const
-{
-    if(mimeData) {
-        QByteArray modelId;
-        QDataStream stream{&modelId, QIODevice::WriteOnly};
-        stream << m_id;
-        mimeData->setData(QString::fromLatin1(MimeModelId), modelId);
-
-        QModelIndexList sortedIndexes{indexes};
-        std::ranges::sort(sortedIndexes, Utils::sortModelIndexes);
-
-        TrackList tracks;
-        tracks.reserve(sortedIndexes.size());
-
-        for(const QModelIndex& index : std::as_const(sortedIndexes)) {
-            tracks.push_back(index.data(PlaylistItem::Role::PersistentItemData).value<PlaylistTrack>().track);
-        }
-
-        Gui::populateExternalTrackMimeData(tracks, mimeData);
-        mimeData->setData(QString::fromLatin1(Constants::Mime::TrackIds), saveTracks(sortedIndexes));
-        if(m_currentPlaylist) {
-            mimeData->setData(QString::fromLatin1(Constants::Mime::PlaylistItems),
-                              saveIndexes(sortedIndexes, m_currentPlaylist));
-            mimeData->setData(QString::fromLatin1(Constants::Mime::QueueTracks),
-                              Gui::queueTracksToMimeData(savePlaylistTracks(m_currentPlaylist->id(), sortedIndexes)));
-        }
-    }
 }
 
 int PlaylistModel::dropInsertRows(const PlaylistItemList& rows, const QModelIndex& target, int row)
@@ -3411,6 +3478,10 @@ PlaylistTrackList PlaylistModel::tracksWithPlayingTrackOverlay(const PlaylistTra
 
 PlaylistModel::PlayingTrackIndexResolution PlaylistModel::resolvePlayingTrackIndex(const PlaylistTrack& track) const
 {
+    if(!m_currentPlaylist || track.playlistId != m_currentPlaylist->id()) {
+        return {.index = -1, .structuralRemapPending = false};
+    }
+
     const int entryIndex = track.entryId.isValid() ? playlistIndexForTrackEntry(track.entryId) : -1;
     const bool structuralRemapPending
         = track.entryId.isValid() && track.indexInPlaylist >= 0
@@ -3531,7 +3602,7 @@ PlaylistModel::MoveOperationMap PlaylistModel::determineMoveOperationGroups(cons
 
     for(const auto& [index, tracks] : operation) {
         for(const auto& range : tracks) {
-            Fooyin::PlaylistItemList rows;
+            PlaylistItemList rows;
             rows.reserve(range.count());
 
             for(int trackIndex{range.first}; trackIndex <= range.last; ++trackIndex) {

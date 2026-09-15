@@ -47,6 +47,12 @@ public:
     void run();
     void stop();
 
+    [[nodiscard]] int pendingCount() const;
+    [[nodiscard]] int succeededCount() const;
+    [[nodiscard]] int failedCount() const;
+    [[nodiscard]] int skippedCount() const;
+    [[nodiscard]] int cancelledCount() const;
+
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
@@ -61,12 +67,16 @@ Q_SIGNALS:
 
 private:
     void populate(const FileOperations& operations);
-    void operationFinished(const FileOpsItem& operation);
+    void operationCompleted(const FileOpResult& result);
+    void workerFinished();
     QString operationToString(Operation op) const;
+    static QString resultToString(const FileOpResult& result);
 
     QThread m_workerThread;
     FileOpsWorker m_worker;
     FileOperations m_operations;
+    std::deque<FileOpResult> m_results;
+    int m_succeededCount;
 };
 } // namespace FileOps
 } // namespace Fooyin

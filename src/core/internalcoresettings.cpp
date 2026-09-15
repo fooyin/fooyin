@@ -26,6 +26,7 @@
 #include <core/engine/audioformat.h>
 #include <core/engine/enginedefs.h>
 #include <core/network/networkaccessmanager.h>
+#include <core/player/playbackqueue.h>
 #include <utils/logging/messagehandler.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -86,7 +87,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Language>(QString{}, u"Language"_s);
     m_settings->createSetting<BufferLength>(4000, u"Engine/BufferLength"_s);
     m_settings->createSetting<OpenFilesPlaylist>(u"Default"_s, u"Playlist/OpenFilesPlaylist"_s);
-    m_settings->createSetting<OpenFilesSendTo>(false, u"Playlist/OpenFilesSendToPlaylist"_s);
+    m_settings->createSetting<OpenFilesSendTo>(true, u"Playlist/OpenFilesSendToPlaylist"_s);
     m_settings->createSetting<SaveRatingToMetadata>(false, u"Library/SaveRatingToFile"_s);
     m_settings->createSetting<SavePlaycountToMetadata>(false, u"Library/SavePlaycountToFile"_s);
     m_settings->createSetting<PlayedThreshold>(0.5, u"Playback/PlayedThreshold"_s);
@@ -97,6 +98,8 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<StopAfterCurrent>(false, u"Playback/StopAfterCurrent"_s);
     m_settings->createSetting<RGMode>(0, u"Engine/ReplayGainMode"_s);
     m_settings->createSetting<RGType>(static_cast<int>(ReplayGainType::Track), u"Engine/ReplayGainType"_s);
+    m_settings->createSetting<Internal::ReplayGainLastActiveMode>(static_cast<int>(Engine::ApplyGain),
+                                                                  u"Engine/ReplayGainLastActiveMode"_s);
     m_settings->createSetting<RGPreAmp>(0.0F, u"Engine/ReplayGainPreAmp"_s);
     m_settings->createSetting<NonRGPreAmp>(0.0F, u"Engine/NonReplayGainPreAmp"_s);
     m_settings->createSetting<UseVariousForCompilations>(false, u"Library/UseVariousArtistsForCompilations"_s);
@@ -112,7 +115,12 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<PreserveTimestamps>(false, u"Tagging/PreserveTimestamps"_s);
     m_settings->createSetting<PlaylistSkipMissing>(true, u"Playlist/SkipMissing"_s);
     m_settings->createSetting<PlaybackQueueStopWhenFinished>(false, u"Playback/PlaybackQueueStopWhenFinished"_s);
-    m_settings->createSetting<ClearPlaybackQueueOnExit>(false, u"Playback/ClearPlaybackQueueOnExit"_s);
+    m_settings->createSetting<ClearPlaybackQueueOnStartup>(false, u"Playback/ClearPlaybackQueueOnStartup"_s);
+    m_settings->createSetting<Settings::Core::PlaybackQueueMode>(
+        static_cast<int>(PlaybackQueueMode::PlaylistWithOverrides), u"Playback/PlaybackQueueMode"_s);
+    m_settings->createSetting<PlaybackQueueHistoryLimit>(5, u"Playback/PlaybackQueueHistoryLimit"_s);
+    m_settings->createSetting<PlaybackQueuePlayNowAction>(static_cast<int>(PlayNowAction::AllTracks),
+                                                          u"Playback/PlaybackQueuePlayNowAction"_s);
     m_settings->createSetting<OverwriteRatingOnReload>(false, u"Library/OverwriteRatingOnReload"_s);
     m_settings->createSetting<OverwritePlaycountOnReload>(false, u"Library/OverwritePlaycountOnReload"_s);
     m_settings->createSetting<OpenFileAddDirectory>(false, u"Playlist/OpenFileAddDirectory"_s);
@@ -121,6 +129,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
 
     m_settings->createSetting<Internal::MonitorLibraryDirectories>(false, u"Library/MonitorLibraries"_s);
     m_settings->createSetting<Internal::MonitorTrackFiles>(false, u"Library/MonitorTrackFiles"_s);
+    m_settings->createSetting<Internal::PlaylistSkipUnavailable>(false, u"Playlist/SkipUnavailable"_s);
     m_settings->createTempSetting<Internal::MuteVolume>(m_settings->value<OutputVolume>());
     m_settings->createSetting<Internal::DisabledPlugins>(QStringList{}, u"Plugins/Disabled"_s);
     m_settings->createSetting<Internal::EngineFading>(false, u"Engine/Fading"_s);
@@ -160,11 +169,21 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 
+    const int rgMode = m_settings->value<RGMode>();
+    if(rgMode != Engine::NoProcessing) {
+        m_settings->set<Internal::ReplayGainLastActiveMode>(rgMode);
+    }
+    m_settings->subscribe<RGMode>(m_settings, [settings = m_settings](int mode) {
+        if(mode != Engine::NoProcessing) {
+            settings->set<Internal::ReplayGainLastActiveMode>(mode);
+        }
+    });
+
     auto logLevel = m_settings->fileValue(LogLevel, QtInfoMsg);
     bool newLogFormat{false};
     int level = logLevel.toInt(&newLogFormat);
     if(!newLogFormat) {
-        level = QtMsgType::QtInfoMsg;
+        level = QtInfoMsg;
     }
     MessageHandler::setLevel(static_cast<QtMsgType>(level));
 }

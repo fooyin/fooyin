@@ -2,14 +2,15 @@
 
 source ci/setup.sh
 
-export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1
+brew untap aws/tap || true
+
 brew update
 brew install \
-    ccache \
     bison \
     flex \
     cmake \
     ninja \
+    glm \
     qt \
     taglib \
     ffmpeg \

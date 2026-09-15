@@ -65,11 +65,13 @@ using namespace std::chrono_literals;
 using namespace Qt::StringLiterals;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-constexpr auto PlaylistSaveInterval = 30s;
-constexpr auto SettingsSaveInterval = 5min;
+constexpr auto PlaylistSaveInterval      = 30s;
+constexpr auto PlaybackQueueSaveInterval = 1s;
+constexpr auto SettingsSaveInterval      = 5min;
 #else
-constexpr auto PlaylistSaveInterval = 30000;
-constexpr auto SettingsSaveInterval = 300000;
+constexpr auto PlaylistSaveInterval      = 30000;
+constexpr auto PlaybackQueueSaveInterval = 1000;
+constexpr auto SettingsSaveInterval      = 300000;
 #endif
 
 namespace {
@@ -127,15 +129,24 @@ Application::Application(QObject* parent)
     QObject::connect(m_playlistHandler, &PlaylistHandler::tracksRemoved, this, &Application::startSaveTimer);
     QObject::connect(
         m_playlistHandler, &PlaylistHandler::playlistsPopulated, this,
-        [this]() { m_playerController->replaceTracks(m_playbackQueueStore.load()); }, Qt::SingleShotConnection);
+        [this]() {
+            if(m_settings->value<Settings::Core::ClearPlaybackQueueOnStartup>()) {
+                m_playbackQueueStore.save(PlaybackQueue{});
+                return;
+            }
+            m_playerController->restorePlaybackQueue(m_playbackQueueStore.load());
+        },
+        Qt::SingleShotConnection);
     QObject::connect(m_playerController, &PlayerController::tracksQueued, this,
-                     [this]() { m_playbackQueueStore.save(m_playerController->playbackQueue()); });
+                     &Application::startPlaybackQueueSaveTimer);
     QObject::connect(m_playerController, &PlayerController::tracksDequeued, this,
-                     [this]() { m_playbackQueueStore.save(m_playerController->playbackQueue()); });
+                     &Application::startPlaybackQueueSaveTimer);
     QObject::connect(m_playerController, &PlayerController::trackIndexesDequeued, this,
-                     [this]() { m_playbackQueueStore.save(m_playerController->playbackQueue()); });
+                     &Application::startPlaybackQueueSaveTimer);
     QObject::connect(m_playerController, &PlayerController::trackQueueChanged, this,
-                     [this]() { m_playbackQueueStore.save(m_playerController->playbackQueue()); });
+                     &Application::startPlaybackQueueSaveTimer);
+    QObject::connect(m_playerController, &PlayerController::playbackQueuePositionChanged, this,
+                     &Application::startPlaybackQueueSaveTimer);
 
     QObject::connect(m_library, &MusicLibrary::tracksMetadataChanged, this,
                      [this](const TrackList& tracks) { tracksWereUpdated(tracks); });
@@ -178,18 +189,14 @@ void Application::startup()
 
 void Application::shutdown()
 {
+    m_playbackQueueSaveTimer.stop();
     saveDatabaseSettings();
 
     if(m_settings->fileValue(Settings::Core::Internal::AutoExportPlaylists).toBool()) {
         exportAllPlaylists(true);
     }
 
-    if(m_settings->value<Settings::Core::ClearPlaybackQueueOnExit>()) {
-        m_playbackQueueStore.save(PlaybackQueue{});
-    }
-    else {
-        m_playbackQueueStore.save(m_playerController->playbackQueue());
-    }
+    m_playbackQueueStore.save(m_playerController->playbackQueue());
 
     m_playlistHandler->savePlaylists();
     m_pluginManager->unloadPlugins();
@@ -214,6 +221,11 @@ void Application::restart()
             QProcess::startDetached(appPath, {u"--skip-single"_s});
         },
         Qt::QueuedConnection);
+}
+
+const CorePluginContext& Application::corePluginContext() const
+{
+    return m_corePluginContext;
 }
 
 Database* Application::database() const
@@ -314,6 +326,10 @@ void Application::timerEvent(QTimerEvent* event)
             exportAllPlaylists(false);
         }
         m_playlistHandler->savePlaylists();
+    }
+    else if(event->timerId() == m_playbackQueueSaveTimer.timerId()) {
+        m_playbackQueueSaveTimer.stop();
+        m_playbackQueueStore.save(m_playerController->playbackQueue());
     }
     else if(event->timerId() == m_settingsSaveTimer.timerId()) {
         if(m_settings->settingsHaveChanged()) {
@@ -469,6 +485,11 @@ void Application::loadPlugins()
 void Application::startSaveTimer()
 {
     m_playlistSaveTimer.start(PlaylistSaveInterval, this);
+}
+
+void Application::startPlaybackQueueSaveTimer()
+{
+    m_playbackQueueSaveTimer.start(PlaybackQueueSaveInterval, this);
 }
 
 void Application::exportAllPlaylists(bool shutdown)

@@ -93,9 +93,7 @@ RemoteStreamSource RemoteIoService::createStreamSource(const QUrl& url) const
     const auto maxBufferedBytes = static_cast<qsizetype>(std::max(1, readAheadKb) * 1024);
     const auto openTimeoutMs    = std::max(1000, m_settings->value<Settings::Core::Internal::RemoteOpenTimeoutMs>());
 
-    const QString path = url.path().toLower();
-
-    if(path.endsWith(".m3u8"_L1)) {
+    if(isHlsStreamUrl(url)) {
         auto device = std::make_unique<HlsStreamDevice>(m_networkManager, url, maxBufferedBytes);
 
         RemoteStreamSource source;

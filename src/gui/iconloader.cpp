@@ -18,6 +18,7 @@
  */
 
 #include <gui/guiconstants.h>
+#include <gui/guiutils.h>
 #include <gui/iconloader.h>
 
 #include <QAction>
@@ -31,6 +32,7 @@
 #include <QPixmapCache>
 #include <QSet>
 #include <QStringList>
+#include <QStyle>
 #include <QStyleOptionViewItem>
 
 using namespace Qt::StringLiterals;
@@ -127,6 +129,15 @@ namespace Fooyin::Gui {
 bool setThemeIconOverrides(const QString& primaryTheme, const QString& fallbackTheme)
 {
     return IconLoader::setThemeOverrides(primaryTheme, fallbackTheme);
+}
+
+QIcon applicationIcon()
+{
+    QIcon icon;
+    for(const int size : {16, 22, 32, 48, 64, 128}) {
+        icon.addFile(u":/icons/%1-fooyin.png"_s.arg(size), QSize{size, size});
+    }
+    return icon;
 }
 
 QIcon iconFromTheme(const QString& icon)
@@ -231,7 +242,10 @@ void drawItemViewIcon(QPainter* painter, const QStyleOptionViewItem& option, con
                        : option.widget && !option.widget->hasFocus() ? QPalette::Inactive
                                                                      : QPalette::Active;
     if(role == QPalette::NoRole) {
-        role = option.state & QStyle::State_Selected ? QPalette::HighlightedText : QPalette::Text;
+        role = QPalette::Text;
+        if(option.state & QStyle::State_Selected) {
+            role = itemViewSelectionTextRole(option);
+        }
     }
     const qreal dpr = option.widget ? option.widget->devicePixelRatioF() : qApp->devicePixelRatio();
 

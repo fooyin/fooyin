@@ -37,6 +37,11 @@ void DspLayoutEditor::setControlsEnabled(const bool enabled)
 
 void DspLayoutEditor::restoreDefaults() { }
 
+QString DspLayoutEditor::restoreDefaultsActionText() const
+{
+    return tr("Restore Defaults");
+}
+
 void DspLayoutEditor::populateContextMenu(QMenu* /*menu*/) { }
 
 void DspLayoutEditor::saveLayoutData(QJsonObject& /*layout*/) { }

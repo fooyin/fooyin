@@ -80,6 +80,7 @@ public:
     }
 
 Q_SIGNALS:
+    void fontUpdated(const QFont& font);
     void toggled(bool checked);
 
 private:

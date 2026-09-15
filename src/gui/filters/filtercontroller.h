@@ -1,0 +1,88 @@
+/*
+ * Fooyin
+ * Copyright © 2023, Luke Taylor <luket@pm.me>
+ *
+ * Fooyin is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Fooyin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#pragma once
+
+#include "fygui_export.h"
+
+#include <core/track.h>
+#include <utils/id.h>
+
+#include <QObject>
+
+namespace Fooyin {
+class ActionManager;
+class CoverRepository;
+class CurrentPlaylistController;
+struct CorePluginContext;
+class EditableLayout;
+class GuiStyleProvider;
+class MusicLibrary;
+class SettingsManager;
+class TagLoader;
+class TrackSelectionController;
+
+namespace Filters {
+class FilterControllerPrivate;
+class FilterColumnRegistry;
+class FilterWidget;
+
+struct FilterGroup
+{
+    Id id;
+    std::vector<FilterWidget*> filters;
+    TrackList filteredTracks;
+    bool hasActiveFilters{false};
+    int updateCount{0};
+};
+
+using FilterGroups     = std::unordered_map<Id, FilterGroup, Id::IdHash>;
+using UngroupedFilters = std::unordered_map<Id, FilterWidget*, Id::IdHash>;
+
+class FYGUI_EXPORT FilterController : public QObject
+{
+    Q_OBJECT
+
+public:
+    FilterController(ActionManager* actionManager, const CorePluginContext& core,
+                     CurrentPlaylistController* playlistController, TrackSelectionController* trackSelection,
+                     EditableLayout* editableLayout, CoverRepository* coverRepository, SettingsManager* settings,
+                     GuiStyleProvider* styleProvider, QObject* parent = nullptr);
+    ~FilterController() override;
+
+    [[nodiscard]] FilterColumnRegistry* columnRegistry() const;
+    static QString defaultPlaylistName();
+
+    FilterWidget* createFilter();
+
+    [[nodiscard]] bool haveUngroupedFilters() const;
+    [[nodiscard]] bool filterIsUngrouped(const Id& id) const;
+
+    [[nodiscard]] FilterGroups filterGroups() const;
+    [[nodiscard]] std::optional<FilterGroup> groupById(const Id& id) const;
+    [[nodiscard]] UngroupedFilters ungroupedFilters() const;
+
+    void addFilterToGroup(FilterWidget* widget, const Id& groupId);
+    bool removeFilter(FilterWidget* widget);
+
+private:
+    std::unique_ptr<FilterControllerPrivate> p;
+};
+} // namespace Filters
+} // namespace Fooyin

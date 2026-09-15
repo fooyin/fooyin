@@ -42,6 +42,11 @@
 using namespace Qt::StringLiterals;
 
 namespace {
+uint64_t remainingPlaybackSeconds(uint64_t duration, uint64_t position)
+{
+    return (duration / 1000) - (position / 1000);
+}
+
 Fooyin::RatingStarSymbols ratingStarSymbols(const Fooyin::ScriptContext& context)
 {
     const auto* environment = context.environment ? context.environment->evaluationEnvironment() : nullptr;
@@ -414,6 +419,9 @@ std::optional<ScriptRegistry::FuncRet> trackMetadataValue(const VariableKind kin
             return formattedRatingStars(track, context, false);
         case VariableKind::RatingStarsPadded:
             return formattedRatingStars(track, context, true);
+        case VariableKind::Loved:
+        case VariableKind::LoveEditor:
+            return track.isLoved() ? u"1"_s : QString{};
         case VariableKind::RatingEditor:
             return track.ratingStars();
         case VariableKind::Codec:
@@ -591,7 +599,9 @@ QString ScriptRegistry::playbackTimeRemaining() const
            || environment->currentPosition() >= environment->currentTrackDuration()) {
             return {};
         }
-        return Utils::msToString(environment->currentTrackDuration() - environment->currentPosition());
+        const auto remaining
+            = remainingPlaybackSeconds(environment->currentTrackDuration(), environment->currentPosition());
+        return Utils::msToString(remaining * 1000);
     }
     return {};
 }
@@ -606,7 +616,8 @@ QString ScriptRegistry::playbackTimeRemainingSeconds() const
            || environment->currentPosition() >= environment->currentTrackDuration()) {
             return {};
         }
-        return QString::number((environment->currentTrackDuration() - environment->currentPosition()) / 1000);
+        return QString::number(
+            remainingPlaybackSeconds(environment->currentTrackDuration(), environment->currentPosition()));
     }
     return {};
 }
@@ -676,16 +687,23 @@ void ScriptRegistry::addDefaultFunctions()
     registerFunction(u"div"_s, makeScriptFunctionInvoker<Scripting::div>());
     registerFunction(u"min"_s, makeScriptFunctionInvoker<Scripting::min>());
     registerFunction(u"max"_s, makeScriptFunctionInvoker<Scripting::max>());
+    registerFunction(u"select"_s, makeScriptFunctionInvoker<Scripting::select>());
     registerFunction(u"mod"_s, makeScriptFunctionInvoker<Scripting::mod>());
     registerFunction(u"rand"_s, makeScriptFunctionInvoker<Scripting::rand>());
     registerFunction(u"round"_s, makeScriptFunctionInvoker<Scripting::round>());
+    registerFunction(u"greater"_s, makeScriptFunctionInvoker<Scripting::greater>());
 
     registerFunction(u"num"_s, makeScriptFunctionInvoker<Scripting::num>());
+    registerFunction(u"hex"_s, makeScriptFunctionInvoker<Scripting::hex>());
     registerFunction(u"replace"_s, makeScriptFunctionInvoker<Scripting::replace>());
+    registerFunction(u"regex_replace"_s, makeScriptFunctionInvoker<Scripting::regexReplace>());
+    registerFunction(u"regex_match"_s, makeScriptFunctionInvoker<Scripting::regexMatch>());
+    registerFunction(u"regex_matches"_s, makeScriptFunctionInvoker<Scripting::regexMatches>());
     registerFunction(u"ascii"_s, makeScriptFunctionInvoker<Scripting::ascii>());
     registerFunction(u"slice"_s, makeScriptFunctionInvoker<Scripting::slice>());
     registerFunction(u"chop"_s, makeScriptFunctionInvoker<Scripting::chop>());
     registerFunction(u"left"_s, makeScriptFunctionInvoker<Scripting::left>());
+    registerFunction(u"cut"_s, makeScriptFunctionInvoker<Scripting::left>());
     registerFunction(u"right"_s, makeScriptFunctionInvoker<Scripting::right>());
     registerFunction(u"insert"_s, makeScriptFunctionInvoker<Scripting::insert>());
     registerFunction(u"substr"_s, makeScriptFunctionInvoker<Scripting::substr>());
@@ -697,8 +715,12 @@ void ScriptRegistry::addDefaultFunctions()
     registerFunction(u"join"_s, makeScriptFunctionInvoker<Scripting::join>());
     registerFunction(u"len"_s, makeScriptFunctionInvoker<Scripting::len>());
     registerFunction(u"longest"_s, makeScriptFunctionInvoker<Scripting::longest>());
+    registerFunction(u"shortest"_s, makeScriptFunctionInvoker<Scripting::shortest>());
+    registerFunction(u"strchr"_s, makeScriptFunctionInvoker<Scripting::strchr>());
+    registerFunction(u"strrchr"_s, makeScriptFunctionInvoker<Scripting::strrchr>());
     registerFunction(u"strcmp"_s, makeScriptFunctionInvoker<Scripting::strcmp>());
     registerFunction(u"stricmp"_s, makeScriptFunctionInvoker<Scripting::stricmp>());
+    registerFunction(u"regex_test"_s, makeScriptFunctionInvoker<Scripting::regexTest>());
     registerFunction(u"longer"_s, makeScriptFunctionInvoker<Scripting::longer>());
     registerFunction(u"sep"_s, makeScriptFunctionInvoker<Scripting::sep>());
     registerFunction(u"crlf"_s, makeScriptFunctionInvoker<Scripting::crlf>());
@@ -723,7 +745,9 @@ void ScriptRegistry::addDefaultFunctions()
     registerFunction(u"progress2"_s, makeScriptFunctionInvoker<Scripting::progress2>());
     registerFunction(u"doclink"_s, makeScriptFunctionInvoker<Scripting::doclink>());
     registerFunction(u"cmdlink"_s, makeScriptFunctionInvoker<Scripting::cmdlink>());
+    registerFunction(u"applink"_s, makeScriptFunctionInvoker<Scripting::applink>());
     registerFunction(u"urlencode"_s, makeScriptFunctionInvoker<Scripting::urlencode>());
+    registerFunction(u"crc32"_s, makeScriptFunctionInvoker<Scripting::crc32>());
     registerFunction(u"isalpha"_s, makeScriptFunctionInvoker<Scripting::isalpha>());
     registerFunction(u"isalnum"_s, makeScriptFunctionInvoker<Scripting::isalnum>());
     registerFunction(u"isnum"_s, makeScriptFunctionInvoker<Scripting::isnum>());

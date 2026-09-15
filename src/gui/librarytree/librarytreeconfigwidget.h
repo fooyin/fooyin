@@ -43,6 +43,8 @@ public:
 protected:
     [[nodiscard]] LibraryTreeWidget::ConfigData config() const override;
     void setConfig(const LibraryTreeWidget::ConfigData& config) override;
+    void mergeExternalConfig(const LibraryTreeWidget::ConfigData& previous,
+                             const LibraryTreeWidget::ConfigData& current) override;
 
 private:
     LibraryTreeGroupRegistry* m_groupsRegistry;
@@ -53,7 +55,7 @@ private:
 
     QCheckBox* m_playlistEnabled;
     QCheckBox* m_autoSwitch;
-    QCheckBox* m_keepAlive;
+    QCheckBox* m_preservePlaybackPlaylist;
     QLineEdit* m_playlistName;
 
     QCheckBox* m_restoreState;
@@ -70,6 +72,7 @@ private:
     QSpinBox* m_rowHeight;
     QSpinBox* m_iconWidth;
     QSpinBox* m_iconHeight;
+    QSpinBox* m_artworkCornerRadius;
     QPushButton* m_manageGroupings;
 };
 } // namespace Fooyin

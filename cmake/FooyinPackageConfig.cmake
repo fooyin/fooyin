@@ -1,3 +1,7 @@
+if(CPACK_GENERATOR STREQUAL "ZIP" AND CPACK_FOOYIN_WINDOWS_PACKAGE_FILE_NAME)
+    set(CPACK_PACKAGE_FILE_NAME "${CPACK_FOOYIN_WINDOWS_PACKAGE_FILE_NAME}-portable")
+endif()
+
 if(CPACK_GENERATOR STREQUAL "DEB")
     find_program(DPKG dpkg)
     if(NOT DPKG)
@@ -37,7 +41,6 @@ if(CPACK_GENERATOR STREQUAL "DEB")
         bookworm libicu72
         noble    libicu74
         trixie   libicu76
-        questing libicu76
         forky    libicu78
         resolute libicu78
     )
@@ -46,7 +49,6 @@ if(CPACK_GENERATOR STREQUAL "DEB")
         bookworm libtag1v5
         noble    libtag1v5
         trixie   libtag2
-        questing libtag2
         forky    libtag2
         resolute libtag2
     )
@@ -55,9 +57,16 @@ if(CPACK_GENERATOR STREQUAL "DEB")
         bookworm "libqt6core6 (>= 6.4.0), libqt6gui6 (>= 6.4.0), libqt6widgets6 (>= 6.4.0), libqt6network6 (>= 6.4.0), libqt6concurrent6 (>= 6.4.0), libqt6sql6 (>= 6.4.0)"
         noble    "libqt6core6t64 (>= 6.4.0), libqt6gui6t64 (>= 6.4.0), libqt6widgets6t64 (>= 6.4.0), libqt6network6t64 (>= 6.4.0), libqt6concurrent6t64 (>= 6.4.0), libqt6sql6t64 (>= 6.4.0)"
         trixie   "libqt6core6t64 (>= 6.4.0), libqt6gui6 (>= 6.4.0), libqt6widgets6 (>= 6.4.0), libqt6network6 (>= 6.4.0), libqt6concurrent6 (>= 6.4.0), libqt6sql6 (>= 6.4.0)"
-        questing "libqt6core6t64 (>= 6.4.0), libqt6gui6 (>= 6.4.0), libqt6widgets6 (>= 6.4.0), libqt6network6 (>= 6.4.0), libqt6concurrent6 (>= 6.4.0), libqt6sql6 (>= 6.4.0)"
         forky    "libqt6core6t64 (>= 6.4.0), libqt6gui6 (>= 6.4.0), libqt6widgets6 (>= 6.4.0), libqt6network6 (>= 6.4.0), libqt6concurrent6 (>= 6.4.0), libqt6sql6 (>= 6.4.0)"
         resolute "libqt6core6t64 (>= 6.4.0), libqt6gui6 (>= 6.4.0), libqt6widgets6 (>= 6.4.0), libqt6network6 (>= 6.4.0), libqt6concurrent6 (>= 6.4.0), libqt6sql6 (>= 6.4.0)"
+    )
+
+    set(DISTRO_DEB_REVISION_MAP
+        bookworm "1~debian.12~bookworm"
+        trixie   "1~debian.13~trixie"
+        forky    "1~debian.14~forky"
+        noble    "1~ubuntu.24.04~noble"
+        resolute "1~ubuntu.26.04~resolute"
     )
 
     # cmake-format: on
@@ -82,12 +91,13 @@ if(CPACK_GENERATOR STREQUAL "DEB")
     get_distro_package(DISTRO_ICU_PACKAGE_MAP "${DIST_RELEASE}" ICU_PKG)
     get_distro_package(DISTRO_TAGLIB_PACKAGE_MAP "${DIST_RELEASE}" TAGLIB_PKG)
     get_distro_package(DISTRO_QT_PACKAGE_MAP "${DIST_RELEASE}" QT_PKGS)
+    get_distro_package(DISTRO_DEB_REVISION_MAP "${DIST_RELEASE}" DEB_REVISION)
 
-    if(NOT QT_PKGS)
-        message(
-            FATAL_ERROR "Unsupported distribution '${DIST_RELEASE}', update Qt runtime dependencies for cpack -G DEB"
-        )
+    if(NOT QT_PKGS OR NOT DEB_REVISION)
+        message(FATAL_ERROR "Unsupported distribution '${DIST_RELEASE}', update DEB packaging metadata")
     endif()
+
+    set(CPACK_DEBIAN_PACKAGE_RELEASE "${DEB_REVISION}")
 
     foreach(pkg IN ITEMS "${ICU_PKG}" "${TAGLIB_PKG}" "${QT_PKGS}")
         if(pkg)

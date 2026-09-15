@@ -28,6 +28,7 @@
 #include "controls/outputselector.h"
 #include "controls/playercontrol.h"
 #include "controls/playlistcontrol.h"
+#include "controls/replaygainmodeselector.h"
 #include "controls/seekbar.h"
 #include "controls/volumecontrol.h"
 #include "dirbrowser/dirbrowser.h"
@@ -36,6 +37,11 @@
 #include "dsp/dspsettingsregistry.h"
 #include "dsp/resamplersettingswidget.h"
 #include "dsp/skipsilencesettingswidget.h"
+#include "filters/filtercontextmenu.h"
+#include "filters/filtercontroller.h"
+#include "filters/filterwidget.h"
+#include "filters/libraryfilterswitcher.h"
+#include "filters/libraryfiltertabs.h"
 #include "gui/editablelayout.h"
 #include "gui/plugins/guiplugincontext.h"
 #include "guiapplication.h"
@@ -45,12 +51,10 @@
 #include "mainwindow.h"
 #include "nowplayingoutput/nowplayingoutputpage.h"
 #include "nowplayingoutput/nowplayingoutputservice.h"
-#include "output/outputprofilemanager.h"
 #include "playlist/manager/playlistmanagerwidget.h"
 #include "playlist/organiser/playlistorganiser.h"
 #include "playlist/playlistbox.h"
 #include "playlist/playlistcontroller.h"
-#include "playlist/playlistinteractor.h"
 #include "playlist/playlisttabs.h"
 #include "playlist/playlistwidget.h"
 #include "queueviewer/queueviewer.h"
@@ -71,6 +75,7 @@
 #include "settings/guilayoutpage.h"
 #include "settings/guithemespage.h"
 #include "settings/guitrackdisplaypage.h"
+#include "settings/library/libraryfilterpage.h"
 #include "settings/library/librarygeneralpage.h"
 #include "settings/library/librarymetadatapage.h"
 #include "settings/library/libraryratingspage.h"
@@ -82,13 +87,13 @@
 #include "settings/playback/fadingpage.h"
 #include "settings/playback/outputpage.h"
 #include "settings/playback/playbackpage.h"
+#include "settings/playback/playbackqueuepage.h"
 #include "settings/playback/replaygainpage.h"
 #include "settings/playlist/playlistcolumnpage.h"
 #include "settings/playlist/playlistgeneralpage.h"
 #include "settings/playlist/playlistguipage.h"
 #include "settings/playlist/playlistpresetspage.h"
 #include "settings/playlist/playlistsavingpage.h"
-#include "settings/playlist/playlisttabspage.h"
 #include "settings/plugins/pluginspage.h"
 #include "settings/searchpage.h"
 #include "settings/shellintegrationpage.h"
@@ -104,6 +109,7 @@
 #include <core/application.h>
 #include <core/coresettings.h>
 #include <core/internalcoresettings.h>
+#include <core/library/libraryfilterregistry.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
@@ -112,8 +118,11 @@
 #include <gui/coverrepository.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/output/outputprofilemanager.h>
+#include <gui/playlist/playlistinteractor.h>
 #include <gui/settings/context/staticcontextmenupage.h>
 #include <gui/theme/themeregistry.h>
+#include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
 #include <utils/settings/advancedsettingsregistry.h>
 #include <utils/stringutils.h>
@@ -147,6 +156,10 @@ Widgets::Widgets(Application* core, GuiApplication* gui, const GuiPluginContext&
     , m_playlistInteractor{playlistInteractor}
     , m_playlistController{playlistInteractor->playlistController()}
     , m_libraryTreeController{new LibraryTreeController(m_settings, this)}
+    , m_filterController{new Filters::FilterController(
+          gui->actionManager(), m_core->corePluginContext(), guiPluginContext.playlistSelection, gui->trackSelection(),
+          gui->editableLayout(), gui->coverRepository(), m_settings, gui->styleProvider(), this)}
+    , m_libraryFilterRegistry{new Filters::LibraryFilterRegistry(m_settings, this)}
     , m_selectionInfoFieldRegistry{new SelectionInfoFieldRegistry(m_settings, this)}
     , m_dspPresetRegistry{new DspPresetRegistry(m_settings, this)}
     , m_outputProfileManager{new OutputProfileManager(m_core->engine(), m_core->dspChainStore(), m_dspPresetRegistry,
@@ -193,7 +206,7 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"PlaylistTabs"_s,
         [this]() {
-            auto* playlistTabs = new PlaylistTabs(m_gui->widgetProvider(), m_playlistController,
+            auto* playlistTabs = new PlaylistTabs(m_gui->actionManager(), m_gui->widgetProvider(), m_playlistController,
                                                   m_gui->trackSelection(), m_settings, m_window);
             QObject::connect(playlistTabs, &PlaylistTabs::filesDropped, m_playlistInteractor,
                              &PlaylistInteractor::filesToPlaylist);
@@ -217,8 +230,12 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"PlaylistManager"_s,
         [this]() {
-            return new PlaylistManagerWidget(m_gui->actionManager(), m_playlistController, m_playlistInteractor,
-                                             m_gui->trackSelection(), m_settings, m_window);
+            auto* playlistManager
+                = new PlaylistManagerWidget(m_gui->actionManager(), m_playlistController, m_playlistInteractor,
+                                            m_gui->trackSelection(), m_settings, m_window);
+            QObject::connect(playlistManager, &PlaylistManagerWidget::savePlaylistRequested, m_gui,
+                             &GuiApplication::savePlaylist);
+            return playlistManager;
         },
         tr("Playlist Manager"));
     provider->setSubMenus(u"PlaylistManager"_s, {tr("Playlist")});
@@ -284,6 +301,11 @@ void Widgets::registerWidgets()
     provider->setSubMenus(u"OutputSelector"_s, {tr("Controls")});
 
     provider->registerWidget(
+        u"ReplayGainMode"_s, [this]() { return new ReplayGainModeSelector(m_settings, m_window); },
+        tr("ReplayGain Mode"));
+    provider->setSubMenus(u"ReplayGainMode"_s, {tr("Controls")});
+
+    provider->registerWidget(
         u"DspSelector"_s,
         [this]() { return new DspChainSelector(m_core->dspChainStore(), m_dspPresetRegistry, m_settings, m_window); },
         tr("DSP Selector"));
@@ -300,11 +322,13 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"ArtworkPanel"_s,
         [this]() {
-            auto* coverWidget
-                = new CoverWidget(m_core->playerController(), m_core->playlistHandler(), m_gui->trackSelection(),
-                                  m_core->audioLoader(), m_coverRepository, m_settings, m_window);
+            auto* coverWidget = new CoverWidget(m_gui->actionManager(), m_core->playerController(),
+                                                m_core->playlistHandler(), m_gui->trackSelection(),
+                                                m_core->audioLoader(), m_coverRepository, m_settings, m_window);
             QObject::connect(m_core->library(), &MusicLibrary::tracksMetadataChanged, coverWidget,
                              &CoverWidget::reloadCover);
+            QObject::connect(coverWidget, &CoverWidget::requestPropertiesDialog, m_gui->trackSelection(),
+                             &TrackSelectionController::requestPropertiesDialog);
             QObject::connect(coverWidget, &CoverWidget::requestArtworkSearch, this, &Widgets::showArtworkDialog);
             QObject::connect(coverWidget, &CoverWidget::requestArtworkRemoval, this, &Widgets::removeArtwork);
             return coverWidget;
@@ -353,6 +377,25 @@ void Widgets::registerWidgets()
                                      m_gui->actionManager(), m_settings, m_window);
         },
         tr("Script Display"));
+
+    provider->registerWidget(
+        u"LibraryFilter"_s, [this]() { return m_filterController->createFilter(); }, tr("Library Filter"));
+    provider->setSubMenus(u"LibraryFilter"_s, {tr("Filters")});
+
+    provider->registerWidget(
+        u"SavedFilterTabs"_s,
+        [this, provider]() {
+            return new Filters::LibraryFilterTabs(m_libraryFilterRegistry, m_core->library(), provider, m_settings);
+        },
+        tr("Saved Filter Tabs"));
+    provider->setSubMenus(u"SavedFilterTabs"_s, {tr("Filters")});
+    provider->setCanSplit(u"SavedFilterTabs"_s, true);
+
+    provider->registerWidget(
+        u"SavedFilterSelector"_s,
+        [this]() { return new Filters::LibraryFilterSwitcher(m_libraryFilterRegistry, m_core->library(), m_settings); },
+        tr("Saved Filter Selector"));
+    provider->setSubMenus(u"SavedFilterSelector"_s, {tr("Filters")});
 }
 
 void Widgets::registerPages()
@@ -411,6 +454,23 @@ void Widgets::registerPages()
             ContextMenuIds::LayoutEditing::DefaultItems, m_settings),
         this);
 
+    new StaticContextMenuPage(
+        m_settings,
+        makeStaticContextMenuDescriptor(
+            Filters::FilterContextMenu::PageId,
+            {.context = "FilterWidget", .sourceText = QT_TRANSLATE_NOOP("FilterWidget", "Library Filter")},
+            {.context    = "FilterWidget",
+             .sourceText = QT_TRANSLATE_NOOP("FilterWidget",
+                                             "Unchecked items will be hidden from the library filter context menu.")},
+            Filters::FilterContextMenu::DefaultItems,
+            ContextMenuSettings::makeFileStringListReader(m_settings, Filters::FilterContextMenu::DisabledSectionsKey,
+                                                          Filters::FilterContextMenu::defaultDisabledSections()),
+            ContextMenuSettings::makeFileStringListWriter(m_settings, Filters::FilterContextMenu::DisabledSectionsKey),
+            ContextMenuSettings::makeFileStringListReader(m_settings, Filters::FilterContextMenu::LayoutKey),
+            ContextMenuSettings::makeFileStringListWriter(m_settings, Filters::FilterContextMenu::LayoutKey),
+            Filters::FilterContextMenu::defaultDisabledSections()),
+        this);
+
     new ArtworkGeneralPage(m_settings, m_coverRepository, this);
     new ArtworkSearchingPage(m_settings, this);
     new ArtworkSourcesPage(m_artworkFinder, m_settings, this);
@@ -419,13 +479,14 @@ void Widgets::registerPages()
     new LibraryMetadataPage(m_settings, this);
     new LibraryRatingsPage(m_settings, this);
     new LibrarySortingPage(m_core->sortingRegistry(), m_settings, this);
+    new Filters::LibraryFilterPage(m_libraryFilterRegistry, m_settings, this);
     new PlaybackPage(m_settings, this);
+    new PlaybackQueuePage(m_settings, this);
     new NowPlayingOutputPage(m_core->playerController(), m_settings, this);
     new DspManagerPage(m_core->dspChainStore(), m_dspPresetRegistry, m_dspSettingsRegistry.get(), m_settings, this);
     new FadingPage(m_settings, this);
     new PlaylistGeneralPage(m_settings, this);
     new PlaylistGuiPage(m_settings, this);
-    new PlaylistTabsPage(m_settings, this);
     new PlaylistSavingPage(m_core->playlistLoader()->supportedSaveExtensions(), m_settings, this);
     new PlaylistColumnPage(m_playlistController->columnRegistry(), m_settings, this);
     new PlaylistPresetsPage(m_playlistController->presetRegistry(), m_settings, this);
@@ -446,6 +507,27 @@ void Widgets::registerPages()
 void Widgets::registerAdvancedSettings()
 {
     auto* advancedSettingsRegistry = m_gui->advancedSettingsRegistry();
+
+    advancedSettingsRegistry->add(
+        {.id           = QString::fromLatin1(Settings::Gui::Internal::ConfirmMetadataWipe),
+         .category     = {tr("Tagging"), tr("Metadata Lookup")},
+         .label        = tr("Confirm before wiping writable tags"),
+         .description  = {},
+         .defaultValue = true,
+         .editor       = AdvancedSettingCheckBox{},
+         .read =
+             [] {
+                 const FyStateSettings settings;
+                 return settings.value(Settings::Gui::Internal::ConfirmMetadataWipe, true).toBool();
+             },
+         .write =
+             [](const QVariant& value) {
+                 FyStateSettings settings;
+                 settings.setValue(Settings::Gui::Internal::ConfirmMetadataWipe, value.toBool());
+                 return true;
+             },
+         .normalise = {},
+         .validate  = {}});
 
     advancedSettingsRegistry->add<Settings::Gui::Internal::ImageAllocationLimit>(
         {.category    = {tr("Interface"), GuiApplication::tr("Display")},
@@ -602,6 +684,32 @@ void Widgets::registerAdvancedSettings()
          .normalise   = {},
          .validate    = {}});
     advancedSettingsRegistry->add(
+        Settings::Core::Internal::Id3v2WriteVersion, static_cast<int>(Id3v2WriteVersion::V4),
+        {.category    = {tr("Tagging"), u"MP3"_s},
+         .label       = tr("ID3v2 revision"),
+         .description = tr("ID3v2 revision used when writing MP3 tags"),
+         .editor      = AdvancedSettingRadioButtons{.options = {{.value = static_cast<int>(Id3v2WriteVersion::V3),
+                                                                 .label = tr("Write ID3v2.3 tags")},
+                                                                {.value = static_cast<int>(Id3v2WriteVersion::V4),
+                                                                 .label = tr("Write ID3v2.4 tags")}}},
+         .normalise   = {},
+         .validate    = {}});
+    advancedSettingsRegistry->add(
+        Settings::Core::Internal::Mp3TagWritingScheme, static_cast<int>(Mp3TagWritingScheme::Id3v2AndId3v1),
+        {.category    = {tr("Tagging"), u"MP3"_s},
+         .label       = tr("Tag writing scheme for untagged files"),
+         .description = tr("Tag types created when writing an MP3 file that has no existing tags"),
+         .editor
+         = AdvancedSettingRadioButtons{.options
+                                       = {{.value = static_cast<int>(Mp3TagWritingScheme::Id3v2AndId3v1),
+                                           .label = tr("ID3v2 + ID3v1")},
+                                          {.value = static_cast<int>(Mp3TagWritingScheme::Id3v2), .label = tr("ID3v2")},
+                                          {.value = static_cast<int>(Mp3TagWritingScheme::ApeAndId3v1),
+                                           .label = tr("APE + ID3v1")},
+                                          {.value = static_cast<int>(Mp3TagWritingScheme::Ape), .label = tr("APE")}}},
+         .normalise = {},
+         .validate  = {}});
+    advancedSettingsRegistry->add(
         {.id           = QString::fromLatin1(Settings::Core::Internal::FFmpegAllExtensions),
          .category     = {tr("Playback"), tr("Decoding"), u"FFmpeg"_s},
          .label        = tr("Enable all supported extensions"),
@@ -716,6 +824,7 @@ void Widgets::registerFontEntries() const
     themeReg->registerFontEntry(tr("Script Display"), u"Fooyin::ScriptDisplay"_s);
     themeReg->registerFontEntry(tr("Status bar"), u"Fooyin::StatusLabel"_s);
     themeReg->registerFontEntry(tr("Tabs"), u"Fooyin::EditableTabBar"_s);
+    themeReg->registerFontEntry(tr("Filters"), u"Fooyin::Filters::FilterView"_s);
 }
 
 DspSettingsRegistry* Widgets::dspSettingsRegistry() const
@@ -731,6 +840,11 @@ DspSettingsController* Widgets::dspSettingsController() const
 PluginSettingsRegistry* Widgets::pluginSettingsRegistry() const
 {
     return m_pluginSettingsRegistry.get();
+}
+
+OutputProfileManager* Widgets::outputProfileManager() const
+{
+    return m_outputProfileManager;
 }
 
 void Widgets::showArtworkDialog(const TrackList& tracks, Track::Cover type, bool quick)

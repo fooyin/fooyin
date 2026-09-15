@@ -394,10 +394,16 @@ void SpectrumView::tick()
 bool SpectrumView::renderLatestSpectrum()
 {
     VisualisationSession::SpectrumWindow spectrum;
-    const auto windowFunction = toBackendWindowFunction(m_config.windowFunction);
-    const uint64_t endTimeMs  = m_session->currentTimeMs();
-    const bool gotSpectrum
-        = endTimeMs > 0 && m_session->getSpectrumWindowEndingAt(spectrum, endTimeMs, m_config.fftSize, windowFunction);
+    const uint64_t endTimeMs = m_session->currentTimeMs();
+
+    bool gotSpectrum{false};
+    if(endTimeMs > 0) {
+        const auto windowFunction = toBackendWindowFunction(m_config.windowFunction);
+        gotSpectrum = m_config.fftSizingMode == FftSizingMode::Duration
+                        ? m_session->getSpectrumWindowEndingAtDuration(spectrum, endTimeMs, m_config.fftDurationMs,
+                                                                       windowFunction)
+                        : m_session->getSpectrumWindowEndingAt(spectrum, endTimeMs, m_config.fftSize, windowFunction);
+    }
 
     if(!gotSpectrum) {
         return false;
@@ -418,11 +424,15 @@ bool SpectrumView::updateLevelsFromSpectrum(const VisualisationSession::Spectrum
     }
 
     ensureBandMap(spectrum);
-    std::vector<float> nextLevels(m_levels.size(), 0.0F);
+    std::vector nextLevels(m_levels.size(), 0.0F);
     bool changed{false};
 
     for(size_t band{0}; band < m_levels.size() && band < m_bandBinRanges.size(); ++band) {
         const BandBinRange& range = m_bandBinRanges[band];
+        if(!range.available) {
+            continue;
+        }
+
         float maxMagnitude{0.0F};
         for(size_t bin{range.startBin}; bin < range.endBin; ++bin) {
             maxMagnitude = std::max(maxMagnitude, bins[bin]);
@@ -930,10 +940,18 @@ void SpectrumView::ensureBandMap(const VisualisationSession::SpectrumWindow& spe
 
     const auto bins      = spectrum.bins();
     const float nyquist  = static_cast<float>(spectrum.sampleRate) * 0.5F;
-    const float minFreq  = std::clamp(effectiveMinFrequencyHz(), 1.0F, nyquist);
-    const float maxFreq  = std::clamp(effectiveMaxFrequencyHz(), minFreq + 1.0F, nyquist);
+    const float minFreq  = std::max(1.0F, effectiveMinFrequencyHz());
+    const float maxFreq  = std::max(minFreq + 1.0F, effectiveMaxFrequencyHz());
     const float binFreq  = static_cast<float>(spectrum.sampleRate) / static_cast<float>(spectrum.fftSize);
     const size_t lastBin = bins.empty() ? 0 : (bins.size() - 1);
+
+    const auto mapBand = [this, binFreq, lastBin, nyquist](size_t band, double centerFrequency) {
+        const double centerBin = centerFrequency / static_cast<double>(binFreq);
+        const size_t keyBin = std::clamp(static_cast<size_t>(std::llround(centerBin)), static_cast<size_t>(1), lastBin);
+        m_bandCenterBins[band]          = std::clamp(centerBin, 1.0, static_cast<double>(lastBin));
+        m_bandKeys[band]                = keyBin;
+        m_bandBinRanges[band].available = centerFrequency <= static_cast<double>(nyquist);
+    };
 
     if(m_config.labelMode == LabelMode::Notes) {
         const int noteCount   = std::max(1, m_config.maxNote - m_config.minNote + 1);
@@ -944,11 +962,7 @@ void SpectrumView::ensureBandMap(const VisualisationSession::SpectrumWindow& spe
         for(size_t band{0}; band < bandCount; ++band) {
             const double noteFrequency
                 = static_cast<double>(m_config.pitchHz) * std::pow(2.0, (static_cast<double>(band) - a4Pos) / octave);
-            const double centerBin = noteFrequency / static_cast<double>(binFreq);
-            const size_t keyBin
-                = std::clamp(static_cast<size_t>(std::llround(centerBin)), static_cast<size_t>(1), lastBin);
-            m_bandCenterBins[band] = std::clamp(centerBin, 1.0, static_cast<double>(lastBin));
-            m_bandKeys[band]       = keyBin;
+            mapBand(band, noteFrequency);
         }
     }
     else {
@@ -956,11 +970,7 @@ void SpectrumView::ensureBandMap(const VisualisationSession::SpectrumWindow& spe
         for(size_t band{0}; band < bandCount; ++band) {
             const double t = bandCount > 1 ? static_cast<double>(band) / static_cast<double>(bandCount - 1) : 0.0;
             const double centerFreq = static_cast<double>(minFreq) * std::pow(ratio, t);
-            const double centerBin  = centerFreq / static_cast<double>(binFreq);
-            const size_t keyBin
-                = std::clamp(static_cast<size_t>(std::llround(centerBin)), static_cast<size_t>(1), lastBin);
-            m_bandCenterBins[band] = std::clamp(centerBin, 1.0, static_cast<double>(lastBin));
-            m_bandKeys[band]       = keyBin;
+            mapBand(band, centerFreq);
         }
     }
 
@@ -982,11 +992,13 @@ void SpectrumView::ensureBandMap(const VisualisationSession::SpectrumWindow& spe
             endBin = std::min(lastBin + 1, endBin);
         }
 
-        m_bandBinRanges[band] = {.startBin = startBin, .endBin = endBin};
+        m_bandBinRanges[band].startBin = startBin;
+        m_bandBinRanges[band].endBin   = endBin;
     }
 
     for(size_t band{1}; band < bandCount; ++band) {
-        if(m_bandKeys[band] == m_bandKeys[band - 1]) {
+        if(m_bandBinRanges[band].available && m_bandBinRanges[band - 1].available
+           && m_bandKeys[band] == m_bandKeys[band - 1]) {
             m_lowResEnd = static_cast<int>(band);
         }
     }

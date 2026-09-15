@@ -19,11 +19,11 @@
 
 #include "playbackordernavigator.h"
 
-#include "core/playlist/playlisthandler.h"
-
-#include <core/player/playbackqueue.h>
+#include "playbackorder.h"
 
 #include <core/coresettings.h>
+#include <core/player/playbackqueue.h>
+#include <core/playlist/playlisthandler.h>
 #include <core/track.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -45,6 +45,12 @@ Playlist* PlaybackOrderNavigator::playbackPlaylist() const
     }
 
     return playlistForTrack(*m_state.currentTrack);
+}
+
+bool PlaybackOrderNavigator::queueIsPlaybackSource() const
+{
+    const auto mode = static_cast<PlaybackQueueMode>(m_settings->value<Settings::Core::PlaybackQueueMode>());
+    return mode == PlaybackQueueMode::QueueAsPlaybackSource;
 }
 
 Playlist* PlaybackOrderNavigator::playlistForTrack(const PlaylistTrack& track) const
@@ -75,8 +81,76 @@ Playlist* PlaybackOrderNavigator::playlistForTrack(const PlaylistTrack& track) c
     return nullptr;
 }
 
+const PlaybackQueueItem* PlaybackOrderNavigator::sequenceRelativeItem(int delta) const
+{
+    if(!queueIsPlaybackSource()) {
+        return nullptr;
+    }
+
+    const auto mode = *m_state.playMode;
+    if((mode & Playlist::RepeatTrack) || !(mode & Playlist::RepeatAlbum)) {
+        return m_queue->relativeItem(delta, mode);
+    }
+
+    Playlist::PlayModes adjacentMode{mode};
+    adjacentMode.setFlag(Playlist::RepeatAlbum, false);
+    const auto* adjacent = m_queue->relativeItem(delta, adjacentMode);
+    if(adjacent && adjacent->origin == PlaybackQueueItemOrigin::Manual) {
+        return adjacent;
+    }
+
+    const auto* current = m_queue->currentItem();
+    if(!current || current->origin != PlaybackQueueItemOrigin::PlaylistGenerated
+       || !current->track.playlistId.isValid()) {
+        return adjacent;
+    }
+
+    TrackList generatedTracks;
+    generatedTracks.reserve(m_queue->items().size());
+    std::vector<const PlaybackQueueItem*> generatedItems;
+    generatedItems.reserve(m_queue->items().size());
+
+    for(const auto& item : m_queue->items()) {
+        if(item.origin == PlaybackQueueItemOrigin::PlaylistGenerated
+           && item.track.playlistId == current->track.playlistId) {
+            generatedTracks.push_back(item.track.track);
+            generatedItems.push_back(&item);
+        }
+    }
+
+    const auto currentIt = std::ranges::find(generatedItems, current);
+    if(currentIt == generatedItems.end()) {
+        return adjacent;
+    }
+
+    const auto currentIndex   = static_cast<int>(std::distance(generatedItems.begin(), currentIt));
+    const QString groupScript = m_settings->value<Settings::Core::ShuffleAlbumsGroupScript>();
+    const auto groups         = PlaybackOrder::groupedTrackIndexes(generatedTracks, groupScript, {});
+    const auto currentGroup   = std::ranges::find_if(
+        groups, [currentIndex](const auto& group) { return std::ranges::find(group, currentIndex) != group.end(); });
+    if(currentGroup == groups.end()) {
+        return adjacent;
+    }
+
+    const auto position = std::ranges::find(*currentGroup, currentIndex);
+    auto target         = static_cast<int>(std::distance(currentGroup->begin(), position)) + delta;
+    const auto count    = static_cast<int>(currentGroup->size());
+    target %= count;
+    if(target < 0) {
+        target += count;
+    }
+    return generatedItems.at(currentGroup->at(target));
+}
+
 PlaylistTrack PlaybackOrderNavigator::previewPlaybackRelativeTrack(int delta) const
 {
+    if(queueIsPlaybackSource()) {
+        if(const auto* item = sequenceRelativeItem(delta)) {
+            return item->track;
+        }
+        return {};
+    }
+
     if(m_settings->value<Settings::Core::FollowPlaybackQueue>() && *m_state.isQueueTrack) {
         if(const auto followedTrack = followQueuedTrackIndex(delta)) {
             return *followedTrack;
@@ -220,6 +294,17 @@ std::optional<PlaybackOrderNavigator::RequestedTrack> PlaybackOrderNavigator::se
 
 std::optional<PlaybackOrderNavigator::RequestedTrack> PlaybackOrderNavigator::selectPlaybackOrderTrack(int delta)
 {
+    if(queueIsPlaybackSource()) {
+        if(const auto* item = sequenceRelativeItem(delta)) {
+            return RequestedTrack{
+                .track        = item->track,
+                .isQueueTrack = true,
+                .queueItemId  = item->id,
+            };
+        }
+        return {};
+    }
+
     const bool followQueue = m_settings->value<Settings::Core::FollowPlaybackQueue>() && *m_state.isQueueTrack;
 
     if(delta <= 0) {
@@ -261,26 +346,40 @@ std::optional<PlaybackOrderNavigator::RequestedTrack> PlaybackOrderNavigator::se
     }
 
     if(!m_queue->empty()) {
+        const auto* item = m_queue->nextItem();
         return RequestedTrack{
-            .track        = m_queue->nextTrack(),
+            .track        = item ? item->track : PlaylistTrack{},
             .isQueueTrack = true,
+            .queueItemId  = item ? item->id : 0,
         };
     }
 
     return {};
 }
 
-std::optional<PlaybackOrderNavigator::RequestedTrack> PlaybackOrderNavigator::selectPlayFromIdleState()
+std::optional<PlaybackOrderNavigator::RequestedTrack>
+PlaybackOrderNavigator::selectPlayFromIdleState(bool preferScheduledTrack)
 {
-    if(auto scheduledTrack = selectScheduledTrack()) {
-        return scheduledTrack;
+    if(preferScheduledTrack) {
+        if(auto scheduledTrack = selectScheduledTrack()) {
+            return scheduledTrack;
+        }
     }
 
     if(!m_queue->empty()) {
+        const auto* item
+            = queueIsPlaybackSource() && m_queue->currentItem() ? m_queue->currentItem() : m_queue->nextItem();
         return RequestedTrack{
-            .track        = m_queue->nextTrack(),
+            .track        = item ? item->track : PlaylistTrack{},
             .isQueueTrack = true,
+            .queueItemId  = item ? item->id : 0,
         };
+    }
+
+    if(!preferScheduledTrack) {
+        if(auto scheduledTrack = selectScheduledTrack()) {
+            return scheduledTrack;
+        }
     }
 
     if(m_playlistHandler) {

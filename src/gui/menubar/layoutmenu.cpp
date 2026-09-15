@@ -52,6 +52,7 @@ LayoutMenu::LayoutMenu(ActionManager* actionManager, LayoutProvider* layoutProvi
     , m_layoutActionGroup{nullptr}
 {
     QObject::connect(m_layoutProvider, &LayoutProvider::layoutAdded, this, &LayoutMenu::refreshLayouts);
+    QObject::connect(m_layoutProvider, &LayoutProvider::layoutChanged, this, &LayoutMenu::refreshLayouts);
     QObject::connect(m_layoutProvider, &LayoutProvider::layoutRemoved, this, &LayoutMenu::refreshLayouts);
     QObject::connect(m_layoutProvider, &LayoutProvider::currentLayoutChanged, this, &LayoutMenu::updateCurrentLayout);
 }
@@ -163,6 +164,7 @@ void LayoutMenu::refreshLayouts()
         auto* layoutAction = new QAction(name, m_layoutMenu->menu());
         layoutAction->setStatusTip(tr("Replace the current layout"));
         layoutAction->setCheckable(true);
+        layoutAction->setVisible(layout.isShownInMenu());
 
         auto* layoutCmd = m_actionManager->registerAction(layoutAction, Id{u"Layout.Switch.%1"_s.arg(name)});
         layoutCmd->setCategories({tr("Layout"), tr("Switch")});

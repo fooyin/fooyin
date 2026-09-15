@@ -73,8 +73,7 @@ OscilloscopeWidget::OscilloscopeWidget(EngineController* engine, PlayerControlle
 
     QObject::connect(playerController, &PlayerController::playStateChanged, this,
                      &OscilloscopeWidget::handlePlayStateChanged);
-    QObject::connect(playerController, &PlayerController::currentTrackChanged, this, [this]() { clearWindow(false); });
-    QObject::connect(playerController, &PlayerController::positionMoved, this, [this]() { clearWindow(false); });
+    QObject::connect(playerController, &PlayerController::positionMoved, this, &OscilloscopeWidget::resetPresentation);
 
     m_config = defaultConfig();
     applyConfig(m_config);
@@ -172,6 +171,8 @@ void OscilloscopeWidget::applyConfig(const ConfigData& config)
     m_config = validated;
     updateSessionConfig();
     update();
+
+    Q_EMIT configChanged();
 }
 
 QSize OscilloscopeWidget::minimumSizeHint() const
@@ -266,7 +267,7 @@ void OscilloscopeWidget::contextMenuEvent(QContextMenuEvent* event)
 
 void OscilloscopeWidget::openConfigDialog()
 {
-    showConfigDialog(new OscilloscopeConfigDialog(this, this));
+    showConfigDialog(new OscilloscopeConfigDialog(this, this), Qt::NonModal);
 }
 
 void OscilloscopeWidget::handlePlayStateChanged(Player::PlayState state)
@@ -275,7 +276,7 @@ void OscilloscopeWidget::handlePlayStateChanged(Player::PlayState state)
     m_active = state != Player::PlayState::Stopped;
 
     if(state == Player::PlayState::Stopped) {
-        clearWindow(true);
+        clearWindow();
         return;
     }
 
@@ -291,22 +292,26 @@ void OscilloscopeWidget::handlePlayStateChanged(Player::PlayState state)
     }
 }
 
-void OscilloscopeWidget::clearWindow(bool stopTimer)
+void OscilloscopeWidget::clearWindow()
 {
     m_window = {};
     m_presentationClock.invalidate();
     m_presentationTimeMs = 0.0;
+    m_updateTimer.stop();
+    m_clockSettling = false;
 
-    if(stopTimer) {
-        m_updateTimer.stop();
-        m_clockSettling = false;
-    }
-    else if(m_active && !m_paused) {
+    update();
+}
+
+void OscilloscopeWidget::resetPresentation()
+{
+    m_presentationClock.invalidate();
+    m_presentationTimeMs = 0.0;
+
+    if(m_active && !m_paused) {
         settlePresentationClock();
         startUpdateTimer();
     }
-
-    update();
 }
 
 int OscilloscopeWidget::displayedLanes() const

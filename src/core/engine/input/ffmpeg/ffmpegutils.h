@@ -79,13 +79,6 @@ struct FrameDeleter
 };
 using FramePtr = std::unique_ptr<AVFrame, FrameDeleter>;
 
-struct FormatContext
-{
-    FormatContextPtr formatContext;
-    IOContextPtr ioContext;
-    std::shared_ptr<void> ioContextData;
-};
-
 struct PacketDeleter
 {
     void operator()(AVPacket* packet) const;

@@ -21,6 +21,7 @@
 
 #include "streamdeviceutils.h"
 
+#include <core/engine/input/id3utils.h>
 #include <core/network/networkutils.h>
 
 #include <QMetaObject>
@@ -28,6 +29,7 @@
 #include <QPointer>
 #include <QThread>
 #include <QTimer>
+#include <QtEndian>
 
 #include <algorithm>
 #include <condition_variable>
@@ -37,6 +39,10 @@
 #include <unordered_set>
 
 using namespace Qt::StringLiterals;
+
+constexpr size_t MaxRememberedHlsSegments = 256;
+constexpr qsizetype MaxMetadataProbeBytes = 64 * 1024;
+constexpr QByteArrayView AppleEmsgId3Scheme{"https://developer.apple.com/streaming/emsg-id3"};
 
 namespace Fooyin {
 struct HlsVariant
@@ -82,10 +88,14 @@ public:
     QNetworkReply* reply{nullptr};
     ReplyKind replyKind{ReplyKind::None};
     std::mutex mutex;
-    std::condition_variable ready;
+    std::condition_variable_any ready;
     QString error;
     bool finished{false};
     bool aborted{false};
+    bool metadataProbeComplete{false};
+    std::stop_token readCancellationToken;
+    QByteArray metadataProbe;
+    NetworkStreamMetadata metadata;
     StreamUtils::BufferState streamBuffer;
     HlsPlaylistState playlist;
     StreamUtils::ReadModeState readMode;
@@ -93,10 +103,14 @@ public:
     void resetForOpen(const QUrl& playlistUrl)
     {
         error.clear();
-        finished  = false;
-        aborted   = false;
-        reply     = nullptr;
-        replyKind = ReplyKind::None;
+        finished              = false;
+        aborted               = false;
+        metadataProbeComplete = false;
+        readCancellationToken = {};
+        reply                 = nullptr;
+        replyKind             = ReplyKind::None;
+        metadataProbe.clear();
+        metadata = {};
         streamBuffer.reset();
         playlist.reset(playlistUrl);
         readMode.reset();
@@ -104,7 +118,127 @@ public:
 };
 
 namespace {
-constexpr size_t MaxRememberedHlsSegments = 256;
+uint32_t bigEndianUint32(QByteArrayView data, qsizetype offset)
+{
+    return qFromBigEndian<uint32_t>(data.data() + offset);
+}
+
+std::optional<QByteArrayView> cString(QByteArrayView data, qsizetype& offset)
+{
+    const qsizetype start{offset};
+    while(offset < data.size() && data.at(offset) != '\0') {
+        ++offset;
+    }
+    if(offset >= data.size()) {
+        return {};
+    }
+
+    const QByteArrayView value = data.sliced(start, offset - start);
+    ++offset;
+    return value;
+}
+
+std::optional<NetworkStreamMetadata> parseEmsgMetadata(QByteArrayView box)
+{
+    if(box.size() < 12 || box.sliced(4, 4) != "emsg") {
+        return {};
+    }
+
+    const QByteArrayView payload = box.sliced(8);
+    const auto version           = static_cast<uchar>(payload.front());
+    qsizetype offset{4};
+    std::optional<QByteArrayView> scheme;
+
+    if(version == 0) {
+        scheme = cString(payload, offset);
+        if(!scheme || !cString(payload, offset) || offset + 16 > payload.size()) {
+            return {};
+        }
+        offset += 16;
+    }
+    else if(version == 1) {
+        if(offset + 20 > payload.size()) {
+            return {};
+        }
+        offset += 20;
+        scheme = cString(payload, offset);
+        if(!scheme || !cString(payload, offset)) {
+            return {};
+        }
+    }
+    else {
+        return {};
+    }
+
+    if(*scheme != AppleEmsgId3Scheme) {
+        return {};
+    }
+
+    const auto id3 = Id3Utils::parseTimedMetadata(payload.sliced(offset));
+    if(!id3) {
+        return {};
+    }
+
+    NetworkStreamMetadata metadata;
+    metadata.streamName = id3->station;
+    if(!id3->title.isEmpty()) {
+        metadata.streamTitle = id3->artist.isEmpty() ? id3->title : u"%1 - %2"_s.arg(id3->artist, id3->title);
+    }
+    return metadata;
+}
+
+void updateMetadata(HlsStreamDeviceState& state, NetworkStreamMetadata metadata)
+{
+    if(state.metadata.streamName == metadata.streamName && state.metadata.streamTitle == metadata.streamTitle
+       && state.metadata.streamUrl == metadata.streamUrl) {
+        return;
+    }
+
+    metadata.revision = state.metadata.revision + 1;
+    state.metadata    = std::move(metadata);
+}
+
+void probeSegmentMetadata(HlsStreamDeviceState& state, QByteArrayView data)
+{
+    if(state.metadataProbeComplete || data.isEmpty()) {
+        return;
+    }
+
+    const qsizetype remaining = MaxMetadataProbeBytes - state.metadataProbe.size();
+    state.metadataProbe.append(data.first(std::max<qsizetype>(0, std::min(remaining, data.size()))));
+
+    const QByteArrayView probe{state.metadataProbe};
+    qsizetype offset{0};
+
+    while(offset + 8 <= probe.size()) {
+        const uint32_t boxSize = bigEndianUint32(probe, offset);
+        if(boxSize < 8 || boxSize > static_cast<uint32_t>(MaxMetadataProbeBytes)) {
+            state.metadataProbeComplete = true;
+            return;
+        }
+        if(std::cmp_greater(boxSize, probe.size() - offset)) {
+            break;
+        }
+
+        const QByteArrayView box = probe.sliced(offset, boxSize);
+        if(box.sliced(4, 4) == "emsg") {
+            if(const auto metadata = parseEmsgMetadata(box)) {
+                updateMetadata(state, *metadata);
+                state.metadataProbeComplete = true;
+                return;
+            }
+        }
+        else if(box.sliced(4, 4) == "moof" || box.sliced(4, 4) == "mdat") {
+            state.metadataProbeComplete = true;
+            return;
+        }
+        offset += boxSize;
+    }
+
+    if(state.metadataProbe.size() >= MaxMetadataProbeBytes) {
+        state.metadataProbeComplete = true;
+    }
+}
 
 void appendSegmentData(HlsStreamDeviceState& state, QNetworkReply* reply)
 {
@@ -112,7 +246,12 @@ void appendSegmentData(HlsStreamDeviceState& state, QNetworkReply* reply)
         return;
     }
 
+    const quint64 bytesReceivedBefore = state.streamBuffer.bytesReceived;
     StreamUtils::appendReplyData(state.streamBuffer, reply);
+    const auto bytesAppended = static_cast<qsizetype>(state.streamBuffer.bytesReceived - bytesReceivedBefore);
+    if(bytesAppended > 0) {
+        probeSegmentMetadata(state, QByteArrayView{state.streamBuffer.data}.last(bytesAppended));
+    }
 }
 
 QUrl absoluteUrl(const QUrl& base, const QString& value)
@@ -353,6 +492,10 @@ void HlsRequestScheduler::startRequest(const QUrl& url, HlsStreamDeviceState::Re
             }
             scheduler.m_state->reply     = reply;
             scheduler.m_state->replyKind = kind;
+            if(kind == HlsStreamDeviceState::ReplyKind::Segment) {
+                scheduler.m_state->metadataProbe.clear();
+                scheduler.m_state->metadataProbeComplete = false;
+            }
         }
 
         QObject::connect(reply, &QIODevice::readyRead, reply, [state = scheduler.m_state, reply]() {
@@ -376,6 +519,9 @@ void HlsRequestScheduler::startRequest(const QUrl& url, HlsStreamDeviceState::Re
                 }
 
                 replyKind = scheduler.m_state->replyKind;
+                if(replyKind == HlsStreamDeviceState::ReplyKind::Segment && reply->error() == QNetworkReply::NoError) {
+                    appendSegmentData(*scheduler.m_state, reply);
+                }
                 if(reply->error() != QNetworkReply::NoError && !scheduler.m_state->aborted
                    && scheduler.m_state->error.isEmpty()) {
                     scheduler.m_state->error = reply->errorString();
@@ -468,6 +614,12 @@ bool HlsStreamDevice::shouldExposePathToDecoder() const
     return false;
 }
 
+std::optional<NetworkStreamMetadata> HlsStreamDevice::remoteStreamMetadata() const
+{
+    const std::scoped_lock lock{m_state->mutex};
+    return m_state->metadata;
+}
+
 void HlsStreamDevice::setNonBlockingReadsEnabled(bool enabled)
 {
     {
@@ -476,6 +628,15 @@ void HlsStreamDevice::setNonBlockingReadsEnabled(bool enabled)
         if(!enabled) {
             m_state->readMode.readWouldBlock = false;
         }
+    }
+    m_state->ready.notify_all();
+}
+
+void HlsStreamDevice::setReadCancellationToken(std::stop_token token)
+{
+    {
+        const std::scoped_lock lock{m_state->mutex};
+        m_state->readCancellationToken = std::move(token);
     }
     m_state->ready.notify_all();
 }
@@ -544,16 +705,22 @@ qint64 HlsStreamDevice::readData(char* data, qint64 maxSize)
 
     std::unique_lock lock{m_state->mutex};
 
-    const auto hasReadableState = [state = m_state]() {
-        return !state->streamBuffer.data.isEmpty() || state->finished || state->aborted || !state->error.isEmpty();
+    const std::stop_token cancellationToken = m_state->readCancellationToken;
+    const auto hasReadableState             = [state = m_state, cancellationToken]() {
+        return cancellationToken.stop_requested() || !state->streamBuffer.data.isEmpty() || state->finished
+            || state->aborted || !state->error.isEmpty();
     };
 
     bool hasData{true};
     if(m_state->readMode.nonBlockingReadsEnabled) {
-        hasData = m_state->ready.wait_for(lock, ReadWaitTimeout, hasReadableState);
+        hasData = m_state->ready.wait_for(lock, cancellationToken, ReadWaitTimeout, hasReadableState);
     }
     else {
-        m_state->ready.wait(lock, hasReadableState);
+        hasData = m_state->ready.wait(lock, cancellationToken, hasReadableState);
+    }
+
+    if(cancellationToken.stop_requested()) {
+        return -1;
     }
 
     if(!hasData && m_state->streamBuffer.data.isEmpty() && !m_state->finished && !m_state->aborted

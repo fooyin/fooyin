@@ -1,15 +1,16 @@
 find_package(
     Qt6
-    COMPONENTS OpenGL OpenGLWidgets
+    COMPONENTS OpenGL
     QUIET
 )
 
-if(NOT Qt6OpenGL_FOUND OR NOT Qt6OpenGLWidgets_FOUND)
-    message(STATUS "Qt6::OpenGL or Qt6::OpenGLWidgets not found; skipping projectm plugin.")
+if(NOT Qt6OpenGL_FOUND)
+    message(STATUS "Qt6::OpenGL not found; skipping projectm plugin.")
     return()
 endif()
 
 set(PROJECTM_TARGET)
+set(PROJECTM_OPENGL_LOADER_TARGET)
 
 include("${PROJECT_SOURCE_DIR}/3rdparty/projectm.cmake")
 
@@ -20,13 +21,24 @@ else()
     return()
 endif()
 
+if(WIN32)
+    if(TARGET GLEW::glew)
+        set(PROJECTM_OPENGL_LOADER_TARGET GLEW::glew)
+    elseif(TARGET GLEW::glew_s)
+        set(PROJECTM_OPENGL_LOADER_TARGET GLEW::glew_s)
+    else()
+        message(STATUS "GLEW not found; skipping projectm plugin on Windows.")
+        return()
+    endif()
+endif()
+
 create_fooyin_plugin_internal(
     projectm
     DEPENDS Fooyin::Core
             Fooyin::Gui
             Qt6::OpenGL
-            Qt6::OpenGLWidgets
             ${PROJECTM_TARGET}
+            ${PROJECTM_OPENGL_LOADER_TARGET}
     SOURCES projectminstance.cpp
             projectminstance.h
             projectmconfigdialog.cpp

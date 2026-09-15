@@ -27,6 +27,7 @@
 #include <core/playlist/playlist.h>
 
 #include <cstdint>
+#include <functional>
 
 namespace Fooyin {
 class ScriptRuntime;
@@ -121,6 +122,8 @@ public:
     QString evaluate(const QString& input, const Playlist& playlist, const ScriptContext& context,
                      const ScriptEvaluationOptions& options);
     QString evaluate(const ParsedScript& input, const Playlist& playlist, const ScriptContext& context);
+
+    void withContext(const ScriptContext& context, const std::function<void()>& operation);
 
     /*!
      * Returns the maximum number of cached parsed and bound scripts.

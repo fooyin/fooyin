@@ -20,9 +20,11 @@
 #include "libraryscanner.h"
 
 #include "database/trackdatabase.h"
+#include "librarycuetrackreloader.h"
 #include "libraryscansession.h"
 #include "libraryscanutils.h"
 
+#include <core/engine/audioloader.h>
 #include <core/playlist/playlistloader.h>
 #include <core/track.h>
 #include <core/trackmetadatastore.h>
@@ -31,9 +33,12 @@
 #include <utils/timer.h>
 #include <utils/utils.h>
 
+#include <QFileInfo>
 #include <QLoggingCategory>
 
 #include <algorithm>
+#include <iterator>
+#include <ranges>
 
 Q_LOGGING_CATEGORY(LIB_SCANNER, "fy.scanner")
 
@@ -215,6 +220,8 @@ void LibraryScanner::scanTracks(const TrackList& tracks, const bool onlyModified
     TrackList tracksToUpdate;
     int processedTracks{0};
 
+    TrackList cueTracksToReload;
+
     for(const Track& track : tracks) {
         if(!shouldContinue()) {
             Q_EMIT progressChanged(
@@ -225,6 +232,7 @@ void LibraryScanner::scanTracks(const TrackList& tracks, const bool onlyModified
         }
 
         if(track.hasCue()) {
+            cueTracksToReload.push_back(track);
             continue;
         }
 
@@ -280,6 +288,30 @@ void LibraryScanner::scanTracks(const TrackList& tracks, const bool onlyModified
         Q_EMIT progressChanged(makeProgress(processedTracks, track.filepath(), static_cast<int>(tracks.size()),
                                             ScanProgress::Phase::ReadingMetadata, 0));
     }
+
+    CueTrackReloader cueReloader{m_audioLoader.get(), m_metadataStore};
+    CueTrackReloadResult cueResult = cueReloader.reload(
+        cueTracksToReload, onlyModified,
+        {.overwriteRatingOnReload    = config.overwriteRatingOnReload,
+         .overwritePlaycountOnReload = config.overwritePlaycountOnReload},
+        shouldContinue,
+        [this, &processedTracks, total = static_cast<int>(tracks.size())](const int count, const QString& source) {
+            processedTracks += count;
+            Q_EMIT progressChanged(
+                makeProgress(processedTracks, source, total, ScanProgress::Phase::ReadingMetadata, 0));
+        });
+
+    if(cueResult.cancelled) {
+        Q_EMIT progressChanged(makeProgress(processedTracks, {}, processedTracks, ScanProgress::Phase::Finished, 0));
+        setState(Idle);
+        Q_EMIT finished();
+        return;
+    }
+
+    tracksToAdd.insert(tracksToAdd.end(), std::make_move_iterator(cueResult.addedTracks.begin()),
+                       std::make_move_iterator(cueResult.addedTracks.end()));
+    tracksToUpdate.insert(tracksToUpdate.end(), std::make_move_iterator(cueResult.updatedTracks.begin()),
+                          std::make_move_iterator(cueResult.updatedTracks.end()));
 
     if(!tracksToAdd.empty()) {
         Q_EMIT progressChanged(makeProgress(processedTracks, {}, static_cast<int>(tracks.size()),

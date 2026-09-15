@@ -29,6 +29,7 @@
 
 #include <QDateTime>
 #include <QDir>
+#include <QFileInfo>
 
 using namespace Qt::StringLiterals;
 
@@ -381,13 +382,43 @@ TEST_F(ScriptParserTest, BasicLiteral)
 
 TEST_F(ScriptParserTest, EscapeComment)
 {
-    EXPECT_EQ(u"I am a % test.", m_parser.evaluate(uR"("I am a \% test.")"_s));
-    EXPECT_EQ(u"I am an \"escape test.", m_parser.evaluate(uR"("I am an \"escape test.")"_s));
+    const QString escapedPercent = uR"(I am a \% test.)"_s;
+    const QString escapedQuote   = uR"("I am an \"escape test.")"_s;
+
+    EXPECT_EQ(u"I am a % test.", m_parser.evaluate(escapedPercent));
+    EXPECT_EQ(u"I am an \"escape test.", m_parser.evaluate(escapedQuote));
+}
+
+TEST_F(ScriptParserTest, LineComments)
+{
+    EXPECT_EQ(u"beforeafter", m_parser.evaluate(u"before\nafter"_s));
+    EXPECT_EQ(u"beforeafter", m_parser.evaluate(u"before\n// ignored FooScript: $invalid(%field%\nafter"_s));
+    EXPECT_EQ(u"beforeafter", m_parser.evaluate(u"before\r\n// ignored\r\nafter"_s));
+    EXPECT_EQ(u"01", m_parser.evaluate(u"$num(\n// first argument\n1,2)"_s));
+    EXPECT_EQ(u"// quoted", m_parser.evaluate(uR"("// quoted")"_s));
+    EXPECT_EQ(u"// escaped", m_parser.evaluate(uR"(\// escaped)"_s));
+    EXPECT_EQ(u"inline // text", m_parser.evaluate(u"inline // text"_s));
+    EXPECT_EQ(u"  // indented", m_parser.evaluate(u"  // indented"_s));
+
+    const ParsedScript commentOnly = m_parser.parse(u"// ignored"_s);
+    EXPECT_TRUE(commentOnly.errors.empty());
+    EXPECT_EQ(u"", m_parser.evaluate(commentOnly));
+}
+
+TEST_F(ScriptParserTest, LineCommentsPreserveLineEndings)
+{
+    const ScriptEvaluationOptions options{.whitespaceMode = ScriptWhitespaceMode::Preserve};
+
+    EXPECT_EQ(u"before\n\nafter", m_parser.evaluate(u"before\n// ignored\nafter"_s, ScriptContext{}, options));
 }
 
 TEST_F(ScriptParserTest, Quote)
 {
     EXPECT_EQ(u"I %am% a $test$.", m_parser.evaluate(uR"("I %am% a $test$.")"_s));
+    EXPECT_EQ(uR"(\%)", m_parser.evaluate(uR"("\%")"_s));
+    EXPECT_EQ(uR"(\d+)", m_parser.evaluate(uR"("\d+")"_s));
+    EXPECT_EQ(uR"(\d+)", m_parser.evaluate(uR"("\\d+")"_s));
+    EXPECT_EQ(uR"(C:\Music)", m_parser.evaluate(uR"("C:\\Music")"_s));
 }
 
 TEST_F(ScriptParserTest, StringTest)
@@ -427,6 +458,9 @@ TEST_F(ScriptParserTest, StringTest)
     EXPECT_EQ(u"winnerwinner",
               m_parser.evaluate(u"$if3(,$put(choice,winner),$put(choice,wrong),fallback)$get(choice)"_s));
     EXPECT_EQ(u"          X", m_parser.evaluate(u"$padright(,$mul($sub(3,1),5))X"_s));
+    EXPECT_EQ(u"1", m_parser.evaluate(u"$strcmp(cmp,cmp)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$strcmp(cmp,cMp)"_s));
+    EXPECT_EQ(u"1", m_parser.evaluate(u"$stricmp(cmp,cMp)"_s));
     EXPECT_EQ(u"true", m_parser.evaluate(u"$if($stricmp(cmp,cMp),true,false)"_s));
     EXPECT_EQ(u"false", m_parser.evaluate(u"$if($strcmp(cmp,cMp),true,false)"_s));
     EXPECT_EQ(u"", m_parser.evaluate(u"$split(a;b;c,;)"_s));
@@ -441,6 +475,24 @@ TEST_F(ScriptParserTest, StringTest)
     EXPECT_EQ(u"Artist", m_parser.evaluate(u"$join( - ,Artist,)"_s));
     EXPECT_EQ(u"Artist - Album", m_parser.evaluate(u"$join( - ,Artist,Album)"_s));
     EXPECT_EQ(u"A / B / C", m_parser.evaluate(u"$join( / ,A,,B,C)"_s));
+    EXPECT_EQ(u"a", m_parser.evaluate(u"$shortest(longer,a,bb)"_s));
+    EXPECT_EQ(u"first", m_parser.evaluate(u"$shortest(first,later)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$shortest()"_s));
+    EXPECT_EQ(u"1", m_parser.evaluate(u"$strchr(abca,a)"_s));
+    EXPECT_EQ(u"4", m_parser.evaluate(u"$strrchr(abca,a)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$strchr(abca,z)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$strrchr(abca,ab)"_s));
+    EXPECT_EQ(u"1", m_parser.evaluate(u"$strstr(abca,a)"_s));
+    EXPECT_EQ(u"3", m_parser.evaluate(u"$strstr(abca,c)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$strstr(abca,A)"_s));
+    EXPECT_EQ(u"4", m_parser.evaluate(u"$strstr(abca,a,1)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$strstr(abca,a,invalid)"_s));
+    EXPECT_EQ(u"1", m_parser.evaluate(u"$stristr(Abca,a)"_s));
+    EXPECT_EQ(u"4", m_parser.evaluate(u"$stristr(Abca,A,1)"_s));
+    EXPECT_EQ(u"4", m_parser.evaluate(u"$strstrlast(abca,a)"_s));
+    EXPECT_EQ(u"1", m_parser.evaluate(u"$strstrlast(abca,a,2)"_s));
+    EXPECT_EQ(u"4", m_parser.evaluate(u"$stristrlast(abcA,a)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$stristrlast(abca,z)"_s));
 
     EXPECT_EQ(u"true", m_parser.evaluate(u"$if($isalpha(abcXYZ),true,false)"_s));
     EXPECT_EQ(u"false", m_parser.evaluate(u"$if($isalpha(abc123),true,false)"_s));
@@ -455,6 +507,26 @@ TEST_F(ScriptParserTest, StringTest)
     EXPECT_EQ(u"", m_parser.evaluate(u"$ascii(©)"_s));
     EXPECT_EQ(u"Hello", m_parser.evaluate(u"$ascii(Hello)"_s));
     EXPECT_EQ(u"", m_parser.evaluate(u"$ascii()"_s));
+    EXPECT_EQ(u"3421780262", m_parser.evaluate(u"$crc32(123456789)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$crc32(a,b)"_s));
+    EXPECT_EQ(u"00FF", m_parser.evaluate(u"$hex(255,4)"_s));
+    EXPECT_EQ(u"CBF43926", m_parser.evaluate(u"$hex($crc32(123456789),8)"_s));
+    EXPECT_EQ(u"FFFF", m_parser.evaluate(u"$hex(65535,2)"_s));
+}
+
+TEST_F(ScriptParserTest, ApplicationLinkTest)
+{
+    EXPECT_EQ(uR"(<a href="fooyin://application/run?application=player">Player</a>)",
+              m_parser.evaluate(u"$applink(Player,player)"_s));
+    EXPECT_EQ(uR"(<a href="fooyin://application/run?application=player&arguments=--play">Player</a>)",
+              m_parser.evaluate(u"$applink(Player,player,--play)"_s));
+    EXPECT_EQ(
+        uR"(<a href="fooyin://application/run?application=/usr/bin/player&arguments=--play&directory=/tmp/Music">Player</a>)",
+        m_parser.evaluate(u"$applink(Player,/usr/bin/player,--play,/tmp/Music)"_s));
+    EXPECT_TRUE(m_parser.evaluate(u"$applink()"_s).isEmpty());
+    EXPECT_TRUE(m_parser.evaluate(u"$applink(Player)"_s).isEmpty());
+    EXPECT_TRUE(m_parser.evaluate(u"$applink(Player,)"_s).isEmpty());
+    EXPECT_TRUE(m_parser.evaluate(u"$applink(Player,player,args,directory,extra)"_s).isEmpty());
 }
 
 TEST_F(ScriptParserTest, MathTest)
@@ -471,22 +543,44 @@ TEST_F(ScriptParserTest, MathTest)
     EXPECT_EQ(u"1", m_parser.evaluate(u"[$mod(10,3)]"_s));
     EXPECT_EQ(2, m_parser.evaluate(u"$min(3,2,3,9,23,100,4)"_s).toInt());
     EXPECT_EQ(100, m_parser.evaluate(u"$max(3,2,3,9,23,100,4)"_s).toInt());
+    EXPECT_EQ(u"0", m_parser.evaluate(u"$select(2,-10,0,10)"_s));
+    EXPECT_TRUE(m_parser.evaluate(u"$select(0,-10,0,10)"_s).isEmpty());
+    EXPECT_TRUE(m_parser.evaluate(u"$select(4,-10,0,10)"_s).isEmpty());
 }
 
 TEST_F(ScriptParserTest, TimeDateFunctionTest)
 {
     EXPECT_EQ(u"2024", m_parser.evaluate(u"$year(\"2024-03-09 08:07:06\")"_s));
+    EXPECT_EQ(u"2024", m_parser.evaluate(u"$year(2024)"_s));
+    EXPECT_TRUE(m_parser.evaluate(u"$year(0000)"_s).isEmpty());
     EXPECT_EQ(u"03", m_parser.evaluate(u"$month(\"2024-03-09 08:07:06\")"_s));
+    EXPECT_EQ(u"01", m_parser.evaluate(u"$month(2024)"_s));
     EXPECT_EQ(u"09", m_parser.evaluate(u"$day_of_month(\"2024-03-09 08:07:06\")"_s));
+    EXPECT_EQ(u"01", m_parser.evaluate(u"$day_of_month(\"2024-03\")"_s));
     EXPECT_EQ(u"2024-03-09", m_parser.evaluate(u"$date(\"2024-03-09 08:07:06\")"_s));
+    EXPECT_EQ(u"2024-01-01", m_parser.evaluate(u"$date(2024)"_s));
+    EXPECT_EQ(u"2024-02-29", m_parser.evaluate(u"$date(\"2024-02-29\")"_s));
     EXPECT_EQ(u"08:07:06", m_parser.evaluate(u"$time(\"2024-03-09 08:07:06\")"_s));
     EXPECT_EQ(u"08:07", m_parser.evaluate(u"$time(\"2024-03-09 08:07\")"_s));
+    EXPECT_EQ(u"08:00", m_parser.evaluate(u"$time(\"2024-03-09 08\")"_s));
+    EXPECT_EQ(u"23:59:59", m_parser.evaluate(u"$time(\"2024-03-09 23:59:59\")"_s));
     EXPECT_EQ(u"", m_parser.evaluate(u"$time(\"2024-03-09\")"_s));
     EXPECT_EQ(u"", m_parser.evaluate(u"$year(not-a-date)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$date(\"2023-02-29\")"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$date(\"2024-13-01\")"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$date(\"2024/03/09\")"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$date(\"2024-3-09\")"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$time(\"2024-03-09 24:00:00\")"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$time(\"2024-03-09 08:60:00\")"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$time(\"2024-03-09 08:07:60\")"_s));
 }
 
 TEST_F(ScriptParserTest, ConditionalTest)
 {
+    EXPECT_EQ(u"", m_parser.evaluate(u"[literal]"_s));
+    EXPECT_EQ(u"1shown", m_parser.evaluate(u"[$strcmp(a,a)shown]"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"[$strcmp(a,b)shown]"_s));
+    EXPECT_EQ(u"yes", m_parser.evaluate(u"$if([$strcmp(a,a)],yes,no)"_s));
     EXPECT_EQ(u"", m_parser.evaluate(u"$and(1,1)"_s));
     EXPECT_EQ(u"true", m_parser.evaluate(u"$if($and(1,$strcmp(a,a),$stricmp(B,b)),true,false)"_s));
     EXPECT_EQ(u"false", m_parser.evaluate(u"$if($and(1,,2),true,false)"_s));
@@ -504,6 +598,12 @@ TEST_F(ScriptParserTest, ConditionalTest)
     EXPECT_EQ(u"true", m_parser.evaluate(u"[$ifequal(1,1,true,false)]"_s));
     EXPECT_EQ(u"true", m_parser.evaluate(u"[$ifgreater(5,3,true,false)]"_s));
     EXPECT_EQ(u"true", m_parser.evaluate(u"[$iflonger(aaa,2,true,false)]"_s));
+    EXPECT_EQ(u"false", m_parser.evaluate(u"[$iflonger(aaa,3,true,false)]"_s));
+    EXPECT_EQ(u"one", m_parser.evaluate(u"$select(1,one,two,three)"_s));
+    EXPECT_EQ(u"three", m_parser.evaluate(u"$select(3,one,two,three)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$select(0,one,two,three)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$select(4,one,two,three)"_s));
+    EXPECT_EQ(u"oneone", m_parser.evaluate(u"$select(1,$put(value,one),$put(value,two))$get(value)"_s));
     EXPECT_EQ(u"<A", m_parser.evaluate(u"$if(1,<A,X)"_s));
     EXPECT_EQ(u"<rgb=255,0,0>A", m_parser.evaluate(u"$if(1,<rgb=255,0,0>A,X)"_s));
     EXPECT_EQ(u"\\<A", m_parser.evaluate(u"$if(1,\\<A,X)"_s));
@@ -537,6 +637,9 @@ TEST_F(ScriptParserTest, MetadataTest)
 
     track.setTrackNumber(u"7"_s);
     EXPECT_EQ(u"7", m_parser.evaluate(u"[%track%]"_s, track));
+    EXPECT_EQ(u"yes", m_parser.evaluate(u"$if(%disc%%track%,yes,no)"_s, track));
+    EXPECT_EQ(u"no", m_parser.evaluate(u"$if(%disc%literal,yes,no)"_s, track));
+    EXPECT_EQ(u"yes", m_parser.evaluate(u"$if($strcmp(a,a)literal,yes,no)"_s, track));
     EXPECT_EQ(u"07", m_parser.evaluate(u"$num(%track%,2)"_s, track));
     EXPECT_EQ(u"07", m_parser.evaluate(u"[$num(%track%,2)]"_s, track));
     EXPECT_EQ(u"07.  ", m_parser.evaluate(u"[$num(%track%,2).  ]"_s, track));
@@ -567,7 +670,29 @@ TEST_F(ScriptParserTest, MetadataTest)
     EXPECT_EQ(u"true", m_parser.evaluate(u"$if(%replaygain_track_gain%,true,false)"_s, track));
     EXPECT_EQ(u"true", m_parser.evaluate(u"$if(%replaygain_album_gain%,true,false)"_s, track));
 
-    EXPECT_EQ(u"", m_parser.evaluate(u"[%disc% - %track%]"_s, track));
+    EXPECT_EQ(u" - 7", m_parser.evaluate(u"[%disc% - %track%]"_s, track));
+}
+
+TEST_F(ScriptParserTest, RegexTest)
+{
+    EXPECT_EQ(u"true", m_parser.evaluate(uR"REGEX($if($regex_test(Track 42,"^Track \d+$"),true,false))REGEX"_s));
+    EXPECT_EQ(u"true", m_parser.evaluate(uR"REGEX($if($regex_test(FOOYIN,"^fooyin$",i),true,false))REGEX"_s));
+    EXPECT_EQ(u"false", m_parser.evaluate(uR"REGEX($if($regex_test(FOOYIN,"^fooyin$"),true,false))REGEX"_s));
+    EXPECT_EQ(u"false", m_parser.evaluate(uR"REGEX($if($regex_test(text,"["),true,false))REGEX"_s));
+    EXPECT_EQ(u"false", m_parser.evaluate(uR"REGEX($if($regex_test(text,"text",g),true,false))REGEX"_s));
+    EXPECT_EQ(u"Track 42", m_parser.evaluate(uR"REGEX($regex_match(Track 42,"Track (\d+)"))REGEX"_s));
+    EXPECT_EQ(u"42", m_parser.evaluate(uR"REGEX($regex_match(Track 42,"Track (\d+)",1))REGEX"_s));
+    EXPECT_EQ(u"FOOYIN", m_parser.evaluate(uR"REGEX($regex_match(FOOYIN,"(fooyin)",1,i))REGEX"_s));
+    EXPECT_EQ(u"42", m_parser.evaluate(uR"REGEX($regex_match(Track 42,"Track (?<number>\d+)",number))REGEX"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(uR"REGEX($regex_match(Track 42,"Track (\d+)",2))REGEX"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(uR"REGEX($regex_match(Track 42,"Track (\d+)",missing))REGEX"_s));
+    EXPECT_EQ(u"A1 / B22 / C333", m_parser.evaluate(uR"REGEX($regex_matches(A1 B22 C333,"[A-Z]\d+"," / "))REGEX"_s));
+    EXPECT_EQ(u"1 / 22 / 333", m_parser.evaluate(uR"REGEX($regex_matches(A1 B22 C333,"([A-Z])(\d+)"," / ",2))REGEX"_s));
+    EXPECT_EQ(u"1 / 22 / 333",
+              m_parser.evaluate(uR"REGEX($regex_matches(a1 B22 c333,"([a-z])(\d+)"," / ",2,i))REGEX"_s));
+    EXPECT_EQ(u"Track #42", m_parser.evaluate(uR"REGEX($regex_replace(Track 42,"(\d+)","#\1"))REGEX"_s));
+    EXPECT_EQ(u"one cat two cat", m_parser.evaluate(u"$regex_replace(one DOG two dog,dog,cat,i)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(uR"REGEX($regex_replace(text,"[",replacement))REGEX"_s));
 }
 
 TEST_F(ScriptParserTest, ReplaceCanSanitiseUserFilenameExpression)
@@ -578,9 +703,9 @@ TEST_F(ScriptParserTest, ReplaceCanSanitiseUserFilenameExpression)
     track.setTitle(u"What? A \"Title\": Part | Two"_s);
 
     static auto nestedReplaceScript
-        = uR"($trim($replace($replace($replace($replace($iflonger(%disc%,1,%disc%.,)$iflonger(%track%,1,%track%.,) %title%,?, ),\",),:, ),|,)))"_s;
+        = uR"($trim($replace($replace($replace($replace($iflonger(%disc%,0,%disc%.,)$iflonger(%track%,0,%track%.,) %title%,?, ),\",),:, ),|,)))"_s;
     static auto variadicReplaceScript
-        = uR"($trim($replace($iflonger(%disc%,1,%disc%.,)$iflonger(%track%,1,%track%.,) %title%,?, ,\",,:, ,|,)))"_s;
+        = uR"($trim($replace($iflonger(%disc%,0,%disc%.,)$iflonger(%track%,0,%track%.,) %title%,?, ,\",,:, ,|,)))"_s;
 
     EXPECT_EQ(u"2.13. What  A Title  Part  Two", m_parser.evaluate(nestedReplaceScript, track));
     EXPECT_EQ(u"2.13. What  A Title  Part  Two", m_parser.evaluate(variadicReplaceScript, track));
@@ -628,6 +753,26 @@ TEST_F(ScriptParserTest, RatingScriptWritesUseExpectedScales)
 
     setTrackScriptValue(u"rating_stars"_s, u"7"_s, track);
     EXPECT_FLOAT_EQ(track.rating(), 0.7F);
+}
+
+TEST_F(ScriptParserTest, MultiValueScriptWritesAcceptSingleStrings)
+{
+    Track track;
+
+    setTrackScriptValue(u"artist"_s, u"Artist"_s, track);
+    setTrackScriptValue(u"albumartist"_s, u"Album Artist"_s, track);
+    setTrackScriptValue(u"genre"_s, u"Genre"_s, track);
+    setTrackScriptValue(u"composer"_s, u"Composer"_s, track);
+    setTrackScriptValue(u"performer"_s, u"Performer"_s, track);
+
+    EXPECT_EQ(track.artists(), QStringList{u"Artist"_s});
+    EXPECT_EQ(track.albumArtists(), QStringList{u"Album Artist"_s});
+    EXPECT_EQ(track.genres(), QStringList{u"Genre"_s});
+    EXPECT_EQ(track.composers(), QStringList{u"Composer"_s});
+    EXPECT_EQ(track.performers(), QStringList{u"Performer"_s});
+
+    setTrackScriptValue(u"genre"_s, QString{}, track);
+    EXPECT_FALSE(track.hasGenres());
 }
 
 TEST_F(ScriptParserTest, TrackListTest)
@@ -785,6 +930,7 @@ TEST_F(ScriptParserTest, ContextEnvironmentVariables)
     EXPECT_EQ(u"1", parser.evaluate(u"%queue_index%"_s, track, context));
     EXPECT_EQ(u"1, 3", parser.evaluate(u"%queueindexes%"_s, track, context));
     EXPECT_EQ(u"1, 3", parser.evaluate(u"%queue_indexes%"_s, track, context));
+    EXPECT_EQ(u"[1, 3]", parser.evaluate(uR"([\[%queueindexes%\]])"_s, track, context));
     EXPECT_EQ(u"7", parser.evaluate(u"%queuetotal%"_s, track, context));
     EXPECT_EQ(u"7", parser.evaluate(u"%queue_total%"_s, track, context));
 }
@@ -825,18 +971,21 @@ TEST_F(ScriptParserTest, ContextEvaluationEnvironmentPreservesPathVariableSepara
 {
     ScriptParser parser;
 
+    const QString libraryPath = QFileInfo{u"/tmp/music"_s}.absoluteFilePath();
+    const QString filePath    = QFileInfo{u"/tmp/music/foo/bar.mp3"_s}.absoluteFilePath();
+
     TestPlaylistEnvironment environment;
     environment.setEvaluationState(TrackListContextPolicy::Unresolved, {}, false, false, {}, {}, {}, true);
-    environment.setLibraryState({}, u"/tmp/music"_s);
+    environment.setLibraryState({}, libraryPath);
 
     ScriptContext context;
     context.environment = &environment;
     Track track;
-    track.setFilePath(u"/tmp/music/foo/bar.mp3"_s);
+    track.setFilePath(filePath);
     track.setTitle(u"foo/bar"_s);
 
-    EXPECT_EQ(u"/tmp/music/foo", parser.evaluate(u"%path%"_s, track, context));
-    EXPECT_EQ(u"/tmp/music/foo/bar.mp3", parser.evaluate(u"%filepath%"_s, track, context));
+    EXPECT_EQ(QFileInfo{filePath}.path(), parser.evaluate(u"%path%"_s, track, context));
+    EXPECT_EQ(filePath, parser.evaluate(u"%filepath%"_s, track, context));
     EXPECT_EQ(u"foo/bar.mp3", parser.evaluate(u"%relativepath%"_s, track, context));
     EXPECT_EQ(u"foo-bar", parser.evaluate(u"%title%"_s, track, context));
 }
@@ -882,9 +1031,30 @@ TEST_F(ScriptParserTest, ContextPlaybackEnvironmentProvidesPlaybackVariables)
     track.setBitrate(192);
 
     EXPECT_EQ(u"00:45", parser.evaluate(u"%playback_time%"_s, track, context));
+    EXPECT_EQ(u"45", parser.evaluate(u"%playback_time_seconds%"_s, track, context));
     EXPECT_EQ(u"75", parser.evaluate(u"%playback_time_remaining_s%"_s, track, context));
+    EXPECT_EQ(u"75", parser.evaluate(u"%playback_time_remaining_seconds%"_s, track, context));
     EXPECT_EQ(u"1", parser.evaluate(u"%isplaying%"_s, track, context));
     EXPECT_EQ(u"320", parser.evaluate(u"%bitrate%"_s, track, context));
+}
+
+TEST_F(ScriptParserTest, PlaybackTimeRemainingFollowsElapsedSecondBoundaries)
+{
+    ScriptParser parser;
+
+    TestPlaylistEnvironment environment;
+    ScriptContext context;
+    context.environment = &environment;
+
+    const Track track;
+
+    environment.setPlaybackState(1005, 254013, 320, Player::PlayState::Playing);
+    EXPECT_EQ(u"04:13", parser.evaluate(u"%playback_time_remaining%"_s, track, context));
+    EXPECT_EQ(u"253", parser.evaluate(u"%playback_time_remaining_s%"_s, track, context));
+
+    environment.setPlaybackState(2015, 254013, 320, Player::PlayState::Playing);
+    EXPECT_EQ(u"04:12", parser.evaluate(u"%playback_time_remaining%"_s, track, context));
+    EXPECT_EQ(u"252", parser.evaluate(u"%playback_time_remaining_s%"_s, track, context));
 }
 
 TEST_F(ScriptParserTest, ContextLibraryEnvironmentProvidesLibraryVariables)
@@ -1109,6 +1279,86 @@ TEST_F(ScriptParserTest, QueryTest)
     EXPECT_EQ(2, m_filter.filter(query, tracks).size());
 }
 
+TEST_F(ScriptParserTest, PathQueriesNormaliseSeparators)
+{
+    const Track canonicalPathTrack{u"C:/Music/First Album/song.flac"_s};
+    const Track nativePathTrack{QDir::toNativeSeparators(u"C:/Music/Second Album/song.flac"_s)};
+    const TrackList tracks{canonicalPathTrack, nativePathTrack};
+
+    const QString nativeFolder = QDir::toNativeSeparators(u"C:/Music/First Album"_s);
+    EXPECT_EQ(1, m_filter.filter(uR"(path HAS "%1")"_s.arg(nativeFolder), tracks).size());
+    EXPECT_EQ(1, m_filter.filter(uR"(filepath IS "C:/Music/Second Album/song.flac")"_s, tracks).size());
+}
+
+TEST_F(ScriptParserTest, QueryQuotedLiteralsPreserveWhitespace)
+{
+    Track track{u"C:/Music/2025 - blossom/song.flac"_s};
+    track.setComment(uR"(say " hello + goodbye)"_s);
+    const TrackList tracks{track};
+
+    EXPECT_EQ(1, m_filter.filter(uR"(path HAS "C:/Music/2025 - blossom")"_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"comment HAS \"say \\\" hello + goodbye\""_s, tracks).size());
+}
+
+TEST_F(ScriptParserTest, QueryLongLogicalChains)
+{
+    const QStringList paths{u"(Variants)"_s, u"(Ban)"_s, u"[Mixed]"_s, u"_broken"_s, u"__DEFAULT"_s,
+                            u"Six"_s,        u"Seven"_s, u"Eight"_s,   u"Allowed"_s};
+    TrackList tracks;
+    for(const auto& path : paths) {
+        Track track;
+        track.setId(static_cast<int>(tracks.size()));
+        track.setFilePath(u"/music/%1/song.flac"_s.arg(path));
+        track.setRating(0.8F);
+        track.setLastPlayed(QDateTime::currentDateTime().addMonths(-2).toMSecsSinceEpoch());
+        tracks.push_back(track);
+    }
+
+    QStringList alternatives;
+    QStringList exclusions;
+    for(int count{1}; count < paths.size(); ++count) {
+        SCOPED_TRACE(count);
+        alternatives.push_back(u"path : \"%1\""_s.arg(paths.at(count - 1)));
+        exclusions.push_back(u"NOT path : \"%1\""_s.arg(paths.at(count - 1)));
+
+        const QString disjunction = alternatives.join(u" OR "_s);
+        const QString conjunction = exclusions.join(u" AND "_s);
+        const TrackList included{tracks.begin(), tracks.begin() + count};
+        const TrackList excluded{tracks.begin() + count, tracks.end()};
+
+        EXPECT_EQ(included, m_filter.filter(disjunction, tracks));
+        EXPECT_EQ(included, m_filter.filter(u"(%1)"_s.arg(disjunction), tracks));
+        EXPECT_EQ(excluded, m_filter.filter(u"NOT (%1)"_s.arg(disjunction), tracks));
+        EXPECT_EQ(excluded, m_filter.filter(conjunction, tracks));
+        EXPECT_EQ(excluded, m_filter.filter(u"(%1)"_s.arg(conjunction), tracks));
+        EXPECT_EQ(excluded,
+                  m_filter.filter(
+                      u"rating >= 4 AND NOT lastplayed DURING LAST 1 MONTHS AND NOT (%1)"_s.arg(disjunction), tracks));
+    }
+}
+
+TEST_F(ScriptParserTest, QueryDateRangesRespectInputPrecision)
+{
+    Track first;
+    first.setFirstPlayed(QDateTime{QDate{2024, 2, 29}, QTime{8, 7, 6}}.toMSecsSinceEpoch());
+
+    Track second;
+    second.setFirstPlayed(QDateTime{QDate{2024, 2, 29}, QTime{8, 7, 59}}.toMSecsSinceEpoch());
+
+    Track third;
+    third.setFirstPlayed(QDateTime{QDate{2024, 2, 29}, QTime{8, 8}}.toMSecsSinceEpoch());
+
+    const TrackList tracks{first, second, third};
+
+    EXPECT_EQ(3, m_filter.filter(u"firstplayed DURING 2024"_s, tracks).size());
+    EXPECT_EQ(3, m_filter.filter(u"firstplayed DURING \"2024-02\""_s, tracks).size());
+    EXPECT_EQ(3, m_filter.filter(u"firstplayed DURING \"2024-02-29\""_s, tracks).size());
+    EXPECT_EQ(3, m_filter.filter(u"firstplayed DURING \"2024-02-29 08\""_s, tracks).size());
+    EXPECT_EQ(2, m_filter.filter(u"firstplayed DURING \"2024-02-29 08:07\""_s, tracks).size());
+    EXPECT_EQ(1, m_filter.filter(u"firstplayed DURING \"2024-02-29 08:07:06\""_s, tracks).size());
+    EXPECT_EQ(0, m_filter.filter(u"firstplayed DURING \"2023-02-29\""_s, tracks).size());
+}
+
 TEST_F(ScriptParserTest, QueryAccentInsensitiveSearch)
 {
     Track track;
@@ -1151,6 +1401,28 @@ TEST_F(ScriptParserTest, QueryLiteralSearchOptions)
     titleOnly.mode = ScriptSearchMode::MatchAnywhere;
     TrackQueryFilter anywhereFilter{titleOnly};
     EXPECT_EQ(1, anywhereFilter.filter(u"light"_s, tracks).size());
+}
+
+TEST_F(ScriptParserTest, QueryWordBeginningSearchIgnoresAccents)
+{
+    Track composedTrack;
+    composedTrack.setId(0);
+    composedTrack.setArtists({u"Ásgeir"_s});
+
+    Track decomposedTrack;
+    decomposedTrack.setId(1);
+    decomposedTrack.setArtists({u"A\u0301sgeir"_s});
+
+    ScriptSearchOptions artistOnly;
+    artistOnly.script = u"%artist%"_s;
+    artistOnly.mode   = ScriptSearchMode::MatchWordBeginnings;
+
+    TrackQueryFilter filter{artistOnly};
+    const TrackList tracks{composedTrack, decomposedTrack};
+
+    EXPECT_EQ(2, filter.filter(u"Asgeir"_s, tracks).size());
+    EXPECT_EQ(2, filter.filter(u"Ásgeir"_s, tracks).size());
+    EXPECT_EQ(0, filter.filter(u"sgeir"_s, tracks).size());
 }
 
 TEST_F(ScriptParserTest, QueryClassification)

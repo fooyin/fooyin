@@ -21,7 +21,6 @@
 
 #include "dialog/autoplaylistdialog.h"
 #include "playlist/playlistcontroller.h"
-#include "playlist/playlistinteractor.h"
 #include "playlistorganiserconfigwidget.h"
 #include "playlistorganiserdelegate.h"
 #include "playlistorganisermodel.h"
@@ -32,6 +31,8 @@
 #include <core/track.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/iconloader.h>
+#include <gui/playlist/playlistinteractor.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
@@ -46,6 +47,7 @@
 #include <QMainWindow>
 #include <QMenu>
 #include <QMouseEvent>
+#include <QSignalBlocker>
 #include <QTreeView>
 #include <QVBoxLayout>
 
@@ -492,6 +494,9 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
         if(auto* savePlaylist = m_actionManager->command(Constants::Actions::SavePlaylist)) {
             menu->addSeparator();
             menu->addAction(savePlaylist->action());
+            if(auto* saveAllPlaylists = m_actionManager->command(Constants::Actions::SaveAllPlaylists)) {
+                menu->addAction(saveAllPlaylists->action());
+            }
         }
     }
 
@@ -501,6 +506,16 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
         if(auto* playlist = actionIndex().data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>()) {
             if(playlist->isAutoPlaylist()) {
                 menu->addAction(m_editAutoPlaylistCmd->action());
+            }
+            if(!playlist->isAutoPlaylist()) {
+                auto* lockAction
+                    = new QAction(Gui::iconFromTheme(Constants::Icons::ReadOnly), tr("Lock playlist"), menu);
+                lockAction->setCheckable(true);
+                lockAction->setChecked(playlist->isLocked());
+                QObject::connect(lockAction, &QAction::toggled, this, [this, id = playlist->id()](bool locked) {
+                    m_playlistInteractor->handler()->setPlaylistLocked(id, locked);
+                });
+                menu->addAction(lockAction);
             }
         }
     }
@@ -786,7 +801,7 @@ void PlaylistOrganiser::saveConfigToLayout(const ConfigData& config, QJsonObject
 
 void PlaylistOrganiser::openConfigDialog()
 {
-    showConfigDialog(new PlaylistOrganiserConfigDialog(this, this));
+    showConfigDialog(new PlaylistOrganiserConfigDialog(this, this), Qt::NonModal);
 }
 } // namespace Fooyin
 

@@ -21,12 +21,16 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/fileutils.h
     ${CMAKE_SOURCE_DIR}/include/utils/fymath.h
     ${CMAKE_SOURCE_DIR}/include/utils/fypaths.h
+    ${CMAKE_SOURCE_DIR}/include/utils/heartdelegate.h
+    ${CMAKE_SOURCE_DIR}/include/utils/hearteditor.h
     ${CMAKE_SOURCE_DIR}/include/utils/helpers.h
     ${CMAKE_SOURCE_DIR}/include/utils/id.h
     ${CMAKE_SOURCE_DIR}/include/utils/itemregistry.h
+    ${CMAKE_SOURCE_DIR}/include/utils/jsonutils.h
     ${CMAKE_SOURCE_DIR}/include/utils/lockfreeringbuffer.h
     ${CMAKE_SOURCE_DIR}/include/utils/logging/messagehandler.h
     ${CMAKE_SOURCE_DIR}/include/utils/modelutils.h
+    ${CMAKE_SOURCE_DIR}/include/utils/scopeguard.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/advancedsettingsregistry.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsdialogcontroller.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsentry.h
@@ -67,8 +71,11 @@ set(SOURCES
     datastream.cpp
     fileutils.cpp
     fypaths.cpp
+    heartdelegate.cpp
+    hearteditor.cpp
     id.cpp
     itemregistry.cpp
+    jsonutils.cpp
     logging/logmodel.cpp
     logging/logmodel.h
     logging/logwidget.cpp
@@ -106,12 +113,12 @@ create_fooyin_library(
 
 target_link_libraries(
     fooyin_utils
+    PRIVATE ICU::uc
+            ICU::i18n
     PUBLIC Qt6::Core
            Qt6::Widgets
            Qt6::Sql
            Qt6::Concurrent
-    PRIVATE ICU::uc
-            ICU::i18n
 )
 
-target_include_directories(fooyin_utils PUBLIC ${ICU_INCLUDE_DIRS})
+target_include_directories(fooyin_utils PRIVATE ${ICU_INCLUDE_DIRS})

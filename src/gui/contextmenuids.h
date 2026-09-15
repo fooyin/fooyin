@@ -32,6 +32,7 @@ using StaticContextMenu::isBuiltInSeparatorId;
 namespace TrackSelection {
 constexpr auto ArtworkSearchSeparator = "Fooyin.Menu.Artwork.SearchSeparator";
 constexpr auto ArtworkAttachSeparator = "Fooyin.Menu.Artwork.AttachSeparator";
+constexpr auto FileActionsSeparator   = "Fooyin.Menu.Track.FileActionsSeparator";
 } // namespace TrackSelection
 
 namespace LayoutEditing {
@@ -97,6 +98,7 @@ constexpr auto ClipboardSeparator = "Fooyin.Context.Playlist.Clipboard.Separator
 constexpr auto Presets            = "Fooyin.Context.Playlist.Presets";
 constexpr auto PresetsSeparator   = "Fooyin.Context.Playlist.Presets.Separator";
 constexpr auto Queue              = "Fooyin.Context.Playlist.Queue";
+constexpr auto TrackSeparator     = "Fooyin.Context.Playlist.Track.Separator";
 constexpr auto TrackActions       = "Fooyin.Context.Playlist.TrackActions";
 
 constexpr auto DefaultItems = std::to_array<Item>({
@@ -139,6 +141,7 @@ constexpr auto DefaultItems = std::to_array<Item>({
      .title
      = {.context = "PlaylistWidget", .sourceText = QT_TRANSLATE_NOOP("PlaylistWidget", "Remove from playback queue")},
      .isSeparator = false},
+    {.id = TrackSeparator, .title = {}, .isSeparator = true},
     {.id          = TrackActions,
      .title       = {.context = "PlaylistWidget", .sourceText = QT_TRANSLATE_NOOP("PlaylistWidget", "Track menu")},
      .isSeparator = false},
@@ -154,6 +157,7 @@ constexpr auto PlaylistSeparator = "Fooyin.Context.LibraryTree.Playlist.Separato
 constexpr auto Queue             = "Fooyin.Context.LibraryTree.Queue";
 constexpr auto QueueSeparator    = "Fooyin.Context.LibraryTree.Queue.Separator";
 constexpr auto OpenFolder        = "Fooyin.Context.LibraryTree.OpenFolder";
+constexpr auto TrackSeparator    = "Fooyin.Context.LibraryTree.Track.Separator";
 constexpr auto TrackActions      = "Fooyin.Context.LibraryTree.TrackActions";
 constexpr auto WidgetSeparator   = "Fooyin.Context.LibraryTree.Widget.Separator";
 constexpr auto Grouping          = "Fooyin.Context.LibraryTree.Grouping";

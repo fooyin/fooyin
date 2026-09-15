@@ -45,7 +45,7 @@ public:
     ~ScriptEditor() override;
 
     static void openEditor(const QString& script, const std::function<void(const QString&)>& callback,
-                           const Track& track = {});
+                           const Track& track = {}, QWidget* parent = nullptr);
 
     [[nodiscard]] QSize sizeHint() const override;
 

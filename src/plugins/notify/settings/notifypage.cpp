@@ -57,11 +57,14 @@ private:
     NotifyPlugin* m_plugin;
 
     QCheckBox* m_enable;
+    QCheckBox* m_notifyOnRepeat;
     QLabel* m_titleLabel;
     ScriptLineEdit* m_titleField;
     QLabel* m_bodyLabel;
     ScriptLineEdit* m_bodyField;
     QCheckBox* m_showAlbumArt;
+    QLabel* m_maxAlbumArtSizeLabel;
+    QSpinBox* m_maxAlbumArtSize;
     QCheckBox* m_showPrevious;
     QCheckBox* m_showPlayPause;
     QCheckBox* m_showNext;
@@ -73,11 +76,14 @@ NotifyPageWidget::NotifyPageWidget(SettingsManager* settings, NotifyPlugin* plug
     : m_settings{settings}
     , m_plugin{plugin}
     , m_enable{new QCheckBox(tr("Enable notifications"), this)}
+    , m_notifyOnRepeat{new QCheckBox(tr("Notify when repeating a track"), this)}
     , m_titleLabel{new QLabel(tr("Title") + ":"_L1, this)}
     , m_titleField{new ScriptLineEdit(this)}
     , m_bodyLabel{new QLabel(tr("Body") + ":"_L1, this)}
     , m_bodyField{new ScriptLineEdit(this)}
     , m_showAlbumArt{new QCheckBox(tr("Show album art"), this)}
+    , m_maxAlbumArtSizeLabel{new QLabel(tr("Maximum album art size") + ":"_L1, this)}
+    , m_maxAlbumArtSize{new QSpinBox(this)}
     , m_showPrevious{new QCheckBox(tr("Show previous"), this)}
     , m_showPlayPause{new QCheckBox(tr("Show play/pause"), this)}
     , m_showNext{new QCheckBox(tr("Show next"), this)}
@@ -95,13 +101,24 @@ NotifyPageWidget::NotifyPageWidget(SettingsManager* settings, NotifyPlugin* plug
     controlsLayout->addWidget(m_showPlayPause);
     controlsLayout->addWidget(m_showNext);
 
+    m_maxAlbumArtSize->setRange(32, 1024);
+    m_maxAlbumArtSize->setSuffix(u" px"_s);
+    m_maxAlbumArtSize->setToolTip(tr("Maximum width or height of album art sent with notifications"));
+
+    auto* albumArtSizeLayout = new QHBoxLayout();
+    albumArtSizeLayout->setContentsMargins(0, 0, 0, 0);
+    albumArtSizeLayout->addWidget(m_maxAlbumArtSizeLabel);
+    albumArtSizeLayout->addWidget(m_maxAlbumArtSize);
+    albumArtSizeLayout->addStretch();
+
     int row{0};
     fieldsLayout->addWidget(m_titleLabel, row, 0);
-    fieldsLayout->addWidget(m_titleField, row++, 1);
+    fieldsLayout->addWidget(m_titleField, row++, 1, 1, 2);
     fieldsLayout->addWidget(m_bodyLabel, row, 0);
-    fieldsLayout->addWidget(m_bodyField, row++, 1);
-    fieldsLayout->addWidget(m_showAlbumArt, row++, 0, 1, 2);
-    fieldsLayout->setColumnStretch(1, 1);
+    fieldsLayout->addWidget(m_bodyField, row++, 1, 1, 2);
+    fieldsLayout->addWidget(m_showAlbumArt, row++, 0, 1, 3);
+    fieldsLayout->addLayout(albumArtSizeLayout, row++, 0, 1, 3);
+    fieldsLayout->setColumnStretch(2, 1);
 
     m_timeout->setRange(-1, 60000);
     m_timeout->setSuffix(u" ms"_s);
@@ -118,6 +135,7 @@ NotifyPageWidget::NotifyPageWidget(SettingsManager* settings, NotifyPlugin* plug
 
     row = 0;
     generalLayout->addWidget(m_enable, row++, 0, 1, 2);
+    generalLayout->addWidget(m_notifyOnRepeat, row++, 0, 1, 2);
     generalLayout->addWidget(m_timeoutLabel, row, 0);
     generalLayout->addLayout(timeoutLayout, row++, 1);
     generalLayout->setColumnStretch(1, 1);
@@ -129,6 +147,7 @@ NotifyPageWidget::NotifyPageWidget(SettingsManager* settings, NotifyPlugin* plug
     layout->setRowStretch(row, 1);
 
     QObject::connect(m_enable, &QCheckBox::toggled, this, &NotifyPageWidget::updateWidgetState);
+    QObject::connect(m_showAlbumArt, &QCheckBox::toggled, this, &NotifyPageWidget::updateWidgetState);
 }
 
 PlaybackControls NotifyPageWidget::playbackControls() const
@@ -177,9 +196,15 @@ void NotifyPageWidget::updateWidgetState()
     m_titleField->setEnabled(enabled);
     m_bodyLabel->setEnabled(enabled);
     m_bodyField->setEnabled(enabled);
+    m_notifyOnRepeat->setEnabled(enabled);
 
     m_showAlbumArt->setEnabled(enabled && albumArtSupported);
     m_showAlbumArt->setToolTip(albumArtTooltip);
+    m_maxAlbumArtSizeLabel->setEnabled(enabled && albumArtSupported && m_showAlbumArt->isChecked());
+    m_maxAlbumArtSizeLabel->setToolTip(albumArtTooltip);
+    m_maxAlbumArtSize->setEnabled(enabled && albumArtSupported && m_showAlbumArt->isChecked());
+    m_maxAlbumArtSize->setToolTip(albumArtSupported ? tr("Maximum width or height of album art sent with notifications")
+                                                    : albumArtTooltip);
 
     m_showPrevious->setEnabled(enabled && controlsSupported);
     m_showPrevious->setToolTip(controlsTooltip);
@@ -197,9 +222,11 @@ void NotifyPageWidget::updateWidgetState()
 void NotifyPageWidget::load()
 {
     m_enable->setChecked(m_settings->value<Settings::Notify::Enabled>());
+    m_notifyOnRepeat->setChecked(m_settings->value<Settings::Notify::NotifyOnRepeat>());
     m_titleField->setText(m_settings->value<Settings::Notify::TitleField>());
     m_bodyField->setText(m_settings->value<Settings::Notify::BodyField>());
     m_showAlbumArt->setChecked(m_settings->value<Settings::Notify::ShowAlbumArt>());
+    m_maxAlbumArtSize->setValue(m_settings->value<Settings::Notify::MaxAlbumArtSize>());
     setPlaybackControls(PlaybackControls::fromInt(m_settings->value<Settings::Notify::Controls>()));
     m_timeout->setValue(m_settings->value<Settings::Notify::Timeout>());
     updateAvailability();
@@ -208,9 +235,11 @@ void NotifyPageWidget::load()
 void NotifyPageWidget::apply()
 {
     m_settings->set<Settings::Notify::Enabled>(m_enable->isChecked());
+    m_settings->set<Settings::Notify::NotifyOnRepeat>(m_notifyOnRepeat->isChecked());
     m_settings->set<Settings::Notify::TitleField>(m_titleField->text());
     m_settings->set<Settings::Notify::BodyField>(m_bodyField->text());
     m_settings->set<Settings::Notify::ShowAlbumArt>(m_showAlbumArt->isChecked());
+    m_settings->set<Settings::Notify::MaxAlbumArtSize>(m_maxAlbumArtSize->value());
     m_settings->set<Settings::Notify::Controls>(playbackControls().toInt());
     m_settings->set<Settings::Notify::Timeout>(m_timeout->value());
 }
@@ -218,9 +247,11 @@ void NotifyPageWidget::apply()
 void NotifyPageWidget::reset()
 {
     m_settings->reset<Settings::Notify::Enabled>();
+    m_settings->reset<Settings::Notify::NotifyOnRepeat>();
     m_settings->reset<Settings::Notify::TitleField>();
     m_settings->reset<Settings::Notify::BodyField>();
     m_settings->reset<Settings::Notify::ShowAlbumArt>();
+    m_settings->reset<Settings::Notify::MaxAlbumArtSize>();
     m_settings->reset<Settings::Notify::Controls>();
     m_settings->reset<Settings::Notify::Timeout>();
 }

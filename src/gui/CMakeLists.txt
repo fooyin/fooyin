@@ -4,6 +4,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/coverrepository.h
     ${CMAKE_SOURCE_DIR}/include/gui/configdialog.h
     ${CMAKE_SOURCE_DIR}/include/gui/contextmenuutils.h
+    ${CMAKE_SOURCE_DIR}/include/gui/conversion/conversionservice.h
     ${CMAKE_SOURCE_DIR}/include/gui/dsp/dsplayouteditor.h
     ${CMAKE_SOURCE_DIR}/include/gui/dsp/dspsettingsdialog.h
     ${CMAKE_SOURCE_DIR}/include/gui/dsp/dspsettingsprovider.h
@@ -18,7 +19,10 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/guistyleprovider.h
     ${CMAKE_SOURCE_DIR}/include/gui/guiutils.h
     ${CMAKE_SOURCE_DIR}/include/gui/layoutprovider.h
+    ${CMAKE_SOURCE_DIR}/include/gui/output/outputprofilemanager.h
     ${CMAKE_SOURCE_DIR}/include/gui/playlist/currentplaylistcontroller.h
+    ${CMAKE_SOURCE_DIR}/include/gui/playlist/playlisteditcontroller.h
+    ${CMAKE_SOURCE_DIR}/include/gui/playlist/playlistinteractor.h
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/dspguiplugin.h
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/guiplugin.h
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/guiplugincontext.h
@@ -34,6 +38,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatterregistry.h
     ${CMAKE_SOURCE_DIR}/include/gui/statusevent.h
     ${CMAKE_SOURCE_DIR}/include/gui/theme/fytheme.h
+    ${CMAKE_SOURCE_DIR}/include/gui/theme/fythemefile.h
     ${CMAKE_SOURCE_DIR}/include/gui/theme/themeregistry.h
     ${CMAKE_SOURCE_DIR}/include/gui/trackmimedata.h
     ${CMAKE_SOURCE_DIR}/include/gui/trackselectioncontroller.h
@@ -116,6 +121,8 @@ set(SOURCES
     controls/dspchainselector.h
     controls/outputselector.cpp
     controls/outputselector.h
+    controls/replaygainmodeselector.cpp
+    controls/replaygainmodeselector.h
     controls/seekbar.cpp
     controls/seekbar.h
     controls/volumecontrol.cpp
@@ -136,9 +143,13 @@ set(SOURCES
     dialog/aboutdialog.h
     dialog/autoplaylistdialog.cpp
     dialog/autoplaylistdialog.h
+    dialog/commandpickerdialog.cpp
+    dialog/commandpickerdialog.h
     dialog/configdialog.cpp
     dialog/exportlayoutdialog.cpp
     dialog/exportlayoutdialog.h
+    dialog/iconpickerdialog.cpp
+    dialog/iconpickerdialog.h
     dialog/importlayoutdialog.cpp
     dialog/importlayoutdialog.h
     dialog/propertiesdialog.cpp
@@ -174,6 +185,37 @@ set(SOURCES
     dsp/skipsilencesettingswidget.h
     editablelayout.cpp
     editablelayout_p.h
+    filters/filtercolumnregistry.cpp
+    filters/filtercolumnregistry.h
+    filters/filtercolumneditordialog.cpp
+    filters/filtercolumneditordialog.h
+    filters/filterscolumnmodel.cpp
+    filters/filterscolumnmodel.h
+    filters/filterconstants.h
+    filters/filtercontroller.cpp
+    filters/filtercontroller.h
+    filters/filtercontextmenu.h
+    filters/filterdelegate.cpp
+    filters/filterdelegate.h
+    filters/filterfwd.h
+    filters/filteritem.cpp
+    filters/filteritem.h
+    filters/filtermanager.cpp
+    filters/filtermanager.h
+    filters/filtermodel.cpp
+    filters/filtermodel.h
+    filters/filterpipeline.cpp
+    filters/filterpipeline.h
+    filters/filterrows.cpp
+    filters/filterrows.h
+    filters/filterwidget.cpp
+    filters/filterwidget.h
+    filters/libraryfilterswitcher.cpp
+    filters/libraryfilterswitcher.h
+    filters/libraryfiltertabs.cpp
+    filters/libraryfiltertabs.h
+    filters/filterconfigwidget.cpp
+    filters/filterconfigwidget.h
     fylayout.cpp
     fywidget.cpp
     guiapplication.cpp
@@ -230,12 +272,33 @@ set(SOURCES
     menubar/playbackmenu.h
     menubar/viewmenu.cpp
     menubar/viewmenu.h
+    metadatalookup/lookupresultsmodel.cpp
+    metadatalookup/lookupresultsmodel.h
+    metadatalookup/metadataapply.cpp
+    metadatalookup/metadataapply.h
+    metadatalookup/metadatachangesdialog.cpp
+    metadatalookup/metadatachangesdialog.h
+    metadatalookup/metadatalookupdialog.cpp
+    metadatalookup/metadatalookupdialog.h
+    metadatalookup/metadatalookupregistry.cpp
+    metadatalookup/metadatalookupregistry.h
+    metadatalookup/metadatamatcher.cpp
+    metadatalookup/metadatamatcher.h
+    metadatalookup/metadatatypes.h
+    metadatalookup/trackmatchmodel.cpp
+    metadatalookup/trackmatchmodel.h
+    metadatalookup/sources/metadatalookupsource.cpp
+    metadatalookup/sources/metadatalookupsource.h
+    metadatalookup/sources/musicbrainzmetadata.cpp
+    metadatalookup/sources/musicbrainzmetadata.h
     sortactionhandler.cpp
     sortactionhandler.h
     nowplayingoutput/nowplayingoutputservice.cpp
     nowplayingoutput/nowplayingoutputservice.h
     nowplayingoutput/nowplayingoutputpage.cpp
     nowplayingoutput/nowplayingoutputpage.h
+    playlist/manager/playlistmanagerdelegate.cpp
+    playlist/manager/playlistmanagerdelegate.h
     playlist/manager/playlistmanagermodel.cpp
     playlist/manager/playlistmanagermodel.h
     playlist/manager/playlistmanagerwidget.cpp
@@ -270,7 +333,6 @@ set(SOURCES
     playlist/playlistdelegate.cpp
     playlist/playlistdelegate.h
     playlist/playlistinteractor.cpp
-    playlist/playlistinteractor.h
     playlist/playlistitem.cpp
     playlist/playlistitem.h
     playlist/playlistitemmodels.cpp
@@ -285,6 +347,8 @@ set(SOURCES
     playlist/playlistpreset.h
     playlist/playlisttabs.cpp
     playlist/playlisttabs.h
+    playlist/playlisttabsconfigdialog.cpp
+    playlist/playlisttabsconfigdialog.h
     playlist/playlistview.cpp
     playlist/playlistview.h
     playlist/detachedplaylistsession.cpp
@@ -299,6 +363,7 @@ set(SOURCES
     playlist/playlistwidget.h
     playlist/presetregistry.cpp
     playlist/presetregistry.h
+    plugins/pluginsettingsprovider.cpp
     queueviewer/queueviewer.cpp
     queueviewer/queueviewer.h
     queueviewer/queueviewerconfigwidget.cpp
@@ -352,7 +417,6 @@ set(SOURCES
     search/searchwidget.cpp
     search/searchwidget.h
     output/outputprofilemanager.cpp
-    output/outputprofilemanager.h
     selectioninfo/infodelegate.cpp
     selectioninfo/infodelegate.h
     selectioninfo/infoitem.cpp
@@ -409,6 +473,10 @@ set(SOURCES
     settings/guithemespage.h
     settings/layouttreemodel.cpp
     settings/layouttreemodel.h
+    settings/library/libraryfiltermodel.cpp
+    settings/library/libraryfiltermodel.h
+    settings/library/libraryfilterpage.cpp
+    settings/library/libraryfilterpage.h
     settings/library/librarygeneralpage.cpp
     settings/library/librarygeneralpage.h
     settings/library/librarymetadatapage.cpp
@@ -449,6 +517,8 @@ set(SOURCES
     settings/playback/outputpage.h
     settings/playback/playbackpage.cpp
     settings/playback/playbackpage.h
+    settings/playback/playbackqueuepage.cpp
+    settings/playback/playbackqueuepage.h
     settings/playback/playbacksettingsutils.h
     settings/playback/replaygainpage.cpp
     settings/playback/replaygainpage.h
@@ -464,8 +534,6 @@ set(SOURCES
     settings/playlist/playlistpresetspage.h
     settings/playlist/playlistsavingpage.cpp
     settings/playlist/playlistsavingpage.h
-    settings/playlist/playlisttabspage.cpp
-    settings/playlist/playlisttabspage.h
     settings/plugins/pluginaboutdialog.cpp
     settings/plugins/pluginaboutdialog.h
     settings/plugins/pluginsmodel.cpp
@@ -482,6 +550,10 @@ set(SOURCES
     settings/shortcuts/shortcutspage.h
     settings/widgets/statuswidgetpage.cpp
     settings/widgets/statuswidgetpage.h
+    splitters/fysplitter.cpp
+    splitters/fysplitter.h
+    splitters/splitterstate.cpp
+    splitters/splitterstate.h
     splitters/splitterwidget.cpp
     splitters/splitterwidget.h
     splitters/tabstackwidget.cpp
@@ -490,11 +562,14 @@ set(SOURCES
     systemtrayicon.cpp
     systemtrayicon.h
     theme/fytheme.cpp
+    theme/fythemefile.cpp
     theme/themeregistry.cpp
     trackmimedata.cpp
     trackselectioncontroller.cpp
     widgetfilter.cpp
     widgetprovider.cpp
+    verification/verificationcontroller.cpp
+    verification/verificationcontroller.h
     widgets.cpp
     widgets.h
     widgets/actiondelegate.cpp

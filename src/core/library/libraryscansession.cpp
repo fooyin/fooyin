@@ -58,12 +58,8 @@ bool anyTrackWasExplicitlyDropped(const Fooyin::TrackList& tracks, const std::se
 
 bool pathIsInDroppedDirectory(const QString& path, const std::set<QString>& explicitDirs)
 {
-    for(const auto& dir : explicitDirs) {
-        if(path == dir || path.startsWith(dir + u"/"_s)) {
-            return true;
-        }
-    }
-    return false;
+    return std::ranges::any_of(explicitDirs,
+                               [&path](const auto& dir) { return path == dir || path.startsWith(dir + u"/"_s); });
 }
 
 bool anyTrackWasCoveredByDroppedDirectory(const Fooyin::TrackList& tracks, const std::set<QString>& explicitDirs)
@@ -138,16 +134,12 @@ void LibraryScanSession::flushWriter(const bool finalFlush)
         return;
     }
 
-    const auto previousPhase = m_phase;
-    m_state.setProgressPhase(ScanProgress::Phase::WritingDatabase, 0);
-    m_state.reportProgress({});
-    m_writer.flush();
-
-    if(!finalFlush) {
-        const size_t total = previousPhase == ScanProgress::Phase::Finished ? m_state.filesScannedCount() : 0;
-        m_state.setProgressPhase(previousPhase, total);
+    if(finalFlush) {
+        m_state.setProgressPhase(ScanProgress::Phase::WritingDatabase, 0);
         m_state.reportProgress({});
     }
+
+    m_writer.flush();
 }
 
 void LibraryScanSession::maybeFlushWriter()
@@ -287,7 +279,7 @@ void LibraryScanSession::flushTrackResolverWrites()
     maybeFlushWriter();
 }
 
-void LibraryScanSession::finaliseMissingTracks()
+void LibraryScanSession::finaliseUnseenTracks()
 {
     m_phase = ScanProgress::Phase::Finalising;
     m_state.setProgressPhase(m_phase, 0);
@@ -298,17 +290,11 @@ void LibraryScanSession::finaliseMissingTracks()
             continue;
         }
 
-        bool shouldDisable = !m_state.pathExists(physicalTrackPath(track));
+        // Existing tracks are marked seen whenever their source is still valid, including when
+        // metadata cannot be refreshed. Anything left unseen after a scan is either
+        // gone or no longer accepted by the exclusion filters.
 
-        if(!shouldDisable && track.hasCue() && !track.hasEmbeddedCue()) {
-            shouldDisable = !m_state.pathExists(track.cuePath());
-        }
-
-        if(!shouldDisable) {
-            continue;
-        }
-
-        qCDebug(LIB_SCANNER) << "Track not found:" << track.prettyFilepath();
+        qCDebug(LIB_SCANNER) << "Track no longer in scan scope:" << track.prettyFilepath();
 
         Track disabledTrack{track};
         disabledTrack.setLibraryId(-1);
@@ -353,7 +339,7 @@ bool LibraryScanSession::scanLibrary(const LibraryInfo& library, const TrackList
     m_resolver           = nullptr;
 
     if(completed && m_state.mayRun()) {
-        finaliseMissingTracks();
+        finaliseUnseenTracks();
         flushWriter(true);
     }
 
@@ -396,7 +382,7 @@ bool LibraryScanSession::scanDirectories(const LibraryInfo& library, const QStri
     m_resolver           = nullptr;
 
     if(completed && m_state.mayRun()) {
-        finaliseMissingTracks();
+        finaliseUnseenTracks();
         flushWriter(true);
     }
 
@@ -432,7 +418,7 @@ bool LibraryScanSession::scanFiles(const TrackList& libraryTracks, const QList<Q
     m_externalExplicitDirs.clear();
     m_externalCueCoveredPaths.clear();
 
-    for(const auto& path : paths) {
+    for(const auto& path : std::as_const(paths)) {
         const QString normalisedPath = normalisePath(path);
         m_externalExplicitPaths.emplace(normalisedPath);
         if(QFileInfo{path}.isDir()) {

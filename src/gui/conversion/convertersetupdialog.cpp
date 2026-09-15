@@ -64,6 +64,7 @@
 #include <QVBoxLayout>
 
 #include <set>
+#include <utility>
 
 using namespace Qt::StringLiterals;
 
@@ -92,7 +93,7 @@ ConverterSetupDialog::ConverterSetupDialog(AudioEncoderRegistry* registry, DspCh
     , m_destinationMode{new QComboBox(this)}
     , m_folder{new QLineEdit(this)}
     , m_browse{new QPushButton(tr("Browse…"), this)}
-    , m_filenamePattern{new QLineEdit(u"%title%"_s, this)}
+    , m_filenamePattern{new QLineEdit(u"%filename%"_s, this)}
     , m_existingFileMode{new QComboBox(this)}
     , m_outputStyle{new QComboBox(this)}
     , m_preview{new QListWidget(this)}
@@ -114,6 +115,7 @@ ConverterSetupDialog::ConverterSetupDialog(AudioEncoderRegistry* registry, DspCh
     , m_generatePreview{new QCheckBox(tr("Generate short previews instead of converting entire tracks"), this)}
     , m_previewPercentage{new QSpinBox(this)}
     , m_showReport{new QCheckBox(tr("Show full status report"), this)}
+    , m_showOutputFiles{new QCheckBox(tr("Show converted files when finished"), this)}
     , m_copyFilesPattern{new QLineEdit(this)}
     , m_verifyOutput{new QCheckBox(tr("Verify converted output"), this)}
     , m_outputSummary{new QLabel(this)}
@@ -196,6 +198,19 @@ QString ConverterSetupDialog::askFolder() const
 bool ConverterSetupDialog::showReport() const
 {
     return m_showReport->isChecked();
+}
+
+bool ConverterSetupDialog::showOutputFiles() const
+{
+    return m_showOutputFiles->isChecked();
+}
+
+void ConverterSetupDialog::applySuggestedFilenamePattern(const QString& pattern)
+{
+    const QString trimmedPattern = pattern.trimmed();
+    if(!trimmedPattern.isEmpty() && m_filenamePattern->text().trimmed() == u"%filename%"_s) {
+        m_filenamePattern->setText(trimmedPattern);
+    }
 }
 
 void ConverterSetupDialog::accept()
@@ -289,13 +304,14 @@ QWidget* ConverterSetupDialog::createOutputPage()
 
     m_profileTable->addCustomTool(m_editProfile);
 
-    m_sampleFormat->addItem(tr("Auto"), static_cast<int>(SampleFormat::Unknown));
+    m_sampleFormat->addItem(tr("Automatic (preserve source)"), static_cast<int>(SampleFormat::Unknown));
     m_sampleFormat->addItem(tr("8-bit integer"), static_cast<int>(SampleFormat::U8));
     m_sampleFormat->addItem(tr("16-bit integer"), static_cast<int>(SampleFormat::S16));
     m_sampleFormat->addItem(tr("24-bit integer"), static_cast<int>(SampleFormat::S24In32));
     m_sampleFormat->addItem(tr("32-bit integer"), static_cast<int>(SampleFormat::S32));
     m_sampleFormat->addItem(tr("32-bit floating point"), static_cast<int>(SampleFormat::F32));
 
+    m_dither->addItem(tr("Automatic (when reducing bit depth)"), static_cast<int>(DitherMode::Automatic));
     m_dither->addItem(tr("Never"), static_cast<int>(DitherMode::Never));
     m_dither->addItem(tr("Lossy sources only"), static_cast<int>(DitherMode::LossySourceOnly));
     m_dither->addItem(tr("Always"), static_cast<int>(DitherMode::Always));
@@ -517,6 +533,7 @@ QWidget* ConverterSetupDialog::createOtherPage()
     auto* whenDoneBox    = new QGroupBox(tr("When done"), this);
     auto* whenDoneLayout = new QVBoxLayout(whenDoneBox);
     whenDoneLayout->addWidget(m_showReport);
+    whenDoneLayout->addWidget(m_showOutputFiles);
     whenDoneLayout->addWidget(m_verifyOutput);
 
     auto* copyFilesBox    = new QGroupBox(tr("Copy other files to the destination folder"), this);
@@ -533,6 +550,7 @@ QWidget* ConverterSetupDialog::createOtherPage()
     QObject::connect(m_generatePreview, &QCheckBox::toggled, this, &ConverterSetupDialog::updateState);
     QObject::connect(m_previewPercentage, &QSpinBox::valueChanged, this, &ConverterSetupDialog::updateOverview);
     QObject::connect(m_showReport, &QCheckBox::toggled, this, &ConverterSetupDialog::updateOverview);
+    QObject::connect(m_showOutputFiles, &QCheckBox::toggled, this, &ConverterSetupDialog::updateOverview);
     QObject::connect(m_copyFilesPattern, &QLineEdit::textChanged, this, &ConverterSetupDialog::updateOverview);
     QObject::connect(m_verifyOutput, &QCheckBox::toggled, this, &ConverterSetupDialog::updateOverview);
 
@@ -816,11 +834,12 @@ void ConverterSetupDialog::savePreset()
         presetId = QUuid::createUuid().toString(QUuid::WithoutBraces);
     }
 
-    stored.name        = name;
-    stored.preset      = job().preset;
-    stored.preset.id   = presetId;
-    stored.preset.name = name;
-    stored.showReport  = m_showReport->isChecked();
+    stored.name            = name;
+    stored.preset          = job().preset;
+    stored.preset.id       = presetId;
+    stored.preset.name     = name;
+    stored.showReport      = m_showReport->isChecked();
+    stored.showOutputFiles = m_showOutputFiles->isChecked();
 
     if(existing != m_presets.end()) {
         *existing = std::move(stored);
@@ -1011,29 +1030,36 @@ void ConverterSetupDialog::applyPreset(const StoredConversionPreset& stored)
     m_copyFilesPattern->setText(stored.preset.other.copyFilesPattern);
     m_verifyOutput->setChecked(stored.preset.other.verifyOutput);
     m_showReport->setChecked(stored.showReport);
+    m_showOutputFiles->setChecked(stored.showOutputFiles);
 
     updateState();
 }
 
 void ConverterSetupDialog::applyDefaultPreset()
 {
-    const auto defaultProfile = std::ranges::find_if(m_profiles, [](const EncoderProfileEntry& entry) {
-        return entry.info.id == QLatin1StringView{ConverterSettings::DefaultEncoderProfileId};
+    const auto& profiles = std::as_const(m_profiles);
+    auto defaultProfile  = std::ranges::find_if(profiles, [](const EncoderProfileEntry& entry) {
+        return entry.info.id == QLatin1StringView{ConverterSettings::PreferredDefaultEncoderProfileId};
     });
-    if(defaultProfile != m_profiles.cend()) {
-        m_profileTable->selectRow(static_cast<int>(std::ranges::distance(m_profiles.cbegin(), defaultProfile)));
+    if(defaultProfile == profiles.cend()) {
+        defaultProfile = std::ranges::find_if(profiles, [](const EncoderProfileEntry& entry) {
+            return entry.info.id == QLatin1StringView{ConverterSettings::FallbackDefaultEncoderProfileId};
+        });
+    }
+    if(defaultProfile != profiles.cend()) {
+        m_profileTable->selectRow(static_cast<int>(std::ranges::distance(profiles.cbegin(), defaultProfile)));
     }
     else {
         m_profileTable->setCurrentIndex({});
     }
 
     m_sampleFormat->setCurrentIndex(m_sampleFormat->findData(static_cast<int>(SampleFormat::Unknown)));
-    m_dither->setCurrentIndex(m_dither->findData(static_cast<int>(DitherMode::Never)));
+    m_dither->setCurrentIndex(m_dither->findData(static_cast<int>(DitherMode::Automatic)));
     m_destinationMode->setCurrentIndex(m_destinationMode->findData(static_cast<int>(DestinationMode::Ask)));
     m_existingFileMode->setCurrentIndex(m_existingFileMode->findData(static_cast<int>(ExistingFileMode::Ask)));
     m_outputStyle->setCurrentIndex(m_outputStyle->findData(static_cast<int>(OutputStyle::IndividualFiles)));
     m_folder->clear();
-    m_filenamePattern->setText(u"%title%"_s);
+    m_filenamePattern->setText(u"%filename%"_s);
     m_transferMetadata->setChecked(true);
     m_transferRating->setChecked(true);
     m_transferPlaycount->setChecked(false);
@@ -1050,6 +1076,7 @@ void ConverterSetupDialog::applyDefaultPreset()
     m_copyFilesPattern->clear();
     m_verifyOutput->setChecked(false);
     m_showReport->setChecked(true);
+    m_showOutputFiles->setChecked(false);
     updateState();
 }
 
@@ -1215,6 +1242,9 @@ void ConverterSetupDialog::updateOverview()
     }
     if(m_showReport->isChecked()) {
         other.push_back(tr("Show status report"));
+    }
+    if(m_showOutputFiles->isChecked()) {
+        other.push_back(tr("Show converted files"));
     }
     if(!m_copyFilesPattern->text().trimmed().isEmpty()) {
         other.push_back(tr("Copy matching files"));

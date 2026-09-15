@@ -38,6 +38,7 @@ enum class NetworkRequestOption : uint8_t
 Q_DECLARE_FLAGS(NetworkRequestOptions, NetworkRequestOption)
 
 [[nodiscard]] FYCORE_EXPORT QByteArray networkUserAgent();
+[[nodiscard]] FYCORE_EXPORT bool isHlsStreamUrl(const QUrl& url);
 [[nodiscard]] FYCORE_EXPORT QNetworkRequest makeNetworkRequest(const QUrl& url, NetworkRequestOptions options = {});
 } // namespace Fooyin
 

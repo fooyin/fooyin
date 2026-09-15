@@ -39,6 +39,7 @@ public:
 
     [[nodiscard]] QStringList extensions() const override;
     [[nodiscard]] bool isSeekable() const override;
+    [[nodiscard]] RepeatHandling repeatHandling() const override;
     [[nodiscard]] bool trackHasChanged() const override;
     [[nodiscard]] Track changedTrack() const override;
 
@@ -50,8 +51,14 @@ public:
 
     AudioBuffer readBuffer(size_t bytes) override;
 
+protected:
+    void playbackHintsChanged(PlaybackHints hints) override;
+
 private:
+    void applyRepeatPolicy();
+
     bool m_repeatTrack;
+    bool m_allowInfiniteRepeat;
     bool m_isDecoding;
     bool m_shouldFade;
     AudioFormat m_format;

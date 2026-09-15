@@ -62,6 +62,9 @@ public:
 
     [[nodiscard]] QSize sizeHint() const override;
 
+Q_SIGNALS:
+    void savePlaylistRequested(const Fooyin::UId& playlistId);
+
 protected:
     void showEvent(QShowEvent* event) override;
     void closeEvent(QCloseEvent* event) override;
@@ -112,6 +115,8 @@ private:
     Command* m_renameCmd;
     QAction* m_removeAction;
     Command* m_removeCmd;
+    QAction* m_savePlaylistAction;
+    Command* m_savePlaylistCmd;
     QAction* m_newPlaylistAction;
     Command* m_newPlaylistCmd;
     QAction* m_newAutoPlaylistAction;

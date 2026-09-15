@@ -25,6 +25,7 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
+#include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
@@ -61,6 +62,12 @@ private:
     ScriptLineEdit* m_artistField;
     QLabel* m_albumLabel;
     ScriptLineEdit* m_albumField;
+
+    QCheckBox* m_artworkEnabled;
+    QLabel* m_artworkSourceLabel;
+    QComboBox* m_artworkSource;
+    QLabel* m_artworkRetentionLabel;
+    QComboBox* m_artworkRetention;
 };
 
 DiscordPageWidget::DiscordPageWidget(SettingsManager* settings)
@@ -76,6 +83,11 @@ DiscordPageWidget::DiscordPageWidget(SettingsManager* settings)
     , m_artistField{new ScriptLineEdit(this)}
     , m_albumLabel{new QLabel(tr("Album") + ":"_L1, this)}
     , m_albumField{new ScriptLineEdit(this)}
+    , m_artworkEnabled{new QCheckBox(tr("Show artwork"), this)}
+    , m_artworkSourceLabel{new QLabel(tr("Source") + ":"_L1, this)}
+    , m_artworkSource{new QComboBox(this)}
+    , m_artworkRetentionLabel{new QLabel(tr("Retention") + ":"_L1, this)}
+    , m_artworkRetention{new QComboBox(this)}
 {
     auto* connectionGroup  = new QGroupBox(tr("Connection"), this);
     auto* connectionLayout = new QGridLayout(connectionGroup);
@@ -100,6 +112,31 @@ DiscordPageWidget::DiscordPageWidget(SettingsManager* settings)
     presenceLayout->addWidget(m_albumField, row++, 1);
     presenceLayout->setColumnStretch(1, 1);
 
+    auto* artworkGroup  = new QGroupBox(tr("Artwork"), this);
+    auto* artworkLayout = new QGridLayout(artworkGroup);
+
+    m_artworkRetention->addItem(tr("1 hour"), 1);
+    m_artworkRetention->addItem(tr("12 hours"), 12);
+    m_artworkRetention->addItem(tr("24 hours"), 24);
+    m_artworkRetention->addItem(tr("72 hours"), 72);
+
+    using enum Settings::Discord::ArtworkMode;
+
+    m_artworkSource->addItem(tr("Search for artwork via MusicBrainz ID only"), static_cast<int>(MusicBrainzOnly));
+    m_artworkSource->addItem(tr("Search via MusicBrainz ID, or upload if not found"),
+                             static_cast<int>(MusicBrainzOrUpload));
+    m_artworkSource->addItem(tr("Upload artwork only"), static_cast<int>(UploadOnly));
+    m_artworkSource->addItem(tr("Upload artwork, or search via MusicBrainz ID if not found"),
+                             static_cast<int>(UploadOrMusicBrainz));
+
+    row = 0;
+    artworkLayout->addWidget(m_artworkEnabled, row++, 0, 1, 2);
+    artworkLayout->addWidget(m_artworkSourceLabel, row, 0);
+    artworkLayout->addWidget(m_artworkSource, row++, 1);
+    artworkLayout->addWidget(m_artworkRetentionLabel, row, 0);
+    artworkLayout->addWidget(m_artworkRetention, row++, 1);
+    artworkLayout->setColumnStretch(1, 1);
+
     auto* layout = new QGridLayout(this);
 
     m_showPlayState->setToolTip(tr("Display a small icon in Discord showing the current playback state"));
@@ -108,9 +145,12 @@ DiscordPageWidget::DiscordPageWidget(SettingsManager* settings)
     row = 0;
     layout->addWidget(connectionGroup, row++, 0, 1, 2);
     layout->addWidget(presenceGroup, row++, 0, 1, 2);
+    layout->addWidget(artworkGroup, row++, 0, 1, 2);
     layout->setRowStretch(row, 1);
 
     QObject::connect(m_enable, &QCheckBox::toggled, this, &DiscordPageWidget::updateWidgetState);
+    QObject::connect(m_artworkEnabled, &QCheckBox::toggled, this, &DiscordPageWidget::updateWidgetState);
+    QObject::connect(m_artworkSource, &QComboBox::currentIndexChanged, this, &DiscordPageWidget::updateWidgetState);
 }
 
 void DiscordPageWidget::load()
@@ -122,6 +162,16 @@ void DiscordPageWidget::load()
     m_titleField->setText(m_settings->value<Settings::Discord::TitleField>());
     m_artistField->setText(m_settings->value<Settings::Discord::ArtistField>());
     m_albumField->setText(m_settings->value<Settings::Discord::AlbumField>());
+    m_artworkEnabled->setChecked(m_settings->value<Settings::Discord::ArtworkEnabled>());
+
+    const int source = m_settings->value<Settings::Discord::ArtworkSource>();
+    if(const int index = m_artworkSource->findData(source); index >= 0) {
+        m_artworkSource->setCurrentIndex(index);
+    }
+    const int retention = m_settings->value<Settings::Discord::ArtworkRetention>();
+    if(const int index = m_artworkRetention->findData(retention); index >= 0) {
+        m_artworkRetention->setCurrentIndex(index);
+    }
 
     updateWidgetState();
 }
@@ -135,6 +185,9 @@ void DiscordPageWidget::apply()
     m_settings->set<Settings::Discord::TitleField>(m_titleField->text());
     m_settings->set<Settings::Discord::ArtistField>(m_artistField->text());
     m_settings->set<Settings::Discord::AlbumField>(m_albumField->text());
+    m_settings->set<Settings::Discord::ArtworkEnabled>(m_artworkEnabled->isChecked());
+    m_settings->set<Settings::Discord::ArtworkSource>(m_artworkSource->currentData().toInt());
+    m_settings->set<Settings::Discord::ArtworkRetention>(m_artworkRetention->currentData().toInt());
 }
 
 void DiscordPageWidget::reset()
@@ -146,6 +199,9 @@ void DiscordPageWidget::reset()
     m_settings->reset<Settings::Discord::TitleField>();
     m_settings->reset<Settings::Discord::ArtistField>();
     m_settings->reset<Settings::Discord::AlbumField>();
+    m_settings->reset<Settings::Discord::ArtworkEnabled>();
+    m_settings->reset<Settings::Discord::ArtworkSource>();
+    m_settings->reset<Settings::Discord::ArtworkRetention>();
 }
 
 void DiscordPageWidget::updateWidgetState()
@@ -162,6 +218,15 @@ void DiscordPageWidget::updateWidgetState()
     m_artistField->setEnabled(enabled);
     m_albumLabel->setEnabled(enabled);
     m_albumField->setEnabled(enabled);
+    m_artworkEnabled->setEnabled(enabled);
+
+    const bool artworkEnabled = enabled && m_artworkEnabled->isChecked();
+    m_artworkSourceLabel->setEnabled(artworkEnabled);
+    m_artworkSource->setEnabled(artworkEnabled);
+    const auto mode          = static_cast<Settings::Discord::ArtworkMode>(m_artworkSource->currentData().toInt());
+    const bool uploadEnabled = artworkEnabled && mode != Settings::Discord::ArtworkMode::MusicBrainzOnly;
+    m_artworkRetentionLabel->setEnabled(uploadEnabled);
+    m_artworkRetention->setEnabled(uploadEnabled);
 }
 
 DiscordPage::DiscordPage(SettingsManager* settings, QObject* parent)

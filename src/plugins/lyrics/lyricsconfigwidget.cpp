@@ -53,8 +53,8 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
     , m_scrollSynced{new QRadioButton(tr("Synced"), this)}
     , m_scrollAutomatic{new QRadioButton(tr("Automatic"), this)}
     , m_showScrollbar{new QCheckBox(tr("Show scrollbar"), this)}
-    , m_centreFirstSyncedLine{new QCheckBox(tr("Centre first synced line"), this)}
-    , m_centreLastSyncedLine{new QCheckBox(tr("Centre last synced line"), this)}
+    , m_centreFirstLine{new QCheckBox(tr("Centre first line"), this)}
+    , m_centreLastLine{new QCheckBox(tr("Centre last line"), this)}
     , m_progressMode{new QComboBox(this)}
     , m_alignment{new QComboBox(this)}
     , m_lineSpacing{new QSpinBox(this)}
@@ -135,10 +135,10 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
     layoutGeneralLayout->addWidget(m_alignment, row++, 1);
     layoutGeneralLayout->setColumnStretch(2, 1);
 
-    auto* marginsGroup  = new QGroupBox(tr("Margins"), layoutPage);
-    auto* marginsLayout = new QGridLayout(marginsGroup);
-    auto* syncedGroup   = new QGroupBox(tr("Synced"), layoutPage);
-    auto* syncedLayout  = new QGridLayout(syncedGroup);
+    auto* marginsGroup   = new QGroupBox(tr("Margins"), layoutPage);
+    auto* marginsLayout  = new QGridLayout(marginsGroup);
+    auto* centringGroup  = new QGroupBox(tr("Centring"), layoutPage);
+    auto* centringLayout = new QGridLayout(centringGroup);
 
     for(auto* spin : {m_leftMargin, m_topMargin, m_rightMargin, m_bottomMargin}) {
         spin->setRange(0, 100);
@@ -155,24 +155,24 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
     marginsLayout->addWidget(new QLabel(tr("Bottom") + u":"_s, layoutPage), row, 2);
     marginsLayout->addWidget(m_bottomMargin, row++, 3);
     marginsLayout->addWidget(new QLabel(u"🛈 "_s
-                                            + tr("Top and bottom margins apply to unsynced lyrics, and to synced "
-                                                 "lyrics when centring is disabled for that edge."),
+                                            + tr("Top and bottom margins apply to lyrics that are not centred at "
+                                                 "that edge."),
                                         layoutPage),
                              row++, 0, 1, 5);
     marginsLayout->setColumnStretch(4, 1);
 
     row = 0;
-    syncedLayout->addWidget(m_centreFirstSyncedLine, row++, 0, 1, 2);
-    syncedLayout->addWidget(m_centreLastSyncedLine, row++, 0, 1, 2);
-    syncedLayout->addWidget(
-        new QLabel(u"🛈 "_s + tr("These options control whether the first and last synced lines are centred in view."),
+    centringLayout->addWidget(m_centreFirstLine, row++, 0, 1, 2);
+    centringLayout->addWidget(m_centreLastLine, row++, 0, 1, 2);
+    centringLayout->addWidget(
+        new QLabel(u"🛈 "_s + tr("These options apply to synced lyrics and automatically scrolling unsynced lyrics."),
                    layoutPage),
         row++, 0, 1, 2);
-    syncedLayout->setColumnStretch(1, 1);
+    centringLayout->setColumnStretch(1, 1);
 
     auto* layoutPageLayout = new QVBoxLayout(layoutPage);
     layoutPageLayout->addWidget(layoutGeneralGroup);
-    layoutPageLayout->addWidget(syncedGroup);
+    layoutPageLayout->addWidget(centringGroup);
     layoutPageLayout->addWidget(marginsGroup);
     layoutPageLayout->addStretch();
 
@@ -181,7 +181,7 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
     auto* fontsGroupLayout = new QGridLayout(fontsGroup);
     auto* fadeGroup        = new QGroupBox(tr("Fade"), layoutPage);
     auto* fadeLayout       = new QGridLayout(fadeGroup);
-    auto* progressGroup    = new QGroupBox(tr("Progress"), stylePage);
+    auto* progressGroup    = new QGroupBox(tr("Progress highlighting"), stylePage);
     auto* progressLayout   = new QGridLayout(progressGroup);
 
     FontButton::alignLabels({m_baseFontBtn, m_lineFontBtn, m_wordLineFontBtn, m_wordFontBtn});
@@ -261,24 +261,26 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
         m_edgeFadeSize->setEnabled(enabled);
     });
 
+    QObject::connect(lyricsWidget, &LyricsWidget::configChanged, this, &LyricsConfigDialog::syncCurrentConfig);
+
     loadCurrentConfig();
 }
 
 LyricsWidget::ConfigData LyricsConfigDialog::config() const
 {
     LyricsWidget::ConfigData config{
-        .seekOnClick           = m_seekOnClick->isChecked(),
-        .noLyricsScript        = m_noLyricsScript->text(),
-        .scrollDuration        = m_scrollDuration->value(),
-        .scrollMode            = static_cast<int>(scrollMode()),
-        .edgeFadeMode          = m_edgeFadeMode->currentData().toInt(),
-        .edgeFadeSize          = m_edgeFadeSize->value(),
-        .showScrollbar         = m_showScrollbar->isChecked(),
-        .alignment             = m_alignment->currentData().toInt(),
-        .lineSpacing           = m_lineSpacing->value(),
-        .centreFirstSyncedLine = m_centreFirstSyncedLine->isChecked(),
-        .centreLastSyncedLine  = m_centreLastSyncedLine->isChecked(),
-        .progressMode          = m_progressMode->currentData().toInt(),
+        .seekOnClick     = m_seekOnClick->isChecked(),
+        .noLyricsScript  = m_noLyricsScript->text(),
+        .scrollDuration  = m_scrollDuration->value(),
+        .scrollMode      = static_cast<int>(scrollMode()),
+        .edgeFadeMode    = m_edgeFadeMode->currentData().toInt(),
+        .edgeFadeSize    = m_edgeFadeSize->value(),
+        .showScrollbar   = m_showScrollbar->isChecked(),
+        .alignment       = m_alignment->currentData().toInt(),
+        .lineSpacing     = m_lineSpacing->value(),
+        .centreFirstLine = m_centreFirstLine->isChecked(),
+        .centreLastLine  = m_centreLastLine->isChecked(),
+        .progressMode    = m_progressMode->currentData().toInt(),
         .margins      = {m_leftMargin->value(), m_topMargin->value(), m_rightMargin->value(), m_bottomMargin->value()},
         .colours      = QVariant{},
         .baseFont     = m_baseFontBtn->isChecked() ? m_baseFontBtn->buttonFont().toString() : QString{},
@@ -328,8 +330,8 @@ void LyricsConfigDialog::setConfig(const LyricsWidget::ConfigData& config)
 
     m_showScrollbar->setChecked(config.showScrollbar);
     m_lineSpacing->setValue(config.lineSpacing);
-    m_centreFirstSyncedLine->setChecked(config.centreFirstSyncedLine);
-    m_centreLastSyncedLine->setChecked(config.centreLastSyncedLine);
+    m_centreFirstLine->setChecked(config.centreFirstLine);
+    m_centreLastLine->setChecked(config.centreLastLine);
 
     int progressModeIdx = m_progressMode->findData(config.progressMode);
     if(progressModeIdx < 0) {
@@ -379,6 +381,21 @@ void LyricsConfigDialog::setConfig(const LyricsWidget::ConfigData& config)
     loadFont(m_lineFontBtn, config.lineFont, Lyrics::defaultLineFont(*m_styleProvider));
     loadFont(m_wordLineFontBtn, config.wordLineFont, Lyrics::defaultWordLineFont(*m_styleProvider));
     loadFont(m_wordFontBtn, config.wordFont, Lyrics::defaultWordFont(*m_styleProvider));
+}
+
+void LyricsConfigDialog::mergeExternalConfig(const LyricsWidget::ConfigData& previous,
+                                             const LyricsWidget::ConfigData& current)
+{
+    mergeExternalFields(previous, current, &LyricsWidget::ConfigData::seekOnClick,
+                        &LyricsWidget::ConfigData::noLyricsScript, &LyricsWidget::ConfigData::scrollDuration,
+                        &LyricsWidget::ConfigData::scrollMode, &LyricsWidget::ConfigData::edgeFadeMode,
+                        &LyricsWidget::ConfigData::edgeFadeSize, &LyricsWidget::ConfigData::showScrollbar,
+                        &LyricsWidget::ConfigData::alignment, &LyricsWidget::ConfigData::lineSpacing,
+                        &LyricsWidget::ConfigData::centreFirstLine, &LyricsWidget::ConfigData::centreLastLine,
+                        &LyricsWidget::ConfigData::progressMode, &LyricsWidget::ConfigData::margins,
+                        &LyricsWidget::ConfigData::colours, &LyricsWidget::ConfigData::baseFont,
+                        &LyricsWidget::ConfigData::lineFont, &LyricsWidget::ConfigData::wordLineFont,
+                        &LyricsWidget::ConfigData::wordFont);
 }
 
 ScrollMode LyricsConfigDialog::scrollMode() const

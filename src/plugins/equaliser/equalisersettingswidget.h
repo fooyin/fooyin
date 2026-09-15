@@ -19,17 +19,22 @@
 
 #pragma once
 
+#include "equalisersliderstate.h"
+
+#include <gui/dsp/dsplayouteditor.h>
 #include <gui/dsp/dspsettingsprovider.h>
 
 #include <QBasicTimer>
 #include <QPointer>
 
 #include <array>
-#include <vector>
+#include <memory>
 
 class QComboBox;
 class QDoubleSpinBox;
+class QJsonObject;
 class QLabel;
+class QMenu;
 class QPushButton;
 class QSlider;
 class QTimerEvent;
@@ -38,14 +43,66 @@ namespace Fooyin {
 class ToolTip;
 
 namespace Equaliser {
+class EqualiserPresetStore;
 class ScaleLabelsWidget;
+
+constexpr auto PreviewDebounceMs = 16;
+
+class EqualiserLayoutEditor : public DspLayoutEditor
+{
+    Q_OBJECT
+
+public:
+    explicit EqualiserLayoutEditor(EqualiserPresetStore& presetStore, QWidget* parent = nullptr);
+
+    void loadSettings(const QByteArray& settings) override;
+    [[nodiscard]] QByteArray saveSettings() const override;
+
+    void setControlsEnabled(bool enabled) override;
+    void restoreDefaults() override;
+    [[nodiscard]] QString restoreDefaultsActionText() const override;
+    void populateContextMenu(QMenu* menu) override;
+    void saveLayoutData(QJsonObject& layout) override;
+    void loadLayoutData(const QJsonObject& layout) override;
+
+protected:
+    void timerEvent(QTimerEvent* event) override;
+
+private:
+    static constexpr size_t SliderCount = EqualiserDsp::BandCount + 1;
+
+    void setControlsVisible(bool visible);
+    [[nodiscard]] EqualiserSliderState sliderState() const;
+    void applySliderState(const EqualiserSliderState& state);
+    void updateValueLabels();
+    void updatePresetSelection();
+    void refreshPresets();
+    void loadPreset(int index);
+    void savePreset();
+    void zeroLevel();
+    void autoLevel();
+
+    QWidget* m_controls;
+    EqualiserPresetStore& m_presetStore;
+    QWidget* m_controlRow;
+    QPushButton* m_enabledToggle;
+    QPushButton* m_zeroLevelButton;
+    QPushButton* m_autoLevelButton;
+    QComboBox* m_presetBox;
+    QPushButton* m_savePresetButton;
+    std::array<QSlider*, SliderCount> m_sliders;
+    std::array<QLabel*, SliderCount> m_valueLabels;
+    QPointer<ToolTip> m_sliderToolTip;
+    QBasicTimer m_previewTimer;
+    bool m_showControls;
+};
 
 class EqualiserSettingsWidget : public DspSettingsDialog
 {
     Q_OBJECT
 
 public:
-    explicit EqualiserSettingsWidget(QWidget* parent = nullptr);
+    explicit EqualiserSettingsWidget(EqualiserPresetStore& presetStore, QWidget* parent = nullptr);
 
     void loadSettings(const QByteArray& settings) override;
     [[nodiscard]] QByteArray saveSettings() const override;
@@ -55,24 +112,9 @@ protected:
     void timerEvent(QTimerEvent* event) override;
 
 private:
-    static constexpr int PreviewDebounceMs = 16;
-
-    struct PresetItem
-    {
-        QString name;
-        QByteArray settings;
-    };
-
-    static int gainDbToSliderValue(double gainDb);
-    static double sliderValueToGainDb(int sliderValue);
-    static QString gainTooltip(double gainDb);
-    static QString gainValueLabel(int sliderValue);
-
     void connectSliderSignals(QSlider* slider, bool refreshBandEditor);
-    void applySliderValues(int preampSliderValue, const std::array<int, 18>& bandSliderValues);
-    void loadStoredPresets();
-    void saveStoredPresets() const;
-    [[nodiscard]] int presetIndexByName(const QString& name) const;
+    [[nodiscard]] EqualiserSliderState sliderState() const;
+    void applySliderState(const EqualiserSliderState& state);
     void refreshPresets();
     void updatePresetButtons();
     void loadPreset();
@@ -85,10 +127,9 @@ private:
     void zeroAll();
     void autoLevel();
     void refreshValueLabels();
-    void updateSliderToolTip(QSlider* slider);
-    void hideSliderToolTip();
 
     QComboBox* m_presetBox;
+    EqualiserPresetStore& m_presetStore;
 
     QPushButton* m_loadPresetButton;
     QPushButton* m_savePresetButton;
@@ -101,13 +142,12 @@ private:
 
     QSlider* m_preampSlider;
     QLabel* m_preampValueLabel;
-    std::array<QSlider*, 18> m_bandSliders;
-    std::array<QLabel*, 18> m_bandValueLabels;
+    std::array<QSlider*, EqualiserDsp::BandCount> m_bandSliders;
+    std::array<QLabel*, EqualiserDsp::BandCount> m_bandValueLabels;
     ScaleLabelsWidget* m_scaleTrackWidget;
     QPointer<ToolTip> m_sliderToolTip;
 
     QBasicTimer m_previewTimer;
-    std::vector<PresetItem> m_presets;
 
     void refreshSelectedBandEditor();
 };
@@ -115,13 +155,20 @@ private:
 class EqualiserSettingsProvider : public DspSettingsProvider
 {
 public:
+    EqualiserSettingsProvider();
+    ~EqualiserSettingsProvider() override;
+
     [[nodiscard]] QString id() const override;
     [[nodiscard]] QString displayName() const override;
     [[nodiscard]] QString viewMenuText() const override;
     [[nodiscard]] QString viewMenuStatusTip() const override;
     [[nodiscard]] bool showInViewMenu() const override;
     [[nodiscard]] bool showAsLayoutWidget() const override;
+    [[nodiscard]] DspLayoutEditor* createLayoutEditor(QWidget* parent) override;
     DspSettingsDialog* createSettingsWidget(QWidget* parent) override;
+
+private:
+    std::unique_ptr<EqualiserPresetStore> m_presetStore;
 };
 } // namespace Equaliser
 } // namespace Fooyin

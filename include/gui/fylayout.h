@@ -40,6 +40,9 @@ public:
     [[nodiscard]] QString name() const;
     [[nodiscard]] QJsonObject json() const;
 
+    [[nodiscard]] bool isShownInMenu() const;
+    void setShownInMenu(bool shown);
+
     [[nodiscard]] bool appliesWindowSize() const;
     void setAppliesWindowSize(bool enabled);
     void saveWindowSize();

@@ -29,6 +29,12 @@ namespace Fooyin {
 class FYCORE_EXPORT PlaybackSession
 {
 public:
+    enum class ScheduledTrackKind
+    {
+        Normal = 0,
+        StopAfterCurrentResume,
+    };
+
     PlaybackSession();
 
     [[nodiscard]] PlaylistTrack* currentTrackPtr();
@@ -38,9 +44,11 @@ public:
     [[nodiscard]] const PlaylistTrack& currentTrack() const;
     [[nodiscard]] PlaylistTrack& currentTrack();
     [[nodiscard]] const PlaylistTrack& scheduledTrack() const;
+    [[nodiscard]] ScheduledTrackKind scheduledTrackKind() const;
     [[nodiscard]] const std::optional<PlaylistTrack>& detachedCurrentPlaylistTrack() const;
     [[nodiscard]] bool hasCurrentTrack() const;
     [[nodiscard]] bool isQueueTrack() const;
+    [[nodiscard]] PlaybackQueueItemId currentQueueItemId() const;
     [[nodiscard]] uint64_t currentItemId() const;
     [[nodiscard]] bool isIdle() const;
 
@@ -58,6 +66,7 @@ public:
     struct CommitResult
     {
         bool isQueueTrack{false};
+        PlaybackQueueItemId queueItemId{0};
         bool matchedPendingRequest{false};
     };
     [[nodiscard]] CommitResult commitRequest(const Player::TrackChangeRequest& request);
@@ -65,7 +74,8 @@ public:
     void clearPendingRequest();
     void clearCurrentTrack();
     void resetCurrentTrackState();
-    void scheduleTrack(const PlaylistTrack& track);
+    void scheduleTrack(const PlaylistTrack& track, ScheduledTrackKind kind = ScheduledTrackKind::Normal);
+    void clearScheduledTrack();
     void setDetachedCurrentPlaylistTrack(const PlaylistTrack& track);
     void clearDetachedCurrentPlaylistTrack();
 
@@ -77,7 +87,9 @@ public:
 private:
     PlaylistTrack m_currentTrack;
     PlaylistTrack m_scheduledTrack;
+    ScheduledTrackKind m_scheduledTrackKind;
     bool m_isQueueTrack;
+    PlaybackQueueItemId m_currentQueueItemId;
     uint64_t m_currentItemId;
     Player::TrackChangeContext m_pendingChangeContext;
     Player::TrackChangeContext m_lastChangeContext;

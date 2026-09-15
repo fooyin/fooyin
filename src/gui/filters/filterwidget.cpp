@@ -1,0 +1,1149 @@
+/*
+ * Fooyin
+ * Copyright © 2023, Luke Taylor <luket@pm.me>
+ *
+ * Fooyin is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Fooyin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "filterwidget.h"
+
+#include "filtercolumneditordialog.h"
+#include "filtercolumnregistry.h"
+#include "filterconfigwidget.h"
+#include "filtercontroller.h"
+#include "filterdelegate.h"
+#include "filteritem.h"
+#include "filtermodel.h"
+
+#include <gui/coverprovider.h>
+#include <gui/coverrepository.h>
+#include <gui/guiconstants.h>
+#include <gui/guisettings.h>
+#include <gui/guiutils.h>
+#include <gui/trackselectioncontroller.h>
+#include <gui/widgets/autoheaderview.h>
+#include <gui/widgets/expandedtreeview.h>
+#include <utils/actions/widgetcontext.h>
+#include <utils/settings/settingsmanager.h>
+#include <utils/tooltipfilter.h>
+#include <utils/utils.h>
+
+#include <QActionGroup>
+#include <QContextMenuEvent>
+#include <QHBoxLayout>
+#include <QHeaderView>
+#include <QJsonObject>
+#include <QMenu>
+#include <QScrollBar>
+#include <QSignalBlocker>
+#include <QTimerEvent>
+
+#include <algorithm>
+#include <set>
+#include <utility>
+
+using namespace Qt::StringLiterals;
+
+constexpr auto FilterDoubleClickKey       = u"Filters/DoubleClickBehaviour";
+constexpr auto FilterMiddleClickKey       = u"Filters/MiddleClickBehaviour";
+constexpr auto FilterPlaylistEnabledKey   = u"Filters/SelectionPlaylistEnabled";
+constexpr auto FilterAutoSwitchKey        = u"Filters/AutoSwitchSelectionPlaylist";
+constexpr auto FilterAutoPlaylistKey      = u"Filters/SelectionPlaylistName";
+constexpr auto FilterRowHeightKey         = u"Filters/RowHeight";
+constexpr auto FilterSendPlaybackKey      = u"Filters/StartPlaybackOnSend";
+constexpr auto FilterSourceKey            = u"Filters/Source";
+constexpr auto FilterKeepAliveKey         = u"Filters/KeepAlive";
+constexpr auto FilterIconSizeKey          = u"Filters/IconSize";
+constexpr auto FilterIconHorizontalGapKey = u"Filters/IconHorizontalGap";
+constexpr auto FilterIconVerticalGapKey   = u"Filters/IconVerticalGap";
+constexpr auto FilterArtworkRadiusKey     = u"Filters/ArtworkCornerRadius";
+constexpr auto FilterAlignCaptionsKey     = u"Filters/AlignCaptionsToArtwork";
+constexpr int FilterModelPinUpdateDelay   = 50;
+
+namespace Fooyin::Filters {
+class FilterView : public ExpandedTreeView
+{
+    Q_OBJECT
+
+public:
+    using ExpandedTreeView::ExpandedTreeView;
+
+Q_SIGNALS:
+    void displayChanged();
+
+protected:
+    void changeEvent(QEvent* event) override
+    {
+        ExpandedTreeView::changeEvent(event);
+
+        switch(event->type()) {
+            case QEvent::FontChange:
+            case QEvent::PaletteChange:
+            case QEvent::StyleChange:
+                Q_EMIT displayChanged();
+                break;
+            default:
+                break;
+        }
+    }
+};
+
+FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* columnRegistry, MusicLibrary* library,
+                           CoverRepository* coverRepository, SettingsManager* settings, QWidget* parent)
+    : FyWidget{parent}
+    , m_actionManager{actionManager}
+    , m_columnRegistry{columnRegistry}
+    , m_settings{settings}
+    , m_view{new FilterView(this)}
+    , m_delegate{new FilterDelegate(this)}
+    , m_header{new AutoHeaderView(Qt::Horizontal, this)}
+    , m_model{new FilterModel(library, new CoverProvider(coverRepository, this), m_settings, this)}
+    , m_sortProxy{new FilterSortModel(this)}
+    , m_index{-1}
+    , m_multipleColumns{false}
+    , m_widgetContext{new WidgetContext(
+          this, Context{IdList{Constants::Context::TrackSelection, Id{"Fooyin.Context.FilterWidget."}.append(id())}},
+          this)}
+    , m_applyingViewState{false}
+    , m_showScrollbar{true}
+    , m_alternatingColours{false}
+{
+    setObjectName(FilterWidget::name());
+    setFeature(FyWidget::Search);
+
+    auto* layout = new QHBoxLayout(this);
+    layout->setContentsMargins({});
+    layout->addWidget(m_view);
+
+    m_sortProxy->setSourceModel(m_model);
+    m_view->setModel(m_sortProxy);
+    m_view->setHeader(m_header);
+    m_view->setItemDelegate(m_delegate);
+    m_view->viewport()->installEventFilter(new ToolTipFilter(this));
+    QObject::connect(m_view, &FilterView::displayChanged, this, &FilterWidget::filterUpdated);
+    QObject::connect(m_view, &FilterView::displayChanged, this, [this]() { scheduleVisibleCoverPinUpdate(); });
+
+    m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    m_view->setTextElideMode(Qt::ElideRight);
+    m_view->setDragEnabled(true);
+    m_view->setDragDropMode(QAbstractItemView::DragOnly);
+    m_view->setDefaultDropAction(Qt::CopyAction);
+    m_view->setDropIndicatorShown(true);
+    m_view->setUniformRowHeights(false);
+    m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
+    m_view->setSelectBeforeDrag(m_settings->value<Settings::Gui::DragOnlyAfterSelect>());
+    m_settings->subscribe<Settings::Gui::DragOnlyAfterSelect>(m_view, &FilterView::setSelectBeforeDrag);
+
+    m_header->setStretchEnabled(true);
+    m_header->setSortIndicatorShown(true);
+    m_header->setSectionsMovable(true);
+    m_header->setFirstSectionMovable(true);
+    m_header->setSectionsClickable(true);
+    m_header->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    if(const auto column = m_columnRegistry->itemByIndex(0)) {
+        m_columns = {column.value()};
+    }
+
+    m_config = defaultConfig();
+    applyConfig(m_config);
+
+    setupConnections();
+}
+
+FilterWidget::~FilterWidget()
+{
+    m_model->coverProvider()->clearVisibleThumbnailKeys(this);
+    Q_EMIT filterDeleted();
+}
+
+Id FilterWidget::group() const
+{
+    return m_group;
+}
+
+int FilterWidget::index() const
+{
+    return m_index;
+}
+
+const FilterColumnList& FilterWidget::columns() const
+{
+    return m_columns;
+}
+
+bool FilterWidget::multipleColumns() const
+{
+    return m_multipleColumns;
+}
+
+bool FilterWidget::isActive() const
+{
+    return !selectedKeys().empty();
+}
+
+std::vector<RowKey> FilterWidget::selectedKeys() const
+{
+    const QModelIndexList selectedIndexes = m_view->selectionModel()->selectedIndexes();
+
+    std::vector<RowKey> keys;
+    keys.reserve(selectedIndexes.size());
+    std::set<RowKey> seen;
+
+    for(const QModelIndex& index : selectedIndexes) {
+        if(index.isValid()) {
+            RowKey key = index.data(FilterItem::Key).toByteArray();
+            if(seen.emplace(key).second) {
+                keys.emplace_back(std::move(key));
+            }
+        }
+    }
+
+    return keys;
+}
+
+QString FilterWidget::searchText() const
+{
+    return m_searchStr;
+}
+
+WidgetContext* FilterWidget::widgetContext() const
+{
+    return m_widgetContext;
+}
+
+TrackAction FilterWidget::doubleClickAction() const
+{
+    return static_cast<TrackAction>(m_config.doubleClickAction);
+}
+
+TrackAction FilterWidget::middleClickAction() const
+{
+    return static_cast<TrackAction>(m_config.middleClickAction);
+}
+
+bool FilterWidget::sendPlayback() const
+{
+    return m_config.sendPlayback;
+}
+
+FilterSource FilterWidget::source() const
+{
+    return m_config.source;
+}
+
+bool FilterWidget::playlistEnabled() const
+{
+    return m_config.playlistEnabled;
+}
+
+bool FilterWidget::autoSwitch() const
+{
+    return m_config.autoSwitch;
+}
+
+bool FilterWidget::preservePlaybackPlaylist() const
+{
+    return m_config.preservePlaybackPlaylist;
+}
+
+QString FilterWidget::playlistName() const
+{
+    return m_config.playlistName;
+}
+
+bool FilterWidget::hasSelection() const
+{
+    return m_view->selectionModel()->hasSelection();
+}
+
+void FilterWidget::openConfigDialog()
+{
+    showConfigDialog(new FilterConfigDialog(this, m_columnRegistry, this), Qt::NonModal);
+}
+
+void FilterWidget::setGroup(const Id& group)
+{
+    m_group = group;
+}
+
+void FilterWidget::setIndex(int index)
+{
+    m_index = index;
+}
+
+void FilterWidget::setViewState(const FilterViewState& state)
+{
+    m_applyingViewState = true;
+    m_searchStr         = state.searchText;
+
+    m_model->setRows(m_columns, state.rows);
+
+    auto* selectionModel = m_view->selectionModel();
+    const QSignalBlocker blocker{selectionModel};
+    selectionModel->clearSelection();
+
+    const QModelIndexList selectedIndexes = m_model->indexesForKeys(state.selectedKeys);
+    if(!selectedIndexes.empty()) {
+        QItemSelection indexesToSelect;
+        indexesToSelect.reserve(selectedIndexes.size());
+
+        const int columnCount = static_cast<int>(m_columns.size());
+
+        for(const QModelIndex& index : selectedIndexes) {
+            if(!index.isValid()) {
+                continue;
+            }
+
+            const QModelIndex proxyIndex = m_sortProxy->mapFromSource(index);
+            if(!proxyIndex.isValid()) {
+                continue;
+            }
+
+            const QModelIndex last = proxyIndex.siblingAtColumn(std::max(columnCount - 1, 0));
+            indexesToSelect.append({proxyIndex, last.isValid() ? last : proxyIndex});
+        }
+
+        if(!indexesToSelect.empty()) {
+            selectionModel->select(indexesToSelect, QItemSelectionModel::ClearAndSelect);
+        }
+    }
+
+    m_applyingViewState = false;
+    // Restored layouts can publish rows before the widget has gone through a resize,
+    // so nudge the view to recalculate delegate-driven row heights immediately.
+    QMetaObject::invokeMethod(m_delegate, "sizeHintChanged", Q_ARG(QModelIndex, {}));
+}
+
+QString FilterWidget::name() const
+{
+    return tr("Library Filter");
+}
+
+QString FilterWidget::layoutName() const
+{
+    return u"LibraryFilter"_s;
+}
+
+void FilterWidget::saveLayoutData(QJsonObject& layout)
+{
+    saveConfigToLayout(m_config, layout);
+
+    QStringList columns;
+
+    for(int i{0}; const auto& column : m_columns) {
+        const auto alignment = m_model->columnAlignment(i++);
+        QString colStr       = QString::number(column.id);
+
+        if(alignment != Qt::AlignLeft) {
+            colStr += u":"_s + QString::number(alignment.toInt());
+        }
+
+        columns.push_back(colStr);
+    }
+
+    const auto coverSourceToInt = [](std::optional<ArtworkSourcePreference> source) -> int {
+        if(!source) {
+            return -1;
+        }
+        return static_cast<int>(*source);
+    };
+
+    layout["Columns"_L1]         = columns.join(u"|"_s);
+    layout["Display"_L1]         = static_cast<int>(m_view->viewMode());
+    layout["Captions"_L1]        = static_cast<int>(m_view->captionDisplay());
+    layout["Artwork"_L1]         = static_cast<int>(m_model->coverType());
+    layout["Source"_L1]          = coverSourceToInt(m_model->coverSource());
+    layout["ShowSummary"_L1]     = m_model->showSummary();
+    layout["ShowHeader"_L1]      = !m_header->isCollapsed();
+    layout["ShowScrollbar"_L1]   = m_showScrollbar;
+    layout["AlternatingRows"_L1] = m_alternatingColours;
+
+    QByteArray state = m_header->saveHeaderState();
+    state            = qCompress(state, 9);
+
+    layout["Group"_L1] = m_group.name();
+    layout["Index"_L1] = m_index;
+    layout["State"_L1] = QString::fromUtf8(state.toBase64());
+}
+
+void FilterWidget::saveCopyLayoutData(QJsonObject& layout, LayoutCopyContext& context, bool isRoot)
+{
+    FyWidget::saveCopyLayoutData(layout, context, isRoot);
+
+    if(isRoot) {
+        layout["Index"_L1] = -1;
+        return;
+    }
+
+    const QString group = layout.value("Group"_L1).toString();
+    if(!group.isEmpty()) {
+        layout["Group"_L1] = context.mappedString(u"Fooyin.Filters.FilterGroup"_s, group);
+    }
+}
+
+void FilterWidget::loadLayoutData(const QJsonObject& layout)
+{
+    applyConfig(configFromLayout(layout));
+
+    if(layout.contains("Columns"_L1)) {
+        m_columns.clear();
+
+        const QString columnData    = layout.value("Columns"_L1).toString();
+        const QStringList columnIds = columnData.split(u'|');
+
+        for(int i{0}; const auto& columnId : columnIds) {
+            const auto column = columnId.split(u':');
+
+            if(const auto columnItem = m_columnRegistry->itemById(column.at(0).toInt())) {
+                m_columns.push_back(columnItem.value());
+
+                if(column.size() > 1) {
+                    m_model->changeColumnAlignment(i, static_cast<Qt::Alignment>(column.at(1).toInt()));
+                }
+                else {
+                    m_model->changeColumnAlignment(i, Qt::AlignLeft);
+                }
+            }
+            ++i;
+        }
+    }
+
+    if(layout.contains("Display"_L1)) {
+        m_view->setViewMode(static_cast<ExpandedTreeView::ViewMode>(layout.value("Display"_L1).toInt()));
+    }
+    if(layout.contains("Captions"_L1)) {
+        updateCaptions(static_cast<ExpandedTreeView::CaptionDisplay>(layout.value("Captions"_L1).toInt()));
+    }
+    if(layout.contains("Artwork"_L1)) {
+        m_model->setCoverType(static_cast<Track::Cover>(layout.value("Artwork"_L1).toInt()));
+    }
+    if(layout.contains("Source"_L1)) {
+        auto source = layout.value("Source"_L1).toInt();
+        if(source == -1) {
+            m_model->setCoverSource(std::nullopt);
+        }
+        else {
+            m_model->setCoverSource(static_cast<ArtworkSourcePreference>(source));
+        }
+    }
+    if(layout.contains("ShowSummary"_L1)) {
+        m_model->setShowSummary(layout.value("ShowSummary"_L1).toBool());
+    }
+    if(layout.contains("ShowHeader"_L1)) {
+        m_header->setCollapsed(!layout.value("ShowHeader"_L1).toBool());
+    }
+    if(layout.contains("ShowScrollbar"_L1)) {
+        m_showScrollbar = layout.value("ShowScrollbar"_L1).toBool();
+    }
+    if(layout.contains("AlternatingRows"_L1)) {
+        m_alternatingColours = layout.value("AlternatingRows"_L1).toBool();
+    }
+    if(layout.contains("Group"_L1)) {
+        m_group = Id{layout.value("Group"_L1).toString()};
+    }
+    if(layout.contains("Index"_L1)) {
+        m_index = layout.value("Index"_L1).toInt();
+    }
+
+    Q_EMIT filterUpdated();
+
+    if(layout.contains("State"_L1)) {
+        const auto headerState = layout.value("State"_L1).toString().toUtf8();
+
+        if(!headerState.isEmpty() && headerState.isValidUtf8()) {
+            const auto state = QByteArray::fromBase64(headerState);
+            m_headerState    = qUncompress(state);
+        }
+    }
+}
+
+void FilterWidget::finalise()
+{
+    m_multipleColumns = m_columns.size() > 1;
+
+    if(!m_columns.empty()) {
+        if(m_headerState.isEmpty()) {
+            m_header->setSortIndicator(0, Qt::AscendingOrder);
+        }
+        else {
+            QObject::connect(
+                m_header, &AutoHeaderView::stateRestored, this,
+                [this]() { m_sortProxy->sort(m_header->sortIndicatorSection(), m_header->sortIndicatorOrder()); },
+                Qt::SingleShotConnection);
+
+            m_header->restoreHeaderState(m_headerState);
+        }
+    }
+
+    updateAppearance();
+}
+
+void FilterWidget::searchEvent(const SearchRequest& request)
+{
+    if(std::exchange(m_searchStr, request.text) == m_searchStr) {
+        return;
+    }
+
+    Q_EMIT searchTextChanged(m_searchStr);
+}
+
+FilterWidget::ConfigData FilterWidget::factoryConfig() const
+{
+    return {
+        .doubleClickAction        = 1,
+        .middleClickAction        = 0,
+        .sendPlayback             = true,
+        .source                   = FilterSource::Library,
+        .playlistEnabled          = true,
+        .autoSwitch               = true,
+        .preservePlaybackPlaylist = true,
+        .playlistName             = FilterController::defaultPlaylistName(),
+        .rowHeight                = 0,
+        .iconSize                 = QSize{100, 100},
+        .iconHorizontalGap        = -1,
+        .iconVerticalGap          = 10,
+        .artworkCornerRadius      = 0,
+        .alignCaptionsToArtwork   = true,
+    };
+}
+
+FilterWidget::ConfigData FilterWidget::defaultConfig() const
+{
+    auto config{factoryConfig()};
+
+    config.doubleClickAction = m_settings->fileValue(FilterDoubleClickKey, config.doubleClickAction).toInt();
+    config.middleClickAction = m_settings->fileValue(FilterMiddleClickKey, config.middleClickAction).toInt();
+    config.sendPlayback      = m_settings->fileValue(FilterSendPlaybackKey, config.sendPlayback).toBool();
+    config.source
+        = static_cast<FilterSource>(m_settings->fileValue(FilterSourceKey, static_cast<int>(config.source)).toInt());
+    config.playlistEnabled = m_settings->fileValue(FilterPlaylistEnabledKey, config.playlistEnabled).toBool();
+    config.autoSwitch      = m_settings->fileValue(FilterAutoSwitchKey, config.autoSwitch).toBool();
+    config.preservePlaybackPlaylist
+        = m_settings->fileValue(FilterKeepAliveKey, config.preservePlaybackPlaylist).toBool();
+    config.playlistName        = m_settings->fileValue(FilterAutoPlaylistKey, config.playlistName).toString();
+    config.rowHeight           = m_settings->fileValue(FilterRowHeightKey, config.rowHeight).toInt();
+    config.iconSize            = m_settings->fileValue(FilterIconSizeKey, config.iconSize).toSize();
+    config.iconHorizontalGap   = m_settings->fileValue(FilterIconHorizontalGapKey, config.iconHorizontalGap).toInt();
+    config.iconVerticalGap     = m_settings->fileValue(FilterIconVerticalGapKey, config.iconVerticalGap).toInt();
+    config.artworkCornerRadius = m_settings->fileValue(FilterArtworkRadiusKey, config.artworkCornerRadius).toInt();
+    config.alignCaptionsToArtwork
+        = m_settings->fileValue(FilterAlignCaptionsKey, config.alignCaptionsToArtwork).toBool();
+
+    return config;
+}
+
+const FilterWidget::ConfigData& FilterWidget::currentConfig() const
+{
+    return m_config;
+}
+
+void FilterWidget::saveDefaults(const ConfigData& config) const
+{
+    m_settings->fileSet(FilterDoubleClickKey, config.doubleClickAction);
+    m_settings->fileSet(FilterMiddleClickKey, config.middleClickAction);
+    m_settings->fileSet(FilterSendPlaybackKey, config.sendPlayback);
+    m_settings->fileSet(FilterSourceKey, static_cast<int>(config.source));
+    m_settings->fileSet(FilterPlaylistEnabledKey, config.playlistEnabled);
+    m_settings->fileSet(FilterAutoSwitchKey, config.autoSwitch);
+    m_settings->fileSet(FilterKeepAliveKey, config.preservePlaybackPlaylist);
+    m_settings->fileSet(FilterAutoPlaylistKey, config.playlistName);
+    m_settings->fileSet(FilterRowHeightKey, config.rowHeight);
+    m_settings->fileSet(FilterIconSizeKey, config.iconSize);
+    m_settings->fileSet(FilterIconHorizontalGapKey, config.iconHorizontalGap);
+    m_settings->fileSet(FilterIconVerticalGapKey, config.iconVerticalGap);
+    m_settings->fileSet(FilterArtworkRadiusKey, config.artworkCornerRadius);
+    m_settings->fileSet(FilterAlignCaptionsKey, config.alignCaptionsToArtwork);
+}
+
+void FilterWidget::clearSavedDefaults() const
+{
+    m_settings->fileRemove(FilterDoubleClickKey);
+    m_settings->fileRemove(FilterMiddleClickKey);
+    m_settings->fileRemove(FilterSendPlaybackKey);
+    m_settings->fileRemove(FilterSourceKey);
+    m_settings->fileRemove(FilterPlaylistEnabledKey);
+    m_settings->fileRemove(FilterAutoSwitchKey);
+    m_settings->fileRemove(FilterKeepAliveKey);
+    m_settings->fileRemove(FilterAutoPlaylistKey);
+    m_settings->fileRemove(FilterRowHeightKey);
+    m_settings->fileRemove(FilterIconSizeKey);
+    m_settings->fileRemove(FilterIconHorizontalGapKey);
+    m_settings->fileRemove(FilterIconVerticalGapKey);
+    m_settings->fileRemove(FilterArtworkRadiusKey);
+    m_settings->fileRemove(FilterAlignCaptionsKey);
+}
+
+void FilterWidget::applyConfig(const ConfigData& config)
+{
+    auto validated{config};
+
+    if(validated.source != FilterSource::Library && validated.source != FilterSource::CurrentPlaylist) {
+        validated.source = FilterSource::Library;
+    }
+
+    validated.rowHeight           = std::max(validated.rowHeight, 0);
+    validated.iconHorizontalGap   = std::max(validated.iconHorizontalGap, -1);
+    validated.iconVerticalGap     = std::max(validated.iconVerticalGap, 0);
+    validated.artworkCornerRadius = std::clamp(validated.artworkCornerRadius, 0, 100);
+
+    if(!validated.iconSize.isValid()) {
+        validated.iconSize = factoryConfig().iconSize;
+    }
+
+    const bool hasConfigChanged
+        = m_config.doubleClickAction != validated.doubleClickAction
+       || m_config.middleClickAction != validated.middleClickAction || m_config.sendPlayback != validated.sendPlayback
+       || m_config.source != validated.source || m_config.playlistEnabled != validated.playlistEnabled
+       || m_config.autoSwitch != validated.autoSwitch
+       || m_config.preservePlaybackPlaylist != validated.preservePlaybackPlaylist
+       || m_config.playlistName != validated.playlistName || m_config.rowHeight != validated.rowHeight
+       || m_config.iconSize != validated.iconSize || m_config.iconHorizontalGap != validated.iconHorizontalGap
+       || m_config.iconVerticalGap != validated.iconVerticalGap
+       || m_config.artworkCornerRadius != validated.artworkCornerRadius
+       || m_config.alignCaptionsToArtwork != validated.alignCaptionsToArtwork;
+
+    m_config = validated;
+
+    m_model->setRowHeight(m_config.rowHeight);
+    m_model->setIconSize(m_config.iconSize);
+    m_view->setIconHorizontalGap(m_config.iconHorizontalGap);
+    m_view->setIconVerticalGap(m_config.iconVerticalGap);
+    m_delegate->setAlignCaptionsToArtwork(m_config.alignCaptionsToArtwork);
+    m_delegate->setArtworkCornerRadius(m_config.artworkCornerRadius);
+    m_view->changeIconSize(m_config.iconSize);
+
+    m_view->viewport()->update();
+    QMetaObject::invokeMethod(m_delegate, "sizeHintChanged", Q_ARG(QModelIndex, {}));
+
+    if(hasConfigChanged) {
+        Q_EMIT configChanged();
+    }
+}
+
+void FilterWidget::addFilterHeaderMenu(QMenu* menu, const QPoint& pos, bool includeWidgetActions)
+{
+    auto* columnsMenu = new QMenu(tr("Columns"), menu);
+    auto* columnGroup = new QActionGroup{menu};
+    columnGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
+
+    for(const auto& column : m_columnRegistry->items()) {
+        auto* columnAction = new QAction(column.name, menu);
+        columnAction->setData(column.id);
+        columnAction->setCheckable(true);
+        columnAction->setChecked(
+            std::ranges::any_of(m_columns, [column](const FilterColumn& current) { return current.id == column.id; }));
+        columnAction->setEnabled(columnAction->isChecked() ? m_columns.size() > 1 : true);
+        columnsMenu->addAction(columnAction);
+        columnGroup->addAction(columnAction);
+    }
+
+    menu->setDefaultAction(columnGroup->checkedAction());
+    QObject::connect(columnGroup, &QActionGroup::triggered, this, [this](QAction* action) {
+        const int columnId = action->data().toInt();
+        if(action->isChecked()) {
+            if(const auto column = m_columnRegistry->itemById(columnId)) {
+                if(m_multipleColumns) {
+                    m_columns.push_back(column.value());
+                }
+                else {
+                    m_columns = {column.value()};
+                }
+            }
+        }
+        else {
+            auto colIt = std::ranges::find_if(m_columns,
+                                              [columnId](const FilterColumn& column) { return column.id == columnId; });
+
+            if(colIt != m_columns.end()) {
+                const int removedIndex = static_cast<int>(std::distance(m_columns.begin(), colIt));
+                if(m_model->removeColumn(removedIndex)) {
+                    m_columns.erase(colIt);
+                }
+            }
+        }
+
+        Q_EMIT filterUpdated();
+    });
+
+    auto* multiColAction = new QAction(tr("Multiple columns"), menu);
+    multiColAction->setCheckable(true);
+    multiColAction->setChecked(m_multipleColumns);
+    multiColAction->setEnabled(m_columns.size() <= 1);
+    QObject::connect(multiColAction, &QAction::triggered, this, [this](bool checked) { m_multipleColumns = checked; });
+    columnsMenu->addSeparator();
+    columnsMenu->addAction(multiColAction);
+
+    auto* moreSettings = new QAction(tr("More…"), columnsMenu);
+    QObject::connect(moreSettings, &QAction::triggered, this, [this]() {
+        auto* dialog = new FilterColumnEditorDialog(m_columnRegistry, this);
+        dialog->open();
+    });
+    columnsMenu->addSeparator();
+    columnsMenu->addAction(moreSettings);
+
+    menu->addMenu(columnsMenu);
+    menu->addSeparator();
+    m_header->addHeaderContextMenu(menu, m_header->mapToGlobal(pos));
+    menu->addSeparator();
+    m_header->addHeaderAlignmentMenu(menu, m_header->mapToGlobal(pos));
+
+    addDisplayMenu(menu);
+
+    auto* sourceMenu  = new QMenu(tr("Source"), menu);
+    auto* sourceGroup = new QActionGroup(sourceMenu);
+
+    const auto addSourceAction = [this, sourceMenu, sourceGroup](const QString& text, FilterSource source) {
+        auto* action = sourceMenu->addAction(text);
+        action->setCheckable(true);
+        action->setChecked(m_config.source == source);
+        action->setData(static_cast<int>(source));
+        sourceGroup->addAction(action);
+    };
+
+    addSourceAction(tr("Library"), FilterSource::Library);
+    addSourceAction(tr("Current playlist"), FilterSource::CurrentPlaylist);
+
+    QObject::connect(sourceGroup, &QActionGroup::triggered, this, [this](QAction* action) {
+        ConfigData config{m_config};
+        config.source = static_cast<FilterSource>(action->data().toInt());
+        applyConfig(config);
+    });
+
+    menu->addMenu(sourceMenu);
+    menu->addSeparator();
+
+    if(includeWidgetActions) {
+        menu->addSeparator();
+        auto* manageConnections = new QAction(tr("Manage groups"), menu);
+        QObject::connect(manageConnections, &QAction::triggered, this, &FilterWidget::requestEditConnections);
+        menu->addAction(manageConnections);
+
+        auto* configure = new QAction(tr("Configure…"), menu);
+        QObject::connect(configure, &QAction::triggered, this, &FilterWidget::openConfigDialog);
+        menu->addAction(configure);
+    }
+}
+
+void FilterWidget::contextMenuEvent(QContextMenuEvent* event)
+{
+    Q_EMIT requestContextMenu(event->globalPos());
+}
+
+void FilterWidget::keyPressEvent(QKeyEvent* event)
+{
+    const auto key = event->key();
+    if(key == Qt::Key_Enter || key == Qt::Key_Return) {
+        Q_EMIT doubleClicked();
+    }
+
+    FyWidget::keyPressEvent(event);
+}
+
+void FilterWidget::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_visibleCoverPinUpdateTimer.timerId()) {
+        m_visibleCoverPinUpdateTimer.stop();
+        updateVisibleCoverPins();
+        return;
+    }
+
+    FyWidget::timerEvent(event);
+}
+
+void FilterWidget::setupConnections()
+{
+    const auto syncIconColumnOrder = [this]() {
+        if(m_view->viewMode() == ExpandedTreeView::ViewMode::Icon) {
+            m_model->setColumnOrder(Utils::logicalIndexOrder(m_header));
+        }
+    };
+
+    QObject::connect(m_columnRegistry, &FilterColumnRegistry::columnChanged, this, &FilterWidget::columnChanged);
+    QObject::connect(m_columnRegistry, &FilterColumnRegistry::itemRemoved, this, &FilterWidget::columnRemoved);
+
+    QObject::connect(m_header, &QHeaderView::sectionCountChanged, this, syncIconColumnOrder);
+    QObject::connect(m_header, &AutoHeaderView::sectionVisiblityChanged, this, syncIconColumnOrder);
+    QObject::connect(m_header, &QHeaderView::sectionMoved, this, syncIconColumnOrder);
+    QObject::connect(m_header, &QHeaderView::sortIndicatorChanged, m_sortProxy, &QSortFilterProxyModel::sort);
+    QObject::connect(m_header, &QWidget::customContextMenuRequested, this, &FilterWidget::filterHeaderMenu);
+    QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+                     &FilterWidget::handleSelectionChanged);
+    QObject::connect(m_view, &ExpandedTreeView::viewModeChanged, this, [this](ExpandedTreeView::ViewMode mode) {
+        m_model->setShowDecoration(mode == ExpandedTreeView::ViewMode::Icon);
+        scheduleVisibleCoverPinUpdate();
+    });
+    QObject::connect(m_view, &QAbstractItemView::iconSizeChanged, this, [this](const QSize& size) {
+        if(size.isValid() && m_config.iconSize != size) {
+            m_config.iconSize = size;
+            m_model->setIconSize(size);
+            scheduleVisibleCoverPinUpdate();
+            Q_EMIT configChanged();
+        }
+    });
+    QObject::connect(m_view->verticalScrollBar(), &QScrollBar::valueChanged, this,
+                     [this]() { scheduleVisibleCoverPinUpdate(); });
+    QObject::connect(m_sortProxy, &QAbstractItemModel::modelReset, this,
+                     [this]() { scheduleVisibleCoverPinUpdate(FilterModelPinUpdateDelay); });
+    QObject::connect(m_sortProxy, &QAbstractItemModel::rowsInserted, this,
+                     [this]() { scheduleVisibleCoverPinUpdate(FilterModelPinUpdateDelay); });
+    QObject::connect(m_sortProxy, &QAbstractItemModel::rowsRemoved, this,
+                     [this]() { scheduleVisibleCoverPinUpdate(FilterModelPinUpdateDelay); });
+    QObject::connect(m_view, &ExpandedTreeView::doubleClicked, this, &FilterWidget::doubleClicked);
+    QObject::connect(m_view, &ExpandedTreeView::middleClicked, this, &FilterWidget::middleClicked);
+
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this](const QVariant& var) {
+        const auto resolvedStyle = var.value<ResolvedAppStyle>();
+        Gui::updateItemViewStyle(m_view, resolvedStyle.palette);
+    });
+}
+
+void FilterWidget::handleSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+{
+    if(m_applyingViewState) {
+        return;
+    }
+
+    if(selected.indexes().empty() && deselected.indexes().empty()) {
+        return;
+    }
+
+    Q_EMIT selectionKeysChanged(selectedKeys());
+}
+
+void FilterWidget::updateViewMode(ExpandedTreeView::ViewMode mode)
+{
+    m_view->setViewMode(mode);
+
+    if(mode == ExpandedTreeView::ViewMode::Tree) {
+        m_model->setColumnOrder({});
+    }
+    else {
+        m_model->setColumnOrder(Utils::logicalIndexOrder(m_header));
+    }
+
+    scheduleVisibleCoverPinUpdate();
+}
+
+void FilterWidget::updateCaptions(ExpandedTreeView::CaptionDisplay captions)
+{
+    m_model->setShowLabels(captions != ExpandedTreeView::CaptionDisplay::None);
+    m_view->setCaptionDisplay(captions);
+}
+
+void FilterWidget::updateAppearance()
+{
+    m_view->setVerticalScrollBarPolicy(m_showScrollbar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+    m_view->setAlternatingRowColors(m_alternatingColours);
+
+    const QVariant resolvedStyleValue = m_settings->value<Settings::Gui::ResolvedAppStyle>();
+    Gui::refreshItemViewPalette(m_view, resolvedStyleValue.value<ResolvedAppStyle>().palette);
+}
+
+void FilterWidget::scheduleVisibleCoverPinUpdate(int delay)
+{
+    if(delay <= 0 || !m_visibleCoverPinUpdateTimer.isActive()) {
+        m_visibleCoverPinUpdateTimer.start(delay, this);
+    }
+}
+
+void FilterWidget::updateVisibleCoverPins()
+{
+    auto* coverProvider = m_model->coverProvider();
+    if(m_view->viewMode() != ExpandedTreeView::ViewMode::Icon) {
+        coverProvider->clearVisibleThumbnailKeys(this);
+        return;
+    }
+
+    std::set<QString> keys;
+
+    const int pinMargin       = std::max(m_config.iconSize.width(), m_config.iconSize.height());
+    const auto visibleIndexes = m_view->visibleIndexes(pinMargin);
+
+    for(const QModelIndex& index : visibleIndexes) {
+        if(index.isValid()) {
+            const QString key = index.data(FilterItem::CoverKey).toString();
+            if(!key.isEmpty()) {
+                keys.emplace(key);
+            }
+        }
+    }
+
+    coverProvider->setVisibleThumbnailKeys(this, keys);
+}
+
+void FilterWidget::addDisplayMenu(QMenu* menu)
+{
+    auto* displayMenu  = new QMenu(FilterWidget::tr("Display"), menu);
+    auto* displayGroup = new QActionGroup(displayMenu);
+    auto* coverGroup   = new QActionGroup(displayMenu);
+    auto* sourceGroup  = new QActionGroup(displayMenu);
+
+    auto* displayList      = new QAction(FilterWidget::tr("Columns"), displayGroup);
+    auto* displayArtBottom = new QAction(FilterWidget::tr("Artwork (bottom labels)"), displayGroup);
+    auto* displayArtLeft   = new QAction(FilterWidget::tr("Artwork (right labels)"), displayGroup);
+    auto* displayArtNone   = new QAction(FilterWidget::tr("Artwork (no labels)"), displayGroup);
+    auto* coverFront       = new QAction(FilterWidget::tr("Front cover"), coverGroup);
+    auto* coverBack        = new QAction(FilterWidget::tr("Back cover"), coverGroup);
+    auto* coverArtist      = new QAction(FilterWidget::tr("Artist"), coverGroup);
+    auto* sourceEmbedded   = new QAction(FilterWidget::tr("Use embedded covers"), sourceGroup);
+    auto* sourceDirectory  = new QAction(FilterWidget::tr("Use directory covers"), sourceGroup);
+    auto* sourceDefault    = new QAction(FilterWidget::tr("Use default source"), sourceGroup);
+
+    displayList->setCheckable(true);
+    displayArtBottom->setCheckable(true);
+    displayArtLeft->setCheckable(true);
+    displayArtNone->setCheckable(true);
+    coverFront->setCheckable(true);
+    coverBack->setCheckable(true);
+    coverArtist->setCheckable(true);
+    sourceEmbedded->setCheckable(true);
+    sourceDirectory->setCheckable(true);
+    sourceDefault->setCheckable(true);
+
+    const auto currentMode     = m_view->viewMode();
+    const auto currentCaptions = m_view->captionDisplay();
+    const auto currentType     = m_model->coverType();
+    const auto currentSource   = m_model->coverSource();
+
+    using ViewMode       = ExpandedTreeView::ViewMode;
+    using CaptionDisplay = ExpandedTreeView::CaptionDisplay;
+
+    if(currentMode == ExpandedTreeView::ViewMode::Tree) {
+        displayList->setChecked(true);
+    }
+    else if(currentCaptions == CaptionDisplay::Bottom) {
+        displayArtBottom->setChecked(true);
+    }
+    else if(currentCaptions == CaptionDisplay::Right) {
+        displayArtLeft->setChecked(true);
+    }
+    else {
+        displayArtNone->setChecked(true);
+    }
+
+    if(currentType == Track::Cover::Front) {
+        coverFront->setChecked(true);
+    }
+    else if(currentType == Track::Cover::Back) {
+        coverBack->setChecked(true);
+    }
+    else {
+        coverArtist->setChecked(true);
+    }
+
+    if(!currentSource) {
+        sourceDefault->setChecked(true);
+    }
+    else if(*currentSource == ArtworkSourcePreference::PreferEmbedded) {
+        sourceEmbedded->setChecked(true);
+    }
+    else if(*currentSource == ArtworkSourcePreference::PreferDirectory) {
+        sourceDirectory->setChecked(true);
+    }
+
+    QObject::connect(displayList, &QAction::triggered, this, [this]() {
+        updateViewMode(ViewMode::Tree);
+        updateCaptions(CaptionDisplay::Bottom);
+    });
+    QObject::connect(displayArtBottom, &QAction::triggered, this, [this]() {
+        updateViewMode(ViewMode::Icon);
+        updateCaptions(CaptionDisplay::Bottom);
+    });
+    QObject::connect(displayArtLeft, &QAction::triggered, this, [this]() {
+        updateViewMode(ViewMode::Icon);
+        updateCaptions(CaptionDisplay::Right);
+    });
+    QObject::connect(displayArtNone, &QAction::triggered, this, [this]() {
+        updateViewMode(ViewMode::Icon);
+        updateCaptions(CaptionDisplay::None);
+    });
+    QObject::connect(coverFront, &QAction::triggered, this, [this]() { m_model->setCoverType(Track::Cover::Front); });
+    QObject::connect(coverBack, &QAction::triggered, this, [this]() { m_model->setCoverType(Track::Cover::Back); });
+    QObject::connect(coverArtist, &QAction::triggered, this, [this]() { m_model->setCoverType(Track::Cover::Artist); });
+    QObject::connect(sourceDefault, &QAction::triggered, this, [this]() { m_model->setCoverSource(std::nullopt); });
+    QObject::connect(sourceEmbedded, &QAction::triggered, this,
+                     [this]() { m_model->setCoverSource(ArtworkSourcePreference::PreferEmbedded); });
+    QObject::connect(sourceDirectory, &QAction::triggered, this,
+                     [this]() { m_model->setCoverSource(ArtworkSourcePreference::PreferDirectory); });
+
+    auto* displaySummary = new QAction(FilterWidget::tr("Summary item"), displayMenu);
+    displaySummary->setCheckable(true);
+    displaySummary->setChecked(m_model->showSummary());
+    QObject::connect(displaySummary, &QAction::triggered, this,
+                     [this](bool checked) { m_model->setShowSummary(checked); });
+
+    auto* showHeader = new QAction(FilterWidget::tr("Show header"), displayMenu);
+    showHeader->setCheckable(true);
+    showHeader->setChecked(!m_header->isCollapsed());
+    QObject::connect(showHeader, &QAction::triggered, this, [this](bool checked) { m_header->setCollapsed(!checked); });
+
+    auto* showScrollbar = new QAction(FilterWidget::tr("Show scrollbar"), displayMenu);
+    showScrollbar->setCheckable(true);
+    showScrollbar->setChecked(m_showScrollbar);
+    QObject::connect(showScrollbar, &QAction::triggered, this, [this](bool checked) {
+        m_showScrollbar = checked;
+        updateAppearance();
+    });
+
+    auto* alternatingRows = new QAction(FilterWidget::tr("Alternating row colours"), displayMenu);
+    alternatingRows->setCheckable(true);
+    alternatingRows->setChecked(m_alternatingColours);
+    QObject::connect(alternatingRows, &QAction::triggered, this, [this](bool checked) {
+        m_alternatingColours = checked;
+        updateAppearance();
+    });
+
+    displayMenu->addActions(displayGroup->actions());
+    displayMenu->addSeparator();
+    displayMenu->addAction(displaySummary);
+    displayMenu->addAction(showHeader);
+    displayMenu->addAction(showScrollbar);
+    displayMenu->addAction(alternatingRows);
+    displayMenu->addSeparator();
+    displayMenu->addActions(coverGroup->actions());
+    displayMenu->addSeparator();
+    displayMenu->addActions(sourceGroup->actions());
+
+    menu->addMenu(displayMenu);
+}
+
+void FilterWidget::filterHeaderMenu(const QPoint& pos)
+{
+    Q_EMIT requestHeaderMenu(m_header, pos);
+}
+
+bool FilterWidget::hasColumn(int id) const
+{
+    return std::ranges::any_of(m_columns, [id](const FilterColumn& column) { return column.id == id; });
+}
+
+void FilterWidget::columnChanged(const FilterColumn& changedColumn)
+{
+    bool changed{false};
+
+    for(FilterColumn& column : m_columns) {
+        if(column.id == changedColumn.id) {
+            column  = changedColumn;
+            changed = true;
+        }
+    }
+
+    if(changed) {
+        Q_EMIT filterUpdated();
+    }
+}
+
+void FilterWidget::columnRemoved(int id)
+{
+    auto columnIt = std::ranges::find_if(m_columns, [id](const FilterColumn& column) { return column.id == id; });
+    if(columnIt == m_columns.end()) {
+        return;
+    }
+
+    if(m_columns.size() == 1) {
+        if(const auto replacement = m_columnRegistry->itemByIndex(0)) {
+            *columnIt = replacement.value();
+        }
+    }
+    else {
+        m_columns.erase(columnIt);
+    }
+
+    Q_EMIT filterUpdated();
+}
+
+FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layout) const
+{
+    ConfigData config = defaultConfig();
+
+    if(layout.contains("DoubleClickAction"_L1)) {
+        config.doubleClickAction = layout.value("DoubleClickAction"_L1).toInt();
+    }
+    if(layout.contains("MiddleClickAction"_L1)) {
+        config.middleClickAction = layout.value("MiddleClickAction"_L1).toInt();
+    }
+    if(layout.contains("SendPlayback"_L1)) {
+        config.sendPlayback = layout.value("SendPlayback"_L1).toBool();
+    }
+    if(layout.contains("FilterSource"_L1)) {
+        config.source = static_cast<FilterSource>(layout.value("FilterSource"_L1).toInt());
+    }
+    if(layout.contains("PlaylistEnabled"_L1)) {
+        config.playlistEnabled = layout.value("PlaylistEnabled"_L1).toBool();
+    }
+    if(layout.contains("AutoSwitch"_L1)) {
+        config.autoSwitch = layout.value("AutoSwitch"_L1).toBool();
+    }
+    if(layout.contains("KeepAlive"_L1)) {
+        config.preservePlaybackPlaylist = layout.value("KeepAlive"_L1).toBool();
+    }
+    if(layout.contains("PlaylistName"_L1)) {
+        config.playlistName = layout.value("PlaylistName"_L1).toString();
+    }
+    if(layout.contains("RowHeight"_L1)) {
+        config.rowHeight = layout.value("RowHeight"_L1).toInt();
+    }
+    if(layout.contains("IconWidth"_L1) && layout.contains("IconHeight"_L1)) {
+        config.iconSize = {layout.value("IconWidth"_L1).toInt(), layout.value("IconHeight"_L1).toInt()};
+    }
+    if(layout.contains("IconHorizontalGap"_L1)) {
+        config.iconHorizontalGap = layout.value("IconHorizontalGap"_L1).toInt();
+    }
+    if(layout.contains("IconVerticalGap"_L1)) {
+        config.iconVerticalGap = layout.value("IconVerticalGap"_L1).toInt();
+    }
+    if(layout.contains("ArtworkCornerRadius"_L1)) {
+        config.artworkCornerRadius = layout.value("ArtworkCornerRadius"_L1).toInt();
+    }
+    if(layout.contains("AlignCaptionsToArtwork"_L1)) {
+        config.alignCaptionsToArtwork = layout.value("AlignCaptionsToArtwork"_L1).toBool();
+    }
+
+    config.rowHeight           = std::max(config.rowHeight, 0);
+    config.iconHorizontalGap   = std::max(config.iconHorizontalGap, -1);
+    config.iconVerticalGap     = std::max(config.iconVerticalGap, 0);
+    config.artworkCornerRadius = std::max(config.artworkCornerRadius, 0);
+
+    if(!config.iconSize.isValid()) {
+        config.iconSize = factoryConfig().iconSize;
+    }
+
+    return config;
+}
+
+void FilterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
+{
+    layout["DoubleClickAction"_L1]      = config.doubleClickAction;
+    layout["MiddleClickAction"_L1]      = config.middleClickAction;
+    layout["SendPlayback"_L1]           = config.sendPlayback;
+    layout["FilterSource"_L1]           = static_cast<int>(config.source);
+    layout["PlaylistEnabled"_L1]        = config.playlistEnabled;
+    layout["AutoSwitch"_L1]             = config.autoSwitch;
+    layout["KeepAlive"_L1]              = config.preservePlaybackPlaylist;
+    layout["PlaylistName"_L1]           = config.playlistName;
+    layout["RowHeight"_L1]              = config.rowHeight;
+    layout["IconWidth"_L1]              = config.iconSize.width();
+    layout["IconHeight"_L1]             = config.iconSize.height();
+    layout["IconHorizontalGap"_L1]      = config.iconHorizontalGap;
+    layout["IconVerticalGap"_L1]        = config.iconVerticalGap;
+    layout["ArtworkCornerRadius"_L1]    = config.artworkCornerRadius;
+    layout["AlignCaptionsToArtwork"_L1] = config.alignCaptionsToArtwork;
+}
+} // namespace Fooyin::Filters
+
+#include "filterwidget.moc"
+#include "moc_filterwidget.cpp"

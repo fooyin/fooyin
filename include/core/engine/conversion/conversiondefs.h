@@ -33,6 +33,7 @@ enum class DitherMode : uint8_t
     Never = 0,
     LossySourceOnly,
     Always,
+    Automatic,
 };
 
 enum class EncoderMode : uint8_t
@@ -63,7 +64,7 @@ struct AudioEncoderSettings
 {
     EncoderProfile profile;
     SampleFormat outputSampleFormat{SampleFormat::Unknown};
-    DitherMode ditherMode{DitherMode::Never};
+    DitherMode ditherMode{DitherMode::Automatic};
 };
 
 enum class DestinationMode : uint8_t
@@ -98,7 +99,7 @@ struct ConversionDestination
 {
     DestinationMode mode{DestinationMode::Ask};
     QString fixedFolder;
-    QString filenamePattern{QStringLiteral("%title%")};
+    QString filenamePattern{QStringLiteral("%filename%")};
     ExistingFileMode existingFileMode{ExistingFileMode::Ask};
     OutputStyle outputStyle{OutputStyle::IndividualFiles};
 };

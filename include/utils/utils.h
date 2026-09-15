@@ -21,8 +21,13 @@
 
 #include "fyutils_export.h"
 
+#include <QDate>
 #include <QDateTime>
 #include <QStringList>
+#include <QStringView>
+#include <QTime>
+
+#include <optional>
 
 class QAction;
 class QColor;
@@ -37,11 +42,33 @@ class QString;
 class QWidget;
 
 namespace Fooyin::Utils {
+enum class DateTimePrecision : uint8_t
+{
+    Year   = 4,
+    Month  = 7,
+    Day    = 10,
+    Hour   = 12,
+    Minute = 16,
+    Second = 19
+};
+
+struct FYUTILS_EXPORT ParsedDateTime
+{
+    QDate date;
+    QTime time;
+    DateTimePrecision precision;
+
+    [[nodiscard]] QDateTime toDateTime() const
+    {
+        return {date, time};
+    }
+};
+
 FYUTILS_EXPORT int randomNumber(int min, int max);
 
 FYUTILS_EXPORT uint64_t currentDateToInt();
 FYUTILS_EXPORT QString formatTimeMs(uint64_t time);
-FYUTILS_EXPORT std::array<const char*, 6> dateFormats();
+FYUTILS_EXPORT std::optional<ParsedDateTime> parseDateTime(QStringView value);
 FYUTILS_EXPORT QDateTime dateStringToDate(const QString& str);
 FYUTILS_EXPORT std::optional<int64_t> dateStringToMs(const QString& str);
 FYUTILS_EXPORT QString msToDateString(int64_t dateMs);

@@ -26,6 +26,8 @@
 #include <QStringList>
 #include <QUrl>
 
+#include <stop_token>
+
 namespace Fooyin::Utils::File {
 FYUTILS_EXPORT QString cleanPath(const QString& path);
 FYUTILS_EXPORT bool isSamePath(const QString& filename1, const QString& filename2);
@@ -43,6 +45,7 @@ FYUTILS_EXPORT QList<QUrl> getUrlsInDirRecursive(const QDir& baseDirectory, cons
 FYUTILS_EXPORT QStringList getFiles(const QStringList& paths, const QStringList& fileExtensions = {});
 FYUTILS_EXPORT QStringList getFiles(const QList<QUrl>& urls, const QStringList& fileExtensions = {});
 FYUTILS_EXPORT QStringList getAllSubdirectories(const QDir& dir);
+FYUTILS_EXPORT QStringList getAllSubdirectories(const QDir& dir, std::stop_token stopToken);
 
 FYUTILS_EXPORT bool pathContainsWildcard(const QString& path);
 FYUTILS_EXPORT QStringList directoriesFromWildcardPath(const QString& pathPattern);

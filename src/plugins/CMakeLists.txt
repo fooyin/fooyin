@@ -2,11 +2,12 @@ include(FooyinPluginSelection)
 
 set(FOOYIN_KNOWN_PLUGINS
     alsa
+    cdda
     discord
     equaliser
     fileops
-    filters
     gme
+    globalhotkeys
     libarchive
     lyrics
     mediacontrol
@@ -21,6 +22,7 @@ set(FOOYIN_KNOWN_PLUGINS
     projectm
     rawaudio
     radiobrowser
+    runservices
     rgscanner
     scrobbler
     sdl
@@ -33,6 +35,7 @@ set(FOOYIN_KNOWN_PLUGINS
     tageditor
     thumbnailtoolbar
     vumeter
+    wasapi
     wavebar
 )
 
@@ -40,8 +43,8 @@ set(FOOYIN_DEFAULT_PLUGINS
     discord
     equaliser
     fileops
-    filters
     gme
+    globalhotkeys
     libarchive
     lyrics
     oscilloscope
@@ -51,6 +54,7 @@ set(FOOYIN_DEFAULT_PLUGINS
     projectm
     rawaudio
     radiobrowser
+    runservices
     rgscanner
     scrobbler
     sdl
@@ -73,6 +77,7 @@ if(UNIX AND NOT APPLE)
     list(
         APPEND
         FOOYIN_DEFAULT_PLUGINS
+        cdda
         mpris
         notify
         pulseaudio
@@ -80,7 +85,13 @@ if(UNIX AND NOT APPLE)
 endif()
 
 if(WIN32)
-    list(APPEND FOOYIN_DEFAULT_PLUGINS mediacontrol thumbnailtoolbar)
+    list(
+        APPEND
+        FOOYIN_DEFAULT_PLUGINS
+        wasapi
+        mediacontrol
+        thumbnailtoolbar
+    )
 endif()
 
 if(APPLE)
@@ -105,9 +116,13 @@ elseif("alsa" IN_LIST FOOYIN_RESOLVED_PLUGINS)
 endif()
 
 if(UNIX AND NOT APPLE)
+    fooyin_add_selected_plugin(cdda)
     fooyin_add_selected_plugin(mpris)
     fooyin_add_selected_plugin(notify)
 else()
+    if("cdda" IN_LIST FOOYIN_RESOLVED_PLUGINS)
+        message(STATUS "cdda plugin is only available on Unix platforms other than macOS; skipping.")
+    endif()
     if("mpris" IN_LIST FOOYIN_RESOLVED_PLUGINS)
         message(STATUS "mpris plugin is only available on Unix platforms other than macOS; skipping.")
     endif()
@@ -119,8 +134,8 @@ endif()
 fooyin_add_selected_plugin(discord)
 fooyin_add_selected_plugin(equaliser)
 fooyin_add_selected_plugin(fileops)
-fooyin_add_selected_plugin(filters)
 fooyin_add_selected_plugin(gme)
+fooyin_add_selected_plugin(globalhotkeys)
 fooyin_add_selected_plugin(libarchive)
 fooyin_add_selected_plugin(lyrics)
 fooyin_add_selected_plugin(oscilloscope)
@@ -131,6 +146,7 @@ fooyin_add_selected_plugin(quicktagger)
 fooyin_add_selected_plugin(projectm)
 fooyin_add_selected_plugin(rawaudio)
 fooyin_add_selected_plugin(radiobrowser)
+fooyin_add_selected_plugin(runservices)
 fooyin_add_selected_plugin(rgscanner)
 fooyin_add_selected_plugin(scrobbler)
 fooyin_add_selected_plugin(sdl)
@@ -145,9 +161,13 @@ fooyin_add_selected_plugin(vumeter)
 fooyin_add_selected_plugin(wavebar)
 
 if(WIN32)
+    fooyin_add_selected_plugin(wasapi)
     fooyin_add_selected_plugin(mediacontrol)
     fooyin_add_selected_plugin(thumbnailtoolbar)
 else()
+    if("wasapi" IN_LIST FOOYIN_RESOLVED_PLUGINS)
+        message(STATUS "wasapi plugin is only available on Windows; skipping.")
+    endif()
     if("mediacontrol" IN_LIST FOOYIN_RESOLVED_PLUGINS)
         message(STATUS "mediacontrol plugin is only available on Windows; skipping.")
     endif()

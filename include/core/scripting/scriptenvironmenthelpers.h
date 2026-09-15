@@ -89,6 +89,7 @@ public:
     void setPlaylistData(const Playlist* playlist, const PlaybackQueue* playbackQueue,
                          const TrackList* tracks = nullptr, int queueTotal = 0);
     void setQueueState(std::span<const int> queueIndexes, int queueTotal);
+    void setQueueIndexesVisible(bool visible);
     void setTrackState(int playlistTrackIndex, int currentPlayingTrackIndex, int currentPlayingTrackId, int trackDepth);
     void setPlaybackState(uint64_t currentPosition, uint64_t currentTrackDuration, int bitrate,
                           Player::PlayState playState);
@@ -141,6 +142,7 @@ private:
     bool m_useVariousArtists;
     RatingStarSymbols m_ratingSymbols;
     bool m_hasDirectQueueState;
+    bool m_queueIndexesVisible;
 };
 
 struct FYCORE_EXPORT PlaybackScriptContext

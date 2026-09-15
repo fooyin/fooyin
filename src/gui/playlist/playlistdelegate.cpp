@@ -21,6 +21,7 @@
 
 #include "playlistitem.h"
 
+#include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/widgets/expandedtreeview.h>
@@ -62,41 +63,109 @@ struct DrawTextResult
     int totalWidth{0};
 };
 
-template <typename Range>
-DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& option, QRect rect, const Range& blocks,
-                              Qt::Alignment alignment)
+struct PreparedTextBlock
+{
+    QString text;
+    QFont font;
+    QColor colour;
+    int width{0};
+};
+
+struct PreparedTextLine
+{
+    std::vector<PreparedTextBlock> blocks;
+    TextBaselineMetrics baseline;
+    int width{0};
+};
+
+DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& option, QRect rect,
+                              const std::vector<RichTextBlock>& blocks, Qt::Alignment alignment)
 {
     DrawTextResult result;
 
-    const QStyle* style         = option.widget ? option.widget->style() : QApplication::style();
     const auto selected         = option.state & QStyle::State_Selected;
-    const auto colour           = selected ? QPalette::HighlightedText : QPalette::NoRole;
     const QColor defaultColour  = option.palette.color(QPalette::Text);
     const QColor selectedColour = option.palette.color(QPalette::HighlightedText);
     const QColor linkColour     = option.palette.color(QPalette::Link);
 
-    for(const auto& block : blocks) {
-        painter->setFont(resolvedRichTextFont(block.format, option.font));
+    const RichText richText{.blocks = blocks};
+    const auto logicalLines = splitRichTextLines(richText);
+    std::vector<PreparedTextLine> preparedLines;
+    preparedLines.reserve(logicalLines.size());
 
-        QColor blockColour = resolvedRichTextColour(block.format, defaultColour, linkColour);
-        if(selected) {
-            blockColour = selectedColour;
+    int totalHeight{0};
+    for(const auto& logicalLine : logicalLines) {
+        PreparedTextLine line;
+        line.baseline      = textBaselineMetrics(option.font);
+        int remainingWidth = rect.width();
+
+        for(const auto& block : logicalLine.blocks) {
+            if(block.text.isEmpty() || remainingWidth <= 0) {
+                continue;
+            }
+
+            const QFont font = resolvedRichTextFont(block.format, option.font);
+            const QFontMetrics metrics{font};
+            const QString text = metrics.elidedText(block.text, Qt::ElideRight, remainingWidth);
+            if(text.isEmpty()) {
+                continue;
+            }
+
+            QColor blockColour = resolvedRichTextColour(block.format, defaultColour, linkColour);
+            if(selected) {
+                blockColour = selectedColour;
+            }
+
+            const int width = metrics.horizontalAdvance(text);
+            line.blocks.push_back({.text = text, .font = font, .colour = blockColour, .width = width});
+            line.baseline.expand(metrics);
+            line.width += width;
+            remainingWidth -= width;
+
+            if(text != block.text) {
+                break;
+            }
         }
-        painter->setPen(blockColour);
 
-        result.bound = painter->boundingRect(rect, alignment | Qt::TextWrapAnywhere, block.text);
-        style->drawItemText(painter, rect, alignment, option.palette, true,
-                            painter->fontMetrics().elidedText(block.text, Qt::ElideRight, rect.width()), colour);
+        result.totalWidth = std::max(result.totalWidth, line.width);
+        totalHeight += line.baseline.height();
+        preparedLines.push_back(std::move(line));
+    }
 
+    int y = rect.y();
+    if(alignment & Qt::AlignBottom) {
+        y = rect.bottom() - totalHeight + 1;
+    }
+    else if(alignment & Qt::AlignVCenter) {
+        y += std::max(0, (rect.height() - totalHeight) / 2);
+    }
+
+    int boundX = rect.x();
+    if(alignment & Qt::AlignRight) {
+        boundX = rect.right() - result.totalWidth + 1;
+    }
+    else if(alignment & Qt::AlignHCenter) {
+        boundX += std::max(0, (rect.width() - result.totalWidth) / 2);
+    }
+    result.bound = {boundX, y, result.totalWidth, totalHeight};
+
+    for(const auto& line : preparedLines) {
+        int x = rect.x();
         if(alignment & Qt::AlignRight) {
-            rect.moveRight((rect.x() + rect.width()) - result.bound.width());
+            x = rect.right() - line.width + 1;
         }
-        else {
-            rect.setWidth(rect.width() - result.bound.width());
-            rect.moveLeft(rect.x() + result.bound.width());
+        else if(alignment & Qt::AlignHCenter) {
+            x += std::max(0, (rect.width() - line.width) / 2);
         }
 
-        result.totalWidth += result.bound.width();
+        for(const auto& block : line.blocks) {
+            painter->setFont(block.font);
+            painter->setPen(block.colour);
+            painter->drawText(QPoint{x, y + line.baseline.ascent}, block.text);
+            x += block.width;
+        }
+
+        y += line.baseline.height();
     }
 
     return result;
@@ -159,15 +228,11 @@ QRect subheaderContentRect(const QStyleOptionViewItem& option, const QModelIndex
     return rect;
 }
 
-void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
+void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, int cornerRadius)
 {
     QStyleOptionViewItem opt{option};
     opt.text.clear();
     opt.icon = {};
-
-    const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
-
-    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 
     QPen linePen = painter->pen();
     linePen.setWidth(1);
@@ -202,7 +267,7 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
 
     const QRect rightRect{rect.left() + halfWidth, rect.top(), halfWidth - offset, rect.height()};
     const auto [rightBound, totalRightWidth]
-        = drawTextBlocks(painter, opt, rightRect, side | std::views::reverse, Qt::AlignVCenter | Qt::AlignRight);
+        = drawTextBlocks(painter, opt, rightRect, side, Qt::AlignVCenter | Qt::AlignRight);
 
     const int contentLeft = cover.isNull() ? rect.left() + offset : coverFrameRect.right() + (2 * offset);
     const int leftWidth   = cover.isNull() ? rect.right() - contentLeft + 1 - totalRightWidth
@@ -243,10 +308,13 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
         coverPen.setWidth(coverFrameWidth);
 
         painter->setRenderHint(QPainter::Antialiasing);
-        painter->drawRect(coverFrameRect);
+        const qreal frameRadius
+            = std::min(coverFrameRect.width(), coverFrameRect.height()) * std::clamp(cornerRadius, 0, 100) / 200.0;
+        painter->drawRoundedRect(coverFrameRect, frameRadius, frameRadius);
 
-        const double pixelRatio = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
-        painter->drawPixmap(coverRect, Utils::scalePixmap(cover, coverSize, pixelRatio, true));
+        const double dpr = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
+        Gui::drawRoundedPixmap(*painter, coverRect, Qt::AlignCenter, Utils::scalePixmap(cover, coverSize, dpr, true),
+                               cornerRadius);
     }
 }
 
@@ -255,10 +323,6 @@ void paintSimpleHeader(QPainter* painter, const QStyleOptionViewItem& option, co
     QStyleOptionViewItem opt{option};
     opt.text.clear();
     opt.icon = {};
-
-    const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
-
-    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 
     QPen linePen = painter->pen();
     linePen.setWidth(1);
@@ -276,7 +340,7 @@ void paintSimpleHeader(QPainter* painter, const QStyleOptionViewItem& option, co
 
     const QRect rightRect{rect.left() + halfWidth, rect.top(), halfWidth - offset, height};
     auto [rightBound, totalRightWidth]
-        = drawTextBlocks(painter, opt, rightRect, subtitle | std::views::reverse, Qt::AlignVCenter | Qt::AlignRight);
+        = drawTextBlocks(painter, opt, rightRect, subtitle, Qt::AlignVCenter | Qt::AlignRight);
 
     QRect leftRect{rect.left() + offset, rect.top(), rect.width() - totalRightWidth, height};
     if(totalRightWidth > 0) {
@@ -301,10 +365,6 @@ void paintSimpleHeader(QPainter* painter, const QStyleOptionViewItem& option, co
 
 void paintSubheader(QPainter* painter, const QStyleOptionViewItem& opt, const QModelIndex& index)
 {
-    const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
-
-    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
-
     QPen linePen = painter->pen();
     linePen.setWidth(1);
     QColor lineColour = opt.palette.color(QPalette::Text);
@@ -321,7 +381,7 @@ void paintSubheader(QPainter* painter, const QStyleOptionViewItem& opt, const QM
 
     const QRect rightRect{rect.left() + halfWidth, rect.top(), halfWidth - offset, height};
     auto [rightBound, totalRightWidth]
-        = drawTextBlocks(painter, opt, rightRect, subtitle | std::views::reverse, Qt::AlignVCenter | Qt::AlignRight);
+        = drawTextBlocks(painter, opt, rightRect, subtitle, Qt::AlignVCenter | Qt::AlignRight);
 
     QRect leftRect{rect.left() + offset, rect.top(), rect.width() - totalRightWidth, height};
     if(totalRightWidth > 0) {
@@ -346,7 +406,8 @@ void paintSubheader(QPainter* painter, const QStyleOptionViewItem& opt, const QM
     painter->drawLine(titleLine);
 }
 
-void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
+void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index,
+                int cornerRadiusPercent)
 {
     QStyleOptionViewItem opt{option};
 
@@ -354,20 +415,19 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 
     const bool singleColumn = index.data(PlaylistItem::Role::SingleColumnMode).toBool();
 
-    const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) * 2;
+    const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) + 1;
 
     if(singleColumn) {
-        QRect iconRect = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
-        QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
-        textRect.adjust(textMargin, 0, -textMargin, 0);
+        QRect iconRect       = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
+        const QRect textRect = Gui::itemViewTextRect(opt);
 
         const int indent     = opt.icon.isNull() ? 0 : textMargin;
         const auto leftSide  = index.data(PlaylistItem::Role::Left).value<RichText>().blocks;
         const auto rightSide = index.data(PlaylistItem::Role::Right).value<RichText>().blocks;
 
-        const QRect rightRect     = textRect.adjusted(textRect.center().x() - textRect.left(), 0, 0, 0);
-        auto [_, totalRightWidth] = drawTextBlocks(painter, opt, rightRect, rightSide | std::views::reverse,
-                                                   Qt::AlignVCenter | Qt::AlignRight);
+        const QRect rightRect = textRect.adjusted(textRect.center().x() - textRect.left(), 0, 0, 0);
+        auto [_, totalRightWidth]
+            = drawTextBlocks(painter, opt, rightRect, rightSide, Qt::AlignVCenter | Qt::AlignRight);
 
         const QRect leftRect = textRect.adjusted(0, 0, -totalRightWidth, 0);
         drawTextBlocks(painter, opt, leftRect, leftSide, Qt::AlignVCenter | Qt::AlignLeft);
@@ -387,9 +447,10 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 
                 opt.rect.adjust(imagePadding, imagePaddingTop, -imagePadding, imagePaddingTop);
 
-                style->drawItemPixmap(
-                    painter, opt.rect, Qt::AlignHCenter | Qt::AlignTop,
-                    Utils::scalePixmap(image, opt.rect.width(), opt.widget->devicePixelRatioF(), true));
+                const QPixmap scaledImage
+                    = Utils::scalePixmap(image, opt.rect.width(), opt.widget->devicePixelRatioF(), true);
+                Gui::drawRoundedPixmap(*painter, opt.rect, Qt::AlignHCenter | Qt::AlignTop, scaledImage,
+                                       cornerRadiusPercent);
             }
         }
         else {
@@ -400,8 +461,7 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
                 opt.decorationPosition = decPos;
             }
 
-            QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
-            textRect.adjust(textMargin, 0, -textMargin, 0);
+            const QRect textRect = Gui::itemViewTextRect(opt);
 
             const auto columnText = index.data(PlaylistItem::Role::Column).value<RichText>().blocks;
 
@@ -451,11 +511,11 @@ void PlaylistDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
     const auto type = index.data(PlaylistItem::Type).toInt();
     switch(type) {
         case PlaylistItem::Track:
-            paintTrack(painter, opt, index);
+            paintTrack(painter, opt, index, m_artworkCornerRadius);
             break;
         case PlaylistItem::Header: {
             const auto simple = index.data(PlaylistItem::Simple).toBool();
-            simple ? paintSimpleHeader(painter, opt, index) : paintHeader(painter, opt, index);
+            simple ? paintSimpleHeader(painter, opt, index) : paintHeader(painter, opt, index, m_artworkCornerRadius);
             break;
         }
         case PlaylistItem::Subheader:
@@ -506,6 +566,11 @@ QSize PlaylistDelegate::sizeHint(const QStyleOptionViewItem& option, const QMode
     size.setWidth(size.width() + margin);
 
     return size;
+}
+
+void PlaylistDelegate::setArtworkCornerRadius(int radius)
+{
+    m_artworkCornerRadius = std::clamp(radius, 0, 100);
 }
 } // namespace Fooyin
 

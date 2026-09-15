@@ -90,7 +90,6 @@ void LibraryScanState::fileDiscovered(const QString& file)
         return;
     }
 
-    setProgressPhase(ScanProgress::Phase::Enumerating, 0);
     reportProgress(file);
 }
 

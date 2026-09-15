@@ -291,6 +291,7 @@ public:
     LibraryTreeGrouping m_grouping;
     bool m_loaded{false};
     bool m_resetting{false};
+    bool m_resetPendingFinish{false};
 
     QThread m_populatorThread;
     LibraryTreePopulator m_populator;
@@ -530,7 +531,9 @@ void LibraryTreeModelPrivate::mergeTrackParents(const TrackIdNodeMap& parents)
 
 void LibraryTreeModelPrivate::batchFinished(const PendingTreeDataPtr& data)
 {
-    if(m_resetting) {
+    const bool resetting = m_resetting;
+    if(resetting) {
+        m_resetPendingFinish = true;
         m_self->beginResetModel();
         beginReset();
     }
@@ -542,7 +545,7 @@ void LibraryTreeModelPrivate::batchFinished(const PendingTreeDataPtr& data)
 
     populateModel(*data);
 
-    if(m_resetting) {
+    if(resetting) {
         m_self->endResetModel();
     }
     m_resetting = false;
@@ -794,9 +797,6 @@ void LibraryTreeModelPrivate::populateModel(PendingTreeData& data)
         }
     }
 
-    const QModelIndex allIndex = m_self->indexOfItem(&m_summaryNode);
-    Q_EMIT m_self->dataChanged(allIndex, allIndex, {Qt::DisplayRole});
-
     for(const QModelIndex& index : changedIndexes) {
         Q_EMIT m_self->dataChanged(index, index,
                                    {Qt::DisplayRole, Qt::ToolTipRole, Qt::SizeHintRole, LibraryTreeItem::RichTitle,
@@ -833,6 +833,9 @@ void LibraryTreeModelPrivate::populateModel(PendingTreeData& data)
     applyUpdatedItems(data.updatedItems);
     queueRichTitleUpdate(std::move(itemsToUpdate));
     updateSummary();
+
+    const QModelIndex allIndex = m_self->indexOfItem(&m_summaryNode);
+    Q_EMIT m_self->dataChanged(allIndex, allIndex, {Qt::DisplayRole});
 }
 
 void LibraryTreeModelPrivate::beginReset()
@@ -878,6 +881,9 @@ LibraryTreeModel::LibraryTreeModel(LibraryManager* libraryManager, const std::sh
         if(!p->m_loaded) {
             p->m_loaded = true;
             Q_EMIT modelLoaded();
+        }
+        if(std::exchange(p->m_resetPendingFinish, false)) {
+            Q_EMIT modelResetFinished();
         }
     });
 
@@ -952,6 +958,10 @@ void LibraryTreeModel::setPlayState(Player::PlayState state)
 
 void LibraryTreeModel::setPlayingPath(const QString& parentNode, const QString& path)
 {
+    if(p->m_parentNode == parentNode && p->m_playingPath == path) {
+        return;
+    }
+
     p->m_parentNode  = parentNode;
     p->m_playingPath = path;
     Q_EMIT dataUpdated({}, {}, {Qt::DecorationRole, Qt::BackgroundRole, LibraryTreeItem::IsPlaying});
@@ -1332,17 +1342,19 @@ void LibraryTreeModel::reset(const TrackList& tracks)
         beginResetModel();
         p->beginReset();
         endResetModel();
+        p->m_resetPendingFinish = false;
         Q_EMIT modelLoaded();
+        Q_EMIT modelResetFinished();
         return;
     }
 
     p->m_resetting = true;
-    p->m_trackParents.clear();
     p->m_tracksPendingRemoval.clear();
 
     QMetaObject::invokeMethod(&p->m_populator, [this, tracks] {
         p->m_populator.setFont(p->libraryTreeFont());
-        p->m_populator.run(p->m_grouping, tracks, p->m_settings->value<Settings::Core::UseVariousForCompilations>());
+        p->m_populator.run(p->m_grouping, tracks, p->m_settings->value<Settings::Core::UseVariousForCompilations>(),
+                           LibraryTreePopulator::PopulationMode::Atomic);
     });
 }
 

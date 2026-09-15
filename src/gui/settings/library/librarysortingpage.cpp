@@ -101,9 +101,9 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(SortingRegistry* sortingRegis
     QObject::connect(m_openEditor, &QToolButton::clicked, this, [this]() {
         const auto selection    = m_sortList->selectionModel()->selectedIndexes();
         const QModelIndex index = selection.front();
-        ScriptEditor::openEditor(index.data().toString(), [this, index](const QString& script) {
-            m_model->setData(index, script, Qt::EditRole);
-        });
+        ScriptEditor::openEditor(
+            index.data().toString(),
+            [this, index](const QString& script) { m_model->setData(index, script, Qt::EditRole); }, {}, this);
     });
 }
 

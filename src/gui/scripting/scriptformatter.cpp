@@ -294,7 +294,9 @@ void ScriptFormatterPrivate::resetFormat()
 
 ScriptFormatter::ScriptFormatter()
     : p{std::make_unique<ScriptFormatterPrivate>()}
-{ }
+{
+    p->m_scanner.setCommentsEnabled(false);
+}
 
 ScriptFormatter::~ScriptFormatter() = default;
 

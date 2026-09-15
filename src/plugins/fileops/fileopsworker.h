@@ -57,6 +57,21 @@ struct FileOpsItem
 };
 using FileOperations = std::deque<FileOpsItem>;
 
+enum class FileOpStatus : uint8_t
+{
+    Succeeded = 0,
+    Failed,
+    Skipped,
+    Cancelled
+};
+
+struct FileOpResult
+{
+    FileOpsItem operation;
+    FileOpStatus status{FileOpStatus::Succeeded};
+    QString error;
+};
+
 class FileOpsWorker : public Worker
 {
     Q_OBJECT
@@ -72,7 +87,7 @@ public:
 Q_SIGNALS:
     void simulated(const Fooyin::FileOps::FileOperations& operations);
     void deleteFinished(const Fooyin::TrackList& deletedTracks);
-    void operationFinished(const Fooyin::FileOps::FileOpsItem& operation);
+    void operationCompleted(const Fooyin::FileOps::FileOpResult& result);
 
 private:
     bool prepareOperations(const FileOpPreset& preset, bool emitSimulation);
@@ -83,12 +98,12 @@ private:
     void simulateExtract();
     void simulateRename();
 
-    [[nodiscard]] QString evaluatePath(const ParsedScript& script, const Track& track);
+    QString evaluatePath(const ParsedScript& script, const Track& track);
 
-    bool renameFile(const FileOpsItem& item);
-    static bool copyFile(const FileOpsItem& item);
-    bool extractFile(const FileOpsItem& item);
-    bool removeArchive(const FileOpsItem& item);
+    FileOpResult renameFile(const FileOpsItem& item);
+    static FileOpResult copyFile(const FileOpsItem& item);
+    FileOpResult extractFile(const FileOpsItem& item);
+    FileOpResult removeArchive(const FileOpsItem& item);
 
     void createDir(const QDir& dir);
     void removeDir(const QDir& dir);
@@ -96,8 +111,8 @@ private:
     void reset();
 
     void updateExtractedArchiveTracks(const QString& archivePath);
-    void handleEmptyDirs(const QDir& dir, const QString& filepath);
-    void addEmptyDirs(const QDir& dir);
+    void handleEmptyDirs(const QDir& dir, const QString& filepath, const QDir& sourceRoot);
+    void addEmptyDirs(const QDir& dir, const QDir& sourceRoot);
     void removeEmptyFoldersUpToLibraryRoot(const QString& filePath, int libraryId = -1);
     [[nodiscard]] QString libraryRootForDeletedPath(const QString& filePath, int libraryId) const;
     [[nodiscard]] int archiveLibraryId(const QString& archivePath) const;
@@ -113,6 +128,7 @@ private:
 
     bool m_isMonitoring;
     std::optional<QDir> m_currentDir;
+    std::optional<QDir> m_currentSourceRoot;
     std::set<QString> m_tracksProcessed;
     std::set<QString> m_filesToMove;
     std::set<QString> m_dirsToCreate;

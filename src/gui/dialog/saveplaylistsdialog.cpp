@@ -69,11 +69,7 @@ void SavePlaylistsDialog::accept()
 {
     FyStateSettings stateSettings;
 
-    QString dir{QDir::homePath()};
-    if(const auto lastPath = stateSettings.value(Settings::Gui::Internal::LastFilePath).toString();
-       !lastPath.isEmpty()) {
-        dir = lastPath;
-    }
+    const QString dir = stateSettings.value(Settings::Gui::Internal::LastPlaylistPath, QDir::homePath()).toString();
 
     QLoggingCategory log{"fy.saveplaylists"};
 
@@ -85,7 +81,7 @@ void SavePlaylistsDialog::accept()
         return;
     }
 
-    stateSettings.setValue(Settings::Gui::Internal::LastFilePath, saveDir);
+    stateSettings.setValue(Settings::Gui::Internal::LastPlaylistPath, saveDir);
 
     const QString extension = m_formats->currentText();
     if(extension.isEmpty()) {

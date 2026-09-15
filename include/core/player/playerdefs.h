@@ -21,6 +21,7 @@
 
 #include "fycore_export.h"
 
+#include <core/player/playbackqueue.h>
 #include <core/playlist/playlist.h>
 #include <core/track.h>
 #include <utils/id.h>
@@ -61,6 +62,7 @@ struct FYCORE_EXPORT TrackChangeRequest
     PlaylistTrack track;
     TrackChangeContext context;
     bool isQueueTrack{false};
+    PlaybackQueueItemId queueItemId{0};
     uint64_t itemId{0};
 };
 
@@ -68,6 +70,7 @@ struct FYCORE_EXPORT UpcomingTrack
 {
     PlaylistTrack track;
     bool isQueueTrack{false};
+    PlaybackQueueItemId queueItemId{0};
     uint64_t itemId{0};
 };
 
@@ -81,6 +84,7 @@ struct FYCORE_EXPORT PlaybackSnapshot
     uint64_t durationMs{0};
     int bitrate{0};
     bool isQueueTrack{false};
+    PlaybackQueueItemId queueItemId{0};
 };
 } // namespace Fooyin::Player
 

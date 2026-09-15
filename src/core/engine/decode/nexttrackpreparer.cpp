@@ -33,6 +33,7 @@ Q_DECLARE_LOGGING_CATEGORY(ENGINE)
 constexpr uint64_t PreparedStreamPrefillMs = 300;
 constexpr uint64_t MaxPreparedStreamMs     = 30000;
 
+namespace Fooyin {
 namespace {
 size_t bufferSamplesFromMs(uint64_t ms, int sampleRate, int channels)
 {
@@ -57,28 +58,52 @@ size_t bufferSamplesFromMs(uint64_t ms, int sampleRate, int channels)
 
     const uint64_t frames = rounded / 1000U;
 
-    return static_cast<size_t>(satMul(frames, static_cast<uint64_t>(channels)));
+    return satMul(frames, static_cast<uint64_t>(channels));
 }
+
+class ActiveDecoderRegistration
+{
+public:
+    ActiveDecoderRegistration(const std::function<void(AudioDecoder*)>& callback, AudioDecoder* decoder)
+        : m_callback{callback}
+    {
+        if(m_callback) {
+            m_callback(decoder);
+        }
+    }
+
+    ~ActiveDecoderRegistration()
+    {
+        if(m_callback) {
+            m_callback(nullptr);
+        }
+    }
+
+    ActiveDecoderRegistration(const ActiveDecoderRegistration&)            = delete;
+    ActiveDecoderRegistration& operator=(const ActiveDecoderRegistration&) = delete;
+
+private:
+    const std::function<void(AudioDecoder*)>& m_callback;
+};
 } // namespace
 
-namespace Fooyin {
 NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const Context& context)
 {
     NextTrackPreparationState state;
     state.item.track = track;
 
-    const auto canceled = [&context]() {
+    const auto cancelled = [&context]() {
         return context.cancelFlag && context.cancelFlag->load(std::memory_order_relaxed);
     };
 
-    if(!track.isValid() || !context.audioLoader || canceled()) {
+    if(!track.isValid() || !context.audioLoader || !context.currentAllowsConcurrentDecoding || cancelled()) {
         return {};
     }
 
     DecoderContext decoderContext;
     decoderContext.setPlaybackHints(context.playbackHints);
 
-    if(canceled()) {
+    if(cancelled()) {
         return {};
     }
 
@@ -88,7 +113,9 @@ NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const C
         return {};
     }
 
-    if(canceled()) {
+    const ActiveDecoderRegistration activeDecoder{context.activeDecoderChanged, decoder.decoder.get()};
+
+    if(cancelled()) {
         return {};
     }
 
@@ -97,10 +124,12 @@ NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const C
         return {};
     }
 
-    state.format = decoderContext.format();
+    state.format                   = decoderContext.format();
+    state.allowsConcurrentDecoding = decoderContext.allowsConcurrentDecoding();
 
     const bool sameFileSegmentHandoff = isMultiTrackFileTransition(context.currentTrack, track);
     const bool canPrimePreparedStream = context.playbackState == Engine::PlaybackState::Playing
+                                     && context.currentAllowsConcurrentDecoding && state.allowsConcurrentDecoding
                                      && (decoderContext.isSeekable() || track.offset() == 0) && !sameFileSegmentHandoff;
 
     if(canPrimePreparedStream) {
@@ -120,7 +149,7 @@ NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const C
                 decoderContext.seek(track.offset());
             }
 
-            if(canceled()) {
+            if(cancelled()) {
                 return {};
             }
 
@@ -128,7 +157,7 @@ NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const C
 
             const auto chunksDecoded = decoderContext.prefillActiveStreamMs(clampedPrefillMs);
 
-            if(canceled()) {
+            if(cancelled()) {
                 return {};
             }
 
@@ -148,6 +177,7 @@ NextTrackPrepareWorker::NextTrackPrepareWorker()
     : m_nextJobToken{1}
     , m_activeJobToken{0} // 0 == idle
     , m_cancelFlag{std::make_shared<std::atomic<bool>>(false)}
+    , m_activeDecoder{nullptr}
 { }
 
 NextTrackPrepareWorker::~NextTrackPrepareWorker()
@@ -182,6 +212,7 @@ void NextTrackPrepareWorker::stop()
         m_activeJobToken.store(0, std::memory_order_relaxed);
     }
 
+    requestActiveJobAbort();
     m_worker.request_stop();
     m_cv.notify_all();
 
@@ -190,11 +221,15 @@ void NextTrackPrepareWorker::stop()
 
 void NextTrackPrepareWorker::cancelPendingJobs()
 {
-    const std::scoped_lock lock{m_mutex};
+    {
+        const std::scoped_lock lock{m_mutex};
 
-    m_cancelFlag->store(true, std::memory_order_relaxed);
-    m_cancelFlag = std::make_shared<std::atomic<bool>>(false);
-    m_pendingRequest.reset();
+        m_cancelFlag->store(true, std::memory_order_relaxed);
+        m_cancelFlag = std::make_shared<std::atomic<bool>>(false);
+        m_pendingRequest.reset();
+    }
+
+    requestActiveJobAbort();
 }
 
 void NextTrackPrepareWorker::replacePending(Request request)
@@ -202,9 +237,12 @@ void NextTrackPrepareWorker::replacePending(Request request)
     {
         const std::scoped_lock lock{m_mutex};
 
-        request.jobToken           = m_nextJobToken++;
-        request.context.cancelFlag = m_cancelFlag;
-        m_pendingRequest           = std::move(request);
+        request.jobToken                     = m_nextJobToken++;
+        request.context.cancelFlag           = m_cancelFlag;
+        request.context.activeDecoderChanged = [this](AudioDecoder* decoder) {
+            setActiveDecoder(decoder);
+        };
+        m_pendingRequest = std::move(request);
     }
 
     m_cv.notify_one();
@@ -213,6 +251,20 @@ void NextTrackPrepareWorker::replacePending(Request request)
 uint64_t NextTrackPrepareWorker::activeJobToken() const
 {
     return m_activeJobToken.load(std::memory_order_relaxed);
+}
+
+void NextTrackPrepareWorker::requestActiveJobAbort() const
+{
+    const std::scoped_lock lock{m_activeDecoderMutex};
+    if(m_activeDecoder) {
+        m_activeDecoder->requestAbort();
+    }
+}
+
+void NextTrackPrepareWorker::setActiveDecoder(AudioDecoder* decoder)
+{
+    const std::scoped_lock lock{m_activeDecoderMutex};
+    m_activeDecoder = decoder;
 }
 
 void NextTrackPrepareWorker::run(const std::stop_token& stopToken)
@@ -243,12 +295,13 @@ void NextTrackPrepareWorker::run(const std::stop_token& stopToken)
         auto prepared = NextTrackPreparer::prepare(request.item.track, request.context);
         prepared.item = request.item;
 
-        const bool canceled = request.context.cancelFlag && request.context.cancelFlag->load(std::memory_order_relaxed);
+        const bool cancelled
+            = request.context.cancelFlag && request.context.cancelFlag->load(std::memory_order_relaxed);
 
         const uint64_t currentActive = m_activeJobToken.load(std::memory_order_relaxed);
         const bool stale             = (currentActive != request.jobToken);
 
-        if(!canceled && !stale && completion) {
+        if(!cancelled && !stale && completion) {
             completion(request.jobToken, request.requestId, request.purpose, request.item, std::move(prepared));
         }
     }

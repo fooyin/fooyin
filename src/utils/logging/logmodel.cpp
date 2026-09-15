@@ -30,29 +30,31 @@ using namespace Qt::StringLiterals;
 
 constexpr auto MessageSplit = R"lit(([^:]+): (.+))lit";
 
-namespace {
-QIcon iconForType(QtMsgType type)
-{
-    switch(type) {
-        case(QtDebugMsg):
-        case(QtInfoMsg):
-            return QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation);
-        case(QtWarningMsg):
-            return QApplication::style()->standardIcon(QStyle::SP_MessageBoxWarning);
-        case(QtCriticalMsg):
-        case(QtFatalMsg):
-            return QApplication::style()->standardIcon(QStyle::SP_MessageBoxCritical);
-        default:
-            return {};
-    }
-}
-} // namespace
-
 namespace Fooyin {
 LogModel::LogModel(QObject* parent)
     : QAbstractListModel{parent}
     , m_maxEntries{0}
-{ }
+{
+    refreshIcons();
+}
+
+void LogModel::refreshIcons()
+{
+    if(const auto* style = QApplication::style()) {
+        m_infoIcon     = style->standardIcon(QStyle::SP_MessageBoxInformation);
+        m_warningIcon  = style->standardIcon(QStyle::SP_MessageBoxWarning);
+        m_criticalIcon = style->standardIcon(QStyle::SP_MessageBoxCritical);
+    }
+    else {
+        m_infoIcon     = {};
+        m_warningIcon  = {};
+        m_criticalIcon = {};
+    }
+
+    if(!m_items.empty()) {
+        Q_EMIT dataChanged(index(0, Level), index(rowCount({}) - 1, Level), {Qt::DecorationRole});
+    }
+}
 
 void LogModel::addEntry(ConsoleEntry entry)
 {
@@ -205,7 +207,18 @@ QVariant LogModel::data(const QModelIndex& index, int role) const
         }
         case(Qt::DecorationRole): {
             if(column == Level) {
-                return iconForType(item.type);
+                switch(item.type) {
+                    case(QtDebugMsg):
+                    case(QtInfoMsg):
+                        return m_infoIcon;
+                    case(QtWarningMsg):
+                        return m_warningIcon;
+                    case(QtCriticalMsg):
+                    case(QtFatalMsg):
+                        return m_criticalIcon;
+                    default:
+                        break;
+                }
             }
             break;
         }

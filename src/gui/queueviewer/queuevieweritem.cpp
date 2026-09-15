@@ -24,8 +24,9 @@
 #include <gui/scripting/scriptformatter.h>
 
 namespace Fooyin {
-QueueViewerItem::QueueViewerItem(PlaylistTrack track)
+QueueViewerItem::QueueViewerItem(PlaylistTrack track, PlaybackQueueItemId queueItemId)
     : m_track{std::move(track)}
+    , m_queueItemId{queueItemId}
 { }
 
 QString QueueViewerItem::title() const
@@ -51,6 +52,11 @@ const RichText& QueueViewerItem::richSubtitle() const
 PlaylistTrack QueueViewerItem::track() const
 {
     return m_track;
+}
+
+PlaybackQueueItemId QueueViewerItem::queueItemId() const
+{
+    return m_queueItemId;
 }
 
 void QueueViewerItem::generateTitle(ScriptParser* parser, ScriptFormatter* formatter, const QString& leftScript,

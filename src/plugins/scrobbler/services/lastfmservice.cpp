@@ -24,6 +24,7 @@
 
 #include <core/coresettings.h>
 #include <core/network/networkaccessmanager.h>
+#include <core/network/networkutils.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QJsonArray>
@@ -124,6 +125,14 @@ QByteArray encodeQueryValue(const QString& value)
 {
     return QUrl::toPercentEncoding(value);
 }
+
+QString trackStatsKey(const Fooyin::Track& track)
+{
+    if(!track.hash().isEmpty()) {
+        return track.hash();
+    }
+    return QString::number(track.id()) + u':' + track.uniqueFilepath();
+}
 } // namespace
 
 namespace Fooyin::Scrobbler {
@@ -167,12 +176,24 @@ bool LastFmService::isAuthenticated() const
     return !m_username.isEmpty() && !m_sessionKey.isEmpty();
 }
 
+bool LastFmService::supportsLoved() const
+{
+    return true;
+}
+
+bool LastFmService::supportsTrackStatsSync() const
+{
+    return true;
+}
+
 void LastFmService::saveSession()
 {
     FySettings settings;
     settings.beginGroup(isCustom() ? u"Scrobbler-"_s + name() : name());
 
     settings.setValue("IsEnabled", details().isEnabled);
+    settings.setValue("SubmitLoved", details().submitLoved);
+    settings.setValue("SyncPlaybackStats", details().syncPlaybackStats);
     settings.setValue("Username", m_username);
     settings.setValue("SessionKey", m_sessionKey);
 
@@ -187,8 +208,10 @@ void LastFmService::loadSession()
     if(settings.contains("IsEnabled")) {
         detailsRef().isEnabled = settings.value("IsEnabled").toBool();
     }
-    m_username   = settings.value("Username").toString();
-    m_sessionKey = settings.value("SessionKey").toString();
+    detailsRef().submitLoved       = settings.value("SubmitLoved", false).toBool();
+    detailsRef().syncPlaybackStats = settings.value("SyncPlaybackStats", false).toBool();
+    m_username                     = settings.value("Username").toString();
+    m_sessionKey                   = settings.value("SessionKey").toString();
 
     settings.endGroup();
 }
@@ -301,6 +324,51 @@ void LastFmService::submit()
                      [this, reply, sentItems]() { scrobbleFinished(reply, sentItems); });
 }
 
+void LastFmService::submitLoved(const LovedItem& item)
+{
+    const std::map<QString, QString> params{{u"method"_s, item.loved ? u"track.love"_s : u"track.unlove"_s},
+                                            {u"artist"_s, item.metadata.artist},
+                                            {u"track"_s, item.metadata.title}};
+
+    QNetworkReply* reply = createRequest(params);
+    QObject::connect(reply, &QNetworkReply::finished, this, [this, reply, item]() { lovedFinished(reply, item); });
+}
+
+void LastFmService::fetchTrackStats(const Track& track)
+{
+    if(!isAuthenticated()) {
+        return;
+    }
+
+    const Metadata metadata{scriptParser(), settings(), track};
+    if(metadata.artist.isEmpty() || metadata.title.isEmpty()) {
+        return;
+    }
+
+    const QString key = trackStatsKey(track);
+    if(const auto reply = m_trackStatsReplies.find(key);
+       reply != m_trackStatsReplies.cend() && !reply->second.isNull()) {
+        return;
+    }
+
+    QUrl requestUrl{url()};
+    QUrlQuery query;
+    query.addQueryItem(u"api_key"_s, apiKey());
+    query.addQueryItem(u"method"_s, u"track.getInfo"_s);
+    query.addQueryItem(u"username"_s, username());
+    query.addQueryItem(u"artist"_s, metadata.artist);
+    query.addQueryItem(u"track"_s, metadata.title);
+    query.addQueryItem(u"autocorrect"_s, u"0"_s);
+    query.addQueryItem(u"format"_s, u"json"_s);
+    requestUrl.setQuery(query);
+
+    const QNetworkRequest request = makeNetworkRequest(requestUrl);
+    QNetworkReply* reply          = addReply(network()->get(request));
+    m_trackStatsReplies.insert_or_assign(key, reply);
+    QObject::connect(reply, &QNetworkReply::finished, this,
+                     [this, reply, key, track]() { trackStatsFinished(reply, key, track); });
+}
+
 void LastFmService::setupAuthQuery(ScrobblerAuthSession* session, QUrlQuery& query)
 {
     query.addQueryItem(u"api_key"_s, apiKey());
@@ -330,9 +398,8 @@ void LastFmService::requestAuth(const QString& token)
     urlQuery.addQueryItem(u"format"_s, u"json"_s);
     reqUrl.setQuery(urlQuery);
 
-    QNetworkRequest req{reqUrl};
-    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
-    QNetworkReply* reply = addReply(network()->get(req));
+    const QNetworkRequest req = makeNetworkRequest(reqUrl);
+    QNetworkReply* reply      = addReply(network()->get(req));
     QObject::connect(reply, &QNetworkReply::finished, this, [this, reply]() { authFinished(reply); });
 }
 
@@ -451,8 +518,7 @@ QNetworkReply* LastFmService::createRequest(const std::map<QString, QString>& pa
     const QString signature = QString::fromLatin1(digest.toHex()).rightJustified(32, u'0').toLower();
 
     const QUrl reqUrl{url()};
-    QNetworkRequest req{reqUrl};
-    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+    QNetworkRequest req = makeNetworkRequest(reqUrl);
     req.setHeader(QNetworkRequest::ContentTypeHeader, u"application/x-www-form-urlencoded"_s);
 
     queryParams.emplace(u"api_sig"_s, signature);
@@ -691,5 +757,61 @@ void LastFmService::scrobbleFinished(QNetworkReply* reply, const CacheItemList& 
     }
 
     doDelayedSubmit();
+}
+
+void LastFmService::lovedFinished(QNetworkReply* reply, const LovedItem& item)
+{
+    if(!removeReply(reply)) {
+        return;
+    }
+
+    QJsonObject object;
+    QString error;
+    const ReplyResult result = getJsonFromReply(reply, &object, &error);
+    if(result == ReplyResult::Success) {
+        lovedUpdateFinished(item, LovedUpdateResult::Success);
+        return;
+    }
+
+    const ReplyErrorInfo errorInfo = getReplyErrorInfo(reply, object);
+    const auto apiError            = static_cast<ScrobbleError>(errorInfo.apiErrorCode);
+    const bool retry               = result == ReplyResult::ServerError || apiError == ScrobbleError::OperationFailed
+                                  || apiError == ScrobbleError::ServiceOffline || apiError == ScrobbleError::TempUnavailable
+                                  || apiError == ScrobbleError::RateLimitExceeded;
+
+    qCWarning(SCROBBLER) << "Unable to update Loved state for" << name() << item.metadata.artist << u"-"_s
+                         << item.metadata.title << ':' << error;
+    lovedUpdateFinished(item, retry ? LovedUpdateResult::Retry : LovedUpdateResult::Discard);
+}
+
+void LastFmService::trackStatsFinished(QNetworkReply* reply, const QString& key, const Track& track)
+{
+    m_trackStatsReplies.erase(key);
+    if(!removeReply(reply)) {
+        return;
+    }
+
+    QJsonObject object;
+    QString error;
+    if(getJsonFromReply(reply, &object, &error) != ReplyResult::Success) {
+        qCWarning(SCROBBLER) << "Unable to fetch track statistics for" << name() << track.filepath() << ':' << error;
+        return;
+    }
+
+    const QJsonObject trackObject = object.value("track"_L1).toObject();
+    if(trackObject.isEmpty()) {
+        qCWarning(SCROBBLER) << "Track statistics response from" << name() << "is missing track data";
+        return;
+    }
+
+    RemoteTrackStats stats{.track = track, .loved = {}, .playCount = {}};
+    if(const QJsonValue loved = trackObject.value("userloved"_L1); !loved.isUndefined()) {
+        stats.loved = loved.toVariant().toInt() != 0;
+    }
+    if(const QJsonValue playCount = trackObject.value("userplaycount"_L1); !playCount.isUndefined()) {
+        stats.playCount = playCount.toVariant().toInt();
+    }
+
+    Q_EMIT trackStatsFetched(stats);
 }
 } // namespace Fooyin::Scrobbler

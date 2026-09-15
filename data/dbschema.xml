@@ -400,4 +400,20 @@
             ALTER TABLE Playlists ADD COLUMN ExtraProperties BLOB;
         </sql>
     </revision>
+    <revision version="20">
+        <description>Add the Love playback statistic.</description>
+        <sql>
+            ALTER TABLE TrackStats ADD COLUMN Loved INTEGER NOT NULL DEFAULT 0;
+        </sql>
+    </revision>
+    <revision version="21">
+        <description>
+            Add playback queue origin metadata.
+        </description>
+        <sql>
+            ALTER TABLE PlaybackQueue ADD COLUMN Origin INTEGER NOT NULL DEFAULT 0;
+            ALTER TABLE PlaybackQueue ADD COLUMN SourceOrder INTEGER NOT NULL DEFAULT -1;
+            ALTER TABLE PlaybackQueue ADD COLUMN IsCurrent INTEGER NOT NULL DEFAULT 0;
+        </sql>
+    </revision>
 </schema>

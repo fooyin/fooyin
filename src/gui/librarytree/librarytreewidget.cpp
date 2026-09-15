@@ -94,6 +94,7 @@ constexpr auto LibTreeAnimatedKey              = u"LibraryTree/Animated";
 constexpr auto LibTreeHeaderKey                = u"LibraryTree/Header";
 constexpr auto LibTreeShowSummaryNodeKey       = u"LibraryTree/ShowSummaryNode";
 constexpr auto LibTreeSummaryNodeTitleKey      = u"LibraryTree/SummaryNodeTitle";
+constexpr auto LibTreeArtworkRadiusKey         = u"LibraryTree/ArtworkCornerRadius";
 
 namespace Fooyin {
 using namespace Settings::Gui::Internal;
@@ -201,9 +202,11 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
     , m_trackSelection{trackSelection}
     , m_settings{core->settingsManager()}
     , m_styleProvider{styleProvider}
+    , m_styleInitialised{false}
     , m_resetThrottler{new SignalThrottler(this)}
     , m_layout{new QVBoxLayout(this)}
     , m_libraryTree{new LibraryTreeView(this)}
+    , m_delegate{new LibraryTreeDelegate(this)}
     , m_model{new LibraryTreeModel(core->libraryManager(), core->audioLoader(), coverRepository, m_settings,
                                    styleProvider, this)}
     , m_sortProxy{new LibraryTreeSortModel(this)}
@@ -226,7 +229,7 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
 
     m_sortProxy->setSourceModel(m_model);
     m_libraryTree->setModel(m_sortProxy);
-    m_libraryTree->setItemDelegate(new LibraryTreeDelegate(this));
+    m_libraryTree->setItemDelegate(m_delegate);
     m_libraryTree->viewport()->installEventFilter(new ToolTipFilter(this));
     QObject::connect(m_libraryTree, &LibraryTreeView::displayChanged, m_model, &LibraryTreeModel::resetPalette);
 
@@ -245,8 +248,7 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
     Gui::setThemeIcon(m_playAction, Constants::Icons::Play);
 
     m_playAction->setStatusTip(tr("Start playback of the selected tracks"));
-    QObject::connect(m_playAction, &QAction::triggered, this,
-                     [this]() { handlePlayback(m_libraryTree->selectionModel()->selectedRows()); });
+    QObject::connect(m_playAction, &QAction::triggered, this, &LibraryTreeWidget::handlePlaySelection);
 
     m_addToQueueAction->setEnabled(false);
     m_actionManager->registerAction(m_addToQueueAction, Constants::Actions::AddToQueue, actionContext);
@@ -330,21 +332,23 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::defaultConfig() const
     config.sendPlayback      = m_settings->fileValue(LibTreeSendPlaybackKey, config.sendPlayback).toBool();
     config.playlistEnabled   = m_settings->fileValue(LibTreePlaylistEnabledKey, config.playlistEnabled).toBool();
     config.autoSwitch        = m_settings->fileValue(LibTreeAutoSwitchKey, config.autoSwitch).toBool();
-    config.keepAlive         = m_settings->fileValue(LibTreeKeepAliveKey, config.keepAlive).toBool();
-    config.playlistName      = m_settings->fileValue(LibTreeAutoPlaylistKey, config.playlistName).toString();
-    config.restoreState      = m_settings->fileValue(LibTreeRestoreStateKey, config.restoreState).toBool();
+    config.preservePlaybackPlaylist
+        = m_settings->fileValue(LibTreeKeepAliveKey, config.preservePlaybackPlaylist).toBool();
+    config.playlistName = m_settings->fileValue(LibTreeAutoPlaylistKey, config.playlistName).toString();
+    config.restoreState = m_settings->fileValue(LibTreeRestoreStateKey, config.restoreState).toBool();
     config.expandOnSingleClick
         = m_settings->fileValue(LibTreeExpandSingleClickKey, config.expandOnSingleClick).toBool();
     config.autoExpandSearchResultLimit
         = m_settings->fileValue(LibTreeAutoExpandSearchLimitKey, config.autoExpandSearchResultLimit).toInt();
-    config.animated         = m_settings->fileValue(LibTreeAnimatedKey, config.animated).toBool();
-    config.showHeader       = m_settings->fileValue(LibTreeHeaderKey, config.showHeader).toBool();
-    config.showScrollbar    = m_settings->fileValue(LibTreeScrollBarKey, config.showScrollbar).toBool();
-    config.alternatingRows  = m_settings->fileValue(LibTreeAltColoursKey, config.alternatingRows).toBool();
-    config.showSummaryNode  = m_settings->fileValue(LibTreeShowSummaryNodeKey, config.showSummaryNode).toBool();
-    config.summaryNodeTitle = m_settings->fileValue(LibTreeSummaryNodeTitleKey, config.summaryNodeTitle).toString();
-    config.rowHeight        = m_settings->fileValue(LibTreeRowHeightKey, config.rowHeight).toInt();
-    config.iconSize         = m_settings->value<LibTreeIconSize>().toSize();
+    config.animated            = m_settings->fileValue(LibTreeAnimatedKey, config.animated).toBool();
+    config.showHeader          = m_settings->fileValue(LibTreeHeaderKey, config.showHeader).toBool();
+    config.showScrollbar       = m_settings->fileValue(LibTreeScrollBarKey, config.showScrollbar).toBool();
+    config.alternatingRows     = m_settings->fileValue(LibTreeAltColoursKey, config.alternatingRows).toBool();
+    config.showSummaryNode     = m_settings->fileValue(LibTreeShowSummaryNodeKey, config.showSummaryNode).toBool();
+    config.summaryNodeTitle    = m_settings->fileValue(LibTreeSummaryNodeTitleKey, config.summaryNodeTitle).toString();
+    config.rowHeight           = m_settings->fileValue(LibTreeRowHeightKey, config.rowHeight).toInt();
+    config.iconSize            = m_settings->value<LibTreeIconSize>().toSize();
+    config.artworkCornerRadius = m_settings->fileValue(LibTreeArtworkRadiusKey, config.artworkCornerRadius).toInt();
 
     return config;
 }
@@ -361,7 +365,7 @@ void LibraryTreeWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(LibTreeSendPlaybackKey, config.sendPlayback);
     m_settings->fileSet(LibTreePlaylistEnabledKey, config.playlistEnabled);
     m_settings->fileSet(LibTreeAutoSwitchKey, config.autoSwitch);
-    m_settings->fileSet(LibTreeKeepAliveKey, config.keepAlive);
+    m_settings->fileSet(LibTreeKeepAliveKey, config.preservePlaybackPlaylist);
     m_settings->fileSet(LibTreeAutoPlaylistKey, config.playlistName);
     m_settings->fileSet(LibTreeRestoreStateKey, config.restoreState);
     m_settings->fileSet(LibTreeExpandSingleClickKey, config.expandOnSingleClick);
@@ -374,6 +378,7 @@ void LibraryTreeWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(LibTreeSummaryNodeTitleKey, config.summaryNodeTitle);
     m_settings->fileSet(LibTreeRowHeightKey, config.rowHeight);
     m_settings->set<LibTreeIconSize>(config.iconSize);
+    m_settings->fileSet(LibTreeArtworkRadiusKey, config.artworkCornerRadius);
 }
 
 void LibraryTreeWidget::clearSavedDefaults() const
@@ -396,6 +401,7 @@ void LibraryTreeWidget::clearSavedDefaults() const
     m_settings->fileRemove(LibTreeSummaryNodeTitleKey);
     m_settings->fileRemove(LibTreeRowHeightKey);
     m_settings->reset<LibTreeIconSize>();
+    m_settings->fileRemove(LibTreeArtworkRadiusKey);
 }
 
 void LibraryTreeWidget::applyConfig(const ConfigData& config)
@@ -408,6 +414,7 @@ void LibraryTreeWidget::applyConfig(const ConfigData& config)
 
     m_config.rowHeight                   = std::max(m_config.rowHeight, 0);
     m_config.autoExpandSearchResultLimit = std::max(m_config.autoExpandSearchResultLimit, 0);
+    m_config.artworkCornerRadius         = std::clamp(m_config.artworkCornerRadius, 0, 100);
 
     if(m_config.summaryNodeTitle.isEmpty()) {
         m_config.summaryNodeTitle = factoryConfig().summaryNodeTitle;
@@ -427,8 +434,12 @@ void LibraryTreeWidget::applyConfig(const ConfigData& config)
     m_model->setRowHeight(m_config.rowHeight);
     m_model->setSummaryNodeConfig(m_config.showSummaryNode, m_config.summaryNodeTitle);
     m_libraryTree->setIconSize(m_config.iconSize);
+    m_delegate->setArtworkCornerRadius(m_config.artworkCornerRadius);
+    m_libraryTree->viewport()->update();
 
     QMetaObject::invokeMethod(m_libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+
+    Q_EMIT configChanged();
 }
 
 void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
@@ -471,7 +482,7 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::configFromLayout(const QJsonObj
         config.autoSwitch = layout.value("AutoSwitch"_L1).toBool();
     }
     if(layout.contains("KeepAlive"_L1)) {
-        config.keepAlive = layout.value("KeepAlive"_L1).toBool();
+        config.preservePlaybackPlaylist = layout.value("KeepAlive"_L1).toBool();
     }
     if(layout.contains("PlaylistName"_L1)) {
         config.playlistName = layout.value("PlaylistName"_L1).toString();
@@ -509,6 +520,9 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::configFromLayout(const QJsonObj
     if(layout.contains("IconWidth"_L1) && layout.contains("IconHeight"_L1)) {
         config.iconSize = {layout.value("IconWidth"_L1).toInt(), layout.value("IconHeight"_L1).toInt()};
     }
+    if(layout.contains("ArtworkCornerRadius"_L1)) {
+        config.artworkCornerRadius = layout.value("ArtworkCornerRadius"_L1).toInt();
+    }
 
     if(!config.iconSize.isValid()) {
         config.iconSize = factoryConfig().iconSize;
@@ -516,6 +530,7 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::configFromLayout(const QJsonObj
 
     config.rowHeight                   = std::max(config.rowHeight, 0);
     config.autoExpandSearchResultLimit = std::max(config.autoExpandSearchResultLimit, 0);
+    config.artworkCornerRadius         = std::clamp(config.artworkCornerRadius, 0, 100);
 
     if(config.summaryNodeTitle.isEmpty()) {
         config.summaryNodeTitle = factoryConfig().summaryNodeTitle;
@@ -531,7 +546,7 @@ void LibraryTreeWidget::saveConfigToLayout(const ConfigData& config, QJsonObject
     layout["SendPlayback"_L1]                = config.sendPlayback;
     layout["PlaylistEnabled"_L1]             = config.playlistEnabled;
     layout["AutoSwitch"_L1]                  = config.autoSwitch;
-    layout["KeepAlive"_L1]                   = config.keepAlive;
+    layout["KeepAlive"_L1]                   = config.preservePlaybackPlaylist;
     layout["PlaylistName"_L1]                = config.playlistName;
     layout["RestoreState"_L1]                = config.restoreState;
     layout["ExpandOnSingleClick"_L1]         = config.expandOnSingleClick;
@@ -545,23 +560,36 @@ void LibraryTreeWidget::saveConfigToLayout(const ConfigData& config, QJsonObject
     layout["RowHeight"_L1]                   = config.rowHeight;
     layout["IconWidth"_L1]                   = config.iconSize.width();
     layout["IconHeight"_L1]                  = config.iconSize.height();
+    layout["ArtworkCornerRadius"_L1]         = config.artworkCornerRadius;
 }
 
 void LibraryTreeWidget::openConfigDialog()
 {
-    showConfigDialog(new LibraryTreeConfigDialog(this, m_groupsRegistry, this));
+    showConfigDialog(new LibraryTreeConfigDialog(this, m_groupsRegistry, this), Qt::NonModal);
 }
 
 void LibraryTreeWidget::setupConnections()
 {
     const auto resetModel = [this]() {
-        m_model->reset(m_library->libraryTracks());
+        if(m_pendingResetState.isEmpty()) {
+            m_pendingResetState = saveState();
+        }
+        const bool usingFilteredTracks
+            = !m_currentSearch.isEmpty() || m_currentEmptySearchMode == EmptySearchMode::ShowAll;
+        m_model->reset(usingFilteredTracks ? m_filteredTracks : sourceTracks());
     };
 
     QObject::connect(m_resetThrottler, &SignalThrottler::triggered, this, resetModel);
 
     QObject::connect(m_model, &LibraryTreeModel::dataUpdated, m_libraryTree, &QTreeView::dataChanged);
     QObject::connect(m_model, &LibraryTreeModel::modelLoaded, this, [this]() { restoreState(m_pendingState); });
+    QObject::connect(m_model, &LibraryTreeModel::modelResetFinished, this,
+                     [this]() { restoreState(std::exchange(m_pendingResetState, {}), true); });
+    QObject::connect(m_libraryTree, &LibraryTreeView::displayAboutToChange, this, [this]() {
+        if(m_pendingResetState.isEmpty()) {
+            m_pendingResetState = saveState();
+        }
+    });
 
     QObject::connect(m_libraryTree, &LibraryTreeView::doubleClicked, this,
                      [this](const QModelIndex& index) { handleDoubleClick(index); });
@@ -577,6 +605,7 @@ void LibraryTreeWidget::setupConnections()
         if(size.isValid() && m_config.iconSize != size) {
             m_config.iconSize = size;
             QMetaObject::invokeMethod(m_libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+            Q_EMIT configChanged();
         }
     });
     QObject::connect(m_groupsRegistry, &LibraryTreeGroupRegistry::groupingChanged, this,
@@ -586,17 +615,39 @@ void LibraryTreeWidget::setupConnections()
                          }
                      });
 
-    QObject::connect(m_library, &MusicLibrary::tracksLoaded, this, [this]() { reset(); });
-    QObject::connect(m_library, &MusicLibrary::tracksAdded, this,
-                     [this](const TrackList& tracks) { handleTracksAdded(tracks); });
+    QObject::connect(m_library, &MusicLibrary::tracksLoaded, this, [this]() {
+        if(!m_library->hasActiveLibraryFilters()) {
+            reset();
+        }
+    });
+    QObject::connect(m_library, &MusicLibrary::tracksAdded, this, [this](const TrackList& tracks) {
+        if(!m_library->hasActiveLibraryFilters()) {
+            handleTracksAdded(tracks);
+        }
+    });
     QObject::connect(m_library, &MusicLibrary::tracksScanned, m_model,
                      [this](int /*id*/, const TrackList& tracks) { handleTracksAdded(tracks); });
-    QObject::connect(m_library, &MusicLibrary::tracksMetadataChanged, this,
-                     [this](const TrackList& tracks) { handleTracksUpdated(tracks); });
-    QObject::connect(m_library, &MusicLibrary::tracksUpdated, this,
-                     [this](const TrackList& tracks) { m_model->refreshTracks(tracks); });
-    QObject::connect(m_library, &MusicLibrary::tracksDeleted, m_model, &LibraryTreeModel::removeTracks);
-    QObject::connect(m_library, &MusicLibrary::tracksSorted, this, [this]() { reset(); });
+    QObject::connect(m_library, &MusicLibrary::tracksMetadataChanged, this, [this](const TrackList& tracks) {
+        if(!m_library->hasActiveLibraryFilters()) {
+            handleTracksUpdated(tracks);
+        }
+    });
+    QObject::connect(m_library, &MusicLibrary::tracksUpdated, this, [this](const TrackList& tracks) {
+        if(!m_library->hasActiveLibraryFilters()) {
+            m_model->refreshTracks(tracks);
+        }
+    });
+    QObject::connect(m_library, &MusicLibrary::tracksDeleted, this, [this](const TrackList& tracks) {
+        if(!m_library->hasActiveLibraryFilters()) {
+            m_model->removeTracks(tracks);
+        }
+    });
+    QObject::connect(m_library, &MusicLibrary::tracksSorted, this, [this]() {
+        if(!m_library->hasActiveLibraryFilters()) {
+            reset();
+        }
+    });
+    QObject::connect(m_library, &MusicLibrary::visibleLibraryTracksChanged, this, &LibraryTreeWidget::refreshSearch);
 
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
                      [this](Player::PlayState state) { m_model->setPlayState(state); });
@@ -606,9 +657,12 @@ void LibraryTreeWidget::setupConnections()
                      [this](auto* playlist) { activePlaylistChanged(playlist); });
 
     m_styleProvider->subscribe(this, [this](const ResolvedAppStyle& resolvedStyle) {
+        const bool initialStyle = !std::exchange(m_styleInitialised, true);
         Gui::refreshItemViewPalette(m_libraryTree, resolvedStyle.palette);
         m_model->resetPalette();
-        reset();
+        if(initialStyle) {
+            reset();
+        }
     });
 
     m_settings->subscribe<Settings::Core::UseVariousForCompilations>(this, [this]() { reset(); });
@@ -618,135 +672,13 @@ void LibraryTreeWidget::setupConnections()
     m_settings->subscribe<Settings::Gui::RatingEmptyStarSymbol>(this, resetModel);
 }
 
-void LibraryTreeWidget::reset() const
+void LibraryTreeWidget::reset()
 {
     if(!m_styleProvider->isResolved()) {
         return;
     }
 
     m_resetThrottler->throttle();
-}
-
-void LibraryTreeWidget::changeGrouping(const LibraryTreeGrouping& newGrouping)
-{
-    if(std::exchange(m_grouping, newGrouping) != newGrouping) {
-        m_model->changeGrouping(m_grouping);
-        reset();
-    }
-}
-
-void LibraryTreeWidget::activePlaylistChanged(Playlist* playlist) const
-{
-    if(!playlist || !m_playlist) {
-        return;
-    }
-
-    if(playlist->id() != m_playlist->id()) {
-        m_model->setPlayingPath({}, {});
-    }
-}
-
-void LibraryTreeWidget::playlistTrackChanged(const PlaylistTrack& track)
-{
-    if(!m_playlist || m_playlist->id() != track.playlistId) {
-        return;
-    }
-
-    if(m_playlistGroups.empty()) {
-        m_model->setPlayingPath({}, track.track.uniqueFilepath());
-        return;
-    }
-
-    auto groupIt = m_playlistGroups.upper_bound(track.indexInPlaylist);
-    if(groupIt != m_playlistGroups.cbegin()) {
-        --groupIt;
-    }
-    m_model->setPlayingPath(groupIt->second, track.track.uniqueFilepath());
-}
-
-void LibraryTreeWidget::addGroupMenu(QMenu* parent)
-{
-    auto* groupMenu = new QMenu(tr("Grouping"), parent);
-
-    auto* treeGroups = new QActionGroup(groupMenu);
-
-    const auto groups = m_groupsRegistry->items();
-    for(const auto& group : groups) {
-        auto* switchGroup = new QAction(group.name, groupMenu);
-        QObject::connect(switchGroup, &QAction::triggered, this, [this, group]() { changeGrouping(group); });
-        switchGroup->setCheckable(true);
-        switchGroup->setChecked(m_grouping.id == group.id);
-        groupMenu->addAction(switchGroup);
-        treeGroups->addAction(switchGroup);
-    }
-
-    groupMenu->addSeparator();
-
-    auto* manageGroupings = new QAction(tr("Manage groupings..."), groupMenu);
-    QObject::connect(manageGroupings, &QAction::triggered, this, [this]() {
-        auto* dialog = new LibraryTreeGroupEditorDialog(m_groupsRegistry, this);
-        dialog->open();
-    });
-    groupMenu->addAction(manageGroupings);
-
-    parent->addMenu(groupMenu);
-}
-
-void LibraryTreeWidget::addOpenMenu(QMenu* menu)
-{
-    const auto selected = m_libraryTree->selectionModel()->selectedRows();
-    if(selected.size() != 1) {
-        return;
-    }
-
-    if(m_grouping.id != 2) {
-        // Only add if in folder structure view
-        return;
-    }
-
-    const auto tracks = selected.front().data(LibraryTreeItem::Tracks).value<TrackList>();
-    if(tracks.empty()) {
-        return;
-    }
-
-    const auto libId   = tracks.front().libraryId();
-    const auto library = m_library->libraryInfo(libId);
-    if(!library) {
-        return;
-    }
-
-    QString dir{library->path};
-    QStringList parentDirs;
-
-    QModelIndex index{selected.front()};
-    while(index.isValid()) {
-        parentDirs.prepend(index.data().toString());
-        index = index.parent();
-    }
-
-    dir += "/"_L1 + parentDirs.join(u'/');
-    const QFileInfo info{dir};
-    if(info.exists() && info.isDir()) {
-        auto* openFolder = new QAction(tr("Open folder"), this);
-        QObject::connect(openFolder, &QAction::triggered, this, [dir]() { Utils::File::openDirectory(dir); });
-        menu->addAction(openFolder);
-    }
-}
-
-void LibraryTreeWidget::setScrollbarEnabled(bool enabled) const
-{
-    m_libraryTree->setVerticalScrollBarPolicy(enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
-}
-
-void LibraryTreeWidget::setupHeaderContextMenu(const QPoint& pos)
-{
-    auto* menu = new QMenu(this);
-    menu->setAttribute(Qt::WA_DeleteOnClose);
-
-    addGroupMenu(menu);
-    addConfigureAction(menu);
-
-    menu->popup(m_libraryTree->header()->viewport()->mapToGlobal(pos));
 }
 
 void LibraryTreeWidget::populateContextMenu(QMenu* menu)
@@ -872,6 +804,158 @@ void LibraryTreeWidget::populateContextMenu(QMenu* menu)
         });
 }
 
+void LibraryTreeWidget::changeGrouping(const LibraryTreeGrouping& newGrouping)
+{
+    if(std::exchange(m_grouping, newGrouping) != newGrouping) {
+        m_model->changeGrouping(m_grouping);
+        reset();
+    }
+}
+
+void LibraryTreeWidget::activePlaylistChanged(Playlist* playlist) const
+{
+    if(!playlist || !m_playlist) {
+        return;
+    }
+
+    if(playlist->id() != m_playlist->id()) {
+        m_model->setPlayingPath({}, {});
+    }
+}
+
+void LibraryTreeWidget::playlistTrackChanged(const PlaylistTrack& track)
+{
+    if(!m_playlist) {
+        return;
+    }
+
+    if(m_playlist->id() != track.playlistId) {
+        m_model->setPlayingPath({}, {});
+        return;
+    }
+
+    if(m_playlistGroups.empty()) {
+        m_model->setPlayingPath({}, track.track.uniqueFilepath());
+        return;
+    }
+
+    auto groupIt = m_playlistGroups.upper_bound(track.indexInPlaylist);
+    if(groupIt != m_playlistGroups.cbegin()) {
+        --groupIt;
+    }
+    m_model->setPlayingPath(groupIt->second, track.track.uniqueFilepath());
+}
+
+void LibraryTreeWidget::addGroupMenu(QMenu* parent)
+{
+    auto* groupMenu = new QMenu(tr("Grouping"), parent);
+
+    auto* treeGroups = new QActionGroup(groupMenu);
+
+    const auto groups = m_groupsRegistry->items();
+    for(const auto& group : groups) {
+        auto* switchGroup = new QAction(group.name, groupMenu);
+        QObject::connect(switchGroup, &QAction::triggered, this, [this, group]() { changeGrouping(group); });
+        switchGroup->setCheckable(true);
+        switchGroup->setChecked(m_grouping.id == group.id);
+        groupMenu->addAction(switchGroup);
+        treeGroups->addAction(switchGroup);
+    }
+
+    groupMenu->addSeparator();
+
+    auto* manageGroupings = new QAction(tr("Manage groupings…"), groupMenu);
+    QObject::connect(manageGroupings, &QAction::triggered, this, [this]() {
+        auto* dialog = new LibraryTreeGroupEditorDialog(m_groupsRegistry, this);
+        dialog->open();
+    });
+    groupMenu->addAction(manageGroupings);
+
+    parent->addMenu(groupMenu);
+}
+void LibraryTreeWidget::addOpenMenu(QMenu* menu)
+{
+    const auto selected = m_libraryTree->selectionModel()->selectedRows();
+    if(selected.size() != 1) {
+        return;
+    }
+
+    if(m_grouping.id != 2) {
+        // Only add if in folder structure view
+        return;
+    }
+
+    const auto tracks = selected.front().data(LibraryTreeItem::Tracks).value<TrackList>();
+    if(tracks.empty()) {
+        return;
+    }
+
+    const auto libId   = tracks.front().libraryId();
+    const auto library = m_library->libraryInfo(libId);
+    if(!library) {
+        return;
+    }
+
+    QString dir{library->path};
+    QStringList parentDirs;
+
+    QModelIndex index{selected.front()};
+    while(index.isValid()) {
+        parentDirs.prepend(index.data().toString());
+        index = index.parent();
+    }
+
+    dir += "/"_L1 + parentDirs.join(u'/');
+    const QFileInfo info{dir};
+    if(info.exists() && info.isDir()) {
+        auto* openFolder = new QAction(tr("Open folder"), this);
+        QObject::connect(openFolder, &QAction::triggered, this, [dir]() { Utils::File::openDirectory(dir); });
+        menu->addAction(openFolder);
+    }
+}
+
+void LibraryTreeWidget::setScrollbarEnabled(bool enabled) const
+{
+    m_libraryTree->setVerticalScrollBarPolicy(enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+}
+
+void LibraryTreeWidget::setupHeaderContextMenu(const QPoint& pos)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    addGroupMenu(menu);
+    addConfigureAction(menu);
+
+    menu->popup(m_libraryTree->header()->viewport()->mapToGlobal(pos));
+}
+
+void LibraryTreeWidget::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected) const
+{
+    if(m_updating) {
+        return;
+    }
+
+    if(selected.indexes().empty() && deselected.indexes().empty()) {
+        return;
+    }
+
+    const QModelIndexList filteredIndexes = filterAncestors(m_libraryTree->selectionModel()->selectedRows());
+
+    const auto summaryNodeIt = std::ranges::find_if(filteredIndexes, [](const QModelIndex& index) {
+        return index.isValid() && index.data(LibraryTreeItem::Level).toInt() == -1;
+    });
+    if(summaryNodeIt != filteredIndexes.cend()) {
+        const bool usingFilteredTracks
+            = !m_currentSearch.isEmpty() || m_currentEmptySearchMode == EmptySearchMode::ShowAll;
+        applySelectedTracks(usingFilteredTracks ? m_filteredTracks : sourceTracks());
+        return;
+    }
+
+    const TrackList selectedTracks = tracksForIndexes(m_sortProxy, filteredIndexes);
+    applySelectedTracks(selectedTracks);
+}
+
 void LibraryTreeWidget::applySelectedTracks(const TrackList& selectedTracks) const
 {
     const TrackList tracks = Gui::sortTracksForLibraryViewerPlaylist(m_settings, selectedTracks);
@@ -903,32 +987,6 @@ void LibraryTreeWidget::applySelectedTracks(const TrackList& selectedTracks) con
     syncSelectionPlaylist(tracks);
 }
 
-void LibraryTreeWidget::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected) const
-{
-    if(m_updating) {
-        return;
-    }
-
-    if(selected.indexes().empty() && deselected.indexes().empty()) {
-        return;
-    }
-
-    const QModelIndexList filteredIndexes = filterAncestors(m_libraryTree->selectionModel()->selectedRows());
-
-    const auto summaryNodeIt = std::ranges::find_if(filteredIndexes, [](const QModelIndex& index) {
-        return index.isValid() && index.data(LibraryTreeItem::Level).toInt() == -1;
-    });
-    if(summaryNodeIt != filteredIndexes.cend()) {
-        const bool usingFilteredTracks
-            = !m_currentSearch.isEmpty() || m_currentEmptySearchMode == EmptySearchMode::ShowAll;
-        applySelectedTracks(usingFilteredTracks ? m_filteredTracks : m_library->libraryTracks());
-        return;
-    }
-
-    const TrackList selectedTracks = tracksForIndexes(m_sortProxy, filteredIndexes);
-    applySelectedTracks(selectedTracks);
-}
-
 void LibraryTreeWidget::syncSelectionPlaylist(const TrackList& tracks) const
 {
     if(!m_config.playlistEnabled || tracks.empty()) {
@@ -937,16 +995,16 @@ void LibraryTreeWidget::syncSelectionPlaylist(const TrackList& tracks) const
 
     const QString playlistName{m_config.playlistName};
 
-    if(m_config.keepAlive) {
+    if(m_config.preservePlaybackPlaylist) {
         if(const auto* activePlaylist = m_playlistHandler->activePlaylist();
            activePlaylist && activePlaylist->name() == playlistName) {
-            const QString keepActiveName = playlistName + u" ("_s + tr("Playback") + u")"_s;
+            const QString playbackPlaylistName = playlistName + u" ("_s + tr("Playback") + u")"_s;
 
-            if(auto* keepActivePlaylist = m_playlistHandler->playlistByName(keepActiveName)) {
-                m_playlistHandler->movePlaylistTracks(activePlaylist->id(), keepActivePlaylist->id());
+            if(auto* playbackPlaylist = m_playlistHandler->playlistByName(playbackPlaylistName)) {
+                m_playlistHandler->movePlaylistTracks(activePlaylist->id(), playbackPlaylist->id());
             }
             else {
-                m_playlistHandler->renamePlaylist(activePlaylist->id(), keepActiveName);
+                m_playlistHandler->renamePlaylist(activePlaylist->id(), playbackPlaylistName);
             }
         }
     }
@@ -1007,24 +1065,45 @@ void LibraryTreeWidget::searchChanged(const SearchRequest& request)
 
     m_currentSearch          = request.text;
     m_currentEmptySearchMode = request.emptyMode;
+    refreshSearch();
+}
+
+TrackList LibraryTreeWidget::sourceTracks() const
+{
+    return m_library->visibleLibraryTracks();
+}
+
+bool LibraryTreeWidget::shouldAutoExpandSearchResults(const TrackList& tracks) const
+{
+    if(m_config.autoExpandSearchResultLimit <= 0 || m_currentSearch.isEmpty() || tracks.empty()) {
+        return false;
+    }
+
+    return std::cmp_less_equal(tracks.size(), m_config.autoExpandSearchResultLimit);
+}
+
+void LibraryTreeWidget::refreshSearch()
+{
+    const uint64_t revision = ++m_searchRevision;
+    const TrackList tracks  = sourceTracks();
 
     if(m_currentSearch.length() < 1) {
-        if(request.emptyMode == EmptySearchMode::ShowAll) {
-            m_filteredTracks = m_library->libraryTracks();
+        if(m_currentEmptySearchMode == EmptySearchMode::ShowAll) {
+            m_filteredTracks = tracks;
             m_model->reset(m_filteredTracks);
         }
         else {
             m_filteredTracks.clear();
-            m_model->reset(m_library->libraryTracks());
+            m_model->reset(tracks);
         }
         return;
     }
 
-    Utils::asyncExec([search = m_currentSearch, tracks = m_library->libraryTracks()]() {
+    Utils::asyncExec([search = m_currentSearch, tracks]() {
         TrackQueryFilter filter;
         return filter.filter(search, tracks);
-    }).then(this, [this, search = m_currentSearch](const TrackList& filteredTracks) {
-        if(m_currentSearch != search) {
+    }).then(this, [this, search = m_currentSearch, revision](const TrackList& filteredTracks) {
+        if(m_currentSearch != search || m_searchRevision != revision) {
             return;
         }
 
@@ -1037,15 +1116,6 @@ void LibraryTreeWidget::searchChanged(const SearchRequest& request)
 
         m_model->reset(m_filteredTracks);
     });
-}
-
-bool LibraryTreeWidget::shouldAutoExpandSearchResults(const TrackList& tracks) const
-{
-    if(m_config.autoExpandSearchResultLimit <= 0 || m_currentSearch.isEmpty() || tracks.empty()) {
-        return false;
-    }
-
-    return std::cmp_less_equal(tracks.size(), m_config.autoExpandSearchResultLimit);
 }
 
 void LibraryTreeWidget::expandSearchResults()
@@ -1078,7 +1148,7 @@ void LibraryTreeWidget::expandSearchResults()
     expandChildren(expandChildren, {});
 }
 
-void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, int row)
+void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, int row, bool singleTrackSelection)
 {
     m_playlistGroups.clear();
 
@@ -1115,6 +1185,28 @@ void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, int row)
         return;
     }
 
+    row                  = std::clamp(row, 0, static_cast<int>(tracks.size()) - 1);
+    const auto queueMode = static_cast<PlaybackQueueMode>(m_settings->value<Settings::Core::PlaybackQueueMode>());
+    const auto playNowAction
+        = static_cast<PlayNowAction>(m_settings->value<Settings::Core::PlaybackQueuePlayNowAction>());
+    if(queueMode == PlaybackQueueMode::QueueAsPlaybackSource && playNowAction != PlayNowAction::AllTracks) {
+        const Track selectedTrack = tracks.at(row);
+        TrackList selectedTracks  = singleTrackSelection ? TrackList{selectedTrack} : tracks;
+
+        if(playNowAction == PlayNowAction::ContainingGroup && singleTrackSelection) {
+            selectedTracks = tracks;
+        }
+        else if(playNowAction != PlayNowAction::ContainingGroup) {
+            row = singleTrackSelection ? 0 : row;
+        }
+
+        if(playNowAction == PlayNowAction::QueueNext) {
+            m_playerController->queueTracksNextAndPlay(PlaylistTrack::fromTracks(selectedTracks, {}));
+            return;
+        }
+        tracks = std::move(selectedTracks);
+    }
+
     syncSelectionPlaylist(tracks);
 
     if(parent.isValid() && m_playlistGroups.empty()) {
@@ -1126,6 +1218,17 @@ void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, int row)
         m_playlist->changeCurrentIndex(row);
         m_playerController->startPlayback(m_playlist);
     }
+}
+
+void LibraryTreeWidget::handlePlaySelection()
+{
+    const QModelIndexList indexes = m_libraryTree->selectionModel()->selectedRows();
+    if(indexes.size() == 1 && !m_sortProxy->hasChildren(indexes.front())) {
+        handlePlayTrack(indexes.front());
+        return;
+    }
+
+    handlePlayback(indexes);
 }
 
 void LibraryTreeWidget::handlePlayTrack(const QModelIndex& index)
@@ -1148,7 +1251,7 @@ void LibraryTreeWidget::handlePlayTrack(const QModelIndex& index)
         trackIndexes.emplace_back(m_sortProxy->index(i, 0, parent));
     }
 
-    handlePlayback(trackIndexes, row);
+    handlePlayback(trackIndexes, row, true);
 }
 
 void LibraryTreeWidget::handleDoubleClick(const QModelIndex& index)
@@ -1202,16 +1305,17 @@ void LibraryTreeWidget::handleMiddleClick(const QModelIndex& index) const
 
 void LibraryTreeWidget::handleTracksAdded(const TrackList& tracks)
 {
-    if(tracks.empty()) {
+    if(tracks.empty() || m_library->hasActiveLibraryFilters()) {
         return;
     }
 
     if(!m_currentSearch.isEmpty()) {
+        const uint64_t revision{m_searchRevision};
         Utils::asyncExec([search = m_currentSearch, tracks]() {
             TrackQueryFilter filter;
             return filter.filter(search, tracks);
-        }).then(this, [this, search = m_currentSearch](const TrackList& filteredTracks) {
-            if(m_currentSearch != search) {
+        }).then(this, [this, search = m_currentSearch, revision](const TrackList& filteredTracks) {
+            if(m_currentSearch != search || m_searchRevision != revision) {
                 return;
             }
 
@@ -1225,7 +1329,7 @@ void LibraryTreeWidget::handleTracksAdded(const TrackList& tracks)
 
 void LibraryTreeWidget::handleTracksUpdated(const TrackList& tracks)
 {
-    if(tracks.empty()) {
+    if(tracks.empty() || m_library->hasActiveLibraryFilters()) {
         return;
     }
 
@@ -1244,9 +1348,10 @@ void LibraryTreeWidget::handleTracksUpdated(const TrackList& tracks)
     }
 
     std::stack<QModelIndex> checkExpanded;
-    for(const QModelIndex& index : trackParents) {
-        if(index.isValid()) {
-            checkExpanded.emplace(index);
+    for(const QModelIndex& sourceIndex : trackParents) {
+        const QModelIndex proxyIndex = m_sortProxy->mapFromSource(sourceIndex);
+        if(proxyIndex.isValid()) {
+            checkExpanded.emplace(proxyIndex);
         }
     }
 
@@ -1376,9 +1481,9 @@ void LibraryTreeWidget::restoreIndexState(const QByteArray& topKey, const std::v
     }
 }
 
-void LibraryTreeWidget::restoreState(const QByteArray& state)
+void LibraryTreeWidget::restoreState(const QByteArray& state, bool force)
 {
-    if(state.isEmpty() || !m_config.restoreState) {
+    if(state.isEmpty() || (!force && !m_config.restoreState)) {
         return;
     }
 

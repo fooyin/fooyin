@@ -36,6 +36,7 @@ class QTimerEvent;
 class QWidget;
 
 namespace Fooyin {
+class HeartDelegate;
 class PixmapFadeController;
 class StarDelegate;
 
@@ -61,6 +62,7 @@ public:
     void setLoadingText(const QString& text);
     void setEmptyText(const QString& text);
     void setRatingColumn(int column);
+    void setLovedColumn(int column);
     void setBackgroundOptions(const BackgroundOptions& options);
     void setBackgroundPixmap(const QPixmap& pixmap);
 
@@ -91,11 +93,14 @@ protected:
 
 Q_SIGNALS:
     void bulkWriteRequested(const Fooyin::TrackList& tracks);
+    void tracksLoved(const Fooyin::TrackList& tracks);
     void tracksRated(const Fooyin::TrackList& tracks);
     void displayChanged();
 
 private:
     [[nodiscard]] QModelIndexList selectedTrackRows() const;
+    void editTrackStat(const QModelIndex& index, const QVariant& value, Track::Stat stat);
+    void emitTrackStatChanged(const TrackList& tracks, Track::Stat stat);
     [[nodiscard]] std::vector<int> bulkEditableColumns() const;
     [[nodiscard]] QModelIndex bulkEditAnchorIndex(int column) const;
     [[nodiscard]] QRect bulkEditRect(int column) const;
@@ -115,6 +120,8 @@ private:
 
     void ratingHoverIn(const QModelIndex& index, const QPoint& pos);
     void ratingHoverOut();
+    void loveHoverIn(const QModelIndex& index);
+    void loveHoverOut();
 
     void drawBackground(QPainter& painter);
     void updateBackgroundTransparency();
@@ -136,6 +143,8 @@ private:
 
     StarDelegate* m_starDelegate;
     int m_ratingColumn;
+    HeartDelegate* m_heartDelegate;
+    int m_lovedColumn;
 
     BackgroundOptions m_bgOptions;
     PixmapFadeController* m_bgFadeController;

@@ -71,11 +71,11 @@ public:
     void saveUpdatedTracks(const TrackList& tracks);
     WriteRequest writeUpdatedTracks(const TrackList& tracks);
     WriteRequest writeTrackCovers(const TrackCoverData& tracks);
-    [[nodiscard]] std::optional<CoverImage> pendingTrackCover(const Track& track, Track::Cover type) const override;
+    [[nodiscard]] std::optional<PendingTrackCover> pendingTrackCover(const Track& track,
+                                                                     Track::Cover type) const override;
     void setActivePlaybackTrack(const Track& track);
     void flushPendingWrites();
-    void saveUpdatedTrackStats(const TrackList& tracks);
-    void saveUpdatedTrackPlaycounts(const TrackList& tracks);
+    void saveUpdatedTrackStats(const TrackList& tracks, Track::Stats stats);
     void checkTrackAvailability(const TrackList& tracks);
 
     WriteRequest removeUnavailbleTracks(const TrackList& tracks);
@@ -92,7 +92,7 @@ Q_SIGNALS:
     void scanUpdate(int id, Fooyin::ScanRequest::Type type, const Fooyin::ScanResult& result);
     void tracksUpdated(const Fooyin::TrackList& tracks);
     void tracksAvailabilityUpdated(const Fooyin::TrackList& tracks);
-    void tracksStatsUpdated(const Fooyin::TrackList& tracks);
+    void tracksStatsUpdated(const Fooyin::TrackList& tracks, Fooyin::Track::Stats stats);
     void tracksRemoved(const Fooyin::TrackList& tracks);
 
     void gotTracks(Fooyin::TrackList result);

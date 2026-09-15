@@ -49,7 +49,6 @@ public:
                                   const std::set<Track>& selectedTracks) const override;
     [[nodiscard]] PlaylistTrackList searchSourceTracks(const PlaylistController* playlistController,
                                                        const MusicLibrary* library) const override;
-    void selectionChanged(PlaylistWidgetSessionHost& host) override;
 };
 
 class DetachedLibrarySession final : public DetachedSearchSession
@@ -66,5 +65,25 @@ public:
                                                        const MusicLibrary* library) const override;
     [[nodiscard]] bool canResetWithoutPlaylist() const override;
     [[nodiscard]] PlaylistAction::ActionOptions playbackOptions() const override;
+};
+
+class DetachedTrackListSession final : public DetachedSearchSession
+{
+public:
+    explicit DetachedTrackListSession(const TrackList& tracks);
+
+    [[nodiscard]] PlaylistWidget::ModeCapabilities capabilities() const override;
+    [[nodiscard]] TrackSelection selection(Playlist* currentPlaylist, const TrackList& tracks,
+                                           const std::set<int>& trackIndexes,
+                                           const PlaylistTrack& firstTrack) const override;
+    [[nodiscard]] bool canDequeue(const PlayerController* playerController, Playlist* currentPlaylist,
+                                  const std::set<int>& trackIndexes,
+                                  const std::set<Track>& selectedTracks) const override;
+    [[nodiscard]] PlaylistTrackList searchSourceTracks(const PlaylistController* playlistController,
+                                                       const MusicLibrary* library) const override;
+    [[nodiscard]] PlaylistAction::ActionOptions playbackOptions() const override;
+
+private:
+    PlaylistTrackList m_tracks;
 };
 } // namespace Fooyin

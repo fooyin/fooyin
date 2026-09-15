@@ -44,6 +44,7 @@ public:
     [[nodiscard]] int bitrate() const override;
     [[nodiscard]] bool trackHasChanged() const override;
     [[nodiscard]] Track changedTrack() const override;
+    [[nodiscard]] std::optional<TimedTrackChange> takeTimedTrackChange() override;
 
     std::optional<AudioFormat> init(const AudioSource& source, const Track& track, DecoderOptions options) override;
     void start() override;

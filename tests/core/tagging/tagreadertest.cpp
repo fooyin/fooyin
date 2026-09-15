@@ -21,6 +21,7 @@
 
 #include <core/coresettings.h>
 #include <core/engine/input/ffmpeg/ffmpeginput.h>
+#include <core/engine/input/playcounttagpolicy.h>
 #include <core/engine/input/ratingtagpolicy.h>
 #include <core/engine/input/taglibparser.h>
 #include <core/track.h>
@@ -47,6 +48,11 @@ namespace Fooyin::Testing {
 class TagReaderTest : public ::testing::Test
 {
 protected:
+    TagReaderTest()
+    {
+        resetRatingSettings();
+    }
+
     TagLibReader m_parser;
 };
 
@@ -57,15 +63,17 @@ protected:
 };
 
 namespace {
-constexpr auto Mp4AlbumGain    = "----:com.apple.iTunes:replaygain_album_gain";
-constexpr auto Mp4AlbumGainAlt = "----:com.apple.iTunes:REPLAYGAIN_ALBUM_GAIN";
-constexpr auto Mp4AlbumPeak    = "----:com.apple.iTunes:replaygain_album_peak";
-constexpr auto Mp4AlbumPeakAlt = "----:com.apple.iTunes:REPLAYGAIN_ALBUM_PEAK";
-constexpr auto Mp4TrackGain    = "----:com.apple.iTunes:replaygain_track_gain";
-constexpr auto Mp4TrackGainAlt = "----:com.apple.iTunes:REPLAYGAIN_TRACK_GAIN";
-constexpr auto Mp4TrackPeak    = "----:com.apple.iTunes:replaygain_track_peak";
-constexpr auto Mp4TrackPeakAlt = "----:com.apple.iTunes:REPLAYGAIN_TRACK_PEAK";
-constexpr auto Mp4CustomRating = "----:com.apple.iTunes:MY_RATING";
+constexpr auto Mp4AlbumGain      = "----:com.apple.iTunes:replaygain_album_gain";
+constexpr auto Mp4AlbumGainAlt   = "----:com.apple.iTunes:REPLAYGAIN_ALBUM_GAIN";
+constexpr auto Mp4AlbumPeak      = "----:com.apple.iTunes:replaygain_album_peak";
+constexpr auto Mp4AlbumPeakAlt   = "----:com.apple.iTunes:REPLAYGAIN_ALBUM_PEAK";
+constexpr auto Mp4TrackGain      = "----:com.apple.iTunes:replaygain_track_gain";
+constexpr auto Mp4TrackGainAlt   = "----:com.apple.iTunes:REPLAYGAIN_TRACK_GAIN";
+constexpr auto Mp4TrackPeak      = "----:com.apple.iTunes:replaygain_track_peak";
+constexpr auto Mp4TrackPeakAlt   = "----:com.apple.iTunes:REPLAYGAIN_TRACK_PEAK";
+constexpr auto Mp4CustomRating   = "----:com.apple.iTunes:MY_RATING";
+constexpr auto Mp4ReleaseType    = "----:com.apple.iTunes:MusicBrainz Album Type";
+constexpr auto Mp4ReleaseTypeAlt = "----:com.apple.iTunes:RELEASETYPE";
 
 void clearMp4ReplayGainItems(TagLib::MP4::Tag* tag)
 {
@@ -97,6 +105,14 @@ void setXiphRatingFields(TagLib::Ogg::XiphComment* tag, const QString& rating, c
     tag->addField("FMPS_RATING", TagLib::String{fmpsRating.toUtf8().constData(), TagLib::String::UTF8}, true);
 }
 
+void setXiphPlaycountFields(TagLib::Ogg::XiphComment* tag, const QString& playcount, const QString& fmpsPlaycount)
+{
+    ASSERT_NE(tag, nullptr);
+
+    tag->addField("PLAYCOUNT", TagLib::String{playcount.toUtf8().constData(), TagLib::String::UTF8}, true);
+    tag->addField("FMPS_PLAYCOUNT", TagLib::String{fmpsPlaycount.toUtf8().constData(), TagLib::String::UTF8}, true);
+}
+
 void setRatingReadPolicy(const QString& tag, const QString& scale)
 {
     FySettings settings;
@@ -115,6 +131,14 @@ void setId3TextFrame(TagLib::ID3v2::Tag* tag, const char* id, const QByteArray& 
     tag->removeFrames(id);
     auto* frame = new TagLib::ID3v2::TextIdentificationFrame(id, encoding);
     frame->setText(TagLib::String{value.constData(), encoding});
+    tag->addFrame(frame);
+}
+
+void addId3UserTextFrame(TagLib::ID3v2::Tag* tag, const QString& description, const QString& value)
+{
+    auto* frame = new TagLib::ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
+    frame->setDescription(TagLib::String{description.toUtf8().constData(), TagLib::String::UTF8});
+    frame->setText(TagLib::String{value.toUtf8().constData(), TagLib::String::UTF8});
     tag->addFrame(frame);
 }
 
@@ -287,6 +311,52 @@ TEST_F(TagReaderTest, M4aRead)
     EXPECT_EQ(testTag.front(), u"A custom tag"_s);
 }
 
+TEST_F(TagReaderTest, M4aReadDeduplicatesNormalisedExtraTags)
+{
+    const QString filepath = u":/audio/audiotest.m4a"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    {
+        const QByteArray localPath = file.fileName().toLocal8Bit();
+        TagLib::MP4::File mp4File(localPath.constData());
+        ASSERT_TRUE(mp4File.isValid());
+        ASSERT_NE(mp4File.tag(), nullptr);
+
+        setMp4StringItem(mp4File.tag(), Mp4ReleaseType, u"Album"_s);
+        setMp4StringItem(mp4File.tag(), Mp4ReleaseTypeAlt, u"Album"_s);
+        ASSERT_TRUE(mp4File.save());
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+    EXPECT_EQ(track.extraTag(u"RELEASETYPE"_s), QStringList{u"Album"_s});
+}
+
+TEST_F(TagReaderTest, M4aReadPreservesDistinctNormalisedExtraTags)
+{
+    const QString filepath = u":/audio/audiotest.m4a"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    {
+        const QByteArray localPath = file.fileName().toLocal8Bit();
+        TagLib::MP4::File mp4File(localPath.constData());
+        ASSERT_TRUE(mp4File.isValid());
+        ASSERT_NE(mp4File.tag(), nullptr);
+
+        setMp4StringItem(mp4File.tag(), Mp4ReleaseType, u"Album"_s);
+        setMp4StringItem(mp4File.tag(), Mp4ReleaseTypeAlt, u"Compilation"_s);
+        ASSERT_TRUE(mp4File.save());
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+    EXPECT_EQ(track.extraTag(u"RELEASETYPE"_s), (QStringList{u"Album"_s, u"Compilation"_s}));
+}
+
 TEST_F(TagReaderTest, M4aReadCustomAutomaticRatingScale)
 {
     resetTagReaderRatingSettings();
@@ -422,6 +492,82 @@ TEST_F(TagReaderTest, Mp3Read)
     EXPECT_EQ(testTag.front(), u"A custom tag"_s);
 }
 
+TEST_F(TagReaderTest, Mp3ReadDeduplicatesNormalisedExtraTags)
+{
+    const QString filepath = u":/audio/audiotest.mp3"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    {
+        const QByteArray localPath = file.fileName().toLocal8Bit();
+        TagLib::MPEG::File mp3File(localPath.constData());
+        ASSERT_TRUE(mp3File.isValid());
+        auto* tag = mp3File.ID3v2Tag(true);
+        ASSERT_NE(tag, nullptr);
+
+        setId3TextFrame(tag, "TPUB", "Example Records", TagLib::String::UTF8);
+        addId3UserTextFrame(tag, u"LABEL"_s, u"Example Records"_s);
+        ASSERT_TRUE(mp3File.save());
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+    EXPECT_EQ(track.extraTag(u"LABEL"_s), QStringList{u"Example Records"_s});
+}
+
+TEST_F(TagReaderTest, Mp3ReadPreservesDistinctNormalisedExtraTags)
+{
+    const QString filepath = u":/audio/audiotest.mp3"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    {
+        const QByteArray localPath = file.fileName().toLocal8Bit();
+        TagLib::MPEG::File mp3File(localPath.constData());
+        ASSERT_TRUE(mp3File.isValid());
+        auto* tag = mp3File.ID3v2Tag(true);
+        ASSERT_NE(tag, nullptr);
+
+        setId3TextFrame(tag, "TPUB", "Example Records", TagLib::String::UTF8);
+        addId3UserTextFrame(tag, u"label"_s, u"Another Label"_s);
+        ASSERT_TRUE(mp3File.save());
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+    const QStringList labels = track.extraTag(u"LABEL"_s);
+    EXPECT_EQ(labels.size(), 2);
+    EXPECT_TRUE(labels.contains(u"Example Records"_s));
+    EXPECT_TRUE(labels.contains(u"Another Label"_s));
+}
+
+TEST_F(TagReaderTest, Mp3ReadDeduplicatesMixedCaseTxxxDescriptions)
+{
+    const QString filepath = u":/audio/audiotest.mp3"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    {
+        const QByteArray localPath = file.fileName().toLocal8Bit();
+        TagLib::MPEG::File mp3File(localPath.constData());
+        ASSERT_TRUE(mp3File.isValid());
+        auto* tag = mp3File.ID3v2Tag(true);
+        ASSERT_NE(tag, nullptr);
+
+        addId3UserTextFrame(tag, u"albumartistsort"_s, u"Artist, The"_s);
+        addId3UserTextFrame(tag, u"ALBUMARTISTSORT"_s, u"Artist, The"_s);
+        addId3UserTextFrame(tag, u"albumARTISTsort"_s, u"Artist, The"_s);
+        ASSERT_TRUE(mp3File.save());
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+    EXPECT_EQ(track.extraTag(u"ALBUMARTISTSORT"_s), QStringList{u"Artist, The"_s});
+}
+
 TEST_F(TagReaderTest, Mp3ReadRepairsLegacyTextInLatin1Id3Frames)
 {
     const QString filepath = u":/audio/audiotest.mp3"_s;
@@ -452,8 +598,17 @@ TEST_F(TagReaderTest, Mp3ReadRepairsLegacyTextInLatin1Id3Frames)
         ASSERT_TRUE(mp3File.save(TagLib::MPEG::File::ID3v2, TagLib::MPEG::File::StripOthers, TagLib::ID3v2::v3));
     }
 
+    FySettings settings;
+    settings.setValue(Utils::PreferredFallbackEncodingSetting, u"windows-1251"_s);
+    settings.sync();
+
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    const bool success = m_parser.readTrack({filepath, &file, nullptr}, track);
+
+    settings.remove(Utils::PreferredFallbackEncodingSetting);
+    settings.sync();
+
+    ASSERT_TRUE(success);
 
     EXPECT_EQ(track.title(), u"Как молоды мы были"_s);
     EXPECT_EQ(track.artist(), u"Александр Градский"_s);
@@ -580,6 +735,48 @@ TEST_F(TagReaderTest, Mp3ReadHonoursPopmSettings)
         ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
 
         EXPECT_LE(track.rating(), 0.0F);
+        EXPECT_EQ(track.playCount(), 0);
+        EXPECT_EQ(track.rawRatingTag(u"POPM"_s), QString{});
+    }
+
+    {
+        FySettings settings;
+        settings.setValue(PlaycountSettings::ReadId3Popm, true);
+        settings.sync();
+
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+        EXPECT_LE(track.rating(), 0.0F);
+        EXPECT_EQ(track.playCount(), 12);
+        EXPECT_EQ(track.rawRatingTag(u"POPM"_s), QString{});
+    }
+
+    {
+        FySettings settings;
+        settings.setValue(RatingSettings::ReadId3Popm, true);
+        settings.setValue(PlaycountSettings::ReadId3Popm, false);
+        settings.sync();
+
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+        EXPECT_FLOAT_EQ(track.rating(), 0.8F);
+        EXPECT_EQ(track.playCount(), 0);
+        EXPECT_EQ(track.rawRatingTag(u"POPM"_s), u"owner@example.com|196|12"_s);
+    }
+
+    {
+        FySettings settings;
+        settings.setValue(RatingSettings::PopmOwner, u"missing@example.com"_s);
+        settings.setValue(PlaycountSettings::ReadId3Popm, true);
+        settings.sync();
+
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+        EXPECT_LE(track.rating(), 0.0F);
+        EXPECT_EQ(track.playCount(), 0);
         EXPECT_EQ(track.rawRatingTag(u"POPM"_s), QString{});
     }
 
@@ -638,6 +835,60 @@ TEST_F(TagReaderTest, OggReadPrefersFmpsRatingOverRating)
     EXPECT_FLOAT_EQ(track.rating(), 0.8F);
     EXPECT_EQ(track.rawRatingTag(u"RATING"_s), u"1"_s);
     EXPECT_EQ(track.rawRatingTag(u"FMPS_RATING"_s), u"0.8"_s);
+}
+
+TEST_F(TagReaderTest, OggAutomaticPlaycountReadPrefersFmpsPlaycount)
+{
+    resetTagReaderRatingSettings();
+
+    const QString filepath = u":/audio/audiotest.ogg"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    {
+        TagLib::Ogg::Vorbis::File oggFile{file.fileName().toLocal8Bit().constData()};
+        ASSERT_TRUE(oggFile.isValid());
+        setXiphPlaycountFields(oggFile.tag(), u"17"_s, u"42"_s);
+        ASSERT_TRUE(oggFile.save());
+    }
+
+    {
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        EXPECT_EQ(track.playCount(), 42);
+    }
+
+    {
+        TagLib::Ogg::Vorbis::File oggFile{file.fileName().toLocal8Bit().constData()};
+        ASSERT_TRUE(oggFile.isValid());
+        setXiphPlaycountFields(oggFile.tag(), u"17"_s, u"invalid"_s);
+        ASSERT_TRUE(oggFile.save());
+    }
+
+    {
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        EXPECT_EQ(track.playCount(), 17);
+    }
+
+    {
+        FySettings settings;
+        settings.setValue(PlaycountSettings::ReadTag, u"PLAYCOUNT"_s);
+        settings.sync();
+
+        {
+            TagLib::Ogg::Vorbis::File oggFile{file.fileName().toLocal8Bit().constData()};
+            ASSERT_TRUE(oggFile.isValid());
+            setXiphPlaycountFields(oggFile.tag(), u"17"_s, u"42"_s);
+            ASSERT_TRUE(oggFile.save());
+        }
+
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        EXPECT_EQ(track.playCount(), 17);
+    }
+
+    resetTagReaderRatingSettings();
 }
 
 TEST_F(TagReaderTest, OggAutomaticRatingReadDetectsTenPointRating)
@@ -807,8 +1058,9 @@ TEST_F(FFmpegTagReaderTest, TakRead)
     TempResource file{filepath};
     file.checkValid();
 
-    Track track{file.fileName()};
-    AudioSource source{file.fileName(), &file, nullptr};
+    const QString localFilepath = file.QFile::fileName();
+    Track track{localFilepath};
+    AudioSource source{localFilepath, &file, nullptr};
     ASSERT_TRUE(m_parser.init(source));
     ASSERT_TRUE(m_parser.readTrack(source, track));
 
@@ -839,8 +1091,9 @@ TEST_F(FFmpegTagReaderTest, TakReadApeCoverArt)
     appendApeCoverItems(file.fileName());
     ASSERT_TRUE(file.seek(0));
 
-    Track track{file.fileName()};
-    AudioSource source{file.fileName(), &file, nullptr};
+    const QString localFilepath = file.QFile::fileName();
+    Track track{localFilepath};
+    AudioSource source{localFilepath, &file, nullptr};
 
     const QByteArray frontCover = m_parser.readCover(source, track, Track::Cover::Front);
     const QByteArray backCover  = m_parser.readCover(source, track, Track::Cover::Back);

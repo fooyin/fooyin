@@ -41,9 +41,13 @@ public:
     ~TagEditorModel() override;
 
     [[nodiscard]] TrackList tracks() const;
-    void populate(TagEditorDataPtr data);
-    void setRatingRow(int row);
+    [[nodiscard]] Track::Stats changedStats() const;
     void updateTracks(const TrackList& tracks);
+
+    void populate(TagEditorDataPtr data);
+
+    void setRatingRow(int row);
+    void setLoveRow(int row);
 
     void capitaliseRows(const QModelIndexList& rows);
     void autoNumberTracks();

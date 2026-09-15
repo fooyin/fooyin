@@ -125,6 +125,8 @@ SpectrogramConfigDialog::SpectrogramConfigDialog(SpectrogramWidget* widget, QWid
     layout->addWidget(tabs, 0, 0);
     layout->setRowStretch(0, 1);
 
+    QObject::connect(widget, &SpectrogramWidget::configChanged, this, &SpectrogramConfigDialog::syncCurrentConfig);
+
     loadCurrentConfig();
 }
 
@@ -178,5 +180,16 @@ void SpectrogramConfigDialog::setConfig(const SpectrogramWidget::ConfigData& con
     m_minDb->setValue(config.minDb);
     m_maxDb->setValue(config.maxDb);
     m_colours->setColours(config.colours);
+}
+
+void SpectrogramConfigDialog::mergeExternalConfig(const SpectrogramWidget::ConfigData& previous,
+                                                  const SpectrogramWidget::ConfigData& current)
+{
+    mergeExternalFields(previous, current, &SpectrogramWidget::ConfigData::channelMode,
+                        &SpectrogramWidget::ConfigData::presentationMode, &SpectrogramWidget::ConfigData::logFrequency,
+                        &SpectrogramWidget::ConfigData::clearOnTrackChange,
+                        &SpectrogramWidget::ConfigData::channelSpacing, &SpectrogramWidget::ConfigData::fftSize,
+                        &SpectrogramWidget::ConfigData::minDb, &SpectrogramWidget::ConfigData::maxDb,
+                        &SpectrogramWidget::ConfigData::windowFunction, &SpectrogramWidget::ConfigData::colours);
 }
 } // namespace Fooyin::Spectrogram

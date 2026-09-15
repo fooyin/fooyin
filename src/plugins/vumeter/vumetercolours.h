@@ -48,7 +48,7 @@ struct Colours
     {
         switch(type) {
             case Type::Background:
-                return Qt::transparent;
+                return palette.color(QPalette::Window);
             case Type::Peak:
                 return {190, 40, 10};
             case Type::Legend:

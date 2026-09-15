@@ -1,0 +1,33 @@
+{
+  "name": "projectm",
+  "buildsystem": "cmake-ninja",
+  "config-opts": [
+    "-DCMAKE_BUILD_TYPE=Release",
+    "-DBUILD_SHARED_LIBS=ON",
+    "-DENABLE_INSTALL=ON",
+    "-DENABLE_SDL_UI=OFF",
+    "-DBUILD_TESTING=OFF",
+    "-DBUILD_DOCS=OFF",
+    "-DENABLE_SYSTEM_GLM=OFF",
+    "-DENABLE_SYSTEM_PROJECTM_EVAL=OFF",
+    "-DENABLE_PLAYLIST=ON"
+  ],
+  "sources": [
+    {
+      "type": "git",
+      "url": "https://github.com/projectM-visualizer/projectm",
+      "tag": "v4.1.7",
+      "commit": "e0b0a967f0ffd7d332106c366668ed271718472b",
+      "x-checker-data": {
+        "type": "git",
+        "tag-pattern": "^v([\\d.]+)$"
+      }
+    }
+  ],
+  "cleanup": [
+    "*.la",
+    "/bin",
+    "/share/doc",
+    "/share/man"
+  ]
+}

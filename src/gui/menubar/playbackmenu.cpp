@@ -222,8 +222,15 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
 
     auto* followPlayback = new QAction(tr("Cursor follows play&back"), this);
     followPlayback->setStatusTip(tr("Select the currently playing track when changed"));
+    auto* followPlaybackCmd = actionManager->registerAction(followPlayback, Constants::Actions::CursorFollowsPlayback);
+    followPlaybackCmd->setCategories(playbackCategory);
+    followPlaybackCmd->setAttribute(ProxyAction::UpdateText);
+
     auto* followCursor = new QAction(tr("Playback follows &cursor"), this);
     followCursor->setStatusTip(tr("Start playback of the currently selected track on next"));
+    auto* followCursorCmd = actionManager->registerAction(followCursor, Constants::Actions::PlaybackFollowsCursor);
+    followCursorCmd->setCategories(playbackCategory);
+    followCursorCmd->setAttribute(ProxyAction::UpdateText);
 
     m_stopAfterCurrent->setStatusTip(tr("Stop playback at the end of the current track"));
     auto* stopCurrentCmd = actionManager->registerAction(m_stopAfterCurrent, Constants::Actions::StopAfterCurrent);
@@ -234,6 +241,7 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     auto* resetStopCurrentCmd
         = actionManager->registerAction(m_resetStopAfterCurrent, Constants::Actions::StopAfterCurrentReset);
     resetStopCurrentCmd->setCategories(playbackCategory);
+    resetStopCurrentCmd->setDescription(tr("Reset 'Stop after current' after stopping"));
     resetStopCurrentCmd->setAttribute(ProxyAction::UpdateText);
 
     m_stopAfterCurrent->setCheckable(true);
@@ -264,8 +272,8 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     m_settings->subscribe<Settings::Gui::PlaybackFollowsCursor>(
         this, [followCursor](bool enabled) { followCursor->setChecked(enabled); });
 
-    playbackMenu->addAction(followPlayback);
-    playbackMenu->addAction(followCursor);
+    playbackMenu->addAction(followPlaybackCmd->action());
+    playbackMenu->addAction(followCursorCmd->action());
     playbackMenu->addSeparator();
     playbackMenu->addAction(stopCurrentCmd->action());
     playbackMenu->addAction(resetStopCurrentCmd->action());

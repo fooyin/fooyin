@@ -112,6 +112,11 @@ public:
                                                        TrackSelectionController* selectionController,
                                                        CoverProvider* coverProvider, Application* core,
                                                        GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
+    static PlaylistWidget* createDetachedTracks(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
+                                                TrackSelectionController* selectionController,
+                                                CoverProvider* coverProvider, Application* core,
+                                                GuiStyleProvider* styleProvider, const TrackList& tracks,
+                                                QWidget* parent = nullptr);
 
     ~PlaylistWidget() override;
 
@@ -139,11 +144,11 @@ public:
     void resetSort(bool force = false);
     void setHeaderVisible(bool visible);
     void setScrollbarVisible(bool visible);
+    void setAlternatingRowColors(bool enabled);
     void selectAll();
 
     void handlePresetChanged(const PlaylistPreset& preset);
     void changePlaylistLayout(Playlist* previousPlaylist, const Playlist* playlist);
-    void setMiddleClickAction(TrackAction action);
     bool followCurrentTrack();
     void sessionHandleRestoredState();
     [[nodiscard]] bool hasDelayedStateLoad() const;
@@ -208,6 +213,7 @@ private:
     void applyBackgroundSettings();
     void reloadBackgroundCover(const Track& track = {});
     void updateVisibleCoverPins();
+    void executeClickAction(TrackAction action);
 
     void handleMetadataWriteRequested(const TrackList& tracks);
     void handleBulkWriteRequested(const TrackList& tracks);
@@ -243,9 +249,13 @@ private:
     PlaylistWidgetLayoutState m_layoutState;
     PlaylistWidgetLayoutState m_defaultLayoutState;
     QString m_loadedPlaylistLayout;
+    // Until playlist settings are per-playlist
+    bool m_useGlobalPresetState;
 
     WidgetContext* m_playlistContext;
+    TrackAction m_doubleClickAction;
     TrackAction m_middleClickAction;
+    bool m_startPlaybackOnSend;
     QAction* m_playAction;
     std::unique_ptr<SortActionHandler> m_sortActions;
 

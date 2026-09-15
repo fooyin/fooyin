@@ -1,5 +1,9 @@
 <p align="center">
-<img src="https://github.com/ludouzi/fooyin/assets/45490980/a6c6923a-5de3-4d29-a6e9-f73ebd5181ac" width="40%" alt="fooyin logo">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="data/icons/logo-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="data/icons/logo.svg">
+    <img src="data/icons/logo.svg" width="40%" alt="fooyin logo">
+  </picture>
 </p>
 
 <hr />
@@ -13,40 +17,68 @@
 
 <hr />
 
+<p align="center">
+<a href="https://fooyin.org">Website</a> ·
+<a href="https://fooyin.org/download">Download</a> ·
+<a href="https://docs.fooyin.org/en/latest/">Documentation</a> ·
+<a href="https://docs.fooyin.org/en/latest/quick-start/quick-start.html">Quick start</a> ·
+<a href="https://github.com/fooyin/fooyin/releases">Releases</a> ·
+<a href="https://github.com/fooyin/fooyin/releases/tag/nightly">Nightly</a>
+</p>
+
 ## A customisable music player
 
 fooyin is a customisable desktop music player. It combines flexible playback, library management, playlists, and scripting tools in an interface that can be rearranged from a blank canvas or adapted from preset layouts.
 
-The player is built around extensibility. fooyin supports plugins for widgets, decoders, tag readers, DSPs, and integrations, and includes FooScript for advanced display formatting, queries, autoplaylists, and widget behaviour.
+It's built around extensibility and supports plugins for widgets, decoders, tag readers, DSPs, and integrations, and includes FooScript for advanced display formatting, queries, autoplaylists, and widget behaviour.
 
-| ![Simple layout](https://github.com/user-attachments/assets/8e8732a7-a7e5-4542-87b4-7d0a7b5e8fa0) | ![Directory browser layout](https://github.com/user-attachments/assets/d9f4ed62-e50a-419c-aa26-8801a76a6597) |
-| --- | --- |
-| ![Obsidian layout](https://github.com/user-attachments/assets/7dcc92be-04ea-402f-9cbb-a92ee855b893) | ![Custom layout](https://github.com/user-attachments/assets/de5b4b3a-cd9d-4520-a975-e268e472e0f9) |
+<table>
+  <tr>
+    <td><img src="https://fooyin.org/assets/images/simple.webp" alt="Simple layout"></td>
+    <td><img src="https://fooyin.org/assets/images/browser.webp" alt="Directory browser layout"></td>
+  </tr>
+  <tr>
+    <td><img src="https://fooyin.org/assets/images/obsidian.webp" alt="Obsidian layout"></td>
+    <td><img src="https://fooyin.org/assets/images/gallery.webp" alt="Gallery layout"></td>
+  </tr>
+  <tr>
+    <td><img src="https://fooyin.org/assets/images/radio.webp" alt="Radio layout"></td>
+    <td><img src="https://fooyin.org/assets/images/waveform.webp" alt="Waveform layout"></td>
+  </tr>
+  <tr>
+    <td colspan="2"><img src="https://fooyin.org/assets/images/custom.webp" alt="Custom layout"></td>
+  </tr>
+</table>
 
 ## Features
 
 ### Playback
 
-- Support for major formats including FLAC, MP3, MP4, Vorbis, Opus, WavPack, WAV, AIFF, MKA, Musepack, and Monkey's Audio
+- Support for major audio formats and containers, including FLAC, MP3, MP4, Vorbis, Opus, WavPack, WAV, AIFF, MKA, Musepack, and Monkey's Audio
 - Native support for VGM and tracker/module formats through optional plugins
 - Playback of files directly from archives
 - Internet radio discovery and remote audio stream playback
 - Gapless and bit-perfect playback
-- ReplayGain support (including calculation)
 - Configurable fade and crossfade behaviour for pause, stop, seek, manual track changes, and automatic transitions
-- DSP chains with built-in and plugin-provided DSPs
-- Waveform seekbar, spectrum, and VU meter visualisations
+- Waveform seekbar, spectrum, and other visualisations
 - Audio output and device configuration
 
-### Library, playlists, and metadata
+### Audio and metadata tools
+
+- ReplayGain playback support and scanning
+- DSP chains with built-in and plugin-provided DSPs
+- Built-in tag editor and metadata management tools
+- Artwork embedding, downloading, viewing, exporting, and extracting
+- File renaming, copying, moving, and deletion
+- Audio conversion to WAV, FLAC, ALAC, WavPack, MP3, AAC, Vorbis, and Opus with reusable presets
+
+### Library and playlists
 
 - Advanced filtering and search on library and playlist data
 - Standard playlists plus autoplaylists
 - Playback queue
 - M3U/M3U8 import and export
 - Library tree and directory browser views
-- Built-in tag editor and metadata management tools
-- Artwork embedding, downloading, viewing, exporting, and extracting
 
 ### Widgets, scripting, and customisation
 
@@ -61,22 +93,39 @@ The player is built around extensibility. fooyin supports plugins for widgets, d
 - Scrobbling support for Last.fm, Libre.fm, ListenBrainz, and custom services
 - Discord Rich Presence
 
-## Platform support
+## Installation
 
-fooyin is developed primarily on Linux, with build support for Linux, macOS, Windows, and FreeBSD. 
-
-Official support for Windows and macOS is coming soon.
-
-## Roadmap
-
-See [ROADMAP.md](ROADMAP.md) for upcoming releases and longer-term plans.
+The [download page](https://fooyin.org/download) lists the Flathub package and packages available through Linux distribution repositories. 
+Release notes and downloadable artifacts are published on [GitHub Releases](https://github.com/fooyin/fooyin/releases).
+The [latest nightly build](https://github.com/fooyin/fooyin/releases/tag/nightly) is also available for testing upcoming changes.
 
 ## Building from source
 
-See [BUILD.md](BUILD.md) for dependency lists, build steps, and installation.
+See [BUILD.md](BUILD.md) for dependencies, build options, and installation instructions.
 
-## Translations
+## Platform support
 
-Translations are managed on [Hosted Weblate](https://hosted.weblate.org/projects/fooyin/). Contributions are very welcome.
+fooyin is developed and supported on Linux and Windows. Build configurations and CI workflows are also maintained for macOS.
 
-In case you want to test your translation in the application, follow the steps outlined in [issue#679](https://github.com/fooyin/fooyin/issues/679)
+Official macOS support is coming soon.
+
+## Documentation and support
+
+- Read the [documentation](https://docs.fooyin.org/en/latest/) or follow the [quick-start guide](https://docs.fooyin.org/en/latest/quick-start/quick-start.html).
+- Visit the [support page](https://fooyin.org/support) for help and frequently asked questions.
+- Report bugs and request features through the [GitHub issue tracker](https://github.com/fooyin/fooyin/issues).
+- See [ROADMAP.md](ROADMAP.md) for upcoming releases and long-term plans, or [CHANGELOG.md](CHANGELOG.md) for previous changes.
+
+## Contributing and translations
+
+Contributions through code, bug reports, documentation, testing, translation, or user support are welcome. Before contributing, please read [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+Translations are managed on [Hosted Weblate](https://hosted.weblate.org/projects/fooyin/). To test a translation locally, follow the instructions in [issue #679](https://github.com/fooyin/fooyin/issues/679).
+
+## Licence
+
+fooyin is free software released under the [GNU General Public License, version 3 or later](COPYING).
+
+## Donate
+
+If you would like to support fooyin development, see the [donate page](https://fooyin.org/donate).

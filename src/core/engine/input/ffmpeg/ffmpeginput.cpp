@@ -40,6 +40,9 @@
 
 #include <chrono>
 #include <cstring>
+#include <deque>
+#include <stop_token>
+#include <utility>
 
 #ifdef Q_OS_WINDOWS
 #define snprintf _snprintf
@@ -735,7 +738,7 @@ void parseTagValues(Track& track, TagType tagType, const QString& rawKey, const 
         track.setRating(firstValue.toFloat());
     }
     else {
-        addExtraTagValues(track, tagType, policy, key, values);
+        addExtraTagValues(track, tagType, policy, rawKey, values);
     }
 }
 
@@ -798,12 +801,25 @@ struct FFmpegIoContext
     QIODevice* device{nullptr};
     RemoteStreamDevice* remoteDevice{nullptr};
     const FFmpegOpenProbeDeadline* openProbeDeadline{nullptr};
+    std::stop_token abortToken;
+};
+
+struct FormatContext
+{
+    std::unique_ptr<FFmpegIoContext> ioContextData;
+    IOContextPtr ioContext;
+    FormatContextPtr formatContext;
 };
 
 int ffmpegInterruptCallback(void* data)
 {
-    const auto* deadline = static_cast<const FFmpegOpenProbeDeadline*>(data);
-    return deadline && deadline->expired();
+    const auto* ioContext = static_cast<const FFmpegIoContext*>(data);
+    if(!ioContext) {
+        return 0;
+    }
+
+    const auto* deadline = ioContext->openProbeDeadline;
+    return ioContext->abortToken.stop_requested() || (deadline && deadline->expired());
 }
 
 int ffRead(void* data, uint8_t* buffer, int size)
@@ -816,8 +832,15 @@ int ffRead(void* data, uint8_t* buffer, int size)
     }
 
     while(true) {
+        if(ioContext->abortToken.stop_requested()) {
+            return AVERROR_EXIT;
+        }
+
         const auto sizeRead = device->read(reinterpret_cast<char*>(buffer), size);
         if(sizeRead < 0) {
+            if(ioContext->abortToken.stop_requested()) {
+                return AVERROR_EXIT;
+            }
             if(remoteDevice && remoteDevice->readWouldBlock()) {
                 const auto* deadline = ioContext->openProbeDeadline;
                 if(deadline && !deadline->expired()) {
@@ -850,15 +873,15 @@ int64_t ffSeek(void* data, int64_t offset, int whence)
     int64_t seekPos{0};
 
     switch(whence) {
-        case(AVSEEK_SIZE):
+        case AVSEEK_SIZE:
             return device->size();
-        case(SEEK_SET):
+        case SEEK_SET:
             seekPos = offset;
             break;
-        case(SEEK_CUR):
+        case SEEK_CUR:
             seekPos = device->pos() + offset;
             break;
-        case(SEEK_END):
+        case SEEK_END:
             seekPos = device->size() - offset;
             break;
         default:
@@ -872,25 +895,19 @@ int64_t ffSeek(void* data, int64_t offset, int whence)
     return device->seek(seekPos);
 }
 
-void clearAvioReadWouldBlockState(AVFormatContext* context)
-{
-    if(!context || !context->pb || context->pb->error != AVERROR(EAGAIN)) {
-        return;
-    }
-
-    context->pb->error       = 0;
-    context->pb->eof_reached = 0;
-}
-
-FormatContext createAVFormatContext(const AudioSource& source)
+FormatContext createAVFormatContext(const AudioSource& source, std::stop_token abortToken = {})
 {
     FormatContext fc;
 
-    auto ioContextData          = std::make_shared<FFmpegIoContext>();
+    auto ioContextData          = std::make_unique<FFmpegIoContext>();
     ioContextData->device       = source.device;
     ioContextData->remoteDevice = source.remoteStreamDevice;
+    ioContextData->abortToken   = std::move(abortToken);
 
-    fc.ioContext.reset(avio_alloc_context(nullptr, 0, 0, ioContextData.get(), ffRead, nullptr, ffSeek));
+    // FFmpeg infers seek support from the callback itself, so returning an error from ffSeek is not enough to keep
+    // demuxers on their sequential path in all cases
+    auto* seek = source.device && source.device->isSequential() ? nullptr : ffSeek;
+    fc.ioContext.reset(avio_alloc_context(nullptr, 0, 0, ioContextData.get(), ffRead, nullptr, seek));
     if(!fc.ioContext) {
         qCWarning(FFMPEG) << "Failed to allocate AVIO context";
         return {};
@@ -919,10 +936,10 @@ FormatContext createAVFormatContext(const AudioSource& source)
                                ? source.remoteOpenTimeout
                                : std::chrono::milliseconds{Settings::Core::Internal::DefaultRemoteOpenTimeoutMs};
         deadline.emplace(std::chrono::steady_clock::now() + std::max(1ms, timeout));
-        auto* ioContext                        = static_cast<FFmpegIoContext*>(fc.ioContextData.get());
+        auto* ioContext                        = fc.ioContextData.get();
         ioContext->openProbeDeadline           = &*deadline;
         avContext->interrupt_callback.callback = ffmpegInterruptCallback;
-        avContext->interrupt_callback.opaque   = &*deadline;
+        avContext->interrupt_callback.opaque   = ioContext;
     }
 
     const int ret = avformat_open_input(&avContext, filepath, nullptr, nullptr);
@@ -949,8 +966,7 @@ FormatContext createAVFormatContext(const AudioSource& source)
         return {};
     }
 
-    avContext->interrupt_callback = {};
-    if(auto* ioContext = static_cast<FFmpegIoContext*>(fc.ioContextData.get())) {
+    if(auto* ioContext = fc.ioContextData.get()) {
         ioContext->openProbeDeadline = nullptr;
     }
 
@@ -1003,7 +1019,7 @@ public:
     { }
 
     void reset();
-    bool setup(const AudioSource& source);
+    bool setup(const AudioSource& source, std::stop_token abortToken);
     void checkIsVbr(const Track& track);
 
     bool createCodec(AVStream* avStream);
@@ -1014,14 +1030,15 @@ public:
 
     void applyStreamProperties(Track& track) const;
     void updateNetworkMetadata() const;
+    void processTimedMetadataPacket(const AVPacket& packet);
     void readNext();
     void seek(uint64_t pos);
     [[nodiscard]] bool isRemoteStream() const;
 
     FFmpegDecoder* m_self;
 
+    std::unique_ptr<FFmpegIoContext> m_ioContextData;
     IOContextPtr m_ioContext;
-    std::shared_ptr<void> m_ioContextData;
     FormatContextPtr m_context;
     Stream m_stream;
     Codec m_codec;
@@ -1038,14 +1055,18 @@ public:
     bool m_returnFrame{false};
     bool m_lastErrorRecoverable{false};
     mutable bool m_trackChanged{false};
+    QString m_errorMessage;
 
     AudioDecoder::DecoderOptions m_options;
     Track m_baseTrack;
     mutable Track m_changedTrack;
+    Track m_lastTimedTrack;
+    std::deque<AudioDecoder::TimedTrackChange> m_timedTrackChanges;
     RemoteStreamDevice* m_remoteDevice{nullptr};
     mutable quint64 m_networkMetadataRevision{0};
     AudioBuffer m_buffer;
     Frame m_frame;
+    PacketPtr m_pendingPacket;
     int m_bufferPos{0};
     int64_t m_seekPos{-1};
     uint64_t m_currentPos{0};
@@ -1075,11 +1096,15 @@ void FFmpegInputPrivate::reset()
     m_consecutiveDecodeErrors = 0;
     m_lastErrorRecoverable    = false;
     m_trackChanged            = false;
-    m_baseTrack               = {};
-    m_changedTrack            = {};
+    m_errorMessage.clear();
+    m_baseTrack      = {};
+    m_changedTrack   = {};
+    m_lastTimedTrack = {};
+    m_timedTrackChanges.clear();
     m_remoteDevice            = nullptr;
     m_networkMetadataRevision = 0;
     m_buffer.clear();
+    m_pendingPacket = {};
 
     if(m_context) {
         m_context.reset();
@@ -1095,16 +1120,17 @@ void FFmpegInputPrivate::reset()
     m_buffer = {};
 }
 
-bool FFmpegInputPrivate::setup(const AudioSource& source)
+bool FFmpegInputPrivate::setup(const AudioSource& source, std::stop_token abortToken)
 {
     reset();
 
     m_remoteDevice = source.remoteStreamDevice;
     if(m_remoteDevice) {
+        m_remoteDevice->setReadCancellationToken(abortToken);
         m_remoteDevice->setNonBlockingReadsEnabled(true);
     }
 
-    FormatContext context = createAVFormatContext(source);
+    FormatContext context = createAVFormatContext(source, std::move(abortToken));
     m_context             = std::move(context.formatContext);
     m_ioContext           = std::move(context.ioContext);
     m_ioContextData       = std::move(context.ioContextData);
@@ -1124,6 +1150,9 @@ bool FFmpegInputPrivate::setup(const AudioSource& source)
 
     if(createCodec(m_stream.avStream())) {
         m_audioFormat = Utils::audioFormatFromCodec(m_stream.avStream()->codecpar, m_codec.context()->sample_fmt);
+        if(m_remoteDevice) {
+            m_remoteDevice->setNonBlockingReadsEnabled(false);
+        }
         return true;
     }
 
@@ -1168,6 +1197,10 @@ bool FFmpegInputPrivate::createCodec(AVStream* avStream)
 
     avCodecContext.get()->pkt_timebase = m_timeBase;
 
+    if(m_options.testFlag(AudioDecoder::VerifyIntegrity)) {
+        avCodecContext.get()->err_recognition |= AV_EF_CRCCHECK | AV_EF_EXPLODE;
+    }
+
     if(avcodec_open2(avCodecContext.get(), avCodec, nullptr) < 0) {
         Utils::printError(u"Could not initialise codec context"_s);
         m_error = true;
@@ -1188,12 +1221,20 @@ void FFmpegInputPrivate::decodeAudio(const PacketPtr& packet)
     int result = sendAVPacket(packet);
 
     if(result == AVERROR(EAGAIN)) {
-        receiveAVFrames();
-        result = sendAVPacket(packet);
-
-        if(result != AVERROR(EAGAIN)) {
-            Utils::printError(u"Unexpected decoder behavior"_s);
+        if(packet) {
+            m_pendingPacket.reset(av_packet_clone(packet.get()));
+            if(!m_pendingPacket) {
+                qCWarning(FFMPEG) << "Failed to retain FFmpeg packet while draining decoder output";
+                m_error = true;
+                return;
+            }
         }
+
+        const int receiveResult = receiveAVFrames();
+        if(receiveResult == AVERROR(EAGAIN)) {
+            qCWarning(FFMPEG) << "FFmpeg decoder rejected input without making output available";
+        }
+        return;
     }
 
     if(result == 0) {
@@ -1242,11 +1283,12 @@ int FFmpegInputPrivate::receiveAVFrames()
 
     if(result < 0) {
         const QString error = Utils::ffmpegErrorString(result);
+        m_errorMessage      = error;
         qCWarning(FFMPEG) << "FFmpeg receive frame failed:"
                           << "error=" << error << "code=" << result << "remote=" << isRemoteStream()
                           << "consecutiveDecodeErrors=" << m_consecutiveDecodeErrors << "currentPosMs=" << m_currentPos
                           << "inputUnavailable=" << m_inputUnavailable << "eof=" << m_eof << "draining=" << m_draining;
-        m_lastErrorRecoverable = isRecoverableDecodeError(result);
+        m_lastErrorRecoverable = !m_options.testFlag(AudioDecoder::VerifyIntegrity) && isRecoverableDecodeError(result);
 
         if(m_lastErrorRecoverable) {
             ++m_consecutiveDecodeErrors;
@@ -1283,7 +1325,8 @@ int FFmpegInputPrivate::receiveAVFrames()
             if(!interleave(m_frame.avFrame()->extended_data, m_buffer)) {
                 qCWarning(FFMPEG) << "Invalid planar audio frame";
                 m_buffer.clear();
-                m_error = true;
+                m_errorMessage = u"Invalid planar audio frame"_s;
+                m_error        = true;
                 return AVERROR_INVALIDDATA;
             }
         }
@@ -1359,6 +1402,53 @@ void FFmpegInputPrivate::updateNetworkMetadata() const
     m_trackChanged = true;
 }
 
+void FFmpegInputPrivate::processTimedMetadataPacket(const AVPacket& packet)
+{
+    if(!m_options.testFlag(AudioDecoder::UpdateTracks) || !m_context || packet.stream_index < 0
+       || std::cmp_greater_equal(packet.stream_index, m_context->nb_streams) || !packet.data || packet.size <= 0) {
+        return;
+    }
+
+    const AVStream* stream = m_context->streams[packet.stream_index];
+    if(!stream || !stream->codecpar || stream->codecpar->codec_id != AV_CODEC_ID_TIMED_ID3) {
+        return;
+    }
+
+    const auto metadata
+        = Id3Utils::parseTimedMetadata(QByteArrayView{reinterpret_cast<const char*>(packet.data), packet.size});
+    if(!metadata) {
+        return;
+    }
+
+    Track track = m_lastTimedTrack.isValid() ? m_lastTimedTrack : m_baseTrack;
+    if(!metadata->title.isEmpty()) {
+        track.setTitle(metadata->title);
+        track.setArtists(metadata->artist.isEmpty() ? QStringList{} : QStringList{metadata->artist});
+        const QString streamTitle
+            = metadata->artist.isEmpty() ? metadata->title : u"%1 - %2"_s.arg(metadata->artist, metadata->title);
+        track.replaceExtraTag(u"STREAMTITLE"_s, streamTitle);
+    }
+    if(!metadata->station.isEmpty()) {
+        track.replaceExtraTag(u"STATION"_s, metadata->station);
+    }
+
+    track.setMetadataWasRead(true);
+    applyStreamProperties(track);
+
+    if(track.sameDataAs(m_lastTimedTrack)) {
+        return;
+    }
+
+    uint64_t timestampMs{0};
+    const int64_t timestamp = packet.pts != AV_NOPTS_VALUE ? packet.pts : packet.dts;
+    if(timestamp != AV_NOPTS_VALUE && timestamp >= 0) {
+        timestampMs = static_cast<uint64_t>(av_rescale_q(timestamp, stream->time_base, TimeBaseMs));
+    }
+
+    m_lastTimedTrack = track;
+    m_timedTrackChanges.push_back({.timestampMs = timestampMs, .track = track});
+}
+
 void FFmpegInputPrivate::applyStreamProperties(Track& track) const
 {
     if(!m_codec.isValid() || !m_audioFormat.isValid()) {
@@ -1393,7 +1483,6 @@ void FFmpegInputPrivate::readNext()
     }
 
     updateNetworkMetadata();
-    clearAvioReadWouldBlockState(m_context.get());
 
     // Exhaust the current packet first
     if(receiveAVFrames() == 0) {
@@ -1401,10 +1490,21 @@ void FFmpegInputPrivate::readNext()
         return;
     }
 
+    if(m_pendingPacket) {
+        const PacketPtr pendingPacket = std::move(m_pendingPacket);
+        decodeAudio(pendingPacket);
+        return;
+    }
+
     const PacketPtr packet{av_packet_alloc()};
     const int readResult = av_read_frame(m_context.get(), packet.get());
     if(readResult < 0) {
         updateNetworkMetadata();
+        const auto* ioContext = m_ioContextData.get();
+        if(readResult == AVERROR_EXIT && ioContext && ioContext->abortToken.stop_requested()) {
+            m_inputUnavailable = true;
+            return;
+        }
         if(readResult == AVERROR(EAGAIN)) {
             m_inputUnavailable = true;
             return;
@@ -1419,7 +1519,7 @@ void FFmpegInputPrivate::readNext()
         }
         else {
             const QString error = Utils::ffmpegErrorString(readResult);
-            if(isRemoteStream()) {
+            if(isRemoteStream() && readResult != AVERROR(EIO) && !m_options.testFlag(AudioDecoder::VerifyIntegrity)) {
                 qCWarning(FFMPEG) << "Treating remote FFmpeg read error as temporary:"
                                   << "error=" << error << "code=" << readResult << "currentPosMs=" << m_currentPos
                                   << "eof=" << m_eof << "draining=" << m_draining
@@ -1427,9 +1527,10 @@ void FFmpegInputPrivate::readNext()
                 m_inputUnavailable = true;
                 return;
             }
-            qCWarning(FFMPEG) << "FFmpeg read failed:"
+            qCWarning(FFMPEG) << (isRemoteStream() ? "Remote FFmpeg input failed:" : "FFmpeg read failed:")
                               << "error=" << error << "code=" << readResult << "currentPosMs=" << m_currentPos;
-            m_error = true;
+            m_errorMessage = error;
+            m_error        = true;
             return;
         }
         return;
@@ -1440,6 +1541,7 @@ void FFmpegInputPrivate::readNext()
     updateNetworkMetadata();
 
     if(packet->stream_index != m_codec.streamIndex()) {
+        processTimedMetadataPacket(*packet);
         readNext();
         return;
     }
@@ -1492,12 +1594,15 @@ void FFmpegInputPrivate::seek(uint64_t pos)
     }
     avcodec_flush_buffers(m_codec.context());
 
-    m_bufferPos  = 0;
-    m_buffer     = {};
-    m_eof        = false;
-    m_draining   = false;
-    m_skipBytes  = 0;
-    m_currentPos = pos;
+    m_bufferPos     = 0;
+    m_buffer        = {};
+    m_pendingPacket = {};
+    m_timedTrackChanges.clear();
+    m_lastTimedTrack = {};
+    m_eof            = false;
+    m_draining       = false;
+    m_skipBytes      = 0;
+    m_currentPos     = pos;
 }
 
 FFmpegDecoder::FFmpegDecoder()
@@ -1530,11 +1635,22 @@ Track FFmpegDecoder::changedTrack() const
     return p->m_changedTrack;
 }
 
+std::optional<AudioDecoder::TimedTrackChange> FFmpegDecoder::takeTimedTrackChange()
+{
+    if(p->m_timedTrackChanges.empty()) {
+        return {};
+    }
+
+    TimedTrackChange change = std::move(p->m_timedTrackChanges.front());
+    p->m_timedTrackChanges.pop_front();
+    return change;
+}
+
 std::optional<AudioFormat> FFmpegDecoder::init(const AudioSource& source, const Track& track, DecoderOptions options)
 {
     p->m_options = options;
 
-    if(p->setup(source)) {
+    if(p->setup(source, abortToken())) {
         Track runtimeTrack{track};
         if(track.isRemote() && p->m_remoteDevice) {
             p->m_remoteDevice->setReconnectOnFinishedEnabled(track.duration() == 0);
@@ -1602,7 +1718,7 @@ AudioDecoder::ReadResult FFmpegDecoder::readAudio(size_t bytes)
                           << "isDecoding=" << p->m_isDecoding << "error=" << p->m_error
                           << "hasContext=" << static_cast<bool>(p->m_context) << "remote=" << p->isRemoteStream()
                           << "currentPosMs=" << p->m_currentPos;
-        return p->m_error ? ReadResult::errorResult() : ReadResult::endOfStream();
+        return p->m_error ? ReadResult::errorResult(p->m_errorMessage) : ReadResult::endOfStream();
     }
 
     p->m_inputUnavailable = false;
@@ -1647,7 +1763,7 @@ AudioDecoder::ReadResult FFmpegDecoder::readAudio(size_t bytes)
         qCWarning(FFMPEG) << "FFmpeg readAudio returning error:"
                           << "remote=" << p->isRemoteStream() << "currentPosMs=" << p->m_currentPos
                           << "eof=" << p->m_eof << "inputUnavailable=" << p->m_inputUnavailable;
-        return ReadResult::errorResult();
+        return ReadResult::errorResult(p->m_errorMessage);
     }
     qCWarning(FFMPEG) << "FFmpeg readAudio returning end of stream:"
                       << "remote=" << p->isRemoteStream() << "currentPosMs=" << p->m_currentPos << "eof=" << p->m_eof
@@ -1713,8 +1829,8 @@ public:
         return true;
     }
 
+    std::unique_ptr<FFmpegIoContext> m_ioContextData;
     IOContextPtr m_ioContext;
-    std::shared_ptr<void> m_ioContextData;
     FormatContextPtr m_context;
     Stream m_stream;
     int m_chapterCount{0};

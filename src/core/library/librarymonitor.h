@@ -26,6 +26,8 @@
 
 #include <QObject>
 
+#include <mutex>
+#include <stop_token>
 #include <unordered_map>
 
 namespace Fooyin {
@@ -36,18 +38,26 @@ class LibraryMonitor : public QObject
 public:
     explicit LibraryMonitor(QObject* parent = nullptr);
 
+    std::stop_token prepareSetup();
+    void cancelSetup();
+
 Q_SIGNALS:
+    void setupFinished();
     void statusChanged(const Fooyin::LibraryInfo& library);
     void directoriesChanged(const Fooyin::LibraryInfo& library, const QStringList& dirs);
     void trackFilesChanged(const Fooyin::LibraryInfo& library, const QStringList& files);
 
-public Q_SLOTS:
+public:
     void setupWatchers(const Fooyin::LibraryInfoMap& libraries, const Fooyin::TrackList& tracks,
-                       bool monitorDirectories, bool monitorTrackFiles);
+                       bool monitorDirectories, bool monitorTrackFiles, std::stop_token stopToken);
+    void shutdown();
 
 private:
-    void addWatcher(const LibraryInfo& library, const TrackList& tracks, bool monitorTrackFiles);
+    bool addWatcher(const LibraryInfo& library, const TrackList& tracks, bool monitorTrackFiles,
+                    std::stop_token stopToken);
 
     std::unordered_map<int, LibraryWatcher> m_watchers;
+    std::mutex m_setupMutex;
+    std::stop_source m_setupStopSource;
 };
 } // namespace Fooyin

@@ -19,14 +19,23 @@
 
 #pragma once
 
+#include "fileopsdefs.h"
+
 #include <core/plugins/coreplugin.h>
 #include <core/plugins/plugin.h>
 #include <gui/plugins/guiplugin.h>
+#include <utils/id.h>
 
 #include <memory>
+#include <vector>
+
+class QAction;
 
 namespace Fooyin {
 class AudioLoader;
+class Command;
+struct TrackSelection;
+
 namespace FileOps {
 class FileOpsPlugin : public QObject,
                       public Plugin,
@@ -44,7 +53,18 @@ public:
     void initialise(const GuiPluginContext& context) override;
 
 private:
+    struct PresetAction
+    {
+        Operation operation;
+        QString presetName;
+        Id id;
+        QAction* action;
+        Command* command;
+    };
+
     void setupMenu();
+    void openDialog(const TrackSelection& selection, Operation operation, const QString& presetName = {});
+    void refreshPresetActions();
 
     ActionManager* m_actionManager;
     std::shared_ptr<AudioLoader> m_audioLoader;
@@ -52,6 +72,7 @@ private:
     LibraryManager* m_libraryManager;
     TrackSelectionController* m_trackSelectionController;
     SettingsManager* m_settings;
+    std::vector<PresetAction> m_presetActions;
 };
 } // namespace FileOps
 } // namespace Fooyin

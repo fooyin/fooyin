@@ -26,6 +26,7 @@
 #include <core/engine/visualisationservice.h>
 #include <core/player/playerdefs.h>
 
+#include <QBasicTimer>
 #include <QMetaMethod>
 #include <QMetaObject>
 #include <QObject>
@@ -102,6 +103,7 @@ public:
 protected:
     void connectNotify(const QMetaMethod& signal) override;
     void disconnectNotify(const QMetaMethod& signal) override;
+    void timerEvent(QTimerEvent* event) override;
 
 private:
     struct StartupRestoreState
@@ -151,6 +153,8 @@ private:
     void handleTrackBoundaryReached(const Track& track, uint64_t generation, uint64_t remainingOutputMs,
                                     bool engineOwnsTransition);
     void armEndAdvanceWatchdog(const Track& track, uint64_t generation);
+    void handleEndAdvanceWatchdogTimeout();
+    void resumeControllerNaturalEndAdvance(const char* reason);
     void clearPendingBoundaryAdvance();
     void clearEngineOwnedTransition();
     void handleEngineTrackChanged(const Track& track);
@@ -212,6 +216,7 @@ private:
     uint64_t m_engineOwnedTransitionGen;
     bool m_endAdvanceSuppressed;
     std::chrono::steady_clock::time_point m_endAdvanceSuppressedSince;
+    QBasicTimer m_endAdvanceWatchdog;
     Track m_pendingBoundaryAdvanceTrack;
     uint64_t m_pendingBoundaryAdvanceGen;
     Track m_latestTrackMetadata;

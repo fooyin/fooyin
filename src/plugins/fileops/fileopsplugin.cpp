@@ -24,6 +24,7 @@
 #include "fileopsdialog.h"
 #include "fileopssettings.h"
 
+#include <core/coresettings.h>
 #include <core/engine/audioloader.h>
 #include <gui/guiconstants.h>
 #include <gui/plugins/guiplugincontext.h>
@@ -42,25 +43,40 @@
 
 using namespace Qt::StringLiterals;
 
+namespace Fooyin::FileOps {
 namespace {
-bool canOperateOnTracks(const Fooyin::TrackList& tracks)
+bool canOperateOnTracks(const TrackList& tracks)
 {
-    return !tracks.empty()
-        && std::ranges::all_of(tracks, [](const Fooyin::Track& track) { return !track.isInArchive(); });
+    return !tracks.empty() && std::ranges::all_of(tracks, [](const Track& track) { return !track.isInArchive(); });
 }
 
-bool canExtractTracks(const Fooyin::TrackList& tracks)
+bool canExtractTracks(const TrackList& tracks)
 {
-    return !tracks.empty()
-        && std::ranges::all_of(tracks, [](const Fooyin::Track& track) { return track.isInArchive(); });
+    return !tracks.empty() && std::ranges::all_of(tracks, [](const Track& track) { return track.isInArchive(); });
+}
+
+Id presetActionId(Operation operation, const QString& presetName, const std::vector<FileOpPreset>& presets)
+{
+    // Retain compatability with exisiting shortcuts
+    const auto firstPreset = std::ranges::find(presets, presetName, &FileOpPreset::name);
+    if(firstPreset != presets.cend() && firstPreset->op == operation) {
+        return Id{u"FileOps.Preset.%1"_s.arg(presetName)};
+    }
+
+    return Id{u"FileOps.Preset.%1.%2"_s.arg(QString::number(static_cast<int>(operation)), presetName)};
+}
+
+bool canUsePreset(Operation operation, const TrackList& tracks)
+{
+    return operation == Operation::Extract ? canExtractTracks(tracks) : canOperateOnTracks(tracks);
 }
 } // namespace
 
-namespace Fooyin::FileOps {
 FileOpsPlugin::FileOpsPlugin()
     : m_actionManager{nullptr}
     , m_audioLoader{nullptr}
     , m_library{nullptr}
+    , m_libraryManager{nullptr}
     , m_trackSelectionController{nullptr}
     , m_settings{nullptr}
 { }
@@ -92,6 +108,27 @@ void FileOpsPlugin::initialise(const GuiPluginContext& context)
          .validate  = {}});
 
     context.advancedSettingsRegistry->add(
+        {.id           = QString::fromLatin1(Settings::ConfirmDeleteSourceArchives),
+         .category     = {tr("File Operations")},
+         .label        = tr("Confirm before deleting source archives after extraction"),
+         .description  = {},
+         .defaultValue = true,
+         .editor       = AdvancedSettingCheckBox{},
+         .read =
+             [] {
+                 const FyStateSettings settings;
+                 return settings.value(Settings::ConfirmDeleteSourceArchives, true).toBool();
+             },
+         .write =
+             [](const QVariant& value) {
+                 FyStateSettings settings;
+                 settings.setValue(Settings::ConfirmDeleteSourceArchives, value.toBool());
+                 return true;
+             },
+         .normalise = {},
+         .validate  = {}});
+
+    context.advancedSettingsRegistry->add(
         {.id           = QString::fromLatin1(Settings::ImmediateDelete),
          .category     = {tr("File Operations")},
          .label        = tr("Immediately delete tracks (bypass trash)"),
@@ -105,15 +142,17 @@ void FileOpsPlugin::initialise(const GuiPluginContext& context)
          .validate  = {}});
 
     context.advancedSettingsRegistry->add(
-        {.id           = QString::fromLatin1(Settings::DeleteEmptyFolders),
+        {.id           = QString::fromLatin1(Settings::RemoveEmptyParentFolders),
          .category     = {tr("File Operations")},
-         .label        = tr("Delete empty folders"),
-         .description  = {},
+         .label        = tr("Remove empty parent folders"),
+         .description  = tr("Remove empty parent folders after moving or deleting files, stopping at the library root"),
          .defaultValue = false,
          .editor       = AdvancedSettingCheckBox{},
-         .read         = [this] { return m_settings->fileValue(Settings::DeleteEmptyFolders, false).toBool(); },
-         .write
-         = [this](const QVariant& value) { return m_settings->fileSet(Settings::DeleteEmptyFolders, value.toBool()); },
+         .read         = [this] { return m_settings->fileValue(Settings::RemoveEmptyParentFolders, false).toBool(); },
+         .write =
+             [this](const QVariant& value) {
+                 return m_settings->fileSet(Settings::RemoveEmptyParentFolders, value.toBool());
+             },
          .normalise = {},
          .validate  = {}});
 
@@ -126,45 +165,41 @@ void FileOpsPlugin::setupMenu()
         this, TrackContextMenuArea::Track, Constants::Menus::Context::TrackSelection, "FileOperations",
         tr("File operations"), Constants::Menus::Context::Utilities);
 
-    const auto openDialog = [this](const TrackSelection& selection, Operation op, const QString& presetName = {}) {
-        auto* dialog = new FileOpsDialog(m_library, m_audioLoader, selection.tracks, op, m_settings, m_libraryManager,
-                                         Utils::getMainWindow());
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
-        dialog->loadPreset(presetName);
-        dialog->open();
-    };
-
-    const auto registerOpEntry = [this, openDialog](Operation op, const Id& id, const QString& title,
-                                                    const auto& canUseTracks) {
+    const auto registerOpEntry = [this](Operation op, const Id& id, const QString& title, const auto& canUseTracks) {
         m_trackSelectionController->registerTrackContextAction(
             this, TrackContextMenuArea::Track, "FileOperations", id, title,
-            [openDialog, op, title, canUseTracks](QMenu* menu, const TrackSelection& selection) {
+            [this, op, title, canUseTracks](QMenu* menu, const TrackSelection& selection) {
                 if(!canUseTracks(selection.tracks)) {
                     return;
                 }
+
+                refreshPresetActions();
 
                 const auto presets = getMappedPresets();
                 if(!presets.contains(op) || presets.at(op).empty()) {
                     auto* action = new QAction(title, menu);
                     QObject::connect(action, &QAction::triggered, action,
-                                     [openDialog, op, selection]() { openDialog(selection, op); });
+                                     [this, op, selection]() { openDialog(selection, op); });
                     menu->addAction(action);
                     return;
                 }
 
                 auto* submenu = new QMenu(title, menu);
                 for(const auto& preset : presets.at(op)) {
-                    auto* presetAction = new QAction(preset.name, submenu);
-                    QObject::connect(presetAction, &QAction::triggered, presetAction,
-                                     [openDialog, op, preset, selection]() { openDialog(selection, op, preset.name); });
-                    submenu->addAction(presetAction);
+                    const auto presetAction
+                        = std::ranges::find_if(m_presetActions, [op, &preset](const PresetAction& action) {
+                              return action.operation == op && action.presetName == preset.name;
+                          });
+                    if(presetAction != m_presetActions.cend()) {
+                        submenu->addAction(presetAction->command->action());
+                    }
                 }
 
                 submenu->addSeparator();
 
                 auto* action = new QAction(u"…"_s, submenu);
                 QObject::connect(action, &QAction::triggered, action,
-                                 [openDialog, op, selection]() { openDialog(selection, op); });
+                                 [this, op, selection]() { openDialog(selection, op); });
                 submenu->addAction(action);
                 menu->addMenu(submenu);
             });
@@ -175,10 +210,12 @@ void FileOpsPlugin::setupMenu()
     registerOpEntry(Operation::Rename, "FileOps.Rename", tr("&Rename to…"), canOperateOnTracks);
     registerOpEntry(Operation::Extract, "FileOps.Extract", tr("&Extract to…"), canExtractTracks);
 
+    refreshPresetActions();
+
     auto* deleteAction = new QAction(tr("&Delete"), this);
     auto* deleteCmd
         = m_actionManager->registerAction(deleteAction, "FileOps.Delete", Context{Constants::Context::TrackSelection});
-    deleteCmd->setCategories({tr("File operations")});
+    deleteCmd->setCategories({tr("Tracks"), tr("File operations")});
 
     QObject::connect(deleteAction, &QAction::triggered, deleteAction, [this]() {
         const auto* selection = m_trackSelectionController->selectedSelection();
@@ -227,5 +264,91 @@ void FileOpsPlugin::setupMenu()
             deleteAction->setEnabled(true);
             menu->addAction(deleteAction);
         });
+}
+
+void FileOpsPlugin::openDialog(const TrackSelection& selection, Operation operation, const QString& presetName)
+{
+    auto* dialog = new FileOpsDialog(m_library, m_audioLoader, selection.tracks, operation, m_settings,
+                                     m_libraryManager, Utils::getMainWindow());
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->loadPreset(presetName);
+    QObject::connect(dialog, &FileOpsDialog::presetsChanged, this, &FileOpsPlugin::refreshPresetActions);
+    dialog->open();
+}
+
+void FileOpsPlugin::refreshPresetActions()
+{
+    const auto presets                = getPresets();
+    const auto categoriesForOperation = [](Operation operation) {
+        QString operationCategory;
+        switch(operation) {
+            case Operation::Copy:
+                operationCategory = tr("Copy");
+                break;
+            case Operation::Move:
+                operationCategory = tr("Move");
+                break;
+            case Operation::Rename:
+                operationCategory = tr("Rename");
+                break;
+            case Operation::Extract:
+                operationCategory = tr("Extract");
+                break;
+            default:
+                operationCategory = tr("Other");
+                break;
+        }
+        return QStringList{tr("Tracks"), tr("File operations"), operationCategory};
+    };
+
+    std::erase_if(m_presetActions, [this, &presets](const PresetAction& presetAction) {
+        const bool removed = std::ranges::none_of(presets, [&presetAction](const FileOpPreset& preset) {
+            return preset.op == presetAction.operation && preset.name == presetAction.presetName;
+        });
+        if(removed && presetAction.action) {
+            m_actionManager->unregisterAction(presetAction.action, presetAction.id);
+            presetAction.action->deleteLater();
+        }
+        return removed;
+    });
+
+    for(const FileOpPreset& preset : presets) {
+        if(preset.name.isEmpty()) {
+            continue;
+        }
+
+        const auto existing = std::ranges::find_if(m_presetActions, [&preset](const PresetAction& action) {
+            return action.operation == preset.op && action.presetName == preset.name;
+        });
+        if(existing != m_presetActions.end()) {
+            existing->action->setText(preset.name);
+            existing->command->setCategories(categoriesForOperation(preset.op));
+            continue;
+        }
+
+        auto* action      = new QAction(preset.name, this);
+        const Id actionId = presetActionId(preset.op, preset.name, presets);
+        auto* command     = m_actionManager->registerAction(action, actionId);
+        command->setCategories(categoriesForOperation(preset.op));
+        command->setAttribute(ProxyAction::UpdateText);
+        command->action()->setShortcutVisibleInContextMenu(true);
+
+        QObject::connect(action, &QAction::triggered, this, [this, operation = preset.op, presetName = preset.name]() {
+            const auto currentPresets = getPresets();
+            const auto current = std::ranges::find_if(currentPresets, [operation, &presetName](const FileOpPreset& p) {
+                return p.op == operation && p.name == presetName;
+            });
+            const auto* selection = m_trackSelectionController->selectedSelection();
+            if(!selection) {
+                selection = m_trackSelectionController->displaySelection();
+            }
+            if(current != currentPresets.cend() && selection && canUsePreset(current->op, selection->tracks)) {
+                openDialog(*selection, current->op, current->name);
+            }
+        });
+
+        m_presetActions.push_back(
+            {.operation = preset.op, .presetName = preset.name, .id = actionId, .action = action, .command = command});
+    }
 }
 } // namespace Fooyin::FileOps

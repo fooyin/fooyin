@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <core/playlist/playlist.h>
 #include <core/plugins/coreplugin.h>
 #include <core/plugins/plugin.h>
 #include <gui/coverprovider.h>
@@ -27,8 +28,6 @@
 class QDBusObjectPath;
 
 namespace Fooyin {
-struct PlaylistTrack;
-
 namespace Mpris {
 class MprisPlugin : public QObject,
                     public Plugin,
@@ -139,8 +138,10 @@ private:
     SettingsManager* m_settings;
 
     bool m_registered;
+    bool m_mprisPausePending;
     QString m_currCoverKey;
     uint64_t m_coverLoadGeneration;
+    PlaylistTrack m_currentPlaylistTrack;
     QVariantMap m_currentMetaData;
     CoverProvider* m_coverProvider;
 };

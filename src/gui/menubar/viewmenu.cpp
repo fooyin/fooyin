@@ -32,6 +32,7 @@
 #include <utils/utils.h>
 
 #include <QAction>
+#include <QMainWindow>
 #include <QMenu>
 
 using namespace Qt::StringLiterals;
@@ -86,6 +87,9 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     viewMenu->addAction(showPlaybackQueueCmd);
     QObject::connect(showPlaybackQueue, &QAction::triggered, this, &ViewMenu::openPlaybackQueue);
 
+    viewMenu->addSeparator(Actions::Groups::Three);
+    viewMenu->addMenu(m_actionManager->actionContainer(Constants::Menus::Visualisations), Actions::Groups::Three);
+
     auto* separator   = viewMenu->addSeparator(Actions::Groups::Three);
     m_dspInsertBefore = separator->action();
 
@@ -137,7 +141,7 @@ void ViewMenu::registerDspSettingsActions(DspSettingsRegistry* registry, DspSett
 
         QObject::connect(action, &QAction::triggered, this, [controller, dspId]() {
             if(controller->hasDsp(dspId)) {
-                controller->showDialog(dspId);
+                controller->showDialog(dspId, Utils::getMainWindow());
             }
         });
 

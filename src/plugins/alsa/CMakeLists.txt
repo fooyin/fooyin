@@ -7,6 +7,7 @@ endif()
 create_fooyin_plugin_internal(
     alsa
     DEPENDS Fooyin::Core
+            Fooyin::Gui
             ${ALSA_LIBRARIES}
     SOURCES alsaoutput.cpp
             alsaoutput.h

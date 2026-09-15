@@ -32,6 +32,7 @@
 #include <gui/widgets/multilinedelegate.h>
 #include <gui/widgets/toolbutton.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/heartdelegate.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/stardelegate.h>
@@ -60,6 +61,7 @@ TagEditorEditor::TagEditorEditor(ActionManager* actionManager, TagEditorFieldReg
     , m_autocompleteDelegate{new TagEditorAutocompleteDelegate(this)}
     , m_multilineDelegate{nullptr}
     , m_starDelegate{nullptr}
+    , m_heartDelegate{nullptr}
     , m_toolsButton{new ToolButton(this)}
     , m_autoTrackNum{new QAction(tr("Auto &track number"), this)}
     , m_autoFillValuesAction{new QAction(tr("Automatically &fill values…"), this)}
@@ -173,13 +175,14 @@ void TagEditorEditor::configureDelegates(const std::vector<TagEditorField>& item
     m_delegateRows.clear();
     m_view->setRatingRow(-1);
     m_model->setRatingRow(-1);
+    m_model->setLoveRow(-1);
 
     for(int row{0}; const auto& item : items) {
         if(!item.enabled) {
             continue;
         }
 
-        if(item.scriptField.compare(QLatin1String{Fooyin::Constants::MetaData::RatingEditor}, Qt::CaseInsensitive)
+        if(item.scriptField.compare(QLatin1StringView{Fooyin::Constants::MetaData::RatingEditor}, Qt::CaseInsensitive)
            == 0) {
             if(!m_starDelegate) {
                 m_starDelegate = new StarDelegate(this);
@@ -187,6 +190,17 @@ void TagEditorEditor::configureDelegates(const std::vector<TagEditorField>& item
             m_view->setItemDelegateForRow(row, m_starDelegate);
             m_view->setRatingRow(row);
             m_model->setRatingRow(row);
+            m_delegateRows.emplace(row);
+        }
+        else if(item.scriptField.compare(QLatin1StringView{Fooyin::Constants::MetaData::LoveEditor},
+                                         Qt::CaseInsensitive)
+                == 0) {
+            if(!m_heartDelegate) {
+                m_heartDelegate = new HeartDelegate(this);
+            }
+            m_view->setItemDelegateForRow(row, m_heartDelegate);
+            m_view->setLovedRow(row);
+            m_model->setLoveRow(row);
             m_delegateRows.emplace(row);
         }
         else if(item.multiline) {
@@ -251,6 +265,11 @@ void TagEditorEditor::populationFinished(TagEditorDataPtr result)
 bool TagEditorEditor::hasChanges() const
 {
     return !m_loading && m_model->haveChanges();
+}
+
+Track::Stats TagEditorEditor::changedStats() const
+{
+    return m_model->changedStats();
 }
 
 bool TagEditorEditor::hasOnlyStatChanges() const

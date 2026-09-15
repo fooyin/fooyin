@@ -129,6 +129,7 @@ QJsonObject conversionPresetToJson(const StoredConversionPreset& stored)
         {u"copyFilesPattern"_s, preset.other.copyFilesPattern},
         {u"verifyOutput"_s, preset.other.verifyOutput},
         {u"showReport"_s, stored.showReport},
+        {u"showOutputFiles"_s, stored.showOutputFiles},
     };
 }
 
@@ -144,7 +145,7 @@ StoredConversionPreset conversionPresetFromJson(const QJsonObject& object)
     stored.preset.encoder.ditherMode         = static_cast<DitherMode>(object.value(u"dither"_s).toInt());
     stored.preset.destination.mode           = static_cast<DestinationMode>(object.value(u"destinationMode"_s).toInt());
     stored.preset.destination.fixedFolder    = object.value(u"fixedFolder"_s).toString();
-    stored.preset.destination.filenamePattern = object.value(u"filenamePattern"_s).toString(u"%title%"_s);
+    stored.preset.destination.filenamePattern = object.value(u"filenamePattern"_s).toString(u"%filename%"_s);
     stored.preset.destination.existingFileMode
         = static_cast<ExistingFileMode>(object.value(u"existingFileMode"_s).toInt());
     stored.preset.destination.outputStyle      = static_cast<OutputStyle>(object.value(u"outputStyle"_s).toInt());
@@ -166,6 +167,7 @@ StoredConversionPreset conversionPresetFromJson(const QJsonObject& object)
     stored.preset.other.copyFilesPattern   = object.value(u"copyFilesPattern"_s).toString();
     stored.preset.other.verifyOutput       = object.value(u"verifyOutput"_s).toBool(false);
     stored.showReport                      = object.value(u"showReport"_s).toBool(true);
+    stored.showOutputFiles                 = object.value(u"showOutputFiles"_s).toBool(false);
 
     return stored;
 }

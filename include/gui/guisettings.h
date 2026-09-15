@@ -91,6 +91,19 @@ enum GuiSettings : uint32_t
     PlaylistSearchMode         = 34 | Type::Int,
     PlaylistSearchScript       = 35 | Type::String,
     DragOnlyAfterSelect        = 36 | Type::Bool,
+    DarkMode                   = 37 | Type::Bool,
+    ResizeLockedAdjacentOnly   = 38 | Type::Bool,
+    LoveHeartSize              = 39 | Type::Int,
+    LoveHeartColour            = 40 | Type::Variant,
+    RatingOneStarColour        = 41 | Type::Variant,
+    RatingTwoStarColour        = 42 | Type::Variant,
+    RatingThreeStarColour      = 43 | Type::Variant,
+    RatingFourStarColour       = 44 | Type::Variant,
+    RatingFiveStarColour       = 45 | Type::Variant,
+    UnlovedHeartColour         = 46 | Type::Variant,
+    UnratedStarColour          = 47 | Type::Variant,
+    PlaybackQueueFollowCurrent = 48 | Type::Bool,
+    PlaylistShowQueueIndexes   = 49 | Type::Bool,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Settings::Gui

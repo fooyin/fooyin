@@ -28,10 +28,12 @@
 #include <core/playlist/playlist.h>
 #include <utils/treemodel.h>
 
+#include <QColor>
 #include <QFont>
 #include <QPixmap>
 #include <QThread>
 
+#include <array>
 #include <expected>
 #include <unordered_map>
 
@@ -129,8 +131,14 @@ public:
         InvalidRequest = 0,
         NoChanges,
     };
-    [[nodiscard]] std::expected<TrackList, BulkEditError> setBulkData(const QModelIndexList& indexes,
-                                                                      const QVariant& value);
+    struct BulkEditResult
+    {
+        TrackList tracks;
+        bool ratingField{false};
+        bool loveField{false};
+    };
+    [[nodiscard]] std::expected<BulkEditResult, BulkEditError> setBulkData(const QModelIndexList& indexes,
+                                                                           const QVariant& value);
 
     MoveOperation moveTracks(const MoveOperation& operation);
 
@@ -173,6 +181,8 @@ public:
 
 Q_SIGNALS:
     void metadataWriteRequested(const Fooyin::TrackList& tracks);
+    void tracksLoved(const Fooyin::TrackList& tracks);
+    void tracksRated(const Fooyin::TrackList& tracks);
     void loadingStateChanged();
     void playlistLoaded();
     void filesDropped(const QList<QUrl>& urls, int index);
@@ -201,6 +211,7 @@ private:
         int column{-1};
         QString writeField;
         bool ratingField{false};
+        bool loveField{false};
     };
     [[nodiscard]] std::optional<EditableTrackContext> editableTrackContextForColumn(int column) const;
     [[nodiscard]] std::expected<EditableTrackContext, BulkEditError>
@@ -251,7 +262,6 @@ private:
     DropTargetResult canBeMerged(PlaylistItem*& currTarget, int& targetRow, PlaylistItemList& sourceParents,
                                  int targetOffset);
     void handleTrackGroup(PendingData& data);
-    void storeMimeData(const QModelIndexList& indexes, QMimeData* mimeData) const;
 
     int dropInsertRows(const PlaylistItemList& rows, const QModelIndex& target, int row);
     int dropMoveRows(const QModelIndex& source, const PlaylistItemList& rows, const QModelIndex& target, int row);
@@ -321,6 +331,7 @@ private:
     QString m_headerText;
 
     QColor m_playingColour;
+    QVariant m_playingFont;
     QColor m_disabledColour;
 
     QThread m_populatorThread;
@@ -341,6 +352,11 @@ private:
     int m_pixmapPadding;
     int m_pixmapPaddingTop;
     int m_starRatingSize;
+    int m_loveHeartSize;
+    std::array<QColor, 5> m_ratingStarColours;
+    QColor m_unratedStarColour;
+    QColor m_loveHeartColour;
+    QColor m_unlovedHeartColour;
 
     std::set<int> m_positionColumns;
     std::set<int> m_bitrateColumns;

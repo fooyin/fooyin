@@ -296,6 +296,11 @@ QString ScriptParser::evaluate(const ParsedScript& input, const Playlist& playli
     return p->withContext(context, [&] { return evaluate(input, playlist); });
 }
 
+void ScriptParser::withContext(const ScriptContext& context, const std::function<void()>& operation)
+{
+    p->withContext(context, operation);
+}
+
 int ScriptParser::cacheLimit() const
 {
     return p->cacheLimit();

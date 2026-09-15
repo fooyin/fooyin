@@ -52,6 +52,7 @@ public:
     [[nodiscard]] static std::unique_ptr<PlaylistWidgetSession> createEditable();
     [[nodiscard]] static std::unique_ptr<PlaylistWidgetSession> createDetachedPlaylist();
     [[nodiscard]] static std::unique_ptr<PlaylistWidgetSession> createDetachedLibrary();
+    [[nodiscard]] static std::unique_ptr<PlaylistWidgetSession> createDetachedTracks(const TrackList& tracks);
 
     [[nodiscard]] virtual PlaylistWidget::ModeCapabilities capabilities() const                      = 0;
     [[nodiscard]] virtual QString emptyText() const                                                  = 0;

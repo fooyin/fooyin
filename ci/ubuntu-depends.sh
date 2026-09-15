@@ -8,7 +8,6 @@ $SUDO apt-get update -qq
 $SUDO apt-get install -y \
         g++ \
         git \
-        ccache \
         zstd \
         bison \
         flex \
@@ -18,6 +17,7 @@ $SUDO apt-get install -y \
         debhelper \
         lsb-release \
         libicu-dev \
+        libglm-dev \
         libglu1-mesa-dev \
         libxkbcommon-dev \
         dpkg-dev \
@@ -28,6 +28,7 @@ $SUDO apt-get install -y \
         libpulse-dev \
         libsdl2-dev \
         qt6-base-dev \
+        libqt6sql6-sqlite \
         libqt6opengl6-dev \
         libqt6svg6-dev \
         qt6-tools-dev \
@@ -43,6 +44,8 @@ $SUDO apt-get install -y \
         libarchive-dev \
         libsndfile1-dev \
         libebur128-dev \
+        libcdio-dev \
+        libcdio-paranoia-dev \
         libsoundtouch-dev \
         libsoxr-dev \
         libgtest-dev

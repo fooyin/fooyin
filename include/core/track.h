@@ -25,6 +25,7 @@
 #include <utils/datastream.h>
 
 #include <QByteArray>
+#include <QFlags>
 #include <QMap>
 #include <QMetaType>
 #include <QSharedDataPointer>
@@ -64,6 +65,16 @@ public:
             return qHash(track.uniqueFilepath());
         }
     };
+
+    enum class Stat : uint8_t
+    {
+        None      = 0,
+        Rating    = 1 << 0,
+        Playcount = 1 << 1,
+        Loved     = 1 << 2,
+        All       = Rating | Playcount | Loved,
+    };
+    Q_DECLARE_FLAGS(Stats, Stat)
 
     enum class Cover : uint8_t
     {
@@ -130,6 +141,8 @@ public:
 
     [[nodiscard]] bool isInArchive() const;
     [[nodiscard]] bool isRemote() const;
+    //! True when the track is backed by a non-file, non-HTTP(S) URI handled by a specialised input backend.
+    [[nodiscard]] bool isVirtual() const;
     [[nodiscard]] QString archivePath() const;
     [[nodiscard]] QString pathInArchive() const;
     [[nodiscard]] QString relativeArchivePath() const;
@@ -196,10 +209,13 @@ public:
     [[nodiscard]] QString comment() const;
     [[nodiscard]] QString date() const;
     [[nodiscard]] int year() const;
+
     [[nodiscard]] float rating() const;
     //! Returns rating() on the internal 0-10 half-star scale.
     [[nodiscard]] int ratingStars() const;
     [[nodiscard]] QString ratingStarsText() const;
+    [[nodiscard]] bool isLoved() const;
+    void setLoved(bool loved);
 
     [[nodiscard]] bool hasRGInfo() const;
     [[nodiscard]] bool hasTrackGain() const;
@@ -241,6 +257,8 @@ public:
     //! Archive paths use fooyin's unpack:// URL format.
     static bool isArchivePath(const QString& path);
     static bool isRemotePath(const QString& path);
+    //! True for a valid custom URI, excluding local, archive, and HTTP(S).
+    static bool isVirtualPath(const QString& path);
     //! True for built-in tags that can hold multiple values.
     static bool isMultiValueTag(const QString& tag);
     //! True when tag is not one of Track's built-in metadata fields.
@@ -326,6 +344,9 @@ public:
     void setRating(float rating);
     //! Sets rating on the internal 0-10 half-star scale; 0 clears the rating.
     void setRatingStars(int rating);
+
+    //! Clears metadata and extra tags while retaining ratings, ReplayGain and playback statistics.
+    void clearWritableTags();
 
     void setRGTrackGain(float gain);
     void setRGAlbumGain(float gain);
@@ -418,7 +439,9 @@ public:
 private:
     QSharedDataPointer<TrackPrivate> p;
 };
+
 FYCORE_EXPORT size_t qHash(const Track& track);
+FYCORE_EXPORT void mergeTrackStats(Track& track, const Track& updatedTrack, Track::Stats stats);
 
 struct CoverImage
 {
@@ -438,3 +461,5 @@ struct TrackCoverData
 
 Q_DECLARE_METATYPE(Fooyin::TrackList)
 Q_DECLARE_METATYPE(Fooyin::TrackIds)
+Q_DECLARE_METATYPE(Fooyin::Track::Stats)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::Track::Stats)

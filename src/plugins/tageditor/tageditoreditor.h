@@ -32,6 +32,7 @@
 namespace Fooyin {
 class ActionManager;
 class AutoHeaderView;
+class HeartDelegate;
 class MultiLineEditDelegate;
 class SettingsManager;
 class StarDelegate;
@@ -57,6 +58,7 @@ public:
     void setReadOnly(bool readOnly);
     [[nodiscard]] bool hasChanges() const;
     [[nodiscard]] bool hasOnlyStatChanges() const;
+    [[nodiscard]] Track::Stats changedStats() const;
     [[nodiscard]] TrackList tracks() const;
     TrackList applyChanges();
 
@@ -100,6 +102,7 @@ private:
     TagEditorAutocompleteDelegate* m_autocompleteDelegate;
     MultiLineEditDelegate* m_multilineDelegate;
     StarDelegate* m_starDelegate;
+    HeartDelegate* m_heartDelegate;
 
     ToolButton* m_toolsButton;
     QAction* m_autoTrackNum;

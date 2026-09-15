@@ -20,6 +20,7 @@
 #include "darklyrics.h"
 
 #include <core/network/networkaccessmanager.h>
+#include <core/network/networkutils.h>
 
 #include <QNetworkReply>
 #include <QNetworkRequest>
@@ -78,7 +79,7 @@ void DarkLyrics::search(const SearchParams& params)
 
     qCInfo(LYRICS) << "Sending request" << url.toString();
 
-    const QNetworkRequest req{url};
+    const QNetworkRequest req = makeNetworkRequest(url);
     setReply(network()->get(req));
     QObject::connect(reply(), &QNetworkReply::finished, this, &DarkLyrics::handleLyricReply);
 }

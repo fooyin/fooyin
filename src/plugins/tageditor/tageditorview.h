@@ -23,6 +23,7 @@
 
 namespace Fooyin {
 class Command;
+class HeartDelegate;
 class StarDelegate;
 class WidgetContext;
 
@@ -37,6 +38,7 @@ public:
     void setTagEditTriggers(EditTriggers triggers);
     void setupActions();
     void setRatingRow(int row);
+    void setLovedRow(int row);
 
 protected:
     [[nodiscard]] int sizeHintForRow(int row) const override;
@@ -61,6 +63,8 @@ private:
 
     void ratingHoverIn(const QModelIndex& index, const QPoint& pos);
     void ratingHoverOut();
+    void lovedHoverIn(const QModelIndex& index);
+    void lovedHoverOut();
 
     ActionManager* m_actionManager;
 
@@ -75,6 +79,8 @@ private:
 
     int m_ratingRow;
     StarDelegate* m_starDelegate;
+    int m_lovedRow;
+    HeartDelegate* m_heartDelegate;
 };
 } // namespace TagEditor
 } // namespace Fooyin

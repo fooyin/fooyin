@@ -6,6 +6,10 @@ create_fooyin_plugin_internal(
             equaliserdsp.h
             equaliserplugin.cpp
             equaliserplugin.h
+            equaliserpresetstore.cpp
+            equaliserpresetstore.h
+            equalisersliderstate.cpp
+            equalisersliderstate.h
             equalisersettingswidget.cpp
             equalisersettingswidget.h
             supereqadapter.cpp

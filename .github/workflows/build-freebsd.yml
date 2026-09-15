@@ -2,14 +2,16 @@ name: Build FreeBSD
 
 on:
   workflow_call:
+    inputs:
+      version_suffix:
+        required: false
+        type: string
+        default: ''
 
 env:
+  FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
   BUILD_TESTS: ON
-  CCACHE_DIR: ${{ github.workspace }}/.ccache
-  CCACHE_BASEDIR: ${{ github.workspace }}
-  CCACHE_MAXSIZE: 1G
-  CCACHE_COMPILERCHECK: content
-  CCACHE_SLOPPINESS: pch_defines,time_macros
+  BUILD_CCACHE: OFF
 
 jobs:
   freebsd:
@@ -19,36 +21,32 @@ jobs:
       FREEBSD_VERSION: '15.0'
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           submodules: recursive
 
-      - name: Cache ccache
-        uses: actions/cache@v5
-        with:
-          path: ${{ env.CCACHE_DIR }}
-          key: freebsd-${{ env.FREEBSD_VERSION }}-ccache-${{ github.sha }}
-          restore-keys: |
-            freebsd-${{ env.FREEBSD_VERSION }}-ccache-
-
-      - name: run VM
-        uses: cross-platform-actions/action@v0.32.0
+      - name: Start FreeBSD VM
+        uses: cross-platform-actions/action@v1.5.0
         with:
           operating_system: freebsd
           architecture: x86-64
           cpu_count: 4
           shell: bash
           version: ${{ env.FREEBSD_VERSION }}
-          run: |
-            ./ci/freebsd-depends.sh
-            ./ci/freebsd-build.sh
-            if [ "${{ env.BUILD_TESTS }}" = "ON" ]; then
-              ./ci/tests.sh
-            fi
+          environment_variables: BUILD_TESTS BUILD_CCACHE FOOYIN_VERSION_SUFFIX
+
+      - name: Build and test
+        shell: cpa.sh {0}
+        run: |
+          ./ci/freebsd-depends.sh
+          ./ci/freebsd-build.sh
+          if [ "$BUILD_TESTS" = "ON" ]; then
+            ./ci/tests.sh
+          fi
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: freebsd-${{ env.FREEBSD_VERSION }}
           path: pkg

@@ -49,7 +49,7 @@ int pw_stream_get_time_n(struct pw_stream* stream, struct pw_time* time, size_t 
 } // namespace
 
 namespace Fooyin::Pipewire {
-PipewireStream::PipewireStream(PipewireCore* core, const AudioFormat& format, const int targetBufferFrames,
+PipewireStream::PipewireStream(PipewireCore* core, const AudioFormat& format, const int latencyFrames,
                                const QString& device)
     : m_channelCount{static_cast<uint32_t>(std::max(1, format.channelCount()))}
 {
@@ -58,8 +58,8 @@ PipewireStream::PipewireStream(PipewireCore* core, const AudioFormat& format, co
                                                     PW_KEY_APP_ICON_NAME, "fooyin", PW_KEY_APP_NAME, "fooyin", nullptr);
 
     pw_properties_setf(props, PW_KEY_NODE_RATE, "1/%u", format.sampleRate());
-    if(targetBufferFrames > 0 && format.sampleRate() > 0) {
-        pw_properties_setf(props, PW_KEY_NODE_LATENCY, "%u/%u", static_cast<uint32_t>(targetBufferFrames),
+    if(latencyFrames > 0 && format.sampleRate() > 0) {
+        pw_properties_setf(props, PW_KEY_NODE_LATENCY, "%u/%u", static_cast<uint32_t>(latencyFrames),
                            static_cast<uint32_t>(format.sampleRate()));
     }
 

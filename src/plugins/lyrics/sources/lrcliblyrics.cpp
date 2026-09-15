@@ -20,18 +20,23 @@
 #include "lrcliblyrics.h"
 
 #include <core/network/networkaccessmanager.h>
+#include <core/network/networkutils.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QTimerEvent>
 #include <QUrl>
 #include <QUrlQuery>
 
+#include <limits>
+
 using namespace Qt::StringLiterals;
 
-constexpr auto ApiUrl = "https://lrclib.net/api/get";
+constexpr auto ApiUrl       = "https://lrclib.net/api/get";
+constexpr auto RequestDelay = 300;
 
 namespace Fooyin::Lyrics {
 QString LrcLibLyrics::name() const
@@ -41,7 +46,7 @@ QString LrcLibLyrics::name() const
 
 void LrcLibLyrics::search(const SearchParams& params)
 {
-    resetReply();
+    cancel();
 
     QUrl url{QString::fromLatin1(ApiUrl)};
 
@@ -52,12 +57,30 @@ void LrcLibLyrics::search(const SearchParams& params)
     urlQuery.addQueryItem(encode(u"duration"_s), encode(QString::number(params.track.duration() / 1000)));
     url.setQuery(urlQuery);
 
-    QNetworkRequest req{url};
-    req.setRawHeader(
-        "User-Agent",
-        u"fooyin v%1 (https://www.fooyin.org)"_s.arg(settings()->value<Settings::Core::Version>()).toUtf8());
+    m_requestUrl = url;
+    m_requestTimer.start(RequestDelay, this);
+}
 
-    qCDebug(LYRICS) << "Sending request" << url.toString();
+void LrcLibLyrics::cancel()
+{
+    m_requestTimer.stop();
+    resetReply();
+}
+
+void LrcLibLyrics::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_requestTimer.timerId()) {
+        m_requestTimer.stop();
+        sendRequest();
+    }
+    LyricSource::timerEvent(event);
+}
+
+void LrcLibLyrics::sendRequest()
+{
+    const QNetworkRequest req = makeNetworkRequest(m_requestUrl);
+
+    qCDebug(LYRICS) << "Sending request" << m_requestUrl.toString();
 
     setReply(network()->get(req));
     QObject::connect(reply(), &QNetworkReply::finished, this, &LrcLibLyrics::handleLyricReply);
@@ -65,10 +88,32 @@ void LrcLibLyrics::search(const SearchParams& params)
 
 void LrcLibLyrics::handleLyricReply()
 {
-    QJsonObject obj;
-    if(getJsonFromReply(reply(), &obj)) {
+    auto* lyricReply = reply();
+    if(!lyricReply) {
+        return;
+    }
+
+    const int statusCode = lyricReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    if(statusCode == 429) {
+        bool validRetryAfter{false};
+        const qint64 retryAfter = lyricReply->rawHeader("Retry-After").trimmed().toLongLong(&validRetryAfter);
+
         resetReply();
 
+        qint64 retryDelay{RequestDelay};
+        if(validRetryAfter && retryAfter >= 0) {
+            static constexpr qint64 MaxSeconds = std::numeric_limits<int>::max() / 1000;
+            retryDelay                         = std::min(retryAfter, MaxSeconds) * 1000;
+        }
+        m_requestTimer.start(static_cast<int>(std::max(retryDelay, static_cast<qint64>(RequestDelay))), this);
+        return;
+    }
+
+    QJsonObject obj;
+    const bool success = getJsonFromReply(lyricReply, &obj);
+    resetReply();
+
+    if(success) {
         LyricData data;
         QString lyrics = obj.value("syncedLyrics"_L1).toString();
         if(!lyrics.isEmpty()) {
@@ -89,6 +134,7 @@ void LrcLibLyrics::handleLyricReply()
         }
 
         Q_EMIT searchResult({data});
+        return;
     }
 
     Q_EMIT searchResult({});

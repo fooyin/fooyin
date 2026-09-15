@@ -27,6 +27,7 @@ namespace Fooyin {
 QueueViewerView::QueueViewerView(QWidget* parent)
     : ExpandedTreeView{parent}
 {
+    setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setTextElideMode(Qt::ElideRight);

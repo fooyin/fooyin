@@ -21,6 +21,7 @@
 
 #include <utils/logging/messagehandler.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/signalthrottler.h>
 #include <utils/utils.h>
 
 #include <QAction>
@@ -47,6 +48,7 @@ using namespace Qt::StringLiterals;
 
 constexpr auto FlushInterval    = 200;
 constexpr auto MaxQueuedEntries = 250;
+constexpr auto ScrollInterval   = 200;
 
 namespace {
 QModelIndexList allRowIndexes(const QAbstractItemModel* model)
@@ -77,6 +79,7 @@ LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
     , m_view{new QTreeView(this)}
     , m_model{new LogModel(this)}
     , m_level{new QComboBox(this)}
+    , m_scrollThrottler{new SignalThrottler(this)}
     , m_scrollIsAtBottom{false}
 {
     setWindowTitle(tr("Log"));
@@ -108,6 +111,7 @@ LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
 
     m_view->setModel(m_model);
     m_view->setRootIsDecorated(false);
+    m_view->setUniformRowHeights(true);
     m_view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
     m_view->header()->setStretchLastSection(true);
     m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -123,14 +127,29 @@ LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
     QObject::connect(m_level, &QComboBox::currentIndexChanged, this,
                      [this]() { MessageHandler::setLevel(m_level->currentData().value<QtMsgType>()); });
     QObject::connect(m_view, &QWidget::customContextMenuRequested, this, &LogWidget::showContextMenu);
+
+    m_scrollThrottler->setTimeout(ScrollInterval);
+    QObject::connect(m_scrollThrottler, &SignalThrottler::triggered, this, [this]() {
+        if(m_scrollIsAtBottom) {
+            m_view->scrollToBottom();
+        }
+        else {
+            m_scrollIsAtBottom = false;
+        }
+    });
+
+    QObject::connect(m_view->verticalScrollBar(), &QScrollBar::actionTriggered, this,
+                     [this]() { m_scrollIsAtBottom = false; });
     QObject::connect(m_model, &QAbstractItemModel::rowsAboutToBeInserted, this, [this]() {
-        if(const auto* bar = m_view->verticalScrollBar()) {
-            m_scrollIsAtBottom = (bar->value() == bar->maximum());
+        if(!m_scrollThrottler->isActive()) {
+            if(const auto* bar = m_view->verticalScrollBar()) {
+                m_scrollIsAtBottom = (bar->value() == bar->maximum());
+            }
         }
     });
     QObject::connect(m_model, &QAbstractItemModel::rowsInserted, this, [this]() {
         if(m_scrollIsAtBottom) {
-            m_view->scrollToBottom();
+            m_scrollThrottler->throttle();
         }
     });
 
@@ -147,6 +166,22 @@ void LogWidget::addEntry(const QString& message, QtMsgType type)
 QSize LogWidget::sizeHint() const
 {
     return Utils::proportionateSize(this, 0.3, 0.4);
+}
+
+void LogWidget::changeEvent(QEvent* event)
+{
+    QWidget::changeEvent(event);
+
+    switch(event->type()) {
+        case QEvent::ApplicationPaletteChange:
+        case QEvent::PaletteChange:
+        case QEvent::StyleChange:
+        case QEvent::ThemeChange:
+            m_model->refreshIcons();
+            break;
+        default:
+            break;
+    }
 }
 
 void LogWidget::timerEvent(QTimerEvent* event)

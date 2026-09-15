@@ -90,4 +90,18 @@ TEST(RealFftTest, ReportsNyquistBin)
         EXPECT_NEAR(magnitudes[bin], 0.0F, 1.0e-4F);
     }
 }
+
+TEST(RealFftTest, SelectsSupportedSizeNearestRequest)
+{
+    for(const int requestedSize : {4101, 8928, 17856, 35712}) {
+        const int selectedSize = Fooyin::Dsp::RealFft::nearestValidSize(requestedSize);
+        EXPECT_GT(selectedSize, 0);
+
+        const Fooyin::Dsp::RealFft fft{selectedSize};
+        EXPECT_TRUE(fft.isValid());
+        EXPECT_LT(std::abs(selectedSize - requestedSize), requestedSize / 10);
+    }
+
+    EXPECT_EQ(Fooyin::Dsp::RealFft::nearestValidSize(0), 0);
+}
 } // namespace

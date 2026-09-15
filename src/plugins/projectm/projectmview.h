@@ -67,6 +67,7 @@ public:
     void selectRandomPreset();
     void selectPreset(int index);
     void selectPreset(const QString& path);
+    void setPlaybackIdle(bool idle);
     void setPresetLocked(bool locked);
     void setShuffle(bool shuffle);
     void applySettings(const ProjectMSettings& settings);
@@ -120,11 +121,11 @@ private:
     void resetPcmCursor();
     void queueGLOperation(std::function<void()> operation);
     void processQueuedGLOperations();
+    void applyIdleState();
+    void leaveIdleForUserSelection();
     void scheduleProjectMRecreation();
     void initialiseOpenGLDebugLogger();
     void logOpenGLContext();
-    void logOpenGLState(const QString& stage);
-    void logOpenGLErrors(const QString& stage);
 
     void setUnavailable(const QString& statusText);
     void emitAvailability();
@@ -145,12 +146,13 @@ private:
     QString m_pendingPresetPath;
     QStringList m_presetDirs;
     uint64_t m_lastPcmTimeMs;
-    uint32_t m_debugRenderFrames;
-    uint32_t m_debugPcmWindows;
     bool m_ready;
     bool m_initialised;
+    bool m_openGLReady;
     bool m_recreateProjectM;
     bool m_hasPcmCursor;
+    bool m_playbackIdle;
+    bool m_idlePresetActive;
     bool m_presetLocked;
     bool m_shuffle;
     ProjectMSettings m_settings;

@@ -181,6 +181,8 @@ Q_NAMESPACE_EXPORT(FYGUI_EXPORT)
 
 constexpr auto PlaylistCurrentPreset = "PlaylistWidget/CurrentPreset";
 constexpr auto LastFilePath          = "Interface/LastFilePath";
+constexpr auto LastPlaylistPath      = "Playlist/LastPlaylistPath";
+constexpr auto ConfirmMetadataWipe   = "MetadataLookup/ConfirmWipeWritableTags";
 
 enum GuiInternalSettings : uint32_t
 {
@@ -203,13 +205,8 @@ enum GuiInternalSettings : uint32_t
     PlaylistImagePaddingTop                  = 17 | Type::Int,
     PixmapCacheSize                          = 18 | Type::Int,
     EditableLayoutMargin                     = 19 | Type::Int,
-    PlaylistTabsAddButton                    = 20 | Type::Bool,
     ShowTrayIcon                             = 21 | Type::Bool,
     TrayOnClose                              = 22 | Type::Bool,
-    PlaylistTabsCloseButton                  = 23 | Type::Bool,
-    PlaylistTabsMiddleClose                  = 24 | Type::Bool,
-    PlaylistTabsExpand                       = 25 | Type::Bool,
-    PlaylistTabsClearButton                  = 26 | Type::Bool,
     PlaylistMiddleClick                      = 27 | Type::Int,
     InfoDisplayPrefer                        = 28 | Type::Int,
     LibTreeIconSize                          = 29 | Type::Variant,
@@ -255,6 +252,14 @@ enum GuiInternalSettings : uint32_t
     NowPlayingOutputOptions                  = 69 | Type::Int,
     NowPlayingOutputAppendLineLimit          = 70 | Type::Int,
     OutputDeviceRefreshMs                    = 71 | Type::Int,
+    PlaylistPlayingRowColour                 = 72 | Type::Variant,
+    PlaylistPlayingRowFont                   = 73 | Type::Variant,
+    PlaylistDoubleClick                      = 74 | Type::Int,
+    PlaylistStartPlaybackOnSend              = 75 | Type::Bool,
+    PlaylistArtworkCornerRadius              = 76 | Type::Int,
+    ArtistCoverFallbackToFront               = 77 | Type::Bool,
+    StatusDoubleClick                        = 78 | Type::Int,
+    StatusMiddleClick                        = 79 | Type::Int,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

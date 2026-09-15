@@ -26,6 +26,9 @@
 #include <QIcon>
 #include <QSize>
 
+#include <map>
+#include <set>
+#include <unordered_map>
 #include <vector>
 
 class QMimeData;
@@ -87,7 +90,8 @@ public:
     void updateColours();
     [[nodiscard]] bool reorderEnabled() const;
     [[nodiscard]] RadioStation stationAt(int row) const;
-    void requestIcons(const QModelIndexList& indexes);
+    void setVisibleIcons(QObject* owner, const QModelIndexList& indexes);
+    void clearVisibleIcons(QObject* owner);
     void refreshIcons();
 
 Q_SIGNALS:
@@ -101,6 +105,8 @@ private:
     [[nodiscard]] int iconBucketSize() const;
     [[nodiscard]] QIcon stationIcon(const RadioStation& station) const;
     [[nodiscard]] QIcon placeholderIcon(const RadioStation& station) const;
+    [[nodiscard]] QString placeholderCacheKey(const RadioStation& station) const;
+    void rebuildPinnedPlaceholderIcons();
     [[nodiscard]] bool isSavedStation(const RadioStation& station) const;
     void handleIconLoaded(const QString& favicon);
 
@@ -111,6 +117,8 @@ private:
     QColor m_iconPlayingColour;
     RadioIconProvider* m_iconProvider;
     mutable QCache<QString, QIcon> m_placeholderIcons;
+    mutable std::map<QString, QIcon> m_pinnedPlaceholderIcons;
+    std::unordered_map<QObject*, std::set<QString>> m_visiblePlaceholderKeys;
     std::vector<int> m_iconColumnOrder;
     QSize m_iconSize;
     int m_iconCaptionLineCount;

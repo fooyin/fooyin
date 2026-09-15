@@ -21,6 +21,11 @@
 
 #include "lyricsource.h"
 
+#include <QBasicTimer>
+#include <QUrl>
+
+class QTimerEvent;
+
 namespace Fooyin::Lyrics {
 class LrcLibLyrics : public LyricSource
 {
@@ -31,8 +36,16 @@ public:
 
     [[nodiscard]] QString name() const override;
     void search(const SearchParams& params) override;
+    void cancel() override;
+
+protected:
+    void timerEvent(QTimerEvent* event) override;
 
 private:
+    void sendRequest();
     void handleLyricReply();
+
+    QUrl m_requestUrl;
+    QBasicTimer m_requestTimer;
 };
 } // namespace Fooyin::Lyrics

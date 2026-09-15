@@ -54,7 +54,6 @@ public Q_SLOTS:
 
 private:
     QString setup(const Track& track, int samplesPerChannel);
-    void processBuffer(const AudioBuffer& buffer);
 
     std::shared_ptr<AudioLoader> m_audioLoader;
     LoadedDecoder m_loadedDecoder;
@@ -65,7 +64,6 @@ private:
     Track m_track;
     AudioFormat m_format;
     AudioFormat m_requiredFormat;
-    int m_samplesPerChannel;
     WaveformData<float> m_data;
 };
 } // namespace WaveBar

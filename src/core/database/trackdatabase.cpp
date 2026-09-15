@@ -86,7 +86,8 @@ QString fetchTrackColumns()
                                    "FirstPlayed,"
                                    "LastPlayed,"
                                    "PlayCount,"
-                                   "Rating"_s;
+                                   "Rating,"
+                                   "Loved"_s;
 
     return columns;
 }
@@ -150,6 +151,7 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q, const std::shared_ptr<Fooyin
     track.setLastPlayed(q.value(41).toULongLong());
     track.setPlayCount(q.value(42).toInt());
     track.setRating(q.value(43).toFloat());
+    track.setLoved(q.value(44).toBool());
 
     track.setMetadataWasRead(true);
     track.generateHash();
@@ -190,6 +192,23 @@ bool TrackDatabase::storeTracks(TrackList& tracks)
                     return false;
                 }
             }
+
+            Track::Stats importedStats{Track::Stat::Playcount};
+            if(track.rating() > 0) {
+                importedStats |= Track::Stat::Rating;
+            }
+
+            StoredTrackStats stats;
+            if(!insertOrUpdateStats(track, &stats, importedStats)) {
+                return false;
+            }
+
+            track.setAddedTime(stats.added);
+            track.setFirstPlayed(stats.firstPlayed);
+            track.setLastPlayed(stats.lastPlayed);
+            track.setPlayCount(stats.playCount);
+            track.setRating(stats.rating);
+            track.setLoved(stats.loved);
         }
     }
 
@@ -402,6 +421,22 @@ bool TrackDatabase::updateTrackStats(const Track& track)
     return insertOrUpdateStats(track);
 }
 
+bool TrackDatabase::updateTrackStats(Track& track, Track::Stats updatedStats)
+{
+    StoredTrackStats stats;
+    if(!insertOrUpdateStats(track, &stats, updatedStats)) {
+        return false;
+    }
+
+    track.setAddedTime(stats.added);
+    track.setFirstPlayed(stats.firstPlayed);
+    track.setLastPlayed(stats.lastPlayed);
+    track.setPlayCount(stats.playCount);
+    track.setRating(stats.rating);
+    track.setLoved(stats.loved);
+    return true;
+}
+
 bool TrackDatabase::updateTrackStats(const TrackList& tracks)
 {
     bool success{true};
@@ -559,7 +594,8 @@ void TrackDatabase::insertViews(const QSqlDatabase& db)
                                      "TrackStats.FirstPlayed,"
                                      "TrackStats.LastPlayed,"
                                      "TrackStats.PlayCount,"
-                                     "TrackStats.Rating"
+                                     "TrackStats.Rating,"
+                                     "TrackStats.Loved"
                                      " FROM Tracks "
                                      "LEFT JOIN TrackStats ON Tracks.TrackHash = TrackStats.TrackHash;"_s;
 
@@ -767,43 +803,49 @@ bool TrackDatabase::insertTrack(Track& track, bool ignoreDuplicates) const
     }
 
     track.setId(query.lastInsertId().toInt());
-
-    return insertOrUpdateStats(track);
+    return true;
 }
 
-bool TrackDatabase::insertOrUpdateStats(const Track& track) const
+std::optional<TrackDatabase::StoredTrackStats> TrackDatabase::existingTrackStats(const QString& hash) const
+{
+    static const QString statement = u"SELECT AddedDate, FirstPlayed, LastPlayed, PlayCount, Rating, Loved "
+                                     "FROM TrackStats WHERE TrackHash = :trackHash;"_s;
+
+    DbQuery query{db(), statement};
+    query.bindValue(u":trackHash"_s, hash);
+
+    if(!query.exec()) {
+        return {};
+    }
+
+    if(!query.next()) {
+        return StoredTrackStats{};
+    }
+
+    return StoredTrackStats{
+        .added       = query.value(0).toULongLong(),
+        .firstPlayed = query.value(1).toULongLong(),
+        .lastPlayed  = query.value(2).toULongLong(),
+        .playCount   = query.value(3).toInt(),
+        .rating      = normaliseTrackRating(query.value(4).toFloat()),
+        .loved       = query.value(5).toBool(),
+    };
+}
+
+bool TrackDatabase::insertOrUpdateStats(const Track& track, StoredTrackStats* mergedStats,
+                                        Track::Stats updatedStats) const
 {
     if(track.hash().isEmpty()) {
         qCWarning(TRK_DB) << "Cannot insert/update track stats (Hash empty)";
         return false;
     }
 
-    uint64_t added{0};
-    uint64_t firstPlayed{0};
-    uint64_t lastPlayed{0};
-    int playCount{0};
-    float rating{-1.0F};
-
-    {
-        static const QString statement = u"SELECT AddedDate, FirstPlayed, LastPlayed, PlayCount, Rating FROM "
-                                         "TrackStats WHERE TrackHash = :trackHash;"_s;
-
-        DbQuery query{db(), statement};
-
-        query.bindValue(u":trackHash"_s, track.hash());
-
-        if(!query.exec()) {
-            return false;
-        }
-
-        if(query.next()) {
-            added       = query.value(0).toULongLong();
-            firstPlayed = query.value(1).toULongLong();
-            lastPlayed  = query.value(2).toULongLong();
-            playCount   = query.value(3).toInt();
-            rating      = normaliseTrackRating(query.value(4).toFloat());
-        }
+    const auto currentStats = existingTrackStats(track.hash());
+    if(!currentStats) {
+        return false;
     }
+
+    auto [added, firstPlayed, lastPlayed, playCount, rating, loved] = *currentStats;
 
     bool dbNeedsUpdate{false};
 
@@ -812,6 +854,7 @@ bool TrackDatabase::insertOrUpdateStats(const Track& track) const
     const uint64_t trackLastPlayed  = track.lastPlayed();
     const int trackPlayCount        = track.playCount();
     const float trackRating         = normaliseTrackRating(track.rating());
+    const bool trackLoved           = track.isLoved();
 
     if(trackAdded != added) {
         if(added == 0 || (trackAdded > 0 && trackAdded < added)) {
@@ -819,57 +862,90 @@ bool TrackDatabase::insertOrUpdateStats(const Track& track) const
             dbNeedsUpdate = true;
         }
     }
-    if(trackFirstPlayed != firstPlayed) {
-        if(firstPlayed == 0 || (trackFirstPlayed > 0 && trackFirstPlayed < firstPlayed)) {
-            firstPlayed   = trackFirstPlayed;
-            dbNeedsUpdate = true;
+    if(updatedStats.testFlag(Track::Stat::Playcount)) {
+        if(trackFirstPlayed != firstPlayed) {
+            if(firstPlayed == 0 || (trackFirstPlayed > 0 && trackFirstPlayed < firstPlayed)) {
+                firstPlayed   = trackFirstPlayed;
+                dbNeedsUpdate = true;
+            }
+        }
+        if(trackLastPlayed != lastPlayed) {
+            if(trackLastPlayed > lastPlayed) {
+                lastPlayed    = trackLastPlayed;
+                dbNeedsUpdate = true;
+            }
+        }
+        if(trackPlayCount != playCount) {
+            if(trackPlayCount > playCount) {
+                playCount     = trackPlayCount;
+                dbNeedsUpdate = true;
+            }
         }
     }
-    if(trackLastPlayed != lastPlayed) {
-        if(trackLastPlayed > lastPlayed) {
-            lastPlayed    = trackLastPlayed;
-            dbNeedsUpdate = true;
-        }
-    }
-    if(trackPlayCount != playCount) {
-        if(trackPlayCount > playCount) {
-            playCount     = trackPlayCount;
-            dbNeedsUpdate = true;
-        }
-    }
-    if(trackRating != rating) {
+    if(updatedStats.testFlag(Track::Stat::Rating) && trackRating != rating) {
         rating        = trackRating;
         dbNeedsUpdate = true;
     }
-
-    if(!dbNeedsUpdate) {
-        return true;
+    if(updatedStats.testFlag(Track::Stat::Loved) && trackLoved != loved) {
+        loved         = trackLoved;
+        dbNeedsUpdate = true;
     }
 
-    static const QString statement
-        = u"INSERT OR REPLACE INTO TrackStats (TrackHash, AddedDate, FirstPlayed, LastPlayed, "
-          u"PlayCount, Rating) VALUES "
-          "(:trackHash, :addedDate, :firstPlayed, :lastPlayed, :playCount, :rating);"_s;
+    if(dbNeedsUpdate) {
+        static const QString statement
+            = u"INSERT OR REPLACE INTO TrackStats (TrackHash, AddedDate, FirstPlayed, LastPlayed, "
+              u"PlayCount, Rating, Loved) VALUES "
+              "(:trackHash, :addedDate, :firstPlayed, :lastPlayed, :playCount, :rating, :loved);"_s;
 
-    DbQuery query{db(), statement};
+        DbQuery query{db(), statement};
 
-    query.bindValue(u":trackHash"_s, track.hash());
-    query.bindValue(u":addedDate"_s, QVariant::fromValue(added));
-    query.bindValue(u":firstPlayed"_s, QVariant::fromValue(firstPlayed));
-    query.bindValue(u":lastPlayed"_s, QVariant::fromValue(lastPlayed));
-    query.bindValue(u":playCount"_s, playCount);
-    query.bindValue(u":rating"_s, rating);
+        query.bindValue(u":trackHash"_s, track.hash());
+        query.bindValue(u":addedDate"_s, QVariant::fromValue(added));
+        query.bindValue(u":firstPlayed"_s, QVariant::fromValue(firstPlayed));
+        query.bindValue(u":lastPlayed"_s, QVariant::fromValue(lastPlayed));
+        query.bindValue(u":playCount"_s, playCount);
+        query.bindValue(u":rating"_s, rating);
+        query.bindValue(u":loved"_s, loved);
 
-    return query.exec();
+        if(!query.exec()) {
+            return false;
+        }
+    }
+
+    if(mergedStats) {
+        *mergedStats = {
+            .added       = added,
+            .firstPlayed = firstPlayed,
+            .lastPlayed  = lastPlayed,
+            .playCount   = playCount,
+            .rating      = rating,
+            .loved       = loved,
+        };
+    }
+
+    return true;
 }
 
 void TrackDatabase::removeUnmanagedTracks() const
 {
-    static const QString statement
-        = u"DELETE FROM Tracks WHERE LibraryID = -1 AND TrackID NOT IN (SELECT TrackID FROM PlaylistTracks);"_s;
+    static const QString statement = uR"(
+        DELETE FROM Tracks
+        WHERE
+            (
+                LibraryID = -1
+                OR NOT EXISTS (
+                    SELECT 1
+                    FROM Libraries
+                    WHERE Libraries.LibraryID = Tracks.LibraryID
+                )
+            )
+            AND TrackID NOT IN (
+                SELECT TrackID
+                FROM PlaylistTracks
+            );
+    )"_s;
 
     DbQuery query{db(), statement};
-
     query.exec();
 }
 

@@ -50,13 +50,16 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QJsonObject>
+#include <QLoggingCategory>
 #include <QMenu>
 #include <QPalette>
+#include <QProcess>
 #include <QScrollBar>
 #include <QSignalBlocker>
 #include <QTextBrowser>
 #include <QTextDocument>
 #include <QUrl>
+#include <QUrlQuery>
 
 #include <array>
 
@@ -70,6 +73,8 @@ constexpr auto LinkColourKey          = "TextWidget/LinkColour";
 constexpr auto HorizontalAlignmentKey = "TextWidget/HorizontalAlignment";
 constexpr auto VerticalAlignmentKey   = "TextWidget/VerticalAlignment";
 constexpr auto ScrollBarKey           = "TextWidget/Scrollbar";
+
+Q_LOGGING_CATEGORY(SCRIPT_DISPLAY, "fy.scriptdisplay")
 
 namespace {
 QFont fontFromString(const QString& fontString)
@@ -233,6 +238,8 @@ void ScriptDisplay::applyConfig(const ConfigData& config)
 
     applyAppearance();
     updateText();
+
+    Q_EMIT configChanged();
 }
 
 void ScriptDisplay::saveDefaults(const ConfigData& config) const
@@ -348,7 +355,7 @@ void ScriptDisplay::contextMenuEvent(QContextMenuEvent* event)
 
 void ScriptDisplay::openConfigDialog()
 {
-    showConfigDialog(new ScriptDisplayConfigDialog(this, this));
+    showConfigDialog(new ScriptDisplayConfigDialog(this, this), Qt::NonModal);
 }
 
 void ScriptDisplay::resizeEvent(QResizeEvent* event)
@@ -569,6 +576,21 @@ void ScriptDisplay::activateLink(const QString& link) const
         }
 
         m_commandHandler->execute(commandId);
+        return;
+    }
+
+    if(url.scheme() == "fooyin"_L1 && url.host() == "application"_L1 && url.path() == "/run"_L1) {
+        const QUrlQuery query{url};
+        const QString application = query.queryItemValue(u"application"_s, QUrl::FullyDecoded);
+        if(application.isEmpty()) {
+            return;
+        }
+
+        const QString args = query.queryItemValue(u"arguments"_s, QUrl::FullyDecoded);
+        const QString dir  = query.queryItemValue(u"directory"_s, QUrl::FullyDecoded);
+        if(!QProcess::startDetached(application, QProcess::splitCommand(args), dir)) {
+            qCWarning(SCRIPT_DISPLAY) << "Could not launch application:" << application;
+        }
         return;
     }
 

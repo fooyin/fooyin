@@ -20,6 +20,7 @@
 #include "tageditorpanel.h"
 
 #include "tageditoreditor.h"
+#include "tagfilldialog.h"
 
 #include <core/engine/audioloader.h>
 #include <core/library/musiclibrary.h>
@@ -70,6 +71,7 @@ TagEditorPanel::TagEditorPanel(ActionManager* actionManager, TagEditorFieldRegis
     m_editor->addTool(m_applyButton);
 
     QObject::connect(m_applyButton, &QPushButton::clicked, this, &TagEditorPanel::apply);
+    QObject::connect(m_editor, &TagEditorEditor::autoFillValuesRequested, this, &TagEditorPanel::autoFillValues);
     QObject::connect(m_selectionController, &TrackSelectionController::displaySelectionChanged, this,
                      &TagEditorPanel::selectionChanged);
 
@@ -135,6 +137,7 @@ bool TagEditorPanel::apply()
     }
 
     const bool statOnly = m_editor->hasOnlyStatChanges();
+    const auto stats    = m_editor->changedStats();
     if(!statOnly && !allDbOnlyTracks(m_currentTracks) && !m_settings->fileValue(DontAskAgain).toBool()) {
         QMessageBox message;
         message.setIcon(QMessageBox::Warning);
@@ -161,13 +164,32 @@ bool TagEditorPanel::apply()
     }
 
     if(statOnly) {
-        m_library->updateTrackStats(changedTracks);
+        m_library->updateTrackStats(changedTracks, stats);
     }
     else {
         m_library->writeTrackMetadata(changedTracks);
     }
 
     return true;
+}
+
+void TagEditorPanel::autoFillValues()
+{
+    if(m_fillDialog) {
+        m_fillDialog->raise();
+        m_fillDialog->activateWindow();
+        return;
+    }
+
+    if(!apply()) {
+        return;
+    }
+
+    m_fillDialog = openFillDialog(m_editor->tracks(), m_settings, this, [this](const FillValuesResult& result) {
+        if(!result.tracks.empty()) {
+            m_library->writeTrackMetadata(result.tracks);
+        }
+    });
 }
 
 void TagEditorPanel::updateForTracks(const TrackList& tracks)

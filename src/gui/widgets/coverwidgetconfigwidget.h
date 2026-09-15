@@ -25,6 +25,7 @@
 
 class QCheckBox;
 class QButtonGroup;
+class QComboBox;
 
 namespace Fooyin {
 class SliderEditor;
@@ -39,6 +40,7 @@ public:
 protected:
     void setConfig(const CoverWidget::ConfigData& config) override;
     [[nodiscard]] CoverWidget::ConfigData config() const override;
+    void mergeExternalConfig(const CoverWidget::ConfigData& previous, const CoverWidget::ConfigData& current) override;
 
 private:
     QButtonGroup* m_coverTypeGroup;
@@ -47,5 +49,8 @@ private:
 
     QCheckBox* m_fadeEnabled;
     SliderEditor* m_fadeDuration;
+
+    QComboBox* m_doubleClick;
+    QComboBox* m_middleClick;
 };
 } // namespace Fooyin

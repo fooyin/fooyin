@@ -80,6 +80,7 @@ public:
         TokLimit       = 40,
         TokPlus        = 41,
         TokMinus       = 42,
+        TokComment     = 43,
     };
 
     struct Token
@@ -96,15 +97,18 @@ public:
     Token peekNext(int delta = 1);
 
     void setWhitespaceMode(WhitespaceMode mode);
+    void setCommentsEnabled(bool enabled);
 
 private:
-    Token scanNext();
+    Token scanNext(bool insideQuote);
     [[nodiscard]] Token makeToken(TokenType type) const;
+    Token comment();
     Token literal();
     Token keyword();
     Token checkKeyword(int start, QAnyStringView rest, TokenType type);
 
     [[nodiscard]] bool isAtEnd() const;
+    [[nodiscard]] bool shouldSkipWhitespace(QChar ch) const;
     QChar advance();
     [[nodiscard]] QChar peek() const;
     [[nodiscard]] int currentLength() const;
@@ -117,5 +121,6 @@ private:
     Token* m_lastToken;
     int m_currentTokenIndex;
     WhitespaceMode m_whitespaceMode;
+    bool m_commentsEnabled;
 };
 } // namespace Fooyin

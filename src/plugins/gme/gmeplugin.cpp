@@ -28,12 +28,10 @@ namespace Fooyin::Gme {
 namespace {
 class GmePluginSettingsProvider : public PluginSettingsProvider
 {
-public:
-    void showSettings(QWidget* parent) override
+protected:
+    QDialog* createSettings(QWidget* parent) override
     {
-        auto* dialog = new GmeSettings(parent);
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
-        dialog->show();
+        return new GmeSettings(parent);
     }
 };
 } // namespace

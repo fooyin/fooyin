@@ -26,6 +26,7 @@
 #include <QBuffer>
 #include <QDir>
 #include <QFile>
+#include <QTemporaryDir>
 
 #include <algorithm>
 #include <memory>
@@ -128,6 +129,32 @@ TEST_F(PlsParserTest, RelativeRemoteEntriesResolveAgainstPlaylistUrl)
     EXPECT_EQ(u"https://example.com/radio/backup/live.ogg"_s, tracks.at(1).filepath());
 }
 
+TEST_F(PlsParserTest, NormalisesNativeSeparators)
+{
+    QTemporaryDir tempDir;
+    ASSERT_TRUE(tempDir.isValid());
+
+    const QString trackPath = tempDir.filePath(u"song.flac"_s);
+    QFile trackFile{trackPath};
+    ASSERT_TRUE(trackFile.open(QIODevice::WriteOnly));
+    trackFile.close();
+
+    QByteArray playlistData = "[playlist]\nFile1=" + QDir::toNativeSeparators(trackPath).toUtf8() + '\n';
+    QBuffer buffer{&playlistData};
+    ASSERT_TRUE(buffer.open(QIODevice::ReadOnly | QIODevice::Text));
+
+    PlaylistParser::ReadPlaylistEntry readEntry;
+    readEntry.readTrack = [](const Track& track) {
+        return track;
+    };
+
+    const auto tracks
+        = m_parser->readPlaylist(&buffer, tempDir.filePath(u"test.pls"_s), QDir{tempDir.path()}, readEntry, false);
+
+    ASSERT_EQ(1, tracks.size());
+    EXPECT_EQ(QDir::fromNativeSeparators(trackPath), tracks.front().filepath());
+}
+
 TEST_F(PlsParserTest, ParsesMixedRelativeFixtureAgainstRemoteBase)
 {
     const QString filepath = u":/playlists/mixedrelative.pls"_s;
@@ -169,7 +196,7 @@ TEST_F(PlsParserTest, SavesPlaylist)
 
     m_parser->savePlaylist(&buffer, u"pls"_s, {first, second}, QDir{u"/music"_s}, PlaylistParser::PathType::Auto, true);
 
-    const QString saved = QString::fromUtf8(output);
+    const QString saved = QString::fromUtf8(output).replace(u"\r\n"_s, u"\n"_s);
     const QString expected{u"[playlist]\n"
                            "File1=https://stream.example.com/main\n"
                            "Title1=Main Stream\n"
@@ -179,5 +206,32 @@ TEST_F(PlsParserTest, SavesPlaylist)
                            "NumberOfEntries=2\n"
                            "Version=2\n"_s};
     EXPECT_EQ(expected, saved);
+}
+
+TEST_F(PlsParserTest, RoundTripsVirtualTracksWithoutResolvingThemAsLocalFiles)
+{
+    const QString filepath = u"cdda:///I5l9cCSFccLKFEKS.7wqSZAorPU-"_s;
+    const Track source{filepath, 4};
+
+    QByteArray output;
+    QBuffer writeBuffer{&output};
+    ASSERT_TRUE(writeBuffer.open(QIODevice::WriteOnly | QIODevice::Text));
+    m_parser->savePlaylist(&writeBuffer, u"pls"_s, {source}, QDir{u"/music"_s}, PlaylistParser::PathType::Relative,
+                           false);
+    EXPECT_TRUE(QString::fromUtf8(output).contains(u"File1=%1#4"_s.arg(filepath)));
+
+    QBuffer readBuffer{&output};
+    ASSERT_TRUE(readBuffer.open(QIODevice::ReadOnly | QIODevice::Text));
+    PlaylistParser::ReadPlaylistEntry readEntry;
+    readEntry.readTrack = [](const Track& track) {
+        return track;
+    };
+
+    const TrackList tracks
+        = m_parser->readPlaylist(&readBuffer, u"/music/disc.pls"_s, QDir{u"/music"_s}, readEntry, true);
+    ASSERT_EQ(1, tracks.size());
+    EXPECT_EQ(filepath, tracks.front().filepath());
+    EXPECT_EQ(4, tracks.front().subsong());
+    EXPECT_TRUE(tracks.front().isVirtual());
 }
 } // namespace Fooyin::Testing

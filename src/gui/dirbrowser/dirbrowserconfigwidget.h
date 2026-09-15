@@ -38,6 +38,7 @@ public:
 protected:
     [[nodiscard]] DirBrowser::ConfigData config() const override;
     void setConfig(const DirBrowser::ConfigData& config) override;
+    void mergeExternalConfig(const DirBrowser::ConfigData& previous, const DirBrowser::ConfigData& current) override;
 
 private:
     QRadioButton* m_treeMode;
@@ -45,7 +46,9 @@ private:
 
     QCheckBox* m_showIcons;
     QCheckBox* m_indentList;
-    QCheckBox* m_showHorizScrollbar;
+    QCheckBox* m_showHeader;
+    QCheckBox* m_restoreSort;
+    QComboBox* m_controlsPosition;
     QCheckBox* m_showControls;
     QCheckBox* m_showLocation;
     QCheckBox* m_showSymLinks;

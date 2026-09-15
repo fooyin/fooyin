@@ -48,6 +48,7 @@ class Application;
 class CoverRepository;
 class LibraryTreeController;
 class LibraryTreeGroupRegistry;
+class LibraryTreeDelegate;
 class LibraryTreeModel;
 class LibraryTreeSortModel;
 class LibraryTreeView;
@@ -89,7 +90,7 @@ public:
         bool sendPlayback{true};
         bool playlistEnabled{false};
         bool autoSwitch{true};
-        bool keepAlive{false};
+        bool preservePlaybackPlaylist{true};
         QString playlistName{LibraryTreeController::defaultPlaylistName()};
         bool restoreState{true};
         bool expandOnSingleClick{false};
@@ -102,6 +103,7 @@ public:
         QString summaryNodeTitle{defaultLibraryTreeSummaryTitle()};
         int rowHeight{0};
         QSize iconSize{36, 36};
+        int artworkCornerRadius{0};
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;
@@ -110,6 +112,9 @@ public:
     void saveDefaults(const ConfigData& config) const;
     void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
+
+Q_SIGNALS:
+    void configChanged();
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
@@ -121,7 +126,7 @@ protected:
 
 private:
     void setupConnections();
-    void reset() const;
+    void reset();
     void populateContextMenu(QMenu* menu);
 
     void changeGrouping(const LibraryTreeGrouping& newGrouping);
@@ -141,10 +146,14 @@ private:
     void dequeueSelectedTracks() const;
 
     void searchChanged(const SearchRequest& request);
+    void refreshSearch();
     [[nodiscard]] bool shouldAutoExpandSearchResults(const TrackList& tracks) const;
     void expandSearchResults();
 
-    void handlePlayback(const QModelIndexList& indexes, int row = 0);
+    [[nodiscard]] TrackList sourceTracks() const;
+
+    void handlePlayback(const QModelIndexList& indexes, int row = 0, bool singleTrackSelection = false);
+    void handlePlaySelection();
     void handlePlayTrack(const QModelIndex& index);
     void handleDoubleClick(const QModelIndex& index);
     void handleMiddleClick(const QModelIndex& index) const;
@@ -155,7 +164,7 @@ private:
     void restoreSelection(const std::vector<Md5Hash>& expandedKeys, const std::vector<Md5Hash>& selectedKeys);
     [[nodiscard]] QByteArray saveState() const;
     void restoreIndexState(const QByteArray& topKey, const std::vector<QByteArray>& keys, int currentIndex = 0);
-    void restoreState(const QByteArray& state);
+    void restoreState(const QByteArray& state, bool force = false);
 
     ActionManager* m_actionManager;
     MusicLibrary* m_library;
@@ -166,12 +175,14 @@ private:
     TrackSelectionController* m_trackSelection;
     SettingsManager* m_settings;
     GuiStyleProvider* m_styleProvider;
+    bool m_styleInitialised;
 
     SignalThrottler* m_resetThrottler;
     LibraryTreeGrouping m_grouping;
 
     QVBoxLayout* m_layout;
     LibraryTreeView* m_libraryTree;
+    LibraryTreeDelegate* m_delegate;
     LibraryTreeModel* m_model;
     LibraryTreeSortModel* m_sortProxy;
 
@@ -188,9 +199,11 @@ private:
     QString m_currentSearch;
     EmptySearchMode m_currentEmptySearchMode;
     TrackList m_filteredTracks;
+    uint64_t m_searchRevision{0};
 
     bool m_updating;
     QByteArray m_pendingState;
+    QByteArray m_pendingResetState;
     ConfigData m_config;
 
     Playlist* m_playlist;

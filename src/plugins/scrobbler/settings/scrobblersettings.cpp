@@ -38,5 +38,6 @@ ScrobblerSettings::ScrobblerSettings(SettingsManager* settings)
     settings->createSetting<AlbumField>(u"%album%"_s, u"Scrobbling/AlbumField"_s);
     settings->createSetting<ArtistField>(u"%artist%"_s, u"Scrobbling/ArtistField"_s);
     settings->createSetting<AlbumArtistField>(u"$meta(albumartist)"_s, u"Scrobbling/AlbumArtistField"_s);
+    settings->createSetting<SyncPlaybackStats>(false, u"Scrobbling/SyncPlaybackStats"_s);
 }
 } // namespace Fooyin::Scrobbler

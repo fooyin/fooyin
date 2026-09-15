@@ -5,6 +5,8 @@ create_fooyin_plugin_internal(
             Qt6::Network
     SOURCES customservicedialog.cpp
             customservicedialog.h
+            lovedcache.cpp
+            lovedcache.h
             scrobbler.cpp
             scrobbler.h
             scrobblerauthsession.cpp

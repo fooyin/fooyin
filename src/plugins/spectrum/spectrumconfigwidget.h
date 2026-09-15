@@ -41,10 +41,13 @@ class SpectrumConfigDialog : public WidgetConfigDialog<SpectrumWidget, SpectrumW
 public:
     explicit SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* parent = nullptr);
 
-private:
+protected:
     [[nodiscard]] SpectrumWidget::ConfigData config() const override;
     void setConfig(const SpectrumWidget::ConfigData& config) override;
+    void mergeExternalConfig(const SpectrumWidget::ConfigData& previous,
+                             const SpectrumWidget::ConfigData& current) override;
 
+private:
     QSpinBox* m_bandCount;
     QSpinBox* m_barSpacing;
     QSpinBox* m_barSections;
@@ -65,7 +68,9 @@ private:
     QSpinBox* m_peakHoldTime;
     QSpinBox* m_peakGravity;
     QComboBox* m_updateFps;
+    QComboBox* m_fftSizingMode;
     QComboBox* m_fftSize;
+    QSpinBox* m_fftDuration;
     QComboBox* m_windowFunction;
     QComboBox* m_drawStyle;
     QCheckBox* m_showTopLabels;

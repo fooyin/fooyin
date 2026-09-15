@@ -37,6 +37,7 @@
 #include <algorithm>
 #include <limits>
 #include <set>
+#include <unordered_set>
 
 using namespace Qt::StringLiterals;
 
@@ -47,6 +48,27 @@ constexpr auto OpaqueAltAlphaThreshold = 185;
 constexpr auto TransparentAltAlpha     = 80;
 
 namespace {
+struct ModelIndexHash
+{
+    size_t operator()(const QModelIndex& index) const noexcept
+    {
+        return qHash(index);
+    }
+};
+
+void makeBaseRowTransparent(QStyleOptionViewItem& option)
+{
+    QColor base = option.palette.color(QPalette::Base);
+    base.setAlpha(base.alpha() >= OpaqueAltAlphaThreshold ? 0 : base.alpha());
+    option.palette.setColor(QPalette::Base, base);
+
+    if(option.features.testFlag(QStyleOptionViewItem::Alternate)) {
+        QColor alternate = option.palette.color(QPalette::AlternateBase);
+        alternate.setAlpha(alternate.alpha() >= OpaqueAltAlphaThreshold ? TransparentAltAlpha : alternate.alpha());
+        option.palette.setColor(QPalette::AlternateBase, alternate);
+    }
+}
+
 void selectChildren(QAbstractItemModel* model, const QModelIndex& parentIndex, QItemSelection& selection)
 {
     if(model->hasChildren(parentIndex)) {
@@ -703,6 +725,7 @@ void TreeView::dataChanged(const QModelIndex& topLeft, const QModelIndex& bottom
     }
 
     if(sizeChanged) {
+        m_p->m_itemOffsetsDirty = true;
         updateScrollBars();
         viewport()->update();
     }
@@ -1192,6 +1215,13 @@ void TreeView::drawRow(QPainter* painter, const QStyleOptionViewItem& option, co
         // Span first column of parents
         opt.rect.setX(0);
         opt.rect.setWidth(header()->length());
+
+        const auto bg = index.data(Qt::BackgroundRole).value<QBrush>();
+        if(m_view->property("transparent_base_rows").toBool() && !opt.state.testFlag(QStyle::State_Selected)
+           && bg.style() == Qt::NoBrush) {
+            makeBaseRowTransparent(opt);
+        }
+
         m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, m_view);
         m_view->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_view);
         delegate(index)->paint(painter, opt, index);
@@ -1248,6 +1278,7 @@ void TreeView::drawRow(QPainter* painter, const QStyleOptionViewItem& option, co
 
         if(m_view->selectionModel()->isSelected(modelIndex)) {
             opt.state |= QStyle::State_Selected;
+            opt.features.setFlag(QStyleOptionViewItem::Alternate, false);
         }
         if(rowFocused && (current == modelIndex)) {
             currentRowHasFocus = true;
@@ -1301,8 +1332,7 @@ void TreeView::drawRowBackground(QPainter* painter, const QStyleOptionViewItem& 
 {
     const auto bg                      = index.data(Qt::BackgroundRole).value<QBrush>();
     const bool transparentBase         = m_view->property("transparent_base_rows").toBool();
-    const bool preserveStyleBackground = option.state.testFlag(QStyle::State_Selected)
-                                      || option.state.testFlag(QStyle::State_MouseOver) || bg.style() != Qt::NoBrush;
+    const bool preserveStyleBackground = option.state.testFlag(QStyle::State_Selected) || bg.style() != Qt::NoBrush;
 
     const auto paintRects = m_p->rectsToPaint(index, option, y);
     for(const auto& rect : paintRects) {
@@ -1311,16 +1341,7 @@ void TreeView::drawRowBackground(QPainter* painter, const QStyleOptionViewItem& 
             opt.rect = rect;
 
             if(transparentBase && !preserveStyleBackground) {
-                QColor base = opt.palette.color(QPalette::Base);
-                base.setAlpha(base.alpha() >= OpaqueAltAlphaThreshold ? 0 : base.alpha());
-                opt.palette.setColor(QPalette::Base, base);
-
-                if(opt.features.testFlag(QStyleOptionViewItem::Alternate)) {
-                    QColor alternate = opt.palette.color(QPalette::AlternateBase);
-                    alternate.setAlpha(alternate.alpha() >= OpaqueAltAlphaThreshold ? TransparentAltAlpha
-                                                                                    : alternate.alpha());
-                    opt.palette.setColor(QPalette::AlternateBase, alternate);
-                }
+                makeBaseRowTransparent(opt);
             }
 
             m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, m_view);
@@ -1827,7 +1848,6 @@ void IconView::doItemLayout()
 
     int deltaSegPosition{0};
     int segPosition{topLeft.y()};
-    int rowStartPosition{segStartPosition};
 
     const bool useConfiguredGridSpacing = useIconGaps();
     const bool fixedGridSpacing         = useConfiguredGridSpacing && m_p->m_iconHorizontalGap >= 0;
@@ -1860,6 +1880,19 @@ void IconView::doItemLayout()
     const int itmWidth            = useConfiguredGridSpacing ? itemWidth(0) : totalWidthAvailable / m_segmentSize;
     const int maxPadding          = static_cast<int>(totalWidthAvailable * maxPaddingRatio);
 
+    int gridStartPosition{segStartPosition};
+    if(fixedGridSpacing) {
+        const int nextRowWidth = ((m_segmentSize + 1) * itmWidth) + (m_segmentSize * m_itemSpacing);
+        if(nextRowWidth > totalWidthAvailable) {
+            const int gridWidth      = (m_segmentSize * itmWidth) + (std::max(0, m_segmentSize - 1) * m_itemSpacing);
+            const int remainingWidth = totalWidthAvailable - gridWidth;
+            gridStartPosition += std::max(0, remainingWidth / 2);
+        }
+        else {
+            gridStartPosition += MinItemSpacing;
+        }
+    }
+
     if(!fixedGridSpacing) {
         const int totalPadding = totalWidthAvailable - totalItemWidth;
         m_itemSpacing          = std::max(0, totalPadding / (m_segmentSize + 1));
@@ -1880,22 +1913,11 @@ void IconView::doItemLayout()
             deltaSegPosition = 0;
         }
 
-        if(segColumn == 0) {
-            rowStartPosition = segStartPosition;
-
-            if(fixedGridSpacing) {
-                const int itemsOnRow     = std::min(m_segmentSize, count - i);
-                const int rowWidth       = (itemsOnRow * itmWidth) + (std::max(0, itemsOnRow - 1) * m_itemSpacing);
-                const int remainingWidth = totalWidthAvailable - rowWidth;
-                rowStartPosition += std::max(0, remainingWidth / 2);
-            }
-        }
-
         if(!useConfiguredGridSpacing) {
             item.x = segStartPosition + (segColumn * itmWidth);
         }
         else if(fixedGridSpacing) {
-            item.x = rowStartPosition + (segColumn * (itmWidth + m_itemSpacing));
+            item.x = gridStartPosition + (segColumn * (itmWidth + m_itemSpacing));
         }
         else {
             item.x = segStartPosition + m_itemSpacing + (segColumn * (itmWidth + m_itemSpacing));
@@ -2733,7 +2755,6 @@ bool ExpandedTreeViewPrivate::itemHasChildren(int i) const
 void ExpandedTreeViewPrivate::invalidateHeightCache(int item) const
 {
     m_viewItems[item].height = 0;
-    m_itemOffsetsDirty       = true;
 }
 
 int ExpandedTreeViewPrivate::itemForHomeKey() const
@@ -2837,6 +2858,21 @@ QModelIndexList ExpandedTreeViewPrivate::selectedDraggableIndexes(bool fullRow) 
 
     if(fullRow) {
         const auto selection = m_self->selectionModel()->selection();
+
+        qsizetype indexCount{0};
+        for(const QItemSelectionRange& range : selection) {
+            if(range.isValid()) {
+                indexCount += range.bottom() - range.top() + 1;
+            }
+        }
+        indexes.reserve(indexCount);
+
+        const bool mayOverlap = selection.size() > 1;
+        std::unordered_set<QModelIndex, ModelIndexHash> seenIndexes;
+        if(mayOverlap) {
+            seenIndexes.reserve(indexCount);
+        }
+
         for(const QItemSelectionRange& range : selection) {
             if(!range.isValid()) {
                 continue;
@@ -2847,20 +2883,30 @@ QModelIndexList ExpandedTreeViewPrivate::selectedDraggableIndexes(bool fullRow) 
 
             for(int row{range.top()}; row <= range.bottom(); ++row) {
                 const QModelIndex index = m_model->index(row, column, parent);
-                if(index.isValid() && !indexes.contains(index)) {
+                if(index.isValid() && (m_model->flags(index) & Qt::ItemIsDragEnabled)
+                   && (!mayOverlap || seenIndexes.emplace(index).second)) {
                     indexes.append(index);
                 }
             }
         }
     }
     else {
-        indexes = m_self->selectedIndexes();
-    }
+        const QModelIndexList visibleIndexes = m_view->visibleIndexes(0);
+        indexes.reserve(visibleIndexes.size() * m_header->count());
 
-    auto isNotDragEnabled = [this](const QModelIndex& index) {
-        return !(m_model->flags(index) & Qt::ItemIsDragEnabled);
-    };
-    indexes.removeIf(isNotDragEnabled);
+        for(const QModelIndex& visibleIndex : visibleIndexes) {
+            const QModelIndex parent = visibleIndex.parent();
+            const int columnCount    = m_model->columnCount(parent);
+
+            for(int column{0}; column < columnCount; ++column) {
+                const QModelIndex index = visibleIndex.siblingAtColumn(column);
+                if(!m_self->isIndexHidden(index) && m_self->selectionModel()->isSelected(index)
+                   && (m_model->flags(index) & Qt::ItemIsDragEnabled)) {
+                    indexes.append(index);
+                }
+            }
+        }
+    }
 
     return indexes;
 }
@@ -3575,7 +3621,7 @@ QModelIndex ExpandedTreeView::indexBelow(const QModelIndex& index) const
     p->layoutItems();
 
     const int i = p->viewIndex(index) + 1;
-    if(i > p->itemCount()) {
+    if(i >= p->itemCount()) {
         return {};
     }
 
@@ -4016,6 +4062,7 @@ void ExpandedTreeView::scrollContentsBy(int dx, int dy)
 
     const int itemHeight = p->m_defaultItemHeight <= 0 ? sizeHintForRow(0) : p->m_defaultItemHeight;
     if(p->m_viewItems.empty() || itemHeight == 0) {
+        updateEditorGeometries();
         return;
     }
 
@@ -4026,6 +4073,7 @@ void ExpandedTreeView::scrollContentsBy(int dx, int dy)
     if(std::abs(dy) > std::abs(maxDeltaY)) {
         verticalScrollBar()->update();
         viewport()->update();
+        updateEditorGeometries();
         return;
     }
 
@@ -4055,6 +4103,7 @@ void ExpandedTreeView::scrollContentsBy(int dx, int dy)
     p->m_scrollDelayOffset = {-dx, -dy};
     viewport()->update();
     p->m_scrollDelayOffset = {0, 0};
+    updateEditorGeometries();
 }
 
 void ExpandedTreeView::rowsInserted(const QModelIndex& parent, int start, int end)

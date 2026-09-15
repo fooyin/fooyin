@@ -41,6 +41,8 @@ public:
 protected:
     [[nodiscard]] SpectrogramWidget::ConfigData config() const override;
     void setConfig(const SpectrogramWidget::ConfigData& config) override;
+    void mergeExternalConfig(const SpectrogramWidget::ConfigData& previous,
+                             const SpectrogramWidget::ConfigData& current) override;
 
 private:
     QCheckBox* m_logFrequency;

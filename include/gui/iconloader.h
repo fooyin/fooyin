@@ -44,6 +44,8 @@ namespace Fooyin::Gui {
 /*! Sets the preferred bundled icon theme override and fallback theme. */
 FYGUI_EXPORT bool setThemeIconOverrides(const QString& primaryTheme, const QString& fallbackTheme);
 
+/*! Returns fooyin's multi-resolution application icon, including optical masters for small sizes. */
+FYGUI_EXPORT QIcon applicationIcon();
 /*! Loads an icon by name using the current bundled override, then the system theme, then the bundled fallback. */
 FYGUI_EXPORT QIcon iconFromTheme(const QString& icon);
 /*! Convenience overload for Latin-1 icon names. */

@@ -59,11 +59,13 @@ public:
     Id m_id;
     Context m_context;
     ShortcutList m_defaultKeys;
+    ShortcutList m_globalKeys;
     QString m_defaultText;
     QStringList m_categories;
 
     bool m_active{false};
     bool m_shortcutIsInitialised{false};
+    bool m_globalShortcutRegistered{false};
 
     std::map<Id, QPointer<QAction>> m_contextActionMap;
     ProxyAction* m_action{nullptr};
@@ -156,6 +158,27 @@ void Command::setShortcut(const ShortcutList& keys)
     Q_EMIT shortcutChanged();
 }
 
+void Command::setGlobalShortcuts(const ShortcutList& keys)
+{
+    ShortcutList globalKeys;
+    if(!keys.empty()) {
+        globalKeys.append(keys.front());
+    }
+
+    if(std::exchange(p->m_globalKeys, globalKeys) == globalKeys) {
+        return;
+    }
+
+    Q_EMIT globalShortcutsChanged();
+}
+
+void Command::setGlobalShortcutRegistered(bool registered)
+{
+    if(std::exchange(p->m_globalShortcutRegistered, registered) != registered) {
+        Q_EMIT globalShortcutRegistrationChanged();
+    }
+}
+
 QString Command::stringWithShortcut(const QString& str) const
 {
     return Utils::appendShortcut(str, shortcut());
@@ -194,6 +217,16 @@ ShortcutList Command::defaultShortcuts() const
 ShortcutList Command::shortcuts() const
 {
     return p->m_action->shortcuts();
+}
+
+ShortcutList Command::globalShortcuts() const
+{
+    return p->m_globalKeys;
+}
+
+bool Command::isGlobalShortcutRegistered() const
+{
+    return p->m_globalShortcutRegistered;
 }
 
 QKeySequence Command::shortcut() const

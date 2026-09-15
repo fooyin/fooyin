@@ -21,6 +21,9 @@
 
 #include <QBasicTimer>
 #include <QFileSystemWatcher>
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(LIB_WATCHER)
 
 #include <set>
 

@@ -34,6 +34,7 @@ public:
 
     [[nodiscard]] QStringList extensions() const override;
     [[nodiscard]] bool isSeekable() const override;
+    [[nodiscard]] RepeatHandling repeatHandling() const override;
 
     std::optional<AudioFormat> init(const AudioSource& source, const Track& track, DecoderOptions options) override;
 
@@ -41,10 +42,17 @@ public:
     void seek(uint64_t pos) override;
     AudioBuffer readBuffer(size_t bytes) override;
 
+protected:
+    void playbackHintsChanged(PlaybackHints hints) override;
+
 private:
+    void applyRepeatPolicy();
+
     SettingsManager* m_settings;
     std::unique_ptr<openmpt::module> m_module;
     AudioFormat m_format;
+    int m_boundedRepeatCount;
+    bool m_allowInfiniteRepeat;
     bool m_eof;
 };
 

@@ -158,27 +158,52 @@ void PlaylistWorkspace::savePlaylistState(Playlist* playlist, const PlaylistView
 
 void PlaylistWorkspace::addToHistory(QUndoCommand* command)
 {
-    m_state.addToHistory(m_currentPlaylist, command);
+    addToHistory(m_currentPlaylist, command);
+}
+
+void PlaylistWorkspace::addToHistory(Playlist* playlist, QUndoCommand* command)
+{
+    m_state.addToHistory(playlist, command);
 }
 
 bool PlaylistWorkspace::canUndo() const
 {
-    return m_state.canUndo(m_currentPlaylist);
+    return canUndo(m_currentPlaylist);
+}
+
+bool PlaylistWorkspace::canUndo(Playlist* playlist) const
+{
+    return m_state.canUndo(playlist);
 }
 
 bool PlaylistWorkspace::canRedo() const
 {
-    return m_state.canRedo(m_currentPlaylist);
+    return canRedo(m_currentPlaylist);
+}
+
+bool PlaylistWorkspace::canRedo(Playlist* playlist) const
+{
+    return m_state.canRedo(playlist);
 }
 
 void PlaylistWorkspace::undo()
 {
-    m_state.undo(m_currentPlaylist);
+    undo(m_currentPlaylist);
+}
+
+void PlaylistWorkspace::undo(Playlist* playlist)
+{
+    m_state.undo(playlist);
 }
 
 void PlaylistWorkspace::redo()
 {
-    m_state.redo(m_currentPlaylist);
+    redo(m_currentPlaylist);
+}
+
+void PlaylistWorkspace::redo(Playlist* playlist)
+{
+    m_state.redo(playlist);
 }
 
 void PlaylistWorkspace::clearHistory()

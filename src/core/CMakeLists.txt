@@ -12,6 +12,8 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/engine/conversion/conversiondefs.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/conversion/conversionpathresolver.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/conversion/conversionrunner.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/verification/accuraterip.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/verification/audioverifier.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/dsp/dspnode.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/dsp/dspplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/dsp/processingbuffer.h
@@ -25,6 +27,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/engine/outputplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/pcmframe.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/visualisationservice.h
+    ${CMAKE_SOURCE_DIR}/include/core/library/libraryfilter.h
     ${CMAKE_SOURCE_DIR}/include/core/library/libraryinfo.h
     ${CMAKE_SOURCE_DIR}/include/core/library/libraryutils.h
     ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
@@ -96,6 +99,8 @@ set(SOURCES
     engine/conversion/conversionrunner.cpp
     engine/conversion/outputtransaction.cpp
     engine/conversion/outputtransaction.h
+    engine/verification/accuraterip.cpp
+    engine/verification/audioverifier.cpp
     engine/control/enginetaskqueue.cpp
     engine/control/enginetaskqueue.h
     engine/control/playbackintentreducer.cpp
@@ -165,6 +170,8 @@ set(SOURCES
     engine/input/ffmpeg/ffmpegutils.h
     engine/input/id3utils.cpp
     engine/input/id3utils.h
+    engine/input/playcounttagpolicy.cpp
+    engine/input/playcounttagpolicy.h
     engine/input/ratingtagpolicy.cpp
     engine/input/ratingtagpolicy.h
     engine/input/tagpolicy.cpp
@@ -220,10 +227,16 @@ set(SOURCES
     internalcoresettings.h
     library/librarymanager.cpp
     library/librarymanager.h
+    library/musiclibrary.cpp
     library/libraryfileenumerator.cpp
     library/libraryfileenumerator.h
+    library/libraryfilter.cpp
+    library/libraryfilterregistry.cpp
+    library/libraryfilterregistry.h
     library/librarymonitor.cpp
     library/librarymonitor.h
+    library/librarycuetrackreloader.cpp
+    library/librarycuetrackreloader.h
     library/libraryscanner.cpp
     library/libraryscanner.h
     library/libraryscansession.cpp
@@ -262,6 +275,8 @@ set(SOURCES
     network/remoteioservice.cpp
     playback/playbackcursor.cpp
     playback/playbackcursor.h
+    playback/playbackorder.cpp
+    playback/playbackorder.h
     playback/playbackqueue.cpp
     playback/playbackqueuestore.cpp
     playback/playbackqueuestore.h
@@ -332,16 +347,16 @@ target_link_libraries(
     fooyin_core
     PRIVATE fooyin_version
             fooyin_config
+            Taglib::Taglib
             QCoro6::Core
             ${FFMPEG_LIBRARIES}
             PFFFT::PFFFT
-    PUBLIC Qt6::Core
-           Qt6::Widgets
+            ZLIB::ZLIB
+    PUBLIC Fooyin::Utils
+           Qt6::Core
            Qt6::Sql
            Qt6::Concurrent
            Qt6::Network
-           Taglib::Taglib
-           Fooyin::Utils
 )
 
 target_include_directories(

@@ -87,6 +87,7 @@ public:
     void requestClearCache();
 
 Q_SIGNALS:
+    void configChanged();
     void clearCacheRequested();
 
 protected:

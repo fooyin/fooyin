@@ -23,7 +23,6 @@
 #include "projectmpresetdialog.h"
 #include "projectmview.h"
 
-#include <core/coresettings.h>
 #include <core/engine/enginecontroller.h>
 #include <core/engine/visualisationservice.h>
 #include <utils/actions/actionmanager.h>
@@ -34,7 +33,6 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QApplication>
-#include <QCloseEvent>
 #include <QCursor>
 #include <QDir>
 #include <QEvent>
@@ -47,7 +45,6 @@
 #include <QMenu>
 #include <QOpenGLWindow>
 #include <QPixmap>
-#include <QRandomGenerator>
 #include <QSizePolicy>
 #include <QSplitter>
 #include <QSplitterHandle>
@@ -100,9 +97,6 @@ constexpr auto NextPresetAction     = "ProjectM.NextPreset";
 constexpr auto RandomPresetAction   = "ProjectM.RandomPreset";
 constexpr auto LockPresetAction     = "ProjectM.LockPreset";
 constexpr auto ShufflePresetsAction = "ProjectM.ShufflePresets";
-
-constexpr auto GeometryKey            = "Geometry"_L1;
-constexpr auto ProjectMWindowStateKey = "ProjectM/WindowState"_L1;
 
 namespace Fooyin::ProjectM {
 namespace {
@@ -165,10 +159,10 @@ ProjectMWidget::ProjectMWidget(ActionManager* actionManager, EngineController* e
     , m_randomPresetCmd{nullptr}
     , m_lockPresetCmd{nullptr}
     , m_shufflePresetsCmd{nullptr}
+    , m_standaloneWindowState{Qt::WindowNoState}
     , m_rememberPreset{false}
     , m_detachedWindowFullScreen{false}
     , m_splitterResizeActive{false}
-    , m_topLevelStateLoaded{false}
 {
     m_actionManager->addContextObject(m_context);
 
@@ -183,6 +177,7 @@ ProjectMWidget::ProjectMWidget(ActionManager* actionManager, EngineController* e
 
     m_viewContainer->setFocusPolicy(Qt::StrongFocus);
     m_viewContainer->installEventFilter(this);
+    m_view->installEventFilter(this);
 
     m_resizeSnapshot->setAttribute(Qt::WA_TransparentForMouseEvents);
     m_resizeSnapshot->setScaledContents(true);
@@ -201,7 +196,16 @@ ProjectMWidget::ProjectMWidget(ActionManager* actionManager, EngineController* e
         const bool showView = ready || !m_view->hasInitialised() || m_view->isRecreating();
         m_viewContainer->setVisible(showView);
         m_statusLabel->setVisible(!showView);
-        m_statusLabel->setText(text);
+
+        QString statusText{text};
+        if(!ready && m_library.presets().empty()) {
+            if(m_library.isReady()) {
+                statusText = tr("No projectM presets were found in the configured location.");
+            }
+            statusText += u"\n\n"_s + tr("Right-click to configure presets.");
+        }
+        m_statusLabel->setText(statusText);
+
         updateActionState();
     });
     QObject::connect(m_view, &ProjectMView::activated, m_viewContainer, [this]() { m_viewContainer->setFocus(); });
@@ -216,6 +220,11 @@ ProjectMWidget::ProjectMWidget(ActionManager* actionManager, EngineController* e
         }
     });
 
+    const auto updateIdleState = [this](Engine::PlaybackState state) {
+        m_view->setPlaybackIdle(state == Engine::PlaybackState::Stopped || state == Engine::PlaybackState::Error);
+    };
+    QObject::connect(engine, &EngineController::engineStateChanged, this, updateIdleState);
+    updateIdleState(engine->engineState());
     m_view->setVisualisationSession(engine->visualisationService()->createSession());
 }
 
@@ -310,6 +319,8 @@ void ProjectMWidget::loadLayoutData(const QJsonObject& layout)
     }
 
     updateActionState();
+
+    Q_EMIT configChanged();
 }
 
 ProjectMWidget::ConfigData ProjectMWidget::factoryConfig() const
@@ -363,6 +374,8 @@ void ProjectMWidget::applyConfig(const ConfigData& config)
     scanPresetLibrary();
     m_view->setPresetDirs(presetDirs(m_config));
     m_view->applySettings(m_config.settings);
+
+    Q_EMIT configChanged();
 }
 
 void ProjectMWidget::saveDefaults(const ConfigData& config) const
@@ -450,6 +463,14 @@ bool ProjectMWidget::eventFilter(QObject* watched, QEvent* event)
         }
     }
 
+    if(watched == m_view && event->type() == QEvent::KeyPress && isWindow() && isFullScreen()) {
+        const auto* keyEvent = static_cast<QKeyEvent*>(event);
+        if(keyEvent->key() == Qt::Key_Escape || keyEvent->key() == Qt::Key_F11) {
+            leaveFullScreen();
+            return true;
+        }
+    }
+
     if(event->type() == QEvent::MouseButtonPress
        && std::ranges::any_of(m_splitterEventObjects, [watched](const auto& object) { return object == watched; })) {
         const auto* mouseEvent = static_cast<QMouseEvent*>(event);
@@ -461,6 +482,15 @@ bool ProjectMWidget::eventFilter(QObject* watched, QEvent* event)
     return FyWidget::eventFilter(watched, event);
 }
 
+void ProjectMWidget::changeEvent(QEvent* event)
+{
+    FyWidget::changeEvent(event);
+
+    if(event->type() == QEvent::WindowStateChange) {
+        updateActionState();
+    }
+}
+
 void ProjectMWidget::contextMenuEvent(QContextMenuEvent* event)
 {
     showContextMenu(event->globalPos());
@@ -468,26 +498,14 @@ void ProjectMWidget::contextMenuEvent(QContextMenuEvent* event)
 
 void ProjectMWidget::showEvent(QShowEvent* event)
 {
-    if(isWindowWidget() && !m_topLevelStateLoaded) {
-        loadTopLevelState();
-    }
-
     FyWidget::showEvent(event);
     installSplitterEventFilters();
 }
 
-void ProjectMWidget::closeEvent(QCloseEvent* event)
-{
-    if(isWindowWidget()) {
-        saveTopLevelState();
-    }
-
-    FyWidget::closeEvent(event);
-}
-
 void ProjectMWidget::openConfigDialog()
 {
-    showConfigDialog(new ProjectMConfigDialog(this, m_fullScreenWindow ? m_fullScreenWindow.data() : this));
+    showConfigDialog(new ProjectMConfigDialog(this, m_fullScreenWindow ? m_fullScreenWindow.data() : this),
+                     Qt::NonModal);
 }
 
 void ProjectMWidget::setupActions()
@@ -547,11 +565,12 @@ void ProjectMWidget::setupActions()
 
 void ProjectMWidget::updateActionState()
 {
-    const bool ready = m_view->isReady();
+    const bool ready      = m_view->isReady();
+    const bool fullScreen = m_detachedWindowFullScreen || (isWindow() && isFullScreen());
 
-    m_fullScreenAction->setEnabled(ready || m_fullScreenWindow);
-    m_fullScreenAction->setText(m_detachedWindowFullScreen ? tr("E&xit Full Screen") : tr("&Full Screen"));
-    m_fullScreenAction->setChecked(m_detachedWindowFullScreen);
+    m_fullScreenAction->setEnabled(ready || m_fullScreenWindow || fullScreen);
+    m_fullScreenAction->setText(fullScreen ? tr("E&xit Full Screen") : tr("&Full Screen"));
+    m_fullScreenAction->setChecked(fullScreen);
     m_selectPresetAction->setEnabled(ready);
     m_previousPresetAction->setEnabled(ready);
     m_nextPresetAction->setEnabled(ready);
@@ -640,7 +659,15 @@ void ProjectMWidget::showPresetDialog()
 
 void ProjectMWidget::toggleFullScreen()
 {
-    if(m_fullScreenWindow && m_detachedWindowFullScreen) {
+    if(isWindow()) {
+        if(isFullScreen()) {
+            leaveFullScreen();
+        }
+        else {
+            enterFullScreen();
+        }
+    }
+    else if(m_fullScreenWindow && m_detachedWindowFullScreen) {
         leaveFullScreen();
     }
     else if(m_fullScreenWindow) {
@@ -690,11 +717,26 @@ void ProjectMWidget::openDetachedWindow(bool fullScreen)
 
 void ProjectMWidget::enterFullScreen()
 {
-    openDetachedWindow(true);
+    if(isWindow()) {
+        m_standaloneWindowState = windowState();
+        showFullScreen();
+        updateActionState();
+    }
+    else {
+        openDetachedWindow(true);
+    }
 }
 
 void ProjectMWidget::leaveFullScreen()
 {
+    if(isWindow()) {
+        if(isFullScreen()) {
+            setWindowState(m_standaloneWindowState);
+            updateActionState();
+        }
+        return;
+    }
+
     if(!m_fullScreenWindow) {
         return;
     }
@@ -739,15 +781,7 @@ void ProjectMWidget::scanPresetLibrary()
 
 void ProjectMWidget::selectRandomPreset()
 {
-    const auto& presets = m_library.presets();
-    if(presets.empty()) {
-        m_view->selectRandomPreset();
-        saveSelectedPreset();
-        return;
-    }
-
-    const int index = QRandomGenerator::global()->bounded(static_cast<int>(presets.size()));
-    m_view->selectPreset(presets.at(static_cast<size_t>(index)).path);
+    m_view->selectRandomPreset();
     saveSelectedPreset();
 }
 
@@ -778,6 +812,8 @@ void ProjectMWidget::setPresetDuration(int seconds)
     m_config                         = normaliseConfig(m_config);
     m_view->applySettings(m_config.settings);
     updateActionState();
+
+    Q_EMIT configChanged();
 }
 
 void ProjectMWidget::installSplitterEventFilters()
@@ -854,32 +890,4 @@ void ProjectMWidget::updateResizeSnapshotGeometry()
     }
 }
 
-bool ProjectMWidget::isWindowWidget() const
-{
-    return parentWidget() == nullptr;
-}
-
-void ProjectMWidget::saveTopLevelState()
-{
-    QJsonObject state;
-    saveLayoutData(state);
-    state[GeometryKey] = QString::fromUtf8(saveGeometry().toBase64());
-
-    FyStateSettings settings;
-    settings.setValue(ProjectMWindowStateKey, state);
-}
-
-void ProjectMWidget::loadTopLevelState()
-{
-    const FyStateSettings settings;
-    const QJsonObject state = settings.value(ProjectMWindowStateKey).toJsonObject();
-    if(!state.isEmpty()) {
-        loadLayoutData(state);
-        if(state.contains(GeometryKey)) {
-            restoreGeometry(QByteArray::fromBase64(state.value(GeometryKey).toString().toUtf8()));
-        }
-    }
-
-    m_topLevelStateLoaded = true;
-}
 } // namespace Fooyin::ProjectM

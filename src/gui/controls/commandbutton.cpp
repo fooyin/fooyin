@@ -263,7 +263,7 @@ void CommandButton::contextMenuEvent(QContextMenuEvent* event)
 
 void CommandButton::openConfigDialog()
 {
-    showConfigDialog(new CommandButtonConfigDialog(this, m_actionManager, this));
+    showConfigDialog(new CommandButtonConfigDialog(this, m_actionManager, this), Qt::NonModal);
 }
 
 CommandButton::ConfigData CommandButton::configFromLayout(const QJsonObject& layout) const

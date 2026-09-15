@@ -47,10 +47,12 @@ PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* pla
     , m_prev{new ToolButton(settings, this)}
     , m_playPause{new ToolButton(settings, this)}
     , m_next{new ToolButton(settings, this)}
+    , m_randomTrack{new ToolButton(settings, this)}
     , m_showStop{true}
     , m_showPrev{true}
     , m_showPlayPause{true}
     , m_showNext{true}
+    , m_showRandomTrack{false}
 {
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins({});
@@ -60,6 +62,7 @@ PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* pla
     layout->addWidget(m_prev);
     layout->addWidget(m_playPause);
     layout->addWidget(m_next);
+    layout->addWidget(m_randomTrack);
 
     if(auto* stopCmd = m_actionManager->command(Constants::Actions::Stop)) {
         m_stop->setDefaultAction(stopCmd->action());
@@ -73,7 +76,11 @@ PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* pla
     if(auto* nextCmd = m_actionManager->command(Constants::Actions::Next)) {
         m_next->setDefaultAction(nextCmd->action());
     }
+    if(auto* randomTrackCmd = m_actionManager->command(Constants::Actions::RandomTrack)) {
+        m_randomTrack->setDefaultAction(randomTrackCmd->action());
+    }
 
+    m_randomTrack->hide();
     updateIcons();
 
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &PlayerControl::stateChanged);
@@ -93,10 +100,11 @@ QString PlayerControl::layoutName() const
 
 void PlayerControl::saveLayoutData(QJsonObject& layout)
 {
-    layout["ShowStop"_L1]      = m_showStop;
-    layout["ShowPrevious"_L1]  = m_showPrev;
-    layout["ShowPlayPause"_L1] = m_showPlayPause;
-    layout["ShowNext"_L1]      = m_showNext;
+    layout["ShowStop"_L1]        = m_showStop;
+    layout["ShowPrevious"_L1]    = m_showPrev;
+    layout["ShowPlayPause"_L1]   = m_showPlayPause;
+    layout["ShowNext"_L1]        = m_showNext;
+    layout["ShowRandomTrack"_L1] = m_showRandomTrack;
 }
 
 void PlayerControl::loadLayoutData(const QJsonObject& layout)
@@ -117,6 +125,9 @@ void PlayerControl::loadLayoutData(const QJsonObject& layout)
     }
     if(layout.contains("ShowNext"_L1)) {
         updateButton(m_next, m_showNext, layout.value("ShowNext"_L1).toBool());
+    }
+    if(layout.contains("ShowRandomTrack"_L1)) {
+        updateButton(m_randomTrack, m_showRandomTrack, layout.value("ShowRandomTrack"_L1).toBool());
     }
 }
 
@@ -139,6 +150,7 @@ void PlayerControl::contextMenuEvent(QContextMenuEvent* event)
     setupButtonControl(tr("Show Previous"), m_prev, &m_showPrev);
     setupButtonControl(tr("Show Play/Pause"), m_playPause, &m_showPlayPause);
     setupButtonControl(tr("Show Next"), m_next, &m_showNext);
+    setupButtonControl(tr("Show Random Track"), m_randomTrack, &m_showRandomTrack);
 
     menu->popup(event->globalPos());
 }
@@ -148,6 +160,7 @@ void PlayerControl::updateIcons() const
     m_stop->setIcon(Gui::iconFromTheme(Constants::Icons::Stop));
     m_prev->setIcon(Gui::iconFromTheme(Constants::Icons::Prev));
     m_next->setIcon(Gui::iconFromTheme(Constants::Icons::Next));
+    m_randomTrack->setIcon(Gui::iconFromTheme(Constants::Icons::RandomPlay));
     stateChanged(m_playerController->playState());
 }
 

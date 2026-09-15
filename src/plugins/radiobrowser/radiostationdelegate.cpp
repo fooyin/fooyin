@@ -426,6 +426,7 @@ void drawColumnItem(QPainter* painter, const QStyleOptionViewItem& option, const
     }
 
     painter->save();
+    painter->setClipRect(option.rect, Qt::IntersectClip);
 
     const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);

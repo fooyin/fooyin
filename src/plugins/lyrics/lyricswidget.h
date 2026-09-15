@@ -79,8 +79,8 @@ public:
         bool showScrollbar{true};
         int alignment{Qt::AlignCenter};
         int lineSpacing{5};
-        bool centreFirstSyncedLine{false};
-        bool centreLastSyncedLine{true};
+        bool centreFirstLine{false};
+        bool centreLastLine{true};
         int progressMode{static_cast<int>(ProgressMode::Off)};
         QMargins margins{Defaults::margins()};
         QVariant colours;
@@ -96,6 +96,9 @@ public:
     void saveDefaults(const ConfigData& config) const;
     void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
+
+Q_SIGNALS:
+    void configChanged();
 
 protected:
     void timerEvent(QTimerEvent* event) override;
@@ -125,9 +128,11 @@ private:
     void scrollToCurrentLine(int scrollValue);
     void updateScrollMode(ScrollMode mode);
 
-    void checkStartAutoScrollPos(uint64_t pos);
-    void checkStartAutoScroll(int startValue = -1);
-    void updateAutoScroll(int startValue);
+    void syncAutoScroll(uint64_t position);
+    void resumeAutoScroll();
+    void startAutoScroll(uint64_t position, bool syncPosition);
+    void stopAutoScroll();
+
     void updateEdgeFadeState();
     [[nodiscard]] bool shouldEnableEdgeFade() const;
 

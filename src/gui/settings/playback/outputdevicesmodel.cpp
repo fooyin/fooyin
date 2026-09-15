@@ -74,7 +74,7 @@ QVariant OutputDevicesModel::data(const QModelIndex& index, int role) const
     if(role == Qt::TextAlignmentRole) {
         switch(index.column()) {
             case DeviceColumn:
-                return {Qt::AlignVCenter | Qt::AlignLeft};
+                return QVariant::fromValue(Qt::AlignVCenter | Qt::AlignLeft);
             case DspColumn:
             case BitsColumn:
                 return Qt::AlignCenter;

@@ -115,6 +115,7 @@ private:
     void stopAfterTrack(PlaylistWidget* widget) const;
     void handlePlayingTrackChanged(PlaylistWidget* widget, const PlaylistTrack& track) const;
     void selectTrackIds(PlaylistWidget* widget, const std::vector<int>& ids) const;
+    void selectTracks(PlaylistWidget* widget, const TrackList& tracks) const;
     void filterTracks(PlaylistWidget* widget, const PlaylistTrackList& tracks);
     void ensureActions(QWidget* parent);
 

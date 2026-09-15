@@ -29,6 +29,8 @@
 
 #include <chrono>
 #include <memory>
+#include <optional>
+#include <stop_token>
 #include <utility>
 
 namespace Fooyin {
@@ -105,6 +107,10 @@ public:
         //! Allow decoder to update `Track` metadata after `init()`.
         //! Useful when duration/fields depend on decoder options.
         UpdateTracks = 1 << 3,
+        //! Select source policies intended for offline conversion/extraction.
+        ForConversion = 1 << 4,
+        //! Enable strict bitstream and checksum validation where supported.
+        VerifyIntegrity = 1 << 5,
     };
     Q_DECLARE_FLAGS(DecoderOptions, DecoderFlag)
     Q_FLAG(DecoderOptions)
@@ -117,6 +123,15 @@ public:
     };
     Q_DECLARE_FLAGS(PlaybackHints, PlaybackHint)
     Q_FLAG(PlaybackHints)
+
+    enum class RepeatHandling : uint8_t
+    {
+        //! Repeat-track playback is performed by transitioning to a new playback occurrence.
+        EngineTransition = 0,
+        //! The decoder loops its current input indefinitely while repeat-track is enabled.
+        DecoderLoop,
+    };
+    Q_ENUM(RepeatHandling)
 
     enum class ReadStatus : uint8_t
     {
@@ -161,6 +176,12 @@ public:
         }
     };
 
+    struct TimedTrackChange
+    {
+        uint64_t timestampMs{0};
+        Track track;
+    };
+
     AudioDecoder();
     virtual ~AudioDecoder();
 
@@ -174,6 +195,12 @@ public:
      * Base class implementation returns an empty list.
      */
     [[nodiscard]] virtual QStringList preferredExtensions() const;
+    /*!
+     * Returns URI schemes this decoder handles directly without a QIODevice.
+     * Scheme names are matched case-insensitively and should omit the trailing colon.
+     * Base class implementation returns an empty list.
+     */
+    [[nodiscard]] virtual QStringList supportedSchemes() const;
     /*!
      * Returns @c true if this decoder can consume remote/network-backed sources
      * supplied by AudioLoader. Base implementation returns @c false.
@@ -192,6 +219,23 @@ public:
      */
     [[nodiscard]] virtual bool isSeekable() const = 0;
     /*!
+     * Returns whether this decoder may read while another decoder instance is active.
+     * Base implementation returns true.
+     */
+    [[nodiscard]] virtual bool allowsConcurrentDecoding() const;
+    /*!
+     * Returns the minimum decoded audio reserve preferred before playback starts or resumes.
+     * A value of zero selects the engine's normal low-latency behaviour.
+     */
+    [[nodiscard]] virtual int playbackPrebufferMs() const;
+    //! Drains non-fatal source diagnostics accumulated since the previous call.
+    [[nodiscard]] virtual QStringList takeWarnings();
+    /*!
+     * Returns which component owns repeat-track playback for this decoder.
+     * Base implementation returns EngineTransition.
+     */
+    [[nodiscard]] virtual RepeatHandling repeatHandling() const;
+    /*!
      * Returns @c true if the current track is being repeated/looped forever.
      * @note Called only after `init()` succeeds.
      */
@@ -207,6 +251,8 @@ public:
      * @note Called only when `trackHasChanged()` returns true.
      */
     [[nodiscard]] virtual Track changedTrack() const;
+    /*! Returns and removes the next timestamped metadata change reported by the demuxer. */
+    [[nodiscard]] virtual std::optional<TimedTrackChange> takeTimedTrackChange();
     /*!
      * Returns the current variable/dynamic bitrate.
      * @note this should return 0 if the file isn't encoded with VBR.
@@ -234,6 +280,14 @@ public:
      * Base class implementation does nothing.
      */
     virtual void start();
+    /*!
+     * Request cancellation of an in-progress blocking decoder operation.
+     *
+     * This may be called from a control thread while `init()`, `readAudio()`,
+     * or `seek()` is running on a worker. It is thread-safe, returns promptly,
+     * and does not tear down decoder state.
+     */
+    void requestAbort();
     /*!
      * Stop and deinitialise decoder state.
      * Should reset to pre-`init()` state.
@@ -264,6 +318,14 @@ public:
      * identify whether that was EOF, would-block, or an error.
      */
     virtual AudioBuffer readBuffer(size_t bytes) = 0;
+
+protected:
+    //! Called on the decoder worker thread when runtime playback policy changes.
+    virtual void playbackHintsChanged(PlaybackHints hints);
+    //! Interrupts a backend read after requestAbort(); may be called from another thread.
+    virtual void interruptRead();
+    //! Shared cancellation token for decoder backends and blocking input devices.
+    [[nodiscard]] std::stop_token abortToken() const noexcept;
 
 private:
     std::unique_ptr<AudioDecoderPrivate> p;
@@ -305,6 +367,12 @@ public:
      * Base class implementation returns an empty list.
      */
     [[nodiscard]] virtual QStringList preferredExtensions() const;
+    /*!
+     * Returns URI schemes this reader handles directly without a QIODevice.
+     * Scheme names are matched case-insensitively and should omit the trailing colon.
+     * Base class implementation returns an empty list.
+     */
+    [[nodiscard]] virtual QStringList supportedSchemes() const;
     /*!
      * Returns @c true if this reader can consume remote/network-backed sources
      * supplied by AudioLoader. Base implementation returns @c false.
@@ -365,9 +433,9 @@ using ReaderCreator = std::function<std::unique_ptr<AudioReader>()>;
 class FYCORE_EXPORT ArchiveReader
 {
 public:
-    using ReadEntryCallback      = std::function<void(ArchiveEntryData&&)>;
-    using ReadEntryInfoCallback  = std::function<bool(const ArchiveEntryInfo&)>;
-    using ShouldContinueCallback = std::function<bool()>;
+    using ReadEntryCallback     = std::function<void(ArchiveEntryData&&)>;
+    using ReadEntryInfoCallback = std::function<bool(const ArchiveEntryInfo&)>;
+    using StopRequestedCallback = std::function<bool()>;
 
     virtual ~ArchiveReader() = default;
 
@@ -397,24 +465,26 @@ public:
     /*!
      * Copies the file within the archive at @p file into @p device.
      * If the file can't be found or writing fails, this should return false.
+     * Long-running archive reads should stop when @p stopRequested returns true.
      * @note Called only after `init()` returns true.
      */
-    virtual bool copyEntryToDevice(const QString& file, QIODevice* device,
-                                   const ShouldContinueCallback& shouldContinue);
+    virtual bool copyEntryToDevice(const QString& file, QIODevice* device, const StopRequestedCallback& stopRequested);
     /*!
      * Reads metadata for all entries in the archive.
      * The callback @p readEntry should return false to stop iteration.
+     * Long-running archive reads should stop when @p stopRequested returns true.
      * @returns true if entries were read successfully.
      * @note Called only after `init()` returns true.
      */
-    virtual bool readEntries(const ReadEntryInfoCallback& readEntry);
+    virtual bool readEntries(const ReadEntryInfoCallback& readEntry, const StopRequestedCallback& stopRequested);
     /*!
      * Reads all files in the archive.
      * The callback @p readEntry should be used to read each file in the archive.
+     * Long-running entry reads should stop when @p stopRequested returns true.
      * @returns true if tracks were read successfully.
      * @note Called only after `init()` returns true.
      */
-    virtual bool readTracks(ReadEntryCallback readEntry) = 0;
+    virtual bool readTracks(ReadEntryCallback readEntry, const StopRequestedCallback& stopRequested) = 0;
     /*!
      * Reads artwork within the archive for the given Track @p track.
      * @returns image data.

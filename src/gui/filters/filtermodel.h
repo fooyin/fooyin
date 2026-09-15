@@ -1,0 +1,108 @@
+/*
+ * Fooyin
+ * Copyright © 2023, Luke Taylor <luket@pm.me>
+ *
+ * Fooyin is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Fooyin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#pragma once
+
+#include "fygui_export.h"
+
+#include "filterfwd.h"
+#include "filteritem.h"
+#include "filterrows.h"
+
+#include <core/track.h>
+#include <gui/coverprovider.h>
+#include <utils/stringcollator.h>
+#include <utils/treemodel.h>
+
+#include <QSortFilterProxyModel>
+
+namespace Fooyin {
+class CoverProvider;
+class MusicLibrary;
+class SettingsManager;
+
+namespace Filters {
+class FilterModelPrivate;
+
+class FYGUI_EXPORT FilterSortModel : public QSortFilterProxyModel
+{
+    Q_OBJECT
+
+public:
+    explicit FilterSortModel(QObject* parent = nullptr);
+
+protected:
+    [[nodiscard]] bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;
+
+private:
+    StringCollator m_collator;
+};
+
+class FYGUI_EXPORT FilterModel : public TreeModel<FilterItem>
+{
+    Q_OBJECT
+
+public:
+    explicit FilterModel(MusicLibrary* library, CoverProvider* coverProvider, SettingsManager* settings,
+                         QObject* parent = nullptr);
+    ~FilterModel() override;
+
+    [[nodiscard]] bool showSummary() const;
+    [[nodiscard]] Track::Cover coverType() const;
+    [[nodiscard]] std::optional<ArtworkSourcePreference> coverSource() const;
+    [[nodiscard]] CoverProvider* coverProvider() const;
+
+    void setRowHeight(int height);
+    void setIconSize(const QSize& size);
+    void setShowSummary(bool show);
+    void setShowDecoration(bool show);
+    void setShowLabels(bool show);
+    void setCoverType(Track::Cover type);
+    void setCoverSource(std::optional<ArtworkSourcePreference> source);
+    void setColumnOrder(const std::vector<int>& order);
+
+    [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
+    [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+    bool setHeaderData(int section, Qt::Orientation orientation, const QVariant& value, int role) override;
+    [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
+    [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
+
+    [[nodiscard]] QStringList mimeTypes() const override;
+    [[nodiscard]] Qt::DropActions supportedDragActions() const override;
+    [[nodiscard]] QMimeData* mimeData(const QModelIndexList& indexes) const override;
+
+    [[nodiscard]] Qt::Alignment columnAlignment(int column) const;
+    void changeColumnAlignment(int column, Qt::Alignment alignment);
+    void resetColumnAlignment(int column);
+    void resetColumnAlignments();
+
+    [[nodiscard]] QModelIndexList indexesForKeys(const std::vector<Md5Hash>& keys) const;
+
+    bool removeColumn(int column);
+
+    void setRows(const FilterColumnList& columns, const FilterRowList& rows);
+
+protected:
+    friend class FilterModelPrivate;
+
+private:
+    std::unique_ptr<FilterModelPrivate> p;
+};
+} // namespace Filters
+} // namespace Fooyin

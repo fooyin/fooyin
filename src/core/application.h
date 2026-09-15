@@ -68,6 +68,7 @@ public:
     static void quit();
     static void restart();
 
+    [[nodiscard]] const CorePluginContext& corePluginContext() const;
     [[nodiscard]] Database* database() const;
     [[nodiscard]] DbConnectionPoolPtr databasePool() const;
     [[nodiscard]] PluginManager* pluginManager() const;
@@ -101,6 +102,7 @@ private:
     void loadPlugins();
 
     void startSaveTimer();
+    void startPlaybackQueueSaveTimer();
     void exportAllPlaylists(bool shutdown);
 
     void loadDatabaseSettings() const;
@@ -129,6 +131,7 @@ private:
     CorePluginContext m_corePluginContext;
 
     QBasicTimer m_playlistSaveTimer;
+    QBasicTimer m_playbackQueueSaveTimer;
     QBasicTimer m_settingsSaveTimer;
 };
 } // namespace Fooyin

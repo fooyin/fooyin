@@ -21,7 +21,7 @@
 
 #include "fygui_export.h"
 
-#include <core/track.h>
+#include <core/playlist/playlist.h>
 #include <utils/id.h>
 
 #include <QObject>
@@ -44,6 +44,10 @@ class WidgetContext;
 struct FYGUI_EXPORT TrackSelection
 {
     TrackList tracks;
+    PlaylistTrackList playbackGroupTracks;
+    std::optional<int> playbackGroupCurrentIndex;
+    PlaylistTrackList playbackViewTracks;
+    std::optional<int> playbackViewCurrentIndex;
     std::optional<UId> playlistId;
     std::vector<int> playlistIndexes;
     std::vector<UId> playlistEntryIds;
@@ -96,11 +100,11 @@ Q_DECLARE_FLAGS(ActionGroups, ActionGroup)
 namespace PlaylistAction {
 enum ActionOption : uint8_t
 {
-    None          = 0,
-    Switch        = 1 << 0,
-    KeepActive    = 1 << 1,
-    StartPlayback = 1 << 2,
-    TempPlaylist  = 1 << 3
+    None                     = 0,
+    Switch                   = 1 << 0,
+    PreservePlaybackPlaylist = 1 << 1,
+    StartPlayback            = 1 << 2,
+    TempPlaylist             = 1 << 3
 };
 Q_DECLARE_FLAGS(ActionOptions, ActionOption)
 } // namespace PlaylistAction
@@ -147,6 +151,8 @@ public:
     bool registerTrackContextAction(QObject* owner, TrackContextMenuArea area, const Id& parentId, const Id& id,
                                     const QString& title, const TrackContextMenuRenderer& renderer,
                                     const Id& beforeId = {});
+    bool registerTrackContextSeparator(QObject* owner, TrackContextMenuArea area, const Id& parentId, const Id& id,
+                                       const Id& beforeId = {});
     bool registerTrackContextDynamicSubmenu(QObject* owner, TrackContextMenuArea area, const Id& parentId, const Id& id,
                                             const QString& title, const TrackContextMenuRenderer& renderer,
                                             const Id& beforeId = {});

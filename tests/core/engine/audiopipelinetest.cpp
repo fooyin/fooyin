@@ -53,7 +53,8 @@ public:
     bool init(const AudioFormat& format) override
     {
         const std::scoped_lock lock{m_mutex};
-        m_format = format;
+        m_initThread = std::this_thread::get_id();
+        m_format     = format;
         if(m_forcedSampleRate > 0) {
             m_format.setSampleRate(m_forcedSampleRate);
         }
@@ -64,6 +65,7 @@ public:
     void uninit() override
     {
         const std::scoped_lock lock{m_mutex};
+        m_uninitThread = std::this_thread::get_id();
         m_initialised  = false;
         m_started      = false;
         m_queuedFrames = 0;
@@ -214,6 +216,18 @@ public:
         return m_startCalls;
     }
 
+    [[nodiscard]] std::thread::id initThread() const
+    {
+        const std::scoped_lock lock{m_mutex};
+        return m_initThread;
+    }
+
+    [[nodiscard]] std::thread::id uninitThread() const
+    {
+        const std::scoped_lock lock{m_mutex};
+        return m_uninitThread;
+    }
+
     [[nodiscard]] bool startedBeforeFirstWrite() const
     {
         const std::scoped_lock lock{m_mutex};
@@ -260,6 +274,8 @@ private:
     bool m_started{false};
     bool m_startedBeforeFirstWrite{false};
     bool m_paused{false};
+    std::thread::id m_initThread;
+    std::thread::id m_uninitThread;
 };
 
 class RateTagDsp final : public DspNode
@@ -398,6 +414,22 @@ bool waitUntil(const std::function<bool()>& predicate, std::chrono::milliseconds
     return predicate();
 }
 } // namespace
+
+TEST(AudioPipelineTest, StopsInitialisedOutputOnAudioThread)
+{
+    AudioPipeline pipeline;
+    auto output   = std::make_unique<FakeAudioOutput>();
+    auto* backend = output.get();
+
+    pipeline.setOutput(std::move(output));
+    pipeline.start();
+
+    ASSERT_TRUE(pipeline.init(testFormat()));
+    pipeline.stop();
+
+    EXPECT_NE(backend->initThread(), std::thread::id{});
+    EXPECT_EQ(backend->uninitThread(), backend->initThread());
+}
 
 TEST(AudioPipelineTest, AutomaticallyResamplesToBackendSampleRate)
 {

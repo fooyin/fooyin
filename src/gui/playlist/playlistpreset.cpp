@@ -20,7 +20,7 @@
 #include "playlistpreset.h"
 
 constexpr auto PlaylistPresetVersionMarker = -1;
-constexpr auto PlaylistPresetVersion       = 3;
+constexpr auto PlaylistPresetVersion       = 4;
 
 namespace Fooyin {
 QDataStream& operator<<(QDataStream& stream, const HeaderRow& header)
@@ -91,6 +91,15 @@ QDataStream& operator<<(QDataStream& stream, const PlaylistPreset& preset)
     stream << preset.track;
     stream << preset.insetSubheadersToImageColumns;
     stream << preset.showCoverBelowEverySubheader;
+    stream << preset.header.grouping;
+
+    QStringList subheaderGroupings;
+    subheaderGroupings.reserve(preset.subHeaders.size());
+    for(const auto& subheader : preset.subHeaders) {
+        subheaderGroupings.push_back(subheader.grouping);
+    }
+    stream << subheaderGroupings;
+
     return stream;
 }
 
@@ -115,6 +124,16 @@ QDataStream& operator>>(QDataStream& stream, PlaylistPreset& preset)
     }
     if(version >= 3 && !stream.atEnd()) {
         stream >> preset.showCoverBelowEverySubheader;
+    }
+    if(version >= 4 && !stream.atEnd()) {
+        stream >> preset.header.grouping;
+
+        QStringList subheaderGroupings;
+        stream >> subheaderGroupings;
+        const auto count = std::min(preset.subHeaders.size(), subheaderGroupings.size());
+        for(qsizetype i{0}; i < count; ++i) {
+            preset.subHeaders[i].grouping = subheaderGroupings.at(i);
+        }
     }
 
     return stream;

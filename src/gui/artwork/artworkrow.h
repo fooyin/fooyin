@@ -56,6 +56,7 @@ public:
     [[nodiscard]] QByteArray image() const;
 
 Q_SIGNALS:
+    void requestView();
     void requestExtract();
     void requestExtractAs();
 

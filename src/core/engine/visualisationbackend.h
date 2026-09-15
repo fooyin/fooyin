@@ -68,6 +68,14 @@ public:
                                                  int fftSize, const ChannelSelection& selection,
                                                  SpectrumWindowFunction windowFunction
                                                  = SpectrumWindowFunction::Hann) const;
+    [[nodiscard]] bool getSpectrumWindowForDuration(VisualisationSession::SpectrumWindow& out, uint64_t centerTimeMs,
+                                                    uint64_t durationMs, const ChannelSelection& selection,
+                                                    SpectrumWindowFunction windowFunction
+                                                    = SpectrumWindowFunction::Hann) const;
+    [[nodiscard]] bool getSpectrumWindowEndingAtDuration(VisualisationSession::SpectrumWindow& out, uint64_t endTimeMs,
+                                                         uint64_t durationMs, const ChannelSelection& selection,
+                                                         SpectrumWindowFunction windowFunction
+                                                         = SpectrumWindowFunction::Hann) const;
 
 private:
     enum class WindowAnchor : uint8_t
@@ -96,6 +104,7 @@ private:
     };
 
     [[nodiscard]] static uint64_t msToFrames(uint64_t ms, int sampleRate);
+    [[nodiscard]] int spectrumFramesForDuration(uint64_t durationMs) const;
     [[nodiscard]] bool resolveWindow(WindowRange& out, uint64_t timeMs, int requestedFrameCount, int minimumFrameCount,
                                      WindowAnchor anchor) const;
     [[nodiscard]] bool resolvePcmWindowEndingAt(WindowRange& out, uint64_t endTimeMs, int requestedFrameCount,
@@ -132,6 +141,7 @@ private:
     {
         uint64_t nextFrame{0};
         int64_t visualTimeOffsetMs{0};
+        std::chrono::steady_clock::time_point nextPresentationTime;
     };
     std::unordered_map<uint32_t, SourceTimeline> m_sourceTimelines;
 

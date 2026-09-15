@@ -139,6 +139,8 @@ public:
 
     //! Replace active DSP chain configuration.
     void setDspChain(const Engine::DspChains& chain);
+    //! Thread-safe shutdown hook for decoder operations blocked outside the engine event loop.
+    void requestBlockingDecoderAbort();
 
 public Q_SLOTS:
     void loadTrack(const Fooyin::Engine::PlaybackItem& item, bool manualChange = false);
@@ -151,7 +153,8 @@ public Q_SLOTS:
     //! Commit a previously armed prepared crossfade transition after UI track context changes.
     [[nodiscard]] bool commitPreparedCrossfadeTransition(const Fooyin::Engine::PlaybackItem& item);
     [[nodiscard]] static bool shouldEnableTimelineTransitionHints(const Fooyin::Track& track,
-                                                                  Fooyin::AudioDecoder::PlaybackHints playbackHints);
+                                                                  Fooyin::AudioDecoder::PlaybackHints playbackHints,
+                                                                  Fooyin::AudioDecoder::RepeatHandling repeatHandling);
     //! Stage a prepared gapless stream in the pipeline without committing UI track context.
     [[nodiscard]] bool armPreparedGaplessTransition(const Fooyin::Engine::PlaybackItem& item, uint64_t generation);
     //! Commit a previously armed prepared gapless transition after UI track context changes.
@@ -161,6 +164,8 @@ public Q_SLOTS:
     void pause();
     void stop();
     void stopImmediate();
+    //! Queue a restored position before the target decoder begins its initial prefill.
+    void queueInitialRestore(uint64_t positionMs, int trackId);
     void restorePosition(uint64_t positionMs, bool pause);
 
     void seek(uint64_t positionMs);
@@ -241,6 +246,7 @@ private:
     [[nodiscard]] bool cancelPendingAudiblePause();
     void handlePipelineFadeEvent(const AudioPipeline::FadeEvent& event);
     void syncDecoderTrackMetadata();
+    void syncTimedTrackMetadata(const AudioStreamPtr& stream, uint64_t sourcePositionMs);
     void publishBitrate(int bitrate);
     void syncDecoderBitrate();
     void publishPosition(uint64_t sourcePositionMs, uint64_t outputDelayMs, double delayToSourceScale,
@@ -300,11 +306,12 @@ private:
     void handlePipelineWakeSignals(const AudioPipeline::PendingSignals& pendingSignals);
     void handleOutputStateChange(AudioOutput::State state);
 
-    void clearRemoteBufferingState(bool resumePipeline = true);
-    void maybeUpdateRemoteBuffering(const char* reason);
+    void clearInputBufferingState(bool resumePipeline = true);
+    void maybeUpdateInputBuffering(const char* reason);
     [[nodiscard]] int streamBufferLengthMs(const Track& track) const;
     [[nodiscard]] int remotePrebufferTargetMs(int capacityMs) const;
     [[nodiscard]] int remotePrebufferTargetMs(const AudioStreamPtr& stream) const;
+    [[nodiscard]] int inputPrebufferTargetMs(const AudioStreamPtr& stream) const;
 
     [[nodiscard]] uint64_t beginTransportTransition();
     void clearTransportTransition();
@@ -312,6 +319,8 @@ private:
     void refreshVbrUpdateTimer();
     void setupSettings();
     void reconfigureActiveStreamBuffering(uint64_t positionMs);
+    [[nodiscard]] bool rebuildCurrentTrackStreamAt(uint64_t positionMs, uint64_t requestId,
+                                                   bool preserveUpcomingCandidate, const char* reason);
     void updatePlaybackState(Engine::PlaybackState state);
     void updateTrackStatus(Engine::TrackStatus status, bool flushDspOnEnd = true);
     void setPhase(Playback::Phase phase, PhaseChangeReason reason);
@@ -324,6 +333,7 @@ private:
     [[nodiscard]] Engine::PlaybackItem upcomingTrackCandidateItem() const;
     [[nodiscard]] Engine::PlaybackItem preparedCrossfadeTargetItem() const;
     [[nodiscard]] Engine::PlaybackItem preparedGaplessTargetItem() const;
+    [[nodiscard]] bool hasStagedPreparedGaplessDecoder() const;
     std::optional<AutoTransitionEligibility>
     evaluateAutoTransitionEligibility(const Track& track, bool isManualChange, bool requireTransitionReady = true,
                                       const char** rejectionReason = nullptr) const;
@@ -331,6 +341,7 @@ private:
     void setCurrentTrackContext(const Engine::PlaybackItem& item);
     void setStreamToTrackOriginForTrack(const Track& track);
     [[nodiscard]] bool setStreamToTrackOriginForSegmentSwitch(const Track& track, uint64_t streamPosMs);
+    void updateCurrentStreamReadLimit();
     [[nodiscard]] AudioStreamPtr currentTrackTimingStream() const;
     void scheduleGaplessBoundaryStallDiagnostic(uint64_t generation, StreamId currentStreamId,
                                                 StreamId preparedStreamId);
@@ -355,6 +366,7 @@ private:
     void handleManualRemoteCrossfadePreparationResult(uint64_t requestId, const Engine::PlaybackItem& item,
                                                       NextTrackPreparationState prepared);
     void clearPendingManualRemoteCrossfade(bool cancelJobs = false);
+    void prepareUpcomingTrackCandidate();
 
     void cancelPendingPrepareJobs();
     void enqueuePrepareNextTrack(const Engine::PlaybackItem& item, uint64_t requestId, uint64_t prefillTargetMs);
@@ -492,6 +504,7 @@ private:
         bool overlapMidpointAnchorSeen{false};
         bool boundaryAnchorSeen{false};
         bool boundaryPendingUntilAudible{false};
+        std::optional<std::chrono::steady_clock::time_point> boundedSegmentDrainDeadline;
         bool drainPrepareRequested{false};
     };
     AutoAdvanceState m_autoAdvanceState;
@@ -523,13 +536,21 @@ private:
     PendingAudiblePause m_pendingAudiblePause;
     uint64_t m_nextPendingAudiblePauseSerial{0};
 
-    struct RemoteBufferingState
+    struct InitialRestoreState
+    {
+        uint64_t positionMs{0};
+        int trackId{-1};
+        bool applied{false};
+    };
+    std::optional<InitialRestoreState> m_initialRestore;
+
+    struct InputBufferingState
     {
         bool active{false};
         uint64_t generation{0};
         StreamId streamId{InvalidStreamId};
         uint64_t rebufferCount{0};
     };
-    RemoteBufferingState m_remoteBuffering;
+    InputBufferingState m_inputBuffering;
 };
 } // namespace Fooyin

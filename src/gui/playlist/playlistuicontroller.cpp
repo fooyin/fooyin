@@ -66,6 +66,11 @@ void PlaylistUiController::selectTrackIds(const TrackIds& ids)
     Q_EMIT selectTracks(ids);
 }
 
+void PlaylistUiController::selectPlaylistTracks(const TrackList& tracks)
+{
+    Q_EMIT selectMatchingTracks(tracks);
+}
+
 void PlaylistUiController::focusPlaylist()
 {
     Q_EMIT requestPlaylistFocus();

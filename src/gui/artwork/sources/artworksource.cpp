@@ -20,6 +20,7 @@
 #include "artworksource.h"
 
 #include <core/coresettings.h>
+#include <core/network/networkutils.h>
 #include <utils/stringutils.h>
 #include <utils/utils.h>
 
@@ -238,8 +239,7 @@ QNetworkRequest ArtworkSource::createRequest(const QUrl& url, const std::map<QSt
     QUrl reqUrl{url};
     reqUrl.setQuery(queryUrl);
 
-    QNetworkRequest req{reqUrl};
-    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+    QNetworkRequest req = makeNetworkRequest(reqUrl);
     req.setHeader(QNetworkRequest::ContentTypeHeader, u"application/x-www-form-urlencoded"_s);
 
     qCDebug(ARTWORK) << "Sending request" << queryUrl.toString(QUrl::FullyDecoded);

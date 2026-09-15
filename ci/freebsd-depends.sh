@@ -6,10 +6,10 @@ sudo pkg install -y \
      git \
      bison \
      flex \
-     ccache \
      cmake-core \
      pkgconf \
      ninja \
+     glm \
      libgme \
      libvgm \
      vulkan-headers \
@@ -25,6 +25,8 @@ sudo pkg install -y \
      libopenmpt \
      libarchive \
      ebur128 \
+     libcdio \
+     libcdio-paranoia \
      soundtouch \
      libsoxr \
      googletest

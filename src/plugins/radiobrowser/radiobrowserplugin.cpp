@@ -38,8 +38,10 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/fypaths.h>
+#include <utils/utils.h>
 
 #include <QAction>
+#include <QMainWindow>
 
 using namespace Qt::StringLiterals;
 
@@ -143,15 +145,15 @@ void RadioBrowserPlugin::initialise(const GuiPluginContext& context)
 void RadioBrowserPlugin::registerLayouts(LayoutProvider& layoutProvider)
 {
     static const QString jsonStart
-        = uR"json({"Name":"Radio","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAAFFgAAABYA/////wEAAAACAA==",
-                "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAAA1gAABRoA/////wEAAAABAA==",
-                "Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAAEAAABugAAANUAAABWAAAAGgD/////AQAAAAIA",
+        = uR"json({"Name":"Radio","Widgets":[{"SplitterVertical":{"Locked":[false,true],"State":"AAAA/wAAAAEAAAACAAAFFgAAABYA/////wEAAAACAA==",
+                "Widgets":[{"SplitterHorizontal":{"Locked":[true,false],"State":"AAAA/wAAAAEAAAACAAAA1gAABRoA/////wEAAAABAA==",
+                "Widgets":[{"SplitterVertical":{"Locked":[false,true,true,true,true],"State":"AAAA/wAAAAEAAAAFAAABpwAAANgAAABvAAAAHQAAABwA/////wEAAAACAA==",
                 "Widgets":[{"RadioGuide":{}},{"ArtworkPanel":{}},{"ScriptDisplay":{"HorizontalAlignment": 4,"Script":"$if(%isstopped%,\n<b>)json"_s;
     const QString playbackStopped = tr("Playback stopped");
     static const QString jsonEnd
         = uR"json(</b>,\n<sized=1><b>$if2(%station%,$if(%streamtitle%,,%title%))</b></size>\n$crlf()\n$if2(%streamtitle%,[$join( - ,%artist%,%title%)])\n)"}},
             {"PlayerControls":{"ShowNext":false,"ShowPrevious":false}},{"VolumeControls":{}}]}},
-            {"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAAAHAAABOIA/////wEAAAACAA==","Widgets":[{"RadioSearch":{}},{"RadioBrowser":{}}]}}]}},{"StatusBar":{}}]}}]})json"_s;
+            {"SplitterVertical":{"Locked":[true,false],"State":"AAAA/wAAAAEAAAACAAAAHAAABOIA/////wEAAAACAA==","Widgets":[{"RadioSearch":{}},{"RadioBrowser":{}}]}}]}},{"StatusBar":{}}]}}]})json"_s;
 
     const QString fullJson = jsonStart + playbackStopped + jsonEnd;
     layoutProvider.registerLayout(fullJson.toUtf8());
@@ -181,10 +183,17 @@ void RadioBrowserPlugin::relinkRadioWidgets()
 
 void RadioBrowserPlugin::showRadioBrowserDialog()
 {
-    auto* dialog = new RadioBrowserDialog(m_network, m_playlistLoader, m_settings, m_playerController, m_store,
-                                          m_actionManager, m_trackSelection);
-    dialog->setAttribute(Qt::WA_DeleteOnClose);
-    dialog->show();
+    if(m_radioBrowserDialog) {
+        m_radioBrowserDialog->show();
+        m_radioBrowserDialog->raise();
+        m_radioBrowserDialog->activateWindow();
+        return;
+    }
+
+    m_radioBrowserDialog = new RadioBrowserDialog(m_network, m_playlistLoader, m_settings, m_playerController, m_store,
+                                                  m_actionManager, m_trackSelection, Utils::getMainWindow());
+    m_radioBrowserDialog->setAttribute(Qt::WA_DeleteOnClose);
+    m_radioBrowserDialog->show();
 }
 } // namespace Fooyin::RadioBrowser
 

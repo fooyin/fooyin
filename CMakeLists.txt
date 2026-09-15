@@ -6,9 +6,14 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 include(CheckBuildDir)
 include(CheckLevel)
 
+if(BUILD_TESTING)
+    list(APPEND VCPKG_MANIFEST_FEATURES fooyin-tests)
+    list(REMOVE_DUPLICATES VCPKG_MANIFEST_FEATURES)
+endif()
+
 project(
     fooyin
-    VERSION 0.11.1
+    VERSION 0.12.6
     DESCRIPTION "A customisable music player"
     HOMEPAGE_URL "https://www.fooyin.org"
     LANGUAGES CXX
@@ -17,7 +22,13 @@ project(
 set(FOOYIN_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
 set(FOOYIN_VERSION_MINOR ${PROJECT_VERSION_MINOR})
 set(FOOYIN_VERSION_PATCH ${PROJECT_VERSION_PATCH})
-set(FOOYIN_VERSION ${PROJECT_VERSION})
+
+set(FOOYIN_VERSION_SUFFIX
+    "$ENV{FOOYIN_VERSION_SUFFIX}"
+    CACHE STRING "Suffix appended to the fooyin version (e.g. .g01234567)"
+)
+
+set(FOOYIN_VERSION "${PROJECT_VERSION}${FOOYIN_VERSION_SUFFIX}")
 set(FOOYIN_SOVERSION "0.0.0")
 set(FOOYIN_PLUGIN_VERSION "0.0")
 
@@ -31,6 +42,10 @@ set(CMAKE_LINK_DEPENDS_NO_SHARED ON)
 # Enable setting options with SET cmake command
 # Needed for some 3rdparty libs
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
+
+if(POLICY CMP0177)
+    cmake_policy(SET CMP0177 NEW)
+endif()
 
 if(NOT DEFINED CMAKE_SKIP_BUILD_RPATH)
     set(CMAKE_SKIP_BUILD_RPATH OFF)
@@ -65,6 +80,7 @@ or comma-separated list to build only those plugins, or prefix names with '-' to
 )
 fooyin_option(BUILD_ALSA "Build ALSA plugin" ON)
 fooyin_option(FETCH_PROJECTM "Fetch projectM when a system package is unavailable" OFF)
+fooyin_option(ENABLE_SYSTEM_GLM "Use system GLM package for fetched projectM" OFF)
 fooyin_option(BUILD_TRANSLATIONS "Build translation files" ON)
 fooyin_option(BUILD_CCACHE "Build using CCache if found" ON)
 fooyin_option(BUILD_PCH "Build with precompiled header support" OFF)
@@ -108,7 +124,7 @@ list(
     APPEND
     FOOYIN_COMPILE_DEFINITIONS
     QT_USE_QSTRINGBUILDER
-    QT_DISABLE_DEPRECATED_BEFORE=0x060200
+    QT_DISABLE_DEPRECATED_BEFORE=0x060400
     QT_NO_CAST_FROM_ASCII
     QT_NO_CAST_TO_ASCII
     QT_NO_CAST_FROM_BYTEARRAY
@@ -119,8 +135,14 @@ list(
 
 # ---- Dependencies ----
 
+if(WIN32)
+    set(FOOYIN_QT_MIN_VERSION 6.8)
+else()
+    set(FOOYIN_QT_MIN_VERSION 6.4)
+endif()
+
 find_package(
-    Qt6 REQUIRED
+    Qt6 ${FOOYIN_QT_MIN_VERSION} REQUIRED
     COMPONENTS Core
                Widgets
                Gui
@@ -128,6 +150,7 @@ find_package(
                Concurrent
                Network
                Svg
+    OPTIONAL_COMPONENTS OpenGL
 )
 set_package_properties(Qt6Core PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Widgets PROPERTIES TYPE REQUIRED)
@@ -143,6 +166,7 @@ if(APPLE)
     fooyin_prepare_macos_icu()
 endif()
 find_package(Taglib REQUIRED taglib>=1.12)
+find_package(ZLIB REQUIRED)
 find_package(
     FFmpeg REQUIRED
     COMPONENTS AVCODEC
@@ -192,7 +216,7 @@ elseif(INSTALL_FHS)
 else()
     set(BIN_INSTALL_DIR .)
     set(LIB_INSTALL_DIR .)
-    set(TRANSLATION_INSTALL_DIR "${BIN_INSTALL_DIR}/translations")
+    set(TRANSLATION_INSTALL_DIR translations)
 endif()
 
 fooyin_convert_to_relative_path(BIN_INSTALL_DIR)
@@ -210,6 +234,8 @@ file(RELATIVE_PATH FOOYIN_RELATIVE_TRANSLATION_PATH "/${BIN_INSTALL_DIR}" "/${TR
 
 if(APPLE)
     set(FOOYIN_PLUGIN_INSTALL_DIR "${FOOYIN_BUNDLE_NAME}/Contents/PlugIns")
+elseif(LIB_INSTALL_DIR STREQUAL ".")
+    set(FOOYIN_PLUGIN_INSTALL_DIR plugins)
 else()
     set(FOOYIN_PLUGIN_INSTALL_DIR "${LIB_INSTALL_DIR}/plugins")
 endif()
@@ -385,6 +411,7 @@ endif()
 # ---- Fooyin testing ----
 
 if(BUILD_TESTING)
+    enable_testing()
     find_package(Qt6 REQUIRED COMPONENTS Test)
     set_package_properties(Qt6Test PROPERTIES TYPE REQUIRED)
     find_package(GTest)
@@ -398,7 +425,13 @@ set(SOURCES ${SOURCES} src/app/commandline.cpp src/app/main.cpp)
 qt_add_resources(SOURCES data/data.qrc)
 qt_add_resources(SOURCES data/icons.qrc)
 
-qt_add_executable(fooyin WIN32 MACOSX_BUNDLE ${SOURCES} ${TRANSLATIONS})
+qt_add_executable(
+    fooyin
+    WIN32
+    MACOSX_BUNDLE
+    ${SOURCES}
+    ${TRANSLATIONS}
+)
 if(APPLE)
     set_target_properties(fooyin PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${FOOYIN_OUTPUT_PREFIX}")
     target_include_directories(fooyin BEFORE PRIVATE "${FOOYIN_ICU_INCLUDE_DIR}")
@@ -419,7 +452,11 @@ target_link_libraries(
 
 if(WIN32)
     target_include_directories(fooyin PRIVATE ${GETOPT_INCLUDE_DIR})
-    target_link_libraries(fooyin PRIVATE ${GETOPT_LIBRARY})
+    target_link_libraries(
+        fooyin
+        PRIVATE ${GETOPT_LIBRARY}
+                RuntimeObject
+    )
     configure_file(data/win_version.rc.in win_version.rc @ONLY)
     target_sources(fooyin PRIVATE win_version.rc)
 endif()

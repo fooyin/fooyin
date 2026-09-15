@@ -61,13 +61,13 @@ struct PreparedTextBlock
     QFont font;
     QColor colour;
     int width{0};
-    int height{0};
 };
 
 struct PreparedTextLine
 {
     std::vector<PreparedTextBlock> blocks;
     int totalWidth{0};
+    TextBaselineMetrics baseline;
     int height{0};
 };
 
@@ -76,7 +76,7 @@ PreparedTextLine prepareRichTextLine(const std::vector<RichTextBlock>& blocks, c
                                      int maxWidth)
 {
     PreparedTextLine line;
-    line.height = QFontMetrics{baseFont}.height();
+    line.baseline = textBaselineMetrics(baseFont);
 
     int remainingWidth{maxWidth};
 
@@ -98,10 +98,9 @@ PreparedTextLine prepareRichTextLine(const std::vector<RichTextBlock>& blocks, c
         prepared.font   = font;
         prepared.colour = resolvedRichTextColour(block.format, baseColour, linkColour);
         prepared.width  = fm.horizontalAdvance(text);
-        prepared.height = fm.height();
 
         line.totalWidth += prepared.width;
-        line.height = std::max(line.height, prepared.height);
+        line.baseline.expand(fm);
         remainingWidth -= prepared.width;
 
         line.blocks.push_back(std::move(prepared));
@@ -111,6 +110,7 @@ PreparedTextLine prepareRichTextLine(const std::vector<RichTextBlock>& blocks, c
         }
     }
 
+    line.height = line.baseline.height();
     return line;
 }
 
@@ -281,8 +281,7 @@ void ElidedLabel::paintEvent(QPaintEvent* event)
         for(const auto& block : line.blocks) {
             painter.setFont(block.font);
             painter.setPen(block.colour);
-            painter.drawText(QRect{x, y, std::max(0, rect.right() - x + 1), line.height},
-                             Qt::AlignLeft | Qt::AlignVCenter | Qt::TextSingleLine, block.text);
+            painter.drawText(QPoint{x, y + line.baseline.ascent}, block.text);
             x += block.width;
         }
 

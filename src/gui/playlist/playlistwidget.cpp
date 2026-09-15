@@ -21,7 +21,6 @@
 
 #include "contextmenuids.h"
 #include "internalguisettings.h"
-#include "playlist/playlistinteractor.h"
 #include "playlist/presetregistry.h"
 #include "playlistcolumnregistry.h"
 #include "playlistcontroller.h"
@@ -47,6 +46,7 @@
 #include <gui/guistyleprovider.h>
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
+#include <gui/playlist/playlistinteractor.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/autoheaderview.h>
 #include <gui/widgets/elapsedprogressdialog.h>
@@ -155,11 +155,10 @@ public:
     {
         m_widget->setScrollbarVisible(visible);
     }
-    void setMiddleClickAction(TrackAction action) override
+    void setAlternatingRowColors(bool enabled) override
     {
-        m_widget->setMiddleClickAction(action);
+        m_widget->setAlternatingRowColors(enabled);
     }
-
     [[nodiscard]] PlaylistWidget* sessionWidget() override
     {
         return m_widget;
@@ -284,6 +283,22 @@ PlaylistWidget* PlaylistWidget::createDetachedLibrarySearch(ActionManager* actio
                               selectionController, PlaylistWidgetSession::createDetachedLibrary(), parent);
 }
 
+PlaylistWidget* PlaylistWidget::createDetachedTracks(ActionManager* actionManager,
+                                                     PlaylistInteractor* playlistInteractor,
+                                                     TrackSelectionController* selectionController,
+                                                     CoverProvider* coverProvider, Application* core,
+                                                     GuiStyleProvider* styleProvider, const TrackList& tracks,
+                                                     QWidget* parent)
+{
+    auto* widget = new PlaylistWidget(actionManager, playlistInteractor, coverProvider, core, styleProvider,
+                                      selectionController, PlaylistWidgetSession::createDetachedTracks(tracks), parent);
+    widget->m_useGlobalPresetState = false;
+    if(const auto presets = widget->m_presetRegistry->items(); !presets.empty()) {
+        widget->m_layoutState.currentPreset = presets.front();
+    }
+    return widget;
+}
+
 PlaylistWidget::~PlaylistWidget()
 {
     resetSort();
@@ -370,7 +385,9 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
         const int presetId = layout.value("Preset"_L1).toInt();
         if(const auto preset = m_presetRegistry->itemById(presetId)) {
             m_layoutState.currentPreset = preset.value();
-            m_settings->fileSet(PlaylistCurrentPreset, presetId);
+            if(m_useGlobalPresetState) {
+                m_settings->fileSet(PlaylistCurrentPreset, presetId);
+            }
         }
     }
     if(layout.contains("SingleMode"_L1)) {
@@ -466,14 +483,19 @@ void PlaylistWidget::resetModel()
 
     const bool forceSortedAutoPlaylist
         = currentPlaylist && currentPlaylist->isAutoPlaylist() && currentPlaylist->forceSorted();
-    const bool readOnly = m_session->hasSearch() || forceSortedAutoPlaylist;
+    const bool locked   = currentPlaylist && currentPlaylist->isLocked();
+    const bool readOnly = m_session->hasSearch() || forceSortedAutoPlaylist || locked;
 
-    setReadOnly(readOnly, currentPlaylist && (!currentPlaylist->isAutoPlaylist() || !currentPlaylist->forceSorted()));
+    setReadOnly(readOnly,
+                currentPlaylist && !locked && (!currentPlaylist->isAutoPlaylist() || !currentPlaylist->forceSorted()));
 
     if(m_session->canResetWithoutPlaylist() || currentPlaylist) {
         m_model->reset(layoutState().currentPreset,
                        layoutState().singleMode ? PlaylistColumnList{} : layoutState().columns,
                        m_session->modelPlaylist(currentPlaylist), m_session->modelTracks(currentPlaylist));
+    }
+    else if(m_playlistController->playlistsHaveLoaded()) {
+        m_playlistView->playlistReset();
     }
 }
 
@@ -489,7 +511,7 @@ void PlaylistWidget::resetModelThrottled() const
 void PlaylistWidget::changePreset(const PlaylistPreset& preset)
 {
     m_layoutState.currentPreset = preset;
-    if(!remembersLayout(m_playlistController->currentPlaylist())) {
+    if(m_useGlobalPresetState && !remembersLayout(m_playlistController->currentPlaylist())) {
         m_settings->fileSet(PlaylistCurrentPreset, preset.id);
     }
     m_playlistView->setExtendSpansIntoParents(m_layoutState.currentPreset.insetSubheadersToImageColumns);
@@ -507,18 +529,32 @@ void PlaylistWidget::setReadOnly(bool readOnly, bool allowSorting)
 void PlaylistWidget::doubleClicked(const QModelIndex& index)
 {
     if(index.isValid()) {
-        startPlayback();
-        m_playlistView->clearSelection();
+        executeClickAction(m_doubleClickAction);
+        if(m_doubleClickAction != TrackAction::None) {
+            m_playlistView->clearSelection();
+        }
     }
 }
 
-void PlaylistWidget::middleClicked(const QModelIndex& /*index*/)
+void PlaylistWidget::middleClicked(const QModelIndex& index)
 {
-    if(m_middleClickAction == TrackAction::None) {
+    if(index.isValid()) {
+        executeClickAction(m_middleClickAction);
+    }
+}
+
+void PlaylistWidget::executeClickAction(TrackAction action)
+{
+    if(action == TrackAction::Play) {
+        startPlayback();
         return;
     }
 
-    m_session->queueSelectedTracks(sessionHost(), m_middleClickAction == TrackAction::SendToQueue, false);
+    PlaylistAction::ActionOptions options;
+    if((action == TrackAction::QueueNext || action == TrackAction::SendToQueue) && m_startPlaybackOnSend) {
+        options |= PlaylistAction::StartPlayback;
+    }
+    m_selectionController->executeAction(action, options);
 }
 
 void PlaylistWidget::resetSort(bool force)
@@ -532,13 +568,20 @@ void PlaylistWidget::resetSort(bool force)
 
 void PlaylistWidget::setHeaderVisible(bool visible)
 {
-    m_header->setFixedHeight(visible ? QWIDGETSIZE_MAX : 0);
-    m_header->adjustSize();
+    m_header->setCollapsed(!visible);
 }
 
 void PlaylistWidget::setScrollbarVisible(bool visible)
 {
     m_playlistView->setVerticalScrollBarPolicy(visible ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+}
+
+void PlaylistWidget::setAlternatingRowColors(bool enabled)
+{
+    m_playlistView->setAlternatingRowColors(enabled);
+    if(m_styleProvider->isResolved()) {
+        Gui::refreshItemViewPalette(m_playlistView, m_styleProvider->style().palette);
+    }
 }
 
 void PlaylistWidget::selectAll()
@@ -727,11 +770,6 @@ void PlaylistWidget::changePlaylistLayout(Playlist* previousPlaylist, const Play
 
     m_loadedPlaylistLayout.clear();
     applyLayoutState(m_defaultLayoutState);
-}
-
-void PlaylistWidget::setMiddleClickAction(TrackAction action)
-{
-    m_middleClickAction = action;
 }
 
 bool PlaylistWidget::followCurrentTrack()
@@ -941,10 +979,13 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     , m_delgate{new PlaylistDelegate(this)}
     , m_playlistView{new PlaylistView(this)}
     , m_header{new AutoHeaderView(Qt::Horizontal, this)}
+    , m_useGlobalPresetState{true}
     , m_playlistContext{new WidgetContext(
           this, Context{IdList{Constants::Context::TrackSelection, Id{Constants::Context::Playlist}.append(id())}},
           this)}
+    , m_doubleClickAction{static_cast<TrackAction>(m_settings->value<PlaylistDoubleClick>())}
     , m_middleClickAction{static_cast<TrackAction>(m_settings->value<PlaylistMiddleClick>())}
+    , m_startPlaybackOnSend{m_settings->value<PlaylistStartPlaybackOnSend>()}
     , m_playAction{new QAction(tr("&Play"), this)}
     , m_sortActions{std::make_unique<SortActionHandler>(m_actionManager, m_sortRegistry, m_playlistContext->context(),
                                                         this)}
@@ -972,6 +1013,9 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     m_playlistView->setModel(m_model);
     m_playlistView->setHeader(m_header);
     m_playlistView->setItemDelegate(m_delgate);
+
+    m_delgate->setArtworkCornerRadius(m_settings->value<PlaylistArtworkCornerRadius>());
+
     m_playlistView->viewport()->setAcceptDrops(modeCaps.editablePlaylist);
     m_playlistView->viewport()->installEventFilter(new ToolTipFilter(this));
     m_playlistView->setSelectBeforeDrag(m_settings->value<Settings::Gui::DragOnlyAfterSelect>());
@@ -981,6 +1025,15 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
                      &PlaylistWidget::startPlayback);
     QObject::connect(m_searchController, &PlaylistSearchController::queueCurrentRequested, this,
                      [this]() { m_session->queueSelectedTracks(sessionHost(), false, false); });
+    QObject::connect(m_playlistController->playlistHandler(), &PlaylistHandler::playlistItemEnsureVisible, this,
+                     [this](Playlist* playlist, int playlistIndex) {
+                         if(playlist == m_playlistController->currentPlaylist()) {
+                             const QModelIndex index = m_model->indexAtPlaylistIndex(playlistIndex, true);
+                             if(index.isValid()) {
+                                 m_playlistView->scrollTo(index, QAbstractItemView::EnsureVisible);
+                             }
+                         }
+                     });
 
     m_layout->addWidget(m_playlistView);
     m_layout->addWidget(m_searchController->widget());
@@ -1162,9 +1215,10 @@ void PlaylistWidget::refreshSortActions()
 
 void PlaylistWidget::updateSortActionState()
 {
-    const auto* playlist          = m_playlistController->currentPlaylist();
-    const bool canReorderPlaylist = playlist && (!playlist->isAutoPlaylist() || !playlist->forceSorted());
-    const bool canSortTracks      = canReorderPlaylist && playlist->trackCount() > 1;
+    const auto* playlist = m_playlistController->currentPlaylist();
+    const bool canReorderPlaylist
+        = playlist && !playlist->isLocked() && (!playlist->isAutoPlaylist() || !playlist->forceSorted());
+    const bool canSortTracks = canReorderPlaylist && playlist->trackCount() > 1;
 
     if(auto* randomiseAction = m_session->randomiseAction()) {
         randomiseAction->setEnabled(canSortTracks);
@@ -1318,7 +1372,7 @@ void PlaylistWidget::applyInitialViewSettings()
 {
     setHeaderVisible(m_settings->value<PlaylistHeader>());
     setScrollbarVisible(m_settings->value<PlaylistScrollBar>());
-    m_playlistView->setAlternatingRowColors(m_settings->value<PlaylistAltColours>());
+    setAlternatingRowColors(m_settings->value<PlaylistAltColours>());
 }
 
 void PlaylistWidget::applySessionTexts()
@@ -1511,16 +1565,21 @@ void PlaylistWidget::updateSpans()
     }
 
     int ratingColumn{-1};
+    int loveColumn{-1};
     for(int i{0}; const auto& column : m_layoutState.columns) {
         m_playlistView->setSpan(i, isPixmap(column.field));
 
         if(column.field == QLatin1StringView{Constants::RatingEditor}) {
             ratingColumn = i;
         }
+        else if(column.field == QLatin1StringView{Constants::LoveEditor}) {
+            loveColumn = i;
+        }
         ++i;
     }
 
     m_playlistView->setRatingColumn(ratingColumn);
+    m_playlistView->setLovedColumn(loveColumn);
 }
 
 void PlaylistWidget::applyBackgroundSettings()
@@ -1695,7 +1754,10 @@ void PlaylistWidget::setupConnections()
         m_session->selectionChanged(sessionHost());
         updateSortActionState();
     });
-    QObject::connect(m_playlistView, &PlaylistView::tracksRated, m_library, qOverload<const TrackList&>(&MusicLibrary::updateTrackStats));
+    QObject::connect(m_playlistView, &PlaylistView::tracksRated, m_library,
+                     [this](const TrackList& tracks) { m_library->updateTrackStats(tracks, Track::Stat::Rating); });
+    QObject::connect(m_playlistView, &PlaylistView::tracksLoved, this,
+                     [this](const TrackList& tracks) { m_library->updateTrackStats(tracks, Track::Stat::Loved); });
     QObject::connect(m_playlistView, &PlaylistView::displayChanged, this, &PlaylistWidget::updateVisibleCoverPins);
     QObject::connect(m_playlistView->verticalScrollBar(), &QScrollBar::valueChanged, this, &PlaylistWidget::updateVisibleCoverPins);
     QObject::connect(m_playlistView->horizontalScrollBar(), &QScrollBar::valueChanged, this, &PlaylistWidget::updateVisibleCoverPins);
@@ -1706,6 +1768,7 @@ void PlaylistWidget::setupConnections()
     QObject::connect(m_model, &QAbstractItemModel::modelReset, this, &PlaylistWidget::updateVisibleCoverPins);
     QObject::connect(m_model, &PlaylistModel::loadingStateChanged, m_playlistView->viewport(), qOverload<>(&QWidget::update));
     QObject::connect(m_model, &PlaylistModel::loadingStateChanged, m_header->viewport(), qOverload<>(&QWidget::update));
+    QObject::connect(m_model, &PlaylistModel::playlistLoaded, m_playlistView, &PlaylistView::playlistReset);
     QObject::connect(m_model, &PlaylistModel::playlistLoaded, m_playlistView->viewport(), [this]() {
         m_playlistView->viewport()->update();
         updateVisibleCoverPins();
@@ -1718,6 +1781,10 @@ void PlaylistWidget::setupConnections()
         }
     });
     QObject::connect(m_model, &PlaylistModel::metadataWriteRequested, this, &PlaylistWidget::handleMetadataWriteRequested);
+    QObject::connect(m_model, &PlaylistModel::tracksRated, m_library,
+                     [this](const TrackList& tracks) { m_library->updateTrackStats(tracks, Track::Stat::Rating); });
+    QObject::connect(m_model, &PlaylistModel::tracksLoved, m_library,
+                     [this](const TrackList& tracks) { m_library->updateTrackStats(tracks, Track::Stat::Loved); });
     QObject::connect(m_playlistView, &PlaylistView::bulkWriteRequested, this, &PlaylistWidget::handleBulkWriteRequested);
     QObject::connect(m_playlistController, &PlaylistController::currentPlaylistTracksUpdated, m_model, [this](const std::vector<int>& indexes) { m_model->refreshTracks(indexes); });
     QObject::connect(m_playlistController, &PlaylistController::currentPlaylistUpdated, this, &PlaylistWidget::resetModelThrottled);
@@ -1746,6 +1813,15 @@ void PlaylistWidget::setupConnections()
             = currentPlaylist && currentPlaylist->isAutoPlaylist() && currentPlaylist->forceSorted();
 
         updateMetadataEditTriggers(m_session->hasSearch() || forceSortedAutoPlaylist);
+    });
+    m_settings->subscribe<PlaylistDoubleClick>(
+        this, [this](int action) { m_doubleClickAction = static_cast<TrackAction>(action); });
+    m_settings->subscribe<PlaylistMiddleClick>(
+        this, [this](int action) { m_middleClickAction = static_cast<TrackAction>(action); });
+    m_settings->subscribe<PlaylistStartPlaybackOnSend>(this, [this](bool enabled) { m_startPlaybackOnSend = enabled; });
+    m_settings->subscribe<PlaylistArtworkCornerRadius>(this, [this](int radius) {
+        m_delgate->setArtworkCornerRadius(radius);
+        m_playlistView->viewport()->update();
     });
 
     m_settings->subscribe<PlaylistBackgroundImageMode>(this, &PlaylistWidget::applyBackgroundSettings);

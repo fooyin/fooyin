@@ -28,6 +28,20 @@
 namespace Fooyin {
 class SettingsManager;
 
+enum class Id3v2WriteVersion : uint8_t
+{
+    V3 = 3,
+    V4 = 4,
+};
+
+enum class Mp3TagWritingScheme : uint8_t
+{
+    Id3v2AndId3v1 = 0,
+    Id3v2,
+    ApeAndId3v1,
+    Ape,
+};
+
 enum class ReplayGainType : uint8_t
 {
     Track = 0,
@@ -39,7 +53,6 @@ enum class ReplayGainType : uint8_t
 namespace Settings::Core::Internal {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 
-constexpr auto PlaylistSkipUnavailable           = "Playlist/SkipUnavailable";
 constexpr auto PlaylistSaveMetadata              = "Playlist/SaveMetadata";
 constexpr auto PlaylistSavePathType              = "Playlist/SavePathType";
 constexpr auto AutoExportPlaylists               = "Playlist/AutoExport";
@@ -59,6 +72,8 @@ constexpr auto FFmpegAllExtensions               = "Engine/FFmpegAllExtensions";
 constexpr auto FFmpegPriorityExtensions          = "Engine/FFmpegPriorityExtensions";
 constexpr auto ReaderProbeAllExtensions          = "Engine/ReaderProbeAllExtensions";
 constexpr auto SplitId3v23SemicolonSeparatedTags = "Tagging/SplitId3v23SemicolonSeparatedTags";
+constexpr auto Id3v2WriteVersion                 = "Tagging/Id3v2WriteVersion";
+constexpr auto Mp3TagWritingScheme               = "Tagging/Mp3TagWritingScheme";
 
 constexpr auto DefaultRemoteReadAheadKb   = 2048;
 constexpr auto DefaultRemotePrebufferMs   = 0;
@@ -97,6 +112,8 @@ enum CoreInternalSettings : uint32_t
     MonitorTrackFiles         = 24 | Type::Bool,
     OutputAutoResample        = 25 | Type::Bool,
     OutputResamplerPreference = 26 | Type::StringList,
+    PlaylistSkipUnavailable   = 27 | Type::Bool,
+    ReplayGainLastActiveMode  = 28 | Type::Int,
 };
 Q_ENUM_NS(CoreInternalSettings)
 } // namespace Settings::Core::Internal

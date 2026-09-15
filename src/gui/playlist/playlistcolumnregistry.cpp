@@ -58,6 +58,7 @@ void PlaylistColumnRegistry::loadDefaults()
     addDefaultItem({.id = 17, .name = tr("Last Modified"), .field = u"%lastmodified%"_s, .sortField = {}, .writeField = {}});
     addDefaultItem({.id = 6, .name = tr("Playcount"), .field = u"$ifgreater(%playcount%,0,%playcount%)"_s, .sortField = u"%playcount%"_s, .writeField = {}});
     addDefaultItem({.id = 21, .name = tr("Rating"), .field = u"%rating_editor%"_s, .sortField = {}, .writeField = u"rating_editor"_s});
+    addDefaultItem({.id = 22, .name = tr("Love"), .field = u"%love_editor%"_s, .sortField = u"%loved%"_s, .writeField = u"love_editor"_s});
     addDefaultItem({.id = 19, .name = tr("First Played"), .field = u"%firstplayed%"_s, .sortField = {}, .writeField = {}});
     addDefaultItem({.id = 20, .name = tr("Last Played"), .field = u"%lastplayed%"_s, .sortField = {}, .writeField = {}});
     addDefaultItem({.id = 13, .name = tr("Front Cover"), .field = u"%frontcover%"_s, .sortField = {}, .writeField = {}, .isPixmap = true});

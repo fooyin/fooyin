@@ -21,6 +21,7 @@
 #include "lyricsparser.h"
 
 #include <core/network/networkaccessmanager.h>
+#include <core/network/networkutils.h>
 
 #include <QJsonArray>
 #include <QJsonObject>
@@ -41,13 +42,6 @@ constexpr auto SearchUrl = "https://lyrics.kugou.com/search"_L1;
 constexpr auto LyricUrl  = "https://lyrics.kugou.com/download"_L1;
 
 namespace {
-QNetworkRequest setupRequest(const QUrl& url)
-{
-    QNetworkRequest req{url};
-    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
-    return req;
-}
-
 QByteArray inflateZlib(QByteArray compressed)
 {
     if(compressed.isEmpty()) {
@@ -202,7 +196,7 @@ void KugouLyrics::search(const SearchParams& params)
     q.addQueryItem(u"hash"_s, u""_s);
     url.setQuery(q);
 
-    const QNetworkRequest req = setupRequest(url);
+    const QNetworkRequest req = makeNetworkRequest(url);
 
     qCDebug(LYRICS) << u"Sending request: %1"_s.arg(url.toString());
 
@@ -280,7 +274,7 @@ void KugouLyrics::makeLyricRequest()
     q.addQueryItem(u"var"_s, u"1"_s);
     url.setQuery(q);
 
-    const QNetworkRequest req = setupRequest(url);
+    const QNetworkRequest req = makeNetworkRequest(url);
 
     qCDebug(LYRICS) << u"Sending request: %1"_s.arg(url.toString());
 

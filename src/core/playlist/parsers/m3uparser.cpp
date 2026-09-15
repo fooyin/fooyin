@@ -105,7 +105,7 @@ bool isCuePath(const QString& path)
 
 QString resolvePlaylistEntryPath(const QString& playlistPath, const QString& entry, const QDir& dir)
 {
-    if(Track::isArchivePath(entry) || Track::isRemotePath(entry)) {
+    if(Track::isArchivePath(entry) || Track::isRemotePath(entry) || Track::isVirtualPath(entry)) {
         return entry;
     }
 
@@ -118,11 +118,12 @@ QString resolvePlaylistEntryPath(const QString& playlistPath, const QString& ent
         }
     }
 
-    if(dir.exists() && !QDir::isAbsolutePath(entry)) {
-        return QDir::cleanPath(dir.absoluteFilePath(entry));
+    const QString localEntry = QDir::fromNativeSeparators(entry);
+    if(dir.exists() && !QDir::isAbsolutePath(localEntry)) {
+        return QDir::cleanPath(dir.absoluteFilePath(localEntry));
     }
 
-    return entry;
+    return localEntry;
 }
 
 TrackList readCuePlaylist(const QString& path, const PlaylistParser::ReadPlaylistEntry& readEntry, bool skipNotFound)
@@ -271,7 +272,8 @@ TrackList M3uParser::readPlaylist(QIODevice* device, const QString& filepath, co
                 track.setSubsong(subsong);
             }
 
-            if(!Track::isArchivePath(path) && !Track::isRemotePath(path) && !QFile::exists(path)) {
+            if(!Track::isArchivePath(path) && !Track::isRemotePath(path) && !Track::isVirtualPath(path)
+               && !QFile::exists(path)) {
                 // Handle potential windows filepath
                 track.setFilePath(path.replace(u'\\', u'/'));
             }
@@ -335,11 +337,15 @@ void M3uParser::savePlaylist(QIODevice* device, const QString& extension, const 
         if(writeMetdata) {
             stream << u"#EXTINF:%1,%2 - %3\n"_s.arg(track.duration() / 1000).arg(track.artist(), track.title());
         }
+
         QString path = track.filepath();
         if(track.subsong() > 0) {
             path += u"#%1"_s.arg(track.subsong());
         }
-        stream << PlaylistParser::determineTrackPath(QUrl::fromLocalFile(path), dir, type) << "\n";
+
+        const QUrl trackUrl
+            = track.isRemote() || track.isVirtual() ? QUrl{path, QUrl::StrictMode} : QUrl::fromLocalFile(path);
+        stream << determineTrackPath(trackUrl, dir, type) << "\n";
     }
 }
 } // namespace Fooyin

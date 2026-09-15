@@ -27,6 +27,8 @@
 #include <utils/stringutils.h>
 #include <utils/utils.h>
 
+#include <QDir>
+
 #include <set>
 #include <tuple>
 
@@ -201,27 +203,32 @@ void InfoPopulatorPrivate::addTrackMetadata(const Track& track, bool extended,
 
 void InfoPopulatorPrivate::addTrackLocation(int total, const Track& track)
 {
-    const bool isRemote = track.isRemote();
+    const bool isRemote    = track.isRemote();
+    const bool isVirtual   = track.isVirtual();
+    const bool isLocalFile = !isRemote && !isVirtual;
+    const QString path     = isLocalFile ? QDir::toNativeSeparators(track.path()) : track.path();
+    const QString filepath = isLocalFile ? QDir::toNativeSeparators(track.prettyFilepath()) : track.prettyFilepath();
 
     checkAddEntryNode(u"FileName"_s, total > 1 ? InfoPopulator::tr("File Names") : InfoPopulator::tr("File Name"),
                       ItemParent::Location, track.filename());
     if(!isRemote) {
         checkAddEntryNode(u"FolderName"_s,
                           total > 1 ? InfoPopulator::tr("Folder Names") : InfoPopulator::tr("Folder Name"),
-                          ItemParent::Location, track.path());
+                          ItemParent::Location, path);
     }
 
     if(total == 1) {
         checkAddEntryNode(isRemote ? u"Url"_s : u"FilePath"_s,
                           isRemote ? InfoPopulator::tr("URL") : InfoPopulator::tr("File Path"), ItemParent::Location,
-                          track.prettyFilepath());
-        if(track.subsong() >= 0) {
+                          filepath);
+        if(track.subsong() > 0 || (isVirtual && track.subsong() >= 0)) {
+            const int displayedSubsong = track.subsong() + (isVirtual ? 1 : 0);
             checkAddEntryNode(u"SubsongIndex"_s, InfoPopulator::tr("Subsong Index"), ItemParent::Location,
-                              track.subsong());
+                              QString::number(displayedSubsong));
         }
     }
 
-    if(!isRemote) {
+    if(isLocalFile) {
         checkAddEntryNode(
             u"FileSize"_s, total > 1 ? InfoPopulator::tr("Total Size") : InfoPopulator::tr("File Size"),
             ItemParent::Location, fileSize(track), InfoItem::Total,
@@ -239,7 +246,7 @@ void InfoPopulatorPrivate::addTrackLocation(int total, const Track& track)
     }
 
     if(total == 1) {
-        if(!isRemote && track.createdTime() > 0) {
+        if(isLocalFile && track.createdTime() > 0) {
             checkAddEntryNode(u"Created"_s, InfoPopulator::tr("Created"), ItemParent::Location, track.createdTime(),
                               InfoItem::Max, InfoItem::FormatUIntFunc{Utils::formatTimeMs});
         }
@@ -308,6 +315,8 @@ void InfoPopulatorPrivate::addTrackGeneral(int total, const Track& track)
 
 void InfoPopulatorPrivate::addTrackPlayStats(const Track& track)
 {
+    checkAddEntryNode(u"Loved"_s, InfoPopulator::tr("Loved"), ItemParent::PlayStats,
+                      track.isLoved() ? InfoPopulator::tr("Yes") : InfoPopulator::tr("No"));
     if(track.playCount() > 0) {
         checkAddEntryNode(u"PlayCount"_s, InfoPopulator::tr("Playcount"), ItemParent::PlayStats,
                           QString::number(std::max(track.playCount(), 0)), InfoItem::Total);

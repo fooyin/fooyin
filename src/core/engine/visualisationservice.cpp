@@ -214,6 +214,22 @@ bool VisualisationSession::getSpectrumWindowEndingAt(SpectrumWindow& out, uint64
         && p->backend->getSpectrumWindowEndingAt(out, endTimeMs, fftSize, p->channelSelection, windowFunction);
 }
 
+bool VisualisationSession::getSpectrumWindowForDuration(SpectrumWindow& out, uint64_t centerTimeMs, uint64_t durationMs,
+                                                        SpectrumWindowFunction windowFunction) const
+{
+    return p->backend
+        && p->backend->getSpectrumWindowForDuration(out, centerTimeMs, durationMs, p->channelSelection, windowFunction);
+}
+
+bool VisualisationSession::getSpectrumWindowEndingAtDuration(SpectrumWindow& out, uint64_t endTimeMs,
+                                                             uint64_t durationMs,
+                                                             SpectrumWindowFunction windowFunction) const
+{
+    return p->backend
+        && p->backend->getSpectrumWindowEndingAtDuration(out, endTimeMs, durationMs, p->channelSelection,
+                                                         windowFunction);
+}
+
 class VisualisationServicePrivate
 {
 public:

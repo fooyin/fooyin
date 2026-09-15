@@ -78,7 +78,7 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Music
 
     resetTitle();
 
-    setWindowIcon(Gui::iconFromTheme(Constants::Icons::FooyinWindow));
+    setWindowIcon(Gui::applicationIcon());
 
     if(windowHandle()) {
         QObject::connect(windowHandle(), &QWindow::screenChanged, this,

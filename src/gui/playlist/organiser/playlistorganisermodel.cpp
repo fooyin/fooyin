@@ -145,8 +145,10 @@ PlaylistOrganiserModel::PlaylistOrganiserModel(PlaylistHandler* playlistHandler,
                      });
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
                      [this, playlistChanged]() { playlistChanged(m_activePlaylistKey, Qt::DecorationRole); });
-    QObject::connect(m_playlistHandler, &PlaylistHandler::playlistUpdated, this,
-                     [this](Playlist* playlist) { refreshPlaylist(playlist); });
+    QObject::connect(m_playlistHandler, &PlaylistHandler::playlistUpdated, this, [this](Playlist* playlist) {
+        refreshPlaylist(playlist, {PlaylistOrganiserItem::RichText, PlaylistOrganiserItem::RichRightText,
+                                   Qt::SizeHintRole, Qt::DecorationRole});
+    });
     QObject::connect(m_playlistHandler, &PlaylistHandler::tracksAdded, this,
                      [this](Playlist* playlist, const TrackList&, int) { refreshPlaylist(playlist); });
     QObject::connect(m_playlistHandler, &PlaylistHandler::tracksPatched, this,
@@ -614,6 +616,9 @@ QVariant PlaylistOrganiserModel::data(const QModelIndex& index, int role) const
                     return Gui::pixmapFromTheme(Constants::Icons::Pause);
                 }
             }
+            if(type == PlaylistOrganiserItem::PlaylistItem && item->playlist()->isLocked()) {
+                return Gui::pixmapFromTheme(Constants::Icons::ReadOnly);
+            }
             break;
 
         case PlaylistOrganiserItem::ItemType:
@@ -678,7 +683,7 @@ bool PlaylistOrganiserModel::canDropMimeData(const QMimeData* data, Qt::DropActi
     }
 
     if(auto* playlist = parent.data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>()) {
-        if(playlist->isAutoPlaylist()) {
+        if(playlist->isAutoPlaylist() || playlist->isLocked()) {
             return false;
         }
     }

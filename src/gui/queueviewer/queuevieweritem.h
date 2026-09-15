@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <core/playlist/playlist.h>
+#include <core/player/playbackqueue.h>
 #include <core/scripting/scripttypes.h>
 #include <gui/scripting/richtext.h>
 #include <utils/treeitem.h>
@@ -37,17 +37,19 @@ public:
         RichTitle,
         RichRightText,
         IsPlaybackIcon,
-        Track
+        Track,
+        QueueItemId,
     };
 
     QueueViewerItem() = default;
-    explicit QueueViewerItem(PlaylistTrack track);
+    explicit QueueViewerItem(PlaylistTrack track, PlaybackQueueItemId queueItemId = 0);
 
     [[nodiscard]] QString title() const;
     [[nodiscard]] QString subtitle() const;
     [[nodiscard]] const RichText& richTitle() const;
     [[nodiscard]] const RichText& richSubtitle() const;
     [[nodiscard]] PlaylistTrack track() const;
+    [[nodiscard]] PlaybackQueueItemId queueItemId() const;
 
     void generateTitle(ScriptParser* parser, ScriptFormatter* formatter, const QString& leftScript,
                        const QString& rightScript, const ScriptContext& context);
@@ -56,5 +58,6 @@ private:
     RichText m_title;
     RichText m_subtitle;
     PlaylistTrack m_track;
+    PlaybackQueueItemId m_queueItemId{0};
 };
 } // namespace Fooyin

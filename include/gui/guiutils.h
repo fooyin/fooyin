@@ -25,14 +25,18 @@
 #include <core/ratingsymbols.h>
 #include <core/track.h>
 #include <gui/theme/fytheme.h>
+#include <utils/starrating.h>
 
 #include <QByteArray>
 #include <QModelIndexList>
+#include <QStyleOptionViewItem>
 
 class QMimeData;
 class QLabel;
 class QAbstractItemView;
 class QPalette;
+class QPainter;
+class QPixmap;
 
 namespace Fooyin {
 class MusicLibrary;
@@ -47,10 +51,25 @@ FYGUI_EXPORT TrackIds sortTrackIdsForLibraryViewerPlaylist(MusicLibrary* library
 FYGUI_EXPORT QByteArray queueTracksToMimeData(const QueueTracks& tracks);
 FYGUI_EXPORT QueueTracks queueTracksFromMimeData(MusicLibrary* library, QByteArray data);
 FYGUI_EXPORT RatingStarSymbols ratingStarSymbols(const SettingsManager& settings);
+FYGUI_EXPORT QColor loveHeartColour(const SettingsManager& settings);
+FYGUI_EXPORT QColor unlovedHeartColour(const SettingsManager& settings);
+FYGUI_EXPORT QColor unratedStarColour(const SettingsManager& settings);
+FYGUI_EXPORT RatingStarColours ratingStarColours(const SettingsManager& settings);
 
 FYGUI_EXPORT QMap<PaletteKey, QColor> coloursFromPalette();
 FYGUI_EXPORT QMap<PaletteKey, QColor> coloursFromStylePalette();
 FYGUI_EXPORT QMap<PaletteKey, QColor> coloursFromPalette(const QPalette& palette);
+FYGUI_EXPORT bool styleSupportsCustomPalette(const QString& styleName);
+FYGUI_EXPORT bool styleSupportsDarkMode(const QString& styleName);
+FYGUI_EXPORT bool styleUsesNormalItemViewSelectionText(const QString& styleName, bool alternatingRows = false);
+FYGUI_EXPORT QPalette::ColorRole itemViewSelectionTextRole(const QStyleOptionViewItem& option);
+FYGUI_EXPORT QIcon::Mode itemViewIconMode(const QStyleOptionViewItem& option);
+
+/*! Returns the style-provided item text rectangle with spacing for leading row decorations. */
+FYGUI_EXPORT QRect itemViewTextRect(const QStyleOptionViewItem& option);
+
+FYGUI_EXPORT void drawRoundedPixmap(QPainter& painter, const QRect& rect, Qt::Alignment alignment,
+                                    const QPixmap& pixmap, int radiusPercent);
 
 FYGUI_EXPORT void refreshItemViewPalette(QAbstractItemView* view);
 FYGUI_EXPORT void refreshItemViewPalette(QAbstractItemView* view, const QPalette& palette);

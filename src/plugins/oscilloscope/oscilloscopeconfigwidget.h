@@ -41,6 +41,8 @@ public:
 protected:
     [[nodiscard]] OscilloscopeWidget::ConfigData config() const override;
     void setConfig(const OscilloscopeWidget::ConfigData& config) override;
+    void mergeExternalConfig(const OscilloscopeWidget::ConfigData& previous,
+                             const OscilloscopeWidget::ConfigData& current) override;
 
 private:
     QComboBox* m_curveDurationMs;

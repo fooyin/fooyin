@@ -105,6 +105,9 @@ OscilloscopeConfigDialog::OscilloscopeConfigDialog(OscilloscopeWidget* oscillosc
     layout->addWidget(m_colourGroup, 0, 1);
     layout->setRowStretch(layout->rowCount(), 1);
 
+    QObject::connect(oscilloscope, &OscilloscopeWidget::configChanged, this,
+                     &OscilloscopeConfigDialog::syncCurrentConfig);
+
     loadCurrentConfig();
 }
 
@@ -178,6 +181,15 @@ void OscilloscopeConfigDialog::setConfig(const OscilloscopeWidget::ConfigData& c
     m_waveformColour->setColour(colours.colour(Colours::Type::Waveform, widget()->palette()));
     m_zeroLineColour->setChecked(colours.hasOverride(Colours::Type::ZeroLine));
     m_zeroLineColour->setColour(colours.colour(Colours::Type::ZeroLine, widget()->palette()));
+}
+
+void OscilloscopeConfigDialog::mergeExternalConfig(const OscilloscopeWidget::ConfigData& previous,
+                                                   const OscilloscopeWidget::ConfigData& current)
+{
+    mergeExternalFields(previous, current, &OscilloscopeWidget::ConfigData::curveDurationMs,
+                        &OscilloscopeWidget::ConfigData::zoomPercent, &OscilloscopeWidget::ConfigData::updateFps,
+                        &OscilloscopeWidget::ConfigData::downmixMode, &OscilloscopeWidget::ConfigData::showZeroLine,
+                        &OscilloscopeWidget::ConfigData::colours);
 }
 } // namespace Fooyin::Oscilloscope
 

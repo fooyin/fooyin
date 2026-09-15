@@ -137,6 +137,41 @@ CreatorT selectRemoteTrackIoCreator(const std::vector<EntryT>& loaders, Capabili
     return ret;
 }
 
+template <typename EntryT, typename CreatorT>
+CreatorT selectSchemeTrackIoCreator(const std::vector<EntryT>& loaders, const QString& scheme,
+                                    bool includeDisabled = false)
+{
+    CreatorT ret;
+    for(const auto& loader : loaders) {
+        if((!includeDisabled && !loader.enabled) || loader.isArchiveWrapper) {
+            continue;
+        }
+        if(loader.schemes.contains(scheme)) {
+            ret.push_back(loader.creator);
+        }
+    }
+    return ret;
+}
+
+QString sourceScheme(const QString& source)
+{
+    if(!Track::isVirtualPath(source)) {
+        return {};
+    }
+
+    const QUrl url{source, QUrl::StrictMode};
+    return url.scheme().toLower();
+}
+
+void prepareSchemeSource(LoadedSource& input, const QString& filepath)
+{
+    input.device.reset();
+    input.archiveReader.reset();
+    input.source          = {};
+    input.source.filepath = filepath;
+    input.rebind();
+}
+
 template <typename T>
 void prioritisePreferredLoaders(std::vector<std::unique_ptr<T>>& loaders, const QString& ext)
 {
@@ -386,7 +421,7 @@ QStringList AudioLoader::supportedArchiveExtensions() const
 
 bool AudioLoader::canWriteMetadata(const Track& track) const
 {
-    if(track.isRemote()) {
+    if(track.isRemote() || !sourceScheme(track.filepath()).isEmpty()) {
         return false;
     }
 
@@ -420,6 +455,7 @@ LoadedDecoder AudioLoader::loadDecoderForTrack(const Track& track, AudioDecoder:
     }
 
     LoadedDecoder ret;
+    const bool isSchemeSource = !sourceScheme(track.filepath()).isEmpty();
 
     for(auto& decoder : decoders) {
         if(track.isRemote()) {
@@ -431,6 +467,9 @@ LoadedDecoder AudioLoader::loadDecoderForTrack(const Track& track, AudioDecoder:
             if(!openRemoteSource(ret.input, track.filepath(), remoteSourceProvider)) {
                 return {};
             }
+        }
+        else if(isSchemeSource) {
+            prepareSchemeSource(ret.input, track.filepath());
         }
         else if(!track.isInArchive()) {
             if(!openFileSource(ret.input, track.filepath())) {
@@ -464,6 +503,7 @@ LoadedReader AudioLoader::loadReaderForTrack(const Track& track) const
 
     LoadedReader best;
     int bestSubsongCount{0};
+    const bool isSchemeSource = !sourceScheme(track.filepath()).isEmpty();
 
     for(auto& reader : readers) {
         LoadedReader ret;
@@ -476,6 +516,9 @@ LoadedReader AudioLoader::loadReaderForTrack(const Track& track) const
             if(!openRemoteSource(ret.input, track.filepath(), remoteSourceProvider)) {
                 return {};
             }
+        }
+        else if(isSchemeSource) {
+            prepareSchemeSource(ret.input, track.filepath());
         }
         else if(!track.isInArchive()) {
             if(!openFileSource(ret.input, track.filepath())) {
@@ -573,6 +616,7 @@ std::vector<std::unique_ptr<AudioDecoder>> AudioLoader::decodersForFile(const QS
 {
     const QString ext      = QFileInfo{file}.suffix().toLower();
     const bool isInArchive = Track::isArchivePath(file);
+    const QString scheme   = sourceScheme(file);
 
     std::vector<DecoderCreator> creators;
     {
@@ -580,6 +624,10 @@ std::vector<std::unique_ptr<AudioDecoder>> AudioLoader::decodersForFile(const QS
         if(Track::isRemotePath(file)) {
             creators = selectRemoteTrackIoCreator<LoaderEntry<DecoderCreator>, std::vector<DecoderCreator>>(
                 p->m_decoders, [](const AudioDecoder& decoder) { return decoder.supportsRemoteSources(); });
+        }
+        else if(!scheme.isEmpty()) {
+            creators = selectSchemeTrackIoCreator<LoaderEntry<DecoderCreator>, std::vector<DecoderCreator>>(
+                p->m_decoders, scheme);
         }
         else {
             creators = selectTrackIoCreator<LoaderEntry<DecoderCreator>, std::vector<DecoderCreator>>(p->m_decoders,
@@ -614,6 +662,7 @@ std::vector<std::unique_ptr<AudioReader>> AudioLoader::readersForFile(const QStr
 {
     const QString ext      = QFileInfo{file}.suffix().toLower();
     const bool isInArchive = Track::isArchivePath(file);
+    const QString scheme   = sourceScheme(file);
 
     std::vector<ReaderCreator> creators;
     {
@@ -622,6 +671,10 @@ std::vector<std::unique_ptr<AudioReader>> AudioLoader::readersForFile(const QStr
             creators = selectRemoteTrackIoCreator<LoaderEntry<ReaderCreator>, std::vector<ReaderCreator>>(
                 p->m_readers, [](const AudioReader& reader) { return reader.supportsRemoteSources(); },
                 includeDisabled);
+        }
+        else if(!scheme.isEmpty()) {
+            creators = selectSchemeTrackIoCreator<LoaderEntry<ReaderCreator>, std::vector<ReaderCreator>>(
+                p->m_readers, scheme, includeDisabled);
         }
         else {
             creators = selectTrackIoCreator<LoaderEntry<ReaderCreator>, std::vector<ReaderCreator>>(
@@ -699,6 +752,9 @@ bool AudioLoader::readTrackMetadata(Track& track) const
             }
             source = loadedSource.source;
         }
+        else if(!sourceScheme(track.filepath()).isEmpty()) {
+            source.device = nullptr;
+        }
         else if(!track.isInArchive()) {
             if(!file.open(QIODevice::ReadOnly)) {
                 qCWarning(AUD_LDR) << "Failed to open file:" << source.filepath;
@@ -736,7 +792,8 @@ QByteArray AudioLoader::readTrackCover(const Track& track, Track::Cover cover) c
     const auto readers = readersForTrack(track);
 
     for(const auto& reader : readers) {
-        if(!track.isInArchive() && !reader->canReadCover()) {
+        const bool isSchemeSource = !sourceScheme(track.filepath()).isEmpty();
+        if(!track.isInArchive() && !isSchemeSource && !reader->canReadCover()) {
             continue;
         }
 
@@ -744,7 +801,7 @@ QByteArray AudioLoader::readTrackCover(const Track& track, Track::Cover cover) c
         source.filepath = track.filepath();
         QFile file{track.filepath()};
 
-        if(!track.isInArchive()) {
+        if(!track.isInArchive() && !isSchemeSource) {
             if(!file.open(QIODevice::ReadOnly)) {
                 return {};
             }
@@ -763,7 +820,7 @@ QByteArray AudioLoader::readTrackCover(const Track& track, Track::Cover cover) c
 
 bool AudioLoader::writeTrackMetadata(const Track& track, AudioReader::WriteOptions options) const
 {
-    if(track.isInArchive() || track.isRemote()) {
+    if(track.isInArchive() || track.isRemote() || !sourceScheme(track.filepath()).isEmpty()) {
         return false;
     }
 
@@ -799,7 +856,7 @@ bool AudioLoader::writeTrackMetadata(const Track& track, AudioReader::WriteOptio
 bool AudioLoader::writeTrackCover(const Track& track, const TrackCovers& coverData,
                                   AudioReader::WriteOptions options) const
 {
-    if(track.isInArchive() || track.isRemote()) {
+    if(track.isInArchive() || track.isRemote() || !sourceScheme(track.filepath()).isEmpty()) {
         return false;
     }
 
@@ -841,6 +898,7 @@ void AudioLoader::addDecoder(const QString& name, const DecoderCreator& creator,
     }
 
     const auto decoderExtensions = normaliseExtensions(decoder->extensions());
+    const auto decoderSchemes    = normaliseExtensions(decoder->supportedSchemes());
 
     const std::unique_lock lock{p->m_mutex};
 
@@ -853,6 +911,7 @@ void AudioLoader::addDecoder(const QString& name, const DecoderCreator& creator,
     loader.name             = name;
     loader.index            = priority >= 0 ? priority : static_cast<int>(p->m_decoders.size());
     loader.extensions       = isArchiveWrapper ? archiveExtensionsFromReaders(p->m_archiveReaders) : decoderExtensions;
+    loader.schemes          = isArchiveWrapper ? QStringList{} : decoderSchemes;
     loader.isArchiveWrapper = isArchiveWrapper;
     loader.creator          = creator;
 
@@ -877,6 +936,7 @@ void AudioLoader::addReader(const QString& name, const ReaderCreator& creator, i
     }
 
     const auto readerExtensions = normaliseExtensions(reader->extensions());
+    const auto readerSchemes    = normaliseExtensions(reader->supportedSchemes());
 
     const std::unique_lock lock{p->m_mutex};
 
@@ -889,6 +949,7 @@ void AudioLoader::addReader(const QString& name, const ReaderCreator& creator, i
     loader.name             = name;
     loader.index            = priority >= 0 ? priority : static_cast<int>(p->m_readers.size());
     loader.extensions       = isArchiveWrapper ? archiveExtensionsFromReaders(p->m_archiveReaders) : readerExtensions;
+    loader.schemes          = isArchiveWrapper ? QStringList{} : readerSchemes;
     loader.isArchiveWrapper = isArchiveWrapper;
     loader.creator          = creator;
 

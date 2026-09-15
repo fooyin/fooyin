@@ -47,6 +47,8 @@ public:
 protected:
     [[nodiscard]] LyricsWidget::ConfigData config() const override;
     void setConfig(const LyricsWidget::ConfigData& config) override;
+    void mergeExternalConfig(const LyricsWidget::ConfigData& previous,
+                             const LyricsWidget::ConfigData& current) override;
 
 private:
     [[nodiscard]] ScrollMode scrollMode() const;
@@ -67,8 +69,8 @@ private:
     QRadioButton* m_scrollAutomatic;
 
     QCheckBox* m_showScrollbar;
-    QCheckBox* m_centreFirstSyncedLine;
-    QCheckBox* m_centreLastSyncedLine;
+    QCheckBox* m_centreFirstLine;
+    QCheckBox* m_centreLastLine;
     QComboBox* m_progressMode;
     QComboBox* m_alignment;
     QSpinBox* m_lineSpacing;

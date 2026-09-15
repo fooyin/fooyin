@@ -38,6 +38,8 @@ struct ServiceDetails
     QString token;
     CustomType customType{CustomType::None};
     bool isEnabled{true};
+    bool submitLoved{false};
+    bool syncPlaybackStats{false};
 
     [[nodiscard]] bool isValid() const
     {

@@ -83,6 +83,7 @@ private:
 
     Parameter m_parameter;
     std::unique_ptr<soundtouch::SoundTouch> m_processor;
+    bool m_bypassProcessor;
 
     std::vector<float> m_inputBuffer;
     std::vector<float> m_outputBuffer;

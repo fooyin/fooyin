@@ -117,8 +117,8 @@ bool isSubdir(const QString& dir, const QString& parentDir)
 
 QString getParentDirectory(const QString& filename)
 {
-    const auto cleaned = cleanPath(filename);
-    const auto index   = cleaned.lastIndexOf(QDir::separator());
+    const QString cleaned = QDir::fromNativeSeparators(cleanPath(filename));
+    const auto index      = cleaned.lastIndexOf('/'_L1);
 
     return (index > 0) ? cleanPath(cleaned.left(index)) : QDir::rootPath();
 }
@@ -249,10 +249,15 @@ QStringList getFiles(const QList<QUrl>& urls, const QStringList& fileExtensions)
 
 QStringList getAllSubdirectories(const QDir& dir)
 {
+    return getAllSubdirectories(dir, {});
+}
+
+QStringList getAllSubdirectories(const QDir& dir, const std::stop_token stopToken)
+{
     QStringList directories;
     QDirIterator it{dir.absolutePath(), QDir::Dirs | QDir::NoDotAndDotDot, QDirIterator::Subdirectories};
 
-    while(it.hasNext()) {
+    while(!stopToken.stop_requested() && it.hasNext()) {
         const QString subdir = it.next();
         directories.push_back(subdir);
     }

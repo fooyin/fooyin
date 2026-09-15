@@ -136,7 +136,7 @@ void LyricsPropertiesTab::apply()
         for(const auto& track : m_pendingTagTracks | std::views::values) {
             tracks.emplace_back(track);
         }
-        m_lyricsSaver->writeLyricsToTags(tracks);
+        Q_EMIT writeRequestStarted(m_lyricsSaver->writeLyricsToTags(tracks));
     }
 
     for(auto& [key, draft] : m_drafts) {

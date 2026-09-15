@@ -23,7 +23,9 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QKeySequence>
+
 #include <algorithm>
+#include <vector>
 
 #include <unicode/ucnv.h>
 #include <unicode/ucsdet.h>
@@ -133,8 +135,6 @@ QByteArray detectEncoding(const QByteArray& content, const DetectEncodingOptions
     int32_t count{0};
     const UCharsetMatch** matches = ucsdet_detectAll(csd, &count, &status);
     if(U_SUCCESS(status) && matches) {
-        QByteArray preferredFallbackEncoding;
-
         for(int32_t i{0}; i < count; ++i) {
             UErrorCode matchStatus{U_ZERO_ERROR};
             const char* name = ucsdet_getName(matches[i], &matchStatus);
@@ -147,24 +147,57 @@ QByteArray detectEncoding(const QByteArray& content, const DetectEncodingOptions
                 continue;
             }
 
-            if(!options.preferredFallbackEncoding.isEmpty()
-               && isEncoding(candidate, options.preferredFallbackEncoding.constData())) {
-                preferredFallbackEncoding = candidate;
-            }
-
             if(encoding.isEmpty()) {
                 encoding = candidate;
             }
         }
 
-        if(!preferredFallbackEncoding.isEmpty() && isLatinEncoding(encoding)) {
-            encoding = preferredFallbackEncoding;
+        if(!options.preferredFallbackEncoding.isEmpty() && isLatinEncoding(encoding)
+           && canDecode(options.preferredFallbackEncoding, content)) {
+            encoding = options.preferredFallbackEncoding;
         }
     }
 
     ucsdet_close(csd);
 
     return encoding;
+}
+
+std::optional<QString> decodeText(const QByteArray& content, const QByteArray& encoding)
+{
+    UErrorCode status{U_ZERO_ERROR};
+    UConverter* converter = ucnv_open(encoding.constData(), &status);
+    if(U_FAILURE(status) || !converter) {
+        return {};
+    }
+
+    UConverterToUCallback oldAction{nullptr};
+    const void* oldContext{nullptr};
+    ucnv_setToUCallBack(converter, UCNV_TO_U_CALLBACK_STOP, nullptr, &oldAction, &oldContext, &status);
+    if(U_FAILURE(status)) {
+        ucnv_close(converter);
+        return {};
+    }
+
+    status = U_ZERO_ERROR;
+    const int32_t requiredSize
+        = ucnv_toUChars(converter, nullptr, 0, content.constData(), static_cast<int32_t>(content.size()), &status);
+    if(status != U_BUFFER_OVERFLOW_ERROR && U_FAILURE(status)) {
+        ucnv_close(converter);
+        return {};
+    }
+
+    std::vector<UChar> decoded(static_cast<size_t>(requiredSize) + 1);
+    status                    = U_ZERO_ERROR;
+    const int32_t decodedSize = ucnv_toUChars(converter, decoded.data(), static_cast<int32_t>(decoded.size()),
+                                              content.constData(), static_cast<int32_t>(content.size()), &status);
+    ucnv_close(converter);
+
+    if(U_FAILURE(status)) {
+        return {};
+    }
+
+    return QString::fromUtf16(decoded.data(), decodedSize);
 }
 
 QString foldForSearch(QStringView text)

@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "gui/trackselectioncontroller.h"
+
 #include <core/player/playbackqueue.h>
 #include <core/player/playerdefs.h>
 #include <gui/fywidget.h>
@@ -38,6 +40,7 @@ class QLineEdit;
 class QModelIndex;
 class QMenu;
 class QUrl;
+class QVBoxLayout;
 
 namespace Fooyin {
 class ActionManager;
@@ -63,6 +66,12 @@ public:
         List,
     };
 
+    enum class ControlsPosition : int
+    {
+        Top,
+        Bottom,
+    };
+
     DirBrowser(const QStringList& supportedExtensions, ActionManager* actionManager,
                PlaylistInteractor* playlistInteractor, SettingsManager* settings, QWidget* parent = nullptr);
     ~DirBrowser() override;
@@ -77,18 +86,22 @@ public:
 
     struct ConfigData
     {
-        int doubleClickAction{0};
-        int middleClickAction{0};
+        int doubleClickAction{static_cast<int>(TrackAction::Play)};
+        int middleClickAction{static_cast<int>(TrackAction::None)};
         bool sendPlayback{true};
         bool showIcons{true};
         bool indentList{true};
-        bool showHorizScrollbar{true};
+        bool showHeader{true};
+        bool restoreSort{false};
         Mode mode{Mode::List};
+        ControlsPosition controlsPosition{ControlsPosition::Top};
         bool showControls{true};
         bool showLocation{true};
         bool showSymLinks{false};
         bool showHidden{false};
-        QString rootPath;
+        QString rootPath{
+            QDir::homePath(),
+        };
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;
@@ -99,6 +112,7 @@ public:
     void applyConfig(const ConfigData& config);
 
 Q_SIGNALS:
+    void configChanged();
     void rootChanged();
 
 public Q_SLOTS:
@@ -122,7 +136,7 @@ private:
     [[nodiscard]] QStringList selectedFilePaths() const;
 
     void handleAction(TrackAction action, bool onlySelection);
-    void handlePlayAction(const QList<QUrl>& files, const QString& startingFile);
+    void handlePlayAction(const QList<QUrl>& files, const QString& startingFile, bool onlySelection);
     void addPlaylistMenu(QMenu* menu) const;
     void handleDoubleClick(const QModelIndex& index);
     void handleMiddleClick();
@@ -135,11 +149,11 @@ private:
     void setSendPlayback(bool enabled);
     void setShowIconsEnabled(bool enabled);
     void setListIndentEnabled(bool enabled);
-    void setShowHorizontalScrollbar(bool enabled);
     void setRootPath(const QString& rootPath);
     [[nodiscard]] QString rootPath() const;
 
     void updateFilters();
+    void setControlsPosition(ControlsPosition position);
     void setControlsEnabled(bool enabled);
     void setLocationEnabled(bool enabled);
     void setShowSymLinksEnabled(bool enabled);
@@ -161,6 +175,7 @@ private:
 
     std::unique_ptr<QFileIconProvider> m_iconProvider;
 
+    QVBoxLayout* m_mainLayout;
     QHBoxLayout* m_controlLayout;
     QPointer<QLineEdit> m_dirEdit;
     QPointer<ToolButton> m_backDir;

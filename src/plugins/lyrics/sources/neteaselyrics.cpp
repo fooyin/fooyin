@@ -22,6 +22,7 @@
 #include "lyricsparser.h"
 
 #include <core/network/networkaccessmanager.h>
+#include <core/network/networkutils.h>
 
 #include <QJsonArray>
 #include <QJsonObject>
@@ -38,14 +39,12 @@ using namespace Qt::StringLiterals;
 constexpr auto SearchUrl = "https://music.163.com/api/cloudsearch/pc";
 constexpr auto LyricUrl  = "https://interface3.music.163.com/api/song/lyric";
 
+namespace Fooyin::Lyrics {
 namespace {
 QNetworkRequest setupRequest(const char* url)
 {
-    QNetworkRequest req{QString::fromLatin1(url)};
-
-    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+    QNetworkRequest req = makeNetworkRequest(QString::fromLatin1(url));
     req.setHeader(QNetworkRequest::ContentTypeHeader, u"application/x-www-form-urlencoded"_s);
-
     return req;
 }
 
@@ -81,7 +80,7 @@ QString yrcToEnhancedLrc(const QString& yrc)
             return {};
         }
 
-        stream << u"[%1]"_s.arg(Fooyin::Lyrics::formatTimestamp(lineTimestamp));
+        stream << u"[%1]"_s.arg(formatTimestamp(lineTimestamp));
 
         bool hasWords{false};
         auto wordIt = WordPattern.globalMatch(lineMatch.captured(3));
@@ -93,7 +92,7 @@ QString yrcToEnhancedLrc(const QString& yrc)
                 return {};
             }
 
-            stream << u"<%1>%2"_s.arg(Fooyin::Lyrics::formatTimestamp(wordTimestamp), wordMatch.captured(3));
+            stream << u"<%1>%2"_s.arg(formatTimestamp(wordTimestamp), wordMatch.captured(3));
             hasWords = true;
         }
 
@@ -108,7 +107,6 @@ QString yrcToEnhancedLrc(const QString& yrc)
 }
 } // namespace
 
-namespace Fooyin::Lyrics {
 QString NeteaseLyrics::name() const
 {
     return u"NetEase Cloud Music"_s;

@@ -393,32 +393,32 @@ void RadioSearch::setCodecCategories(const RadioCategoryList& categories)
 void RadioSearch::setCountryCategoriesFailed(const QString& error)
 {
     setCategoriesFailed(m_popupCountryCombo, m_countryCombo, tr("Any country"),
-                        error.isEmpty() ? tr("Countries unavailable - select to retry")
-                                        : tr("Countries unavailable: %1 - select to retry").arg(error),
+                        error.isEmpty() ? tr("Countries unavailable — select to retry")
+                                        : tr("Countries unavailable: %1 — select to retry").arg(error),
                         FilterControl::Country);
 }
 
 void RadioSearch::setLanguageCategoriesFailed(const QString& error)
 {
     setCategoriesFailed(m_popupLanguageCombo, m_languageCombo, tr("Any language"),
-                        error.isEmpty() ? tr("Languages unavailable - select to retry")
-                                        : tr("Languages unavailable: %1 - select to retry").arg(error),
+                        error.isEmpty() ? tr("Languages unavailable — select to retry")
+                                        : tr("Languages unavailable: %1 — select to retry").arg(error),
                         FilterControl::Language);
 }
 
 void RadioSearch::setTagCategoriesFailed(const QString& error)
 {
     setCategoriesFailed(m_popupTagCombo, m_tagCombo, tr("Any tag"),
-                        error.isEmpty() ? tr("Tags unavailable - select to retry")
-                                        : tr("Tags unavailable: %1 - select to retry").arg(error),
+                        error.isEmpty() ? tr("Tags unavailable — select to retry")
+                                        : tr("Tags unavailable: %1 — select to retry").arg(error),
                         FilterControl::Tag);
 }
 
 void RadioSearch::setCodecCategoriesFailed(const QString& error)
 {
     setCategoriesFailed(m_popupCodecCombo, m_codecCombo, tr("Any codec"),
-                        error.isEmpty() ? tr("Codecs unavailable - select to retry")
-                                        : tr("Codecs unavailable: %1 - select to retry").arg(error),
+                        error.isEmpty() ? tr("Codecs unavailable — select to retry")
+                                        : tr("Codecs unavailable: %1 — select to retry").arg(error),
                         FilterControl::Codec);
 }
 

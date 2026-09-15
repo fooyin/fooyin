@@ -22,13 +22,88 @@
 #include <core/constants.h>
 #include <utils/stringutils.h>
 
+#include <QCache>
 #include <QDir>
 #include <QRegularExpression>
 #include <QUrl>
+#include <QUrlQuery>
+
+#include <optional>
+#include <ranges>
+
+#include <zlib.h>
 
 using namespace Qt::StringLiterals;
 
 namespace {
+std::optional<QRegularExpression> regularExpression(const QString& pattern, const QString& flags)
+{
+    QRegularExpression::PatternOptions options{QRegularExpression::UseUnicodePropertiesOption};
+    for(const QChar flag : flags) {
+        switch(flag.unicode()) {
+            case u'i':
+                options |= QRegularExpression::CaseInsensitiveOption;
+                break;
+            case u'm':
+                options |= QRegularExpression::MultilineOption;
+                break;
+            case u's':
+                options |= QRegularExpression::DotMatchesEverythingOption;
+                break;
+            case u'x':
+                options |= QRegularExpression::ExtendedPatternSyntaxOption;
+                break;
+            case u'U':
+                options |= QRegularExpression::InvertedGreedinessOption;
+                break;
+            default:
+                return {};
+        }
+    }
+
+    const QString cacheKey = QString::number(options.toInt()) + u'\0' + pattern;
+    thread_local QCache<QString, QRegularExpression> cache{64};
+    if(const auto* cached = cache.object(cacheKey)) {
+        return *cached;
+    }
+
+    QRegularExpression regex{pattern, options};
+    if(!regex.isValid()) {
+        return {};
+    }
+
+    cache.insert(cacheKey, new QRegularExpression{regex});
+    return regex;
+}
+
+struct RegexCaptureGroup
+{
+    int index{0};
+    QString name;
+};
+
+std::optional<RegexCaptureGroup> regexCaptureGroup(const QRegularExpression& regex, const QString& group)
+{
+    bool isIndex{false};
+    const int index = group.toInt(&isIndex);
+    if(isIndex) {
+        if(index < 0 || index > regex.captureCount()) {
+            return {};
+        }
+        return RegexCaptureGroup{.index = index, .name = {}};
+    }
+
+    if(group.isEmpty() || !regex.namedCaptureGroups().contains(group)) {
+        return {};
+    }
+    return RegexCaptureGroup{.name = group};
+}
+
+QString captured(const QRegularExpressionMatch& match, const RegexCaptureGroup& group)
+{
+    return group.name.isEmpty() ? match.captured(group.index) : match.captured(group.name);
+}
+
 QString strstrHelper(const QStringList& vec, bool reverse, Qt::CaseSensitivity cs)
 {
     const qsizetype count = vec.size();
@@ -52,7 +127,18 @@ QString strstrHelper(const QStringList& vec, bool reverse, Qt::CaseSensitivity c
         return {};
     }
 
-    return QString::number(ret);
+    return QString::number(ret + 1);
+}
+
+QString strchrHelper(const QStringList& vec, bool reverse)
+{
+    if(vec.size() != 2 || vec.at(1).size() != 1) {
+        return {};
+    }
+
+    const QStringView str = vec.at(0);
+    const qsizetype index = reverse ? str.lastIndexOf(vec.at(1).front()) : str.indexOf(vec.at(1).front());
+    return index < 0 ? QString{} : QString::number(index + 1);
 }
 } // namespace
 
@@ -150,6 +236,65 @@ QString replace(const QStringList& vec)
     return result;
 }
 
+QString regexReplace(const QStringList& vec)
+{
+    if(vec.size() < 3 || vec.size() > 4) {
+        return {};
+    }
+
+    const auto regex = regularExpression(vec.at(1), vec.value(3));
+    if(!regex) {
+        return {};
+    }
+
+    QString result{vec.front()};
+    return result.replace(*regex, vec.at(2));
+}
+
+QString regexMatch(const QStringList& vec)
+{
+    if(vec.size() < 2 || vec.size() > 4) {
+        return {};
+    }
+
+    const auto regex = regularExpression(vec.at(1), vec.value(3));
+    if(!regex) {
+        return {};
+    }
+
+    const auto group = regexCaptureGroup(*regex, vec.size() >= 3 ? vec.at(2) : u"0"_s);
+    if(!group) {
+        return {};
+    }
+
+    const QRegularExpressionMatch match = regex->match(vec.front());
+    return match.hasMatch() ? captured(match, *group) : QString{};
+}
+
+QString regexMatches(const QStringList& vec)
+{
+    if(vec.size() < 3 || vec.size() > 5) {
+        return {};
+    }
+
+    const auto regex = regularExpression(vec.at(1), vec.value(4));
+    if(!regex) {
+        return {};
+    }
+
+    const auto group = regexCaptureGroup(*regex, vec.size() >= 4 ? vec.at(3) : u"0"_s);
+    if(!group) {
+        return {};
+    }
+
+    QStringList matches;
+    auto matchIterator = regex->globalMatch(vec.front());
+    while(matchIterator.hasNext()) {
+        matches.emplace_back(captured(matchIterator.next(), *group));
+    }
+    return matches.join(vec.at(2));
+}
+
 QString ascii(const QStringList& vec)
 {
     if(vec.empty()) {
@@ -217,11 +362,8 @@ QString left(const QStringList& vec)
     bool numSuccess{false};
 
     const int num = vec.at(1).toInt(&numSuccess);
-    if(numSuccess && num >= 0) {
-        const QStringView str = vec.at(0);
-        if(num <= str.size()) {
-            return str.first(num).toString();
-        }
+    if(numSuccess) {
+        return vec.at(0).left(num);
     }
 
     return {};
@@ -363,6 +505,26 @@ QString longest(const QStringList& vec)
     }
 
     return *std::max_element(vec.cbegin(), vec.cend());
+}
+
+QString shortest(const QStringList& vec)
+{
+    if(vec.empty()) {
+        return {};
+    }
+
+    return *std::ranges::min_element(vec,
+                                     [](const QString& lhs, const QString& rhs) { return lhs.size() < rhs.size(); });
+}
+
+QString strchr(const QStringList& vec)
+{
+    return strchrHelper(vec, false);
+}
+
+QString strrchr(const QStringList& vec)
+{
+    return strchrHelper(vec, true);
 }
 
 QString crlf(const QStringList& vec)
@@ -773,6 +935,24 @@ QString cmdlink(const QStringList& vec)
     return u"<a href=\"fooyin://command/%1\">%2</a>"_s.arg(commandId, vec.at(0));
 }
 
+QString applink(const QStringList& vec)
+{
+    if(vec.size() < 2 || vec.size() > 4 || vec.at(0).isEmpty() || vec.at(1).isEmpty()) {
+        return {};
+    }
+
+    QUrlQuery query;
+    query.addQueryItem(u"application"_s, vec.at(1));
+    if(vec.size() >= 3) {
+        query.addQueryItem(u"arguments"_s, vec.at(2));
+    }
+    if(vec.size() == 4) {
+        query.addQueryItem(u"directory"_s, vec.at(3));
+    }
+
+    return u"<a href=\"fooyin://application/run?%1\">%2</a>"_s.arg(query.toString(QUrl::FullyEncoded), vec.at(0));
+}
+
 QString urlencode(const QStringList& vec)
 {
     if(vec.size() != 1) {
@@ -780,6 +960,39 @@ QString urlencode(const QStringList& vec)
     }
 
     return QString::fromUtf8(QUrl::toPercentEncoding(vec.front()));
+}
+
+QString crc32(const QStringList& values)
+{
+    if(values.size() != 1) {
+        return {};
+    }
+
+    const QByteArray bytes = values.constFirst().toUtf8();
+    const auto crc         = static_cast<quint32>(
+        ::crc32(0L, reinterpret_cast<const Bytef*>(bytes.constData()), static_cast<uInt>(bytes.size())));
+
+    return QString::number(crc);
+}
+
+QString hex(const QStringList& vec)
+{
+    if(vec.size() != 2) {
+        return {};
+    }
+
+    bool isInt{false};
+    const qlonglong number = vec.at(0).toLongLong(&isInt);
+    if(!isInt) {
+        return {};
+    }
+
+    const int length = vec.at(1).toInt(&isInt);
+    if(!isInt) {
+        return {};
+    }
+
+    return u"%1"_s.arg(number, length, 16, QLatin1Char{'0'}).toUpper();
 }
 
 QString sep()
@@ -793,7 +1006,8 @@ ScriptResult strcmp(const QStringList& vec)
         return {};
     }
 
-    return {.value = {}, .cond = QString::compare(vec.at(0), vec.at(1), Qt::CaseSensitive) == 0};
+    const bool equal = QString::compare(vec.at(0), vec.at(1), Qt::CaseSensitive) == 0;
+    return {.value = equal ? u"1"_s : QString{}, .cond = equal};
 }
 
 ScriptResult stricmp(const QStringList& vec)
@@ -802,7 +1016,18 @@ ScriptResult stricmp(const QStringList& vec)
         return {};
     }
 
-    return {.value = {}, .cond = QString::compare(vec.at(0), vec.at(1), Qt::CaseInsensitive) == 0};
+    const bool equal = QString::compare(vec.at(0), vec.at(1), Qt::CaseInsensitive) == 0;
+    return {.value = equal ? u"1"_s : QString{}, .cond = equal};
+}
+
+ScriptResult regexTest(const QStringList& vec)
+{
+    if(vec.size() < 2 || vec.size() > 3) {
+        return {};
+    }
+
+    const auto regex = regularExpression(vec.at(1), vec.value(2));
+    return {.value = {}, .cond = regex && regex->match(vec.front()).hasMatch()};
 }
 
 ScriptResult longer(const QStringList& vec)

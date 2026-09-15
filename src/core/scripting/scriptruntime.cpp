@@ -26,6 +26,8 @@
 #include <utils/stringutils.h>
 #include <utils/utils.h>
 
+#include <QDir>
+
 using namespace Qt::StringLiterals;
 
 using TokenType = Fooyin::ScriptScanner::TokenType;
@@ -51,7 +53,7 @@ QDateTime evalDate(const Expression& expr)
 struct DateRange
 {
     QDateTime start;
-    QDateTime end;
+    QDateTime endExclusive;
 };
 
 DateRange calculateDateRange(const Expression& expr)
@@ -60,37 +62,33 @@ DateRange calculateDateRange(const Expression& expr)
         return {};
     }
 
-    const QString dateString = std::get<QString>(expr.value);
+    const auto parsed = Utils::parseDateTime(std::get<QString>(expr.value));
+    if(!parsed) {
+        return {};
+    }
 
     DateRange range;
+    range.start = parsed->toDateTime();
 
-    const auto formats = Utils::dateFormats();
-    for(const auto& format : formats) {
-        const auto date = QDateTime::fromString(dateString, QLatin1String{format});
-        if(!date.isValid()) {
-            continue;
-        }
-
-        range.start = date;
-
-        if(strcmp(format, "yyyy") == 0) {
-            range.end = range.start.addYears(1).addSecs(-1);
-        }
-        else if(strcmp(format, "yyyy-MM") == 0) {
-            range.end = range.start.addMonths(1).addSecs(-1);
-        }
-        else if(strcmp(format, "yyyy-MM-dd") == 0) {
-            range.end = range.start.addDays(1).addSecs(-1);
-        }
-        else if(strcmp(format, "yyyy-MM-dd hh") == 0) {
-            range.end = range.start.addSecs(3600 - 1);
-        }
-        else if(strcmp(format, "yyyy-MM-dd hh:mm") == 0) {
-            range.end = range.start.addSecs(60 - 1);
-        }
-        else if(strcmp(format, "yyyy-MM-dd hh:mm:ss") == 0) {
-            range.end = range.start;
-        }
+    switch(parsed->precision) {
+        case Utils::DateTimePrecision::Year:
+            range.endExclusive = range.start.addYears(1);
+            break;
+        case Utils::DateTimePrecision::Month:
+            range.endExclusive = range.start.addMonths(1);
+            break;
+        case Utils::DateTimePrecision::Day:
+            range.endExclusive = range.start.addDays(1);
+            break;
+        case Utils::DateTimePrecision::Hour:
+            range.endExclusive = range.start.addSecs(3600);
+            break;
+        case Utils::DateTimePrecision::Minute:
+            range.endExclusive = range.start.addSecs(60);
+            break;
+        case Utils::DateTimePrecision::Second:
+            range.endExclusive = range.start.addSecs(1);
+            break;
     }
 
     return range;
@@ -187,6 +185,25 @@ ScriptResult evalLiteral(const BoundExpression& exp)
     return result;
 }
 
+bool isPathVariable(VariableKind kind)
+{
+    switch(kind) {
+        case VariableKind::FilePath:
+        case VariableKind::Directory:
+        case VariableKind::Path:
+        case VariableKind::LibraryPath:
+        case VariableKind::RelativePath:
+            return true;
+        default:
+            return false;
+    }
+}
+
+QString normaliseQueryValue(const QString& value, VariableKind fieldKind)
+{
+    return isPathVariable(fieldKind) ? QDir::fromNativeSeparators(value) : value;
+}
+
 Expression normaliseQueryField(Expression field)
 {
     if(field.type != Expr::Literal) {
@@ -226,6 +243,10 @@ void ScriptRuntime::advance()
     m_previous = m_current;
 
     m_current = m_scanner.next();
+    while(m_current.type == TokenType::TokComment) {
+        m_current = m_scanner.next();
+    }
+
     if(m_current.type == TokenType::TokError) {
         errorAtCurrent(m_current.value.toString());
     }
@@ -343,6 +364,7 @@ Expression ScriptRuntime::expression()
         case TokenType::TokPlus:
         case TokenType::TokMinus:
             return literal();
+        case TokenType::TokComment:
         case TokenType::TokEos:
         case TokenType::TokError:
             break;
@@ -371,13 +393,20 @@ Expression ScriptRuntime::quote()
     QString val;
 
     while(!currentToken(TokenType::TokQuote) && !currentToken(TokenType::TokEos)) {
-        advance();
-        val.append(m_previous.value);
         if(currentToken(TokenType::TokEscape)) {
             advance();
-            val.append(m_current.value);
-            advance();
+            if(currentToken(TokenType::TokQuote) || currentToken(TokenType::TokEscape)) {
+                val.append(m_current.value);
+                advance();
+            }
+            else {
+                val.append(m_previous.value);
+            }
+            continue;
         }
+
+        advance();
+        val.append(m_previous.value);
     }
 
     expr.value = val;
@@ -578,12 +607,13 @@ Expression ScriptRuntime::group()
     ExpressionList args;
 
     while(!currentToken(TokenType::TokRightParen) && !currentToken(TokenType::TokEos)) {
-        Expression prevExpr = expression();
-        Expression argExpr  = checkOperator(prevExpr);
-
-        while(argExpr.type != prevExpr.type) {
-            prevExpr = argExpr;
-            argExpr  = checkOperator(prevExpr);
+        Expression argExpr = expression();
+        while(true) {
+            const int position = m_current.position;
+            argExpr            = checkOperator(argExpr);
+            if(m_current.position == position) {
+                break;
+            }
         }
 
         if(argExpr.type != Expr::Null) {
@@ -783,9 +813,9 @@ Expression ScriptRuntime::duringKeyword(const Expression& key)
     else if(!currentToken(TokenType::TokEos)) {
         const Expression argExpr  = expression();
         const DateRange dateRange = calculateDateRange(argExpr);
-        if(dateRange.start.isValid() && dateRange.end.isValid()) {
+        if(dateRange.start.isValid() && dateRange.endExclusive.isValid()) {
             args.emplace_back(Expr::Date, QString::number(dateRange.start.toMSecsSinceEpoch()));
-            args.emplace_back(Expr::Date, QString::number(dateRange.end.toMSecsSinceEpoch()));
+            args.emplace_back(Expr::Date, QString::number(dateRange.endExclusive.toMSecsSinceEpoch()));
         }
     }
 
@@ -1081,10 +1111,23 @@ ScriptResult ScriptRuntime::evalFunction(const BoundExpression& exp, const auto&
                 return {};
             }
 
-            if(first.value.size() >= length) {
+            if(first.value.length() > length) {
                 return evalExpression(func.args.at(2), tracks);
             }
             return evalExpression(func.args.at(3), tracks);
+        }
+        case FunctionKind::Select: {
+            if(func.args.size() < 2) {
+                return {};
+            }
+
+            bool ok{false};
+            const int index = evalExpression(func.args.front(), tracks).value.toInt(&ok);
+            if(!ok || index < 1 || std::cmp_greater_equal(index, func.args.size())) {
+                return {};
+            }
+
+            return evalExpression(func.args.at(index), tracks);
         }
         case FunctionKind::Add:
         case FunctionKind::Sub:
@@ -1207,12 +1250,12 @@ ScriptResult ScriptRuntime::evalFunctionArg(const BoundExpression& exp, const au
     }
 
     ScriptResult result;
-    bool allPassed{true};
+    bool conditionPassed{false};
 
     for(const BoundExpression& subArg : arg) {
         const auto subExpr = evalExpression(subArg, tracks);
-        if(!subExpr.cond) {
-            allPassed = false;
+        if(subArg.type != Expr::Literal && subArg.type != Expr::QuotedLiteral) {
+            conditionPassed |= subExpr.cond;
         }
         if(subExpr.value.contains(QLatin1String{Constants::UnitSeparator})) {
             QStringList newResult;
@@ -1225,7 +1268,7 @@ ScriptResult ScriptRuntime::evalFunctionArg(const BoundExpression& exp, const au
             result.value = result.value + subExpr.value;
         }
     }
-    result.cond = allPassed;
+    result.cond = conditionPassed;
     return result;
 }
 
@@ -1238,35 +1281,25 @@ ScriptResult ScriptRuntime::evalConditional(const BoundExpression& exp, const au
 
     if(arg.size() == 1) {
         const BoundExpression& subArg = arg.front();
-        const ScriptResult subExpr    = evalExpression(subArg, tracks);
-
-        if(subArg.type != Expr::Literal && subArg.type != Expr::QuotedLiteral) {
-            if(!subExpr.cond || subExpr.value.isEmpty()) {
-                return {};
-            }
+        if(subArg.type == Expr::Literal || subArg.type == Expr::QuotedLiteral) {
+            return {};
         }
 
-        ScriptResult result;
-        result.value = subExpr.value;
-        result.cond  = true;
-        return result;
+        const ScriptResult subExpr = evalExpression(subArg, tracks);
+        return subExpr.cond ? subExpr : ScriptResult{};
     }
 
     ScriptResult result;
     QStringList exprResult;
-    result.cond = true;
+    bool hasCondition{false};
+    bool conditionPassed{false};
 
     for(const BoundExpression& subArg : arg) {
         const auto subExpr = evalExpression(subArg, tracks);
 
-        // Literals return false
         if(subArg.type != Expr::Literal && subArg.type != Expr::QuotedLiteral) {
-            if(!subExpr.cond || subExpr.value.isEmpty()) {
-                // No need to evaluate rest
-                result.value.clear();
-                result.cond = false;
-                return result;
-            }
+            hasCondition = true;
+            conditionPassed |= subExpr.cond;
         }
         if(subExpr.value.contains(QLatin1String{Constants::UnitSeparator})) {
             const QStringList evalList = evalStringList(subExpr, exprResult);
@@ -1290,6 +1323,12 @@ ScriptResult ScriptRuntime::evalConditional(const BoundExpression& exp, const au
     else if(exprResult.size() > 1) {
         result.value = exprResult.join(QLatin1String{Constants::UnitSeparator});
     }
+
+    result.cond = hasCondition && conditionPassed;
+    if(!result.cond) {
+        result.value.clear();
+    }
+
     return result;
 }
 
@@ -1416,7 +1455,8 @@ ScriptResult ScriptRuntime::evalEquals(const BoundExpression& exp, const auto& t
         return {};
     }
 
-    const ScriptResult first = evalExpression(args.at(0), tracks);
+    const BoundExpression& field = args.at(0);
+    const ScriptResult first     = evalExpression(field, tracks);
     if(!first.cond) {
         return {};
     }
@@ -1426,8 +1466,11 @@ ScriptResult ScriptRuntime::evalEquals(const BoundExpression& exp, const auto& t
         return {};
     }
 
+    const QString firstValue  = normaliseQueryValue(first.value, field.variableKind);
+    const QString secondValue = normaliseQueryValue(second.value, field.variableKind);
+
     ScriptResult result;
-    if(first.value.compare(second.value, Qt::CaseInsensitive) == 0) {
+    if(firstValue.compare(secondValue, Qt::CaseInsensitive) == 0) {
         result.cond = true;
     }
 
@@ -1441,7 +1484,8 @@ ScriptResult ScriptRuntime::evalContains(const BoundExpression& exp, const auto&
         return {};
     }
 
-    const ScriptResult first = evalExpression(args.at(0), tracks);
+    const BoundExpression& field = args.at(0);
+    const ScriptResult first     = evalExpression(field, tracks);
     if(!first.cond) {
         return {};
     }
@@ -1451,8 +1495,11 @@ ScriptResult ScriptRuntime::evalContains(const BoundExpression& exp, const auto&
         return {};
     }
 
+    const QString firstValue  = normaliseQueryValue(first.value, field.variableKind);
+    const QString secondValue = normaliseQueryValue(second.value, field.variableKind);
+
     ScriptResult result;
-    result.cond = Utils::foldForSearch(first.value).contains(Utils::foldForSearch(second.value));
+    result.cond = Utils::foldForSearch(firstValue).contains(Utils::foldForSearch(secondValue));
 
     return result;
 }
@@ -1483,7 +1530,9 @@ ScriptResult ScriptRuntime::evalContains(const BoundExpression& exp, const Track
         result.cond = matchSearch(track, second.value, value.type == Expr::QuotedLiteral);
     }
     else {
-        result.cond = Utils::foldForSearch(first.value).contains(Utils::foldForSearch(second.value));
+        const QString firstValue  = normaliseQueryValue(first.value, field.variableKind);
+        const QString secondValue = normaliseQueryValue(second.value, field.variableKind);
+        result.cond               = Utils::foldForSearch(firstValue).contains(Utils::foldForSearch(secondValue));
     }
 
     return result;
@@ -1584,12 +1633,13 @@ ParsedScript ScriptRuntime::parseQuery(const QString& input)
 
     advance();
     while(m_current.type != TokenType::TokEos) {
-        Expression prevExpr = expression();
-        Expression expr     = checkOperator(prevExpr);
-
-        while(expr.type != prevExpr.type) {
-            prevExpr = expr;
-            expr     = checkOperator(prevExpr);
+        Expression expr = expression();
+        while(true) {
+            const int position = m_current.position;
+            expr               = checkOperator(expr);
+            if(m_current.position == position) {
+                break;
+            }
         }
 
         if(expr.type != Expr::Null) {
@@ -1923,7 +1973,7 @@ ScriptResult ScriptRuntime::compareDateRange(const BoundExpression& exp, const a
     const auto max = std::get<QString>(args.at(2).value).toLongLong();
 
     ScriptResult result;
-    result.cond = first.value() > min && first.value() < max;
+    result.cond = first.value() >= min && first.value() < max;
 
     return result;
 }

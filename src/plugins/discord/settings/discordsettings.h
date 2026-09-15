@@ -28,15 +28,27 @@ class SettingsManager;
 
 namespace Settings::Discord {
 Q_NAMESPACE
+enum class ArtworkMode : uint8_t
+{
+    MusicBrainzOnly = 0,
+    MusicBrainzOrUpload,
+    UploadOnly,
+    UploadOrMusicBrainz,
+};
+Q_ENUM_NS(ArtworkMode)
+
 enum DiscordSettings : uint32_t
 {
-    ClientId       = 1 | Type::String,
-    ArtistField    = 2 | Type::String,
-    AlbumField     = 3 | Type::String,
-    TitleField     = 4 | Type::String,
-    ShowStateIcon  = 5 | Type::Bool,
-    DiscordEnabled = 6 | Type::Bool,
-    ClearOnPause   = 7 | Type::Bool,
+    ClientId         = 1 | Type::String,
+    ArtistField      = 2 | Type::String,
+    AlbumField       = 3 | Type::String,
+    TitleField       = 4 | Type::String,
+    ShowStateIcon    = 5 | Type::Bool,
+    DiscordEnabled   = 6 | Type::Bool,
+    ClearOnPause     = 7 | Type::Bool,
+    ArtworkEnabled   = 8 | Type::Bool,
+    ArtworkRetention = 9 | Type::Int,
+    ArtworkSource    = 10 | Type::Int,
 };
 Q_ENUM_NS(DiscordSettings)
 } // namespace Settings::Discord

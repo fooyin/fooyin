@@ -5,7 +5,7 @@ export CC=clang
 export CXX=clang++
 export CXXFLAGS="-fexperimental-library"
 BUILD_CCACHE="${BUILD_CCACHE:-ON}"
-BUILD_PCH="${BUILD_PCH:-OFF}"
+BUILD_PCH="${BUILD_PCH:-ON}"
 
 if [ "$BUILD_CCACHE" = "ON" ]; then
   export CCACHE_DIR="${CCACHE_DIR:-$FOOYIN_DIR/.ccache}"
@@ -23,6 +23,7 @@ cmake -S "$FOOYIN_DIR" \
   -DCMAKE_CXX_COMPILER=clang++ \
   -DBUILD_TESTING=ON \
   -DFETCH_PROJECTM=ON \
+  -DENABLE_SYSTEM_GLM=ON \
   -DBUILD_CCACHE="$BUILD_CCACHE" \
   -DBUILD_PCH="$BUILD_PCH"
 

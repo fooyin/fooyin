@@ -18,7 +18,7 @@ VS_VERSION_INFO VERSIONINFO
             VALUE "FileDescription",  "@PROJECT_DESCRIPTION@"
             VALUE "FileVersion",      "@PROJECT_VERSION@"
             VALUE "InternalName",     "@PROJECT_VERSION@"
-            VALUE "LegalCopyright",   "GPL-3.0 license"
+            VALUE "LegalCopyright",   "GPL-3.0-or-later license"
             VALUE "OriginalFilename", "@PROJECT_NAME@.exe"
             VALUE "ProductName",      "@PROJECT_NAME@ - @PROJECT_DESCRIPTION@"
             VALUE "ProductVersion",   "@PROJECT_VERSION@"

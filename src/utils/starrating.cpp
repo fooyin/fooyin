@@ -32,16 +32,23 @@ struct StarBrushes
     QBrush faded;
 };
 
-[[nodiscard]] StarBrushes getStarBrushes(const QPalette& palette, Fooyin::StarRating::EditMode mode, bool selected)
+[[nodiscard]] StarBrushes getStarBrushes(const QPalette& palette, Fooyin::StarRating::EditMode mode, bool selected,
+                                         const QColor& customColour, const QColor& unratedColour)
 {
-    const QBrush filled = mode == Fooyin::StarRating::EditMode::Editable
+    const QBrush filled = customColour.isValid() ? QBrush{customColour}
+                        : mode == Fooyin::StarRating::EditMode::Editable
                             ? palette.highlight()
                             : (selected ? palette.highlightedText() : palette.text());
 
-    QBrush faded{filled};
-    QColor fadedColour{filled.color()};
-    fadedColour.setAlphaF(fadedColour.alphaF() * 0.2);
-    faded.setColor(fadedColour);
+    QBrush faded;
+    if(unratedColour.isValid()) {
+        faded = unratedColour;
+    }
+    else {
+        QColor fadedColour{filled.color()};
+        fadedColour.setAlphaF(fadedColour.alphaF() * 0.2);
+        faded = fadedColour;
+    }
 
     return {.filled = filled, .faded = faded};
 }
@@ -75,9 +82,20 @@ StarRating::StarRating(float rating, int maxStarCount)
 { }
 
 StarRating::StarRating(float rating, int maxStarCount, int scale)
+    : StarRating{rating, maxStarCount, scale, {}}
+{ }
+
+StarRating::StarRating(float rating, int maxStarCount, int scale, const RatingStarColours& colours)
+    : StarRating{rating, maxStarCount, scale, colours, {}}
+{ }
+
+StarRating::StarRating(float rating, int maxStarCount, int scale, const RatingStarColours& colours,
+                       const QColor& unratedColour)
     : m_rating{rating}
     , m_maxCount{maxStarCount}
     , m_scale{scale}
+    , m_colours{colours}
+    , m_unratedColour{unratedColour}
 {
     double angle{-0.314};
     for(int i{0}; i < 5; ++i) {
@@ -119,18 +137,21 @@ void StarRating::setStarScale(int scale)
 void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode,
                        Qt::Alignment alignment, bool selected) const
 {
-    const auto brushes     = getStarBrushes(palette, mode, selected);
-    const qreal dpr        = painter->device()->devicePixelRatioF();
-    const QString cacheKey = u"StarRating:%1|%2|%3|%4|%5|%6"_s.arg(m_rating)
-                                 .arg(m_scale)
-                                 .arg(m_maxCount)
-                                 .arg(mode == EditMode::Editable ? 1 : 0)
-                                 .arg(rect.width())
-                                 .arg(rect.height())
-                           + u"|%1|%2|%3|%4"_s.arg(alignment.toInt())
-                                 .arg(brushes.filled.color().name(QColor::HexArgb))
-                                 .arg(brushes.faded.color().name(QColor::HexArgb))
-                                 .arg(dpr);
+    const int colourIndex = std::clamp(static_cast<int>(std::ceil(m_rating * static_cast<float>(m_maxCount))) - 1, 0,
+                                       static_cast<int>(m_colours.size()) - 1);
+    const QColor customColour = m_rating > 0 ? m_colours.at(colourIndex) : QColor{};
+    const auto brushes        = getStarBrushes(palette, mode, selected, customColour, m_unratedColour);
+    const qreal dpr           = painter->device()->devicePixelRatioF();
+    const QString cacheKey    = u"StarRating:%1|%2|%3|%4|%5|%6"_s.arg(m_rating)
+                                    .arg(m_scale)
+                                    .arg(m_maxCount)
+                                    .arg(mode == EditMode::Editable ? 1 : 0)
+                                    .arg(rect.width())
+                                    .arg(rect.height())
+                              + u"|%1|%2|%3|%4"_s.arg(alignment.toInt())
+                                    .arg(brushes.filled.color().name(QColor::HexArgb))
+                                    .arg(brushes.faded.color().name(QColor::HexArgb))
+                                    .arg(dpr);
 
     QPixmap pixmap;
     if(!QPixmapCache::find(cacheKey, &pixmap)) {

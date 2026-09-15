@@ -51,6 +51,12 @@ constexpr auto OutputFramePadding  = 32;
 constexpr auto MaxDrainChunkFrames = 8192;
 
 namespace {
+bool swresampleHasSoxr()
+{
+    const char* config = swresample_configuration();
+    return config && std::strstr(config, "--enable-libsoxr");
+}
+
 uint64_t channelBit(const Fooyin::AudioFormat::ChannelPosition position)
 {
     using P = Fooyin::AudioFormat::ChannelPosition;
@@ -279,7 +285,7 @@ ResamplerDsp::ResamplerDsp()
     , m_outputCursorRemainderNs{0.0}
     , m_outputSourceFrameDurationNs{0}
     , m_targetRate{ResamplerSettings::DefaultTargetRate}
-    , m_useSoxr{ResamplerSettings::DefaultUseSoxr}
+    , m_useSoxr{ResamplerSettings::DefaultUseSoxr && swresampleHasSoxr()}
     , m_soxrPrecision{ResamplerSettings::DefaultSoxrPrecision}
     , m_sampleRateFilterMode{ResamplerSettings::SampleRateFilterMode::ExcludeListed}
 
@@ -485,7 +491,7 @@ bool ResamplerDsp::loadSettings(const QByteArray& preset)
     }
 
     qint32 target{ResamplerSettings::DefaultTargetRate};
-    bool useSoxrEngine{ResamplerSettings::DefaultUseSoxr};
+    bool useSoxrEngine{m_useSoxr};
     double soxrPrecision{ResamplerSettings::DefaultSoxrPrecision};
 
     auto filterMode           = static_cast<qint32>(ResamplerSettings::DefaultSampleRateFilterMode);

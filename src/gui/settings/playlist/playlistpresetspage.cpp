@@ -54,6 +54,7 @@ public:
         , m_groupBox{new QGroupBox(this)}
         , m_overrideHeight{new QCheckBox(tr("Override height") + u":"_s, this)}
         , m_rowHeight{new QSpinBox(this)}
+        , m_grouping{new ScriptTextEdit(this)}
         , m_leftScript{new ScriptTextEdit(this)}
         , m_rightScript{new ScriptTextEdit(this)}
     {
@@ -70,15 +71,20 @@ public:
         auto* leftScript  = new QLabel(tr("Left-aligned") + u":"_s, this);
         auto* rightScript = new QLabel(tr("Right-aligned") + u":"_s, this);
 
+        m_grouping->setPlaceholderText(tr("Leave empty to group by the displayed values"));
+
         m_rowHeight->setMinimum(20);
         m_rowHeight->setMaximum(150);
 
-        groupLayout->addWidget(m_overrideHeight, 0, 0);
-        groupLayout->addWidget(m_rowHeight, 0, 1);
-        groupLayout->addWidget(leftScript, 1, 0, 1, 3);
-        groupLayout->addWidget(m_leftScript, 2, 0, 1, 3);
-        groupLayout->addWidget(rightScript, 3, 0, 1, 3);
-        groupLayout->addWidget(m_rightScript, 4, 0, 1, 3);
+        int row{0};
+        groupLayout->addWidget(m_overrideHeight, row, 0);
+        groupLayout->addWidget(m_rowHeight, row++, 1);
+        groupLayout->addWidget(new QLabel(tr("Grouping script") + u":"_s, this), row++, 0, 1, 3);
+        groupLayout->addWidget(m_grouping, row++, 0, 1, 3);
+        groupLayout->addWidget(leftScript, row++, 0, 1, 3);
+        groupLayout->addWidget(m_leftScript, row++, 0, 1, 3);
+        groupLayout->addWidget(rightScript, row++, 0, 1, 3);
+        groupLayout->addWidget(m_rightScript, row++, 0, 1, 3);
 
         groupLayout->setColumnStretch(2, 1);
 
@@ -91,6 +97,11 @@ public:
         m_leftScript->setText(script);
     }
 
+    void setGrouping(const QString& script)
+    {
+        m_grouping->setText(script);
+    }
+
     void setRightScript(const QString& script)
     {
         m_rightScript->setText(script);
@@ -99,6 +110,11 @@ public:
     [[nodiscard]] QString leftScript() const
     {
         return m_leftScript->text();
+    }
+
+    [[nodiscard]] QString grouping() const
+    {
+        return m_grouping->text();
     }
 
     [[nodiscard]] QString rightScript() const
@@ -117,6 +133,7 @@ public:
 
         m_overrideHeight->setDisabled(readOnly);
         m_rowHeight->setReadOnly(readOnly);
+        m_grouping->setReadOnly(readOnly);
         m_leftScript->setReadOnly(readOnly);
         m_rightScript->setReadOnly(readOnly);
     }
@@ -125,6 +142,7 @@ private:
     QGroupBox* m_groupBox;
     QCheckBox* m_overrideHeight;
     QSpinBox* m_rowHeight;
+    ScriptTextEdit* m_grouping;
     ScriptTextEdit* m_leftScript;
     ScriptTextEdit* m_rightScript;
 };
@@ -138,6 +156,7 @@ void createGroupPresetInputs(const SubheaderRow& subheader, ExpandableInputBox* 
     auto* input = new ExpandableGroupBox(subheader.rowHeight, parent);
     box->addInput(input);
 
+    input->setGrouping(subheader.grouping);
     input->setLeftScript(subheader.leftText.script);
     input->setRightScript(subheader.rightText.script);
 }
@@ -150,6 +169,7 @@ void updateGroupTextBlocks(const ExpandableInputList& presetInputs, SubheaderRow
         if(auto* presetInput = qobject_cast<ExpandableGroupBox*>(input)) {
             SubheaderRow block;
 
+            block.grouping         = presetInput->grouping();
             block.leftText.script  = presetInput->leftScript();
             block.rightText.script = presetInput->rightScript();
             block.rowHeight        = presetInput->rowHeight();
@@ -189,6 +209,7 @@ private:
     QTabWidget* m_presetTabs;
 
     ScriptTextEdit* m_headerTitle;
+    ScriptTextEdit* m_headerGrouping;
     ScriptTextEdit* m_headerSubtitle;
     ScriptTextEdit* m_headerSideText;
     ScriptTextEdit* m_headerInfo;
@@ -220,6 +241,7 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
     , m_presetBox{new QComboBox(this)}
     , m_presetTabs{new QTabWidget(this)}
     , m_headerTitle{new ScriptTextEdit(this)}
+    , m_headerGrouping{new ScriptTextEdit(this)}
     , m_headerSubtitle{new ScriptTextEdit(this)}
     , m_headerSideText{new ScriptTextEdit(this)}
     , m_headerInfo{new ScriptTextEdit(this)}
@@ -256,11 +278,15 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
     m_headerRowHeight->setMinimum(50);
     m_headerRowHeight->setMaximum(300);
 
+    m_headerGrouping->setPlaceholderText(tr("Leave empty to group by the displayed values"));
+
     int row{0};
     headerLayout->addWidget(m_simpleHeader, row++, 0, 1, 2);
     headerLayout->addWidget(m_showCover, row++, 0, 1, 2);
     headerLayout->addWidget(m_overrideHeaderHeight, row, 0);
     headerLayout->addWidget(m_headerRowHeight, row++, 1);
+    headerLayout->addWidget(new QLabel(tr("Grouping script") + u":"_s, this), row++, 0, 1, 5);
+    headerLayout->addWidget(m_headerGrouping, row++, 0, 1, 5);
     headerLayout->addWidget(new QLabel(tr("Title") + u":"_s, this), row++, 0, 1, 5);
     headerLayout->addWidget(m_headerTitle, row++, 0, 1, 5);
     headerLayout->addWidget(new QLabel(tr("Subtitle") + u":"_s, this), row++, 0, 1, 5);
@@ -421,6 +447,7 @@ void PlaylistPresetsPageWidget::updatePreset()
 
     auto preset = regPreset.value();
 
+    preset.header.grouping        = m_headerGrouping->text();
     preset.header.title.script    = m_headerTitle->text();
     preset.header.subtitle.script = m_headerSubtitle->text();
     preset.header.sideText.script = m_headerSideText->text();
@@ -476,6 +503,7 @@ void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
 {
     m_deletePreset->setDisabled(preset.isDefault);
 
+    m_headerGrouping->setText(preset.header.grouping);
     m_headerTitle->setText(preset.header.title.script);
     m_headerSubtitle->setText(preset.header.subtitle.script);
     m_headerSideText->setText(preset.header.sideText.script);

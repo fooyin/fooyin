@@ -26,9 +26,13 @@
 namespace Fooyin {
 struct PlaybackQueueInfo
 {
+    int queueIndex{-1};
     int trackId{-1};
     int playlistDbId{-1};
     int playlistTrackIndex{-1};
+    int origin{0};
+    int sourceOrder{-1};
+    bool isCurrent{false};
 };
 
 class PlaybackQueueDatabase : public DbModule

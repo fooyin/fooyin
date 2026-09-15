@@ -113,6 +113,7 @@ ScriptScanner::ScriptScanner()
     , m_lastToken{nullptr}
     , m_currentTokenIndex{0}
     , m_whitespaceMode{WhitespaceMode::Preserve}
+    , m_commentsEnabled{true}
 { }
 
 void ScriptScanner::setup(const QString& input)
@@ -127,13 +128,27 @@ void ScriptScanner::setup(const QString& input)
     m_currentTokenIndex = 0;
     m_lastToken         = nullptr;
 
+    bool insideQuote{false};
+    bool escapeNext{false};
+
     while(!isAtEnd()) {
-        const Token token = scanNext();
-        if(m_lastToken && m_lastToken->type == TokLiteral && token.type == TokLiteral) {
+        const Token token = scanNext(insideQuote);
+        if(m_lastToken && m_lastToken->type == TokLiteral && token.type == TokLiteral
+           && m_lastToken->value.cend() == token.value.cbegin()) {
             m_lastToken->value = QStringView{m_lastToken->value.data(), m_lastToken->value.size() + token.value.size()};
         }
         else {
             m_lastToken = &m_tokens.emplace_back(token);
+        }
+
+        if(escapeNext) {
+            escapeNext = false;
+        }
+        else if(insideQuote && token.type == TokEscape) {
+            escapeNext = true;
+        }
+        else if(token.type == TokQuote) {
+            insideQuote = !insideQuote;
         }
     }
 }
@@ -163,26 +178,18 @@ void ScriptScanner::setWhitespaceMode(WhitespaceMode mode)
     m_whitespaceMode = mode;
 }
 
-ScriptScanner::Token ScriptScanner::scanNext()
+void ScriptScanner::setCommentsEnabled(bool enabled)
+{
+    m_commentsEnabled = enabled;
+}
+
+ScriptScanner::Token ScriptScanner::scanNext(bool insideQuote)
 {
     m_start = m_current;
 
     QChar c = advance();
 
-    const auto shouldSkipWhitespace = [this](QChar ch) {
-        switch(m_whitespaceMode) {
-            case WhitespaceMode::Preserve:
-                return false;
-            case WhitespaceMode::IgnoreLayout:
-                return isLayoutWhitespace(ch);
-            case WhitespaceMode::IgnoreAll:
-                return isWhitespace(ch);
-        }
-
-        return false;
-    };
-
-    while(shouldSkipWhitespace(c)) {
+    while(!insideQuote && shouldSkipWhitespace(c)) {
         m_start = m_current;
         c       = advance();
     }
@@ -212,8 +219,14 @@ ScriptScanner::Token ScriptScanner::scanNext()
             return makeToken(TokLeftSquare);
         case u']':
             return makeToken(TokRightSquare);
-        case u'/':
+        case u'/': {
+            const bool atLineStart = m_start == m_input.cbegin() || std::prev(m_start)->unicode() == u'\n'
+                                  || std::prev(m_start)->unicode() == u'\r';
+            if(m_commentsEnabled && !insideQuote && atLineStart && peek() == u'/') {
+                return comment();
+            }
             return makeToken(TokSlash);
+        }
         case u':':
             return makeToken(TokColon);
         case u'=':
@@ -246,9 +259,20 @@ ScriptScanner::Token ScriptScanner::makeToken(TokenType type) const
     return token;
 }
 
+ScriptScanner::Token ScriptScanner::comment()
+{
+    advance();
+    while(!isAtEnd() && peek() != u'\n' && peek() != u'\r') {
+        advance();
+    }
+
+    return makeToken(TokComment);
+}
+
 ScriptScanner::Token ScriptScanner::literal()
 {
-    while(isLiteral(peek()) && !isStartOfKeyword(peek()) && !isAtEnd()) {
+    while(isLiteral(peek()) && !isStartOfKeyword(peek())
+          && !(m_whitespaceMode == WhitespaceMode::IgnoreLayout && isLayoutWhitespace(peek())) && !isAtEnd()) {
         advance();
     }
 
@@ -406,6 +430,20 @@ ScriptScanner::Token ScriptScanner::checkKeyword(int start, QAnyStringView rest,
 bool ScriptScanner::isAtEnd() const
 {
     return *m_current == u'\0';
+}
+
+bool ScriptScanner::shouldSkipWhitespace(QChar ch) const
+{
+    switch(m_whitespaceMode) {
+        case WhitespaceMode::Preserve:
+            return false;
+        case WhitespaceMode::IgnoreLayout:
+            return isLayoutWhitespace(ch);
+        case WhitespaceMode::IgnoreAll:
+            return isWhitespace(ch);
+    }
+
+    return false;
 }
 
 QChar ScriptScanner::advance()

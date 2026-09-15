@@ -1,5 +1,11 @@
 <RCC>
     <qresource prefix="/">
+        <file>icons/16-fooyin.png</file>
+        <file>icons/22-fooyin.png</file>
+        <file>icons/32-fooyin.png</file>
+        <file>icons/48-fooyin.png</file>
+        <file>icons/64-fooyin.png</file>
+        <file>icons/128-fooyin.png</file>
         <file>icons/dark/index.theme</file>
         <file>icons/dark/scalable/actions/application-exit.svg</file>
         <file>icons/dark/scalable/actions/applications-graphics.svg</file>
@@ -11,6 +17,7 @@
         <file>icons/dark/scalable/actions/command.svg</file>
         <file>icons/dark/scalable/actions/edit-clear.svg</file>
         <file>icons/dark/scalable/actions/edit-find.svg</file>
+        <file>icons/dark/scalable/actions/emblem-readonly.svg</file>
         <file>icons/dark/scalable/actions/favorite.svg</file>
         <file>icons/dark/scalable/actions/favorite-favorited.svg</file>
         <file alias="icons/dark/scalable/actions/org.fooyin.fooyin.svg">icons/dark/scalable/actions/fooyin.svg</file>
@@ -22,6 +29,7 @@
         <file>icons/dark/scalable/actions/go-up.svg</file>
         <file>icons/dark/scalable/actions/list-add.svg</file>
         <file>icons/dark/scalable/actions/list-remove.svg</file>
+        <file>icons/dark/scalable/actions/love.svg</file>
         <file>icons/dark/scalable/actions/media-playback-pause.svg</file>
         <file>icons/dark/scalable/actions/media-playback-start.svg</file>
         <file>icons/dark/scalable/actions/media-playback-stop.svg</file>
@@ -45,6 +53,7 @@
         <file>icons/dark/scalable/actions/script-variable.svg</file>
         <file>icons/dark/scalable/actions/scrobble.svg</file>
         <file>icons/dark/scalable/actions/sidebar-right.svg</file>
+        <file>icons/dark/scalable/actions/unlove.svg</file>
         <file>icons/dark/scalable/actions/user-bookmarks.svg</file>
         <file>icons/dark/scalable/actions/view-filter.svg</file>
         <file>icons/dark/scalable/actions/view-log.svg</file>
@@ -65,6 +74,7 @@
         <file>icons/light/scalable/actions/command.svg</file>
         <file>icons/light/scalable/actions/edit-clear.svg</file>
         <file>icons/light/scalable/actions/edit-find.svg</file>
+        <file>icons/light/scalable/actions/emblem-readonly.svg</file>
         <file>icons/light/scalable/actions/favorite.svg</file>
         <file>icons/light/scalable/actions/favorite-favorited.svg</file>
         <file>icons/light/scalable/actions/fooyin.svg</file>
@@ -76,6 +86,7 @@
         <file>icons/light/scalable/actions/go-up.svg</file>
         <file>icons/light/scalable/actions/list-add.svg</file>
         <file>icons/light/scalable/actions/list-remove.svg</file>
+        <file>icons/light/scalable/actions/love.svg</file>
         <file>icons/light/scalable/actions/media-playback-pause.svg</file>
         <file>icons/light/scalable/actions/media-playback-start.svg</file>
         <file>icons/light/scalable/actions/media-playback-stop.svg</file>
@@ -99,6 +110,7 @@
         <file>icons/light/scalable/actions/script-variable.svg</file>
         <file>icons/light/scalable/actions/scrobble.svg</file>
         <file>icons/light/scalable/actions/sidebar-right.svg</file>
+        <file>icons/light/scalable/actions/unlove.svg</file>
         <file>icons/light/scalable/actions/user-bookmarks.svg</file>
         <file>icons/light/scalable/actions/view-filter.svg</file>
         <file>icons/light/scalable/actions/view-log.svg</file>

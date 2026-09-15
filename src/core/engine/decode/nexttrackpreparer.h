@@ -31,6 +31,7 @@
 
 #include <atomic>
 #include <condition_variable>
+#include <functional>
 #include <mutex>
 #include <optional>
 #include <thread>
@@ -45,6 +46,7 @@ struct FYCORE_EXPORT NextTrackPreparationState
     AudioFormat format;
     AudioStreamPtr preparedStream;
     uint64_t preparedDecodePositionMs{0};
+    bool allowsConcurrentDecoding{true};
 
     [[nodiscard]] bool isValid() const
     {
@@ -67,9 +69,11 @@ public:
         Track currentTrack; // Used to check for same-file transition
         Engine::PlaybackState playbackState{Engine::PlaybackState::Stopped};
         AudioDecoder::PlaybackHints playbackHints{AudioDecoder::NoHints};
+        bool currentAllowsConcurrentDecoding{true};
         uint64_t bufferLengthMs{0};     // Internal prepared-stream reserve target
         uint64_t preferredPrefillMs{0}; // Minimum decoded reserve to accumulate before handoff
         std::shared_ptr<std::atomic<bool>> cancelFlag;
+        std::function<void(AudioDecoder*)> activeDecoderChanged;
     };
 
     /*!
@@ -124,11 +128,15 @@ public:
     void replacePending(Request request);
 
     [[nodiscard]] uint64_t activeJobToken() const;
+    //! Request cancellation of the decoder owned by the active preparation job, if any.
+    void requestActiveJobAbort() const;
 
 private:
     void run(const std::stop_token& stopToken);
+    void setActiveDecoder(AudioDecoder* decoder);
 
     mutable std::mutex m_mutex;
+    mutable std::mutex m_activeDecoderMutex;
     std::condition_variable_any m_cv;
     std::optional<Request> m_pendingRequest;
     CompletionHandler m_completion;
@@ -136,5 +144,6 @@ private:
     uint64_t m_nextJobToken;
     std::atomic<uint64_t> m_activeJobToken;
     std::shared_ptr<std::atomic<bool>> m_cancelFlag;
+    AudioDecoder* m_activeDecoder;
 };
 } // namespace Fooyin
