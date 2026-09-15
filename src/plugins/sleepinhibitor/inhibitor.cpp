@@ -53,9 +53,9 @@ Inhibitor::Inhibitor(QObject* parent)
     , p{new InhibitorPlatform(this)}
 { }
 
-void Inhibitor::inhibitSleep()
+void Inhibitor::inhibitSleep(InhibitionType type)
 {
-    p->inhibitSleep();
+    p->inhibitSleep(type);
 }
 
 void Inhibitor::uninhibitSleep()

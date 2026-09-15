@@ -28,7 +28,7 @@ class InhibitorWin32 : public InhibitorPrivate
 public:
     explicit InhibitorWin32(QObject* parent = nullptr);
 
-    void inhibitSleep() override;
+    void inhibitSleep(InhibitionType type) override;
     void uninhibitSleep() override;
 };
 } // namespace Fooyin::SleepInhibitor

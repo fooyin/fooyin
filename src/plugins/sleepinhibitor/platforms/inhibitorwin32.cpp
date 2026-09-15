@@ -19,6 +19,7 @@
  */
 
 #include "inhibitorwin32.h"
+#include "inhibitor.h"
 
 #include <windows.h>
 
@@ -27,7 +28,7 @@ InhibitorWin32::InhibitorWin32(QObject* parent)
     : InhibitorPrivate{parent}
 { }
 
-void InhibitorWin32::inhibitSleep()
+void InhibitorWin32::inhibitSleep(InhibitionType type)
 {
     if(state() == State::Error || state() == State::Inhibited) {
         return;
@@ -35,7 +36,11 @@ void InhibitorWin32::inhibitSleep()
 
     qCDebug(SLEEPINHIBITOR) << "Inhibiting sleep";
 
-    const auto prevState = SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
+    EXECUTION_STATE flags = ES_CONTINUOUS | ES_SYSTEM_REQUIRED;
+    if(type == InhibitionType::DisplayAndSystem) {
+        flags |= ES_DISPLAY_REQUIRED;
+    }
+    const auto prevState = SetThreadExecutionState(flags);
     if(prevState != 0) {
         setState(State::Inhibited);
     }
