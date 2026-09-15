@@ -43,6 +43,16 @@ void HeartDelegate::setHoverIndex(const QModelIndex& index, const QModelIndexLis
     m_selected   = selected;
 }
 
+void HeartDelegate::setHoveredRow(const QModelIndex& index)
+{
+    m_hoveredRow = index;
+}
+
+void HeartDelegate::setShowEmptyOnlyOnActiveRow(bool enabled)
+{
+    m_showEmptyOnlyOnActiveRow = enabled;
+}
+
 void HeartDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     QStyleOptionViewItem opt{option};
@@ -58,6 +68,11 @@ void HeartDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option,
     auto heartValue        = index.data().value<HeartValue>();
     const bool mixedValues = index.data(MixedValues).toBool();
     const bool selected    = opt.state.testFlag(QStyle::State_Selected);
+    const bool hoveredRow  = m_hoveredRow.isValid() && index.siblingAtColumn(0) == m_hoveredRow;
+
+    if(m_showEmptyOnlyOnActiveRow && !heartValue.loved() && !hoveredRow && !selected) {
+        return;
+    }
 
     const bool hover = m_hoverIndex.isValid()
                     && (m_hoverIndex == index || (m_selected.contains(m_hoverIndex) && m_selected.contains(index)));

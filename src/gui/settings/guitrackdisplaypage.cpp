@@ -30,6 +30,7 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QButtonGroup>
+#include <QCheckBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
@@ -69,7 +70,9 @@ private:
     QRadioButton* m_preferSelection;
 
     QSpinBox* m_starRatingSize;
+    QCheckBox* m_ratingEditorOnlyOnHover;
     QSpinBox* m_loveHeartSize;
+    QCheckBox* m_loveEditorOnlyOnHover;
     QLineEdit* m_fullStarSymbol;
     QLineEdit* m_halfStarSymbol;
     QLineEdit* m_emptyStarSymbol;
@@ -87,7 +90,9 @@ GuiTrackDisplayPageWidget::GuiTrackDisplayPageWidget(SettingsManager* settings)
     , m_preferPlaying{new QRadioButton(tr("Prefer currently playing track"), this)}
     , m_preferSelection{new QRadioButton(tr("Prefer current selection"), this)}
     , m_starRatingSize{new QSpinBox(this)}
+    , m_ratingEditorOnlyOnHover{new QCheckBox(tr("Only show unrated stars on hovered rows"), this)}
     , m_loveHeartSize{new QSpinBox(this)}
+    , m_loveEditorOnlyOnHover{new QCheckBox(tr("Only show unloved hearts on hovered rows"), this)}
     , m_fullStarSymbol{new QLineEdit(this)}
     , m_halfStarSymbol{new QLineEdit(this)}
     , m_emptyStarSymbol{new QLineEdit(this)}
@@ -137,6 +142,7 @@ GuiTrackDisplayPageWidget::GuiTrackDisplayPageWidget(SettingsManager* settings)
     auto* ratingsLayout   = new QGridLayout(ratingsGroupBox);
 
     row = 0;
+    ratingsLayout->addWidget(m_ratingEditorOnlyOnHover, row++, 0, 1, 2);
     ratingsLayout->addWidget(new QLabel(tr("Rating editor star size") + u":"_s, this), row, 0);
     ratingsLayout->addWidget(m_starRatingSize, row++, 1);
     ratingsLayout->addWidget(new QLabel(tr("Full star symbol") + u":"_s, this), row, 0);
@@ -164,6 +170,7 @@ GuiTrackDisplayPageWidget::GuiTrackDisplayPageWidget(SettingsManager* settings)
     auto* loveLayout   = new QGridLayout(loveGroupBox);
 
     row = 0;
+    loveLayout->addWidget(m_loveEditorOnlyOnHover, row++, 0, 1, 2);
     loveLayout->addWidget(new QLabel(tr("Love editor heart size") + u":"_s, this), row, 0);
     loveLayout->addWidget(m_loveHeartSize, row++, 1);
     loveLayout->addWidget(m_unlovedColour, row++, 0, 1, 2);
@@ -228,7 +235,9 @@ void GuiTrackDisplayPageWidget::load()
     }
 
     m_starRatingSize->setValue(m_settings->value<StarRatingSize>());
+    m_ratingEditorOnlyOnHover->setChecked(m_settings->value<RatingEditorOnlyOnHover>());
     m_loveHeartSize->setValue(m_settings->value<LoveHeartSize>());
+    m_loveEditorOnlyOnHover->setChecked(m_settings->value<LoveEditorOnlyOnHover>());
     m_fullStarSymbol->setText(m_settings->value<RatingFullStarSymbol>());
     m_halfStarSymbol->setText(m_settings->value<RatingHalfStarSymbol>());
     m_emptyStarSymbol->setText(m_settings->value<RatingEmptyStarSymbol>());
@@ -269,6 +278,9 @@ void GuiTrackDisplayPageWidget::apply()
         = m_preferPlaying->isChecked() ? SelectionDisplay::PreferPlaying : SelectionDisplay::PreferSelection;
     m_settings->set<InfoDisplayPrefer>(static_cast<int>(option));
 
+    m_settings->set<RatingEditorOnlyOnHover>(m_ratingEditorOnlyOnHover->isChecked());
+    m_settings->set<LoveEditorOnlyOnHover>(m_loveEditorOnlyOnHover->isChecked());
+
     const auto& defaultSymbols = defaultRatingStarSymbols();
     m_settings->set<StarRatingSize>(m_starRatingSize->value());
     m_settings->set<LoveHeartSize>(m_loveHeartSize->value());
@@ -302,6 +314,8 @@ void GuiTrackDisplayPageWidget::reset()
     m_settings->reset<WindowTitleTrackScript>();
     m_settings->reset<PropertiesSidebarTrackScript>();
     m_settings->reset<InfoDisplayPrefer>();
+    m_settings->reset<RatingEditorOnlyOnHover>();
+    m_settings->reset<LoveEditorOnlyOnHover>();
     m_settings->reset<StarRatingSize>();
     m_settings->reset<LoveHeartSize>();
     m_settings->reset<RatingFullStarSymbol>();

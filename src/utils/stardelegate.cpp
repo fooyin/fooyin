@@ -43,6 +43,16 @@ void StarDelegate::setHoverIndex(const QModelIndex& index, const QPoint& pos, co
     m_selected   = selected;
 }
 
+void StarDelegate::setHoveredRow(const QModelIndex& index)
+{
+    m_hoveredRow = index;
+}
+
+void StarDelegate::setShowEmptyOnlyOnActiveRow(bool enabled)
+{
+    m_showEmptyOnlyOnActiveRow = enabled;
+}
+
 void StarDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     QStyleOptionViewItem opt{option};
@@ -58,6 +68,12 @@ void StarDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, 
     auto starRating        = index.data().value<StarRating>();
     const bool mixedValues = index.data(MixedValues).toBool();
     const bool selected    = opt.state.testFlag(QStyle::State_Selected);
+    const bool hoveredRow  = m_hoveredRow.isValid() && index.siblingAtColumn(0) == m_hoveredRow;
+    const bool unrated     = starRating.rating() * static_cast<float>(starRating.maxStarCount()) < 0.5F;
+
+    if(m_showEmptyOnlyOnActiveRow && unrated && !hoveredRow && !selected) {
+        return;
+    }
 
     const bool hover = m_hoverIndex.isValid()
                     && (m_hoverIndex == index || (m_selected.contains(m_hoverIndex) && m_selected.contains(index)));

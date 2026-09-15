@@ -41,6 +41,8 @@ public:
     [[nodiscard]] QModelIndex hoveredIndex() const;
     void setHoverIndex(const QModelIndex& index);
     void setHoverIndex(const QModelIndex& index, const QModelIndexList& selected);
+    void setHoveredRow(const QModelIndex& index);
+    void setShowEmptyOnlyOnActiveRow(bool enabled);
 
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
@@ -52,7 +54,9 @@ private:
     void finishEditing();
 
     QPersistentModelIndex m_hoverIndex;
+    QPersistentModelIndex m_hoveredRow;
     bool m_hoverLoved{false};
     QModelIndexList m_selected;
+    bool m_showEmptyOnlyOnActiveRow{false};
 };
 } // namespace Fooyin

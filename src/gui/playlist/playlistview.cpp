@@ -142,7 +142,7 @@ void PlaylistView::setRatingColumn(int column)
         setItemDelegateForColumn(m_ratingColumn, m_starDelegate);
     }
 
-    setMouseTracking(m_ratingColumn >= 0);
+    setMouseTracking(m_ratingColumn >= 0 || m_lovedColumn >= 0);
 }
 
 void PlaylistView::setLovedColumn(int column)
@@ -165,7 +165,19 @@ void PlaylistView::setLovedColumn(int column)
         setItemDelegateForColumn(m_lovedColumn, m_heartDelegate);
     }
 
-    setMouseTracking(m_lovedColumn >= 0);
+    setMouseTracking(m_ratingColumn >= 0 || m_lovedColumn >= 0);
+}
+
+void PlaylistView::setRatingEditorOnlyOnHover(bool enabled)
+{
+    m_starDelegate->setShowEmptyOnlyOnActiveRow(enabled);
+    viewport()->update();
+}
+
+void PlaylistView::setLoveEditorOnlyOnHover(bool enabled)
+{
+    m_heartDelegate->setShowEmptyOnlyOnActiveRow(enabled);
+    viewport()->update();
 }
 
 void PlaylistView::setBackgroundOptions(const BackgroundOptions& options)
@@ -274,8 +286,10 @@ void PlaylistView::mouseMoveEvent(QMouseEvent* event)
         return;
     }
 
+    const QModelIndex index = indexAt(event->pos());
+    updateHoveredRow(index);
+
     if(m_starDelegate) {
-        const QModelIndex index = indexAt(event->pos());
         if(index.isValid() && index.column() == m_ratingColumn) {
             ratingHoverIn(index, event->pos());
         }
@@ -285,7 +299,6 @@ void PlaylistView::mouseMoveEvent(QMouseEvent* event)
     }
 
     if(m_heartDelegate) {
-        const QModelIndex index = indexAt(event->pos());
         if(index.isValid() && index.column() == m_lovedColumn) {
             loveHoverIn(index);
         }
@@ -410,6 +423,8 @@ void PlaylistView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHi
 
 void PlaylistView::leaveEvent(QEvent* event)
 {
+    updateHoveredRow({});
+
     if(m_starDelegate && m_starDelegate->hoveredIndex().isValid()) {
         ratingHoverOut();
     }
@@ -1005,6 +1020,34 @@ void PlaylistView::loveHoverOut()
             update(selectedIndex);
         }
     }
+}
+
+void PlaylistView::updateHoveredRow(const QModelIndex& index)
+{
+    const QModelIndex hoveredRow = index.isValid() ? index.siblingAtColumn(0) : QModelIndex{};
+    if(m_hoveredRow == hoveredRow) {
+        return;
+    }
+
+    const QModelIndex previousRow = std::exchange(m_hoveredRow, hoveredRow);
+
+    m_starDelegate->setHoveredRow(hoveredRow);
+    m_heartDelegate->setHoveredRow(hoveredRow);
+
+    const auto updateEditorCells = [this](const QModelIndex& row) {
+        if(!row.isValid()) {
+            return;
+        }
+        if(m_ratingColumn >= 0) {
+            update(row.siblingAtColumn(m_ratingColumn));
+        }
+        if(m_lovedColumn >= 0) {
+            update(row.siblingAtColumn(m_lovedColumn));
+        }
+    };
+
+    updateEditorCells(previousRow);
+    updateEditorCells(hoveredRow);
 }
 
 void PlaylistView::drawBackground(QPainter& painter)

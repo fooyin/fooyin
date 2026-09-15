@@ -63,6 +63,8 @@ public:
     void setEmptyText(const QString& text);
     void setRatingColumn(int column);
     void setLovedColumn(int column);
+    void setRatingEditorOnlyOnHover(bool enabled);
+    void setLoveEditorOnlyOnHover(bool enabled);
     void setBackgroundOptions(const BackgroundOptions& options);
     void setBackgroundPixmap(const QPixmap& pixmap);
 
@@ -122,6 +124,7 @@ private:
     void ratingHoverOut();
     void loveHoverIn(const QModelIndex& index);
     void loveHoverOut();
+    void updateHoveredRow(const QModelIndex& index);
 
     void drawBackground(QPainter& painter);
     void updateBackgroundTransparency();
@@ -145,6 +148,7 @@ private:
     int m_ratingColumn;
     HeartDelegate* m_heartDelegate;
     int m_lovedColumn;
+    QPersistentModelIndex m_hoveredRow;
 
     BackgroundOptions m_bgOptions;
     PixmapFadeController* m_bgFadeController;

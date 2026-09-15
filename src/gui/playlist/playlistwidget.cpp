@@ -1032,8 +1032,16 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
 
     m_playlistView->viewport()->setAcceptDrops(modeCaps.editablePlaylist);
     m_playlistView->viewport()->installEventFilter(new ToolTipFilter(this));
+
     m_playlistView->setSelectBeforeDrag(m_settings->value<Settings::Gui::DragOnlyAfterSelect>());
     m_settings->subscribe<Settings::Gui::DragOnlyAfterSelect>(m_playlistView, &PlaylistView::setSelectBeforeDrag);
+
+    m_playlistView->setRatingEditorOnlyOnHover(m_settings->value<Settings::Gui::RatingEditorOnlyOnHover>());
+    m_playlistView->setLoveEditorOnlyOnHover(m_settings->value<Settings::Gui::LoveEditorOnlyOnHover>());
+    m_settings->subscribe<Settings::Gui::RatingEditorOnlyOnHover>(m_playlistView,
+                                                                  &PlaylistView::setRatingEditorOnlyOnHover);
+    m_settings->subscribe<Settings::Gui::LoveEditorOnlyOnHover>(m_playlistView,
+                                                                &PlaylistView::setLoveEditorOnlyOnHover);
 
     QObject::connect(m_searchController, &PlaylistSearchController::playCurrentRequested, this,
                      &PlaylistWidget::startPlayback);
