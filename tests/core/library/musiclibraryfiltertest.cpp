@@ -16,6 +16,7 @@
 #include <QCoreApplication>
 #include <QDataStream>
 #include <QSignalSpy>
+#include <QTest>
 
 #include <gtest/gtest.h>
 
@@ -35,6 +36,11 @@ LibraryFilter makeFilter(int id, const QString& expression)
 {
     return {.id = id, .name = u"Filter %1"_s.arg(id), .expression = expression};
 }
+
+bool waitForSignalCount(const QSignalSpy& spy, qsizetype expectedCount)
+{
+    return QTest::qWaitFor([&spy, expectedCount]() { return spy.count() == expectedCount; }, 5000);
+}
 } // namespace
 
 TEST(MusicLibraryFilterTest, FiltersAndClearsVisibleLibraryTracks)
@@ -42,10 +48,10 @@ TEST(MusicLibraryFilterTest, FiltersAndClearsVisibleLibraryTracks)
     StubMusicLibrary library;
     library.setTracks({makeTrack(1, u"Jazz Song"_s), makeTrack(2, u"Rock Song"_s)});
 
-    QSignalSpy tracksChanged{&library, &MusicLibrary::visibleLibraryTracksChanged};
+    const QSignalSpy tracksChanged{&library, &MusicLibrary::visibleLibraryTracksChanged};
     library.setActiveLibraryFilters({makeFilter(1, u"title:jazz"_s)});
 
-    ASSERT_TRUE(tracksChanged.wait());
+    ASSERT_TRUE(waitForSignalCount(tracksChanged, 1));
     ASSERT_TRUE(library.hasActiveLibraryFilters());
     ASSERT_EQ(1, library.activeLibraryFilters().size());
     EXPECT_EQ(1, library.activeLibraryFilters().front().id);
@@ -65,14 +71,14 @@ TEST(MusicLibraryFilterTest, ReappliesActiveFilterWhenLibraryChanges)
     StubMusicLibrary library;
     library.setTracks({makeTrack(1, u"Jazz Song"_s)});
 
-    QSignalSpy tracksChanged{&library, &MusicLibrary::visibleLibraryTracksChanged};
+    const QSignalSpy tracksChanged{&library, &MusicLibrary::visibleLibraryTracksChanged};
     library.setActiveLibraryFilters({makeFilter(1, u"title:jazz"_s)});
-    ASSERT_TRUE(tracksChanged.wait());
+    ASSERT_TRUE(waitForSignalCount(tracksChanged, 1));
 
     library.setTracks({makeTrack(1, u"Jazz Song"_s), makeTrack(2, u"Jazz Suite"_s)});
     library.emitTracksLoaded();
 
-    ASSERT_TRUE(tracksChanged.wait());
+    ASSERT_TRUE(waitForSignalCount(tracksChanged, 2));
     EXPECT_EQ(2, library.visibleLibraryTracks().size());
 }
 
@@ -81,16 +87,16 @@ TEST(MusicLibraryFilterTest, IncludesMatchingTracksAddedWhileFilterIsActive)
     StubMusicLibrary library;
     library.setTracks({makeTrack(1, u"Jazz Song"_s)});
 
-    QSignalSpy tracksChanged{&library, &MusicLibrary::visibleLibraryTracksChanged};
+    const QSignalSpy tracksChanged{&library, &MusicLibrary::visibleLibraryTracksChanged};
     library.setActiveLibraryFilters({makeFilter(1, u"title:jazz"_s)});
-    ASSERT_TRUE(tracksChanged.wait());
+    ASSERT_TRUE(waitForSignalCount(tracksChanged, 1));
 
     const Track matchingTrack = makeTrack(2, u"Jazz Suite"_s);
     const Track excludedTrack = makeTrack(3, u"Rock Song"_s);
     library.setTracks({makeTrack(1, u"Jazz Song"_s), matchingTrack, excludedTrack});
     Q_EMIT library.tracksAdded({matchingTrack, excludedTrack});
 
-    ASSERT_TRUE(tracksChanged.wait());
+    ASSERT_TRUE(waitForSignalCount(tracksChanged, 2));
     ASSERT_EQ(2, library.visibleLibraryTracks().size());
     EXPECT_EQ(1, library.visibleLibraryTracks().at(0).id());
     EXPECT_EQ(2, library.visibleLibraryTracks().at(1).id());
@@ -101,10 +107,10 @@ TEST(MusicLibraryFilterTest, CombinesActiveFiltersWithAnd)
     StubMusicLibrary library;
     library.setTracks({makeTrack(1, u"Jazz Song"_s), makeTrack(2, u"Jazz Suite"_s), makeTrack(3, u"Rock Suite"_s)});
 
-    QSignalSpy tracksChanged{&library, &MusicLibrary::visibleLibraryTracksChanged};
+    const QSignalSpy tracksChanged{&library, &MusicLibrary::visibleLibraryTracksChanged};
     library.setActiveLibraryFilters({makeFilter(1, u"title:jazz"_s), makeFilter(2, u"title:suite"_s)});
 
-    ASSERT_TRUE(tracksChanged.wait());
+    ASSERT_TRUE(waitForSignalCount(tracksChanged, 1));
     ASSERT_EQ(1, library.visibleLibraryTracks().size());
     EXPECT_EQ(2, library.visibleLibraryTracks().front().id());
 }

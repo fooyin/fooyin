@@ -24,7 +24,7 @@
 class QComboBox;
 
 namespace Fooyin {
-class LibraryFilter;
+struct LibraryFilter;
 class MusicLibrary;
 class SettingsManager;
 
