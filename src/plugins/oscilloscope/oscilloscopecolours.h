@@ -20,12 +20,17 @@
 #pragma once
 
 #include <QColor>
+#include <QDataStream>
+#include <QMetaType>
 #include <QPalette>
 
 namespace Fooyin::Oscilloscope {
 class Colours
 {
 public:
+    static constexpr qint32 Magic   = 0x4F53434F;
+    static constexpr qint32 Version = 1;
+
     enum class Type : uint8_t
     {
         Background = 0,
@@ -90,6 +95,44 @@ public:
     [[nodiscard]] bool isEmpty() const
     {
         return !m_background.isValid() && !m_waveform.isValid() && !m_zeroLine.isValid();
+    }
+
+    bool operator==(const Colours& other) const = default;
+
+    friend QDataStream& operator<<(QDataStream& stream, const Colours& colours)
+    {
+        stream << Magic;
+        stream << Version;
+        stream << colours.m_background;
+        stream << colours.m_waveform;
+        stream << colours.m_zeroLine;
+        return stream;
+    }
+
+    friend QDataStream& operator>>(QDataStream& stream, Colours& colours)
+    {
+        qint32 magic{0};
+        qint32 version{0};
+
+        stream.startTransaction();
+        stream >> magic;
+        stream >> version;
+
+        if(magic != Magic || version != Version) {
+            stream.rollbackTransaction();
+            colours = {};
+            return stream;
+        }
+
+        stream >> colours.m_background;
+        stream >> colours.m_waveform;
+        stream >> colours.m_zeroLine;
+
+        if(!stream.commitTransaction()) {
+            colours = {};
+        }
+
+        return stream;
     }
 
 private:
