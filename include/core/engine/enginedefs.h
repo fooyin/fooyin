@@ -101,6 +101,7 @@ enum class TransitionMode : uint8_t
 struct TrackCommitContext
 {
     Track track;
+    QString decoder;
     uint64_t itemId{0};
     uint64_t generation{0};
     TransitionMode mode{TransitionMode::Direct};

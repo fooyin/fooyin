@@ -604,8 +604,7 @@ protected:
     }
 
     std::shared_ptr<DecoderState> addDecoder(AudioLoader& loader, const QString& label, const QStringList& extensions,
-                                             int priority = -1, bool isArchiveWrapper = false,
-                                             const QStringList& supportedSchemes = {})
+                                             int priority = -1, const QStringList& supportedSchemes = {})
     {
         auto state              = std::make_shared<DecoderState>();
         state->label            = label;
@@ -618,7 +617,7 @@ protected:
                 ++state->creatorCalls;
                 return std::make_unique<FakeDecoder>(state);
             },
-            priority, isArchiveWrapper);
+            priority);
         return state;
     }
 
@@ -679,23 +678,21 @@ TEST_F(AudioLoaderTest, RegistersLoadersAndEnumeratesPublicState)
 {
     AudioLoader loader;
 
-    const auto decoderMp3     = addDecoder(loader, u"decoder-mp3"_s, {u" MP3 "_s}, 5);
-    const auto decoderFlac    = addDecoder(loader, u"decoder-flac"_s, {u"FLAC"_s}, 1);
-    const auto wrapperDecoder = addDecoder(loader, u"wrapper-decoder"_s, {u"ignored"_s}, 3, true);
-    const auto readerMp3      = addReader(loader, u"reader-mp3"_s, {u"mP3"_s}, 4);
-    const auto readerFlac     = addReader(loader, u"reader-flac"_s, {u" flac "_s}, 0);
-    const auto wrapperReader  = addReader(loader, u"wrapper-reader"_s, {u"ignored"_s}, 2, true);
-    const auto archiveReader  = addArchiveReader(loader, u"zip-reader"_s, {u" ZIP "_s}, 0);
+    const auto decoderMp3    = addDecoder(loader, u"decoder-mp3"_s, {u" MP3 "_s}, 5);
+    const auto decoderFlac   = addDecoder(loader, u"decoder-flac"_s, {u"FLAC"_s}, 1);
+    const auto readerMp3     = addReader(loader, u"reader-mp3"_s, {u"mP3"_s}, 4);
+    const auto readerFlac    = addReader(loader, u"reader-flac"_s, {u" flac "_s}, 0);
+    const auto wrapperReader = addReader(loader, u"wrapper-reader"_s, {u"ignored"_s}, 2, true);
+    const auto archiveReader = addArchiveReader(loader, u"zip-reader"_s, {u" ZIP "_s}, 0);
 
     Q_UNUSED(decoderMp3);
     Q_UNUSED(decoderFlac);
-    Q_UNUSED(wrapperDecoder);
     Q_UNUSED(readerMp3);
     Q_UNUSED(readerFlac);
     Q_UNUSED(wrapperReader);
     Q_UNUSED(archiveReader);
 
-    EXPECT_EQ((QStringList{u"decoder-mp3"_s, u"decoder-flac"_s, u"wrapper-decoder"_s}), entryNames(loader.decoders()));
+    EXPECT_EQ((QStringList{u"decoder-mp3"_s, u"decoder-flac"_s}), entryNames(loader.decoders()));
     EXPECT_EQ((QStringList{u"reader-mp3"_s, u"reader-flac"_s, u"wrapper-reader"_s}), entryNames(loader.readers()));
     EXPECT_EQ((QStringList{u"zip-reader"_s}), entryNames(loader.archiveReaders()));
 
@@ -711,7 +708,7 @@ TEST_F(AudioLoaderTest, RegistersLoadersAndEnumeratesPublicState)
     EXPECT_EQ((QStringList{u"decoder-mp3"_s}), decoderLabels(loader.decodersForTrack(mp3Track)));
     EXPECT_EQ((QStringList{u"reader-flac"_s}), readerLabels(loader.readersForFile(flacTrack.filepath())));
     EXPECT_EQ((QStringList{u"reader-mp3"_s}), readerLabels(loader.readersForTrack(mp3Track)));
-    EXPECT_EQ((QStringList{u"wrapper-decoder"_s}), decoderLabels(loader.decodersForFile(archiveTrack.filepath())));
+    EXPECT_EQ((QStringList{u"decoder-mp3"_s}), decoderLabels(loader.decodersForFile(archiveTrack.filepath())));
     EXPECT_EQ((QStringList{u"wrapper-reader"_s}), readerLabels(loader.readersForFile(archiveTrack.filepath())));
 
     EXPECT_TRUE(loader.isArchive(u"/tmp/archive.zip"_s));
@@ -926,7 +923,7 @@ TEST_F(AudioLoaderTest, LoadsDecoderAndReaderForRegisteredUriSchemeWithoutOpenin
     loader.setRemoteSourceProvider(provider);
 
     addDecoder(loader, u"extension-only-decoder"_s, {u"cdda"_s});
-    const auto decoder = addDecoder(loader, u"cdda-decoder"_s, {}, -1, false, {u" CDDA "_s});
+    const auto decoder = addDecoder(loader, u"cdda-decoder"_s, {}, -1, {u" CDDA "_s});
 
     addReader(loader, u"extension-only-reader"_s, {u"cdda"_s});
     const auto reader        = addReader(loader, u"cdda-reader"_s, {}, -1, false, {u"cDdA"_s});
@@ -966,8 +963,8 @@ TEST_F(AudioLoaderTest, UriSchemeSelectionHonoursDisabledStateAndDoesNotMisclass
 {
     AudioLoader loader;
     addDecoder(loader, u"windows-file-decoder"_s, {u"mp3"_s});
-    addDecoder(loader, u"drive-letter-scheme-decoder"_s, {}, -1, false, {u"c"_s});
-    addDecoder(loader, u"cdda-decoder"_s, {}, -1, false, {u"cdda"_s});
+    addDecoder(loader, u"drive-letter-scheme-decoder"_s, {}, -1, {u"c"_s});
+    addDecoder(loader, u"cdda-decoder"_s, {}, -1, {u"cdda"_s});
 
     EXPECT_EQ((QStringList{u"windows-file-decoder"_s}),
               decoderLabels(loader.decodersForFile(uR"(C:\music\song.mp3)"_s)));

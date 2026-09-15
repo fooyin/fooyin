@@ -49,6 +49,8 @@ struct LoadedSource
 
 struct LoadedDecoder
 {
+    //! Registered name of the decoder backend that processes the audio.
+    QString name;
     //! Opened input source backing `decoder`.
     LoadedSource input;
     //! Format resolved during decoder initialisation, if any.
@@ -175,8 +177,7 @@ public:
                                        AudioReader::WriteOptions options) const;
 
     //! Register decoder backend with optional priority and archive-wrapper flag.
-    void addDecoder(const QString& name, const DecoderCreator& creator, int priority = -1,
-                    bool isArchiveWrapper = false);
+    void addDecoder(const QString& name, const DecoderCreator& creator, int priority = -1);
     //! Register metadata reader backend with optional priority.
     void addReader(const QString& name, const ReaderCreator& creator, int priority = -1, bool isArchiveWrapper = false);
     //! Register archive reader backend with optional priority.

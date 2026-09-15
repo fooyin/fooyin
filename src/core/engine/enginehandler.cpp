@@ -609,11 +609,14 @@ void EngineHandler::handleTrackCommitted(const Engine::TrackCommitContext& conte
         return;
     }
 
+    qCInfo(ENG_HANDLER) << "Playback decoder selected:" << context.decoder << "track=" << context.track.filenameExt();
+
     Q_EMIT trackCommitted(context);
 
     if(m_pendingTrackChange.has_value()
        && samePlaybackItem(makePlaybackItem(m_pendingTrackChange->track.track, m_pendingTrackChange->itemId),
                            makePlaybackItem(context.track, context.itemId))) {
+        m_playerController->setDecoder(context.decoder);
         m_playerController->commitCurrentTrack(*m_pendingTrackChange);
 
         if(m_latestTrackMetadata.isValid()
@@ -643,6 +646,7 @@ void EngineHandler::handleTrackCommitted(const Engine::TrackCommitContext& conte
             return;
         }
 
+        m_playerController->setDecoder(context.decoder);
         m_playerController->commitCurrentTrack(Player::TrackChangeRequest{
             .track        = m_upcomingTrack.track,
             .context      = {.reason = Player::AdvanceReason::NaturalEnd, .userInitiated = false},

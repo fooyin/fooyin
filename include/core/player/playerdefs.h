@@ -83,6 +83,7 @@ struct FYCORE_EXPORT PlaybackSnapshot
     uint64_t positionMs{0};
     uint64_t durationMs{0};
     int bitrate{0};
+    QString decoder;
     bool isQueueTrack{false};
     PlaybackQueueItemId queueItemId{0};
 };

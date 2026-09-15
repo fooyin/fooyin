@@ -22,99 +22,9 @@
 #include <QFileInfo>
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(ARCH_DECODER, "fy.archivedecoder")
+Q_LOGGING_CATEGORY(ARCH_READER, "fy.archivereader")
 
 namespace Fooyin {
-ArchiveDecoder::ArchiveDecoder(std::shared_ptr<AudioLoader> audioLoader)
-    : m_audioLoader{std::move(audioLoader)}
-{ }
-
-ArchiveDecoder::~ArchiveDecoder()
-{
-    m_audioLoader = nullptr;
-}
-
-QStringList ArchiveDecoder::extensions() const
-{
-    return {};
-}
-
-bool ArchiveDecoder::isSeekable() const
-{
-    return m_loadedDecoder.decoder != nullptr && m_loadedDecoder.decoder->isSeekable();
-}
-
-bool ArchiveDecoder::trackHasChanged() const
-{
-    return m_loadedDecoder.decoder != nullptr && m_loadedDecoder.decoder->trackHasChanged();
-}
-
-Track ArchiveDecoder::changedTrack() const
-{
-    return m_loadedDecoder.decoder ? m_loadedDecoder.decoder->changedTrack() : Track{};
-}
-
-int ArchiveDecoder::bitrate() const
-{
-    return m_loadedDecoder.decoder ? m_loadedDecoder.decoder->bitrate() : 0;
-}
-
-std::optional<AudioFormat> ArchiveDecoder::init(const AudioSource& /*source*/, const Track& track,
-                                                DecoderOptions options)
-{
-    m_loadedDecoder = m_audioLoader->loadDecoderForArchiveTrack(track, options, playbackHints());
-    if(!m_loadedDecoder.decoder) {
-        qCWarning(ARCH_DECODER) << "No decoder available for archive track:" << track.filepath();
-    }
-    return m_loadedDecoder.format;
-}
-
-void ArchiveDecoder::start()
-{
-    if(m_loadedDecoder.decoder) {
-        m_loadedDecoder.decoder->start();
-    }
-}
-
-void ArchiveDecoder::stop()
-{
-    if(m_loadedDecoder.decoder) {
-        m_loadedDecoder.decoder->stop();
-    }
-}
-
-void ArchiveDecoder::seek(uint64_t pos)
-{
-    if(m_loadedDecoder.decoder) {
-        m_loadedDecoder.decoder->seek(pos);
-    }
-}
-
-AudioDecoder::ReadResult ArchiveDecoder::readAudio(size_t bytes)
-{
-    if(!m_loadedDecoder.decoder) {
-        return ReadResult::errorResult();
-    }
-
-    return m_loadedDecoder.decoder->readAudio(bytes);
-}
-
-AudioBuffer ArchiveDecoder::readBuffer(size_t bytes)
-{
-    if(!m_loadedDecoder.decoder) {
-        return {};
-    }
-
-    return m_loadedDecoder.decoder->readBuffer(bytes);
-}
-
-void ArchiveDecoder::interruptRead()
-{
-    if(m_loadedDecoder.decoder) {
-        m_loadedDecoder.decoder->requestAbort();
-    }
-}
-
 Fooyin::GeneralArchiveReader::GeneralArchiveReader(std::shared_ptr<AudioLoader> audioLoader)
     : m_audioLoader{std::move(audioLoader)}
 { }
@@ -158,7 +68,7 @@ bool GeneralArchiveReader::init(const AudioSource& source)
 
     m_loadedReader = m_audioLoader->loadReaderForArchiveTrack(track);
     if(!m_loadedReader.reader) {
-        qCDebug(ARCH_DECODER) << "No reader available for archive track:" << track.filepath();
+        qCDebug(ARCH_READER) << "No reader available for archive track:" << track.filepath();
     }
 
     return m_loadedReader.reader != nullptr;

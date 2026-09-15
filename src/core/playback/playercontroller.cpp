@@ -253,6 +253,7 @@ public:
     Player::UpcomingTrack m_lastUpcomingTrack;
     uint64_t m_nextPlaybackItemId{1};
     bool m_currentTrackSeekable{false};
+    QString m_decoder;
 
     PlaybackQueue m_queue;
     PlaybackOrderNavigator m_navigator;
@@ -1342,6 +1343,7 @@ void PlayerController::reset()
     p->m_progressTracker.reset();
     p->m_cursor.reset();
     p->m_session.clearPendingRequest();
+    p->m_decoder.clear();
     p->updateBitrate(0);
     setCurrentTrackSeekable(false);
 
@@ -1614,6 +1616,11 @@ void PlayerController::setBitrate(int bitrate)
     }
 }
 
+void PlayerController::setDecoder(const QString& decoder)
+{
+    p->m_decoder = decoder;
+}
+
 void PlayerController::changeCurrentTrack(const Track& track)
 {
     changeCurrentTrack(PlaylistTrack{.track = track, .playlistId = {}, .entryId = {}});
@@ -1735,6 +1742,7 @@ Player::PlaybackSnapshot PlayerController::playbackSnapshot() const
         .positionMs      = p->m_progressTracker.position(),
         .durationMs      = p->m_progressTracker.totalDuration(),
         .bitrate         = p->m_progressTracker.bitrate(),
+        .decoder         = p->m_decoder,
         .isQueueTrack    = p->m_session.isQueueTrack(),
         .queueItemId     = p->m_session.currentQueueItemId(),
     };
@@ -1952,6 +1960,11 @@ bool PlayerController::playedThresholdReached() const
 int PlayerController::bitrate() const
 {
     return p->m_progressTracker.bitrate();
+}
+
+QString PlayerController::decoder() const
+{
+    return p->m_decoder;
 }
 
 bool PlayerController::currentTrackSeekable() const

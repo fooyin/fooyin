@@ -136,6 +136,7 @@ public:
 private:
     std::unique_ptr<AudioDecoder> m_decoder;
     LoadedSource m_input;
+    QString m_decoderName;
 
     AudioStreamPtr m_activeStream;
 

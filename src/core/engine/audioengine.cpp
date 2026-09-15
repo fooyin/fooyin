@@ -3226,6 +3226,7 @@ Engine::TrackCommitContext AudioEngine::makeTrackCommitContext(const Engine::Tra
 {
     return Engine::TrackCommitContext{
         .track          = m_currentTrack,
+        .decoder        = m_decoderName,
         .itemId         = m_currentTrackItemId,
         .generation     = m_trackGeneration,
         .mode           = mode,
@@ -4748,6 +4749,7 @@ bool AudioEngine::initDecoder(const Engine::PlaybackItem& item, bool allowPrepar
 {
     const Track& track = item.track;
     m_decoder.reset();
+    m_decoderName.clear();
 
     if(!track.isValid()) {
         return false;
@@ -4757,6 +4759,7 @@ bool AudioEngine::initDecoder(const Engine::PlaybackItem& item, bool allowPrepar
         auto& prepared               = *m_preparedNext;
         const bool hasPreparedStream = prepared.preparedStream != nullptr;
         const bool decoderAdvanced   = prepared.preparedDecodePositionMs > track.offset();
+        const QString decoderName    = prepared.loadedDecoder.name;
 
         if(!m_decoder.adoptPreparedDecoder(std::move(prepared.loadedDecoder), track)) {
             qCWarning(ENGINE) << "Failed to adopt prepared decoder";
@@ -4777,6 +4780,7 @@ bool AudioEngine::initDecoder(const Engine::PlaybackItem& item, bool allowPrepar
             m_decoder.seek(m_decoder.startPosition());
         }
 
+        m_decoderName = decoderName;
         clearPreparedNextTrack();
         return true;
     }
@@ -4787,10 +4791,13 @@ bool AudioEngine::initDecoder(const Engine::PlaybackItem& item, bool allowPrepar
         return false;
     }
 
+    const QString decoderName = decoder.name;
     if(!m_decoder.init(std::move(decoder), track)) {
         qCWarning(ENGINE) << "Failed to initialse decoder context";
         return false;
     }
+
+    m_decoderName = decoderName;
 
     return true;
 }

@@ -400,6 +400,7 @@ private:
     uint64_t m_nextTransitionId;
     uint64_t m_pendingManualTrackItemId{0};
     AudioFormat m_format;
+    QString m_decoderName;
 
     DecodingController m_decoder;
 

@@ -367,8 +367,6 @@ void Application::registerInputs()
 {
     m_audioEncoderRegistry->addEncoderBackend(u"ffmpeg"_s, u"FFmpeg"_s,
                                               []() { return std::make_unique<FFmpegEncoder>(); });
-    m_audioLoader->addDecoder(
-        u"Archive"_s, [this]() { return std::make_unique<ArchiveDecoder>(m_audioLoader); }, -1, true);
     m_audioLoader->addReader(
         u"Archive"_s, [this]() { return std::make_unique<GeneralArchiveReader>(m_audioLoader); }, -1, true);
     m_audioLoader->addReader(u"TagLib"_s, []() { return std::make_unique<TagLibReader>(); });

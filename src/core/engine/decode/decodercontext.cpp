@@ -208,9 +208,10 @@ bool DecoderContext::init(LoadedDecoder decoder, const Track& track)
 
     const bool isDecoding = decoder.isDecoding;
 
-    m_track   = track;
-    m_decoder = std::move(decoder.decoder);
-    m_input   = std::move(decoder.input);
+    m_track       = track;
+    m_decoderName = std::move(decoder.name);
+    m_decoder     = std::move(decoder.decoder);
+    m_input       = std::move(decoder.input);
     m_input.rebind();
 
     m_format = *decoder.format;
@@ -233,7 +234,8 @@ bool DecoderContext::adoptPreparedDecoder(LoadedDecoder decoder, const Track& tr
 
     const bool isDecoding = decoder.isDecoding;
 
-    m_decoder = std::move(decoder.decoder);
+    m_decoderName = std::move(decoder.name);
+    m_decoder     = std::move(decoder.decoder);
     m_decoder->setPlaybackHints(m_playbackHints);
     m_input = std::move(decoder.input);
     m_input.rebind();
@@ -604,6 +606,7 @@ int DecoderContext::bitrate() const
 LoadedDecoder DecoderContext::takeLoadedDecoder()
 {
     LoadedDecoder loaded;
+    loaded.name       = std::exchange(m_decoderName, {});
     loaded.isDecoding = m_isDecoding;
     loaded.decoder    = std::exchange(m_decoder, nullptr);
     if(loaded.decoder) {
@@ -621,6 +624,7 @@ void DecoderContext::reset()
 
     m_decoder.reset();
     m_input = {};
+    m_decoderName.clear();
     m_activeStream.reset();
     m_track      = {};
     m_format     = {};

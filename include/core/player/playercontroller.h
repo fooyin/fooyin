@@ -57,6 +57,8 @@ public:
     [[nodiscard]] bool playedThresholdReached() const;
     /** Returns the current bitrate. */
     [[nodiscard]] int bitrate() const;
+    /** Returns the decoder backend used for the current track. */
+    [[nodiscard]] QString decoder() const;
     /** Returns @c true if the current track can be seeked. */
     [[nodiscard]] bool currentTrackSeekable() const;
 
@@ -109,6 +111,7 @@ public:
     void restorePlaybackProgress(uint64_t positionMs, uint64_t timeListenedMs);
     void setCurrentPosition(uint64_t ms);
     void setBitrate(int bitrate);
+    void setDecoder(const QString& decoder);
     void setCurrentTrackSeekable(bool seekable);
 
     void changeCurrentTrack(const Track& track);

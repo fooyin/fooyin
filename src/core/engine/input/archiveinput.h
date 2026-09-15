@@ -25,35 +25,6 @@
 #include <QIODevice>
 
 namespace Fooyin {
-class ArchiveDecoder : public AudioDecoder
-{
-public:
-    explicit ArchiveDecoder(std::shared_ptr<AudioLoader> audioLoader);
-    ~ArchiveDecoder() override;
-
-    [[nodiscard]] QStringList extensions() const override;
-    [[nodiscard]] bool isSeekable() const override;
-    [[nodiscard]] bool trackHasChanged() const override;
-    [[nodiscard]] Track changedTrack() const override;
-    [[nodiscard]] int bitrate() const override;
-
-    std::optional<AudioFormat> init(const AudioSource& source, const Track& track, DecoderOptions options) override;
-    void start() override;
-    void stop() override;
-
-    void seek(uint64_t pos) override;
-
-    ReadResult readAudio(size_t bytes) override;
-    AudioBuffer readBuffer(size_t bytes) override;
-
-protected:
-    void interruptRead() override;
-
-private:
-    std::shared_ptr<AudioLoader> m_audioLoader;
-    LoadedDecoder m_loadedDecoder;
-};
-
 class GeneralArchiveReader : public AudioReader
 {
 public:
