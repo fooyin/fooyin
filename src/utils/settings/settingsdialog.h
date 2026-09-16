@@ -67,7 +67,7 @@ private:
     void showCategory(const QModelIndex& index);
     void checkCategoryWidget(SettingsCategory* category);
     void currentChanged(const QModelIndex& current);
-    void currentTabChanged(int index);
+    void currentPageChanged(int index);
     SettingsPage* findPage(const Id& id);
     static QString categoryKey(const QModelIndex& index);
 

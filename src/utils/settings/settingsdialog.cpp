@@ -29,16 +29,22 @@
 #include <QDataStream>
 #include <QDialogButtonBox>
 #include <QEvent>
+#include <QHBoxLayout>
 #include <QIODevice>
 #include <QLabel>
+#include <QListWidget>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QResizeEvent>
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QStackedLayout>
+#include <QStackedWidget>
+#include <QTabWidget>
 #include <QTreeView>
 #include <QVBoxLayout>
+
+constexpr auto PageListPadding = 50;
 
 namespace Fooyin {
 class ScrollArea : public QScrollArea
@@ -170,6 +176,49 @@ int SimpleTreeView::calculateMaxItemWidth(const QModelIndex& index) const
     return maxItemWidth;
 }
 
+class SimpleListWidget : public QListWidget
+{
+    Q_OBJECT
+
+public:
+    explicit SimpleListWidget(QWidget* parent = nullptr);
+
+    [[nodiscard]] QSize sizeHint() const override;
+
+private:
+    [[nodiscard]] int calculateMaxItemWidth(const QModelIndex& index) const;
+};
+
+SimpleListWidget::SimpleListWidget(QWidget* parent)
+    : QListWidget{parent}
+{
+    setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+}
+
+QSize SimpleListWidget::sizeHint() const
+{
+    const int maxWidth = calculateMaxItemWidth({});
+    return {maxWidth + verticalScrollBar()->sizeHint().width() + (2 * frameWidth()) + PageListPadding, 100};
+}
+
+int SimpleListWidget::calculateMaxItemWidth(const QModelIndex& index) const
+{
+    int maxItemWidth{0};
+
+    const int itemWidth = sizeHintForIndex(index).width();
+    maxItemWidth        = std::max(maxItemWidth, itemWidth);
+
+    const int rowCount = model()->rowCount(index);
+    for(int row{0}; row < rowCount; ++row) {
+        const QModelIndex childIndex = model()->index(row, 0, index);
+        const int childWidth         = calculateMaxItemWidth(childIndex);
+        maxItemWidth                 = std::max(maxItemWidth, childWidth);
+    }
+
+    return maxItemWidth;
+}
+
 SettingsDialog::SettingsDialog(PageList pages, QWidget* parent)
     : QDialog{parent}
     , m_model{new SettingsModel(this)}
@@ -235,11 +284,16 @@ void SettingsDialog::openPage(const Id& id)
     const QModelIndex categoryIndex = m_model->indexForCategory(category->id);
     m_categoryTree->setCurrentIndex(categoryIndex);
 
-    if(auto* widget = category->tabWidget) {
-        const int pageIndex = category->findPageById(id);
-        if(pageIndex >= 0) {
-            widget->setCurrentIndex(pageIndex);
-        }
+    const int pageIndex = category->findPageById(id);
+    if(pageIndex < 0) {
+        return;
+    }
+
+    if(category->pageList) {
+        category->pageList->setCurrentRow(pageIndex);
+    }
+    else if(category->tabWidget) {
+        category->tabWidget->setCurrentIndex(pageIndex);
     }
 }
 
@@ -363,9 +417,10 @@ void SettingsDialog::showCategory(const QModelIndex& index)
     m_currentCategory = category->id;
     m_currentPage     = {};
 
-    const int currentTabIndex = category->tabWidget ? category->tabWidget->currentIndex() : -1;
-    if(currentTabIndex != -1 && std::cmp_less(currentTabIndex, category->pages.size())) {
-        auto* page    = category->pages.at(currentTabIndex);
+    const int currentPageIndex = category->pageList ? category->pageList->currentRow()
+                                                    : (category->tabWidget ? category->tabWidget->currentIndex() : -1);
+    if(currentPageIndex != -1 && std::cmp_less(currentPageIndex, category->pages.size())) {
+        auto* page    = category->pages.at(currentPageIndex);
         m_currentPage = page->id();
         m_visitedPages.emplace(page);
     }
@@ -403,11 +458,42 @@ void SettingsDialog::checkCategoryWidget(SettingsCategory* category)
         }
     }
 
+    if(category->selector == SettingsPageSelector::List && category->pages.size() > 1) {
+        auto* container = new QWidget();
+        auto* pageList  = new SimpleListWidget(container);
+        auto* pageStack = new QStackedWidget(container);
+        auto* layout    = new QHBoxLayout(container);
+
+        layout->setContentsMargins({});
+        layout->addWidget(pageList);
+        layout->addWidget(pageStack, 1);
+
+        for(const auto& page : category->pages) {
+            if(QWidget* widget = page->widget()) {
+                auto* scrollArea = new ScrollArea(pageStack);
+                scrollArea->setWidget(widget);
+                pageList->addItem(page->name());
+                pageStack->addWidget(scrollArea);
+
+                page->load();
+            }
+        }
+
+        QObject::connect(pageList, &QListWidget::currentRowChanged, pageStack, &QStackedWidget::setCurrentIndex);
+        QObject::connect(pageList, &QListWidget::currentRowChanged, this, &SettingsDialog::currentPageChanged);
+
+        pageList->setCurrentRow(0);
+
+        category->pageList = pageList;
+        category->index    = m_stackedLayout->addWidget(container);
+        return;
+    }
+
     auto* tabWidget = new QTabWidget();
     tabWidget->setTabBarAutoHide(true);
     tabWidget->setDocumentMode(category->pages.size() == 1);
 
-    const auto addPageToTabWidget = [tabWidget](const auto& page) {
+    for(const auto& page : category->pages) {
         if(QWidget* widget = page->widget()) {
             auto* scrollArea = new ScrollArea(tabWidget);
             scrollArea->setWidget(widget);
@@ -415,11 +501,9 @@ void SettingsDialog::checkCategoryWidget(SettingsCategory* category)
 
             page->load();
         }
-    };
+    }
 
-    std::ranges::for_each(category->pages, addPageToTabWidget);
-
-    QObject::connect(tabWidget, &QTabWidget::currentChanged, this, &SettingsDialog::currentTabChanged);
+    QObject::connect(tabWidget, &QTabWidget::currentChanged, this, &SettingsDialog::currentPageChanged);
 
     category->tabWidget = tabWidget;
     category->index     = m_stackedLayout->addWidget(tabWidget);
@@ -435,7 +519,7 @@ void SettingsDialog::currentChanged(const QModelIndex& current)
     }
 }
 
-void SettingsDialog::currentTabChanged(int index)
+void SettingsDialog::currentPageChanged(int index)
 {
     if(index < 0) {
         m_currentPage = {};

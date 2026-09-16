@@ -26,6 +26,7 @@ SettingsPage::SettingsPage(SettingsDialogController* controller, QObject* parent
     : QObject{parent}
     , m_position{SettingsPagePosition::Default}
     , m_relativePosition{SettingsPageRelativePosition::None}
+    , m_selector{SettingsPageSelector::Tabs}
     , m_widget{nullptr}
 {
     if(controller) {
@@ -61,6 +62,11 @@ SettingsPageRelativePosition SettingsPage::relativePosition() const
 Id SettingsPage::positionPage() const
 {
     return m_positionPage;
+}
+
+SettingsPageSelector SettingsPage::selector() const
+{
+    return m_selector;
 }
 
 void SettingsPage::setWidgetCreator(const WidgetCreator& widgetCreator)
@@ -176,6 +182,11 @@ void SettingsPage::setRelativePosition(SettingsPageRelativePosition position, co
     m_position         = SettingsPagePosition::Default;
     m_relativePosition = position;
     m_positionPage     = page;
+}
+
+void SettingsPage::setSelector(SettingsPageSelector selector)
+{
+    m_selector = selector;
 }
 } // namespace Fooyin
 

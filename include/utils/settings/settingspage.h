@@ -44,6 +44,12 @@ enum class SettingsPageRelativePosition : uint8_t
     After,
 };
 
+enum class SettingsPageSelector : uint8_t
+{
+    Tabs = 0,
+    List,
+};
+
 class FYUTILS_EXPORT SettingsPageWidget : public QWidget
 {
     Q_OBJECT
@@ -81,6 +87,7 @@ public:
     [[nodiscard]] SettingsPagePosition position() const;
     [[nodiscard]] SettingsPageRelativePosition relativePosition() const;
     [[nodiscard]] Id positionPage() const;
+    [[nodiscard]] SettingsPageSelector selector() const;
 
     QWidget* widget();
 
@@ -100,6 +107,7 @@ protected:
     void setCategory(const QStringList& category);
     void setPosition(SettingsPagePosition position);
     void setRelativePosition(SettingsPageRelativePosition position, const Id& page);
+    void setSelector(SettingsPageSelector selector);
 
     using WidgetCreator = std::function<SettingsPageWidget*()>;
     void setWidgetCreator(const WidgetCreator& widgetCreator);
@@ -110,6 +118,7 @@ private:
     QString m_name;
     SettingsPagePosition m_position;
     SettingsPageRelativePosition m_relativePosition;
+    SettingsPageSelector m_selector;
     Id m_positionPage;
     QIcon m_categoryIcon;
     WidgetCreator m_widgetCreator;
