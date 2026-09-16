@@ -43,6 +43,7 @@ if(CPACK_GENERATOR STREQUAL "DEB")
         trixie   libicu76
         forky    libicu78
         resolute libicu78
+        stonking libicu78
     )
 
     set(DISTRO_TAGLIB_PACKAGE_MAP
@@ -51,6 +52,7 @@ if(CPACK_GENERATOR STREQUAL "DEB")
         trixie   libtag2
         forky    libtag2
         resolute libtag2
+        stonking libtag2
     )
 
     set(DISTRO_QT_PACKAGE_MAP
@@ -59,6 +61,7 @@ if(CPACK_GENERATOR STREQUAL "DEB")
         trixie   "libqt6core6t64 (>= 6.4.0), libqt6gui6 (>= 6.4.0), libqt6widgets6 (>= 6.4.0), libqt6network6 (>= 6.4.0), libqt6concurrent6 (>= 6.4.0), libqt6sql6 (>= 6.4.0)"
         forky    "libqt6core6t64 (>= 6.4.0), libqt6gui6 (>= 6.4.0), libqt6widgets6 (>= 6.4.0), libqt6network6 (>= 6.4.0), libqt6concurrent6 (>= 6.4.0), libqt6sql6 (>= 6.4.0)"
         resolute "libqt6core6t64 (>= 6.4.0), libqt6gui6 (>= 6.4.0), libqt6widgets6 (>= 6.4.0), libqt6network6 (>= 6.4.0), libqt6concurrent6 (>= 6.4.0), libqt6sql6 (>= 6.4.0)"
+        stonking "libqt6core6t64 (>= 6.4.0), libqt6gui6 (>= 6.4.0), libqt6widgets6 (>= 6.4.0), libqt6network6 (>= 6.4.0), libqt6concurrent6 (>= 6.4.0), libqt6sql6 (>= 6.4.0)"
     )
 
     set(DISTRO_DEB_REVISION_MAP
@@ -67,6 +70,7 @@ if(CPACK_GENERATOR STREQUAL "DEB")
         forky    "1~debian.14~forky"
         noble    "1~ubuntu.24.04~noble"
         resolute "1~ubuntu.26.04~resolute"
+        stonking "1~ubuntu.26.10~stonking"
     )
 
     # cmake-format: on
