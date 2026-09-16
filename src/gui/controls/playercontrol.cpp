@@ -45,11 +45,15 @@ PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* pla
     , m_playerController{playerController}
     , m_stop{new ToolButton(settings, this)}
     , m_prev{new ToolButton(settings, this)}
+    , m_pause{new ToolButton(settings, this)}
+    , m_play{new ToolButton(settings, this)}
     , m_playPause{new ToolButton(settings, this)}
     , m_next{new ToolButton(settings, this)}
     , m_randomTrack{new ToolButton(settings, this)}
     , m_showStop{true}
     , m_showPrev{true}
+    , m_showPause{false}
+    , m_showPlay{false}
     , m_showPlayPause{true}
     , m_showNext{true}
     , m_showRandomTrack{false}
@@ -60,6 +64,8 @@ PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* pla
 
     layout->addWidget(m_stop);
     layout->addWidget(m_prev);
+    layout->addWidget(m_pause);
+    layout->addWidget(m_play);
     layout->addWidget(m_playPause);
     layout->addWidget(m_next);
     layout->addWidget(m_randomTrack);
@@ -69,6 +75,12 @@ PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* pla
     }
     if(auto* prevCmd = m_actionManager->command(Constants::Actions::Previous)) {
         m_prev->setDefaultAction(prevCmd->action());
+    }
+    if(auto* pauseCmd = m_actionManager->command(Constants::Actions::Pause)) {
+        m_pause->setDefaultAction(pauseCmd->action());
+    }
+    if(auto* playCmd = m_actionManager->command(Constants::Actions::Play)) {
+        m_play->setDefaultAction(playCmd->action());
     }
     if(auto* playCmd = m_actionManager->command(Constants::Actions::PlayPause)) {
         m_playPause->setDefaultAction(playCmd->action());
@@ -80,6 +92,8 @@ PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* pla
         m_randomTrack->setDefaultAction(randomTrackCmd->action());
     }
 
+    m_pause->hide();
+    m_play->hide();
     m_randomTrack->hide();
     updateIcons();
 
@@ -102,6 +116,8 @@ void PlayerControl::saveLayoutData(QJsonObject& layout)
 {
     layout["ShowStop"_L1]        = m_showStop;
     layout["ShowPrevious"_L1]    = m_showPrev;
+    layout["ShowPause"_L1]       = m_showPause;
+    layout["ShowPlay"_L1]        = m_showPlay;
     layout["ShowPlayPause"_L1]   = m_showPlayPause;
     layout["ShowNext"_L1]        = m_showNext;
     layout["ShowRandomTrack"_L1] = m_showRandomTrack;
@@ -119,6 +135,12 @@ void PlayerControl::loadLayoutData(const QJsonObject& layout)
     }
     if(layout.contains("ShowPrevious"_L1)) {
         updateButton(m_prev, m_showPrev, layout.value("ShowPrevious"_L1).toBool());
+    }
+    if(layout.contains("ShowPause"_L1)) {
+        updateButton(m_pause, m_showPause, layout.value("ShowPause"_L1).toBool());
+    }
+    if(layout.contains("ShowPlay"_L1)) {
+        updateButton(m_play, m_showPlay, layout.value("ShowPlay"_L1).toBool());
     }
     if(layout.contains("ShowPlayPause"_L1)) {
         updateButton(m_playPause, m_showPlayPause, layout.value("ShowPlayPause"_L1).toBool());
@@ -148,6 +170,8 @@ void PlayerControl::contextMenuEvent(QContextMenuEvent* event)
 
     setupButtonControl(tr("Show Stop"), m_stop, &m_showStop);
     setupButtonControl(tr("Show Previous"), m_prev, &m_showPrev);
+    setupButtonControl(tr("Show Pause"), m_pause, &m_showPause);
+    setupButtonControl(tr("Show Play"), m_play, &m_showPlay);
     setupButtonControl(tr("Show Play/Pause"), m_playPause, &m_showPlayPause);
     setupButtonControl(tr("Show Next"), m_next, &m_showNext);
     setupButtonControl(tr("Show Random Track"), m_randomTrack, &m_showRandomTrack);
@@ -159,6 +183,8 @@ void PlayerControl::updateIcons() const
 {
     m_stop->setIcon(Gui::iconFromTheme(Constants::Icons::Stop));
     m_prev->setIcon(Gui::iconFromTheme(Constants::Icons::Prev));
+    m_pause->setIcon(Gui::iconFromTheme(Constants::Icons::Pause));
+    m_play->setIcon(Gui::iconFromTheme(Constants::Icons::Play));
     m_next->setIcon(Gui::iconFromTheme(Constants::Icons::Next));
     m_randomTrack->setIcon(Gui::iconFromTheme(Constants::Icons::RandomPlay));
     stateChanged(m_playerController->playState());
