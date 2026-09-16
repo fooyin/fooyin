@@ -118,7 +118,7 @@ QRect itemViewTextRect(const QStyleOptionViewItem& option)
 {
     const QStyle* style     = option.widget ? option.widget->style() : QApplication::style();
     QRect textRect          = style->subElementRect(QStyle::SE_ItemViewItemText, &option, option.widget);
-    const int textMargin    = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &option, option.widget) + 1;
+    const int textMargin    = itemViewTextMargin(option.widget, &option);
     const int frameWidth    = style->pixelMetric(QStyle::PM_DefaultFrameWidth, &option, option.widget);
     const int leadingInset  = textMargin + frameWidth + 1;
     const bool leadingCell  = option.viewItemPosition == QStyleOptionViewItem::Beginning
@@ -134,6 +134,12 @@ QRect itemViewTextRect(const QStyleOptionViewItem& option)
     }
 
     return textRect;
+}
+
+int itemViewTextMargin(const QWidget* widget, const QStyleOption* option)
+{
+    const QStyle* style = widget ? widget->style() : QApplication::style();
+    return style->pixelMetric(QStyle::PM_FocusFrameHMargin, option, widget) + 1;
 }
 
 void drawRoundedPixmap(QPainter& painter, const QRect& rect, Qt::Alignment alignment, const QPixmap& pixmap,

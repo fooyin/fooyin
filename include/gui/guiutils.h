@@ -37,6 +37,7 @@ class QAbstractItemView;
 class QPalette;
 class QPainter;
 class QPixmap;
+class QStyleOption;
 
 namespace Fooyin {
 class MusicLibrary;
@@ -67,6 +68,7 @@ FYGUI_EXPORT QIcon::Mode itemViewIconMode(const QStyleOptionViewItem& option);
 
 /*! Returns the style-provided item text rectangle with spacing for leading row decorations. */
 FYGUI_EXPORT QRect itemViewTextRect(const QStyleOptionViewItem& option);
+FYGUI_EXPORT int itemViewTextMargin(const QWidget* widget, const QStyleOption* option = nullptr);
 
 FYGUI_EXPORT void drawRoundedPixmap(QPainter& painter, const QRect& rect, Qt::Alignment alignment,
                                     const QPixmap& pixmap, int radiusPercent);

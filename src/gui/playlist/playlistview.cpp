@@ -350,7 +350,8 @@ void PlaylistView::mousePressEvent(QMouseEvent* event)
     if(column == m_ratingColumn) {
         const auto starRating = index.data().value<StarRating>();
         const auto align      = static_cast<Qt::Alignment>(index.data(Qt::TextAlignmentRole).toInt());
-        const auto rating     = StarEditor::ratingAtPosition(event->pos(), visualRect(index), starRating, align);
+        const auto rating     = StarEditor::ratingAtPosition(
+            event->pos(), StarDelegate::contentRect(visualRect(index), viewport()), starRating, align);
 
         auto modelRating{starRating};
         modelRating.setRating(rating);

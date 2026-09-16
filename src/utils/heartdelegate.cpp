@@ -24,6 +24,14 @@
 #include <QPainter>
 
 namespace Fooyin {
+namespace {
+int itemViewTextMargin(const QWidget* widget, const QStyleOption* option)
+{
+    const QStyle* style = widget ? widget->style() : QApplication::style();
+    return style->pixelMetric(QStyle::PM_FocusFrameHMargin, option, widget) + 1;
+}
+} // namespace
+
 QModelIndex HeartDelegate::hoveredIndex() const
 {
     return m_hoverIndex;
@@ -64,6 +72,9 @@ void HeartDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option,
         style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
         return;
     }
+
+    const int horizontalPadding = itemViewTextMargin(opt.widget, &opt);
+    opt.rect.adjust(horizontalPadding, 0, -horizontalPadding, 0);
 
     auto heartValue        = index.data().value<HeartValue>();
     const bool mixedValues = index.data(MixedValues).toBool();
@@ -114,8 +125,9 @@ void HeartDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option,
 QSize HeartDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     if(index.data().canConvert<HeartValue>()) {
-        const auto heartValue = index.data().value<HeartValue>();
-        return heartValue.sizeHint();
+        const auto heartValue       = index.data().value<HeartValue>();
+        const int horizontalPadding = itemViewTextMargin(option.widget, &option);
+        return heartValue.sizeHint() + QSize{horizontalPadding * 2, 0};
     }
 
     return QStyledItemDelegate::sizeHint(option, index);

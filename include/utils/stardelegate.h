@@ -43,6 +43,8 @@ public:
     void setHoveredRow(const QModelIndex& index);
     void setShowEmptyOnlyOnActiveRow(bool enabled);
 
+    static QRect contentRect(const QRect& rect, const QWidget* widget);
+
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     [[nodiscard]] QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,

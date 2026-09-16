@@ -180,7 +180,8 @@ void TagEditorView::mousePressEvent(QMouseEvent* event)
 
         if(index.data().canConvert<StarRating>()) {
             auto starRating   = qvariant_cast<StarRating>(index.data());
-            const auto rating = StarEditor::ratingAtPosition(event->pos(), visualRect(index), starRating);
+            const auto rating = StarEditor::ratingAtPosition(
+                event->pos(), m_starDelegate->contentRect(visualRect(index), viewport()), starRating);
             starRating.setRating(rating);
 
             model()->setData(index, QVariant::fromValue(starRating));
