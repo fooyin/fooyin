@@ -25,9 +25,11 @@
 #include "contextmenuids.h"
 #include "controls/commandbutton.h"
 #include "controls/dspchainselector.h"
+#include "controls/lovecontrol.h"
 #include "controls/outputselector.h"
 #include "controls/playercontrol.h"
 #include "controls/playlistcontrol.h"
+#include "controls/ratingcontrol.h"
 #include "controls/replaygainmodeselector.h"
 #include "controls/seekbar.h"
 #include "controls/volumecontrol.h"
@@ -284,6 +286,30 @@ void Widgets::registerWidgets()
         [this]() { return new PlaylistControl(m_core->playerController(), m_settings, m_window); },
         tr("Playlist Controls"));
     provider->setSubMenus(u"PlaylistControls"_s, {tr("Controls")});
+
+    provider->registerWidget(
+        u"RatingControl"_s,
+        [this]() {
+            auto* control = new RatingControl(m_core->playerController(), m_settings, m_window);
+            auto* library = m_core->library();
+            QObject::connect(control, &RatingControl::trackRated, library,
+                             [library](const Track& track) { library->updateTrackStats(track, Track::Stat::Rating); });
+            return control;
+        },
+        tr("Rating Control"));
+    provider->setSubMenus(u"RatingControl"_s, {tr("Controls")});
+
+    provider->registerWidget(
+        u"LoveControl"_s,
+        [this]() {
+            auto* control = new LoveControl(m_core->playerController(), m_settings, m_window);
+            auto* library = m_core->library();
+            QObject::connect(control, &LoveControl::trackLoved, library,
+                             [library](const Track& track) { library->updateTrackStats(track, Track::Stat::Loved); });
+            return control;
+        },
+        tr("Love Control"));
+    provider->setSubMenus(u"LoveControl"_s, {tr("Controls")});
 
     provider->registerWidget(
         u"VolumeControls"_s, [this]() { return new VolumeControl(m_gui->actionManager(), m_settings, m_window); },

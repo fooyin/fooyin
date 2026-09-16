@@ -109,18 +109,22 @@ set(SOURCES
     artwork/sources/musicbrainzartwork.cpp
     artwork/sources/musicbrainzartwork.h
     contextmenuids.h
-    controls/playercontrol.cpp
-    controls/playercontrol.h
     controls/commandbutton.cpp
     controls/commandbutton.h
     controls/commandbuttonconfigdialog.cpp
     controls/commandbuttonconfigdialog.h
+    controls/lovecontrol.cpp
+    controls/lovecontrol.h
+    controls/playercontrol.cpp
+    controls/playercontrol.h
     controls/playlistcontrol.cpp
     controls/playlistcontrol.h
     controls/dspchainselector.cpp
     controls/dspchainselector.h
     controls/outputselector.cpp
     controls/outputselector.h
+    controls/ratingcontrol.cpp
+    controls/ratingcontrol.h
     controls/replaygainmodeselector.cpp
     controls/replaygainmodeselector.h
     controls/seekbar.cpp
