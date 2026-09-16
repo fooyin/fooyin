@@ -37,6 +37,7 @@
 #include <gui/theme/themeregistry.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
+#include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/utils.h>
@@ -68,19 +69,28 @@ void LyricsPlugin::initialise(const GuiPluginContext& context)
     m_trackSelection = context.trackSelection;
     m_widgetProvider = context.widgetProvider;
 
+    const auto createLyricsWidget = [this, styleProvider = context.styleProvider]() {
+        return new LyricsWidget(m_playerController, m_playlistHandler, m_lyricsFinder, m_lyricsSaver, m_settings,
+                                styleProvider);
+    };
+
+    auto* showLyrics = new QAction(tr("Ly&rics"), this);
+    showLyrics->setStatusTip(tr("Open lyrics in a separate window"));
+    auto* showLyricsCmd = m_actionManager->registerAction(showLyrics, "Lyrics.ShowWindow");
+    showLyricsCmd->setCategories({tr("View")});
+    m_actionManager->actionContainer(Constants::Menus::View)->addAction(showLyricsCmd);
+    QObject::connect(showLyrics, &QAction::triggered, this, [createLyricsWidget]() {
+        auto* window = createLyricsWidget();
+        window->showStandaloneWindow(tr("Lyrics"), u"Lyrics/WindowState"_s);
+    });
+
     context.propertiesDialog->addTab(tr("Lyrics"), [this](const TrackList& tracks) {
         return new LyricsPropertiesTab(tracks.empty() ? Track{} : tracks.front(), m_networkAccess, m_lyricsSaver,
                                        m_playerController, m_settings,
                                        [this](const Track& track) { return m_audioLoader->canWriteMetadata(track); });
     });
 
-    m_widgetProvider->registerWidget(
-        u"Lyrics"_s,
-        [this, styleProvider = context.styleProvider]() {
-            return new LyricsWidget(m_playerController, m_playlistHandler, m_lyricsFinder, m_lyricsSaver, m_settings,
-                                    styleProvider);
-        },
-        tr("Lyrics"));
+    m_widgetProvider->registerWidget(u"Lyrics"_s, createLyricsWidget, tr("Lyrics"));
     context.themeRegistry->registerFontEntry(tr("Lyrics"), u"Fooyin::Lyrics::LyricsArea"_s);
 
     new LyricsSearchingPage(m_settings, this);
