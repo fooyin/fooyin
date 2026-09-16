@@ -21,6 +21,7 @@
 
 #include "internalcoresettings.h"
 #include "library/librarymanager.h"
+#include "libraryscanutils.h"
 #include "librarythreadhandler.h"
 
 #include <core/coresettings.h>
@@ -70,6 +71,15 @@ int removedTrackCount(const TrackList& tracks)
 {
     return static_cast<int>(
         std::ranges::count_if(tracks, [](const Track& track) { return !track.isEnabled() || !track.isInLibrary(); }));
+}
+
+std::optional<std::pair<int, QString>> monitoredTrackPath(const Track& track)
+{
+    if(track.libraryId() < 0 || track.hasCue()) {
+        return {};
+    }
+
+    return std::pair{track.libraryId(), physicalTrackPath(track)};
 }
 
 void logScanSummary(int id, const ScanRequest::Type type, const ScanSummaryCounts& summary)
@@ -234,6 +244,7 @@ public:
     QCoro::Task<> commitChangeSort(QString sort);
     QCoro::Task<> commitAddTracks(TrackList newTracks);
     void updateLibraryTracks(const TrackList& updatedTracks);
+    void updateLibraryTracks(const TrackList& updatedTracks, const TrackLookup& lookup);
     void updateTracksMetadata(TrackList tracksToUpdate);
     void updateTracksAvailability(TrackList tracksToUpdate);
     void updateTracksStats(TrackList tracksToUpdate, Track::Stats stats);
@@ -480,8 +491,12 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitAddTracks(TrackList newTracks)
 
 void UnifiedMusicLibraryPrivate::updateLibraryTracks(const TrackList& updatedTracks)
 {
-    const TrackLookup lookup{m_tracks};
+    const TrackLookup lookup{m_tracks, TrackLookup::Id};
+    updateLibraryTracks(updatedTracks, lookup);
+}
 
+void UnifiedMusicLibraryPrivate::updateLibraryTracks(const TrackList& updatedTracks, const TrackLookup& lookup)
+{
     for(const auto& track : updatedTracks) {
         if(const auto index = lookup.findById(track)) {
             m_tracks.at(*index) = track;
@@ -529,10 +544,23 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksMetadata(TrackList t
 
     const TrackList sortedTracks = co_await sortTracks(librarySortScript(), std::move(tracksToUpdate));
 
-    updateLibraryTracks(sortedTracks);
+    bool monitoredPathsChanged{false};
+    const TrackLookup lookup{m_tracks, TrackLookup::Id};
+    for(const Track& track : sortedTracks) {
+        if(const auto index = lookup.findById(track);
+           index && monitoredTrackPath(m_tracks.at(*index)) != monitoredTrackPath(track)) {
+            monitoredPathsChanged = true;
+            break;
+        }
+    }
+
+    updateLibraryTracks(sortedTracks, lookup);
     co_await resortLibraryTracks();
     Q_EMIT m_self->tracksMetadataChanged(sortedTracks);
-    setupLibraryWatchers();
+
+    if(monitoredPathsChanged) {
+        setupLibraryWatchers();
+    }
 }
 
 TrackList UnifiedMusicLibraryPrivate::mergeTrackUpdates(const TrackList& tracksToUpdate,
@@ -566,7 +594,6 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksAvailability(TrackLi
     updateLibraryTracks(sortedTracks);
     co_await resortLibraryTracks();
     Q_EMIT m_self->tracksUpdated(sortedTracks);
-    setupLibraryWatchers();
 }
 
 QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksStats(TrackList tracksToUpdate, Track::Stats stats)

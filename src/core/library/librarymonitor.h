@@ -27,6 +27,7 @@
 #include <QObject>
 
 #include <mutex>
+#include <set>
 #include <stop_token>
 #include <unordered_map>
 
@@ -53,9 +54,11 @@ public:
     void shutdown();
 
 private:
-    bool addWatcher(const LibraryInfo& library, const TrackList& tracks, bool monitorTrackFiles,
-                    std::stop_token stopToken);
+    bool addWatcher(const LibraryInfo& library, std::stop_token stopToken);
+    bool addDirectoryPaths(int libraryId, const QString& path, std::stop_token stopToken);
+    bool syncTrackFiles(const LibraryInfo& library, const std::set<QString>& files, std::stop_token stopToken);
 
+    LibraryInfoMap m_libraries;
     std::unordered_map<int, LibraryWatcher> m_watchers;
     std::mutex m_setupMutex;
     std::stop_source m_setupStopSource;
