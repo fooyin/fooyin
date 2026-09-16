@@ -216,6 +216,9 @@ LyricsWidget::LyricsWidget(PlayerController* playerController, PlaylistHandler* 
     QObject::connect(m_playerController, &PlayerController::positionChanged, this, &LyricsWidget::setCurrentTime);
     QObject::connect(m_playerController, &PlayerController::positionMoved, this, &LyricsWidget::syncAutoScroll);
     QObject::connect(m_lyricsView, &LyricsView::viewportResized, this, &LyricsWidget::updateViewportPadding);
+    QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsSearchStarted, this,
+                     &LyricsWidget::handleLyricsSearchStarted);
+    QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsFound, this, &LyricsWidget::handleLyricsFound);
     QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsSearchFinished, this,
                      &LyricsWidget::handleLyricsSearchFinished);
     QObject::connect(m_lyricsSaver, &LyricsSaver::lyricsSaved, this, &LyricsWidget::handleSavedLyrics);
@@ -300,8 +303,6 @@ void LyricsWidget::updateLyrics(const Track& track, bool force)
         return;
     }
 
-    QObject::disconnect(m_finderConnection);
-
     m_lyrics.clear();
 
     if(m_scrollAnim) {
@@ -320,9 +321,6 @@ void LyricsWidget::updateLyrics(const Track& track, bool force)
     }
 
     m_lyricsView->setDisplayString(noLyricsDisplayText(track));
-
-    m_finderConnection = QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsFound, this,
-                                          [this](const Track& /*track*/, const Lyrics& lyrics) { loadLyrics(lyrics); });
 
     if(!sameTrack && m_settings->fileValue(Settings::AutoSearch, false).toBool()) {
         m_lyricsFinder->findLyrics(track);
@@ -532,14 +530,7 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
 
     auto* searchLyrics = new QAction(tr("Auto-search for lyrics"), menu);
     searchLyrics->setStatusTip(tr("Search for lyrics for the current track"));
-    QObject::connect(searchLyrics, &QAction::triggered, this, [this]() {
-        QObject::disconnect(m_finderConnection);
-        m_finderConnection
-            = QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsFound, this,
-                               [this](const Track& /*track*/, const Lyrics& lyrics) { loadLyrics(lyrics); });
-        m_lyrics.clear();
-        m_lyricsFinder->findLyrics(m_currentTrack);
-    });
+    QObject::connect(searchLyrics, &QAction::triggered, this, [this]() { m_lyricsFinder->findLyrics(m_currentTrack); });
     menu->addAction(searchLyrics);
 
     auto* searchLyricsDialog = new QAction(tr("Search for lyrics…"), menu);
@@ -633,6 +624,20 @@ void LyricsWidget::loadLyrics(const Lyrics& lyrics)
 
     if(first) {
         changeLyrics(lyrics);
+    }
+}
+
+void LyricsWidget::handleLyricsSearchStarted(const Track& track)
+{
+    if(track.sameIdentityAs(m_currentTrack)) {
+        m_lyrics.clear();
+    }
+}
+
+void LyricsWidget::handleLyricsFound(const Track& track, const Lyrics& lyrics)
+{
+    if(track.sameIdentityAs(m_currentTrack)) {
+        loadLyrics(lyrics);
     }
 }
 

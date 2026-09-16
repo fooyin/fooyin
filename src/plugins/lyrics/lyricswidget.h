@@ -108,6 +108,8 @@ protected:
 
 private:
     void loadLyrics(const Lyrics& lyrics);
+    void handleLyricsSearchStarted(const Track& track);
+    void handleLyricsFound(const Track& track, const Lyrics& lyrics);
     void handleLyricsSearchFinished(const Track& track, bool foundAny);
     void handleSavedLyrics(const Track& track, const Lyrics& lyrics);
     void changeLyrics(const Lyrics& lyrics, const Track* sourceTrack = nullptr);
@@ -155,7 +157,6 @@ private:
 
     Track m_currentTrack;
     std::vector<Lyrics> m_lyrics;
-    QMetaObject::Connection m_finderConnection;
     ScriptParser m_parser;
 
     ConfigData m_config;

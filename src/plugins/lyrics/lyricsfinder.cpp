@@ -57,6 +57,7 @@ LyricsFinder::LyricsFinder(std::shared_ptr<NetworkAccessManager> networkManager,
     , m_foundAnyResults{false}
     , m_externalPhaseStarted{false}
     , m_searchFinished{true}
+    , m_searchScheduled{false}
     , m_nextResultIndex{0}
     , m_searchGeneration{0}
 {
@@ -67,7 +68,19 @@ LyricsFinder::LyricsFinder(std::shared_ptr<NetworkAccessManager> networkManager,
 void LyricsFinder::findLyrics(const LyricsSearchRequest& request)
 {
     m_request = request;
-    startLyricsSearch(m_request.track);
+    ++m_searchGeneration;
+
+    if(m_searchScheduled) {
+        return;
+    }
+
+    QMetaObject::invokeMethod(
+        this,
+        [this]() {
+            m_searchScheduled = false;
+            startLyricsSearch(m_request.track);
+        },
+        Qt::QueuedConnection);
 }
 
 void LyricsFinder::findLyrics(const Track& track)
@@ -204,6 +217,8 @@ void LyricsFinder::startLyricsSearch(const Track& track)
     m_externalPhaseStarted = false;
     m_searchFinished       = false;
     m_nextResultIndex      = 0;
+
+    Q_EMIT lyricsSearchStarted(track);
 
     startSources(true);
     advanceSearch();

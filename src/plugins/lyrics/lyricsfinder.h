@@ -65,6 +65,7 @@ public:
     void reset();
 
 Q_SIGNALS:
+    void lyricsSearchStarted(const Fooyin::Track& track);
     void lyricsFound(const Fooyin::Track& track, const Fooyin::Lyrics::Lyrics& lyrics);
     void lyricsSearchFinished(const Fooyin::Track& track, bool foundAny);
 
@@ -108,6 +109,7 @@ private:
     bool m_foundAnyResults;
     bool m_externalPhaseStarted;
     bool m_searchFinished;
+    bool m_searchScheduled;
     size_t m_nextResultIndex;
     uint64_t m_searchGeneration;
 };
