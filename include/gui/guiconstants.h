@@ -274,6 +274,7 @@ constexpr auto InterfaceContextMenuTrack          = "Fooyin.Page.Interface.Conte
 constexpr auto InterfaceContextMenuPlaylistWidget = "Fooyin.Page.Interface.ContextMenu.PlaylistWidget";
 constexpr auto InterfaceContextMenuLibraryTree    = "Fooyin.Page.Interface.ContextMenu.LibraryTree";
 constexpr auto InterfaceContextMenuDirBrowser     = "Fooyin.Page.Interface.ContextMenu.DirBrowser";
+constexpr auto InterfaceContextMenuQueueViewer    = "Fooyin.Page.Interface.ContextMenu.QueueViewer";
 constexpr auto InterfaceContextMenuLayoutEditing  = "Fooyin.Page.Interface.ContextMenu.LayoutEditing";
 constexpr auto InterfaceTheme                     = "Fooyin.Page.Interface.Theme";
 constexpr auto ArtworkGeneral                     = "Fooyin.Page.Interface.Artwork.General";

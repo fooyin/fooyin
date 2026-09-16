@@ -251,6 +251,10 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
         QStringList{}, u"Interface/ContextMenuLayoutEditingDisabledSections"_s);
     m_settings->createSetting<Internal::ContextMenuLayoutEditingLayout>(QStringList{},
                                                                         u"Interface/ContextMenuLayoutEditingLayout"_s);
+    m_settings->createSetting<Internal::ContextMenuQueueViewerDisabledSections>(
+        QStringList{}, u"Interface/ContextMenuQueueViewerDisabledSections"_s);
+    m_settings->createSetting<Internal::ContextMenuQueueViewerLayout>(QStringList{},
+                                                                      u"Interface/ContextMenuQueueViewerLayout"_s);
     m_settings->createSetting<Internal::PropertiesSidebarTrackScript>(u"[%track%. ]%title%"_s,
                                                                       u"Interface/PropertiesSidebarTrackScript "_s);
     m_settings->createSetting<Internal::NowPlayingOutputEnabled>(false, u"NowPlayingOutput/Enabled"_s);

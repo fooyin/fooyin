@@ -161,6 +161,13 @@ QueueViewerModel::QueueViewerModel(CoverRepository* coverRepository, PlayerContr
     m_settings->subscribe<Settings::Gui::RatingHalfStarSymbol>(this, [this](const QString&) { regenerateTitles(); });
     m_settings->subscribe<Settings::Gui::RatingEmptyStarSymbol>(this, [this](const QString&) { regenerateTitles(); });
 
+    QObject::connect(m_playerController, &PlayerController::stopAfterQueueItemChanged, this, [this]() {
+        const int rows = rowCount({});
+        if(rows > 0) {
+            Q_EMIT dataChanged(index(0, 0, {}), index(rows - 1, 0, {}), {Qt::DecorationRole});
+        }
+    });
+
     updateShowCurrent();
 }
 
@@ -243,6 +250,9 @@ QVariant QueueViewerModel::data(const QModelIndex& index, int role) const
                     case Player::PlayState::Stopped:
                         break;
                 }
+            }
+            if(item->queueItemId() == m_playerController->stopAfterQueueItemId()) {
+                return Gui::pixmapFromTheme(Constants::Icons::Stop);
             }
             if(m_showIcon) {
                 return m_coverProvider.trackCoverThumbnail(item->track().track, m_iconSize);

@@ -225,6 +225,56 @@ TEST(PlayerControllerTest, PlayAndPauseEmitTransportStateChanges)
     EXPECT_EQ(playStateSpy.count(), 2);
 }
 
+TEST(PlayerControllerTest, StopAfterQueueItemArmsWhenSelectedItemCommits)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_stop_after_queue_item_test.ini"_s};
+    registerControllerSettings(settings);
+    PlayerController controller{&settings, nullptr};
+
+    const QueueTracks tracks{
+        PlaylistTrack{
+            .track = makeTrack(u"/tmp/stop-after-queue-a.flac"_s, 101, 1000), .playlistId = {}, .entryId = {}},
+        PlaylistTrack{
+            .track = makeTrack(u"/tmp/stop-after-queue-b.flac"_s, 102, 1000), .playlistId = {}, .entryId = {}},
+    };
+    controller.queueTracks(tracks);
+    const auto targetId = controller.playbackQueue().item(1)->id;
+
+    controller.stopAfterQueueItem(targetId);
+
+    EXPECT_EQ(controller.stopAfterQueueItemId(), targetId);
+    EXPECT_FALSE(settings.value<Settings::Core::StopAfterCurrent>());
+
+    controller.commitCurrentTrack(Player::TrackChangeRequest{
+        .track = tracks[1], .context = {}, .isQueueTrack = true, .queueItemId = targetId, .itemId = 1});
+
+    EXPECT_EQ(controller.stopAfterQueueItemId(), 0);
+    EXPECT_TRUE(settings.value<Settings::Core::StopAfterCurrent>());
+}
+
+TEST(PlayerControllerTest, RemovingStopAfterQueueItemClearsSelection)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_remove_stop_after_queue_item_test.ini"_s};
+    registerControllerSettings(settings);
+    PlayerController controller{&settings, nullptr};
+
+    controller.queueTracks({
+        PlaylistTrack{
+            .track = makeTrack(u"/tmp/remove-stop-after-queue-a.flac"_s, 103, 1000), .playlistId = {}, .entryId = {}},
+        PlaylistTrack{
+            .track = makeTrack(u"/tmp/remove-stop-after-queue-b.flac"_s, 104, 1000), .playlistId = {}, .entryId = {}},
+    });
+    const auto targetId = controller.playbackQueue().item(1)->id;
+    controller.stopAfterQueueItem(targetId);
+
+    controller.dequeueQueueItems({targetId});
+
+    EXPECT_EQ(controller.stopAfterQueueItemId(), 0);
+    EXPECT_FALSE(settings.value<Settings::Core::StopAfterCurrent>());
+}
+
 TEST(PlayerControllerTest, TrackPlayedEmitsOnceAfterCrossingThreshold)
 {
     ensureCoreApplication();
@@ -1791,6 +1841,43 @@ TEST(PlayerControllerTest, QueueSourceIgnoresTransientQueueStopSetting)
     const auto next = requestSpy.takeFirst().front().value<Player::TrackChangeRequest>();
     EXPECT_TRUE(next.isQueueTrack);
     EXPECT_EQ(next.track.entryId, playlist->playlistTrack(1)->entryId);
+}
+
+TEST(PlayerControllerTest, QueueSourceStopAfterCurrentResumesAtNextItem)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_source_stop_after_test.ini"_s};
+    registerControllerSettings(settings);
+    settings.set<Settings::Core::PlaybackQueueMode>(static_cast<int>(PlaybackQueueMode::QueueAsPlaybackSource));
+    settings.set<Settings::Core::ResetStopAfterCurrent>(true);
+
+    PlaylistHandlerHarness harness{settings};
+    ASSERT_TRUE(harness.dbInitialised);
+    auto* playlist = harness.handler.createPlaylist(u"QueueSourceStopAfter"_s,
+                                                    {makeTrack(u"/tmp/source-stop-after-a.flac"_s, 553, 1000),
+                                                     makeTrack(u"/tmp/source-stop-after-b.flac"_s, 554, 1000),
+                                                     makeTrack(u"/tmp/source-stop-after-c.flac"_s, 555, 1000)});
+    ASSERT_NE(playlist, nullptr);
+
+    PlayerController controller{&settings, &harness.handler};
+    QSignalSpy requestSpy{&controller, &PlayerController::trackChangeRequested};
+    controller.startPlayback(playlist);
+    ASSERT_EQ(requestSpy.count(), 1);
+    controller.commitCurrentTrack(requestSpy.takeFirst().front().value<Player::TrackChangeRequest>());
+
+    controller.stopAfterQueueItem(controller.currentQueueItemId());
+    controller.advance(Player::AdvanceReason::NaturalEnd);
+    controller.syncPlayStateFromEngine(Player::PlayState::Stopped);
+
+    EXPECT_FALSE(settings.value<Settings::Core::StopAfterCurrent>());
+    EXPECT_EQ(controller.playbackQueue().currentIndex(), 1);
+
+    controller.play();
+
+    ASSERT_EQ(requestSpy.count(), 1);
+    const auto resumed = requestSpy.takeFirst().front().value<Player::TrackChangeRequest>();
+    EXPECT_TRUE(resumed.isQueueTrack);
+    EXPECT_EQ(resumed.track.entryId, playlist->playlistTrack(1)->entryId);
 }
 
 TEST(PlayerControllerTest, QueueSourcePlayModeChangeReordersOnlyUpcomingGeneratedItems)

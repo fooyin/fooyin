@@ -260,6 +260,8 @@ enum GuiInternalSettings : uint32_t
     ArtistCoverFallbackToFront               = 77 | Type::Bool,
     StatusDoubleClick                        = 78 | Type::Int,
     StatusMiddleClick                        = 79 | Type::Int,
+    ContextMenuQueueViewerDisabledSections   = 80 | Type::StringList,
+    ContextMenuQueueViewerLayout             = 81 | Type::StringList,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

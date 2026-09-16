@@ -152,11 +152,15 @@ private:
     [[nodiscard]] QModelIndex indexForViewRowState(const ViewRowState& state) const;
 
     [[nodiscard]] bool canRemoveSelected() const;
+    [[nodiscard]] bool canQueueSelectedNext() const;
     [[nodiscard]] bool canClearQueue() const;
     void updateSelectedTracks() const;
 
     void handleRowsChanged() const;
+    void playSelectedTrack() const;
+    void queueSelectedTracksNext() const;
     void removeSelectedTracks() const;
+    void stopAfterSelectedTrack() const;
     void handleQueueTracksMoved(int row, const QList<int>& indexes) const;
     void handleTracksDropped(int row, const QMimeData* mimeData) const;
     void handlePlaylistTracksDropped(int row, const QByteArray& mimeData) const;
@@ -191,8 +195,13 @@ private:
     QAction* m_remove;
     Command* m_removeCmd;
 
+    QAction* m_playNow;
+    QAction* m_queueNext;
+
     QAction* m_clear;
     Command* m_clearCmd;
+
+    QAction* m_stopAfter;
 
     QAction* m_randomise;
     QAction* m_reverse;

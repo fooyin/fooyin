@@ -19,6 +19,7 @@
 
 #include "queueviewer.h"
 
+#include "contextmenuids.h"
 #include "internalguisettings.h"
 #include "playlist/playlistcontroller.h"
 #include "queueviewerconfigwidget.h"
@@ -32,9 +33,11 @@
 #include <core/library/tracksort.h>
 #include <core/player/playercontroller.h>
 #include <gui/configdialog.h>
+#include <gui/contextmenuutils.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/guiutils.h>
+#include <gui/iconloader.h>
 #include <gui/playlist/playlistinteractor.h>
 #include <gui/trackmimedata.h>
 #include <gui/trackselectioncontroller.h>
@@ -47,7 +50,6 @@
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 
-#include <QActionGroup>
 #include <QCloseEvent>
 #include <QContextMenuEvent>
 #include <QDialog>
@@ -68,6 +70,7 @@
 #include <ranges>
 
 using namespace Qt::StringLiterals;
+using namespace Fooyin::Settings::Gui::Internal;
 
 // Settings
 constexpr auto QueueViewerShowIconKey      = u"PlaybackQueue/ShowIcon";
@@ -110,8 +113,11 @@ QueueViewer::QueueViewer(ActionManager* actionManager, PlaylistInteractor* playl
           this, Context{IdList{Constants::Context::TrackSelection, Id{"Context.QueueViewer."}.append(id())}}, this)}
     , m_remove{new QAction(tr("&Remove"), this)}
     , m_removeCmd{nullptr}
+    , m_playNow{new QAction(tr("&Play now"), this)}
+    , m_queueNext{new QAction(tr("Queue &next"), this)}
     , m_clear{new QAction(tr("&Clear"), this)}
     , m_clearCmd{nullptr}
+    , m_stopAfter{new QAction(tr("&Stop after this"), this)}
     , m_randomise{new QAction(tr("Randomise"), this)}
     , m_reverse{new QAction(tr("Reverse"), this)}
     , m_sortActions{std::make_unique<SortActionHandler>(m_actionManager, m_sortingRegistry, m_context->context(), this)}
@@ -279,68 +285,97 @@ void QueueViewer::contextMenuEvent(QContextMenuEvent* event)
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
     const bool headerMenu = m_view->header()->rect().contains(m_view->header()->mapFromGlobal(event->globalPos()));
+    const QModelIndex currentIndex = m_view->currentIndex();
+    const bool hasRow              = !headerMenu && currentIndex.isValid();
 
-    if(m_removeCmd && m_view->selectionModel()->hasSelection()) {
-        m_remove->setEnabled(canRemoveSelected());
-        menu->addAction(m_removeCmd->action());
-    }
-    if(m_clearCmd) {
-        m_clear->setEnabled(canClearQueue());
-        menu->addAction(m_clearCmd->action());
-    }
-    if(m_playerController->queuedTracksCount() > 1) {
-        addSortMenu(menu);
-    }
+    ContextMenuUtils::renderStaticContextMenu(
+        menu, ContextMenuIds::QueueViewer::DefaultItems, m_settings->value<ContextMenuQueueViewerLayout>(),
+        m_settings->value<ContextMenuQueueViewerDisabledSections>(),
+        [&](const auto& id, QMenu* targetMenu, const auto& sectionEnabled) {
+            if(id == QLatin1StringView{ContextMenuIds::QueueViewer::ViewMode}) {
+                if(!sectionEnabled(ContextMenuIds::QueueViewer::ViewMode)) {
+                    return;
+                }
 
-    if(m_playerController->playbackQueueMode() == PlaybackQueueMode::QueueAsPlaybackSource) {
-        menu->addSeparator();
-
-        auto* viewActionGroup = new QActionGroup(menu);
-        viewActionGroup->setExclusive(true);
-
-        auto* playingTracks = menu->addAction(tr("Playing Tracks"));
-        playingTracks->setCheckable(true);
-        playingTracks->setChecked(m_config.displayMode == DisplayMode::PlayingTracks);
-        playingTracks->setStatusTip(tr("Show played, playing and upcoming tracks"));
-        viewActionGroup->addAction(playingTracks);
-
-        auto* upcomingTracks = menu->addAction(tr("Upcoming Tracks"));
-        upcomingTracks->setCheckable(true);
-        upcomingTracks->setChecked(m_config.displayMode == DisplayMode::UpcomingTracks);
-        upcomingTracks->setStatusTip(tr("Show the playing track and tracks that will play next"));
-        viewActionGroup->addAction(upcomingTracks);
-
-        QObject::connect(playingTracks, &QAction::triggered, this, [this]() {
-            auto config{m_config};
-            config.displayMode = DisplayMode::PlayingTracks;
-            applyConfig(config);
+                if(m_playerController->playbackQueueMode() == PlaybackQueueMode::QueueAsPlaybackSource) {
+                    auto* playingTracks = targetMenu->addAction(m_config.displayMode == DisplayMode::UpcomingTracks
+                                                                    ? tr("Show playing tracks")
+                                                                    : tr("Show upcoming tracks"));
+                    QObject::connect(playingTracks, &QAction::triggered, this, [this]() {
+                        auto config{m_config};
+                        config.displayMode = m_config.displayMode == DisplayMode::UpcomingTracks
+                                               ? DisplayMode::PlayingTracks
+                                               : DisplayMode::UpcomingTracks;
+                        applyConfig(config);
+                    });
+                }
+                else {
+                    auto* showCurrent = targetMenu->addAction(tr("Show playing queue track"));
+                    showCurrent->setCheckable(true);
+                    showCurrent->setChecked(m_config.showCurrent);
+                    QObject::connect(showCurrent, &QAction::triggered, showCurrent, [this](bool enabled) {
+                        auto config{m_config};
+                        config.showCurrent = enabled;
+                        applyConfig(config);
+                    });
+                }
+                return;
+            }
+            if(id == QLatin1StringView{ContextMenuIds::QueueViewer::PlayNow}) {
+                if(hasRow && sectionEnabled(ContextMenuIds::QueueViewer::PlayNow)) {
+                    const auto queueItemId = currentIndex.data(QueueViewerItem::QueueItemId).toULongLong();
+                    m_playNow->setEnabled(queueItemId != 0);
+                    targetMenu->addAction(m_playNow);
+                }
+                return;
+            }
+            if(id == QLatin1StringView{ContextMenuIds::QueueViewer::QueueNext}) {
+                if(hasRow && sectionEnabled(ContextMenuIds::QueueViewer::QueueNext)) {
+                    m_queueNext->setEnabled(canQueueSelectedNext());
+                    targetMenu->addAction(m_queueNext);
+                }
+                return;
+            }
+            if(id == QLatin1StringView{ContextMenuIds::QueueViewer::StopAfterThis}) {
+                if(hasRow && sectionEnabled(ContextMenuIds::QueueViewer::StopAfterThis)) {
+                    targetMenu->addAction(m_stopAfter);
+                }
+                return;
+            }
+            if(id == QLatin1StringView{ContextMenuIds::QueueViewer::Remove}) {
+                if(hasRow && m_removeCmd && m_view->selectionModel()->hasSelection()
+                   && sectionEnabled(ContextMenuIds::QueueViewer::Remove)) {
+                    m_remove->setEnabled(canRemoveSelected());
+                    targetMenu->addAction(m_removeCmd->action());
+                }
+                return;
+            }
+            if(id == QLatin1StringView{ContextMenuIds::QueueViewer::Clear}) {
+                if(m_clearCmd && sectionEnabled(ContextMenuIds::QueueViewer::Clear)) {
+                    m_clear->setEnabled(canClearQueue());
+                    targetMenu->addAction(m_clearCmd->action());
+                }
+                return;
+            }
+            if(id == QLatin1StringView{ContextMenuIds::QueueViewer::Sort}) {
+                if(m_playerController->queuedTracksCount() > 1 && sectionEnabled(ContextMenuIds::QueueViewer::Sort)) {
+                    addSortMenu(targetMenu);
+                }
+                return;
+            }
+            if(id == QLatin1StringView{ContextMenuIds::QueueViewer::Configure}) {
+                if(sectionEnabled(ContextMenuIds::QueueViewer::Configure)) {
+                    addConfigureAction(targetMenu, false);
+                }
+                return;
+            }
+            if(id == QLatin1StringView{ContextMenuIds::QueueViewer::TrackActions}) {
+                if(hasRow && sectionEnabled(ContextMenuIds::QueueViewer::TrackActions)) {
+                    m_selectionController->addTrackContextMenu(targetMenu, m_context);
+                }
+                return;
+            }
         });
-        QObject::connect(upcomingTracks, &QAction::triggered, this, [this]() {
-            auto config{m_config};
-            config.displayMode = DisplayMode::UpcomingTracks;
-            applyConfig(config);
-        });
-    }
-    else {
-        auto* showCurrent = new QAction(tr("Show playing queue track"), menu);
-        showCurrent->setCheckable(true);
-        showCurrent->setChecked(m_config.showCurrent);
-        QObject::connect(showCurrent, &QAction::triggered, showCurrent, [this](bool enabled) {
-            auto config{m_config};
-            config.showCurrent = enabled;
-            applyConfig(config);
-        });
-
-        menu->addSeparator();
-        menu->addAction(showCurrent);
-    }
-
-    addConfigureAction(menu, false);
-
-    if(!headerMenu) {
-        menu->addSeparator();
-        m_selectionController->addTrackContextMenu(menu, m_context);
-    }
 
     menu->popup(event->globalPos());
 }
@@ -389,11 +424,23 @@ void QueueViewer::setupActions()
 
     auto* editMenu = m_actionManager->actionContainer(Constants::Menus::Edit);
 
+    m_playNow->setStatusTip(tr("Start playback of the selected queue track"));
+    Gui::setThemeIcon(m_playNow, Constants::Icons::Play);
+    QObject::connect(m_playNow, &QAction::triggered, this, &QueueViewer::playSelectedTrack);
+
+    m_queueNext->setStatusTip(tr("Move the selected tracks to play next"));
+    Gui::setThemeIcon(m_queueNext, Constants::Icons::Next);
+    QObject::connect(m_queueNext, &QAction::triggered, this, &QueueViewer::queueSelectedTracksNext);
+
     m_clear->setStatusTip(tr("Remove all tracks in the playback queue"));
     m_clearCmd = m_actionManager->registerAction(m_clear, Constants::Actions::Clear, actionContext);
     editMenu->addAction(m_clearCmd);
     QObject::connect(m_clear, &QAction::triggered, m_playerController, &PlayerController::clearQueue);
     m_clear->setEnabled(canClearQueue());
+
+    m_stopAfter->setStatusTip(tr("Stop playback at the end of the selected track"));
+    Gui::setThemeIcon(m_stopAfter, Constants::Icons::Stop);
+    QObject::connect(m_stopAfter, &QAction::triggered, this, &QueueViewer::stopAfterSelectedTrack);
 
     auto* selectAllAction = new QAction(tr("&Select all"), this);
     selectAllAction->setStatusTip(tr("Select all tracks in the playback queue"));
@@ -731,6 +778,18 @@ bool QueueViewer::canRemoveSelected() const
     });
 }
 
+bool QueueViewer::canQueueSelectedNext() const
+{
+    const auto currentQueueItemId = m_playerController->currentQueueItemId();
+    const auto currentIndex       = m_view->currentIndex();
+    const auto selected = m_view->selectionModel()->isSelected(currentIndex) ? m_view->selectionModel()->selectedRows()
+                                                                             : QModelIndexList{currentIndex};
+    return std::ranges::any_of(selected, [currentQueueItemId](const QModelIndex& index) {
+        const auto id = index.data(QueueViewerItem::QueueItemId).toULongLong();
+        return id != 0 && id != currentQueueItemId;
+    });
+}
+
 bool QueueViewer::canClearQueue() const
 {
     return !m_playerController->playbackQueue().empty();
@@ -787,6 +846,37 @@ void QueueViewer::handleRowsChanged() const
     updateSelectedTracks();
 }
 
+void QueueViewer::playSelectedTrack() const
+{
+    const auto queueItemId = m_view->currentIndex().data(QueueViewerItem::QueueItemId).toULongLong();
+    if(queueItemId != 0) {
+        m_playerController->playQueueItem(queueItemId);
+    }
+}
+
+void QueueViewer::queueSelectedTracksNext() const
+{
+    const auto currentQueueItemId = m_playerController->currentQueueItemId();
+    const auto currentIndex       = m_view->currentIndex();
+    const auto selected = m_view->selectionModel()->isSelected(currentIndex) ? m_view->selectionModel()->selectedRows()
+                                                                             : QModelIndexList{currentIndex};
+
+    std::vector<PlaybackQueueItemId> ids;
+    ids.reserve(selected.size());
+
+    for(const QModelIndex& index : selected) {
+        const auto id = index.data(QueueViewerItem::QueueItemId).toULongLong();
+        if(id != 0 && id != currentQueueItemId) {
+            ids.push_back(id);
+        }
+    }
+
+    const int targetIndex = m_playerController->playbackQueueMode() == PlaybackQueueMode::QueueAsPlaybackSource
+                              ? m_playerController->playbackQueue().currentIndex() + 1
+                              : 0;
+    m_playerController->moveQueueItems(targetIndex, ids);
+}
+
 void QueueViewer::removeSelectedTracks() const
 {
     const auto selected = m_view->selectionModel()->selectedRows();
@@ -811,6 +901,20 @@ void QueueViewer::removeSelectedTracks() const
     }
 
     m_playerController->dequeueQueueItems(ids);
+}
+
+void QueueViewer::stopAfterSelectedTrack() const
+{
+    const QModelIndex index = m_view->currentIndex();
+    if(!index.isValid()) {
+        return;
+    }
+
+    PlaybackQueueItemId queueItemId = index.data(QueueViewerItem::QueueItemId).toULongLong();
+    if(queueItemId == 0) {
+        queueItemId = m_playerController->playbackSnapshot().queueItemId;
+    }
+    m_playerController->stopAfterQueueItem(queueItemId);
 }
 
 void QueueViewer::handleQueueTracksMoved(int row, const QList<int>& indexes) const

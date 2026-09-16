@@ -470,6 +470,17 @@ void Widgets::registerPages()
         this);
     new StaticContextMenuPage(
         m_settings,
+        makeStaticContextMenuDescriptor<Settings::Gui::Internal::ContextMenuQueueViewerDisabledSections,
+                                        Settings::Gui::Internal::ContextMenuQueueViewerLayout>(
+            Constants::Page::InterfaceContextMenuQueueViewer,
+            {.context = "QueueViewer", .sourceText = QT_TRANSLATE_NOOP("QueueViewer", "Playback Queue")},
+            {.context    = "QueueViewer",
+             .sourceText = QT_TRANSLATE_NOOP("QueueViewer",
+                                             "Unchecked items will be hidden from the playback queue context menu.")},
+            ContextMenuIds::QueueViewer::DefaultItems, m_settings),
+        this);
+    new StaticContextMenuPage(
+        m_settings,
         makeStaticContextMenuDescriptor<Settings::Gui::Internal::ContextMenuLayoutEditingDisabledSections,
                                         Settings::Gui::Internal::ContextMenuLayoutEditingLayout>(
             Constants::Page::InterfaceContextMenuLayoutEditing,

@@ -139,8 +139,10 @@ public:
     [[nodiscard]] PlaybackQueueMode playbackQueueMode() const;
     [[nodiscard]] int queuedTracksCount() const;
     [[nodiscard]] PlaybackQueueItemId currentQueueItemId() const;
+    [[nodiscard]] PlaybackQueueItemId stopAfterQueueItemId() const;
 
     void playQueueItem(PlaybackQueueItemId id);
+    void stopAfterQueueItem(PlaybackQueueItemId id);
 
     /** Queues the @p track to be played at the end of the current track. */
     void queueTrack(const Track& track);
@@ -207,6 +209,7 @@ Q_SIGNALS:
 
     void playbackSnapshotChanged(const Fooyin::Player::PlaybackSnapshot& snapshot);
     void playbackQueuePositionChanged(Fooyin::PlaybackQueueItemId currentItemId);
+    void stopAfterQueueItemChanged(Fooyin::PlaybackQueueItemId queueItemId);
 
 private:
     std::unique_ptr<PlayerControllerPrivate> p;
