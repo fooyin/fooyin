@@ -34,14 +34,21 @@
   - Add configurable Love and rating editor colours
   - Add configurable Script Editor appearance and behaviour
   - Add per-layout visibility for the Layout menu
+  - Add Rating and Love control layout widgets
+  - Align rating and Love editors with item text
   - Improve large drag selections and item view row updates
   - Refine wording and typography ([#1561](https://github.com/fooyin/fooyin/pull/1561), [#1580](https://github.com/fooyin/fooyin/pull/1580))
   - Update application icons and logos
 * Library Tree: Make context menu playback of a single track match double-click playback
 * Library/Metadata
   - Improve track ID lookup performance
+  - Update filesystem watchers incrementally ([#1626](https://github.com/fooyin/fooyin/issues/1626))
   - Support per-track metadata and reliable reloads for embedded CUE sheets ([#1549](https://github.com/fooyin/fooyin/issues/1549), [#1567](https://github.com/fooyin/fooyin/issues/1567))
+* Lyrics
+  - Add a standalone window to the View menu ([#1624](https://github.com/fooyin/fooyin/issues/1624))
+  - Improve search coordination across multiple widgets
 * Notifications: Make notifications on track repeat optional ([#1545](https://github.com/fooyin/fooyin/issues/1545))
+* Player Controls: Add separate Play and Pause actions and optional buttons ([#1572](https://github.com/fooyin/fooyin/issues/1572))
 * Playlist
   - Add custom grouping scripts to presets ([#1566](https://github.com/fooyin/fooyin/issues/1566))
   - Add Save and Save All actions to playlist widget context menus ([#1602](https://github.com/fooyin/fooyin/issues/1602))
@@ -59,6 +66,7 @@
   - Add common metadata aliases
   - Add `$applink` for launching external applications
   - Add `$greater`, `$shortest`, `$strchr`, and `$strrchr`
+  - Add `%input_decoder%` for the playing track
   - Add `$select`
   - Add `$cut` as alias for `$left`
   - Improve conditional evaluation for concatenated expressions
@@ -107,6 +115,7 @@
   - Fix reordering when temporary playlists are present
   - Normalise native path separators in imported playlists ([#741](https://github.com/fooyin/fooyin/issues/741))
   - Preserve spaces in unquoted CUE `REM` values ([#1548](https://github.com/fooyin/fooyin/issues/1548))
+  - Fix refreshing of dynamic values after track changes
   - Show status tips in Playlist Tabs context menu
   - Stop generating item moves after the reset threshold is reached
 * Quick Tagger: Avoid file rewrites for rating changes ([#1551](https://github.com/fooyin/fooyin/issues/1551))
@@ -125,7 +134,9 @@
 
 ### Build/System
 
-* CI: Reuse a single pre-release for nightly builds
+* CI
+  - Add Ubuntu 26.10 builds
+  - Reuse a single pre-release for nightly builds
 * Dependencies
   - Add libcdio and libcdio-paranoia for Audio CD support
   - Remove unused FFmpeg components ([#1582](https://github.com/fooyin/fooyin/pull/1582))
