@@ -542,7 +542,7 @@ TrackList UnifiedMusicLibraryPrivate::mergeTrackUpdates(const TrackList& tracksT
     TrackList mergedTracks;
     mergedTracks.reserve(tracksToUpdate.size());
 
-    TrackLookup lookup{m_tracks};
+    const TrackLookup lookup{m_tracks};
 
     for(const auto& track : tracksToUpdate) {
         if(const auto index = lookup.findById(track)) {
@@ -580,7 +580,7 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksStats(TrackList trac
     TrackList playcountsChanged;
     TrackList lovedChanged;
 
-    TrackLookup lookup{m_tracks};
+    const TrackLookup lookup{m_tracks};
 
     for(const Track& track : sortedTracks) {
         const auto index          = lookup.findById(track);
@@ -613,8 +613,6 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksStats(TrackList trac
     if(!lovedChanged.empty()) {
         Q_EMIT m_self->tracksStatsChanged(lovedChanged, Track::Stat::Loved);
     }
-
-    setupLibraryWatchers();
 }
 
 QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracks(TrackList tracksToUpdate)
