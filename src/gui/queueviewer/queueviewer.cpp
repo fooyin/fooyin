@@ -363,6 +363,20 @@ void QueueViewer::contextMenuEvent(QContextMenuEvent* event)
                 }
                 return;
             }
+            if(id == QLatin1StringView{Constants::Actions::AddToPlaylist}) {
+                if(hasRow && m_view->selectionModel()->hasSelection()
+                   && sectionEnabled(Constants::Actions::AddToPlaylist)) {
+                    auto* playlistMenu = new QMenu(tr("Add to playlist"), targetMenu);
+                    m_selectionController->addTrackAddToPlaylistContextMenu(playlistMenu, m_context);
+                    if(!playlistMenu->actions().empty()) {
+                        targetMenu->addMenu(playlistMenu);
+                    }
+                    else {
+                        playlistMenu->deleteLater();
+                    }
+                }
+                return;
+            }
             if(id == QLatin1StringView{ContextMenuIds::QueueViewer::Configure}) {
                 if(sectionEnabled(ContextMenuIds::QueueViewer::Configure)) {
                     addConfigureAction(targetMenu, false);

@@ -252,7 +252,8 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::ContextMenuLayoutEditingLayout>(QStringList{},
                                                                         u"Interface/ContextMenuLayoutEditingLayout"_s);
     m_settings->createSetting<Internal::ContextMenuQueueViewerDisabledSections>(
-        QStringList{}, u"Interface/ContextMenuQueueViewerDisabledSections"_s);
+        QStringList{QString::fromLatin1(Constants::Actions::AddToPlaylist)},
+        u"Interface/ContextMenuQueueViewerDisabledSections"_s);
     m_settings->createSetting<Internal::ContextMenuQueueViewerLayout>(QStringList{},
                                                                       u"Interface/ContextMenuQueueViewerLayout"_s);
     m_settings->createSetting<Internal::PropertiesSidebarTrackScript>(u"[%track%. ]%title%"_s,

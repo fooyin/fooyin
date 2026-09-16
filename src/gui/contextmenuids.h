@@ -160,6 +160,7 @@ constexpr auto Remove            = "Fooyin.Context.QueueViewer.Remove";
 constexpr auto Clear             = "Fooyin.Context.QueueViewer.Clear";
 constexpr auto Sort              = "Fooyin.Context.QueueViewer.Sort";
 constexpr auto QueueSeparator    = "Fooyin.Context.QueueViewer.Queue.Separator";
+constexpr auto PlaylistSeparator = "Fooyin.Context.QueueViewer.Playlist.Separator";
 constexpr auto Configure         = "Fooyin.Context.QueueViewer.Configure";
 constexpr auto TrackSeparator    = "Fooyin.Context.QueueViewer.Track.Separator";
 constexpr auto TrackActions      = "Fooyin.Context.QueueViewer.TrackActions";
@@ -189,6 +190,10 @@ constexpr auto DefaultItems = std::to_array<Item>({
      .title       = {.context = "QueueViewer", .sourceText = QT_TRANSLATE_NOOP("QueueViewer", "Sort")},
      .isSeparator = false},
     {.id = QueueSeparator, .title = {}, .isSeparator = true},
+    {.id          = Constants::Actions::AddToPlaylist,
+     .title       = {.context = "QueueViewer", .sourceText = QT_TRANSLATE_NOOP("QueueViewer", "Add to playlist")},
+     .isSeparator = false},
+    {.id = PlaylistSeparator, .title = {}, .isSeparator = true},
     {.id          = Configure,
      .title       = {.context = "QueueViewer", .sourceText = QT_TRANSLATE_NOOP("QueueViewer", "Configure")},
      .isSeparator = false},
