@@ -48,6 +48,8 @@ private:
     SettingsManager* m_settings;
 
     QAction* m_stop;
+    QAction* m_play;
+    QAction* m_pause;
     QAction* m_playPause;
     QAction* m_previous;
     QAction* m_next;

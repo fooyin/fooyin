@@ -79,6 +79,8 @@ public:
 
     /** Starts playback of the current playlist. */
     void play();
+    /** Restarts the current track when already playing, otherwise starts playback. */
+    void playFromStart();
 
     /** Toggles playback. */
     void playPause();

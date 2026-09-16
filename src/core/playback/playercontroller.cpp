@@ -1372,6 +1372,14 @@ void PlayerController::play()
     }
 }
 
+void PlayerController::playFromStart()
+{
+    if(p->m_playState == Player::PlayState::Playing) {
+        seek(0);
+    }
+    play();
+}
+
 void PlayerController::playPause()
 {
     switch(p->m_playState) {

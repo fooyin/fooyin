@@ -42,6 +42,8 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     , m_playerController{playerController}
     , m_settings{settings}
     , m_stop{new QAction(tr("&Stop"), this)}
+    , m_play{new QAction(tr("&Play"), this)}
+    , m_pause{new QAction(tr("P&ause"), this)}
     , m_playPause{new QAction(tr("&Play"), this)}
     , m_previous{new QAction(tr("P&revious"), this)}
     , m_next{new QAction(tr("&Next"), this)}
@@ -60,6 +62,8 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     , m_resetStopAfterCurrent{new QAction(tr("&Reset the above after stopping"), this)}
 {
     Gui::setThemeIcon(m_stop, Constants::Icons::Stop);
+    Gui::setThemeIcon(m_play, Constants::Icons::Play);
+    Gui::setThemeIcon(m_pause, Constants::Icons::Pause);
     Gui::setThemeIcon(m_previous, Constants::Icons::Prev);
     Gui::setThemeIcon(m_next, Constants::Icons::Next);
     Gui::setThemeIcon(m_randomTrack, Constants::Icons::RandomPlay);
@@ -80,6 +84,18 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     stopCmd->setAttribute(ProxyAction::UpdateText);
     playbackMenu->addAction(stopCmd);
 
+    m_play->setStatusTip(tr("Restart the current track or start playback"));
+    auto* playCmd = actionManager->registerAction(m_play, Constants::Actions::Play);
+    playCmd->setCategories(playbackCategory);
+    playCmd->setAttribute(ProxyAction::UpdateText);
+    playbackMenu->addAction(playCmd);
+
+    m_pause->setStatusTip(tr("Pause playback"));
+    auto* pauseCmd = actionManager->registerAction(m_pause, Constants::Actions::Pause);
+    pauseCmd->setCategories(playbackCategory);
+    pauseCmd->setAttribute(ProxyAction::UpdateText);
+    playbackMenu->addAction(pauseCmd);
+
     m_playPause->setStatusTip(tr("Pause or unpause playback"));
     auto* playPauseCmd = actionManager->registerAction(m_playPause, Constants::Actions::PlayPause);
     playPauseCmd->setCategories(playbackCategory);
@@ -87,7 +103,6 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     playPauseCmd->setDefaultShortcut(Qt::Key_Space);
     playPauseCmd->setAttribute(ProxyAction::UpdateText);
     playPauseCmd->setAttribute(ProxyAction::UpdateIcon);
-    playbackMenu->addAction(playPauseCmd);
 
     m_next->setStatusTip(tr("Start playing the next track in the current playlist"));
     auto* nextCmd = actionManager->registerAction(m_next, Constants::Actions::Next);
@@ -140,6 +155,8 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     skipToMenu->addAction(previousAlbumCmd);
 
     QObject::connect(m_stop, &QAction::triggered, playerController, &PlayerController::stop);
+    QObject::connect(m_play, &QAction::triggered, playerController, &PlayerController::playFromStart);
+    QObject::connect(m_pause, &QAction::triggered, playerController, &PlayerController::pause);
     QObject::connect(m_playPause, &QAction::triggered, playerController, &PlayerController::playPause);
     QObject::connect(m_next, &QAction::triggered, playerController, &PlayerController::next);
     QObject::connect(m_previous, &QAction::triggered, playerController, &PlayerController::previous);
