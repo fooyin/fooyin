@@ -90,7 +90,7 @@ FilterSelectionResolution resolveFilterSelection(const FilterRowList& rows, cons
 
     for(const RowKey& key : resolution.selectedKeys) {
         const auto rowIndex = lookup.rowIndex(key);
-        if(!rowIndex || *rowIndex >= rows.size()) {
+        if(!rowIndex || *rowIndex >= rows.size() || rows.at(*rowIndex).key != key) {
             continue;
         }
 

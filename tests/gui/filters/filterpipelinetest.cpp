@@ -114,6 +114,31 @@ TEST(FilterPipelineTest, ResolveFilterSelectionUsesRebuiltRowLookup)
     EXPECT_EQ(2, updatedSelection.selectedTracks.at(1).id());
 }
 
+TEST(FilterPipelineTest, ResolveFilterSelectionRejectsStaleRowLookup)
+{
+    const TrackList tracks{
+        makeTrack(1, u"/music/one.flac"_s),
+        makeTrack(2, u"/music/two.flac"_s),
+    };
+    const Filters::FilterRowList initialRows{
+        makeRow(keyFor(u"B"_s), {2}),
+        makeRow(keyFor(u"A"_s), {1}),
+    };
+    const Filters::FilterRowList reorderedRows{
+        makeRow(keyFor(u"A"_s), {1}),
+        makeRow(keyFor(u"B"_s), {2}),
+    };
+
+    Filters::FilterRowLookup lookup;
+    lookup.rebuildRows(initialRows);
+
+    const auto selection = Filters::resolveFilterSelection(reorderedRows, tracks, {keyFor(u"A"_s)}, lookup);
+
+    EXPECT_FALSE(selection.isActive);
+    EXPECT_TRUE(selection.selectedKeys.empty());
+    EXPECT_TRUE(selection.selectedTracks.empty());
+}
+
 TEST(FilterPipelineTest, ResolveFilterSelectionUsesVisibleRowsForSummaryRow)
 {
     const TrackList inputTracks{

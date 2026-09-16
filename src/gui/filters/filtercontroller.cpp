@@ -842,11 +842,15 @@ void FilterControllerPrivate::recomputeStage(const Id& groupId, int stageIndex, 
         return;
     }
 
-    auto& stage = group.stages.at(stageIndex);
+    auto& stage                = group.stages.at(stageIndex);
+    const bool hadSearchedRows = stage.searchedRows.has_value();
 
     stage.inputTracks = currentTracks;
     stage.selectedTracks.clear();
     stage.searchedRows.reset();
+    if(hadSearchedRows) {
+        stage.rowLookup.rebuildRows(stage.rows);
+    }
     stage.isActive = false;
     stage.revision = revision;
 
