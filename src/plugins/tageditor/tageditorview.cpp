@@ -153,7 +153,10 @@ void TagEditorView::mouseMoveEvent(QMouseEvent* event)
         else if(m_starDelegate->hoveredIndex().isValid()) {
             ratingHoverOut();
         }
+    }
 
+    if(m_heartDelegate) {
+        const QModelIndex index = indexAt(event->pos());
         if(index.isValid() && index.row() == m_lovedRow && index.column() == 1) {
             lovedHoverIn(index);
         }
