@@ -3387,6 +3387,28 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
                             track.setCodec(u"ALAC"_s);
                             track.setEncoding(u"Lossless"_s);
                             break;
+#if TAGLIB_MAJOR_VERSION >= 2 && TAGLIB_MINOR_VERSION >= 3 && TAGLIB_PATCH_VERSION >= 2
+                        case TagLib::MP4::Properties::AC3:
+                            track.setCodec(u"AC3"_s);
+                            track.setEncoding(u"Lossy"_s);
+                            break;
+                        case TagLib::MP4::Properties::EAC3:
+                            track.setCodec(u"EAC3"_s);
+                            track.setEncoding(u"Lossy"_s);
+                            break;
+                        case TagLib::MP4::Properties::FLAC:
+                            track.setCodec(u"FLAC"_s);
+                            track.setEncoding(u"Lossless"_s);
+                            break;
+                        case TagLib::MP4::Properties::DTS:
+                            track.setCodec(u"DTS"_s);
+                            track.setEncoding(u"Lossy"_s);
+                            break;
+                        case TagLib::MP4::Properties::Opus:
+                            track.setCodec(u"Opus"_s);
+                            track.setEncoding(u"Lossy"_s);
+                            break;
+#endif
                         case TagLib::MP4::Properties::Unknown:
                             break;
                     }
