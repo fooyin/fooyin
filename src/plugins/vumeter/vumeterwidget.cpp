@@ -743,7 +743,11 @@ void VuMeterWidgetPrivate::drawChannel(QPainter& painter, float start, int chann
     }
 
     if(m_showPeaks && channelPeak > MinDb) {
-        painter.setPen(m_colours.colour(Colours::Type::Peak, m_self->palette()));
+        QPen peakPen{painter.pen()};
+        peakPen.setColor(m_colours.colour(Colours::Type::Peak, m_self->palette()));
+        peakPen.setCosmetic(true);
+        painter.setPen(peakPen);
+
         if(isHorizontal()) {
             const auto peakX = m_meterX + dbToSize(channelPeak);
             painter.drawLine(QLineF{peakX, y, peakX, y + channelSize - m_channelSpacing});
