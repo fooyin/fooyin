@@ -410,7 +410,7 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="166"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="168"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">Uppspelningsstatistik</translation>
+        <translation>Uppspelningsstatistik</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="167"/>
@@ -611,7 +611,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="350"/>
         <source>Returns the first shortest string</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar den första kortaste strängen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="353"/>
@@ -626,7 +626,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="365"/>
         <source>Returns true when a is longer than b</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar sant när a är längre än b</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="367"/>
@@ -636,7 +636,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="422"/>
         <source>Builds a clickable link that launches an application</source>
-        <translation type="unfinished"></translation>
+        <translation>Bygger en klickbar länk som öppnar en applikation</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="428"/>
@@ -1805,7 +1805,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="300"/>
         <source>View full size</source>
-        <translation type="unfinished">Visa full storlek</translation>
+        <translation>Visa full storlek</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="301"/>
@@ -1917,7 +1917,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="100"/>
         <source>Use front cover before placeholder</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd framsidsomslag före platshållare</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="114"/>
@@ -1957,7 +1957,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="134"/>
         <source>Use the track&apos;s front cover when artist artwork is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Använder spårets framsidsomslag när artistkonstverk är otillgängligt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="138"/>
@@ -6817,37 +6817,37 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="52"/>
         <source>Every library filter needs a name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Varje biblioteksfilter behöver ett namn.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="57"/>
         <source>The expression for library filter &quot;%1&quot; is invalid.</source>
-        <translation type="unfinished"></translation>
+        <translation>Uttrycket för biblioteksfilter ”%1” är ogiltigt.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="89"/>
         <source>Enabled</source>
-        <translation type="unfinished">På</translation>
+        <translation>På</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="91"/>
         <source>Name</source>
-        <translation type="unfinished">Namn</translation>
+        <translation>Namn</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="93"/>
         <source>Query</source>
-        <translation type="unfinished">Fråga</translation>
+        <translation>Fråga</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="138"/>
         <source>Enter name</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in namn</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="140"/>
         <source>Enter expression</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in uttryck</translation>
     </message>
 </context>
 <context>
@@ -6856,12 +6856,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="172"/>
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="173"/>
         <source>Filters</source>
-        <translation type="unfinished">Filter</translation>
+        <translation>Filter</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="173"/>
         <source>Library</source>
-        <translation type="unfinished">Bibliotek</translation>
+        <translation>Bibliotek</translation>
     </message>
 </context>
 <context>
@@ -6869,7 +6869,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="77"/>
         <source>Script Editor</source>
-        <translation type="unfinished">Skriptredigerare</translation>
+        <translation>Skriptredigerare</translation>
     </message>
 </context>
 <context>
@@ -6897,12 +6897,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="168"/>
         <source>Name:</source>
-        <translation type="unfinished">Namn:</translation>
+        <translation>Namn:</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="177"/>
         <source>Manage library filters…</source>
-        <translation type="unfinished"></translation>
+        <translation>Hantera biblioteksfilter…</translation>
     </message>
 </context>
 <context>
@@ -6915,7 +6915,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="63"/>
         <source>Library filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Biblioteksfilter</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="86"/>
@@ -6925,27 +6925,27 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="465"/>
         <source>Rename tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Döp om flik</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="472"/>
         <source>Tabs position</source>
-        <translation type="unfinished"></translation>
+        <translation>Flikposition</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="484"/>
         <source>Top</source>
-        <translation type="unfinished">Topp</translation>
+        <translation>Topp</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="485"/>
         <source>Bottom</source>
-        <translation type="unfinished">Botten</translation>
+        <translation>Botten</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="489"/>
         <source>Manage library filters…</source>
-        <translation type="unfinished"></translation>
+        <translation>Hantera biblioteksfilter…</translation>
     </message>
 </context>
 <context>
@@ -7834,27 +7834,27 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="96"/>
         <source>1 star</source>
-        <translation type="unfinished"></translation>
+        <translation>1 stjärna</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="97"/>
         <source>2 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>2 stjärnor</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="98"/>
         <source>3 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>3 stjärnor</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="99"/>
         <source>4 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>4 stjärnor</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="100"/>
         <source>5 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>5 stjärnor</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="102"/>
@@ -8440,7 +8440,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="319"/>
         <source>No</source>
-        <translation type="unfinished">Nej</translation>
+        <translation>Nej</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="321"/>
@@ -17508,7 +17508,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="301"/>
         <source>Integrations</source>
-        <translation type="unfinished">Integreringar</translation>
+        <translation>Integreringar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="301"/>
@@ -17521,22 +17521,22 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="104"/>
         <source>Add</source>
-        <translation type="unfinished">Lägg till</translation>
+        <translation>Lägg till</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="105"/>
         <source>Remove</source>
-        <translation type="unfinished">Ta bort</translation>
+        <translation>Ta bort</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="106"/>
         <source>Move up</source>
-        <translation type="unfinished">Flytta upp</translation>
+        <translation>Flytta upp</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="107"/>
         <source>Move down</source>
-        <translation type="unfinished">Flytta ner</translation>
+        <translation>Flytta ner</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="108"/>
@@ -17546,7 +17546,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="111"/>
         <source>Browse…</source>
-        <translation type="unfinished">Bläddra…</translation>
+        <translation>Bläddra…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="115"/>
@@ -17566,12 +17566,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="129"/>
         <source>Name</source>
-        <translation type="unfinished">Namn</translation>
+        <translation>Namn</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="131"/>
         <source>Path</source>
-        <translation type="unfinished">Sökväg</translation>
+        <translation>Sökväg</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="134"/>
@@ -17615,7 +17615,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="92"/>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="103"/>
         <source>Tracks</source>
-        <translation type="unfinished">Spår</translation>
+        <translation>Spår</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="92"/>
@@ -17865,7 +17865,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1071"/>
         <source>Font</source>
-        <translation type="unfinished">Typsnitt</translation>
+        <translation>Typsnitt</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1072"/>
@@ -17925,7 +17925,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1220"/>
         <source>Settings</source>
-        <translation type="unfinished">Inställningar</translation>
+        <translation>Inställningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1415"/>
@@ -21030,7 +21030,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="96"/>
         <source>Unsupported format</source>
-        <translation type="unfinished">Ostödd format</translation>
+        <translation>Ostödd format</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="168"/>
@@ -21101,17 +21101,17 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="266"/>
         <source>%1 (AR v1/v2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (AR v1/v2)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="269"/>
         <source>%1 (AR v1)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (AR v1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="272"/>
         <source>%1 (AR v2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (AR v2)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="280"/>
@@ -22271,7 +22271,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/widgets.cpp" line="374"/>
         <source>Library Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Biblioteksfilter</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="375"/>
@@ -22279,7 +22279,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
         <location filename="../../src/gui/widgets.cpp" line="390"/>
         <location filename="../../src/gui/widgets.cpp" line="818"/>
         <source>Filters</source>
-        <translation type="unfinished">Filter</translation>
+        <translation>Filter</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="382"/>
@@ -22906,7 +22906,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1294"/>
         <source>View full size</source>
-        <translation type="unfinished">Visa full storlek</translation>
+        <translation>Visa full storlek</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1295"/>
@@ -22916,12 +22916,12 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1298"/>
         <source>Artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Konstverk</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1351"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">Uppspelningsstatistik</translation>
+        <translation>Uppspelningsstatistik</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1366"/>
