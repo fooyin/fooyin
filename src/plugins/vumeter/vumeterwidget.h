@@ -59,7 +59,6 @@ public:
     [[nodiscard]] Type type() const;
     [[nodiscard]] Qt::Orientation orientation() const;
     void setOrientation(Qt::Orientation orientation);
-    void setShowLegend(bool show);
     void setChannelSpacing(int size);
     void setBarSize(int size);
     void setBarSpacing(int size);
@@ -74,7 +73,10 @@ public:
         int falloffTime{13};
         int peakFalloffTime{13};
         bool showPeaks{false};
-        bool showLegend{false};
+        bool showTopLabels{false};
+        bool showBottomLabels{false};
+        bool showLeftLabels{false};
+        bool showRightLabels{false};
         int updateFps{40};
         int channelSpacing{1};
         int barSize{0};

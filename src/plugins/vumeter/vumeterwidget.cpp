@@ -55,19 +55,23 @@ constexpr auto LegendPadding = 10;
 constexpr auto DefaultFps    = Fooyin::Gui::FrameRate::Preset::Fps40;
 
 // Settings
-constexpr auto PeakHoldTimeKey    = u"PeakHoldTime";
-constexpr auto PeakHoldTimeMsKey  = u"PeakHoldTimeMs";
-constexpr auto FalloffTimeKey     = u"FalloffTime";
-constexpr auto PeakFalloffTimeKey = u"PeakFalloffTime";
-constexpr auto ShowPeaksKey       = u"ShowPeaks";
-constexpr auto ShowLegendKey      = u"ShowLegend";
-constexpr auto UpdateFpsKey       = u"UpdateFps";
-constexpr auto ChannelSpacingKey  = u"ChannelSpacing";
-constexpr auto BarSizeKey         = u"BarSize";
-constexpr auto BarSpacingKey      = u"BarSpacing";
-constexpr auto BarSectionsKey     = u"BarSections";
-constexpr auto SectionSpacingKey  = u"SectionSpacing";
-constexpr auto MeterColoursKey    = u"Colours";
+constexpr auto PeakHoldTimeKey     = u"PeakHoldTime";
+constexpr auto PeakHoldTimeMsKey   = u"PeakHoldTimeMs";
+constexpr auto FalloffTimeKey      = u"FalloffTime";
+constexpr auto PeakFalloffTimeKey  = u"PeakFalloffTime";
+constexpr auto ShowPeaksKey        = u"ShowPeaks";
+constexpr auto ShowLegendKey       = u"ShowLegend"; // Depreciated
+constexpr auto ShowTopLabelsKey    = u"ShowTopLabels";
+constexpr auto ShowBottomLabelsKey = u"ShowBottomLabels";
+constexpr auto ShowLeftLabelsKey   = u"ShowLeftLabels";
+constexpr auto ShowRightLabelsKey  = u"ShowRightLabels";
+constexpr auto UpdateFpsKey        = u"UpdateFps";
+constexpr auto ChannelSpacingKey   = u"ChannelSpacing";
+constexpr auto BarSizeKey          = u"BarSize";
+constexpr auto BarSpacingKey       = u"BarSpacing";
+constexpr auto BarSectionsKey      = u"BarSections";
+constexpr auto SectionSpacingKey   = u"SectionSpacing";
+constexpr auto MeterColoursKey     = u"Colours";
 
 namespace {
 float dbScale(float db)
@@ -172,7 +176,10 @@ public:
     Qt::Orientation m_orientation{Qt::Horizontal};
     bool m_showPeaks{false};
     float m_channelSpacing{1};
-    bool m_showLegend{false};
+    bool m_showTopLabels{false};
+    bool m_showBottomLabels{false};
+    bool m_showLeftLabels{false};
+    bool m_showRightLabels{false};
     float m_barSize{0};
     float m_barSpacing{1};
     int m_barSections{1};
@@ -183,9 +190,12 @@ public:
 
     float m_meterWidth{0};
     float m_meterHeight{0};
-    float m_legendSize{0};
-    float m_labelsSize{0};
-    bool m_drawLegend{false};
+    float m_meterX{0};
+    float m_meterY{0};
+    float m_horizontalLabelSize{0};
+    float m_verticalLabelSize{0};
+    bool m_drawScaleLabels{false};
+    bool m_drawChannelLabels{false};
     bool m_changingTrack{false};
     bool m_stopping{false};
 
@@ -239,33 +249,91 @@ void VuMeterWidgetPrivate::updateSize()
     const auto width  = static_cast<float>(m_self->width());
     const auto height = static_cast<float>(m_self->height());
 
-    m_drawLegend  = false;
-    m_meterHeight = height;
-    m_legendSize  = 0;
-    m_labelsSize  = 0;
-    m_meterWidth  = width;
+    m_drawScaleLabels     = false;
+    m_drawChannelLabels   = false;
+    m_meterX              = 0;
+    m_meterY              = 0;
+    m_meterHeight         = height;
+    m_meterWidth          = width;
+    m_horizontalLabelSize = 0;
+    m_verticalLabelSize   = 0;
 
     const QFontMetrics fm{m_self->fontMetrics()};
-    const auto textRect = fm.boundingRect(u"-60dB"_s);
+    const auto textRect        = fm.boundingRect(u"-60dB"_s);
+    const int channelCount     = std::max(1, m_format.channelCount());
+    const int channelSpacing   = static_cast<int>(m_channelSpacing) * (channelCount - 1);
+    const int channelTextWidth = std::max(fm.horizontalAdvance(u"TFLR"_s), fm.horizontalAdvance(u"Unknown"_s));
 
-    if(m_showLegend) {
-        if(isHorizontal()) {
-            if(width > 300 && height > 60) {
-                m_drawLegend  = true;
-                m_legendSize  = static_cast<float>(textRect.height() + LegendPadding);
-                m_labelsSize  = static_cast<float>(fm.horizontalAdvance(u"TFLR"_s) + 5);
-                m_meterHeight = height - m_legendSize;
-                m_meterWidth  = width - m_labelsSize;
-            }
-        }
-        else if(width > 100 && height > 150) {
-            m_drawLegend  = true;
-            m_legendSize  = static_cast<float>(textRect.width() + LegendPadding);
-            m_labelsSize  = static_cast<float>(textRect.height() + 5);
-            m_meterHeight = height - m_labelsSize;
-            m_meterWidth  = width - m_legendSize;
-        }
+    static constexpr auto TickSpaces = static_cast<int>((0.0F - MinDb) / TickInterval);
+
+    if(isHorizontal()) {
+        m_horizontalLabelSize = static_cast<float>(textRect.height() + LegendPadding);
+        m_verticalLabelSize   = static_cast<float>(channelTextWidth + 5);
+
+        const bool scaleLabelsRequested   = m_showTopLabels || m_showBottomLabels;
+        const bool channelLabelsRequested = m_showLeftLabels || m_showRightLabels;
+        const float requestedScaleMargins
+            = m_horizontalLabelSize * static_cast<float>(m_showTopLabels + m_showBottomLabels);
+        const float requestedChannelMargins
+            = m_verticalLabelSize * static_cast<float>(m_showLeftLabels + m_showRightLabels);
+
+        const auto scaleLabelsFit = [&](float availableWidth) {
+            return height > requestedScaleMargins
+                && availableWidth >= static_cast<float>(TickSpaces * (textRect.width() + LegendPadding));
+        };
+        const auto channelLabelsFit = [&](float availableHeight) {
+            return width > requestedChannelMargins
+                && availableHeight >= static_cast<float>((channelCount * fm.height()) + channelSpacing);
+        };
+
+        m_drawScaleLabels        = scaleLabelsRequested && scaleLabelsFit(width);
+        const float scaleMargins = m_drawScaleLabels ? requestedScaleMargins : 0;
+        m_drawChannelLabels      = channelLabelsRequested && channelLabelsFit(height - scaleMargins);
+
+        const float channelMargins    = m_drawChannelLabels ? requestedChannelMargins : 0;
+        m_drawScaleLabels             = scaleLabelsRequested && scaleLabelsFit(width - channelMargins);
+        const float finalScaleMargins = m_drawScaleLabels ? requestedScaleMargins : 0;
+        m_drawChannelLabels           = channelLabelsRequested && channelLabelsFit(height - finalScaleMargins);
     }
+    else {
+        m_horizontalLabelSize = static_cast<float>(textRect.height() + 5);
+        m_verticalLabelSize   = static_cast<float>(textRect.width() + LegendPadding);
+
+        const bool scaleLabelsRequested   = m_showLeftLabels || m_showRightLabels;
+        const bool channelLabelsRequested = m_showTopLabels || m_showBottomLabels;
+        const float requestedScaleMargins
+            = m_verticalLabelSize * static_cast<float>(m_showLeftLabels + m_showRightLabels);
+        const float requestedChannelMargins
+            = m_horizontalLabelSize * static_cast<float>(m_showTopLabels + m_showBottomLabels);
+
+        const auto scaleLabelsFit = [&](float availableHeight) {
+            return width > requestedScaleMargins
+                && availableHeight >= static_cast<float>(TickSpaces * (fm.height() + 2));
+        };
+        const auto channelLabelsFit = [&](float availableWidth) {
+            return height > requestedChannelMargins
+                && availableWidth >= static_cast<float>((channelCount * channelTextWidth) + channelSpacing);
+        };
+
+        m_drawScaleLabels        = scaleLabelsRequested && scaleLabelsFit(height);
+        const float scaleMargins = m_drawScaleLabels ? requestedScaleMargins : 0;
+        m_drawChannelLabels      = channelLabelsRequested && channelLabelsFit(width - scaleMargins);
+
+        const float channelMargins    = m_drawChannelLabels ? requestedChannelMargins : 0;
+        m_drawScaleLabels             = scaleLabelsRequested && scaleLabelsFit(height - channelMargins);
+        const float finalScaleMargins = m_drawScaleLabels ? requestedScaleMargins : 0;
+        m_drawChannelLabels           = channelLabelsRequested && channelLabelsFit(width - finalScaleMargins);
+    }
+
+    const bool drawTopLabels    = m_showTopLabels && (isHorizontal() ? m_drawScaleLabels : m_drawChannelLabels);
+    const bool drawBottomLabels = m_showBottomLabels && (isHorizontal() ? m_drawScaleLabels : m_drawChannelLabels);
+    const bool drawLeftLabels   = m_showLeftLabels && (isHorizontal() ? m_drawChannelLabels : m_drawScaleLabels);
+    const bool drawRightLabels  = m_showRightLabels && (isHorizontal() ? m_drawChannelLabels : m_drawScaleLabels);
+
+    m_meterX      = drawLeftLabels ? m_verticalLabelSize : 0;
+    m_meterY      = drawTopLabels ? m_horizontalLabelSize : 0;
+    m_meterWidth  = width - m_meterX - (drawRightLabels ? m_verticalLabelSize : 0);
+    m_meterHeight = height - m_meterY - (drawBottomLabels ? m_horizontalLabelSize : 0);
 
     createGradient();
     invalidateStaticLayer();
@@ -334,24 +402,24 @@ void VuMeterWidgetPrivate::updateChannelLevels(int channel, qint64 elapsedTime, 
 
 QRect VuMeterWidgetPrivate::calculateUpdateRect(int channel)
 {
-    const auto labelSize = static_cast<int>(m_labelsSize);
-    const auto barSize   = static_cast<int>(m_barSize + m_barSpacing);
+    const auto barSize = static_cast<int>(m_barSize + m_barSpacing);
 
     if(isHorizontal()) {
         const int y        = static_cast<int>(channelY(channel));
-        const int oldX     = labelSize + static_cast<int>(dbToSize(m_previousChannelDbLevels.at(channel)));
-        const int oldPeakX = labelSize + static_cast<int>(dbToSize(m_previousChannelPeaks.at(channel)));
-        const int levelX   = labelSize + static_cast<int>(dbToSize(m_channelDbLevels.at(channel)));
-        const int peakX    = labelSize + static_cast<int>(dbToSize(m_channelPeaks.at(channel)));
+        const int meterX   = static_cast<int>(m_meterX);
+        const int oldX     = meterX + static_cast<int>(dbToSize(m_previousChannelDbLevels.at(channel)));
+        const int oldPeakX = meterX + static_cast<int>(dbToSize(m_previousChannelPeaks.at(channel)));
+        const int levelX   = meterX + static_cast<int>(dbToSize(m_channelDbLevels.at(channel)));
+        const int peakX    = meterX + static_cast<int>(dbToSize(m_channelPeaks.at(channel)));
 
         const int minX = std::min({oldX, oldPeakX, levelX, peakX});
         const int maxX = std::max({oldX, oldPeakX, levelX, peakX});
 
-        int snappedMinX       = (minX / barSize) * barSize;
-        const int snappedMaxX = ((maxX + barSize - 1) / barSize) * barSize;
+        int snappedMinX       = meterX + (((minX - meterX) / barSize) * barSize);
+        const int snappedMaxX = meterX + (((maxX - meterX + barSize - 1) / barSize) * barSize);
         int width             = snappedMaxX - snappedMinX;
 
-        if(snappedMinX - (2 * barSize) > labelSize) {
+        if(snappedMinX - (2 * barSize) > meterX) {
             snappedMinX -= (2 * barSize);
             width += (4 * barSize);
         }
@@ -360,19 +428,20 @@ QRect VuMeterWidgetPrivate::calculateUpdateRect(int channel)
     }
 
     const int x        = static_cast<int>(channelX(channel));
-    const int oldY     = static_cast<int>(dbToPos(m_previousChannelDbLevels.at(channel))) - labelSize;
-    const int oldPeakY = static_cast<int>(dbToPos(m_previousChannelPeaks.at(channel))) - labelSize;
-    const int levelY   = static_cast<int>(dbToPos(m_channelDbLevels.at(channel))) - labelSize;
-    const int peakY    = static_cast<int>(dbToPos(m_channelPeaks.at(channel))) - labelSize;
+    const int oldY     = static_cast<int>(dbToPos(m_previousChannelDbLevels.at(channel)));
+    const int oldPeakY = static_cast<int>(dbToPos(m_previousChannelPeaks.at(channel)));
+    const int levelY   = static_cast<int>(dbToPos(m_channelDbLevels.at(channel)));
+    const int peakY    = static_cast<int>(dbToPos(m_channelPeaks.at(channel)));
 
     const int minY = std::min({oldY, oldPeakY, levelY, peakY});
     const int maxY = std::max({oldY, oldPeakY, levelY, peakY});
 
-    int snappedMinY       = (minY / barSize) * barSize;
-    const int snappedMaxY = ((maxY + barSize - 1) / barSize) * barSize;
+    const auto meterY     = static_cast<int>(m_meterY);
+    int snappedMinY       = meterY + (((minY - meterY) / barSize) * barSize);
+    const int snappedMaxY = meterY + (((maxY - meterY + barSize - 1) / barSize) * barSize);
     int height            = snappedMaxY - snappedMinY;
 
-    if(snappedMinY - (2 * barSize) > labelSize) {
+    if(snappedMinY - (2 * barSize) > meterY) {
         snappedMinY -= (2 * barSize);
         height += (4 * barSize);
     }
@@ -385,10 +454,10 @@ void VuMeterWidgetPrivate::createGradient()
     QLinearGradient pattern;
 
     if(m_orientation == Qt::Horizontal) {
-        pattern = {0, 0, m_meterWidth, 0};
+        pattern = {m_meterX, 0, m_meterX + m_meterWidth, 0};
     }
     else {
-        pattern = {0, m_meterHeight, 0, 0};
+        pattern = {0, m_meterY + m_meterHeight, 0, m_meterY};
     }
 
     setGradientColours(pattern, m_colours.gradient(m_self->palette()));
@@ -531,7 +600,7 @@ float VuMeterWidgetPrivate::dbToPos(float db) const
         return m_meterWidth - dbToSize(db);
     }
 
-    return m_meterHeight + m_labelsSize - dbToSize(db);
+    return m_meterY + m_meterHeight - dbToSize(db);
 }
 
 bool VuMeterWidgetPrivate::isHorizontal() const
@@ -542,9 +611,9 @@ bool VuMeterWidgetPrivate::isHorizontal() const
 float VuMeterWidgetPrivate::channelX(int channel) const
 {
     if(isHorizontal()) {
-        return m_labelsSize;
+        return m_meterX;
     }
-    return m_legendSize + (static_cast<float>(channel) * (barSize() + m_channelSpacing));
+    return m_meterX + (static_cast<float>(channel) * (barSize() + m_channelSpacing));
 }
 
 float VuMeterWidgetPrivate::channelY(int channel) const
@@ -552,12 +621,12 @@ float VuMeterWidgetPrivate::channelY(int channel) const
     if(!isHorizontal()) {
         return 0;
     }
-    return static_cast<float>(channel) * (barSize() + m_channelSpacing);
+    return m_meterY + (static_cast<float>(channel) * (barSize() + m_channelSpacing));
 }
 
 void VuMeterWidgetPrivate::drawLegend(QPainter& painter)
 {
-    if(!m_drawLegend) {
+    if(!m_drawScaleLabels && !m_drawChannelLabels) {
         return;
     }
 
@@ -568,11 +637,10 @@ void VuMeterWidgetPrivate::drawLegend(QPainter& painter)
         const auto fltDb = static_cast<float>(db);
 
         if(isHorizontal()) {
-            return static_cast<int>((m_meterWidth * (fltDb - MinDb) / DbRange) + m_labelsSize);
+            return static_cast<int>((m_meterWidth * (fltDb - MinDb) / DbRange) + m_meterX);
         }
 
-        const auto height = m_meterHeight;
-        return static_cast<int>(height - (height * (fltDb - MinDb) / DbRange));
+        return static_cast<int>(m_meterY + m_meterHeight - (m_meterHeight * (fltDb - MinDb) / DbRange));
     };
 
     QPen linePen      = painter.pen();
@@ -583,57 +651,79 @@ void VuMeterWidgetPrivate::drawLegend(QPainter& painter)
     const QFontMetrics fm{painter.fontMetrics()};
     const QString dbText = u"%1dB"_s;
 
-    for(int db{static_cast<int>(MinDb)}; db <= 0; db += TickInterval) {
+    for(int db{static_cast<int>(MinDb)}; m_drawScaleLabels && db <= 0; db += TickInterval) {
         const QString text  = dbText.arg(db);
         const int textWidth = fm.horizontalAdvance(text);
 
         if(isHorizontal()) {
-            const int x      = dbToLegendPos(db);
-            const auto textX = x - (textWidth / 2);
-            const auto textY = static_cast<int>(m_meterHeight + (m_legendSize * 0.5F) + 5);
+            const int x     = dbToLegendPos(db);
+            const int textX = std::clamp(x - (textWidth / 2), 0, std::max(0, m_self->width() - textWidth));
 
-            painter.drawText(textX, textY, text);
+            if(m_showTopLabels) {
+                painter.drawText(textX, static_cast<int>(m_meterY) - (LegendPadding / 2), text);
+            }
+            if(m_showBottomLabels) {
+                painter.drawText(textX,
+                                 static_cast<int>(m_meterY) + static_cast<int>(m_meterHeight) + (LegendPadding / 2)
+                                     + fm.ascent(),
+                                 text);
+            }
 
             painter.save();
             painter.setPen(linePen);
 
-            const int tickHeight = static_cast<int>(m_meterHeight - 1);
-            painter.drawLine(x, 0, x, tickHeight);
+            painter.drawLine(x, static_cast<int>(m_meterY), x, static_cast<int>(m_meterY + m_meterHeight - 1));
         }
         else {
-            const int y      = dbToLegendPos(db);
-            const auto textX = static_cast<int>(m_legendSize) - textWidth - 5;
-            const auto textY = y + (fm.height() / 4);
+            const int y     = dbToLegendPos(db);
+            const int textY = std::clamp(y + (fm.height() / 4), fm.ascent(), m_self->height() - fm.descent());
 
-            painter.drawText(textX, textY, text);
+            if(m_showLeftLabels) {
+                painter.drawText(static_cast<int>(m_meterX) - textWidth - (LegendPadding / 2), textY, text);
+            }
+            if(m_showRightLabels) {
+                painter.drawText(static_cast<int>(m_meterX) + static_cast<int>(m_meterWidth) + (LegendPadding / 2),
+                                 textY, text);
+            }
 
             painter.save();
             painter.setPen(linePen);
 
-            const int tickWidth = static_cast<int>(m_meterWidth + m_legendSize - 1);
-            painter.drawLine(static_cast<int>(m_legendSize), y, tickWidth, y);
+            painter.drawLine(static_cast<int>(m_meterX), y, static_cast<int>(m_meterX + m_meterWidth - 1), y);
         }
 
         painter.restore();
     }
 
-    const int channels = m_format.channelCount();
-    for(int i{0}; i < channels; ++i) {
-        const QString name = channelName(i);
+    if(m_drawChannelLabels) {
+        const int channels = m_format.channelCount();
+        for(int i{0}; i < channels; ++i) {
+            const QString name = channelName(i);
 
-        if(isHorizontal()) {
-            const int textWidth = fm.horizontalAdvance(name);
-            const int textX     = static_cast<int>(m_labelsSize) - textWidth - 5;
-            const auto textY = static_cast<int>(channelY(i) + (barSize() / 2) + (static_cast<float>(fm.height()) / 4));
+            if(isHorizontal()) {
+                const int textWidth = fm.horizontalAdvance(name);
+                const auto textY
+                    = static_cast<int>(channelY(i) + (barSize() / 2) + (static_cast<float>(fm.height()) / 4));
 
-            painter.drawText(textX, textY, name);
-        }
-        else {
-            const int textWidth = fm.horizontalAdvance(name);
-            const auto textX    = static_cast<int>(channelX(i)) + static_cast<int>(barSize() / 2) - (textWidth / 2);
-            const auto textY    = static_cast<int>(m_meterHeight + m_labelsSize - 5);
+                if(m_showLeftLabels) {
+                    painter.drawText(static_cast<int>(m_meterX) - textWidth - 5, textY, name);
+                }
+                if(m_showRightLabels) {
+                    painter.drawText(static_cast<int>(m_meterX + m_meterWidth + 5), textY, name);
+                }
+            }
+            else {
+                const int textWidth = fm.horizontalAdvance(name);
+                const auto textX    = static_cast<int>(channelX(i)) + static_cast<int>(barSize() / 2) - (textWidth / 2);
 
-            painter.drawText(textX, textY, name);
+                if(m_showTopLabels) {
+                    painter.drawText(textX, static_cast<int>(m_meterY - 5), name);
+                }
+                if(m_showBottomLabels) {
+                    painter.drawText(textX, static_cast<int>(m_meterY + m_meterHeight + m_horizontalLabelSize - 5),
+                                     name);
+                }
+            }
         }
     }
 }
@@ -655,11 +745,11 @@ void VuMeterWidgetPrivate::drawChannel(QPainter& painter, float start, int chann
     if(m_showPeaks && channelPeak > MinDb) {
         painter.setPen(m_colours.colour(Colours::Type::Peak, m_self->palette()));
         if(isHorizontal()) {
-            const auto peakX = m_labelsSize + dbToSize(channelPeak);
+            const auto peakX = m_meterX + dbToSize(channelPeak);
             painter.drawLine(QLineF{peakX, y, peakX, y + channelSize - m_channelSpacing});
         }
         else {
-            const auto peakY = dbToPos(channelPeak) - m_labelsSize;
+            const auto peakY = dbToPos(channelPeak);
             painter.drawLine(QLineF{x, peakY, x + channelSize - m_channelSpacing, peakY});
         }
     }
@@ -684,7 +774,7 @@ void VuMeterWidgetPrivate::drawHorizontalBars(QPainter& painter, float x, float 
         }
     }
     else {
-        const auto first = static_cast<int>(std::max(0.0F, (((start - m_labelsSize) / m_meterWidth) * bars)));
+        const auto first = static_cast<int>(std::max(0.0F, (((start - m_meterX) / m_meterWidth) * bars)));
         for(int column{first}; column < barCount; ++column) {
             const float barDb = MinDb + (static_cast<float>(column) * dbStep);
             if(channelLevel > barDb) {
@@ -714,17 +804,17 @@ void VuMeterWidgetPrivate::drawVerticalBars(QPainter& painter, float x, float ch
     if(barCount == 1) {
         for(int column{0}; column < m_barSections; ++column) {
             const float barX = x + (static_cast<float>(column) * (barWidth + m_barSpacing));
-            const float barY = dbToPos(channelLevel) - m_labelsSize;
-            painter.fillRect(QRectF{barX, barY, barWidth, m_meterHeight - barY}, m_gradient);
+            const float barY = dbToPos(channelLevel);
+            painter.fillRect(QRectF{barX, barY, barWidth, m_meterY + m_meterHeight - barY}, m_gradient);
         }
     }
     else {
-        const auto first = static_cast<int>(std::max(0.0F, bars - ((start / m_meterHeight) * bars) - 1));
+        const auto first = static_cast<int>(std::max(0.0F, bars - (((start - m_meterY) / m_meterHeight) * bars) - 1));
         for(int row{first}; row < barCount; ++row) {
             const float barDb = MinDb + (static_cast<float>(row) * dbStep);
 
             if(channelLevel > barDb) {
-                const float barY = m_meterHeight - m_barSize - (static_cast<float>(row) * barSize);
+                const float barY = m_meterY + m_meterHeight - m_barSize - (static_cast<float>(row) * barSize);
 
                 for(int column{0}; column < m_barSections; ++column) {
                     const float barX = x + (static_cast<float>(column) * (barWidth + m_sectionSpacing));
@@ -741,12 +831,12 @@ void VuMeterWidgetPrivate::playStateChanged(Player::PlayState state)
     updateSize();
 
     switch(state) {
-        case(Player::PlayState::Playing):
+        case Player::PlayState::Playing:
             m_stopping = false;
             m_updateTimer.start(m_updateIntervalMs, m_self);
             m_elapsedTimer.start();
             break;
-        case(Player::PlayState::Paused):
+        case Player::PlayState::Paused:
             // Pause is requested optimistically by PlayerController; audio may
             // still be fading out on the engine. Keep repaint timer alive
             // until levels naturally decay to zero.
@@ -756,7 +846,7 @@ void VuMeterWidgetPrivate::playStateChanged(Player::PlayState state)
                 m_elapsedTimer.start();
             }
             break;
-        case(Player::PlayState::Stopped):
+        case Player::PlayState::Stopped:
             if(m_updateTimer.isActive()) {
                 m_stopping = true;
             }
@@ -880,16 +970,6 @@ void VuMeterWidget::setOrientation(Qt::Orientation orientation)
     p->setOrientation(orientation);
 }
 
-void VuMeterWidget::setShowLegend(bool show)
-{
-    p->m_showLegend     = show;
-    m_config.showLegend = show;
-    p->updateSize();
-    update();
-
-    Q_EMIT configChanged();
-}
-
 void VuMeterWidget::setChannelSpacing(int size)
 {
     p->m_channelSpacing = static_cast<float>(size);
@@ -951,14 +1031,31 @@ VuMeterWidget::ConfigData VuMeterWidget::defaultConfig() const
     config.falloffTime     = m_settings->fileValue(settingsKey(FalloffTimeKey), config.falloffTime).toInt();
     config.peakFalloffTime = m_settings->fileValue(settingsKey(PeakFalloffTimeKey), config.peakFalloffTime).toInt();
     config.showPeaks       = m_settings->fileValue(settingsKey(ShowPeaksKey), config.showPeaks).toBool();
-    config.showLegend      = m_settings->fileValue(settingsKey(ShowLegendKey), config.showLegend).toBool();
-    config.updateFps       = m_settings->fileValue(settingsKey(UpdateFpsKey), config.updateFps).toInt();
-    config.channelSpacing  = m_settings->fileValue(settingsKey(ChannelSpacingKey), config.channelSpacing).toInt();
-    config.barSize         = m_settings->fileValue(settingsKey(BarSizeKey), config.barSize).toInt();
-    config.barSpacing      = m_settings->fileValue(settingsKey(BarSpacingKey), config.barSpacing).toInt();
-    config.barSections     = m_settings->fileValue(settingsKey(BarSectionsKey), config.barSections).toInt();
-    config.sectionSpacing  = m_settings->fileValue(settingsKey(SectionSpacingKey), config.sectionSpacing).toInt();
-    config.meterColours    = m_settings->fileValue(settingsKey(MeterColoursKey), config.meterColours);
+
+    const QVariant showTopLabels    = m_settings->fileValue(settingsKey(ShowTopLabelsKey));
+    const QVariant showBottomLabels = m_settings->fileValue(settingsKey(ShowBottomLabelsKey));
+    const QVariant showLeftLabels   = m_settings->fileValue(settingsKey(ShowLeftLabelsKey));
+    const QVariant showRightLabels  = m_settings->fileValue(settingsKey(ShowRightLabelsKey));
+    const bool hasLabelSettings     = showTopLabels.isValid() || showBottomLabels.isValid() || showLeftLabels.isValid()
+                                   || showRightLabels.isValid();
+    if(hasLabelSettings) {
+        config.showTopLabels    = showTopLabels.toBool();
+        config.showBottomLabels = showBottomLabels.toBool();
+        config.showLeftLabels   = showLeftLabels.toBool();
+        config.showRightLabels  = showRightLabels.toBool();
+    }
+    else if(m_settings->fileValue(settingsKey(ShowLegendKey), false).toBool()) {
+        config.showBottomLabels = true;
+        config.showLeftLabels   = true;
+    }
+
+    config.updateFps      = m_settings->fileValue(settingsKey(UpdateFpsKey), config.updateFps).toInt();
+    config.channelSpacing = m_settings->fileValue(settingsKey(ChannelSpacingKey), config.channelSpacing).toInt();
+    config.barSize        = m_settings->fileValue(settingsKey(BarSizeKey), config.barSize).toInt();
+    config.barSpacing     = m_settings->fileValue(settingsKey(BarSpacingKey), config.barSpacing).toInt();
+    config.barSections    = m_settings->fileValue(settingsKey(BarSectionsKey), config.barSections).toInt();
+    config.sectionSpacing = m_settings->fileValue(settingsKey(SectionSpacingKey), config.sectionSpacing).toInt();
+    config.meterColours   = m_settings->fileValue(settingsKey(MeterColoursKey), config.meterColours);
 
     return config;
 }
@@ -991,7 +1088,11 @@ void VuMeterWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(settingsKey(FalloffTimeKey), validated.falloffTime);
     m_settings->fileSet(settingsKey(PeakFalloffTimeKey), validated.peakFalloffTime);
     m_settings->fileSet(settingsKey(ShowPeaksKey), validated.showPeaks);
-    m_settings->fileSet(settingsKey(ShowLegendKey), validated.showLegend);
+    m_settings->fileSet(settingsKey(ShowTopLabelsKey), validated.showTopLabels);
+    m_settings->fileSet(settingsKey(ShowBottomLabelsKey), validated.showBottomLabels);
+    m_settings->fileSet(settingsKey(ShowLeftLabelsKey), validated.showLeftLabels);
+    m_settings->fileSet(settingsKey(ShowRightLabelsKey), validated.showRightLabels);
+    m_settings->fileRemove(settingsKey(ShowLegendKey));
     m_settings->fileSet(settingsKey(UpdateFpsKey), validated.updateFps);
     m_settings->fileSet(settingsKey(ChannelSpacingKey), validated.channelSpacing);
     m_settings->fileSet(settingsKey(BarSizeKey), validated.barSize);
@@ -1009,6 +1110,10 @@ void VuMeterWidget::clearSavedDefaults() const
     m_settings->fileRemove(settingsKey(PeakFalloffTimeKey));
     m_settings->fileRemove(settingsKey(ShowPeaksKey));
     m_settings->fileRemove(settingsKey(ShowLegendKey));
+    m_settings->fileRemove(settingsKey(ShowTopLabelsKey));
+    m_settings->fileRemove(settingsKey(ShowBottomLabelsKey));
+    m_settings->fileRemove(settingsKey(ShowLeftLabelsKey));
+    m_settings->fileRemove(settingsKey(ShowRightLabelsKey));
     m_settings->fileRemove(settingsKey(UpdateFpsKey));
     m_settings->fileRemove(settingsKey(ChannelSpacingKey));
     m_settings->fileRemove(settingsKey(BarSizeKey));
@@ -1043,7 +1148,10 @@ void VuMeterWidget::applyConfig(const ConfigData& config)
     p->m_falloffPerMs     = static_cast<float>(m_config.falloffTime) / DbRange / 1000.0F;
     p->m_peakFalloffPerMs = static_cast<float>(m_config.peakFalloffTime) / DbRange / 1000.0F;
     p->m_showPeaks        = m_config.showPeaks;
-    p->m_showLegend       = m_config.showLegend;
+    p->m_showTopLabels    = m_config.showTopLabels;
+    p->m_showBottomLabels = m_config.showBottomLabels;
+    p->m_showLeftLabels   = m_config.showLeftLabels;
+    p->m_showRightLabels  = m_config.showRightLabels;
 
     p->setUpdateFps(m_config.updateFps);
 
@@ -1137,10 +1245,22 @@ void VuMeterWidget::contextMenuEvent(QContextMenuEvent* event)
         Q_EMIT configChanged();
     });
 
-    auto* showLegend = new QAction(tr("Show legend"), menu);
-    showLegend->setCheckable(true);
-    showLegend->setChecked(p->m_showLegend);
-    QObject::connect(showLegend, &QAction::triggered, this, [this](const bool checked) { setShowLegend(checked); });
+    auto* labelsMenu          = new QMenu(tr("Labels"), menu);
+    const auto addLabelAction = [this, labelsMenu](const QString& text, bool ConfigData::* field) {
+        auto* action = new QAction(text, labelsMenu);
+        action->setCheckable(true);
+        action->setChecked(m_config.*field);
+        QObject::connect(action, &QAction::triggered, this, [this, field](bool checked) {
+            auto config{m_config};
+            config.*field = checked;
+            applyConfig(config);
+        });
+        labelsMenu->addAction(action);
+    };
+    addLabelAction(tr("Top"), &ConfigData::showTopLabels);
+    addLabelAction(tr("Bottom"), &ConfigData::showBottomLabels);
+    addLabelAction(tr("Left"), &ConfigData::showLeftLabels);
+    addLabelAction(tr("Right"), &ConfigData::showRightLabels);
 
     auto* orientationMenu  = new QMenu(tr("Orientation"), menu);
     auto* orientationGroup = new QActionGroup(orientationMenu);
@@ -1161,7 +1281,7 @@ void VuMeterWidget::contextMenuEvent(QContextMenuEvent* event)
     orientationMenu->addAction(vertical);
 
     menu->addAction(showPeaks);
-    menu->addAction(showLegend);
+    menu->addMenu(labelsMenu);
     menu->addSeparator();
     menu->addMenu(orientationMenu);
     addConfigureAction(menu);
@@ -1199,8 +1319,19 @@ VuMeterWidget::ConfigData VuMeterWidget::configFromLayout(const QJsonObject& lay
     if(layout.contains("ShowPeaks"_L1)) {
         config.showPeaks = layout.value("ShowPeaks"_L1).toBool();
     }
-    if(layout.contains("ShowLegend"_L1)) {
-        config.showLegend = layout.value("ShowLegend"_L1).toBool();
+    const bool hasLabelSettings = layout.contains("ShowTopLabels"_L1) || layout.contains("ShowBottomLabels"_L1)
+                               || layout.contains("ShowLeftLabels"_L1) || layout.contains("ShowRightLabels"_L1);
+    if(hasLabelSettings) {
+        config.showTopLabels    = layout.value("ShowTopLabels"_L1).toBool();
+        config.showBottomLabels = layout.value("ShowBottomLabels"_L1).toBool();
+        config.showLeftLabels   = layout.value("ShowLeftLabels"_L1).toBool();
+        config.showRightLabels  = layout.value("ShowRightLabels"_L1).toBool();
+    }
+    else if(layout.contains("ShowLegend"_L1)) {
+        config.showTopLabels    = false;
+        config.showBottomLabels = layout.value("ShowLegend"_L1).toBool();
+        config.showLeftLabels   = config.showBottomLabels;
+        config.showRightLabels  = false;
     }
     if(layout.contains("UpdateFps"_L1)) {
         config.updateFps = layout.value("UpdateFps"_L1).toInt();
@@ -1278,24 +1409,28 @@ VuMeterWidget::ConfigData VuMeterWidget::configFromLayout(const QJsonObject& lay
 
 void VuMeterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const
 {
-    layout["PeakHoldTimeMs"_L1]  = config.peakHoldTimeMs;
-    layout["FalloffTime"_L1]     = config.falloffTime;
-    layout["PeakFalloffTime"_L1] = config.peakFalloffTime;
-    layout["ShowPeaks"_L1]       = config.showPeaks;
-    layout["ShowLegend"_L1]      = config.showLegend;
-    layout["UpdateFps"_L1]       = config.updateFps;
-    layout["ChannelSpacing"_L1]  = config.channelSpacing;
-    layout["BarSize"_L1]         = config.barSize;
-    layout["BarSpacing"_L1]      = config.barSpacing;
-    layout["BarSections"_L1]     = config.barSections;
-    layout["SectionSpacing"_L1]  = config.sectionSpacing;
+    layout["PeakHoldTimeMs"_L1]   = config.peakHoldTimeMs;
+    layout["FalloffTime"_L1]      = config.falloffTime;
+    layout["PeakFalloffTime"_L1]  = config.peakFalloffTime;
+    layout["ShowPeaks"_L1]        = config.showPeaks;
+    layout["ShowTopLabels"_L1]    = config.showTopLabels;
+    layout["ShowBottomLabels"_L1] = config.showBottomLabels;
+    layout["ShowLeftLabels"_L1]   = config.showLeftLabels;
+    layout["ShowRightLabels"_L1]  = config.showRightLabels;
+    layout.remove("ShowLegend"_L1);
+    layout["UpdateFps"_L1]      = config.updateFps;
+    layout["ChannelSpacing"_L1] = config.channelSpacing;
+    layout["BarSize"_L1]        = config.barSize;
+    layout["BarSpacing"_L1]     = config.barSpacing;
+    layout["BarSections"_L1]    = config.barSections;
+    layout["SectionSpacing"_L1] = config.sectionSpacing;
 
     const bool customColours      = config.meterColours.isValid() && config.meterColours.canConvert<Colours>()
                                  && !config.meterColours.value<Colours>().isEmpty();
     layout["UseCustomColours"_L1] = customColours;
 
     if(customColours) {
-        const Colours colours = config.meterColours.value<Colours>();
+        const auto colours    = config.meterColours.value<Colours>();
         const auto saveColour = [&layout, &colours](const QString& key, Colours::Type type) {
             if(colours.hasOverride(type)) {
                 layout[key] = colours.colour(type).name(QColor::HexArgb);

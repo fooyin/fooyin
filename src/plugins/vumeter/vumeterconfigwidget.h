@@ -51,7 +51,10 @@ private:
     QSpinBox* m_falloff;
     QSpinBox* m_peakFalloff;
     QComboBox* m_updateFps;
-    QCheckBox* m_showLegend;
+    QCheckBox* m_showTopLabels;
+    QCheckBox* m_showBottomLabels;
+    QCheckBox* m_showLeftLabels;
+    QCheckBox* m_showRightLabels;
     QGroupBox* m_peaksGroup;
 
     QSpinBox* m_channelSpacing;
