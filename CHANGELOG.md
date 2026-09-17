@@ -24,7 +24,9 @@
   - Cache pending embedded artwork to avoid repeated decoding and repainting ([#1585](https://github.com/fooyin/fooyin/issues/1585))
   - Add option to fall back to the front cover when artist artwork is unavailable
 * CLI: Add volume, mute, repeat, and shuffle controls; richer seek times; and directory and remote URL support
-* Command Button: Add searchable command and icon pickers
+* Command Button
+  - Add configurable targets for the playing track, current playlist, selections, and focused widgets
+  - Add searchable command and icon pickers
 * Discord: Add local and MusicBrainz artwork to Rich Presence ([#812](https://github.com/fooyin/fooyin/issues/812))
 * FileOps: Add a "Don't ask again" option to destructive action confirmations
 * Filters
@@ -43,6 +45,7 @@
 * Library/Metadata
   - Improve track ID lookup performance
   - Update filesystem watchers incrementally ([#1626](https://github.com/fooyin/fooyin/issues/1626))
+  - Recognise additional MP4 codecs supported by TagLib 2.3.2
   - Support per-track metadata and reliable reloads for embedded CUE sheets ([#1549](https://github.com/fooyin/fooyin/issues/1549), [#1567](https://github.com/fooyin/fooyin/issues/1567))
 * Lyrics
   - Add a standalone window to the View menu ([#1624](https://github.com/fooyin/fooyin/issues/1624))
@@ -56,7 +59,9 @@
   - Avoid track ID lookups during drag and drop
   - Reduce population and artwork loading overhead
   - Replace the default playlist contents when opening external files by default
-* Queue Viewer: Scroll by item instead of by pixel
+* Queue Viewer
+  - Add configurable Play now, Queue next, Stop after this, and Add to playlist actions ([#343](https://github.com/fooyin/fooyin/issues/343), [#1032](https://github.com/fooyin/fooyin/issues/1032), [#1228](https://github.com/fooyin/fooyin/issues/1228))
+  - Scroll by item instead of by pixel
 * Scrobbling: Add optional Last.fm playcount and loved status synchronisation at playback start
 * Search
   - Add keyboard navigation to results
@@ -71,8 +76,14 @@
   - Add `$cut` as alias for `$left`
   - Improve conditional evaluation for concatenated expressions
   - Improve date parsing and track sorting performance
+* Settings: Use a page list for context menu settings
 * Sleep Inhibitor: Add an option to prevent the display turning off ([#1406](https://github.com/fooyin/fooyin/pull/1406))
+* Spectrum: Refine default gridline and gradient colours
 * Status Widget: Add configurable double and middle-click actions
+* VU Meter
+  - Add configurable axis label positions ([#1634](https://github.com/fooyin/fooyin/issues/1634))
+  - Add configurable gridline colours
+  - Move orientation actions to the top-level context menu
 
 ### Fixes
 
@@ -83,6 +94,7 @@
 * Directory Browser
   - Clear stale playback indicators after playlist changes
   - Show playback indicators only in the first column
+* Filters: Prevent stale row lookups selecting the wrong tracks
 * FileOps
   - Fix context menu actions for presets with duplicate names
   - Fix enabling source removal when extracting archives
@@ -129,8 +141,15 @@
   - Fix whitespace handling in quoted queries
   - Treat native path separators equivalently in queries ([#1595](https://github.com/fooyin/fooyin/issues/1595))
   - Use one-based indexes for `$strstr`
+* Spectrum
+  - Fix grid positioning when labels are disabled
+  - Fix gridlines and separators at fractional scaling
+* Status Widget: Show current playlist information immediately after startup
 * Tag Editor: Fix editing regression
-* WaveBar: Avoid warnings when playing remote streams
+* VU Meter: Fix gridlines and peak lines at fractional scaling
+* WaveBar
+  - Avoid warnings when playing remote streams
+  - Fix cursor shimmering with fractional scaling or supersampling
 
 ### Build/System
 
@@ -149,6 +168,7 @@
   - Add `PlaylistEditController` with shared undo history
   - Add sorting, purging, and item visibility methods to `PlaylistHandler`
   - Expose `PlaylistInteractor` and `OutputProfileManager` to GUI plugins
+* Track Selection: Add target resolution and action availability APIs to `TrackSelectionController`
 
 
 ## [0.12.6](https://github.com/fooyin/fooyin/releases/tag/v0.12.6) (2026-08-23)
