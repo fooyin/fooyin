@@ -25,6 +25,7 @@
 #include <QFontMetrics>
 #include <QPainter>
 #include <QPalette>
+#include <QPen>
 
 #include <algorithm>
 #include <array>
@@ -41,6 +42,13 @@ constexpr auto HighestHorizontalLabelPriority = 2;
 
 namespace Fooyin::Spectrum {
 namespace {
+QPen cosmeticPen(const QColor& colour)
+{
+    QPen pen{colour};
+    pen.setCosmetic(true);
+    return pen;
+}
+
 QString noteNameForSemitone(int semitone)
 {
     static constexpr std::array<const char*, 12> NoteNames
@@ -272,7 +280,7 @@ void SpectrumAxisRenderer::paint(QPainter& painter, const SpectrumPlotGeometry& 
     drawKeyBackgrounds(painter, geometry, palette);
 
     if(m_config.showHorizontalGrid) {
-        painter.setPen(gridColour);
+        painter.setPen(cosmeticPen(gridColour));
         for(int index{0}; index <= GridLineCount; ++index) {
             const int y
                 = geometry.plotRect.top() + ((geometry.plotRect.height() - 1) * index / std::max(1, GridLineCount));
@@ -281,7 +289,7 @@ void SpectrumAxisRenderer::paint(QPainter& painter, const SpectrumPlotGeometry& 
     }
 
     if(m_config.showVerticalGrid) {
-        painter.setPen(verticalGridColour);
+        painter.setPen(cosmeticPen(verticalGridColour));
         if(m_config.labelMode == LabelMode::Notes) {
             for(int note{m_config.minNote}; note <= m_config.maxNote; ++note) {
                 const int semitone = ((note % 12) + 12) % 12;
@@ -755,7 +763,7 @@ void SpectrumAxisRenderer::drawKeyBackgrounds(QPainter& painter, const SpectrumP
     }
 
     if(noteWidth > 2.0) {
-        painter.setPen(separatorColour);
+        painter.setPen(cosmeticPen(separatorColour));
         for(int note = startNote + 1; note <= endNote; ++note) {
             const int x = noteEdgeX(geometry.plotRect, note - startNote, noteCount);
             painter.drawLine(x, keyRect.top(), x, keyRect.bottom());
