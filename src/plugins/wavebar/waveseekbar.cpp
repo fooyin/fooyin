@@ -543,14 +543,21 @@ void WaveSeekBar::drawCursors(QPainter& painter)
 {
     if(m_showCursor && m_playState != Player::PlayState::Stopped) {
         const double posX = positionFromValue(static_cast<double>(m_position));
-        painter.setPen({m_colours.colour(Colours::Type::Cursor, palette()), static_cast<double>(m_cursorWidth),
-                        Qt::SolidLine, Qt::FlatCap});
+
+        QPen cursorPen{m_colours.colour(Colours::Type::Cursor, palette()), static_cast<double>(m_cursorWidth),
+                       Qt::SolidLine, Qt::FlatCap};
+        cursorPen.setCosmetic(true);
+        painter.setPen(cursorPen);
+
         painter.drawLine(QPointF{posX, 0.0}, QPointF{posX, static_cast<double>(height())});
     }
 
     if(isSeeking()) {
-        painter.setPen({m_colours.colour(Colours::Type::SeekingCursor, palette()), static_cast<double>(m_cursorWidth),
-                        Qt::SolidLine, Qt::FlatCap});
+        QPen cursorPen{m_colours.colour(Colours::Type::SeekingCursor, palette()), static_cast<double>(m_cursorWidth),
+                       Qt::SolidLine, Qt::FlatCap};
+        cursorPen.setCosmetic(true);
+        painter.setPen(cursorPen);
+
         painter.drawLine(QPointF{static_cast<double>(m_seekPos.x()), 0.0},
                          QPointF{static_cast<double>(m_seekPos.x()), static_cast<double>(height())});
     }
