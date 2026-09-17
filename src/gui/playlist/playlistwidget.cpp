@@ -1806,6 +1806,10 @@ void PlaylistWidget::setupConnections()
     QObject::connect(m_model, &PlaylistModel::loadingStateChanged, m_playlistView->viewport(), qOverload<>(&QWidget::update));
     QObject::connect(m_model, &PlaylistModel::loadingStateChanged, m_header->viewport(), qOverload<>(&QWidget::update));
     QObject::connect(m_model, &PlaylistModel::playlistLoaded, m_playlistView, &PlaylistView::playlistReset);
+    QObject::connect(m_model, &PlaylistModel::playlistLoaded, this, [this]() {
+        m_session->selectionChanged(sessionHost());
+        updateSortActionState();
+    });
     QObject::connect(m_model, &PlaylistModel::playlistLoaded, m_playlistView->viewport(), [this]() {
         m_playlistView->viewport()->update();
         updateVisibleCoverPins();

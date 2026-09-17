@@ -189,10 +189,11 @@ void ActionManagerPrivate::updateFocusWidget(QWidget* widget)
 
     WidgetContextList newContext;
 
-    QWidget* focusedWidget{widget};
-    if(!focusedWidget) {
-        focusedWidget = QApplication::focusWidget();
+    QWidget* contextWidget{widget};
+    if(!contextWidget) {
+        contextWidget = QApplication::focusWidget();
     }
+    QWidget* focusedWidget{contextWidget};
 
     if(focusedWidget) {
         while(focusedWidget) {
@@ -205,7 +206,19 @@ void ActionManagerPrivate::updateFocusWidget(QWidget* widget)
         }
     }
 
-    if(!newContext.empty() || QApplication::focusWidget() == m_mainWindow->focusWidget()) {
+    const bool updatingFocus        = contextWidget == QApplication::focusWidget();
+    const bool mainWindowHasFocus   = QApplication::focusWidget() == m_mainWindow->focusWidget();
+    const bool onlyAncestorContexts = !updatingFocus && newContext.size() < m_activeContext.size()
+                                   && std::ranges::all_of(
+                                       newContext,
+                                       [this](WidgetContext* context) {
+                                           return std::ranges::find(m_activeContext, context) != m_activeContext.cend();
+                                       });
+    if(onlyAncestorContexts) {
+        return;
+    }
+
+    if(!newContext.empty() || (updatingFocus && mainWindowHasFocus)) {
         updateContextObject(newContext);
     }
 }

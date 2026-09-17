@@ -72,6 +72,7 @@ private:
     };
 
     void unregisterPresetActions();
+    [[nodiscard]] SortScope actionScope(const QAction* action) const;
 
     ActionManager* m_actionManager;
     SortingRegistry* m_sortingRegistry;

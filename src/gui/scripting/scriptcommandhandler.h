@@ -19,16 +19,37 @@
 
 #pragma once
 
+#include <gui/trackselectioncontroller.h>
+
 #include <QString>
 #include <QStringView>
 #include <optional>
 
 #include <vector>
 
+class QAction;
+
 namespace Fooyin {
 class ActionManager;
+class CurrentPlaylistController;
 class PlayerController;
 class PropertiesDialog;
+
+enum class ScriptCommandTarget : uint8_t
+{
+    FollowActiveContext = 0,
+    NowPlaying,
+    CurrentPlaylist,
+    CurrentPlaylistSelection,
+    ActiveSelection,
+};
+
+enum class CommandSelectionScope : uint8_t
+{
+    ContextDefault = 0,
+    WholeContext,
+    Selection,
+};
 
 enum class ScriptCommandAliasType : uint8_t
 {
@@ -55,21 +76,34 @@ struct ResolvedScriptCommand
     ScriptCommandAliasType type{ScriptCommandAliasType::Action};
 };
 
+struct CommandInvocation
+{
+    QAction* action{nullptr};
+    ScriptCommandTarget target{ScriptCommandTarget::FollowActiveContext};
+    std::optional<TrackSelectionTarget> selectionTarget;
+    CommandSelectionScope selectionScope{CommandSelectionScope::ContextDefault};
+};
+
 class ScriptCommandHandler
 {
 public:
     ScriptCommandHandler(ActionManager* actionManager, PlayerController* playerController,
-                         PropertiesDialog* propertiesDialog);
+                         PropertiesDialog* propertiesDialog, TrackSelectionController* selectionController,
+                         CurrentPlaylistController* currentPlaylistController);
 
     static const ScriptCommandAliasList& scriptCommandAliases();
-    [[nodiscard]] static std::optional<ResolvedScriptCommand> resolveCommand(const QString& commandId);
+    static std::optional<ResolvedScriptCommand> resolveCommand(const QString& commandId);
+    static const CommandInvocation* currentInvocation(const QAction* action = nullptr);
 
-    [[nodiscard]] bool canExecute(const QString& commandId) const;
-    bool execute(const QString& commandId) const;
+    [[nodiscard]] bool canExecute(const QString& commandId,
+                                  ScriptCommandTarget target = ScriptCommandTarget::FollowActiveContext) const;
+    bool execute(const QString& commandId, ScriptCommandTarget target = ScriptCommandTarget::FollowActiveContext) const;
 
 private:
     ActionManager* m_actionManager;
     PlayerController* m_playerController;
     PropertiesDialog* m_propertiesDialog;
+    TrackSelectionController* m_selectionController;
+    CurrentPlaylistController* m_currentPlaylistController;
 };
 } // namespace Fooyin

@@ -45,6 +45,7 @@ CommandButtonConfigDialog::CommandButtonConfigDialog(CommandButton* button, Acti
     , m_chooseCommand{new QPushButton(tr("Choose…"), this)}
     , m_text{new QLineEdit(this)}
     , m_buttonStyle{new QComboBox(this)}
+    , m_target{new QComboBox(this)}
     , m_iconPreview{new QPushButton(this)}
     , m_iconDescription{new QLineEdit(this)}
     , m_chooseIcon{new QPushButton(tr("Choose…"), this)}
@@ -58,9 +59,27 @@ CommandButtonConfigDialog::CommandButtonConfigDialog(CommandButton* button, Acti
     m_buttonStyle->addItem(tr("Text beside icon"), Qt::ToolButtonTextBesideIcon);
     m_buttonStyle->addItem(tr("Text under icon"), Qt::ToolButtonTextUnderIcon);
 
+    const auto addTarget = [this](const QString& text, ScriptCommandTarget target, const QString& toolTip) {
+        m_target->addItem(text, static_cast<int>(target));
+        m_target->setItemData(m_target->count() - 1, toolTip, Qt::ToolTipRole);
+    };
+    addTarget(tr("Focused widget"), ScriptCommandTarget::FollowActiveContext,
+              tr("Use the command as if invoked from the focused widget"));
+    addTarget(tr("Now playing track"), ScriptCommandTarget::NowPlaying,
+              tr("Use the currently playing track for selection-based commands"));
+    addTarget(tr("Current playlist"), ScriptCommandTarget::CurrentPlaylist,
+              tr("Use all tracks and the command context of the current playlist"));
+    addTarget(tr("Current playlist selection"), ScriptCommandTarget::CurrentPlaylistSelection,
+              tr("Use the selected tracks and command context of the current playlist"));
+    addTarget(tr("Active selection"), ScriptCommandTarget::ActiveSelection,
+              tr("Use the most recently active track selection, even after focus moves elsewhere."));
+    m_target->setToolTip(m_target->currentData(Qt::ToolTipRole).toString());
+
     QObject::connect(m_chooseCommand, &QPushButton::clicked, this, &CommandButtonConfigDialog::chooseCommand);
     QObject::connect(m_chooseIcon, &QPushButton::clicked, this, &CommandButtonConfigDialog::chooseIcon);
     QObject::connect(m_iconPreview, &QAbstractButton::clicked, this, &CommandButtonConfigDialog::chooseIcon);
+    QObject::connect(m_target, &QComboBox::currentIndexChanged, this,
+                     [this]() { m_target->setToolTip(m_target->currentData(Qt::ToolTipRole).toString()); });
 
     m_iconPreview->setIconSize({64, 64});
     m_iconPreview->setFixedSize(92, 92);
@@ -83,6 +102,8 @@ CommandButtonConfigDialog::CommandButtonConfigDialog(CommandButton* button, Acti
     commandLayout->addWidget(m_text, row++, 1, 1, 2);
     commandLayout->addWidget(new QLabel(tr("Display") + u":"_s, this), row, 0);
     commandLayout->addWidget(m_buttonStyle, row++, 1, 1, 2);
+    commandLayout->addWidget(new QLabel(tr("Target") + u":"_s, this), row, 0);
+    commandLayout->addWidget(m_target, row++, 1, 1, 2);
     commandLayout->addWidget(hint, row++, 0, 1, 3);
     commandLayout->setColumnStretch(1, 1);
 
@@ -154,6 +175,7 @@ void CommandButtonConfigDialog::chooseIcon()
         .iconName        = {},
         .iconPath        = {},
         .toolButtonStyle = Qt::ToolButtonIconOnly,
+        .target          = ScriptCommandTarget::FollowActiveContext,
     };
 
     m_iconPicker = new IconPickerDialog(widget()->previewIcon(commandIconConfig), this);
@@ -201,6 +223,7 @@ void CommandButtonConfigDialog::updatePreview()
         .text      = m_text->text(),
         .iconName  = m_iconName,
         .iconPath  = m_iconPath,
+        .target    = static_cast<ScriptCommandTarget>(m_target->currentData().toInt()),
     };
 
     m_iconPreview->setIcon(widget()->previewIcon(previewConfig));
@@ -216,6 +239,10 @@ void CommandButtonConfigDialog::setConfig(const CommandButton::ConfigData& confi
     if(const int index = m_buttonStyle->findData(config.toolButtonStyle); index >= 0) {
         m_buttonStyle->setCurrentIndex(index);
     }
+    if(const int index = m_target->findData(static_cast<int>(config.target)); index >= 0) {
+        m_target->setCurrentIndex(index);
+    }
+
     updateCommandDisplay();
     updateIconDisplay();
     updatePreview();
@@ -229,6 +256,7 @@ CommandButton::ConfigData CommandButtonConfigDialog::config() const
         .iconName        = m_iconName,
         .iconPath        = m_iconPath,
         .toolButtonStyle = m_buttonStyle->currentData().toInt(),
+        .target          = static_cast<ScriptCommandTarget>(m_target->currentData().toInt()),
     };
 }
 } // namespace Fooyin

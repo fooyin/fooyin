@@ -30,6 +30,7 @@
 #include <optional>
 #include <vector>
 
+class QAction;
 class QComboBox;
 class QMenu;
 
@@ -56,6 +57,12 @@ struct FYGUI_EXPORT TrackSelection
     bool playlistBacked{false};
 
     bool operator==(const TrackSelection& other) const = default;
+};
+
+struct FYGUI_EXPORT TrackSelectionTarget
+{
+    TrackSelection selection;
+    WidgetContext* context{nullptr};
 };
 
 enum class TrackAction
@@ -132,6 +139,12 @@ public:
     [[nodiscard]] Track displayTrack() const;
     [[nodiscard]] TrackList displayTracks() const;
     [[nodiscard]] bool hasDisplayTracks() const;
+
+    [[nodiscard]] std::optional<TrackSelectionTarget> activeSelectionTarget() const;
+    [[nodiscard]] std::optional<TrackSelectionTarget> playlistSelectionTarget(const UId& playlistId) const;
+    [[nodiscard]] std::optional<bool> selectionActionEnabled(const QAction* action) const;
+    [[nodiscard]] std::optional<bool> selectionActionEnabled(const QAction* action,
+                                                             const TrackSelection& selection) const;
 
     void changeSelectedTracks(WidgetContext* context, const TrackSelection& selection);
     void changePlaybackOnSend(WidgetContext* context, bool enabled);

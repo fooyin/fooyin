@@ -22,18 +22,48 @@
 #include <core/player/playercontroller.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
+#include <gui/playlist/currentplaylistcontroller.h>
 #include <gui/propertiesdialog.h>
+#include <gui/trackselectioncontroller.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
+#include <utils/actions/widgetcontext.h>
 #include <utils/fileutils.h>
 #include <utils/id.h>
 
+#include <QAction>
 #include <QFileInfo>
+#include <QPointer>
 
 using namespace Qt::StringLiterals;
 
+namespace Fooyin {
 namespace {
-std::optional<Fooyin::ResolvedScriptCommand> resolveCommandId(const QString& commandId)
+const CommandInvocation*& currentCmdInvocation()
+{
+    static thread_local const CommandInvocation* invocation{nullptr};
+    return invocation;
+}
+
+class CommandInvocationScope
+{
+public:
+    explicit CommandInvocationScope(const CommandInvocation& invocation)
+        : m_previous{currentCmdInvocation()}
+    {
+        currentCmdInvocation() = &invocation;
+    }
+
+    ~CommandInvocationScope()
+    {
+        currentCmdInvocation() = m_previous;
+    }
+
+private:
+    const CommandInvocation* m_previous;
+};
+
+std::optional<ResolvedScriptCommand> resolveCommandId(const QString& commandId)
 {
     const QString trimmed = commandId.trimmed();
     if(trimmed.isEmpty()) {
@@ -41,25 +71,25 @@ std::optional<Fooyin::ResolvedScriptCommand> resolveCommandId(const QString& com
     }
 
     const QString normalized = trimmed.toLower();
-    for(const auto& alias : Fooyin::ScriptCommandHandler::scriptCommandAliases()) {
+    for(const auto& alias : ScriptCommandHandler::scriptCommandAliases()) {
         if(normalized == alias.alias) {
-            if(alias.type == Fooyin::ScriptCommandAliasType::PlayingProperties) {
-                return Fooyin::ResolvedScriptCommand{
+            if(alias.type == ScriptCommandAliasType::PlayingProperties) {
+                return ResolvedScriptCommand{
                     .id          = u"playingproperties"_s,
                     .category    = QString::fromLatin1(alias.category),
                     .description = QString::fromLatin1(alias.description),
                     .type        = alias.type,
                 };
             }
-            if(alias.type == Fooyin::ScriptCommandAliasType::PlayingFolder) {
-                return Fooyin::ResolvedScriptCommand{
+            if(alias.type == ScriptCommandAliasType::PlayingFolder) {
+                return ResolvedScriptCommand{
                     .id          = u"playingfolder"_s,
                     .category    = QString::fromLatin1(alias.category),
                     .description = QString::fromLatin1(alias.description),
                     .type        = alias.type,
                 };
             }
-            return Fooyin::ResolvedScriptCommand{
+            return ResolvedScriptCommand{
                 .id          = QString::fromLatin1(alias.actionId),
                 .category    = QString::fromLatin1(alias.category),
                 .description = QString::fromLatin1(alias.description),
@@ -68,21 +98,116 @@ std::optional<Fooyin::ResolvedScriptCommand> resolveCommandId(const QString& com
         }
     }
 
-    return Fooyin::ResolvedScriptCommand{
+    return ResolvedScriptCommand{
         .id          = trimmed,
         .category    = {},
         .description = {},
-        .type        = Fooyin::ScriptCommandAliasType::Action,
+        .type        = ScriptCommandAliasType::Action,
     };
+}
+
+std::optional<TrackSelectionTarget> resolveTarget(ScriptCommandTarget target, const PlayerController& playerController,
+                                                  const TrackSelectionController& selectionController,
+                                                  const CurrentPlaylistController& currentPlaylistController)
+{
+    if(target == ScriptCommandTarget::FollowActiveContext) {
+        return {};
+    }
+
+    if(target == ScriptCommandTarget::NowPlaying) {
+        TrackSelection selection;
+        if(const Track track = playerController.currentTrack(); track.isValid()) {
+            selection.tracks.emplace_back(track);
+        }
+        return TrackSelectionTarget{.selection = std::move(selection)};
+    }
+
+    if(target == ScriptCommandTarget::CurrentPlaylist || target == ScriptCommandTarget::CurrentPlaylistSelection) {
+        auto selection = selectionController.playlistSelectionTarget(currentPlaylistController.currentPlaylistId())
+                             .value_or(TrackSelectionTarget{});
+        if(target == ScriptCommandTarget::CurrentPlaylist) {
+            WidgetContext* context = selection.context;
+            selection              = TrackSelectionTarget{.selection = {}, .context = context};
+
+            if(const auto* playlist = currentPlaylistController.currentPlaylist()) {
+                selection.selection.tracks         = playlist->tracks();
+                selection.selection.playlistId     = playlist->id();
+                selection.selection.playlistBacked = true;
+
+                const auto playlistTracks = playlist->playlistTracks();
+                selection.selection.playlistIndexes.reserve(playlistTracks.size());
+                selection.selection.playlistEntryIds.reserve(playlistTracks.size());
+                for(const PlaylistTrack& track : playlistTracks) {
+                    selection.selection.playlistIndexes.emplace_back(track.indexInPlaylist);
+                    selection.selection.playlistEntryIds.emplace_back(track.entryId);
+                }
+            }
+        }
+
+        return selection;
+    }
+
+    if(auto selection = selectionController.activeSelectionTarget()) {
+        return selection;
+    }
+
+    return TrackSelectionTarget{};
+}
+
+CommandSelectionScope selectionScope(ScriptCommandTarget target)
+{
+    switch(target) {
+        case ScriptCommandTarget::CurrentPlaylist:
+            return CommandSelectionScope::WholeContext;
+        case ScriptCommandTarget::CurrentPlaylistSelection:
+        case ScriptCommandTarget::ActiveSelection:
+            return CommandSelectionScope::Selection;
+        default:
+            return CommandSelectionScope::ContextDefault;
+    }
+}
+
+QAction* actionForTarget(const Command& command, const std::optional<TrackSelectionTarget>& target)
+{
+    if(!target) {
+        return command.action();
+    }
+
+    if(target->context) {
+        for(const Id& contextId : target->context->context()) {
+            if(QAction* action = command.actionForContext(contextId)) {
+                return action;
+            }
+        }
+    }
+
+    return command.actionForContext(Constants::Context::Global);
+}
+
+bool actionEnabled(const QAction* action, const std::optional<TrackSelectionTarget>& target,
+                   const TrackSelectionController& selectionController)
+{
+    if(!action) {
+        return false;
+    }
+    if(target) {
+        if(const auto enabled = selectionController.selectionActionEnabled(action, target->selection)) {
+            return *enabled;
+        }
+    }
+    return action->isEnabled();
 }
 } // namespace
 
-namespace Fooyin {
 ScriptCommandHandler::ScriptCommandHandler(ActionManager* actionManager, PlayerController* playerController,
-                                           PropertiesDialog* propertiesDialog)
+                                           PropertiesDialog* propertiesDialog,
+                                           TrackSelectionController* selectionController,
+                                           CurrentPlaylistController* currentPlaylistController)
     : m_actionManager{actionManager}
     , m_playerController{playerController}
     , m_propertiesDialog{propertiesDialog}
+    , m_selectionController{selectionController}
+    , m_currentPlaylistController{currentPlaylistController}
 { }
 
 const ScriptCommandAliasList& ScriptCommandHandler::scriptCommandAliases()
@@ -354,7 +479,15 @@ std::optional<ResolvedScriptCommand> ScriptCommandHandler::resolveCommand(const 
     return resolveCommandId(commandId);
 }
 
-bool ScriptCommandHandler::canExecute(const QString& commandId) const
+const CommandInvocation* ScriptCommandHandler::currentInvocation(const QAction* action)
+{
+    if(!currentCmdInvocation() || (action && currentCmdInvocation()->action != action)) {
+        return nullptr;
+    }
+    return currentCmdInvocation();
+}
+
+bool ScriptCommandHandler::canExecute(const QString& commandId, ScriptCommandTarget target) const
 {
     const auto resolved = resolveCommandId(commandId);
     if(!resolved) {
@@ -366,18 +499,17 @@ bool ScriptCommandHandler::canExecute(const QString& commandId) const
         return m_playerController && m_playerController->currentTrack().isValid();
     }
 
-    if(!m_actionManager) {
-        return false;
-    }
-
     if(auto* command = m_actionManager->command(Id{resolved->id})) {
-        return command->action() && command->action()->isEnabled();
+        const auto selectionTarget
+            = resolveTarget(target, *m_playerController, *m_selectionController, *m_currentPlaylistController);
+        const QAction* action = actionForTarget(*command, selectionTarget);
+        return actionEnabled(action, selectionTarget, *m_selectionController);
     }
 
     return false;
 }
 
-bool ScriptCommandHandler::execute(const QString& commandId) const
+bool ScriptCommandHandler::execute(const QString& commandId, ScriptCommandTarget target) const
 {
     const auto resolved = resolveCommandId(commandId);
     if(!resolved) {
@@ -419,15 +551,33 @@ bool ScriptCommandHandler::execute(const QString& commandId) const
         return true;
     }
 
-    if(!m_actionManager) {
-        return false;
-    }
-
     if(auto* command = m_actionManager->command(Id{resolved->id})) {
-        if(command->action() && command->action()->isEnabled()) {
-            command->action()->trigger();
-            return true;
+        const auto selectionTarget
+            = resolveTarget(target, *m_playerController, *m_selectionController, *m_currentPlaylistController);
+        QAction* action = actionForTarget(*command, selectionTarget);
+        if(!actionEnabled(action, selectionTarget, *m_selectionController)) {
+            return false;
         }
+
+        const CommandInvocation invocation{.action          = action,
+                                           .target          = target,
+                                           .selectionTarget = selectionTarget,
+                                           .selectionScope  = selectionScope(target)};
+        const QPointer actionGuard{action};
+        const bool wasEnabled = action->isEnabled();
+        {
+            const CommandInvocationScope invocationScope{invocation};
+            if(!wasEnabled) {
+                action->setEnabled(true);
+            }
+            action->trigger();
+        }
+
+        if(actionGuard && !wasEnabled) {
+            const bool enabled = m_selectionController->selectionActionEnabled(actionGuard).value_or(wasEnabled);
+            actionGuard->setEnabled(enabled);
+        }
+        return true;
     }
 
     return false;

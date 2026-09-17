@@ -23,6 +23,7 @@
 
 #include <core/library/sortingregistry.h>
 #include <gui/guiconstants.h>
+#include <gui/scripting/scriptcommandhandler.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/id.h>
@@ -65,7 +66,8 @@ Command* SortActionHandler::registerRandomiseAction(QAction* action, const QStri
     m_randomiseCmd = m_actionManager->registerAction(action, Constants::Actions::SortRandomise, m_actionContext);
     m_randomiseCmd->setCategories({tr("Edit"), tr("Sort")});
     m_randomiseCmd->setAttribute(ProxyAction::UpdateText);
-    QObject::connect(action, &QAction::triggered, this, [this]() { Q_EMIT randomiseRequested(m_scope); });
+    QObject::connect(action, &QAction::triggered, this,
+                     [this, action]() { Q_EMIT randomiseRequested(actionScope(action)); });
     return m_randomiseCmd;
 }
 
@@ -75,7 +77,8 @@ Command* SortActionHandler::registerReverseAction(QAction* action, const QString
     m_reverseCmd = m_actionManager->registerAction(action, Constants::Actions::SortReverse, m_actionContext);
     m_reverseCmd->setCategories({tr("Edit"), tr("Sort")});
     m_reverseCmd->setAttribute(ProxyAction::UpdateText);
-    QObject::connect(action, &QAction::triggered, this, [this]() { Q_EMIT reverseRequested(m_scope); });
+    QObject::connect(action, &QAction::triggered, this,
+                     [this, action]() { Q_EMIT reverseRequested(actionScope(action)); });
     return m_reverseCmd;
 }
 
@@ -95,9 +98,9 @@ void SortActionHandler::refreshPresetActions(const QString& statusTip)
         presetCmd->setCategories({tr("Edit"), tr("Sort")});
         presetCmd->setAttribute(ProxyAction::UpdateText);
 
-        QObject::connect(presetAction, &QAction::triggered, this, [this, presetId = preset.id]() {
+        QObject::connect(presetAction, &QAction::triggered, this, [this, presetAction, presetId = preset.id]() {
             if(const auto sortPreset = m_sortingRegistry->itemById(presetId)) {
-                Q_EMIT sortPresetRequested(sortPreset->script, m_scope);
+                Q_EMIT sortPresetRequested(sortPreset->script, actionScope(presetAction));
             }
         });
 
@@ -153,6 +156,23 @@ void SortActionHandler::setEnabled(bool enabled) const
         if(presetAction.action) {
             presetAction.action->setEnabled(enabled);
         }
+    }
+}
+
+SortScope SortActionHandler::actionScope(const QAction* action) const
+{
+    const auto* invocation = ScriptCommandHandler::currentInvocation(action);
+    if(!invocation) {
+        return m_scope;
+    }
+
+    switch(invocation->selectionScope) {
+        case CommandSelectionScope::WholeContext:
+            return SortScope::All;
+        case CommandSelectionScope::Selection:
+            return SortScope::SelectedOrAll;
+        default:
+            return m_scope;
     }
 }
 

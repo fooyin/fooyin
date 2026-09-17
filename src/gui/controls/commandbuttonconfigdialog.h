@@ -60,6 +60,7 @@ private:
     QPushButton* m_chooseCommand;
     QLineEdit* m_text;
     QComboBox* m_buttonStyle;
+    QComboBox* m_target;
     QPushButton* m_iconPreview;
     QLineEdit* m_iconDescription;
     QPushButton* m_chooseIcon;

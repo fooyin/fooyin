@@ -47,6 +47,7 @@ constexpr auto TextKey        = "CommandButton/Text";
 constexpr auto IconNameKey    = "CommandButton/IconName";
 constexpr auto IconPathKey    = "CommandButton/IconPath";
 constexpr auto ButtonStyleKey = "CommandButton/ToolButtonStyle";
+constexpr auto TargetKey      = "CommandButton/Target";
 
 namespace {
 QString expandPath(const QString& path)
@@ -106,6 +107,15 @@ QIcon highlightedIcon(const QIcon& icon, const QPalette& palette)
     const QColor iconColour = palette.color(QPalette::Active, QPalette::Highlight);
     return Fooyin::Utils::changePixmapColour(icon.pixmap({128, 128}), iconColour);
 }
+
+Fooyin::ScriptCommandTarget commandTarget(int value)
+{
+    if(value < static_cast<int>(Fooyin::ScriptCommandTarget::FollowActiveContext)
+       || value > static_cast<int>(Fooyin::ScriptCommandTarget::ActiveSelection)) {
+        return Fooyin::ScriptCommandTarget::FollowActiveContext;
+    }
+    return static_cast<Fooyin::ScriptCommandTarget>(value);
+}
 } // namespace
 
 namespace Fooyin {
@@ -131,9 +141,9 @@ CommandButton::CommandButton(ActionManager* actionManager, PlayerController* pla
     m_button->setFocusPolicy(Qt::NoFocus);
 
     QObject::connect(m_button, &QAbstractButton::clicked, this, [this]() {
-        if(m_commandHandler->canExecute(m_config.commandId)) {
+        if(m_commandHandler->canExecute(m_config.commandId, m_config.target)) {
             const QPointer self{this};
-            m_commandHandler->execute(m_config.commandId);
+            m_commandHandler->execute(m_config.commandId, m_config.target);
             if(self) {
                 QMetaObject::invokeMethod(self, &CommandButton::updateButton, Qt::QueuedConnection);
             }
@@ -182,6 +192,7 @@ CommandButton::ConfigData CommandButton::defaultConfig() const
     config.iconName        = m_settings->fileValue(IconNameKey, config.iconName).toString().trimmed();
     config.iconPath        = m_settings->fileValue(IconPathKey, config.iconPath).toString().trimmed();
     config.toolButtonStyle = m_settings->fileValue(ButtonStyleKey, config.toolButtonStyle).toInt();
+    config.target          = commandTarget(m_settings->fileValue(TargetKey, static_cast<int>(config.target)).toInt());
 
     return config;
 }
@@ -212,6 +223,7 @@ void CommandButton::applyConfig(const ConfigData& config)
     m_config.iconName        = config.iconName.trimmed();
     m_config.iconPath        = config.iconPath.trimmed();
     m_config.toolButtonStyle = config.toolButtonStyle;
+    m_config.target          = commandTarget(static_cast<int>(config.target));
 
     rebindAction();
     updateButtonStyle();
@@ -225,6 +237,7 @@ void CommandButton::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(IconNameKey, config.iconName.trimmed());
     m_settings->fileSet(IconPathKey, config.iconPath.trimmed());
     m_settings->fileSet(ButtonStyleKey, config.toolButtonStyle);
+    m_settings->fileSet(TargetKey, static_cast<int>(config.target));
 }
 
 void CommandButton::clearSavedDefaults() const
@@ -234,6 +247,7 @@ void CommandButton::clearSavedDefaults() const
     m_settings->fileRemove(IconNameKey);
     m_settings->fileRemove(IconPathKey);
     m_settings->fileRemove(ButtonStyleKey);
+    m_settings->fileRemove(TargetKey);
 }
 
 void CommandButton::saveLayoutData(QJsonObject& layout)
@@ -285,6 +299,9 @@ CommandButton::ConfigData CommandButton::configFromLayout(const QJsonObject& lay
     if(layout.contains("ToolButtonStyle"_L1)) {
         config.toolButtonStyle = layout.value("ToolButtonStyle"_L1).toInt();
     }
+    if(layout.contains("Target"_L1)) {
+        config.target = commandTarget(layout.value("Target"_L1).toInt());
+    }
 
     return config;
 }
@@ -296,6 +313,7 @@ void CommandButton::saveConfigToLayout(const ConfigData& config, QJsonObject& la
     layout["IconName"_L1]        = config.iconName.trimmed();
     layout["IconPath"_L1]        = config.iconPath.trimmed();
     layout["ToolButtonStyle"_L1] = config.toolButtonStyle;
+    layout["Target"_L1]          = static_cast<int>(config.target);
 }
 
 void CommandButton::rebindAction()
@@ -337,7 +355,7 @@ void CommandButton::updateButton()
     const bool customIconRequested = !m_config.iconPath.isEmpty();
     const bool usingCustomFallback = customIconRequested && configuredIcon.isNull();
     const bool usingCustomIcon     = customIconRequested && !usingThemeIcon && !configuredIcon.isNull();
-    const bool canExecute          = m_commandHandler && m_commandHandler->canExecute(m_config.commandId);
+    const bool canExecute  = m_commandHandler && m_commandHandler->canExecute(m_config.commandId, m_config.target);
     const bool isCheckable = m_boundCommand && m_boundCommand->action() && m_boundCommand->action()->isCheckable();
     const bool isChecked   = isCheckable && m_boundCommand->action()->isChecked();
 
@@ -352,10 +370,16 @@ void CommandButton::updateButton()
     m_button->setChecked(isChecked);
 
     const QString description = currentDescription(m_config.commandId, m_config.text);
+    QString statusTip{description};
+    if(!m_config.commandId.isEmpty() && !canExecute) {
+        statusTip += u": "_s + tr("Command is currently unavailable.");
+    }
+
+    const QString toolTip = currentToolTip(usingThemeIconFallback, usingCustomFallback);
     m_button->setText(description);
-    m_button->setToolTip(currentToolTip(usingThemeIconFallback, usingCustomFallback));
-    m_button->setStatusTip(m_button->toolTip());
-    m_button->setWhatsThis(m_button->toolTip());
+    m_button->setToolTip(toolTip);
+    m_button->setStatusTip(statusTip);
+    m_button->setWhatsThis(toolTip);
     m_button->updateGeometry();
     m_button->update();
 
@@ -467,7 +491,7 @@ QString CommandButton::currentToolTip(bool usingFallbackForThemeIcon, bool using
         }
     }
 
-    const bool canExecute = m_commandHandler && m_commandHandler->canExecute(m_config.commandId);
+    const bool canExecute = m_commandHandler && m_commandHandler->canExecute(m_config.commandId, m_config.target);
 
     if(!m_config.commandId.isEmpty() && !canExecute) {
         toolTip += u"\n"_s + tr("Command is currently unavailable.");
