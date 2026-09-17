@@ -26,6 +26,7 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
+#include <core/player/playercontroller.h>
 #include <gui/guiconstants.h>
 #include <gui/plugins/guiplugincontext.h>
 #include <gui/statusevent.h>
@@ -72,21 +73,13 @@ bool canUsePreset(Operation operation, const TrackList& tracks)
 }
 } // namespace
 
-FileOpsPlugin::FileOpsPlugin()
-    : m_actionManager{nullptr}
-    , m_audioLoader{nullptr}
-    , m_library{nullptr}
-    , m_libraryManager{nullptr}
-    , m_trackSelectionController{nullptr}
-    , m_settings{nullptr}
-{ }
-
 void FileOpsPlugin::initialise(const CorePluginContext& context)
 {
-    m_audioLoader    = context.audioLoader;
-    m_library        = context.library;
-    m_libraryManager = context.libraryManager;
-    m_settings       = context.settingsManager;
+    m_audioLoader      = context.audioLoader;
+    m_library          = context.library;
+    m_libraryManager   = context.libraryManager;
+    m_playerController = context.playerController;
+    m_settings         = context.settingsManager;
 }
 
 void FileOpsPlugin::initialise(const GuiPluginContext& context)
@@ -223,35 +216,7 @@ void FileOpsPlugin::setupMenu()
             return;
         }
 
-        const auto runDelete = [this, tracks = selection->tracks]() {
-            auto* worker = new FileOpsWorker(m_library, m_audioLoader, tracks, m_settings);
-            auto* thread = new QThread(this);
-            worker->moveToThread(thread);
-
-            QObject::connect(worker, &FileOpsWorker::deleteFinished, this, [](const TrackList& deletedTracks) {
-                const QString status = deletedTracks.empty()
-                                         ? tr("No tracks deleted")
-                                         : tr("Deleted %Ln track(s)", nullptr, static_cast<int>(deletedTracks.size()));
-                StatusEvent::post(status);
-            });
-            QObject::connect(worker, &Worker::finished, thread, &QThread::quit);
-            QObject::connect(thread, &QThread::finished, worker, &QObject::deleteLater);
-            QObject::connect(thread, &QThread::finished, thread, &QObject::deleteLater);
-
-            thread->start();
-            QMetaObject::invokeMethod(worker, &FileOpsWorker::deleteFiles);
-        };
-
-        const bool confirm = m_settings->fileValue(Settings::ConfirmDelete, true).toBool();
-        if(confirm) {
-            auto* dialog = new FileOpsDeleteDialog(selection->tracks, m_settings, Utils::getMainWindow());
-            dialog->setAttribute(Qt::WA_DeleteOnClose);
-            QObject::connect(dialog, &QDialog::accepted, dialog, runDelete);
-            dialog->open();
-        }
-        else {
-            runDelete();
-        }
+        deleteTracks(selection->tracks);
     });
 
     m_trackSelectionController->registerTrackContextAction(
@@ -264,6 +229,58 @@ void FileOpsPlugin::setupMenu()
             deleteAction->setEnabled(true);
             menu->addAction(deleteAction);
         });
+
+    auto* deletePlayingAction = new QAction(tr("Delete currently playing file"), this);
+    auto* deletePlayingCmd    = m_actionManager->registerAction(deletePlayingAction, "FileOps.DeletePlaying");
+    deletePlayingCmd->setCategories({tr("Tracks"), tr("File operations")});
+
+    const auto updateDeletePlayingAction = [deletePlayingAction](const Track& track) {
+        deletePlayingAction->setEnabled(track.isValid() && canOperateOnTracks({track}));
+    };
+    updateDeletePlayingAction(m_playerController->currentTrack());
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, deletePlayingAction,
+                     updateDeletePlayingAction);
+    QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, deletePlayingAction,
+                     updateDeletePlayingAction);
+    QObject::connect(deletePlayingAction, &QAction::triggered, deletePlayingAction, [this]() {
+        const Track track = m_playerController->currentTrack();
+        if(track.isValid() && canOperateOnTracks({track})) {
+            deleteTracks({track});
+        }
+    });
+}
+
+void FileOpsPlugin::deleteTracks(const TrackList& tracks)
+{
+    const auto runDelete = [this, tracks]() {
+        auto* worker = new FileOpsWorker(m_library, m_audioLoader, tracks, m_settings);
+        auto* thread = new QThread(this);
+        worker->moveToThread(thread);
+
+        QObject::connect(worker, &FileOpsWorker::deleteFinished, this, [](const TrackList& deletedTracks) {
+            const QString status = deletedTracks.empty()
+                                     ? tr("No tracks deleted")
+                                     : tr("Deleted %Ln track(s)", nullptr, static_cast<int>(deletedTracks.size()));
+            StatusEvent::post(status);
+        });
+        QObject::connect(worker, &Worker::finished, thread, &QThread::quit);
+        QObject::connect(thread, &QThread::finished, worker, &QObject::deleteLater);
+        QObject::connect(thread, &QThread::finished, thread, &QObject::deleteLater);
+
+        thread->start();
+        QMetaObject::invokeMethod(worker, &FileOpsWorker::deleteFiles);
+    };
+
+    const bool confirm = m_settings->fileValue(Settings::ConfirmDelete, true).toBool();
+    if(confirm) {
+        auto* dialog = new FileOpsDeleteDialog(tracks, m_settings, Utils::getMainWindow());
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        QObject::connect(dialog, &QDialog::accepted, dialog, runDelete);
+        dialog->open();
+    }
+    else {
+        runDelete();
+    }
 }
 
 void FileOpsPlugin::openDialog(const TrackSelection& selection, Operation operation, const QString& presetName)

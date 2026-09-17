@@ -23,6 +23,7 @@
 
 #include <core/plugins/coreplugin.h>
 #include <core/plugins/plugin.h>
+#include <core/track.h>
 #include <gui/plugins/guiplugin.h>
 #include <utils/id.h>
 
@@ -34,6 +35,7 @@ class QAction;
 namespace Fooyin {
 class AudioLoader;
 class Command;
+class PlayerController;
 struct TrackSelection;
 
 namespace FileOps {
@@ -47,8 +49,6 @@ class FileOpsPlugin : public QObject,
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:
-    FileOpsPlugin();
-
     void initialise(const CorePluginContext& context) override;
     void initialise(const GuiPluginContext& context) override;
 
@@ -63,6 +63,7 @@ private:
     };
 
     void setupMenu();
+    void deleteTracks(const TrackList& tracks);
     void openDialog(const TrackSelection& selection, Operation operation, const QString& presetName = {});
     void refreshPresetActions();
 
@@ -70,6 +71,7 @@ private:
     std::shared_ptr<AudioLoader> m_audioLoader;
     MusicLibrary* m_library;
     LibraryManager* m_libraryManager;
+    PlayerController* m_playerController;
     TrackSelectionController* m_trackSelectionController;
     SettingsManager* m_settings;
     std::vector<PresetAction> m_presetActions;
