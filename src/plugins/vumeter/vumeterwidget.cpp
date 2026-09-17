@@ -1263,11 +1263,9 @@ void VuMeterWidget::contextMenuEvent(QContextMenuEvent* event)
     addLabelAction(tr("Left"), &ConfigData::showLeftLabels);
     addLabelAction(tr("Right"), &ConfigData::showRightLabels);
 
-    auto* orientationMenu  = new QMenu(tr("Orientation"), menu);
-    auto* orientationGroup = new QActionGroup(orientationMenu);
-
-    auto* horizontal = new QAction(tr("Horizontal"), orientationGroup);
-    auto* vertical   = new QAction(tr("Vertical"), orientationGroup);
+    auto* orientationGroup = new QActionGroup(menu);
+    auto* horizontal       = new QAction(tr("Horizontal"), orientationGroup);
+    auto* vertical         = new QAction(tr("Vertical"), orientationGroup);
 
     horizontal->setCheckable(true);
     vertical->setCheckable(true);
@@ -1278,13 +1276,12 @@ void VuMeterWidget::contextMenuEvent(QContextMenuEvent* event)
     QObject::connect(horizontal, &QAction::triggered, this, [this]() { setOrientation(Qt::Horizontal); });
     QObject::connect(vertical, &QAction::triggered, this, [this]() { setOrientation(Qt::Vertical); });
 
-    orientationMenu->addAction(horizontal);
-    orientationMenu->addAction(vertical);
-
+    menu->addAction(horizontal);
+    menu->addAction(vertical);
+    menu->addSeparator();
     menu->addAction(showPeaks);
     menu->addMenu(labelsMenu);
     menu->addSeparator();
-    menu->addMenu(orientationMenu);
     addConfigureAction(menu);
 
     menu->popup(event->globalPos());
