@@ -113,7 +113,6 @@ ScriptScanner::ScriptScanner()
     , m_lastToken{nullptr}
     , m_currentTokenIndex{0}
     , m_whitespaceMode{WhitespaceMode::Preserve}
-    , m_commentsEnabled{true}
 { }
 
 void ScriptScanner::setup(const QString& input)
@@ -178,11 +177,6 @@ void ScriptScanner::setWhitespaceMode(WhitespaceMode mode)
     m_whitespaceMode = mode;
 }
 
-void ScriptScanner::setCommentsEnabled(bool enabled)
-{
-    m_commentsEnabled = enabled;
-}
-
 ScriptScanner::Token ScriptScanner::scanNext(bool insideQuote)
 {
     m_start = m_current;
@@ -222,7 +216,7 @@ ScriptScanner::Token ScriptScanner::scanNext(bool insideQuote)
         case u'/': {
             const bool atLineStart = m_start == m_input.cbegin() || std::prev(m_start)->unicode() == u'\n'
                                   || std::prev(m_start)->unicode() == u'\r';
-            if(m_commentsEnabled && !insideQuote && atLineStart && peek() == u'/') {
+            if(!insideQuote && atLineStart && peek() == u'/') {
                 return comment();
             }
             return makeToken(TokSlash);

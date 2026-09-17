@@ -200,4 +200,90 @@ TEST_F(ScriptFormatterTest, Link)
     EXPECT_EQ(u"https://example.com"_s, result.blocks.front().format.link);
     EXPECT_TRUE(result.blocks.front().format.font.underline());
 }
+
+TEST_F(ScriptFormatterTest, LiteralAngleBrackets)
+{
+    const auto result = m_formattter.evaluate(u"a < b > c"_s);
+    EXPECT_EQ(u"a < b > c"_s, result.joinedText());
+}
+
+TEST_F(ScriptFormatterTest, LiteralLessThanNumber)
+{
+    const auto result = m_formattter.evaluate(u"I <3 this"_s);
+    EXPECT_EQ(u"I <3 this"_s, result.joinedText());
+}
+
+TEST_F(ScriptFormatterTest, UnknownTagIsLiteral)
+{
+    const auto result = m_formattter.evaluate(u"<notatag>rest</notatag>"_s);
+    EXPECT_EQ(u"<notatag>rest</notatag>"_s, result.joinedText());
+}
+
+TEST_F(ScriptFormatterTest, IncompleteTagIsLiteral)
+{
+    const auto result = m_formattter.evaluate(u"an incomplete <b tag"_s);
+    EXPECT_EQ(u"an incomplete <b tag"_s, result.joinedText());
+}
+
+TEST_F(ScriptFormatterTest, KnownTagWithInvalidOptionStillRendersText)
+{
+    const auto result = m_formattter.evaluate(u"<size=large>text</size>"_s);
+
+    ASSERT_EQ(1, result.size());
+    EXPECT_EQ(u"text"_s, result.blocks.front().text);
+    ASSERT_EQ(1, m_formattter.errors().size());
+    EXPECT_EQ(0, m_formattter.errors().front().position);
+    EXPECT_EQ(u"[0] Error in formatting tag '<size=large>': invalid formatting option."_s,
+              m_formattter.errors().front().message);
+}
+
+TEST_F(ScriptFormatterTest, LiteralAngleBracketsDoNotReportErrors)
+{
+    m_formattter.evaluate(u"I <3 this; a < b > c; <notatag>"_s);
+    EXPECT_TRUE(m_formattter.errors().empty());
+}
+
+TEST_F(ScriptFormatterTest, ErrorsAreClearedBeforeEvaluation)
+{
+    m_formattter.evaluate(u"<size=large>text</size>"_s);
+    ASSERT_FALSE(m_formattter.errors().empty());
+
+    m_formattter.evaluate({});
+    EXPECT_TRUE(m_formattter.errors().empty());
+}
+
+TEST_F(ScriptFormatterTest, LiteralBeforeFormattingTag)
+{
+    const auto result = m_formattter.evaluate(u"I <3 <b>this</b>"_s);
+
+    ASSERT_EQ(2, result.size());
+    EXPECT_EQ(u"I <3 "_s, result.blocks.front().text);
+    EXPECT_FALSE(result.blocks.front().format.font.bold());
+    EXPECT_EQ(u"this"_s, result.blocks.back().text);
+    EXPECT_TRUE(result.blocks.back().format.font.bold());
+}
+
+TEST_F(ScriptFormatterTest, LiteralInsideFormattingTag)
+{
+    const auto result = m_formattter.evaluate(u"<b>I <3 this</b>"_s);
+
+    ASSERT_EQ(1, result.size());
+    EXPECT_EQ(u"I <3 this"_s, result.blocks.front().text);
+    EXPECT_TRUE(result.blocks.front().format.font.bold());
+}
+
+TEST_F(ScriptFormatterTest, KeywordWordsAreLiteral)
+{
+    const auto result = m_formattter.evaluate(u"<LESS> 5 LESS than 6 GREATER"_s);
+    EXPECT_EQ(u"<LESS> 5 LESS than 6 GREATER"_s, result.joinedText());
+}
+
+TEST_F(ScriptFormatterTest, KeywordWordsCannotCloseTag)
+{
+    const auto result = m_formattter.evaluate(u"<b>LESS/b GREATER</b>"_s);
+
+    ASSERT_EQ(1, result.size());
+    EXPECT_EQ(u"LESS/b GREATER"_s, result.blocks.front().text);
+    EXPECT_TRUE(result.blocks.front().format.font.bold());
+}
 } // namespace Fooyin::Testing

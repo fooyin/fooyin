@@ -734,7 +734,7 @@ public:
     void referenceItemActivated(const QModelIndex& index);
     void referenceTabChanged(int index);
 
-    void showErrors() const;
+    void showErrors();
 
     void saveState();
     void restoreState();
@@ -793,6 +793,8 @@ public:
     ScriptContext m_scriptContext;
 
     ParsedScript m_currentScript;
+    ErrorList m_formatErrors;
+    bool m_errorsVisible{false};
 };
 
 ScriptEditorPrivate::ScriptEditorPrivate(ScriptEditor* self, LibraryManager* libraryManager, const Track& track,
@@ -1276,10 +1278,14 @@ void ScriptEditorPrivate::updateResults(const Expression& expression)
     const Track track      = m_track.isValid() ? m_track : m_placeholderTrack;
     const auto result      = m_parser.evaluate(script, track, m_scriptContext);
     const auto formatted   = m_formatter.evaluate(result);
+    m_formatErrors         = m_formatter.errors();
     const QString htmlBody = richTextToHtml(formatted);
     const QString html     = u"<html><body style=\"margin:0;\">%1</body></html>"_s.arg(htmlBody);
 
     m_results->setHtml(html);
+    if(m_errorsVisible) {
+        showErrors();
+    }
 }
 
 void ScriptEditorPrivate::trackContextChanged()
@@ -1307,6 +1313,8 @@ void ScriptEditorPrivate::textChanged()
 {
     m_textChangeTimer.start(TextChangeInterval, m_self);
     m_results->clear();
+    m_formatErrors.clear();
+    m_errorsVisible = false;
 
     m_currentScript = m_parser.parse(m_editor->toPlainText());
     m_model->populate(m_currentScript.expressions);
@@ -1345,10 +1353,14 @@ void ScriptEditorPrivate::referenceTabChanged(int index)
     }
 }
 
-void ScriptEditorPrivate::showErrors() const
+void ScriptEditorPrivate::showErrors()
 {
-    const auto errors = m_currentScript.errors;
-    for(const ScriptError& error : errors) {
+    m_errorsVisible = true;
+
+    for(const ScriptError& error : m_currentScript.errors) {
+        m_results->append(error.message.toHtmlEscaped());
+    }
+    for(const ScriptError& error : m_formatErrors) {
         m_results->append(error.message.toHtmlEscaped());
     }
 }

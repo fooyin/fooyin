@@ -97,7 +97,6 @@ public:
     Token peekNext(int delta = 1);
 
     void setWhitespaceMode(WhitespaceMode mode);
-    void setCommentsEnabled(bool enabled);
 
 private:
     Token scanNext(bool insideQuote);
@@ -121,6 +120,5 @@ private:
     Token* m_lastToken;
     int m_currentTokenIndex;
     WhitespaceMode m_whitespaceMode;
-    bool m_commentsEnabled;
 };
 } // namespace Fooyin
