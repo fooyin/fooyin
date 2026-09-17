@@ -95,8 +95,7 @@ public:
         const QColor highlight       = palette.color(QPalette::Active, QPalette::Highlight);
         const QColor highlightedText = palette.color(QPalette::Active, QPalette::HighlightedText);
         const QColor window          = palette.color(QPalette::Active, QPalette::Window);
-        QColor low                   = blendColours(highlight, window, 0.55);
-        low.setAlpha(210);
+        const QColor low             = blendColours(highlight, window, 0.55);
 
         return {blendColours(highlight, highlightedText, 0.25), highlight, low};
     }
