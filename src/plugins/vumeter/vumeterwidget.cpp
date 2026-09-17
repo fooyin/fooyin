@@ -647,6 +647,7 @@ void VuMeterWidgetPrivate::drawLegend(QPainter& painter)
     QColor lineColour = legendColour;
     lineColour.setAlpha(65);
     linePen.setColor(lineColour);
+    linePen.setCosmetic(true);
 
     const QFontMetrics fm{painter.fontMetrics()};
     const QString dbText = u"%1dB"_s;
