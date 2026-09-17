@@ -68,6 +68,7 @@ private:
     ColourButton* m_bgColour;
     ColourButton* m_peakColour;
     ColourButton* m_legendColour;
+    ColourButton* m_gridlinesColour;
     GradientEditor* m_barGradient;
 };
 } // namespace VuMeter

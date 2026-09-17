@@ -643,10 +643,9 @@ void VuMeterWidgetPrivate::drawLegend(QPainter& painter)
         return static_cast<int>(m_meterY + m_meterHeight - (m_meterHeight * (fltDb - MinDb) / DbRange));
     };
 
-    QPen linePen      = painter.pen();
-    QColor lineColour = legendColour;
-    lineColour.setAlpha(65);
-    linePen.setColor(lineColour);
+    QPen linePen{painter.pen()};
+    const QColor gridlinesColour = m_colours.colour(Colours::Type::Gridlines, m_self->palette());
+    linePen.setColor(gridlinesColour);
     linePen.setCosmetic(true);
 
     const QFontMetrics fm{painter.fontMetrics()};
@@ -1368,6 +1367,7 @@ VuMeterWidget::ConfigData VuMeterWidget::configFromLayout(const QJsonObject& lay
             setColour(u"BackgroundColour"_s, Colours::Type::Background);
             setColour(u"PeakColour"_s, Colours::Type::Peak);
             setColour(u"LegendColour"_s, Colours::Type::Legend);
+            setColour(u"GridlinesColour"_s, Colours::Type::Gridlines);
 
             if(const QJsonValue value = layout.value("BarGradientColours"_L1); value.isArray()) {
                 std::vector<QColor> gradient;
@@ -1441,6 +1441,7 @@ void VuMeterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& la
         saveColour(u"BackgroundColour"_s, Colours::Type::Background);
         saveColour(u"PeakColour"_s, Colours::Type::Peak);
         saveColour(u"LegendColour"_s, Colours::Type::Legend);
+        saveColour(u"GridlinesColour"_s, Colours::Type::Gridlines);
 
         const std::vector<QColor>& customGradient = colours.customGradient();
         if(customGradient.empty()) {

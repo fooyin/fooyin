@@ -63,6 +63,7 @@ VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidge
     , m_bgColour{new ColourButton(tr("Background colour") + ":"_L1, true, this)}
     , m_peakColour{new ColourButton(tr("Peak colour") + ":"_L1, true, this)}
     , m_legendColour{new ColourButton(tr("Legend colour") + ":"_L1, true, this)}
+    , m_gridlinesColour{new ColourButton(tr("Gridlines") + ":"_L1, true, this)}
     , m_barGradient{new GradientEditor(this)}
 {
     m_peakHold->setRange(0, 5000);
@@ -140,14 +141,15 @@ VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidge
 
     auto* coloursLayout = new QGridLayout(m_colourGroup);
 
-    const int colourLabelWidth = ColourButton::alignLabels({m_bgColour, m_peakColour, m_legendColour},
-                                                           m_barGradientEnabled->sizeHint().width());
+    const int colourLabelWidth = ColourButton::alignLabels(
+        {m_bgColour, m_peakColour, m_legendColour, m_gridlinesColour}, m_barGradientEnabled->sizeHint().width());
     m_barGradientEnabled->setMinimumWidth(colourLabelWidth);
 
     row = 0;
     coloursLayout->addWidget(m_bgColour, row++, 0, 1, 3);
     coloursLayout->addWidget(m_peakColour, row++, 0, 1, 3);
     coloursLayout->addWidget(m_legendColour, row++, 0, 1, 3);
+    coloursLayout->addWidget(m_gridlinesColour, row++, 0, 1, 3);
     coloursLayout->addWidget(m_barGradientEnabled, row, 0, Qt::AlignTop);
     coloursLayout->addWidget(m_barGradient, row++, 1);
     coloursLayout->setColumnStretch(2, 1);
@@ -215,6 +217,9 @@ VuMeterWidget::ConfigData VuMeterConfigDialog::config() const
     if(m_legendColour->isChecked()) {
         colours.setColour(Colours::Type::Legend, m_legendColour->colour());
     }
+    if(m_gridlinesColour->isChecked()) {
+        colours.setColour(Colours::Type::Gridlines, m_gridlinesColour->colour());
+    }
     if(m_barGradientEnabled->isChecked()) {
         colours.setGradient(m_barGradient->colours());
     }
@@ -259,6 +264,8 @@ void VuMeterConfigDialog::setConfig(const VuMeterWidget::ConfigData& config)
     m_peakColour->setColour(colours.colour(Colours::Type::Peak, palette()));
     m_legendColour->setChecked(colours.hasOverride(Colours::Type::Legend));
     m_legendColour->setColour(colours.colour(Colours::Type::Legend, palette()));
+    m_gridlinesColour->setChecked(colours.hasOverride(Colours::Type::Gridlines));
+    m_gridlinesColour->setColour(colours.colour(Colours::Type::Gridlines, palette()));
     m_barGradientEnabled->setChecked(!colours.customGradient().empty());
     m_barGradient->setColours(colours.gradient(palette()));
     m_barGradient->setEnabled(m_barGradientEnabled->isChecked());
