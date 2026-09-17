@@ -195,6 +195,8 @@ void StatusWidgetPrivate::setupConnections()
     QObject::connect(m_playerController, &PlayerController::bitrateChanged, this, [this](int) { updatePlayingText(); });
     QObject::connect(m_selectionController, &TrackSelectionController::displaySelectionChanged, this,
                      &StatusWidgetPrivate::updateSelectionText);
+    QObject::connect(m_playlistController, &PlaylistController::playlistsLoaded, this,
+                     &StatusWidgetPrivate::updateSelectionText);
     QObject::connect(m_playlistController, &PlaylistController::currentPlaylistChanged, this,
                      &StatusWidgetPrivate::updateSelectionText);
     QObject::connect(m_playlistController, &PlaylistController::currentPlaylistUpdated, this,
