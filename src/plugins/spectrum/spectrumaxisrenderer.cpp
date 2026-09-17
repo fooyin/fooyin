@@ -249,10 +249,12 @@ SpectrumPlotGeometry SpectrumAxisRenderer::layout(const QRect& widgetRect, const
     SpectrumPlotGeometry barGeometry = barGeometryForPlotRect(geometry.plotRect, bandCount, dpr);
     geometry.barRects                = std::move(barGeometry.barRects);
     geometry.sourceBands             = std::move(barGeometry.sourceBands);
-    geometry.horizontalLabels = drawHorizontalLabels
-                                  ? horizontalLabels(metrics, geometry.spectrumRect, geometry.plotRect, bandCount,
-                                                     HighestHorizontalLabelPriority, dpr)
-                                  : std::vector<SpectrumHorizontalLabel>{};
+    geometry.drawHorizontalLabels    = drawHorizontalLabels;
+    geometry.horizontalLabels
+        = drawHorizontalLabels || (m_config.showVerticalGrid && m_config.labelMode == LabelMode::Frequency)
+            ? horizontalLabels(metrics, geometry.spectrumRect, geometry.plotRect, bandCount,
+                               HighestHorizontalLabelPriority, dpr)
+            : std::vector<SpectrumHorizontalLabel>{};
     return geometry;
 }
 
@@ -318,7 +320,7 @@ void SpectrumAxisRenderer::paint(QPainter& painter, const SpectrumPlotGeometry& 
     const QFontMetrics metrics{painter.font()};
     painter.setPen(textColour);
 
-    if(!geometry.horizontalLabels.empty()) {
+    if(geometry.drawHorizontalLabels && !geometry.horizontalLabels.empty()) {
         for(const auto& label : geometry.horizontalLabels) {
             const int textWidth = metrics.horizontalAdvance(label.text);
             const int x         = std::clamp(label.centerX - (textWidth / 2), geometry.spectrumRect.left(),
@@ -751,6 +753,13 @@ void SpectrumAxisRenderer::drawKeyBackgrounds(QPainter& painter, const SpectrumP
         return;
     }
 
+    const DevicePlotRect deviceKeyRect = toDevicePlotRect(keyRect, painter.device()->devicePixelRatioF());
+    const auto noteDeviceEdge          = [&deviceKeyRect, noteCount](int noteIndex) {
+        return deviceKeyRect.left
+             + static_cast<int>(std::round(static_cast<double>(noteIndex) * static_cast<double>(deviceKeyRect.width)
+                                           / static_cast<double>(noteCount)));
+    };
+
     for(int note = startNote; note <= endNote; ++note) {
         const int semitone = ((note % 12) + 12) % 12;
         const bool black   = isBlackKey(semitone);
@@ -758,15 +767,19 @@ void SpectrumAxisRenderer::drawKeyBackgrounds(QPainter& painter, const SpectrumP
             continue;
         }
 
-        const QRect rect = noteCellRect(keyRect, note - startNote, noteCount);
+        const int left    = noteDeviceEdge(note - startNote);
+        const int right   = noteDeviceEdge(note - startNote + 1);
+        const QRectF rect = logicalBarRect(deviceKeyRect, left, std::max(1, right - left));
         painter.fillRect(rect, black ? blackKeyColour : whiteKeyColour);
     }
 
     if(noteWidth > 2.0) {
         painter.setPen(cosmeticPen(separatorColour));
+        const qreal separatorTop    = devicePixelToLogical(deviceKeyRect.top, deviceKeyRect.dpr);
+        const qreal separatorBottom = devicePixelToLogical(deviceKeyRect.top + deviceKeyRect.height, deviceKeyRect.dpr);
         for(int note = startNote + 1; note <= endNote; ++note) {
-            const int x = noteEdgeX(geometry.plotRect, note - startNote, noteCount);
-            painter.drawLine(x, keyRect.top(), x, keyRect.bottom());
+            const qreal x = devicePixelToLogical(noteDeviceEdge(note - startNote), deviceKeyRect.dpr);
+            painter.drawLine(QLineF{x, separatorTop, x, separatorBottom});
         }
     }
 }
