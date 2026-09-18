@@ -37,6 +37,7 @@
 #include <QMenu>
 #include <QPainter>
 #include <QPolygonF>
+#include <QResizeEvent>
 
 using namespace Qt::StringLiterals;
 
@@ -61,6 +62,8 @@ OscilloscopeWidget::OscilloscopeWidget(EngineController* engine, PlayerControlle
     : FyWidget{parent}
     , m_settings{settings}
     , m_session{engine->visualisationService()->createSession()}
+    , m_orientation{Qt::Horizontal}
+    , m_autoOrientation{true}
     , m_window{}
     , m_active{false}
     , m_paused{false}
@@ -92,11 +95,23 @@ QString OscilloscopeWidget::layoutName() const
 void OscilloscopeWidget::saveLayoutData(QJsonObject& layout)
 {
     saveConfigToLayout(m_config, layout);
+
+    if(!m_autoOrientation) {
+        layout["Orientation"_L1] = m_orientation;
+    }
 }
 
 void OscilloscopeWidget::loadLayoutData(const QJsonObject& layout)
 {
     applyConfig(configFromLayout(layout));
+
+    if(layout.contains("Orientation"_L1)) {
+        const auto orientation = static_cast<Qt::Orientation>(layout.value("Orientation"_L1).toInt());
+        if(orientation == Qt::Horizontal || orientation == Qt::Vertical) {
+            m_autoOrientation = false;
+            setOrientation(orientation);
+        }
+    }
 }
 
 OscilloscopeWidget::ConfigData OscilloscopeWidget::factoryConfig() const
@@ -187,6 +202,12 @@ void OscilloscopeWidget::paintEvent(QPaintEvent* /*event*/)
     paint(painter, rect(), palette());
 }
 
+void OscilloscopeWidget::resizeEvent(QResizeEvent* event)
+{
+    updateOrientation();
+    FyWidget::resizeEvent(event);
+}
+
 void OscilloscopeWidget::timerEvent(QTimerEvent* event)
 {
     if(event->timerId() == m_updateTimer.timerId()) {
@@ -260,6 +281,38 @@ void OscilloscopeWidget::contextMenuEvent(QContextMenuEvent* event)
         });
     }
 
+    auto* orientationGroup = new QActionGroup(menu);
+    auto* automatic        = new QAction(tr("Automatic"), orientationGroup);
+    auto* horizontal       = new QAction(tr("Horizontal"), orientationGroup);
+    auto* vertical         = new QAction(tr("Vertical"), orientationGroup);
+
+    auto* orientationMenu = new QMenu(tr("Orientation"), menu);
+    orientationMenu->addAction(automatic);
+    orientationMenu->addAction(horizontal);
+    orientationMenu->addAction(vertical);
+
+    automatic->setCheckable(true);
+    horizontal->setCheckable(true);
+    vertical->setCheckable(true);
+
+    automatic->setChecked(m_autoOrientation);
+    horizontal->setChecked(!m_autoOrientation && m_orientation == Qt::Horizontal);
+    vertical->setChecked(!m_autoOrientation && m_orientation == Qt::Vertical);
+
+    QObject::connect(automatic, &QAction::triggered, this, [this]() {
+        m_autoOrientation = true;
+        updateOrientation();
+    });
+    QObject::connect(horizontal, &QAction::triggered, this, [this]() {
+        m_autoOrientation = false;
+        setOrientation(Qt::Horizontal);
+    });
+    QObject::connect(vertical, &QAction::triggered, this, [this]() {
+        m_autoOrientation = false;
+        setOrientation(Qt::Vertical);
+    });
+
+    menu->addMenu(orientationMenu);
     menu->addSeparator();
     addConfigureAction(menu, false);
     menu->popup(event->globalPos());
@@ -268,6 +321,22 @@ void OscilloscopeWidget::contextMenuEvent(QContextMenuEvent* event)
 void OscilloscopeWidget::openConfigDialog()
 {
     showConfigDialog(new OscilloscopeConfigDialog(this, this), Qt::NonModal);
+}
+
+void OscilloscopeWidget::setOrientation(Qt::Orientation orientation)
+{
+    if(std::exchange(m_orientation, orientation) == orientation) {
+        return;
+    }
+    update();
+}
+
+void OscilloscopeWidget::updateOrientation()
+{
+    if(!m_autoOrientation) {
+        return;
+    }
+    setOrientation(height() > width() ? Qt::Vertical : Qt::Horizontal);
 }
 
 void OscilloscopeWidget::handlePlayStateChanged(Player::PlayState state)
@@ -412,27 +481,39 @@ void OscilloscopeWidget::paint(QPainter& painter, const QRect& rect, const QPale
         return;
     }
 
-    const float gap        = laneCount == 2 ? StereoLaneGapPx : 0.0F;
-    const float laneHeight = std::max(1.0F, (static_cast<float>(rect.height()) - gap) / static_cast<float>(laneCount));
+    const bool horizontal = m_orientation == Qt::Horizontal;
+    const float gap       = laneCount == 2 ? StereoLaneGapPx : 0.0F;
+    const float laneSize
+        = std::max(1.0F, ((horizontal ? static_cast<float>(rect.height()) : static_cast<float>(rect.width())) - gap)
+                             / static_cast<float>(laneCount));
 
     QPen zeroPen{zeroLine};
     zeroPen.setCosmetic(true);
 
     for(int lane{0}; lane < laneCount; ++lane) {
-        const float top     = static_cast<float>(rect.top()) + (static_cast<float>(lane) * (laneHeight + gap));
-        const float centerY = top + (laneHeight * 0.5F);
+        const float laneStart = (horizontal ? static_cast<float>(rect.top()) : static_cast<float>(rect.left()))
+                              + (static_cast<float>(lane) * (laneSize + gap));
+        const float centerX   = horizontal ? 0.0F : laneStart + (laneSize * 0.5F);
+        const float centerY   = horizontal ? laneStart + (laneSize * 0.5F) : 0.0F;
+
         if(m_config.showZeroLine) {
             painter.setPen(zeroPen);
-            painter.drawLine(
-                QLineF{static_cast<float>(rect.left()), centerY, static_cast<float>(rect.right()), centerY});
+            if(horizontal) {
+                painter.drawLine(
+                    QLineF{static_cast<float>(rect.left()), centerY, static_cast<float>(rect.right()), centerY});
+            }
+            else {
+                painter.drawLine(
+                    QLineF{centerX, static_cast<float>(rect.top()), centerX, static_cast<float>(rect.bottom())});
+            }
         }
 
         if(!m_window.isValid() || m_window.format.channelCount() <= 0 || m_window.frameCount <= 0) {
             continue;
         }
 
-        const float lanePadding = std::max(MinLanePaddingPx, laneHeight * LanePaddingRatio);
-        const float amplitude   = std::max(1.0F, ((laneHeight - (lanePadding * 2.0F)) * 0.5F));
+        const float lanePadding = std::max(MinLanePaddingPx, laneSize * LanePaddingRatio);
+        const float amplitude   = std::max(1.0F, ((laneSize - (lanePadding * 2.0F)) * 0.5F));
         const auto samples      = m_window.interleavedSamples();
         const int channels      = m_window.format.channelCount();
         const int frames        = m_window.frameCount;
@@ -450,12 +531,14 @@ void OscilloscopeWidget::paint(QPainter& painter, const QRect& rect, const QPale
         };
 
         QPolygonF points;
-        const int deviceWidth = std::max(1, qRound(static_cast<qreal>(rect.width()) * devicePixelRatioF()));
-        const int pointCount  = std::min(frames, deviceWidth);
+        const int deviceAxis
+            = std::max(1, qRound(static_cast<qreal>(horizontal ? rect.width() : rect.height()) * devicePixelRatioF()));
+        const int pointCount = std::min(frames, deviceAxis);
         points.reserve(pointCount);
 
-        const float xScale
-            = pointCount > 1 ? static_cast<float>(rect.width() - 1) / static_cast<float>(pointCount - 1) : 0.0F;
+        const float axisScale = pointCount > 1 ? static_cast<float>((horizontal ? rect.width() : rect.height()) - 1)
+                                                     / static_cast<float>(pointCount - 1)
+                                               : 0.0F;
         for(int pointIndex{0}; pointIndex < pointCount; ++pointIndex) {
             float sampleValue{0.0F};
             if(pointCount == frames) {
@@ -471,8 +554,12 @@ void OscilloscopeWidget::paint(QPainter& painter, const QRect& rect, const QPale
                 sampleValue = static_cast<float>(sum / static_cast<double>(endFrame - beginFrame));
             }
 
-            const float drawX = static_cast<float>(rect.left()) + (static_cast<float>(pointIndex) * xScale);
-            const float drawY = centerY - (sampleValue * amplitude);
+            const float drawX = horizontal
+                                  ? static_cast<float>(rect.left()) + (static_cast<float>(pointIndex) * axisScale)
+                                  : centerX + (sampleValue * amplitude);
+            const float drawY = horizontal
+                                  ? centerY - (sampleValue * amplitude)
+                                  : static_cast<float>(rect.top()) + (static_cast<float>(pointIndex) * axisScale);
             points.append(QPointF{drawX, drawY});
         }
 

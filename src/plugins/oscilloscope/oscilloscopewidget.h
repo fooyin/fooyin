@@ -32,6 +32,7 @@
 class QJsonObject;
 class QPainter;
 class QPalette;
+class QResizeEvent;
 
 namespace Fooyin {
 class EngineController;
@@ -94,28 +95,39 @@ Q_SIGNALS:
 
 protected:
     void paintEvent(QPaintEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
     void timerEvent(QTimerEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
 
     void openConfigDialog() override;
 
 private:
+    void setOrientation(Qt::Orientation orientation);
+    void updateOrientation();
+
     void handlePlayStateChanged(Player::PlayState state);
+
     void clearWindow();
     void resetPresentation();
+
     [[nodiscard]] int displayedLanes() const;
     [[nodiscard]] Colours colours() const;
+
     void updateSessionConfig();
     void startUpdateTimer();
     void settlePresentationClock();
     void tick();
+
     void paint(QPainter& painter, const QRect& rect, const QPalette& palette) const;
+
     [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
     void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
 
     SettingsManager* m_settings;
     VisualisationSessionPtr m_session;
     ConfigData m_config;
+    Qt::Orientation m_orientation;
+    bool m_autoOrientation;
     VisualisationSession::PcmWindow m_window;
     bool m_active;
     bool m_paused;
