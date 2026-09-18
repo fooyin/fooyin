@@ -725,7 +725,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="243"/>
         <source>Input decoder backend used for the current playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>Backend vstupního dekodéru použitého pro aktuálně přehrávanou skladbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
@@ -2250,10 +2250,10 @@ Pro vyhledání hodnoty pro danou mechaniku použijte AccurateRip, nebo zadejte 
 Disabled: direct reads with no verification (fastest).
 Standard: verifies overlapping reads and retries inconsistencies (slower).
 Paranoid: performs the most thorough available checking and additional retries (slowest).</source>
-        <translation>Kontroluje detekci a opravu chyb při extrahování; přehrávání není ovlivněno.
-Zakázáno: čtení bez ověřování (nejrychlejší).
-Standardní: ověřuje překrývající se čtení a opakuje čtení při nekonzistencích (pomalejší).
-Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalejší).</translation>
+        <translation>Detekce a oprava chyb při extrahování; přehrávání není ovlivněno.
+Zakázáno: čte bez ověřování (nejrychlejší).
+Standardní: porovnává překrývající se čtení, při nekonzistencích opakuje čtení (pomalejší).
+Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (nejpomalejší).</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="71"/>
@@ -3007,52 +3007,52 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="66"/>
         <source>Focused widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktivní widget</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="67"/>
         <source>Use the command as if invoked from the focused widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít příkaz jako by byl vyvolaný z aktivního widgetu</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="68"/>
         <source>Now playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehrávaná skladba</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="69"/>
         <source>Use the currently playing track for selection-based commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Příkazy pracující s výběrem použít na aktuálně přehrávanou skladbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="70"/>
         <source>Current playlist</source>
-        <translation type="unfinished">Vybraný seznam skladeb</translation>
+        <translation>Vybraný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="71"/>
         <source>Use all tracks and the command context of the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít na všechny skladby a kontext příkazu pro vybraný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="72"/>
         <source>Current playlist selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuální výběr v seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="73"/>
         <source>Use the selected tracks and command context of the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít na vybrané skladby a kontext příkazu pro vybraný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="74"/>
         <source>Active selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktivní výběr</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="75"/>
         <source>Use the most recently active track selection, even after focus moves elsewhere.</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít na poslední aktivní vybranou skladbu i poté co dojde ke změně aktivního vstupu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="86"/>
@@ -3082,7 +3082,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="105"/>
         <source>Target</source>
-        <translation type="unfinished"></translation>
+        <translation>Cíl</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="110"/>
@@ -4067,47 +4067,47 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="100"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">Akce po kliknutí</translation>
+        <translation>Akce po kliknutí</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="104"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádná</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="105"/>
         <source>View full size</source>
-        <translation type="unfinished">Zobrazit skutečnou velikost</translation>
+        <translation>Zobrazit skutečnou velikost</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="106"/>
         <source>Next available artwork type</source>
-        <translation type="unfinished"></translation>
+        <translation>Další dostupný typ přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="107"/>
         <source>Show track</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit skladbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="108"/>
         <source>Open containing folder</source>
-        <translation type="unfinished">Otevřít nadřazenou složku</translation>
+        <translation>Otevřít nadřazenou složku</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="109"/>
         <source>Open properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Otevřít vlastnosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="115"/>
         <source>Double-click</source>
-        <translation type="unfinished">Dvojklik</translation>
+        <translation>Dvojklik</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="117"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Prostřední tlačítko</translation>
+        <translation>Prostřední tlačítko</translation>
     </message>
 </context>
 <context>
@@ -4492,7 +4492,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="87"/>
         <source>Path and controls position</source>
-        <translation>Poloha cesty a ovládacích prvků</translation>
+        <translation>Poloha cesty a tlačítek</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="102"/>
@@ -4502,7 +4502,7 @@ Paranoidní: provádí důkladnou kontrolu a dodatečná opakování (nejpomalej
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="103"/>
         <source>Expand/collapse or play now</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozbalit / sbalit nebo přehrát</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="106"/>
@@ -6399,7 +6399,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="233"/>
         <source>Delete currently playing file</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat přehrávaný soubor</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="262"/>
@@ -6696,7 +6696,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="189"/>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="193"/>
         <source>Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehrát</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="69"/>
@@ -7815,7 +7815,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="245"/>
         <source>Show in Layout menu</source>
-        <translation>Zobrazit v nabídce vzhledů</translation>
+        <translation>Zobrazit v nabídce Vzhled</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="287"/>
@@ -9527,7 +9527,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="199"/>
         <source>Expand/collapse or play now</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozbalit / sbalit nebo přehrát</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="81"/>
@@ -9873,7 +9873,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/controls/lovecontrol.cpp" line="232"/>
         <source>Love Control</source>
-        <translation type="unfinished"></translation>
+        <translation>Oblíbenost</translation>
     </message>
 </context>
 <context>
@@ -10157,7 +10157,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="218"/>
         <source>Controls whether playback progress is shown for line-synced lyrics, word-synced lyrics, or both.</source>
-        <translation>Určuje, zda je průběh zobrazován pro texty se synchronizovanými řádky, slovy, nebo pro oboje.</translation>
+        <translation>Zda průběh zobrazovat pro texty se synchronizovanými řádky, slovy, nebo pro oboje.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="252"/>
@@ -10251,17 +10251,17 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="77"/>
         <source>Ly&amp;rics</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Texty písní</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="78"/>
         <source>Open lyrics in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Otevřít texty písní v samostatném okně</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="80"/>
         <source>View</source>
-        <translation type="unfinished">Zobrazit</translation>
+        <translation>Zobrazit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="84"/>
@@ -11432,17 +11432,17 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="87"/>
         <source>Show previous</source>
-        <translation>Zobrazit předchozí</translation>
+        <translation>Zobrazit Předchozí</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="88"/>
         <source>Show play/pause</source>
-        <translation>Zobrazit přehrát / pozastavit</translation>
+        <translation>Zobrazit Přehrát / Pozastavit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="89"/>
         <source>Show next</source>
-        <translation>Zobrazit další</translation>
+        <translation>Zobrazit Další</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="93"/>
@@ -11879,22 +11879,22 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="285"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="286"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontální</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="287"/>
         <source>Vertical</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikální</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="289"/>
         <source>Orientation</source>
-        <translation type="unfinished">Orientace</translation>
+        <translation>Orientace</translation>
     </message>
 </context>
 <context>
@@ -12167,7 +12167,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
         <source>P&amp;ause</source>
-        <translation type="unfinished"></translation>
+        <translation>Poz&amp;astavit</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
@@ -12242,12 +12242,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="87"/>
         <source>Restart the current track or start playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehrát nebo restartovat aktuální skladbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="93"/>
         <source>Pause playback</source>
-        <translation type="unfinished">Pozastavit přehrávání</translation>
+        <translation>Pozastavit přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="99"/>
@@ -12567,17 +12567,17 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="263"/>
         <source>General</source>
-        <translation type="unfinished">Obecné</translation>
+        <translation>Obecné</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="264"/>
         <source>Playback</source>
-        <translation type="unfinished">Přehrávání</translation>
+        <translation>Přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="264"/>
         <source>Queue</source>
-        <translation type="unfinished">Fronta</translation>
+        <translation>Fronta</translation>
     </message>
 </context>
 <context>
@@ -12585,162 +12585,162 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="75"/>
         <source>Playlist-led</source>
-        <translation type="unfinished"></translation>
+        <translation>Následovat seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="76"/>
         <source>Queue-led</source>
-        <translation type="unfinished"></translation>
+        <translation>Následovat frontu přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="77"/>
         <source>Start with an empty playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Spustit s prázdnou frontou přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="78"/>
         <source>Show queue indexes in playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit v seznamu skladeb pořadí ve frontě</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="79"/>
         <source>Continue from the playlist after queued tracks finish</source>
-        <translation type="unfinished"></translation>
+        <translation>Po přehrání všech skladeb ve frontě pokračovat v přehrávání seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="80"/>
         <source>Stop playback after queued tracks finish</source>
-        <translation type="unfinished"></translation>
+        <translation>Po přehrání skladeb ve frontě zastavit přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="81"/>
         <source>Scroll the current track to the top</source>
-        <translation type="unfinished"></translation>
+        <translation>Posunout aktuálně přehrávanou skladbu na začátek</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="82"/>
         <source>Limit recent track history</source>
-        <translation type="unfinished"></translation>
+        <translation>Omezit historii nedávno přehraných skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="83"/>
         <source>History limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Limit historie</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="85"/>
         <source>Replace with selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit vybranými skladbami</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="86"/>
         <source>Replace with the containing group</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit skupinou</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="87"/>
         <source>Replace with all tracks in the current view</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit všemi skladbami aktuálního zobrazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="88"/>
         <source>Insert selected tracks next and play now</source>
-        <translation type="unfinished"></translation>
+        <translation>Vložit vybrané skladby a přehrát</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="91"/>
         <source>The active playlist drives playback, with queued tracks temporarily taking priority</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehrávání řídí aktivní seznam skladeb, skladby ve frontě mají dočasně prioritu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="93"/>
         <source>The queue drives playback, containing the played, current, and upcoming tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehrávání řídí fronta, obsahuje přehrané, přehrávané a následující skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="102"/>
         <source>Replace Playing Tracks with the selected tracks and start playback at the first selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit Přehrávané skladby vybranými skladbami a spustit přehrávání od první vybrané</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="104"/>
         <source>Replace Playing Tracks with the first selected track&apos;s group and start playback at that track</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit Přehrávané skladby skupinou první vybrané skladby a spustit přehrávání od této skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="106"/>
         <source>Replace Playing Tracks with the current view and start playback at the first selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit Přehrávané skladby aktuálním zobrazením a spustit přehrávání od první vybrané skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="108"/>
         <source>Keep Playing Tracks, insert the selected tracks next, and play the first selection immediately</source>
-        <translation type="unfinished"></translation>
+        <translation>Zachovat Přehrávané skladby, vložit vybrané skladby na konec a spustit přehrávání od prvního výběru</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="116"/>
         <source>Start fooyin without restoring the saved queue or current track</source>
-        <translation type="unfinished"></translation>
+        <translation>Spustit fooyin bez obnovení uložené fronty nebo aktuální skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="118"/>
         <source>Queue mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Režim fronty</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="127"/>
         <source>Show the position of each queued override beside its source track in playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>U zdrojových skladeb seznamu skladeb zobrazit jejich pozici ve frontě</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="129"/>
         <source>After the queue empties, continue after the last queued track in its source playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Po přehrání fronty pokračovat v přehrávání další skladby seznamu skladeb následující za poslední přehranou skladbou fronty</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="131"/>
         <source>Stop when the final queued override finishes instead of returning to playlist playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Po přehrání fronty zastavit přehrávání, nepokračovat v přehrávání seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="133"/>
         <source>Playlist-led options</source>
-        <translation type="unfinished"></translation>
+        <translation>Možnosti následování seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="142"/>
         <source>Unlimited</source>
-        <translation type="unfinished">Neomezeno</translation>
+        <translation>Neomezeno</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="144"/>
         <source>Keep the current track at the top of the Playing Tracks view</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazovat aktuálně přehrávanou skladbu na začátku viditelného seznamu Přehrávaných skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="145"/>
         <source>Automatically remove played tracks beyond the retained history</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky odebrat přehrané skladby po dosažení limitu skladeb v historii</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="146"/>
         <source>Number of played tracks to retain before the current track</source>
-        <translation type="unfinished"></translation>
+        <translation>Počet skladeb před aktuálně přehrávanou skladbou, které mají být zachovány v historii</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="148"/>
         <source>Queue-led options</source>
-        <translation type="unfinished"></translation>
+        <translation>Možnosti následování fronty</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="152"/>
         <source>Play now action</source>
-        <translation type="unfinished"></translation>
+        <translation>Akce příkazu Přehrát</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="157"/>
         <source>Display and history</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazení a historie</translation>
     </message>
 </context>
 <context>
@@ -12763,12 +12763,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="191"/>
         <source>Show Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit Pozastavit</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="192"/>
         <source>Show Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit Přehrát</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="193"/>
@@ -12783,27 +12783,27 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="195"/>
         <source>Show Random Track</source>
-        <translation>Zobrazit náhodnou skladbu</translation>
+        <translation>Zobrazit Náhodná skladba</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="199"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="200"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontálně</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="201"/>
         <source>Vertical</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikálně</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="203"/>
         <source>Orientation</source>
-        <translation type="unfinished">Orientace</translation>
+        <translation>Orientace</translation>
     </message>
 </context>
 <context>
@@ -13053,7 +13053,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="202"/>
         <source>Controls how the background image is scaled to the playlist area</source>
-        <translation>Určuje jakým způsobem přizpůsobit zobrazený obrázek oblasti seznamu skladeb</translation>
+        <translation>Jak přizpůsobit zobrazený obrázek oblasti seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="203"/>
@@ -13437,22 +13437,22 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="115"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="116"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontálně</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="117"/>
         <source>Vertical</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikálně</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="119"/>
         <source>Orientation</source>
-        <translation type="unfinished">Orientace</translation>
+        <translation>Orientace</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="173"/>
@@ -13638,7 +13638,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="167"/>
         <source>Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehrát</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="87"/>
@@ -13733,7 +13733,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="137"/>
         <source>&amp;Save playlist…</source>
-        <translation type="unfinished">&amp;Uložit seznam skladeb…</translation>
+        <translation>&amp;Uložit seznam skladeb…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="140"/>
@@ -13795,7 +13795,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="349"/>
         <source>Save the selected playlist to the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit vybraný seznam skladeb do souboru</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="357"/>
@@ -14335,12 +14335,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="82"/>
         <source>&amp;Save playlist…</source>
-        <translation type="unfinished">&amp;Uložit seznam skladeb…</translation>
+        <translation>&amp;Uložit seznam skladeb…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="98"/>
         <source>Save the selected playlist to the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit vybraný seznam skladeb do souboru</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="524"/>
@@ -15428,12 +15428,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="116"/>
         <source>&amp;Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Přehrát</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="117"/>
         <source>Queue &amp;next</source>
-        <translation type="unfinished"></translation>
+        <translation>Zařadit jako &amp;následující</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="118"/>
@@ -15443,7 +15443,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="120"/>
         <source>&amp;Stop after this</source>
-        <translation type="unfinished">&amp;Zastavit po tomto</translation>
+        <translation>&amp;Zastavit po tomto</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="121"/>
@@ -15458,12 +15458,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="302"/>
         <source>Show playing tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit přehrávané skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="303"/>
         <source>Show upcoming tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit následující skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="313"/>
@@ -15473,7 +15473,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="369"/>
         <source>Add to playlist</source>
-        <translation type="unfinished">Přidat do seznamu skladeb</translation>
+        <translation>Přidat do seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="428"/>
@@ -15483,12 +15483,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="441"/>
         <source>Start playback of the selected queue track</source>
-        <translation type="unfinished"></translation>
+        <translation>Spustit přehrávání vybrané skladby fronty</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="445"/>
         <source>Move the selected tracks to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>Zařadit skladbu jako další přehrávanou</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="449"/>
@@ -15498,7 +15498,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="455"/>
         <source>Stop playback at the end of the selected track</source>
-        <translation type="unfinished">Zastavit přehrávání po dosažení konce vybrané skladby</translation>
+        <translation>Zastavit přehrávání po dosažení konce vybrané skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="459"/>
@@ -15541,17 +15541,17 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="39"/>
         <source>Queue view</source>
-        <translation type="unfinished"></translation>
+        <translation>Prohlížeč fronty</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="40"/>
         <source>Playing Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehrávané skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="41"/>
         <source>Upcoming Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Nadcházející skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="42"/>
@@ -15629,12 +15629,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="212"/>
         <source>Upcoming Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Nadcházející skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="212"/>
         <source>Playing Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehrávané skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="215"/>
@@ -16073,7 +16073,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="55"/>
         <source>Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehrát</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="56"/>
@@ -17711,7 +17711,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/controls/ratingcontrol.cpp" line="241"/>
         <source>Rating Control</source>
-        <translation type="unfinished"></translation>
+        <translation>Hodnocení</translation>
     </message>
 </context>
 <context>
@@ -18472,7 +18472,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/scripting/scriptformatter.cpp" line="236"/>
         <source>[%1] Error in formatting tag &apos;%2&apos;: invalid formatting option.</source>
-        <translation type="unfinished"></translation>
+        <translation>[%1] Chyba ve formátovacím tagu &apos;%2&apos;: neplatná možnost formátování.</translation>
     </message>
 </context>
 <context>
@@ -19167,22 +19167,22 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="451"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="452"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontálně</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="453"/>
         <source>Vertical</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikálně</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="455"/>
         <source>Orientation</source>
-        <translation type="unfinished">Orientace</translation>
+        <translation>Orientace</translation>
     </message>
 </context>
 <context>
@@ -19545,12 +19545,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="35"/>
         <source>Prevent display from turning off</source>
-        <translation type="unfinished"></translation>
+        <translation>Zabránit vypnutí monitoru</translation>
     </message>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="39"/>
         <source>Sleep Inhibitor Settings</source>
-        <translation>Nastavení blokování upsání</translation>
+        <translation>Nastavení blokování uspání</translation>
     </message>
 </context>
 <context>
@@ -20711,37 +20711,37 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="85"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">Akce po kliknutí</translation>
+        <translation>Akce po kliknutí</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="89"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádná</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="90"/>
         <source>Show track</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit skladbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="91"/>
         <source>Open containing folder</source>
-        <translation type="unfinished">Otevřít nadřazenou složku</translation>
+        <translation>Otevřít nadřazenou složku</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="92"/>
         <source>Open properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Otevřít vlastnosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="98"/>
         <source>Double-click</source>
-        <translation type="unfinished">Dvojklik</translation>
+        <translation>Dvojklik</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="100"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Prostřední tlačítko</translation>
+        <translation>Prostřední tlačítko</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="108"/>
@@ -22070,22 +22070,22 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="411"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="412"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontální</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="413"/>
         <source>Vertical</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikální</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="415"/>
         <source>Orientation</source>
-        <translation type="unfinished">Orientace</translation>
+        <translation>Orientace</translation>
     </message>
 </context>
 <context>
@@ -22134,7 +22134,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="66"/>
         <source>Gridlines</source>
-        <translation type="unfinished">Mřížka</translation>
+        <translation>Mřížka</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="83"/>
@@ -22149,7 +22149,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="95"/>
         <source>Axes</source>
-        <translation type="unfinished">Osy</translation>
+        <translation>Osy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="109"/>
@@ -22194,22 +22194,22 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="51"/>
         <source>Top labels</source>
-        <translation type="unfinished">Horní popisky</translation>
+        <translation>Horní popisky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="52"/>
         <source>Bottom labels</source>
-        <translation type="unfinished">Dolní popisky</translation>
+        <translation>Dolní popisky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="53"/>
         <source>Left labels</source>
-        <translation type="unfinished">Levé popisky</translation>
+        <translation>Levé popisky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="54"/>
         <source>Right labels</source>
-        <translation type="unfinished">Pravé popisky</translation>
+        <translation>Pravé popisky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="64"/>
@@ -22302,32 +22302,32 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1204"/>
         <source>Labels</source>
-        <translation type="unfinished">Popisky</translation>
+        <translation>Popisky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1216"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Horní</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1217"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Dolní</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1218"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Levé</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1219"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Pravé</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1222"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1224"/>
@@ -22917,12 +22917,12 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/gui/widgets.cpp" line="299"/>
         <source>Rating Control</source>
-        <translation type="unfinished"></translation>
+        <translation>Hodnocení</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="311"/>
         <source>Love Control</source>
-        <translation type="unfinished"></translation>
+        <translation>Oblíbenost</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="331"/>
@@ -24026,7 +24026,7 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/app/commandline.cpp" line="240"/>
         <source>Options</source>
-        <translation>Možnosti</translation>
+        <translation>Volby</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="241"/>
@@ -24041,7 +24041,7 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/app/commandline.cpp" line="242"/>
         <source>Player options</source>
-        <translation>Možnosti přehrávače</translation>
+        <translation>Volby přehrávače</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="242"/>
@@ -24076,47 +24076,47 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/app/commandline.cpp" line="244"/>
         <source>Seek forward (e.g. 5000, 10s, or 1:30)</source>
-        <translation type="unfinished"></translation>
+        <translation>Přetočit vpřed (např. 5000, 10s, nebo 1:30)</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="245"/>
         <source>Seek backward (e.g. 5000, 10s, or 1:30)</source>
-        <translation type="unfinished"></translation>
+        <translation>Přetočit zpět (např. 5000, 10s, nebo 1:30)</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="245"/>
         <source>Volume options</source>
-        <translation type="unfinished"></translation>
+        <translation>Volby hlasitosti</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="246"/>
         <source>Set volume from 0 to 100</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit hlasitost od 0 do 100</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="246"/>
         <source>Increase volume by the configured step</source>
-        <translation type="unfinished"></translation>
+        <translation>Zvýšit hlasitost o zadanou hodnotu</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="247"/>
         <source>Decrease volume by the configured step</source>
-        <translation type="unfinished"></translation>
+        <translation>Snížit hlasitost o zadanou hodnotu</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="247"/>
         <source>Toggle mute</source>
-        <translation type="unfinished"></translation>
+        <translation>Přepnout ztlumení</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="248"/>
         <source>Playback mode options</source>
-        <translation type="unfinished"></translation>
+        <translation>Volby režimu přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="248"/>
         <source>Set repeat: off, playlist, album, or track</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit režim opakování: off, playlist, album, nebo track</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="249"/>
@@ -24126,69 +24126,69 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/app/commandline.cpp" line="249"/>
         <source>Set shuffle: off, tracks, albums, or random</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit režim promíchání: off, tracks, albums, nebo random</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="250"/>
         <source>Files, directories, or HTTP(S) URLs to open</source>
-        <translation type="unfinished"></translation>
+        <translation>Soubory, složky, HTTP(S) adresy, které mají být otevřeny</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="295"/>
         <location filename="../../src/app/commandline.cpp" line="311"/>
         <source>Invalid seek time: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Neplatný čas přetočení: %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="304"/>
         <location filename="../../src/app/commandline.cpp" line="320"/>
         <source>Missing time for seek option.</source>
-        <translation type="unfinished"></translation>
+        <translation>Chybí čas pro volbu přetočení.</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="327"/>
         <source>Volume must be between 0 and 100: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Hlasitost musí být mezi 0 a 100: %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="353"/>
         <source>The repeat option can only be specified once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Volba opakování může být specifikována pouze jednou.</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="359"/>
         <source>Invalid repeat mode: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Neplatný režim opakování: %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="367"/>
         <source>The shuffle option can only be specified once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Volba promíchání může být specifikována pouze jednou.</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="373"/>
         <source>Invalid shuffle mode: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Neplatný režim promíchání: %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="380"/>
         <source>Option requires an argument: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Volba vyžaduje argument: %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="383"/>
         <source>Unknown option: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Neznámá volba: %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="386"/>
         <source>Unable to parse command line options.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se zpracovat parametry příkazového řádku.</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="405"/>
         <source>File or URL does not exist or is not supported: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Soubor nebo adresa neexistuje, nebo není podporována: %1</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="413"/>
@@ -24463,62 +24463,62 @@ hodnocení je zaokrouhleno na jednu, dvě, tři, čtyři, nebo pět hvězd.</tra
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="170"/>
         <source>View mode</source>
-        <translation type="unfinished">Režim zobrazení</translation>
+        <translation>Režim zobrazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="174"/>
         <source>Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehrát</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="177"/>
         <source>Queue next</source>
-        <translation type="unfinished"></translation>
+        <translation>Zařadit jako následující</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="180"/>
         <source>Stop after this</source>
-        <translation type="unfinished">Zastavit po tomto</translation>
+        <translation>Zastavit po tomto</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="184"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Odebrat</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="187"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>Vymazat</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="190"/>
         <source>Sort</source>
-        <translation type="unfinished">Seřadit</translation>
+        <translation>Seřadit</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="194"/>
         <source>Add to playlist</source>
-        <translation type="unfinished">Přidat do seznamu skladeb</translation>
+        <translation>Přidat do seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="198"/>
         <source>Configure</source>
-        <translation type="unfinished">Nastavit</translation>
+        <translation>Nastavit</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="202"/>
         <source>Track menu</source>
-        <translation type="unfinished">Nabídka skladby</translation>
+        <translation>Nabídka skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="476"/>
         <source>Playback Queue</source>
-        <translation type="unfinished">Fronta přehrávání</translation>
+        <translation>Fronta přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="478"/>
         <source>Unchecked items will be hidden from the playback queue context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nezaškrtnuté položky se nebudou zobrazovat v místní nabídce fronty přehrávání.</translation>
     </message>
 </context>
 <context>
