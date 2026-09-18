@@ -55,10 +55,10 @@ enum class MoveDirection : quint8
     Backward
 };
 
-enum class NegativeSizeMode : quint8
+enum class SizeConstraintMode : quint8
 {
     Preserve,
-    ClampToZero
+    Apply
 };
 
 int& userResizeDepth()
@@ -550,7 +550,7 @@ public:
     void updateHandles();
     int findNearestVisibleItem(int handleIndex, MoveDirection direction, int& collapsibleLength) const;
     bool shouldShowWidget(const QWidget* widget) const;
-    void setSizes(const QList<int>& requestedSizes, NegativeSizeMode negativeSizeMode);
+    void setSizes(const QList<int>& requestedSizes, SizeConstraintMode constraintMode);
 
     int size() const
     {
@@ -1138,7 +1138,7 @@ bool FySplitterPrivate::shouldShowWidget(const QWidget* widget) const
     return m_self->isVisible() && !explicitlyHidden;
 }
 
-void FySplitterPrivate::setSizes(const QList<int>& requestedSizes, NegativeSizeMode negativeSizeMode)
+void FySplitterPrivate::setSizes(const QList<int>& requestedSizes, SizeConstraintMode constraintMode)
 {
     m_rebaseSizesOnNextResize = false;
 
@@ -1146,14 +1146,14 @@ void FySplitterPrivate::setSizes(const QList<int>& requestedSizes, NegativeSizeM
         SplitterLayoutStruct* item = m_list.at(index);
         item->storedSize           = requestedSizes.value(index);
 
-        if(negativeSizeMode == NegativeSizeMode::ClampToZero && item->storedSize < 0) {
+        if(constraintMode == SizeConstraintMode::Apply && item->storedSize < 0) {
             item->storedSize = 0;
         }
 
         const int minWidgetLength = axisLength(smartMinSize(item->widget));
         item->collapsed           = item->storedSize == 0 && collapsible(item) && minWidgetLength > 0;
 
-        if(!item->collapsed) {
+        if(!item->collapsed && constraintMode == SizeConstraintMode::Apply) {
             item->storedSize = std::max(item->storedSize, minWidgetLength);
         }
     }
@@ -1220,6 +1220,8 @@ QWidget* FySplitter::replaceWidget(int index, QWidget* replacement)
 
     const QRect currentGeometry = currentWidget->geometry();
     const bool currentWasHidden = currentWidget->isHidden();
+
+    replacement->setGeometry(currentGeometry);
 
     item->widget = replacement;
     currentWidget->setParent(nullptr);
@@ -1437,7 +1439,7 @@ QList<int> FySplitter::sizes() const
 
 void FySplitter::setSizes(const QList<int>& list)
 {
-    p->setSizes(list, NegativeSizeMode::ClampToZero);
+    p->setSizes(list, SizeConstraintMode::Apply);
 }
 
 QByteArray FySplitter::saveState() const
@@ -1470,7 +1472,7 @@ bool FySplitter::restoreState(const QByteArray& state)
     setOpaqueResize(decodedState->opaqueResize);
 
     p->m_opaqueResizeSet = decodedState->opaqueResizeSet;
-    p->setSizes(decodedState->sizes, NegativeSizeMode::Preserve);
+    p->setSizes(decodedState->sizes, SizeConstraintMode::Preserve);
 
     p->doResize();
     updateGeometry();

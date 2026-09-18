@@ -20,6 +20,7 @@
 #include "gui/splitters/fysplitter.h"
 
 #include <QApplication>
+#include <QResizeEvent>
 #include <QSplitter>
 #include <QWidget>
 
@@ -53,6 +54,28 @@ protected:
     {
         return new TestSplitterHandle(orientation(), this);
     }
+};
+
+class AdaptiveMinimumWidget : public QWidget
+{
+public:
+    [[nodiscard]] QSize minimumSizeHint() const override
+    {
+        return m_vertical ? QSize{30, 60} : QSize{100, 20};
+    }
+
+protected:
+    void resizeEvent(QResizeEvent* event) override
+    {
+        const bool vertical = event->size().height() > event->size().width();
+        if(std::exchange(m_vertical, vertical) != vertical) {
+            updateGeometry();
+        }
+        QWidget::resizeEvent(event);
+    }
+
+private:
+    bool m_vertical{false};
 };
 
 QList<QWidget*> addWidgets(FySplitter& splitter, int count)
@@ -286,6 +309,60 @@ TEST(FySplitterTest, SaveStateRoundTripPreservesSizesButNotLocks)
     EXPECT_FALSE(restored.isLocked(0));
     EXPECT_FALSE(restored.isLocked(1));
     EXPECT_FALSE(restored.isLocked(2));
+}
+
+TEST(FySplitterTest, RestoredSizeRecoversAfterChildMinimumSizeHintChanges)
+{
+    TestSplitter source{Qt::Horizontal};
+    addWidgets(source, 2);
+    source.resize(400, 300);
+    source.setSizes({35, 365});
+    const QByteArray state = source.saveState();
+
+    TestSplitter restored{Qt::Horizontal};
+    auto* adaptive = new AdaptiveMinimumWidget;
+    restored.addWidget(adaptive);
+    adaptive->show();
+    auto* sibling = new QWidget;
+    restored.addWidget(sibling);
+    sibling->show();
+    restored.resize(400, 300);
+
+    ASSERT_TRUE(restored.restoreState(state));
+    EXPECT_GE(restored.sizes().at(0), 100);
+
+    restored.show();
+    QApplication::processEvents();
+
+    EXPECT_NEAR(35, restored.sizes().at(0), 2);
+}
+
+TEST(FySplitterTest, LockedRestoredSizeRecoversAfterChildMinimumSizeHintChanges)
+{
+    TestSplitter source{Qt::Horizontal};
+    addWidgets(source, 2);
+    source.resize(400, 300);
+    source.setSizes({35, 365});
+    const QByteArray state = source.saveState();
+
+    TestSplitter restored{Qt::Horizontal};
+    auto* adaptive = new AdaptiveMinimumWidget;
+    restored.addWidget(adaptive);
+    adaptive->show();
+    auto* sibling = new QWidget;
+    restored.addWidget(sibling);
+    sibling->show();
+    restored.resize(400, 300);
+    ASSERT_TRUE(restored.setLocked(0, true));
+
+    ASSERT_TRUE(restored.restoreState(state));
+    EXPECT_GE(restored.sizes().at(0), 100);
+
+    restored.show();
+    QApplication::processEvents();
+
+    EXPECT_NEAR(35, restored.sizes().at(0), 2);
+    EXPECT_TRUE(restored.isLocked(0));
 }
 
 TEST(FySplitterTest, StateCanBeRestoredByQSplitter)
