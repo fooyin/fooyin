@@ -54,7 +54,7 @@
 <context>
     <name>Fooyin::Cdda::CddaSectorReader</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="129"/>
+        <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="130"/>
         <source>CD read offset correction padded %Ln frame(s) with silence before the readable audio range</source>
         <translation>
             <numerusform>CD read offset correction padded %Ln frame with silence before the readable audio range</numerusform>
@@ -62,7 +62,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="169"/>
+        <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="170"/>
         <source>CD read offset correction padded %Ln frame(s) with silence after the readable audio range</source>
         <translation>
             <numerusform>CD read offset correction padded %Ln frame with silence after the readable audio range</numerusform>
@@ -73,7 +73,7 @@
 <context>
     <name>Fooyin::Cdda::LibcdioDriveSession</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="467"/>
+        <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="468"/>
         <source>CD extraction corrected %Ln read inconsistency event(s)</source>
         <translation>
             <numerusform>CD extraction corrected %Ln read inconsistency event</numerusform>
@@ -81,7 +81,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="470"/>
+        <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="471"/>
         <source>CD extraction encountered %Ln read error event(s)</source>
         <translation>
             <numerusform>CD extraction encountered %Ln read error event</numerusform>
@@ -89,7 +89,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="473"/>
+        <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="474"/>
         <source>CD extraction exhausted retries and concealed %Ln unreadable sector event(s)</source>
         <translation>
             <numerusform>CD extraction exhausted retries and concealed %Ln unreadable sector event</numerusform>
@@ -260,7 +260,7 @@
 <context>
     <name>Fooyin::FileOps::FileOpsPlugin</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="234"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="263"/>
         <source>Deleted %Ln track(s)</source>
         <translation>
             <numerusform>Deleted %Ln track</numerusform>
@@ -408,7 +408,7 @@
 <context>
     <name>Fooyin::PlaylistModel</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1591"/>
+        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1599"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln track</numerusform>
@@ -419,7 +419,7 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1729"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1766"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
@@ -535,7 +535,7 @@
 <context>
     <name>Fooyin::VerificationController</name>
     <message numerus="yes">
-        <location filename="../../src/gui/verification/verificationcontroller.cpp" line="197"/>
+        <location filename="../../src/gui/verification/verificationcontroller.cpp" line="198"/>
         <source>%1 of %Ln item(s) decoded successfully.</source>
         <translation>
             <numerusform>%1 of %Ln item decoded successfully.</numerusform>
@@ -543,7 +543,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/verification/verificationcontroller.cpp" line="253"/>
+        <location filename="../../src/gui/verification/verificationcontroller.cpp" line="254"/>
         <source>+%Ln sample(s)</source>
         <translation>
             <numerusform>+%Ln sample</numerusform>
@@ -551,7 +551,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/verification/verificationcontroller.cpp" line="255"/>
+        <location filename="../../src/gui/verification/verificationcontroller.cpp" line="256"/>
         <source>%Ln sample(s)</source>
         <translation>
             <numerusform>%Ln sample</numerusform>
@@ -559,7 +559,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/verification/verificationcontroller.cpp" line="387"/>
+        <location filename="../../src/gui/verification/verificationcontroller.cpp" line="388"/>
         <source>Problems found in %Ln item(s).</source>
         <translation>
             <numerusform>Problems found in %Ln item.</numerusform>
