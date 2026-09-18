@@ -415,12 +415,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="167"/>
         <source>Love flag: 1 when loved, empty otherwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Älskflagga: 1 när älskad, tomt annars</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="169"/>
         <source>Interactive heart editor for the Love flag</source>
-        <translation type="unfinished"></translation>
+        <translation>Interaktiv hjärtredigerare för älskflaggan</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="171"/>
@@ -7869,7 +7869,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="104"/>
         <source>Unloved heart colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Oälskad hjärtfärg</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="106"/>
@@ -7961,12 +7961,12 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="161"/>
         <source>Controls the heart size used by the love editor widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrollerar hjärtstorleken som används av älskredigerarwidgeten</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="163"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>Älska</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="167"/>
@@ -8430,7 +8430,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="318"/>
         <source>Loved</source>
-        <translation type="unfinished"></translation>
+        <translation>Älskad</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="319"/>
@@ -12985,7 +12985,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="61"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>Älska</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="62"/>
@@ -17910,17 +17910,17 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1184"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation>Operatörer</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1185"/>
         <source>Quoted text</source>
-        <translation type="unfinished"></translation>
+        <translation>Citerad text</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1196"/>
         <source>Reset colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Återställ färger</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1220"/>
@@ -18044,7 +18044,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="81"/>
         <source>Synchronise playback statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Synkronisera uppspelningsstatistik</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="82"/>
@@ -18084,12 +18084,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="121"/>
         <source>Synchronisation</source>
-        <translation type="unfinished"></translation>
+        <translation>Synkronisering</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="125"/>
         <source>Import play counts and Loved status from enabled services when a track starts playing</source>
-        <translation type="unfinished"></translation>
+        <translation>Importera antal spelningar och älskad-status från påsatta tjänster när ett spår börjar spelas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="129"/>
@@ -18247,22 +18247,22 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="324"/>
         <source>Submit loved changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Skicka älskad-ändringar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="325"/>
         <source>Submit Love and Unlove changes to this service</source>
-        <translation type="unfinished"></translation>
+        <translation>Skicka älskad- och oälskad-ändringar till denna tjänst</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="329"/>
         <source>Synchronise playback statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Synkronisera uppspelningsstatistik</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="331"/>
         <source>Import play counts and Loved status from this service when a track starts playing</source>
-        <translation type="unfinished"></translation>
+        <translation>Importera antal spelningar och älskad-status från denna tjänster när ett spår börjar spelas</translation>
     </message>
 </context>
 <context>
@@ -20470,7 +20470,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="58"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>Älska</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="59"/>
@@ -20738,7 +20738,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="191"/>
         <source>The local and retrieved durations differ by more than 10 seconds.</source>
-        <translation type="unfinished"></translation>
+        <translation>De lokala och hämtade längderna skiljer med mer är 10&#xa0;sekunder.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="195"/>
@@ -20748,7 +20748,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="198"/>
         <source>Drag this row to match it with a retrieved track.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dra den här raden för att matcha den med ett hämtat spår.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="221"/>
@@ -21167,7 +21167,7 @@ Detta stödjer inte fullständig skriptning.</translation>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="343"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="473"/>
         <source>Database CRCs: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Databas-CRC:n: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="349"/>
@@ -22926,7 +22926,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1366"/>
         <source>Toggle loved</source>
-        <translation type="unfinished"></translation>
+        <translation>Tåggla älskade</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1366"/>
@@ -22936,22 +22936,22 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1368"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>Älska</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1368"/>
         <source>Love selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Älska valda spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1370"/>
         <source>Unlove</source>
-        <translation type="unfinished"></translation>
+        <translation>Oälska</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1370"/>
         <source>Unlove selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Oälska valda spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1386"/>
@@ -22961,7 +22961,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1412"/>
         <source>Converter Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Konverterarutmatning</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1509"/>
@@ -23773,7 +23773,7 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="118"/>
         <source>Open Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna mapp</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="122"/>
