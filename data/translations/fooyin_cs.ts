@@ -7977,12 +7977,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="93"/>
         <source>Only show unrated stars on hovered rows</source>
-        <translation type="unfinished"></translation>
+        <translation>Hvězdy u nehodnocených skladeb zobrazovat až po najetí myší</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="95"/>
         <source>Only show unloved hearts on hovered rows</source>
-        <translation type="unfinished"></translation>
+        <translation>Srdce u neoblíbených skladeb zobrazovat až po najetí myší</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="101"/>
