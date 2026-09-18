@@ -27,11 +27,14 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/stringutils.h>
 
+#include <QActionGroup>
+#include <QBoxLayout>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QMenu>
 #include <QPointer>
+#include <QResizeEvent>
 #include <QSlider>
 #include <QStyleOptionSlider>
 
@@ -47,7 +50,6 @@ class TrackSlider : public QSlider
 public:
     explicit TrackSlider(QWidget* parent = nullptr);
 
-    [[nodiscard]] int positionFromValue(uint64_t value) const;
     uint64_t valueFromPosition(int pos);
 
     void updateMaximum(uint64_t max);
@@ -100,9 +102,12 @@ uint64_t TrackSlider::valueFromPosition(int pos)
     const QRect groove = style()->subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderGroove, this);
     const QRect handle = style()->subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, this);
 
-    const int handleWidth = handle.width();
-    const int sliderPos   = pos - (handleWidth / 2) - groove.x() + 1;
-    const int span        = groove.right() - handleWidth - groove.x() + 1;
+    const bool horizontal = orientation() == Qt::Horizontal;
+    const int handleSize  = horizontal ? handle.width() : handle.height();
+    const int grooveStart = horizontal ? groove.x() : groove.y();
+    const int grooveEnd   = horizontal ? groove.right() : groove.bottom();
+    const int sliderPos   = pos - (handleSize / 2) - grooveStart + 1;
+    const int span        = grooveEnd - handleSize - grooveStart + 1;
 
     return static_cast<uint64_t>(QStyle::sliderValueFromPosition(0, maximum(), sliderPos, span, opt.upsideDown));
 }
@@ -190,7 +195,8 @@ void TrackSlider::mouseReleaseEvent(QMouseEvent* event)
     stopSeeking();
     m_pressPos = {};
 
-    const auto pos = valueFromPosition(static_cast<int>(event->position().x()));
+    const auto pos = valueFromPosition(
+        static_cast<int>(orientation() == Qt::Horizontal ? event->position().x() : event->position().y()));
     Q_EMIT sliderDropped(pos);
 }
 
@@ -205,7 +211,12 @@ void TrackSlider::mouseMoveEvent(QMouseEvent* event)
 
     if(isSeeking() && event->buttons() & Qt::LeftButton) {
         updateSeekPosition(event->position());
-        if(!m_pressPos.isNull() && std::abs(m_pressPos.x() - event->position().x()) > ToolTipDelay) {
+
+        const auto axisPosition = [this](const QPoint& point) {
+            return orientation() == Qt::Horizontal ? point.x() : point.y();
+        };
+        if(!m_pressPos.isNull()
+           && std::abs(axisPosition(m_pressPos) - axisPosition(event->position().toPoint())) > ToolTipDelay) {
             updateToolTip();
         }
     }
@@ -252,25 +263,57 @@ void TrackSlider::wheelEvent(QWheelEvent* event)
 
 void TrackSlider::updateSeekPosition(const QPointF& pos)
 {
-    m_seekPos = pos.toPoint();
-
+    m_seekPos        = pos.toPoint();
     QPoint seekPoint = pos.toPoint();
 
     if(m_toolTip) {
-        const int yPosToWindow  = mapToGlobal(QPoint{0, 0}).y();
-        const bool displayAbove = (yPosToWindow - (height() + m_toolTip->height())) > 0;
+        if(orientation() == Qt::Horizontal) {
+            const int yPosToWindow  = mapToGlobal(QPoint{0, 0}).y();
+            const bool displayAbove = (yPosToWindow - (height() + m_toolTip->height())) > 0;
 
-        seekPoint.setX(seekPoint.x() - (m_toolTip->width() / 2));
-        seekPoint.setX(std::clamp(seekPoint.x(), 0, width() - m_toolTip->width()));
+            seekPoint.setX(seekPoint.x() - (m_toolTip->width() / 2));
+            seekPoint.setX(std::clamp(seekPoint.x(), 0, width() - m_toolTip->width()));
 
-        if(displayAbove) {
-            seekPoint.setY(rect().y() - (m_toolTip->height() / 4));
+            if(displayAbove) {
+                seekPoint.setY(rect().y() - (m_toolTip->height() / 4));
+            }
+            else {
+                seekPoint.setY(rect().bottom() + (height() + m_toolTip->height()));
+            }
         }
         else {
-            seekPoint.setY(rect().bottom() + (height() + m_toolTip->height()));
+            QStyleOptionSlider opt;
+            initStyleOption(&opt);
+
+            const QRect handle = style()->subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, this);
+            const QRect windowHandle{mapTo(window(), handle.topLeft()), handle.size()};
+            const QRect windowRect = window()->rect();
+
+            static constexpr auto gap = 10;
+
+            const int tooltipY = std::clamp(windowHandle.center().y() + (m_toolTip->height() / 2), m_toolTip->height(),
+                                            windowRect.height());
+
+            const bool canPlaceRight = windowHandle.right() + gap + m_toolTip->width() <= windowRect.right();
+            const bool canPlaceLeft  = windowHandle.left() - gap - m_toolTip->width() >= windowRect.left();
+            const bool placeRight
+                = canPlaceRight
+               || (!canPlaceLeft
+                   && windowRect.right() - windowHandle.right() >= windowHandle.left() - windowRect.left());
+
+            if(placeRight) {
+                seekPoint = {windowHandle.right() + gap, tooltipY};
+                m_toolTip->setPosition(seekPoint, Qt::AlignLeft);
+            }
+            else {
+                seekPoint = {windowHandle.left() - gap, tooltipY};
+                m_toolTip->setPosition(seekPoint, Qt::AlignRight);
+            }
         }
 
-        m_toolTip->setPosition(mapTo(window(), seekPoint));
+        if(orientation() == Qt::Horizontal) {
+            m_toolTip->setPosition(mapTo(window(), seekPoint));
+        }
     }
 
     updateToolTip();
@@ -284,7 +327,7 @@ void TrackSlider::updateToolTip()
         m_toolTip->show();
     }
 
-    const auto seekPos = valueFromPosition(m_seekPos.x());
+    const auto seekPos = valueFromPosition(orientation() == Qt::Horizontal ? m_seekPos.x() : m_seekPos.y());
 
     const uint64_t seekDelta = std::max(m_currentPos, seekPos) - std::min(m_currentPos, seekPos);
 
@@ -307,6 +350,8 @@ SeekBar::SeekBar(PlayerController* playerController, SettingsManager* settings, 
     , m_settings{settings}
     , m_container{new SeekContainer(playerController, this)}
     , m_slider{new TrackSlider(this)}
+    , m_orientation{Qt::Horizontal}
+    , m_autoOrientation{true}
 {
     setMouseTracking(true);
 
@@ -349,6 +394,10 @@ void SeekBar::saveLayoutData(QJsonObject& layout)
 {
     layout["ShowLabels"_L1]        = m_container->labelsEnabled();
     layout["ShowRemainingTime"_L1] = m_container->showRemainingTime();
+
+    if(!m_autoOrientation) {
+        layout["Orientation"_L1] = m_orientation;
+    }
 }
 
 void SeekBar::loadLayoutData(const QJsonObject& layout)
@@ -361,6 +410,14 @@ void SeekBar::loadLayoutData(const QJsonObject& layout)
         const auto key = layout.contains("ShowRemainingTime"_L1) ? "ShowRemainingTime"_L1 : "ElapsedTotal"_L1;
         const bool showRemainingTime = layout.value(key).toBool();
         m_container->setShowRemainingTime(showRemainingTime);
+    }
+    if(layout.contains("Orientation"_L1)) {
+        const auto orientation = static_cast<Qt::Orientation>(layout.value("Orientation"_L1).toInt());
+        if(orientation == Qt::Horizontal || orientation == Qt::Vertical) {
+            m_orientation     = orientation;
+            m_autoOrientation = false;
+            updateOrientation();
+        }
     }
 }
 
@@ -388,7 +445,60 @@ void SeekBar::contextMenuEvent(QContextMenuEvent* event)
                      [this](bool checked) { m_container->setShowRemainingTime(checked); });
     menu->addAction(showRemainingTime);
 
+    menu->addSeparator();
+
+    auto* orientationGroup = new QActionGroup(menu);
+    auto* automatic        = new QAction(tr("Automatic"), orientationGroup);
+    auto* horizontal       = new QAction(tr("Horizontal"), orientationGroup);
+    auto* vertical         = new QAction(tr("Vertical"), orientationGroup);
+
+    automatic->setCheckable(true);
+    horizontal->setCheckable(true);
+    vertical->setCheckable(true);
+
+    automatic->setChecked(m_autoOrientation);
+    horizontal->setChecked(!m_autoOrientation && m_orientation == Qt::Horizontal);
+    vertical->setChecked(!m_autoOrientation && m_orientation == Qt::Vertical);
+
+    QObject::connect(automatic, &QAction::triggered, this, [this]() {
+        m_autoOrientation = true;
+        updateOrientation();
+    });
+    QObject::connect(horizontal, &QAction::triggered, this, [this]() {
+        m_autoOrientation = false;
+        m_orientation     = Qt::Horizontal;
+        updateOrientation();
+    });
+    QObject::connect(vertical, &QAction::triggered, this, [this]() {
+        m_autoOrientation = false;
+        m_orientation     = Qt::Vertical;
+        updateOrientation();
+    });
+
+    menu->addAction(automatic);
+    menu->addAction(horizontal);
+    menu->addAction(vertical);
+
     menu->popup(event->globalPos());
+}
+
+void SeekBar::resizeEvent(QResizeEvent* event)
+{
+    updateOrientation();
+    FyWidget::resizeEvent(event);
+}
+
+void SeekBar::updateOrientation()
+{
+    const auto orientation = m_autoOrientation ? (height() > width() ? Qt::Vertical : Qt::Horizontal) : m_orientation;
+    if(m_slider->orientation() == orientation) {
+        return;
+    }
+
+    m_slider->setOrientation(orientation);
+    m_slider->setInvertedAppearance(orientation == Qt::Vertical);
+    m_container->setOrientation(orientation);
+    updateGeometry();
 }
 
 void SeekBar::reset()

@@ -43,8 +43,10 @@ public:
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
 
 private:
+    void updateOrientation();
     void reset();
     void updateSeekEnabled() const;
     void trackChanged(const Track& track);
@@ -57,5 +59,7 @@ private:
     SeekContainer* m_container;
     TrackSlider* m_slider;
     uint64_t m_max;
+    Qt::Orientation m_orientation;
+    bool m_autoOrientation;
 };
 } // namespace Fooyin

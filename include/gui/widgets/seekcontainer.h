@@ -36,6 +36,7 @@ public:
     ~SeekContainer() override;
 
     void insertWidget(int index, QWidget* widget);
+    void setOrientation(Qt::Orientation orientation);
 
     [[nodiscard]] bool labelsEnabled() const;
     [[nodiscard]] bool showRemainingTime() const;
