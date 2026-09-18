@@ -7094,7 +7094,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="290"/>
         <source>The Wayland portal returned an invalid shortcut session</source>
-        <translation type="unfinished"></translation>
+        <translation>Wayland-portalen returnerade en ogiltig genvägssession</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="314"/>
@@ -21062,24 +21062,24 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="180"/>
         <source>Warning: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Varning: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="187"/>
         <source>Error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fel: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="194"/>
         <source>All items decoded successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alla föremål avkodade med succé.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="197"/>
         <source>%1 of %Ln item(s) decoded successfully.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1 av %Ln föremål avkodat med succé.</numerusform>
+            <numerusform>%1 av %Ln föremål avkodade med succé.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
