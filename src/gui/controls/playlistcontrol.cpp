@@ -30,9 +30,12 @@
 
 #include <QAction>
 #include <QActionGroup>
+#include <QBoxLayout>
+#include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QMenu>
+#include <QResizeEvent>
 
 using namespace Qt::StringLiterals;
 
@@ -40,16 +43,18 @@ namespace Fooyin {
 PlaylistControl::PlaylistControl(PlayerController* playerController, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_playerController{playerController}
+    , m_layout{new QHBoxLayout(this)}
     , m_repeat{new ToolButton(settings, this)}
     , m_shuffle{new ToolButton(settings, this)}
+    , m_orientation{Qt::Horizontal}
+    , m_autoOrientation{true}
 
 {
-    auto* layout = new QHBoxLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(0);
+    m_layout->setContentsMargins({});
+    m_layout->setSpacing(0);
 
-    layout->addWidget(m_repeat);
-    layout->addWidget(m_shuffle);
+    m_layout->addWidget(m_repeat);
+    m_layout->addWidget(m_shuffle);
 
     m_repeat->setPopupMode(QToolButton::InstantPopup);
     m_shuffle->setPopupMode(QToolButton::InstantPopup);
@@ -80,6 +85,80 @@ QString PlaylistControl::name() const
 QString PlaylistControl::layoutName() const
 {
     return u"PlaylistControls"_s;
+}
+
+void PlaylistControl::saveLayoutData(QJsonObject& layout)
+{
+    if(!m_autoOrientation) {
+        layout["Orientation"_L1] = m_orientation;
+    }
+}
+
+void PlaylistControl::loadLayoutData(const QJsonObject& layout)
+{
+    if(layout.contains("Orientation"_L1)) {
+        const auto orientation = static_cast<Qt::Orientation>(layout.value("Orientation"_L1).toInt());
+        if(orientation == Qt::Horizontal || orientation == Qt::Vertical) {
+            m_orientation     = orientation;
+            m_autoOrientation = false;
+            updateOrientation();
+        }
+    }
+}
+
+void PlaylistControl::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    auto* orientationGroup = new QActionGroup(menu);
+    auto* automatic        = new QAction(tr("Automatic"), orientationGroup);
+    auto* horizontal       = new QAction(tr("Horizontal"), orientationGroup);
+    auto* vertical         = new QAction(tr("Vertical"), orientationGroup);
+
+    automatic->setCheckable(true);
+    horizontal->setCheckable(true);
+    vertical->setCheckable(true);
+
+    automatic->setChecked(m_autoOrientation);
+    horizontal->setChecked(!m_autoOrientation && m_orientation == Qt::Horizontal);
+    vertical->setChecked(!m_autoOrientation && m_orientation == Qt::Vertical);
+
+    QObject::connect(automatic, &QAction::triggered, this, [this]() {
+        m_autoOrientation = true;
+        updateOrientation();
+    });
+    QObject::connect(horizontal, &QAction::triggered, this, [this]() {
+        m_autoOrientation = false;
+        m_orientation     = Qt::Horizontal;
+        updateOrientation();
+    });
+    QObject::connect(vertical, &QAction::triggered, this, [this]() {
+        m_autoOrientation = false;
+        m_orientation     = Qt::Vertical;
+        updateOrientation();
+    });
+
+    menu->addAction(automatic);
+    menu->addAction(horizontal);
+    menu->addAction(vertical);
+
+    menu->popup(event->globalPos());
+}
+
+void PlaylistControl::resizeEvent(QResizeEvent* event)
+{
+    updateOrientation();
+    FyWidget::resizeEvent(event);
+}
+
+void PlaylistControl::updateOrientation()
+{
+    const auto orientation = m_autoOrientation ? (height() > width() ? Qt::Vertical : Qt::Horizontal) : m_orientation;
+    const auto direction   = orientation == Qt::Vertical ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight;
+    if(m_layout->direction() != direction) {
+        m_layout->setDirection(direction);
+    }
 }
 
 void PlaylistControl::setupMenus()

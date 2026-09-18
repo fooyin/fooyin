@@ -23,6 +23,7 @@
 #include <gui/fywidget.h>
 
 class QHBoxLayout;
+class QResizeEvent;
 
 namespace Fooyin {
 class PlayerController;
@@ -39,14 +40,26 @@ public:
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 
+    void saveLayoutData(QJsonObject& layout) override;
+    void loadLayoutData(const QJsonObject& layout) override;
+
+protected:
+    void contextMenuEvent(QContextMenuEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
+
 private:
+    void updateOrientation();
     void setupMenus();
     void setMode(Playlist::PlayModes mode) const;
     [[nodiscard]] QColor iconColour() const;
 
     PlayerController* m_playerController;
 
+    QHBoxLayout* m_layout;
     ToolButton* m_repeat;
     ToolButton* m_shuffle;
+
+    Qt::Orientation m_orientation;
+    bool m_autoOrientation;
 };
 } // namespace Fooyin
