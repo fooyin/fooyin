@@ -12600,7 +12600,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="78"/>
         <source>Show queue indexes in playlists</source>
-        <translation>Zobrazit v seznamu skladeb pořadí ve frontě</translation>
+        <translation>V seznamu skladeb zobrazit pořadí ve frontě</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="79"/>
@@ -24001,12 +24001,12 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/app/commandline.cpp" line="215"/>
         <source>Only one player option can be used at a time.</source>
-        <translation type="unfinished"></translation>
+        <translation>Může být použita pouze jedna z voleb přehrávače.</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="224"/>
         <source>Only one volume option can be used at a time.</source>
-        <translation type="unfinished"></translation>
+        <translation>Může být použita pouze jedna z voleb hlasitosti.</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="240"/>
