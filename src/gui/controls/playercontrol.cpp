@@ -30,10 +30,13 @@
 #include <utils/utils.h>
 
 #include <QAction>
+#include <QActionGroup>
+#include <QBoxLayout>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QMenu>
+#include <QResizeEvent>
 
 using namespace Qt::StringLiterals;
 
@@ -43,6 +46,7 @@ PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* pla
     : FyWidget{parent}
     , m_actionManager{actionManager}
     , m_playerController{playerController}
+    , m_layout{new QHBoxLayout(this)}
     , m_stop{new ToolButton(settings, this)}
     , m_prev{new ToolButton(settings, this)}
     , m_pause{new ToolButton(settings, this)}
@@ -57,18 +61,19 @@ PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* pla
     , m_showPlayPause{true}
     , m_showNext{true}
     , m_showRandomTrack{false}
+    , m_orientation{Qt::Horizontal}
+    , m_autoOrientation{true}
 {
-    auto* layout = new QHBoxLayout(this);
-    layout->setContentsMargins({});
-    layout->setSpacing(0);
+    m_layout->setContentsMargins({});
+    m_layout->setSpacing(0);
 
-    layout->addWidget(m_stop);
-    layout->addWidget(m_prev);
-    layout->addWidget(m_pause);
-    layout->addWidget(m_play);
-    layout->addWidget(m_playPause);
-    layout->addWidget(m_next);
-    layout->addWidget(m_randomTrack);
+    m_layout->addWidget(m_stop);
+    m_layout->addWidget(m_prev);
+    m_layout->addWidget(m_pause);
+    m_layout->addWidget(m_play);
+    m_layout->addWidget(m_playPause);
+    m_layout->addWidget(m_next);
+    m_layout->addWidget(m_randomTrack);
 
     if(auto* stopCmd = m_actionManager->command(Constants::Actions::Stop)) {
         m_stop->setDefaultAction(stopCmd->action());
@@ -121,6 +126,10 @@ void PlayerControl::saveLayoutData(QJsonObject& layout)
     layout["ShowPlayPause"_L1]   = m_showPlayPause;
     layout["ShowNext"_L1]        = m_showNext;
     layout["ShowRandomTrack"_L1] = m_showRandomTrack;
+
+    if(!m_autoOrientation) {
+        layout["Orientation"_L1] = m_orientation;
+    }
 }
 
 void PlayerControl::loadLayoutData(const QJsonObject& layout)
@@ -151,12 +160,54 @@ void PlayerControl::loadLayoutData(const QJsonObject& layout)
     if(layout.contains("ShowRandomTrack"_L1)) {
         updateButton(m_randomTrack, m_showRandomTrack, layout.value("ShowRandomTrack"_L1).toBool());
     }
+
+    if(layout.contains("Orientation"_L1)) {
+        const auto orientation = static_cast<Qt::Orientation>(layout.value("Orientation"_L1).toInt());
+        if(orientation == Qt::Horizontal || orientation == Qt::Vertical) {
+            m_orientation     = orientation;
+            m_autoOrientation = false;
+            updateOrientation();
+        }
+    }
 }
 
 void PlayerControl::contextMenuEvent(QContextMenuEvent* event)
 {
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    auto* orientationGroup = new QActionGroup(menu);
+    auto* automatic        = new QAction(tr("Automatic"), orientationGroup);
+    auto* horizontal       = new QAction(tr("Horizontal"), orientationGroup);
+    auto* vertical         = new QAction(tr("Vertical"), orientationGroup);
+
+    automatic->setCheckable(true);
+    horizontal->setCheckable(true);
+    vertical->setCheckable(true);
+
+    automatic->setChecked(m_autoOrientation);
+    horizontal->setChecked(!m_autoOrientation && m_orientation == Qt::Horizontal);
+    vertical->setChecked(!m_autoOrientation && m_orientation == Qt::Vertical);
+
+    QObject::connect(automatic, &QAction::triggered, this, [this]() {
+        m_autoOrientation = true;
+        updateOrientation();
+    });
+    QObject::connect(horizontal, &QAction::triggered, this, [this]() {
+        m_autoOrientation = false;
+        m_orientation     = Qt::Horizontal;
+        updateOrientation();
+    });
+    QObject::connect(vertical, &QAction::triggered, this, [this]() {
+        m_autoOrientation = false;
+        m_orientation     = Qt::Vertical;
+        updateOrientation();
+    });
+
+    menu->addAction(automatic);
+    menu->addAction(horizontal);
+    menu->addAction(vertical);
+    menu->addSeparator();
 
     const auto setupButtonControl = [this, menu](const QString& title, ToolButton* button, bool* member) {
         auto* action = menu->addAction(title);
@@ -177,6 +228,21 @@ void PlayerControl::contextMenuEvent(QContextMenuEvent* event)
     setupButtonControl(tr("Show Random Track"), m_randomTrack, &m_showRandomTrack);
 
     menu->popup(event->globalPos());
+}
+
+void PlayerControl::resizeEvent(QResizeEvent* event)
+{
+    updateOrientation();
+    FyWidget::resizeEvent(event);
+}
+
+void PlayerControl::updateOrientation()
+{
+    const auto orientation = m_autoOrientation ? (height() > width() ? Qt::Vertical : Qt::Horizontal) : m_orientation;
+    const auto direction   = orientation == Qt::Vertical ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight;
+    if(m_layout->direction() != direction) {
+        m_layout->setDirection(direction);
+    }
 }
 
 void PlayerControl::updateIcons() const
