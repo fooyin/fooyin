@@ -410,17 +410,17 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="166"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="168"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">Statistika přehrávání</translation>
+        <translation>Statistika přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="167"/>
         <source>Love flag: 1 when loved, empty otherwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Příznak oblíbenosti: 1 pokud je oblíbeno, jinak prázdné</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="169"/>
         <source>Interactive heart editor for the Love flag</source>
-        <translation type="unfinished"></translation>
+        <translation>Interaktivní editor příznaku oblíbenosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="171"/>
@@ -581,27 +581,27 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="293"/>
         <source>Returns true when x is greater than y</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátí hodnotu ‚true‘ pokud je x větší než y</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="328"/>
         <source>Finds the first substring position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Najde pozici prvního výskytu řetězce (počítáno od 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="331"/>
         <source>Finds the first substring position ignoring case (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Najde pozici prvního výskytu řetězce bez ohledu na velikost písmen (počítáno od 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="334"/>
         <source>Finds the last substring position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Najde pozici posledního výskytu řetězce (počítáno od 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="337"/>
         <source>Finds the last substring position ignoring case (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Najde pozici posledního výskytu řetězce bez ohledu na velikost písmen (počítáno od 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="340"/>
@@ -611,22 +611,22 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="350"/>
         <source>Returns the first shortest string</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátí první nejkratší řetězec</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="353"/>
         <source>Finds the first character position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Najde pozici prvního výskytu znaku (počítáno od 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="356"/>
         <source>Finds the last character position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Najde pozici posledního výskytu znaku (počítáno od 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="365"/>
         <source>Returns true when a is longer than b</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátí hodnotu ‚true‘ pokud je a delší než b</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="367"/>
@@ -636,7 +636,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="422"/>
         <source>Builds a clickable link that launches an application</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvoří klikatelný odkaz pro spuštění aplikace</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="428"/>
@@ -646,7 +646,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="484"/>
         <source>Returns the value at the one-based index</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátí hodnotu na pozici daného indexu počítaného od 1</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="493"/>
@@ -1261,7 +1261,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="475"/>
         <source>Returns then when condition is true</source>
-        <translation>Vyhodnotí podmínku a pokud je pravda, vrátí hodnotu za then</translation>
+        <translation>Vyhodnotí podmínku a pokud je pravdivá, vrátí hodnotu za then</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="497"/>
@@ -1809,7 +1809,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="300"/>
         <source>View full size</source>
-        <translation type="unfinished">Zobrazit skutečnou velikost</translation>
+        <translation>Zobrazit skutečnou velikost</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="301"/>
@@ -1921,7 +1921,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="100"/>
         <source>Use front cover before placeholder</source>
-        <translation type="unfinished"></translation>
+        <translation>Před použitím zástupného přebalu použít přední přebal alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="114"/>
@@ -1961,7 +1961,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="134"/>
         <source>Use the track&apos;s front cover when artist artwork is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokud není obrázek interpreta k dispozici, použít přední přebal alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="138"/>
@@ -6846,37 +6846,37 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="52"/>
         <source>Every library filter needs a name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Každý filtr knihovny musí mít název.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="57"/>
         <source>The expression for library filter &quot;%1&quot; is invalid.</source>
-        <translation type="unfinished"></translation>
+        <translation>Výraz filtru knihovny „%1“ není platný.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="89"/>
         <source>Enabled</source>
-        <translation type="unfinished">Povoleno</translation>
+        <translation>Povoleno</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="91"/>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation>Název</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="93"/>
         <source>Query</source>
-        <translation type="unfinished">Dotaz</translation>
+        <translation>Dotaz</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="138"/>
         <source>Enter name</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadej název</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="140"/>
         <source>Enter expression</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadej výraz</translation>
     </message>
 </context>
 <context>
@@ -6885,12 +6885,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="172"/>
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="173"/>
         <source>Filters</source>
-        <translation type="unfinished">Filtry</translation>
+        <translation>Filtry</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="173"/>
         <source>Library</source>
-        <translation type="unfinished">Knihovna</translation>
+        <translation>Knihovna</translation>
     </message>
 </context>
 <context>
@@ -6898,7 +6898,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="77"/>
         <source>Script Editor</source>
-        <translation type="unfinished">Editor skriptů</translation>
+        <translation>Editor skriptů</translation>
     </message>
 </context>
 <context>
@@ -6906,32 +6906,32 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="50"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>Vše</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="76"/>
         <source>Saved Filter Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>Výběr uložených filtrů</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="165"/>
         <source>Rename &apos;All&apos; filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Přejmenovat filtr ‚Vše‘</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="168"/>
         <source>Rename &apos;All&apos; Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Přejmenovat filtr ‚Vše‘</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="168"/>
         <source>Name:</source>
-        <translation type="unfinished">Název:</translation>
+        <translation>Název:</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="177"/>
         <source>Manage library filters…</source>
-        <translation type="unfinished"></translation>
+        <translation>Spravovat filtry knihovny…</translation>
     </message>
 </context>
 <context>
@@ -6939,42 +6939,42 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="52"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>Vše</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="63"/>
         <source>Library filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtr knihovny</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="86"/>
         <source>Saved Filter Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Karty uložených filtrů</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="465"/>
         <source>Rename tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Přejmenovat kartu</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="472"/>
         <source>Tabs position</source>
-        <translation type="unfinished"></translation>
+        <translation>Pozice karet</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="484"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahoře</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="485"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Dole</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="489"/>
         <source>Manage library filters…</source>
-        <translation type="unfinished"></translation>
+        <translation>Spravovat filtry knihovny…</translation>
     </message>
 </context>
 <context>
@@ -7863,42 +7863,42 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="96"/>
         <source>1 star</source>
-        <translation type="unfinished"></translation>
+        <translation>★</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="97"/>
         <source>2 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>★★</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="98"/>
         <source>3 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>★★★</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="99"/>
         <source>4 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>★★★★</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="100"/>
         <source>5 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>★★★★★</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="102"/>
         <source>Unrated</source>
-        <translation type="unfinished"></translation>
+        <translation>Bez hodnocení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="103"/>
         <source>Heart colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Barva srdce</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="104"/>
         <source>Unloved heart colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Barva srdce u neoblíbených</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="106"/>
@@ -7985,22 +7985,22 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="150"/>
         <source>Editor colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Barvy editoru</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="161"/>
         <source>Controls the heart size used by the love editor widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Velikost srdce v editoru oblíbenosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="163"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>Oblíbenost</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="167"/>
         <source>Love editor heart size</source>
-        <translation type="unfinished"></translation>
+        <translation>Velikost srdce v editoru</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="175"/>
@@ -8019,7 +8019,7 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
         <location filename="../../src/utils/heartdelegate.cpp" line="93"/>
         <source>mixed</source>
         <extracomment>Indicates that the selected tracks have different loved values in the tag editor.</extracomment>
-        <translation type="unfinished">různé</translation>
+        <translation>různé</translation>
     </message>
 </context>
 <context>
@@ -8459,17 +8459,17 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="318"/>
         <source>Loved</source>
-        <translation type="unfinished"></translation>
+        <translation>Oblíbená</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="319"/>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ano</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="319"/>
         <source>No</source>
-        <translation type="unfinished">Ne</translation>
+        <translation>Ne</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="321"/>
@@ -13029,7 +13029,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="61"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>Oblíbenost</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="62"/>
@@ -17563,12 +17563,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="301"/>
         <source>Integrations</source>
-        <translation type="unfinished">Integrace</translation>
+        <translation>Integrace</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="301"/>
         <source>Run Services</source>
-        <translation type="unfinished"></translation>
+        <translation>Spustit služby</translation>
     </message>
 </context>
 <context>
@@ -17576,87 +17576,87 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="104"/>
         <source>Add</source>
-        <translation type="unfinished">Přidat</translation>
+        <translation>Přidat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="105"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="106"/>
         <source>Move up</source>
-        <translation type="unfinished">Posunout nahoru</translation>
+        <translation>Posunout nahoru</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="107"/>
         <source>Move down</source>
-        <translation type="unfinished">Posunout dolů</translation>
+        <translation>Posunout dolů</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="108"/>
         <source>Service properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Vlastnosti služby</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="111"/>
         <source>Browse…</source>
-        <translation type="unfinished">Procházet…</translation>
+        <translation>Procházet…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="115"/>
         <source>Run the service for up to this many selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Spustit službu až pro maximálně tento počet vybraných skladeb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="116"/>
         <source>Name shown in the Run menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Název zobrazený v nabídce Spustit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="117"/>
         <source>Application and arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplikace a argumenty</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="129"/>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation>Název</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="131"/>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Cesta</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="134"/>
         <source>Simultaneous runs</source>
-        <translation type="unfinished"></translation>
+        <translation>Souběžná spuštění</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="143"/>
         <source>Checked services are shown in the Run menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaškrtnuté služby budou zobrazeny v nabídce Spustit.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="158"/>
         <source>Select application</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyber aplikaci</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="191"/>
         <source>Service %1: Name is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>Služba %1: Musí být zadán název.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="194"/>
         <source>Service %1: Path is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>Služba %1: Musí být zadána cesta.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="251"/>
         <source>New service</source>
-        <translation type="unfinished"></translation>
+        <translation>Nová služba</translation>
     </message>
 </context>
 <context>
@@ -17664,26 +17664,26 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="70"/>
         <source>Run</source>
-        <translation type="unfinished"></translation>
+        <translation>Spustit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="92"/>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="103"/>
         <source>Tracks</source>
-        <translation type="unfinished">Skladby</translation>
+        <translation>Skladby</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="92"/>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="103"/>
         <source>Run Services</source>
-        <translation type="unfinished"></translation>
+        <translation>Spustit služby</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="102"/>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="139"/>
         <source>Run %1</source>
         <extracomment>%1 is the name of a registered run service</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Spustit %1</translation>
     </message>
 </context>
 <context>
@@ -17910,77 +17910,77 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1061"/>
         <source>Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Editor</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1063"/>
         <source>Syntax highlighting</source>
-        <translation type="unfinished"></translation>
+        <translation>Zvýraznění syntaxe</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1071"/>
         <source>Font</source>
-        <translation type="unfinished">Písmo</translation>
+        <translation>Písmo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1072"/>
         <source>Word wrap</source>
-        <translation type="unfinished"></translation>
+        <translation>Zalamování slov</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1073"/>
         <source>Autocomplete</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatické dokončování</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1074"/>
         <source>Show whitespace</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazovat prázdné znaky</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1075"/>
         <source>Highlight matching brackets</source>
-        <translation type="unfinished"></translation>
+        <translation>Zvýraznit odpovídající závorky</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1076"/>
         <source>Highlight current line</source>
-        <translation type="unfinished"></translation>
+        <translation>Zvýraznit aktuální řádek</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1077"/>
         <source>Show line numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit čísla řádků</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1129"/>
         <source>Reset editor settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Výchozí nastavení</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1183"/>
         <source>Conditionals</source>
-        <translation type="unfinished"></translation>
+        <translation>Podmínky</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1184"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation>Operátory</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1185"/>
         <source>Quoted text</source>
-        <translation type="unfinished"></translation>
+        <translation>Text v uvozovkách</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1196"/>
         <source>Reset colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Výchozí barvy</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1220"/>
         <source>Settings</source>
-        <translation type="unfinished">Nastavení</translation>
+        <translation>Nastavení</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1415"/>
@@ -18099,7 +18099,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="81"/>
         <source>Synchronise playback statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Synchronizovat statistiky přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="82"/>
@@ -18139,12 +18139,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="121"/>
         <source>Synchronisation</source>
-        <translation type="unfinished"></translation>
+        <translation>Synchronizace</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="125"/>
         <source>Import play counts and Loved status from enabled services when a track starts playing</source>
-        <translation type="unfinished"></translation>
+        <translation>Po spuštění přehrávání skladby importovat z povolených služeb počet přehrání a příznak oblíbenosti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="129"/>
@@ -18302,22 +18302,22 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="324"/>
         <source>Submit loved changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Odeslat změny oblíbenosti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="325"/>
         <source>Submit Love and Unlove changes to this service</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaslat této službě změny oblíbenosti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="329"/>
         <source>Synchronise playback statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Synchronizovat statistiky přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="331"/>
         <source>Import play counts and Loved status from this service when a track starts playing</source>
-        <translation type="unfinished"></translation>
+        <translation>Po spuštění přehrávání skladby importovat z této služby počet přehrání a příznak oblíbenosti</translation>
     </message>
 </context>
 <context>
@@ -20526,7 +20526,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="58"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>Oblíbenost</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="59"/>
@@ -21142,19 +21142,19 @@ Plná podpora skriptování není k dispozici.</translation>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="253"/>
         <source>+%Ln sample(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>+%Ln vzorek</numerusform>
+            <numerusform>+%Ln vzorky</numerusform>
+            <numerusform>+%Ln vzorků</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="255"/>
         <source>%Ln sample(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln vzorek</numerusform>
+            <numerusform>%Ln vzorky</numerusform>
+            <numerusform>%Ln vzorků</numerusform>
         </translation>
     </message>
     <message>
@@ -22332,7 +22332,7 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/gui/widgets.cpp" line="374"/>
         <source>Library Filter</source>
-        <translation type="unfinished">Filtr knihovny</translation>
+        <translation>Filtr knihovny</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="375"/>
@@ -22340,17 +22340,17 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
         <location filename="../../src/gui/widgets.cpp" line="390"/>
         <location filename="../../src/gui/widgets.cpp" line="818"/>
         <source>Filters</source>
-        <translation type="unfinished">Filtry</translation>
+        <translation>Filtry</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="382"/>
         <source>Saved Filter Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Karty uložených filtrů</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="389"/>
         <source>Saved Filter Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>Výběr uložených filtrů</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="504"/>
@@ -22967,52 +22967,52 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1294"/>
         <source>View full size</source>
-        <translation type="unfinished">Zobrazit skutečnou velikost</translation>
+        <translation>Zobrazit skutečnou velikost</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1295"/>
         <source>View the common artwork for the selected tracks at full size</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit společné přebaly alb vybraných skladeb ve skutečné velikosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1298"/>
         <source>Artwork</source>
-        <translation type="unfinished">Přebaly alb</translation>
+        <translation>Přebaly alb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1351"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">Statistika přehrávání</translation>
+        <translation>Statistika přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1366"/>
         <source>Toggle loved</source>
-        <translation type="unfinished"></translation>
+        <translation>Přepnout oblíbenost</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1366"/>
         <source>Toggle Loved for selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Přepnout oblíbenost pro vybrané skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1368"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>Oblíbit</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1368"/>
         <source>Love selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit vybrané skladby jako oblíbené</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1370"/>
         <source>Unlove</source>
-        <translation type="unfinished"></translation>
+        <translation>Neoblíbit</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1370"/>
         <source>Unlove selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit u vybraných skladeb příznak oblíbenosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1386"/>
@@ -23717,7 +23717,7 @@ hodnocení je zaokrouhleno na jednu, dvě, tři, čtyři, nebo pět hvězd.</tra
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="300"/>
         <source>Run Services</source>
-        <translation type="unfinished"></translation>
+        <translation>Spustit služby</translation>
     </message>
 </context>
 <context>
@@ -23836,22 +23836,22 @@ hodnocení je zaokrouhleno na jednu, dvě, tři, čtyři, nebo pět hvězd.</tra
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="118"/>
         <source>Open Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Otevřít složku</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="122"/>
         <source>Google Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Google - umělec</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="126"/>
         <source>Google Artist + Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Google - umělec + název skladby</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="130"/>
         <source>Wikipedia Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Wikipedia - umělec</translation>
     </message>
 </context>
 <context>

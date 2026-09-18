@@ -410,17 +410,17 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="166"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="168"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">Playback Statistics</translation>
+        <translation>Playback Statistics</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="167"/>
         <source>Love flag: 1 when loved, empty otherwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Love flag: 1 when loved, empty otherwise</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="169"/>
         <source>Interactive heart editor for the Love flag</source>
-        <translation type="unfinished"></translation>
+        <translation>Interactive heart editor for the Love flag</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="171"/>
@@ -581,7 +581,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="293"/>
         <source>Returns true when x is greater than y</source>
-        <translation type="unfinished"></translation>
+        <translation>Returns true when x is greater than y</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="328"/>
@@ -2299,9 +2299,9 @@ Paranoid: performs the most thorough available checking and additional retries (
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="154"/>
         <source>Found correction: %1 (%Ln submission(s), %2% agreement).</source>
         <extracomment>Correction = CD Drive read offset correction</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Found correction: %1 (%Ln submission, %2% agreement).</numerusform>
+            <numerusform>Found correction: %1 (%Ln submissions, %2% agreement).</numerusform>
         </translation>
     </message>
 </context>
@@ -2415,17 +2415,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="129"/>
         <source>CD read offset correction padded %Ln frame(s) with silence before the readable audio range</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD read offset correction padded %Ln frame with silence before the readable audio range</numerusform>
+            <numerusform>CD read offset correction padded %Ln frames with silence before the readable audio range</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="169"/>
         <source>CD read offset correction padded %Ln frame(s) with silence after the readable audio range</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD read offset correction padded %Ln frame with silence after the readable audio range</numerusform>
+            <numerusform>CD read offset correction padded %Ln frames with silence after the readable audio range</numerusform>
         </translation>
     </message>
     <message>
@@ -2501,25 +2501,25 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="467"/>
         <source>CD extraction corrected %Ln read inconsistency event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD extraction corrected %Ln read inconsistency event</numerusform>
+            <numerusform>CD extraction corrected %Ln read inconsistency events</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="470"/>
         <source>CD extraction encountered %Ln read error event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD extraction encountered %Ln read error event</numerusform>
+            <numerusform>CD extraction encountered %Ln read error events</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="473"/>
         <source>CD extraction exhausted retries and concealed %Ln unreadable sector event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD extraction exhausted retries and concealed %Ln unreadable sector event</numerusform>
+            <numerusform>CD extraction exhausted retries and concealed %Ln unreadable sector events</numerusform>
         </translation>
     </message>
     <message>
@@ -2644,9 +2644,9 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="305"/>
         <source>Found %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Found %Ln audio track.</numerusform>
+            <numerusform>Found %Ln audio tracks.</numerusform>
         </translation>
     </message>
     <message>
@@ -2672,9 +2672,9 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="392"/>
         <source>Applied CD-Text to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Applied CD-Text to %Ln audio track.</numerusform>
+            <numerusform>Applied CD-Text to %Ln audio tracks.</numerusform>
         </translation>
     </message>
     <message>
@@ -2695,9 +2695,9 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="500"/>
         <source>Applied automatic metadata to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Applied automatic metadata to %Ln audio track.</numerusform>
+            <numerusform>Applied automatic metadata to %Ln audio tracks.</numerusform>
         </translation>
     </message>
     <message>
@@ -2708,9 +2708,9 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="549"/>
         <source>Applied metadata to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Applied metadata to %Ln audio track.</numerusform>
+            <numerusform>Applied metadata to %Ln audio tracks.</numerusform>
         </translation>
     </message>
 </context>
@@ -3153,7 +3153,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="76"/>
         <source>Cancelled</source>
-        <translation type="unfinished">Canceled</translation>
+        <translation>Canceled</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="113"/>
@@ -3183,7 +3183,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="158"/>
         <source>Converted: %1 | Skipped: %2 | Failed: %3 | Cancelled: %4</source>
-        <translation type="unfinished"></translation>
+        <translation>Converted: %1 | Skipped: %2 | Failed: %3 | Canceled: %4</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="475"/>
@@ -7079,7 +7079,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="281"/>
         <source>Global shortcut registration was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Global shortcut registration was canceled</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="282"/>
@@ -7859,12 +7859,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="103"/>
         <source>Heart colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Heart color</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="104"/>
         <source>Unloved heart colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Unloved heart color</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="106"/>
@@ -7951,7 +7951,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="150"/>
         <source>Editor colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Editor colors</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="161"/>
@@ -9875,12 +9875,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="140"/>
         <source>Centring</source>
-        <translation type="unfinished"></translation>
+        <translation>Centering</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="158"/>
         <source>Top and bottom margins apply to lyrics that are not centred at that edge.</source>
-        <translation type="unfinished"></translation>
+        <translation>Top and bottom margins apply to lyrics that are not centered at that edge.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="168"/>
@@ -9927,12 +9927,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="56"/>
         <source>Centre first line</source>
-        <translation type="unfinished"></translation>
+        <translation>Center first line</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="57"/>
         <source>Centre last line</source>
-        <translation type="unfinished"></translation>
+        <translation>Center last line</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="149"/>
@@ -10578,17 +10578,17 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="48"/>
         <source>%Ln metadata change(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln metadata change</numerusform>
+            <numerusform>%Ln metadata changes</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="49"/>
         <source>%Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln file</numerusform>
+            <numerusform>%Ln files</numerusform>
         </translation>
     </message>
     <message>
@@ -10901,9 +10901,9 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="524"/>
         <source>Found %Ln release(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Found %Ln release.</numerusform>
+            <numerusform>Found %Ln releases.</numerusform>
         </translation>
     </message>
     <message>
@@ -10974,17 +10974,17 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="911"/>
         <source>Metadata will be applied to %Ln track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Metadata will be applied to %Ln track.</numerusform>
+            <numerusform>Metadata will be applied to %Ln tracks.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="913"/>
         <source>%Ln track(s) will be updated.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln track will be updated.</numerusform>
+            <numerusform>%Ln tracks will be updated.</numerusform>
         </translation>
     </message>
     <message>
@@ -11041,9 +11041,9 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="993"/>
         <source>Metadata was updated in %Ln track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Metadata was updated in %Ln track.</numerusform>
+            <numerusform>Metadata was updated in %Ln tracks.</numerusform>
         </translation>
     </message>
     <message>
@@ -14957,9 +14957,9 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message numerus="yes">
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="119"/>
         <source>Writing changes to %Ln track(s)…</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Writing changes to %Ln track…</numerusform>
+            <numerusform>Writing changes to %Ln tracks…</numerusform>
         </translation>
     </message>
 </context>
@@ -17915,7 +17915,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1196"/>
         <source>Reset colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Reset colors</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1220"/>
@@ -18039,7 +18039,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="81"/>
         <source>Synchronise playback statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Synchronize playback statistics</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="82"/>
@@ -18252,7 +18252,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="329"/>
         <source>Synchronise playback statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Synchronize playback statistics</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="331"/>
@@ -21005,7 +21005,7 @@ This does not support full scripting.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="81"/>
         <source>Cancelled</source>
-        <translation type="unfinished">Canceled</translation>
+        <translation>Canceled</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="90"/>
@@ -21072,25 +21072,25 @@ This does not support full scripting.</translation>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="197"/>
         <source>%1 of %Ln item(s) decoded successfully.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1 of %Ln item decoded successfully.</numerusform>
+            <numerusform>%1 of %Ln items decoded successfully.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="253"/>
         <source>+%Ln sample(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>+%Ln sample</numerusform>
+            <numerusform>+%Ln samples</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="255"/>
         <source>%Ln sample(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln sample</numerusform>
+            <numerusform>%Ln samples</numerusform>
         </translation>
     </message>
     <message>
@@ -21212,9 +21212,9 @@ This does not support full scripting.</translation>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="387"/>
         <source>Problems found in %Ln item(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Problems found in %Ln item.</numerusform>
+            <numerusform>Problems found in %Ln items.</numerusform>
         </translation>
     </message>
     <message>
@@ -21301,7 +21301,7 @@ This does not support full scripting.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="540"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Cancel</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="543"/>
