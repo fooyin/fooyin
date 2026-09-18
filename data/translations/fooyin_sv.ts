@@ -8435,7 +8435,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="319"/>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ja</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="319"/>
@@ -17541,7 +17541,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="108"/>
         <source>Service properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Tjänstegenskaper</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="111"/>
@@ -17860,7 +17860,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1063"/>
         <source>Syntax highlighting</source>
-        <translation type="unfinished"></translation>
+        <translation>Syntaxmarkering</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1071"/>
@@ -17890,17 +17890,17 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1076"/>
         <source>Highlight current line</source>
-        <translation type="unfinished"></translation>
+        <translation>Markera aktuell rad</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1077"/>
         <source>Show line numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa radnummer</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1129"/>
         <source>Reset editor settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Återställ redigerarinställningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1183"/>
@@ -21041,23 +21041,23 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="173"/>
         <source>Item: &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Föremål: ”%1”</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="174"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="324"/>
         <source>Status: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Status: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="176"/>
         <source>Decoded audio MD5: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Avkodad ljud-MD5: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="177"/>
         <source>Decoded audio CRC32: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Avkodad ljud-CRC32: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="180"/>
@@ -21085,17 +21085,17 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="253"/>
         <source>+%Ln sample(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>+%Ln sampel</numerusform>
+            <numerusform>+%Ln samplar</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="255"/>
         <source>%Ln sample(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln sampel</numerusform>
+            <numerusform>%Ln samplar</numerusform>
         </translation>
     </message>
     <message>
