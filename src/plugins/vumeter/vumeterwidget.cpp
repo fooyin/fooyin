@@ -39,10 +39,8 @@
 #include <QMenu>
 #include <QPainter>
 #include <QTimerEvent>
-#include <QWindow>
 
 #include <cmath>
-#include <optional>
 
 using namespace Qt::StringLiterals;
 
@@ -138,9 +136,7 @@ public:
     void createGradient();
     void setUpdateFps(int fps);
 
-    void resolveInitialOrientation();
     bool setOrientation(Qt::Orientation orientation);
-    bool applyDefaultOrientation();
 
     void invalidateStaticLayer();
     void ensureStaticLayer();
@@ -174,6 +170,7 @@ public:
 
     VuMeterWidget::Type m_type{VuMeterWidget::Type::Peak};
     Qt::Orientation m_orientation{Qt::Horizontal};
+    bool m_autoOrientation{true};
     bool m_showPeaks{false};
     float m_channelSpacing{1};
     bool m_showTopLabels{false};
@@ -198,9 +195,6 @@ public:
     bool m_drawChannelLabels{false};
     bool m_changingTrack{false};
     bool m_stopping{false};
-
-    bool m_defaultOrientationApplied{false};
-    std::optional<Qt::Orientation> m_pendingOrientation;
 
     Colours m_colours;
     QLinearGradient m_gradient;
@@ -473,29 +467,6 @@ void VuMeterWidgetPrivate::setUpdateFps(int fps)
     }
 }
 
-void VuMeterWidgetPrivate::resolveInitialOrientation()
-{
-    if(!m_self->isVisible()) {
-        return;
-    }
-
-    const auto* topLevel     = m_self->window();
-    const auto* windowHandle = topLevel ? topLevel->windowHandle() : nullptr;
-
-    if(!topLevel || !topLevel->isVisible() || !windowHandle || !windowHandle->isExposed()) {
-        QMetaObject::invokeMethod(m_self, [this]() { resolveInitialOrientation(); }, Qt::QueuedConnection);
-        return;
-    }
-
-    if(m_pendingOrientation.has_value()) {
-        setOrientation(*m_pendingOrientation);
-        m_pendingOrientation.reset();
-    }
-    else if(!m_defaultOrientationApplied) {
-        applyDefaultOrientation();
-    }
-}
-
 bool VuMeterWidgetPrivate::setOrientation(Qt::Orientation orientation)
 {
     if(m_orientation == orientation) {
@@ -506,22 +477,6 @@ bool VuMeterWidgetPrivate::setOrientation(Qt::Orientation orientation)
     updateSize();
     m_self->update();
     return true;
-}
-
-bool VuMeterWidgetPrivate::applyDefaultOrientation()
-{
-    if(m_defaultOrientationApplied) {
-        return false;
-    }
-
-    const QSize widgetSize = m_self->size();
-    if(widgetSize.isEmpty()) {
-        return false;
-    }
-
-    m_defaultOrientationApplied              = true;
-    const Qt::Orientation defaultOrientation = widgetSize.height() > widgetSize.width() ? Qt::Vertical : Qt::Horizontal;
-    return setOrientation(defaultOrientation);
 }
 
 void VuMeterWidgetPrivate::invalidateStaticLayer()
@@ -896,7 +851,10 @@ QString VuMeterWidget::layoutName() const
 void VuMeterWidget::saveLayoutData(QJsonObject& layout)
 {
     saveConfigToLayout(m_config, layout);
-    layout["Orientation"_L1] = p->m_orientation;
+
+    if(!p->m_autoOrientation) {
+        layout["Orientation"_L1] = p->m_orientation;
+    }
 }
 
 void VuMeterWidget::loadLayoutData(const QJsonObject& layout)
@@ -905,13 +863,10 @@ void VuMeterWidget::loadLayoutData(const QJsonObject& layout)
 
     if(layout.contains("Orientation"_L1)) {
         const auto orientation = static_cast<Qt::Orientation>(layout.value("Orientation"_L1).toInt());
-        if(isVisible()) {
+        if(orientation == Qt::Horizontal || orientation == Qt::Vertical) {
+            p->m_autoOrientation = false;
             p->setOrientation(orientation);
         }
-        else {
-            p->m_pendingOrientation = orientation;
-        }
-        p->m_defaultOrientationApplied = true;
     }
 }
 
@@ -969,8 +924,7 @@ Qt::Orientation VuMeterWidget::orientation() const
 
 void VuMeterWidget::setOrientation(Qt::Orientation orientation)
 {
-    p->m_defaultOrientationApplied = true;
-    p->m_pendingOrientation.reset();
+    p->m_autoOrientation = false;
     p->setOrientation(orientation);
 }
 
@@ -1172,14 +1126,12 @@ void VuMeterWidget::applyConfig(const ConfigData& config)
     Q_EMIT configChanged();
 }
 
-void VuMeterWidget::showEvent(QShowEvent* event)
-{
-    FyWidget::showEvent(event);
-    QMetaObject::invokeMethod(this, [this]() { p->resolveInitialOrientation(); }, Qt::QueuedConnection);
-}
-
 void VuMeterWidget::resizeEvent(QResizeEvent* event)
 {
+    if(p->m_autoOrientation) {
+        const auto orientation = height() > width() ? Qt::Vertical : Qt::Horizontal;
+        p->setOrientation(orientation);
+    }
     p->updateSize();
     FyWidget::resizeEvent(event);
     update();
@@ -1267,23 +1219,34 @@ void VuMeterWidget::contextMenuEvent(QContextMenuEvent* event)
     addLabelAction(tr("Right"), &ConfigData::showRightLabels);
 
     auto* orientationGroup = new QActionGroup(menu);
+    auto* automatic        = new QAction(tr("Automatic"), orientationGroup);
     auto* horizontal       = new QAction(tr("Horizontal"), orientationGroup);
     auto* vertical         = new QAction(tr("Vertical"), orientationGroup);
 
+    auto* orientationMenu = new QMenu(tr("Orientation"), menu);
+    orientationMenu->addAction(automatic);
+    orientationMenu->addAction(horizontal);
+    orientationMenu->addAction(vertical);
+
+    automatic->setCheckable(true);
     horizontal->setCheckable(true);
     vertical->setCheckable(true);
 
-    horizontal->setChecked(p->isHorizontal());
-    vertical->setChecked(!p->isHorizontal());
+    automatic->setChecked(p->m_autoOrientation);
+    horizontal->setChecked(!p->m_autoOrientation && p->isHorizontal());
+    vertical->setChecked(!p->m_autoOrientation && !p->isHorizontal());
 
+    QObject::connect(automatic, &QAction::triggered, this, [this]() {
+        p->m_autoOrientation   = true;
+        const auto orientation = height() > width() ? Qt::Vertical : Qt::Horizontal;
+        p->setOrientation(orientation);
+    });
     QObject::connect(horizontal, &QAction::triggered, this, [this]() { setOrientation(Qt::Horizontal); });
     QObject::connect(vertical, &QAction::triggered, this, [this]() { setOrientation(Qt::Vertical); });
 
-    menu->addAction(horizontal);
-    menu->addAction(vertical);
-    menu->addSeparator();
     menu->addAction(showPeaks);
     menu->addMenu(labelsMenu);
+    menu->addMenu(orientationMenu);
     menu->addSeparator();
     addConfigureAction(menu);
 
