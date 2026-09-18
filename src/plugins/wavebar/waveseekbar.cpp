@@ -424,6 +424,7 @@ void WaveSeekBar::ensureWaveformCache()
         m_unplayedWaveformCache    = {};
         m_playedWaveformCache      = {};
         m_waveformCacheSize        = {};
+        m_transitionCache          = {};
         m_waveformCacheRenderWidth = 0;
         m_waveformCacheDirty       = true;
         return;
@@ -463,80 +464,87 @@ void WaveSeekBar::drawCachedWaveform(QPainter& painter, const QRect& dirtyRect)
         return;
     }
 
-    const int padPx = std::max(2, m_sampleWidth * 2);
-    const QRect targetRect
-        = QRect{dirtyRect.left() - padPx, 0, dirtyRect.width() + (padPx * 2), height()}.intersected(rect());
-
     painter.save();
     painter.setClipRect(dirtyRect);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-    const double positionX   = positionFromValue(static_cast<double>(m_position));
-    const double targetLeft  = targetRect.left();
-    const double targetRight = targetRect.right() + 1;
+    const QRectF targetRect{0.0, 0.0, static_cast<double>(width()), static_cast<double>(height())};
+    const double positionX = positionFromValue(static_cast<double>(m_position));
 
-    if(positionX <= targetLeft || positionX >= targetRight) {
-        const bool played = positionX >= targetRight;
-        drawCachedSlice(painter, played ? m_playedWaveformCache : m_unplayedWaveformCache, QRectF{targetRect});
-    }
-    else {
-        drawCachedSlice(painter, m_unplayedWaveformCache, QRectF{targetRect});
+    painter.drawImage(targetRect, m_unplayedWaveformCache);
 
+    const double radius    = std::max(2.0, static_cast<double>(m_barWidth) * 2.0);
+    const double playedEnd = std::max(0.0, positionX - radius);
+
+    if(playedEnd > 0.0) {
         painter.save();
-        painter.setClipRect(QRectF{targetLeft, static_cast<double>(targetRect.top()), positionX - targetLeft,
-                                   static_cast<double>(targetRect.height())},
-                            Qt::IntersectClip);
-        drawCachedSlice(painter, m_playedWaveformCache, QRectF{targetRect});
+
+        painter.setClipRect(QRectF{0.0, 0.0, playedEnd, static_cast<double>(height())}, Qt::IntersectClip);
+        painter.drawImage(targetRect, m_playedWaveformCache);
+
         painter.restore();
     }
 
-    if(m_barGap == 0) {
-        drawCachedTransition(painter, positionX, targetRect);
-    }
+    drawCachedTransition(painter, positionX);
 
     painter.restore();
 }
 
-void WaveSeekBar::drawCachedSlice(QPainter& painter, const QImage& image, const QRectF& targetRect) const
+void WaveSeekBar::drawCachedTransition(QPainter& painter, double positionX)
 {
-    if(targetRect.width() <= 0.0 || targetRect.height() <= 0.0 || image.isNull()) {
+    const double radius = std::max(2.0, static_cast<double>(m_barWidth) * 2.0);
+    const QRectF transitionRect{positionX - radius, 0.0, radius * 2.0, static_cast<double>(height())};
+    const QRectF clipped = transitionRect.intersected(QRectF{rect()});
+
+    if(clipped.isEmpty()) {
         return;
     }
 
-    const double widgetWidth = std::max(1, width());
-    const double scale       = static_cast<double>(m_waveformCacheRenderWidth) / widgetWidth;
-    const QRectF sourceRect{targetRect.x() * scale, targetRect.y(), targetRect.width() * scale, targetRect.height()};
+    const qreal dpr = devicePixelRatioF();
+    const QSize pixelSize{qCeil(width() * dpr), qCeil(height() * dpr)};
 
-    painter.drawImage(targetRect, image, sourceRect);
-}
+    // Allocate only on resize
+    if(m_transitionCache.size() != pixelSize || !qFuzzyCompare(m_transitionCache.devicePixelRatio(), dpr)) {
+        m_transitionCache = QImage{pixelSize, QImage::Format_ARGB32_Premultiplied};
 
-void WaveSeekBar::drawCachedTransition(QPainter& painter, double positionX, const QRect& targetRect)
-{
-    const int radius = std::max(2, m_barWidth * 2);
-    const QRect transitionRect{static_cast<int>(std::floor(positionX)), 0, radius + 1, height()};
-    const QRect overlayRect = transitionRect.intersected(targetRect);
-    if(!overlayRect.isValid()) {
+        m_transitionCache.setDevicePixelRatio(dpr);
+        m_transitionCache.fill(Qt::transparent);
+    }
+
+    const QRect clearRect = clipped.toAlignedRect().adjusted(-2, 0, 2, 0).intersected(rect());
+    if(clearRect.isEmpty()) {
         return;
     }
 
-    QImage overlay{overlayRect.size(), QImage::Format_ARGB32_Premultiplied};
-    overlay.fill(Qt::transparent);
+    // Clear only the region we're about to regenerate
+    {
+        QPainter clearPainter{&m_transitionCache};
+        clearPainter.setCompositionMode(QPainter::CompositionMode_Source);
+        clearPainter.fillRect(clearRect, Qt::transparent);
+    }
 
-    QPainter overlayPainter{&overlay};
-    overlayPainter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    {
+        QPainter p{&m_transitionCache};
+        p.setClipRect(clearRect);
+        p.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-    const QPointF offset{-static_cast<double>(overlayRect.left()), -static_cast<double>(overlayRect.top())};
-    overlayPainter.translate(offset);
-    drawCachedSlice(overlayPainter, m_playedWaveformCache, QRectF{targetRect});
+        p.setCompositionMode(QPainter::CompositionMode_Source);
 
-    overlayPainter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-    QLinearGradient alphaGradient{QPointF{positionX, 0.0}, QPointF{positionX + radius, 0.0}};
-    alphaGradient.setColorAt(0.0, QColor{0, 0, 0, 255});
-    alphaGradient.setColorAt(1.0, QColor{0, 0, 0, 0});
-    overlayPainter.fillRect(QRectF{overlayRect}, alphaGradient);
-    overlayPainter.end();
+        const QRectF targetRect{0.0, 0.0, static_cast<double>(width()), static_cast<double>(height())};
+        p.drawImage(targetRect, m_playedWaveformCache);
 
-    painter.drawImage(overlayRect.topLeft(), overlay);
+        p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+
+        QLinearGradient gradient{QPointF{positionX - radius, 0.0}, QPointF{positionX + radius, 0.0}};
+        gradient.setColorAt(0.0, QColor{255, 255, 255, 255});
+        gradient.setColorAt(1.0, QColor{255, 255, 255, 0});
+        p.fillRect(clearRect, gradient);
+    }
+
+    painter.save();
+    painter.setClipRect(clearRect, Qt::IntersectClip);
+    painter.drawImage(QPointF{0.0, 0.0}, m_transitionCache);
+    painter.restore();
 }
 
 void WaveSeekBar::drawCursors(QPainter& painter)

@@ -90,8 +90,7 @@ private:
     void ensureWaveformCache();
     [[nodiscard]] int cachedRenderWidth() const;
     void drawCachedWaveform(QPainter& painter, const QRect& dirtyRect);
-    void drawCachedSlice(QPainter& painter, const QImage& image, const QRectF& targetRect) const;
-    void drawCachedTransition(QPainter& painter, double positionX, const QRect& targetRect);
+    void drawCachedTransition(QPainter& painter, double positionX);
     void drawCursors(QPainter& painter);
     void paintWaveform(QPainter& painter, const QRect& rect, double renderWidth,
                        PlaybackColourMode colourMode = PlaybackColourMode::Position);
@@ -127,6 +126,7 @@ private:
 
     QImage m_unplayedWaveformCache;
     QImage m_playedWaveformCache;
+    QImage m_transitionCache;
     QSize m_waveformCacheSize;
     int m_waveformCacheRenderWidth;
     bool m_waveformCacheDirty;
