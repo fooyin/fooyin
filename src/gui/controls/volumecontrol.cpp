@@ -34,11 +34,14 @@
 #include <utils/utils.h>
 
 #include <QAction>
+#include <QActionGroup>
 #include <QApplication>
+#include <QBoxLayout>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QMenu>
+#include <QResizeEvent>
 #include <QStyle>
 #include <QToolTip>
 #include <QWheelEvent>
@@ -62,6 +65,7 @@ public:
     void volumeChanged(double volume) const;
     void updateDisplay(double volume) const;
     void updateToolTip(int value);
+    void updateOrientation();
 
     VolumeControl* m_self;
     ActionManager* m_actionManager;
@@ -74,6 +78,8 @@ public:
     QPointer<QVBoxLayout> m_menuLayout;
     LogSlider* m_volumeSlider;
     QPointer<ToolTip> m_toolTip;
+    Qt::Orientation m_orientation{Qt::Horizontal};
+    bool m_autoOrientation{true};
 };
 
 VolumeControlPrivate::VolumeControlPrivate(VolumeControl* self, ActionManager* actionManager, SettingsManager* settings)
@@ -146,6 +152,8 @@ void VolumeControlPrivate::changeDisplay(VolumeControl::Options options, bool in
         updateDisplay(m_settings->value<Settings::Core::OutputVolume>());
     }
 
+    updateOrientation();
+
     if(options & VolumeControl::Tooltip) {
         QObject::connect(m_volumeSlider, &LogSlider::sliderMoved, m_volumeSlider,
                          [this](int value) { updateToolTip(value); });
@@ -157,24 +165,57 @@ void VolumeControlPrivate::changeDisplay(VolumeControl::Options options, bool in
     }
 }
 
+void VolumeControlPrivate::updateOrientation()
+{
+    const auto orientation
+        = m_autoOrientation ? (m_self->height() > m_self->width() ? Qt::Vertical : Qt::Horizontal) : m_orientation;
+    const auto direction = orientation == Qt::Vertical ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight;
+    if(m_layout->direction() != direction) {
+        m_layout->setDirection(direction);
+    }
+
+    const auto alignment = direction == QBoxLayout::LeftToRight ? Qt::AlignVCenter : Qt::AlignHCenter;
+    for(int i{0}; i < m_layout->count(); ++i) {
+        if(auto* widget = m_layout->itemAt(i)->widget()) {
+            m_layout->setAlignment(widget, alignment);
+        }
+    }
+
+    if(m_options & VolumeControl::SliderMode) {
+        m_volumeSlider->setOrientation(orientation);
+        m_volumeSlider->setMinimumSize(orientation == Qt::Vertical ? QSize{0, 75} : QSize{75, 0});
+    }
+    else {
+        // The slider in the hover menu is always vertical
+        m_volumeSlider->setOrientation(Qt::Vertical);
+        m_volumeSlider->setMinimumSize(0, 100);
+    }
+}
+
 void VolumeControlPrivate::showVolumeMenu() const
 {
     if(!m_volumeMenu) {
         return;
     }
 
-    const int menuHeight = m_volumeMenu->sizeHint().height();
+    const QSize menuSize = m_volumeMenu->sizeHint();
+    const QRect iconRect{m_volumeIcon->mapToGlobal(QPoint{}), m_volumeIcon->size()};
+    const QRect windowRect{m_self->window()->mapToGlobal(QPoint{}), m_self->window()->size()};
 
-    const int yPosToWindow = m_self->mapToGlobal(QPoint{0, 0}).y();
+    static constexpr auto gap = 10;
 
-    // Only display volume slider above icon if it won't clip above the main window.
-    const bool displayAbove = (yPosToWindow - menuHeight) > 0;
+    const bool canPlaceRight = iconRect.right() + gap + menuSize.width() <= windowRect.right();
+    const bool canPlaceLeft  = iconRect.left() - gap - menuSize.width() >= windowRect.left();
+    const bool placeRight
+        = canPlaceRight
+       || (!canPlaceLeft && windowRect.right() - iconRect.right() >= iconRect.left() - windowRect.left());
 
-    const int x = (m_self->width() / 2) - (m_volumeMenu->sizeHint().width() / 2);
-    const int y = displayAbove ? (-menuHeight - 10) : (m_self->height() + 10);
+    const int x    = placeRight ? iconRect.right() + gap : iconRect.left() - gap - menuSize.width();
+    const int minY = windowRect.top();
+    const int maxY = std::max(minY, windowRect.bottom() - menuSize.height());
+    const int y    = std::clamp(iconRect.center().y() - (menuSize.height() / 2), minY, maxY);
 
-    const QPoint pos(m_self->mapToGlobal(QPoint{x, y}));
-    m_volumeMenu->move(pos);
+    m_volumeMenu->move({x, y});
     m_volumeMenu->show();
     m_volumeMenu->setFocus(Qt::ActiveWindowFocusReason);
 
@@ -226,9 +267,11 @@ void VolumeControlPrivate::updateToolTip(int value)
         m_toolTip->setText(u"-∞ dB"_s);
     }
 
-    QPoint toolTipPos        = m_volumeSlider->mapFrom(m_volumeSlider->window(), QCursor::pos());
+    QPoint toolTipPos        = m_volumeSlider->mapFromGlobal(QCursor::pos());
     const QPoint posToWindow = m_volumeSlider->mapToGlobal(QPoint{0, 0});
     Qt::Alignment alignment{Qt::AlignLeft};
+
+    const auto* window = m_self->window();
 
     if(m_volumeSlider->orientation() == Qt::Horizontal) {
         const bool displayAbove = (posToWindow.y() - (m_volumeSlider->height() + m_toolTip->height())) > 0;
@@ -237,30 +280,43 @@ void VolumeControlPrivate::updateToolTip(int value)
         toolTipPos.rx() = std::clamp(toolTipPos.x(), 0, m_self->width() - m_toolTip->width());
 
         if(displayAbove) {
-            toolTipPos.setY(m_volumeSlider->rect().top() - m_toolTip->height() / 4);
+            toolTipPos.setY(m_volumeSlider->rect().top() - (m_toolTip->height() / 4));
         }
         else {
             toolTipPos.setY(m_volumeSlider->rect().bottom() + (m_volumeSlider->height() + m_toolTip->height()));
         }
     }
     else {
-        const bool displayLeft = (posToWindow.x() - (m_volumeSlider->width() + m_toolTip->width())) > 0;
-        const auto pos         = m_volumeSlider->mapToGlobal(m_volumeSlider->pos());
+        const QPoint sliderTopLeft = window->mapFromGlobal(posToWindow);
+        const QRect sliderRect{sliderTopLeft, m_volumeSlider->size()};
+        const QPoint cursorPos = window->mapFromGlobal(QCursor::pos());
 
-        toolTipPos.ry() += m_toolTip->height() / 2;
+        static constexpr auto gap = 10;
 
-        if(displayLeft) {
-            alignment = Qt::AlignRight;
-            toolTipPos.setX(pos.x() - m_volumeMenu->width());
+        const bool canPlaceRight = sliderRect.right() + gap + m_toolTip->width() <= window->rect().right();
+        const bool canPlaceLeft  = sliderRect.left() - gap - m_toolTip->width() >= window->rect().left();
+        const bool placeRight
+            = canPlaceRight
+           || (!canPlaceLeft
+               && window->rect().right() - sliderRect.right() >= sliderRect.left() - window->rect().left());
+
+        const int tooltipY
+            = std::clamp(cursorPos.y() + (m_toolTip->height() / 2), m_toolTip->height(), window->height());
+
+        if(placeRight) {
+            toolTipPos = {sliderRect.right() + gap, tooltipY};
         }
         else {
-            toolTipPos.setX(pos.x() + m_volumeSlider->width());
+            alignment  = Qt::AlignRight;
+            toolTipPos = {sliderRect.left() - gap, tooltipY};
         }
 
-        toolTipPos.rx() = std::max(toolTipPos.x(), 0);
+        m_toolTip->setPosition(toolTipPos, alignment);
+        return;
     }
 
-    m_toolTip->setPosition(m_volumeSlider->mapTo(m_volumeSlider->window(), toolTipPos), alignment);
+    const QPoint tooltipWindowPos = window->mapFromGlobal(m_volumeSlider->mapToGlobal(toolTipPos));
+    m_toolTip->setPosition(tooltipWindowPos, alignment);
 }
 
 VolumeControl::VolumeControl(ActionManager* actionManager, SettingsManager* settings, QWidget* parent)
@@ -287,6 +343,10 @@ QString VolumeControl::layoutName() const
 void VolumeControl::saveLayoutData(QJsonObject& layout)
 {
     layout["Mode"_L1] = static_cast<int>(p->m_options);
+
+    if(!p->m_autoOrientation) {
+        layout["Orientation"_L1] = p->m_orientation;
+    }
 }
 
 void VolumeControl::loadLayoutData(const QJsonObject& layout)
@@ -295,6 +355,14 @@ void VolumeControl::loadLayoutData(const QJsonObject& layout)
         // Support old format (0=Icon)
         auto options = static_cast<Options>(std::max(1, layout.value("Mode"_L1).toInt()));
         p->changeDisplay(options);
+    }
+    if(layout.contains("Orientation"_L1)) {
+        const auto orientation = static_cast<Qt::Orientation>(layout.value("Orientation"_L1).toInt());
+        if(orientation == Qt::Horizontal || orientation == Qt::Vertical) {
+            p->m_orientation     = orientation;
+            p->m_autoOrientation = false;
+            p->updateOrientation();
+        }
     }
 }
 
@@ -315,8 +383,8 @@ void VolumeControl::contextMenuEvent(QContextMenuEvent* event)
     sliderMode->setChecked(p->m_options & SliderMode);
     toolTip->setChecked(p->m_options & Tooltip);
 
-    auto toggleOption = [this](QAction* action, VolumeControl::Option option) {
-        VolumeControl::Options newOptions = p->m_options;
+    auto toggleOption = [this](QAction* action, Option option) {
+        Options newOptions = p->m_options;
         if(action->isChecked()) {
             newOptions |= option;
         }
@@ -339,12 +407,50 @@ void VolumeControl::contextMenuEvent(QContextMenuEvent* event)
                      [toggleOption, sliderMode]() { toggleOption(sliderMode, SliderMode); });
     QObject::connect(toolTip, &QAction::triggered, this, [toggleOption, toolTip]() { toggleOption(toolTip, Tooltip); });
 
+    auto* orientationGroup = new QActionGroup(menu);
+    auto* automatic        = new QAction(tr("Automatic"), orientationGroup);
+    auto* horizontal       = new QAction(tr("Horizontal"), orientationGroup);
+    auto* vertical         = new QAction(tr("Vertical"), orientationGroup);
+
+    automatic->setCheckable(true);
+    horizontal->setCheckable(true);
+    vertical->setCheckable(true);
+
+    automatic->setChecked(p->m_autoOrientation);
+    horizontal->setChecked(!p->m_autoOrientation && p->m_orientation == Qt::Horizontal);
+    vertical->setChecked(!p->m_autoOrientation && p->m_orientation == Qt::Vertical);
+
+    QObject::connect(automatic, &QAction::triggered, this, [this]() {
+        p->m_autoOrientation = true;
+        p->updateOrientation();
+    });
+    QObject::connect(horizontal, &QAction::triggered, this, [this]() {
+        p->m_autoOrientation = false;
+        p->m_orientation     = Qt::Horizontal;
+        p->updateOrientation();
+    });
+    QObject::connect(vertical, &QAction::triggered, this, [this]() {
+        p->m_autoOrientation = false;
+        p->m_orientation     = Qt::Vertical;
+        p->updateOrientation();
+    });
+
     menu->addAction(iconMode);
     menu->addAction(sliderMode);
     menu->addSeparator();
     menu->addAction(toolTip);
+    menu->addSeparator();
+    menu->addAction(automatic);
+    menu->addAction(horizontal);
+    menu->addAction(vertical);
 
     menu->popup(event->globalPos());
+}
+
+void VolumeControl::resizeEvent(QResizeEvent* event)
+{
+    p->updateOrientation();
+    FyWidget::resizeEvent(event);
 }
 
 void VolumeControl::wheelEvent(QWheelEvent* event)
