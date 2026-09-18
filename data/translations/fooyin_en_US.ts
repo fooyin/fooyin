@@ -3153,7 +3153,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="76"/>
         <source>Cancelled</source>
-        <translation type="unfinished">Canceled</translation>
+        <translation>Canceled</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="113"/>
@@ -3183,7 +3183,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="158"/>
         <source>Converted: %1 | Skipped: %2 | Failed: %3 | Cancelled: %4</source>
-        <translation type="unfinished"></translation>
+        <translation>Converted: %1 | Skipped: %2 | Failed: %3 | Canceled: %4</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="475"/>
@@ -7079,7 +7079,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="281"/>
         <source>Global shortcut registration was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Global shortcut registration was canceled</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="282"/>
@@ -7859,12 +7859,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="103"/>
         <source>Heart colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Heart color</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="104"/>
         <source>Unloved heart colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Unloved heart color</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="106"/>
@@ -7951,7 +7951,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="150"/>
         <source>Editor colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Editor colors</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="161"/>
@@ -9875,12 +9875,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="140"/>
         <source>Centring</source>
-        <translation type="unfinished"></translation>
+        <translation>Centering</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="158"/>
         <source>Top and bottom margins apply to lyrics that are not centred at that edge.</source>
-        <translation type="unfinished"></translation>
+        <translation>Top and bottom margins apply to lyrics that are not centered at that edge.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="168"/>
@@ -9927,12 +9927,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="56"/>
         <source>Centre first line</source>
-        <translation type="unfinished"></translation>
+        <translation>Center first line</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="57"/>
         <source>Centre last line</source>
-        <translation type="unfinished"></translation>
+        <translation>Center last line</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="149"/>
@@ -17915,7 +17915,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1196"/>
         <source>Reset colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Reset colors</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1220"/>
@@ -18039,7 +18039,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="81"/>
         <source>Synchronise playback statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Synchronize playback statistics</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="82"/>
@@ -18252,7 +18252,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="329"/>
         <source>Synchronise playback statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Synchronize playback statistics</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="331"/>
@@ -21005,7 +21005,7 @@ This does not support full scripting.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="81"/>
         <source>Cancelled</source>
-        <translation type="unfinished">Canceled</translation>
+        <translation>Canceled</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="90"/>
@@ -21301,7 +21301,7 @@ This does not support full scripting.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="540"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Cancel</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="543"/>
