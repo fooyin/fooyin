@@ -116,6 +116,11 @@ void PlaylistControl::contextMenuEvent(QContextMenuEvent* event)
     auto* horizontal       = new QAction(tr("Horizontal"), orientationGroup);
     auto* vertical         = new QAction(tr("Vertical"), orientationGroup);
 
+    auto* orientationMenu = new QMenu(tr("Orientation"), menu);
+    orientationMenu->addAction(automatic);
+    orientationMenu->addAction(horizontal);
+    orientationMenu->addAction(vertical);
+
     automatic->setCheckable(true);
     horizontal->setCheckable(true);
     vertical->setCheckable(true);
@@ -139,9 +144,7 @@ void PlaylistControl::contextMenuEvent(QContextMenuEvent* event)
         updateOrientation();
     });
 
-    menu->addAction(automatic);
-    menu->addAction(horizontal);
-    menu->addAction(vertical);
+    menu->addMenu(orientationMenu);
 
     menu->popup(event->globalPos());
 }

@@ -176,10 +176,34 @@ void PlayerControl::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
+    const auto setupButtonControl = [this, menu](const QString& title, ToolButton* button, bool* member) {
+        auto* action = menu->addAction(title);
+        action->setCheckable(true);
+        action->setChecked(*member);
+        QObject::connect(action, &QAction::triggered, this, [member, button](bool checked) {
+            *member = checked;
+            button->setVisible(checked);
+        });
+    };
+
+    setupButtonControl(tr("Show Stop"), m_stop, &m_showStop);
+    setupButtonControl(tr("Show Previous"), m_prev, &m_showPrev);
+    setupButtonControl(tr("Show Pause"), m_pause, &m_showPause);
+    setupButtonControl(tr("Show Play"), m_play, &m_showPlay);
+    setupButtonControl(tr("Show Play/Pause"), m_playPause, &m_showPlayPause);
+    setupButtonControl(tr("Show Next"), m_next, &m_showNext);
+    setupButtonControl(tr("Show Random Track"), m_randomTrack, &m_showRandomTrack);
+    menu->addSeparator();
+
     auto* orientationGroup = new QActionGroup(menu);
     auto* automatic        = new QAction(tr("Automatic"), orientationGroup);
     auto* horizontal       = new QAction(tr("Horizontal"), orientationGroup);
     auto* vertical         = new QAction(tr("Vertical"), orientationGroup);
+
+    auto* orientationMenu = new QMenu(tr("Orientation"), menu);
+    orientationMenu->addAction(automatic);
+    orientationMenu->addAction(horizontal);
+    orientationMenu->addAction(vertical);
 
     automatic->setCheckable(true);
     horizontal->setCheckable(true);
@@ -204,28 +228,7 @@ void PlayerControl::contextMenuEvent(QContextMenuEvent* event)
         updateOrientation();
     });
 
-    menu->addAction(automatic);
-    menu->addAction(horizontal);
-    menu->addAction(vertical);
-    menu->addSeparator();
-
-    const auto setupButtonControl = [this, menu](const QString& title, ToolButton* button, bool* member) {
-        auto* action = menu->addAction(title);
-        action->setCheckable(true);
-        action->setChecked(*member);
-        QObject::connect(action, &QAction::triggered, this, [member, button](bool checked) {
-            *member = checked;
-            button->setVisible(checked);
-        });
-    };
-
-    setupButtonControl(tr("Show Stop"), m_stop, &m_showStop);
-    setupButtonControl(tr("Show Previous"), m_prev, &m_showPrev);
-    setupButtonControl(tr("Show Pause"), m_pause, &m_showPause);
-    setupButtonControl(tr("Show Play"), m_play, &m_showPlay);
-    setupButtonControl(tr("Show Play/Pause"), m_playPause, &m_showPlayPause);
-    setupButtonControl(tr("Show Next"), m_next, &m_showNext);
-    setupButtonControl(tr("Show Random Track"), m_randomTrack, &m_showRandomTrack);
+    menu->addMenu(orientationMenu);
 
     menu->popup(event->globalPos());
 }
