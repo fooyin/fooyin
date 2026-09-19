@@ -1288,7 +1288,7 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="493"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="496"/>
         <source>Conditional</source>
-        <translation>Konditional</translation>
+        <translation>Villkorlighet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="480"/>
@@ -10726,14 +10726,14 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="37"/>
         <source>Metadata Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadataändringar</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="48"/>
         <source>%Ln metadata change(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln metadataändring</numerusform>
+            <numerusform>%Ln metadataändringar</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -10747,7 +10747,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="50"/>
         <source>%1 across %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 över %2.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="54"/>
@@ -10979,12 +10979,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="464"/>
         <source>Write provider IDs</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv leverantörs-ID:n</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="466"/>
         <source>Use original date for Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd ursprungligt datum för datum</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="469"/>
@@ -12123,7 +12123,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
         <source>P&amp;ause</source>
-        <translation type="unfinished"></translation>
+        <translation>P&amp;ausa</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
@@ -12198,7 +12198,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="87"/>
         <source>Restart the current track or start playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Starta om det aktuella spåret eller starta uppspelning</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="93"/>
@@ -18383,7 +18383,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1186"/>
         <source>Conditionals</source>
-        <translation type="unfinished"></translation>
+        <translation>Villkorligheter</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1187"/>
@@ -20665,7 +20665,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="90"/>
         <source>Show track</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="91"/>
@@ -20675,7 +20675,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="92"/>
         <source>Open properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna egenskaper</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="98"/>
@@ -21606,7 +21606,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="178"/>
         <source>Decoded audio CRC32: %1</source>
-        <translation>Avkodad ljud-CRC32: %1</translation>
+        <translation>Avkodad ljud-CRC-32: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="181"/>
@@ -21872,7 +21872,8 @@ Detta stödjer inte fullständig skriptning.</translation>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="591"/>
         <source>Current file:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuell fil:
+%1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="663"/>
@@ -24157,7 +24158,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="600"/>
         <source>Expected %1 to close conditional</source>
-        <translation>Förväntade %1 att stänga villkor</translation>
+        <translation>Förväntade %1 att stänga villkorlighet</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="629"/>
