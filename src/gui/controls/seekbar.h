@@ -50,7 +50,8 @@ private:
     void reset();
     void updateSeekEnabled() const;
     void trackChanged(const Track& track);
-    void setCurrentPosition(uint64_t pos) const;
+    void setCurrentPosition(uint64_t pos);
+    void updatePlayedMarker();
     void stateChanged(Player::PlayState state);
 
     PlayerController* m_playerController;
@@ -61,5 +62,6 @@ private:
     uint64_t m_max;
     Qt::Orientation m_orientation;
     bool m_autoOrientation;
+    bool m_showPlayedThresholdMarker;
 };
 } // namespace Fooyin

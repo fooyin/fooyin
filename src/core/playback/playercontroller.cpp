@@ -2026,6 +2026,11 @@ uint64_t PlayerController::currentTimeListened() const
     return p->m_progressTracker.timeListened();
 }
 
+uint64_t PlayerController::playedThreshold() const
+{
+    return p->m_progressTracker.playedThreshold();
+}
+
 bool PlayerController::playedThresholdReached() const
 {
     return p->m_progressTracker.playedThresholdReached();

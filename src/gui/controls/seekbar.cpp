@@ -33,10 +33,14 @@
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QMenu>
+#include <QPaintEvent>
+#include <QPainter>
 #include <QPointer>
 #include <QResizeEvent>
 #include <QSlider>
 #include <QStyleOptionSlider>
+
+#include <optional>
 
 using namespace Qt::StringLiterals;
 
@@ -54,6 +58,7 @@ public:
 
     void updateMaximum(uint64_t max);
     void updateCurrentValue(uint64_t value);
+    void updatePlayedMarker(std::optional<uint64_t> position);
 
     [[nodiscard]] bool isSeeking() const;
     void stopSeeking();
@@ -71,6 +76,7 @@ protected:
     void mouseMoveEvent(QMouseEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
+    void paintEvent(QPaintEvent* event) override;
 
 private:
     void updateSeekPosition(const QPointF& pos);
@@ -79,6 +85,7 @@ private:
     QPointer<ToolTip> m_toolTip;
     uint64_t m_max{0};
     uint64_t m_currentPos{0};
+    std::optional<uint64_t> m_playedMarker;
     QPoint m_pressPos;
     QPoint m_seekPos;
 };
@@ -129,6 +136,15 @@ void TrackSlider::updateCurrentValue(uint64_t value)
     if(m_toolTip) {
         updateToolTip();
     }
+}
+
+void TrackSlider::updatePlayedMarker(std::optional<uint64_t> position)
+{
+    if(std::exchange(m_playedMarker, position) == position) {
+        return;
+    }
+
+    update();
 }
 
 bool TrackSlider::isSeeking() const
@@ -261,6 +277,40 @@ void TrackSlider::wheelEvent(QWheelEvent* event)
     event->accept();
 }
 
+void TrackSlider::paintEvent(QPaintEvent* event)
+{
+    QSlider::paintEvent(event);
+
+    if(!m_playedMarker.has_value() || m_max == 0) {
+        return;
+    }
+
+    QStyleOptionSlider opt;
+    initStyleOption(&opt);
+
+    opt.sliderPosition = static_cast<int>(*m_playedMarker);
+    opt.sliderValue    = opt.sliderPosition;
+
+    const QRect handle = style()->subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, this);
+
+    QPainter painter{this};
+
+    QPen pen{palette().color(QPalette::Highlight), 2};
+    pen.setCosmetic(true);
+    painter.setPen(pen);
+
+    const QPointF center = QRectF{handle}.center();
+
+    if(orientation() == Qt::Horizontal) {
+        const qreal halfLength = handle.height() / 4.0;
+        painter.drawLine(QPointF{center.x(), center.y() - halfLength}, QPointF{center.x(), center.y() + halfLength});
+    }
+    else {
+        const qreal halfLength = handle.width() / 4.0;
+        painter.drawLine(QPointF{center.x() - halfLength, center.y()}, QPointF{center.x() + halfLength, center.y()});
+    }
+}
+
 void TrackSlider::updateSeekPosition(const QPointF& pos)
 {
     m_seekPos        = pos.toPoint();
@@ -352,6 +402,7 @@ SeekBar::SeekBar(PlayerController* playerController, SettingsManager* settings, 
     , m_slider{new TrackSlider(this)}
     , m_orientation{Qt::Horizontal}
     , m_autoOrientation{true}
+    , m_showPlayedThresholdMarker{false}
 {
     setMouseTracking(true);
 
@@ -392,8 +443,9 @@ QString SeekBar::layoutName() const
 
 void SeekBar::saveLayoutData(QJsonObject& layout)
 {
-    layout["ShowLabels"_L1]        = m_container->labelsEnabled();
-    layout["ShowRemainingTime"_L1] = m_container->showRemainingTime();
+    layout["ShowLabels"_L1]          = m_container->labelsEnabled();
+    layout["ShowRemainingTime"_L1]   = m_container->showRemainingTime();
+    layout["ShowPlayedThreshold"_L1] = m_showPlayedThresholdMarker;
 
     if(!m_autoOrientation) {
         layout["Orientation"_L1] = m_orientation;
@@ -410,6 +462,10 @@ void SeekBar::loadLayoutData(const QJsonObject& layout)
         const auto key = layout.contains("ShowRemainingTime"_L1) ? "ShowRemainingTime"_L1 : "ElapsedTotal"_L1;
         const bool showRemainingTime = layout.value(key).toBool();
         m_container->setShowRemainingTime(showRemainingTime);
+    }
+    if(layout.contains("ShowPlayedThreshold"_L1)) {
+        m_showPlayedThresholdMarker = layout.value("ShowPlayedThreshold"_L1).toBool();
+        updatePlayedMarker();
     }
     if(layout.contains("Orientation"_L1)) {
         const auto orientation = static_cast<Qt::Orientation>(layout.value("Orientation"_L1).toInt());
@@ -444,6 +500,15 @@ void SeekBar::contextMenuEvent(QContextMenuEvent* event)
     QObject::connect(showRemainingTime, &QAction::triggered, this,
                      [this](bool checked) { m_container->setShowRemainingTime(checked); });
     menu->addAction(showRemainingTime);
+
+    auto* showPlayedThreshold = new QAction(tr("Show played threshold"), menu);
+    showPlayedThreshold->setCheckable(true);
+    showPlayedThreshold->setChecked(m_showPlayedThresholdMarker);
+    QObject::connect(showPlayedThreshold, &QAction::triggered, this, [this](bool checked) {
+        m_showPlayedThresholdMarker = checked;
+        updatePlayedMarker();
+    });
+    menu->addAction(showPlayedThreshold);
 
     menu->addSeparator();
 
@@ -510,6 +575,7 @@ void SeekBar::reset()
     m_slider->stopSeeking();
     m_slider->setValue(0);
     m_slider->updateMaximum(m_max);
+    m_slider->updatePlayedMarker({});
 }
 
 void SeekBar::updateSeekEnabled() const
@@ -533,12 +599,28 @@ void SeekBar::trackChanged(const Track& track)
     else {
         reset();
     }
+
+    updatePlayedMarker();
     updateSeekEnabled();
 }
 
-void SeekBar::setCurrentPosition(uint64_t pos) const
+void SeekBar::setCurrentPosition(uint64_t pos)
 {
     m_slider->updateCurrentValue(pos);
+    updatePlayedMarker();
+}
+
+void SeekBar::updatePlayedMarker()
+{
+    const uint64_t threshold = m_playerController->playedThreshold();
+    if(!m_showPlayedThresholdMarker || m_max == 0 || threshold == 0 || m_playerController->playedThresholdReached()) {
+        m_slider->updatePlayedMarker({});
+        return;
+    }
+
+    const uint64_t listened  = m_playerController->currentTimeListened();
+    const uint64_t remaining = threshold > listened ? threshold - listened : 0;
+    m_slider->updatePlayedMarker(std::min(m_max, m_playerController->currentPosition() + remaining));
 }
 
 void SeekBar::stateChanged(Player::PlayState state)

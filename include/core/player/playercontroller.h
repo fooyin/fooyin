@@ -53,6 +53,8 @@ public:
     [[nodiscard]] uint64_t currentPosition() const;
     /** Returns the listened playback time in ms used for playcount thresholding. */
     [[nodiscard]] uint64_t currentTimeListened() const;
+    /** Returns the listened playback time in ms required to count the current track as played. */
+    [[nodiscard]] uint64_t playedThreshold() const;
     /** Returns whether the current track has already crossed the played threshold. */
     [[nodiscard]] bool playedThresholdReached() const;
     /** Returns the current bitrate. */
