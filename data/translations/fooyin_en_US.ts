@@ -6996,12 +6996,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="165"/>
         <source>Rename &apos;All&apos; filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Rename &quot;All&quot; filter</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="168"/>
         <source>Rename &apos;All&apos; Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Rename &quot;All&quot; Filter</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="168"/>
@@ -18412,7 +18412,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/scripting/scriptformatter.cpp" line="236"/>
         <source>[%1] Error in formatting tag &apos;%2&apos;: invalid formatting option.</source>
-        <translation type="unfinished"></translation>
+        <translation>[%1] Error in formatting tag &quot;%2&quot;: invalid formatting option.</translation>
     </message>
 </context>
 <context>
@@ -21601,7 +21601,7 @@ This does not support full scripting.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="178"/>
         <source>Decoded audio CRC32: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Decoded audio CRC-32: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="181"/>
