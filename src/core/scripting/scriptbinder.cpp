@@ -95,8 +95,9 @@ VariableKind resolveBuiltInVariableKind(const QString& var)
     if(var == QLatin1StringView{MetaData::Artist}) {
         return VariableKind::Artist;
     }
-    if(var == QLatin1StringView{MetaData::UniqueArtist}) {
-        return VariableKind::UniqueArtist;
+    if(var == QLatin1StringView{MetaData::TrackArtist} || var == QLatin1StringView{MetaData::UniqueArtist}
+       || var == "TRACK ARTIST"_L1) {
+        return VariableKind::TrackArtist;
     }
     if(var == QLatin1StringView{MetaData::Album}) {
         return VariableKind::Album;

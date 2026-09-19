@@ -925,6 +925,10 @@ QString Track::artistsJoined(const QString& sep) const
 
 QStringList Track::uniqueArtists() const
 {
+    if(!hasAlbumArtists()) {
+        return {};
+    }
+
     QStringList uniqueArtists;
     uniqueArtists.reserve(artistCount());
 

@@ -841,6 +841,27 @@ TEST_F(ScriptParserTest, MetaTest)
     EXPECT_EQ(u"0", m_parser.evaluate(u"$meta_num(missing)"_s, track));
 }
 
+TEST_F(ScriptParserTest, TrackArtistTest)
+{
+    Track track;
+    track.setArtists({u"Artist"_s});
+
+    EXPECT_EQ(u"", m_parser.evaluate(u"%trackartist%"_s, track));
+    EXPECT_EQ(u"", m_parser.evaluate(u"%uniqueartist%"_s, track));
+
+    track.setAlbumArtists({u"Album Artist"_s});
+    EXPECT_EQ(u"Artist", m_parser.evaluate(u"%trackartist%"_s, track));
+    EXPECT_EQ(u"Artist", m_parser.evaluate(u"%uniqueartist%"_s, track));
+
+    track.setArtists({u"Album Artist"_s});
+    EXPECT_EQ(u"", m_parser.evaluate(u"%trackartist%"_s, track));
+
+    track.setArtists({});
+    track.setAlbumArtists({});
+    track.setComposers({u"Composer"_s});
+    EXPECT_EQ(u"", m_parser.evaluate(u"%trackartist%"_s, track));
+}
+
 TEST_F(ScriptParserTest, InfoTest)
 {
     Track track;

@@ -33,6 +33,7 @@ constexpr auto CueEndSector       = "_CUE_END_SECTOR";
 namespace MetaData {
 constexpr auto Title             = "TITLE";
 constexpr auto Artist            = "ARTIST";
+constexpr auto TrackArtist       = "TRACKARTIST";
 constexpr auto UniqueArtist      = "UNIQUEARTIST";
 constexpr auto Album             = "ALBUM";
 constexpr auto AlbumArtist       = "ALBUMARTIST";

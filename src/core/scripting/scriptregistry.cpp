@@ -359,7 +359,7 @@ std::optional<ScriptRegistry::FuncRet> trackMetadataValue(const VariableKind kin
             return track.effectiveTitle();
         case VariableKind::Artist:
             return track.primaryArtist();
-        case VariableKind::UniqueArtist:
+        case VariableKind::TrackArtist:
             return track.uniqueArtist();
         case VariableKind::PlayCount:
             return track.playCount();
