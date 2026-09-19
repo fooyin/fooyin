@@ -394,7 +394,6 @@ private:
                     m_variableModel->appendRow(item);
                     break;
                 case ScriptReferenceKind::Function:
-                case ScriptReferenceKind::CommandAlias:
                     m_functionModel->appendRow(item);
                     break;
                 case ScriptReferenceKind::Formatting:
@@ -423,7 +422,6 @@ private:
                 model = m_functionModel;
                 break;
             case ScriptReferenceKind::Formatting:
-            case ScriptReferenceKind::CommandAlias:
                 break;
         }
 
@@ -774,15 +772,12 @@ public:
     QTreeView* m_variableReferenceTree;
     QTreeView* m_functionReferenceTree;
     QTreeView* m_formattingReferenceTree;
-    QTreeView* m_commandReferenceTree;
     QStandardItemModel* m_variableReferenceModel;
     QStandardItemModel* m_functionReferenceModel;
     QStandardItemModel* m_formattingReferenceModel;
-    QStandardItemModel* m_commandReferenceModel;
     ScriptReferenceFilterModel* m_variableReferenceFilter;
     ScriptReferenceFilterModel* m_functionReferenceFilter;
     ScriptReferenceFilterModel* m_formattingReferenceFilter;
-    ScriptReferenceFilterModel* m_commandReferenceFilter;
     ExpressionTreeModel* m_model;
 
     QBasicTimer m_textChangeTimer;
@@ -817,15 +812,12 @@ ScriptEditorPrivate::ScriptEditorPrivate(ScriptEditor* self, LibraryManager* lib
     , m_variableReferenceTree{new QTreeView(m_self)}
     , m_functionReferenceTree{new QTreeView(m_self)}
     , m_formattingReferenceTree{new QTreeView(m_self)}
-    , m_commandReferenceTree{new QTreeView(m_self)}
     , m_variableReferenceModel{new QStandardItemModel(m_self)}
     , m_functionReferenceModel{new QStandardItemModel(m_self)}
     , m_formattingReferenceModel{new QStandardItemModel(m_self)}
-    , m_commandReferenceModel{new QStandardItemModel(m_self)}
     , m_variableReferenceFilter{new ScriptReferenceFilterModel(m_self)}
     , m_functionReferenceFilter{new ScriptReferenceFilterModel(m_self)}
     , m_formattingReferenceFilter{new ScriptReferenceFilterModel(m_self)}
-    , m_commandReferenceFilter{new ScriptReferenceFilterModel(m_self)}
     , m_model{new ExpressionTreeModel(m_self)}
     , m_environment{libraryManager}
 {
@@ -899,8 +891,7 @@ void ScriptEditorPrivate::setupConnections()
     const auto connectReferenceTree = [this](QTreeView* tree) {
         QObject::connect(tree, &QTreeView::doubleClicked, this, &ScriptEditorPrivate::referenceItemActivated);
     };
-    for(auto* tree :
-        {m_variableReferenceTree, m_functionReferenceTree, m_formattingReferenceTree, m_commandReferenceTree}) {
+    for(auto* tree : {m_variableReferenceTree, m_functionReferenceTree, m_formattingReferenceTree}) {
         connectReferenceTree(tree);
     }
     QObject::connect(m_referenceTabs, &QTabWidget::currentChanged, this, &ScriptEditorPrivate::referenceTabChanged);
@@ -978,8 +969,7 @@ void ScriptEditorPrivate::setupReference()
     const auto headers
         = QStringList{ScriptEditor::tr("Item"), ScriptEditor::tr("Category"), ScriptEditor::tr("Description")};
 
-    for(auto* model :
-        {m_variableReferenceModel, m_functionReferenceModel, m_formattingReferenceModel, m_commandReferenceModel}) {
+    for(auto* model : {m_variableReferenceModel, m_functionReferenceModel, m_formattingReferenceModel}) {
         model->setHorizontalHeaderLabels(headers);
     }
 
@@ -1014,9 +1004,6 @@ void ScriptEditorPrivate::setupReference()
             case ScriptReferenceKind::Formatting:
                 appendRow(m_formattingReferenceModel, entry);
                 break;
-            case ScriptReferenceKind::CommandAlias:
-                appendRow(m_commandReferenceModel, entry);
-                break;
         }
     }
 
@@ -1045,12 +1032,10 @@ void ScriptEditorPrivate::setupReference()
     configureReferenceTree(m_variableReferenceTree, m_variableReferenceFilter, m_variableReferenceModel);
     configureReferenceTree(m_functionReferenceTree, m_functionReferenceFilter, m_functionReferenceModel);
     configureReferenceTree(m_formattingReferenceTree, m_formattingReferenceFilter, m_formattingReferenceModel);
-    configureReferenceTree(m_commandReferenceTree, m_commandReferenceFilter, m_commandReferenceModel);
 
     m_referenceTabs->addTab(m_variableReferenceTree, ScriptEditor::tr("Variables"));
     m_referenceTabs->addTab(m_functionReferenceTree, ScriptEditor::tr("Functions"));
     m_referenceTabs->addTab(m_formattingReferenceTree, ScriptEditor::tr("Formatting"));
-    m_referenceTabs->addTab(m_commandReferenceTree, ScriptEditor::tr("Commands"));
 
     m_referenceSearch->setPlaceholderText(ScriptEditor::tr("Filter"));
 }
@@ -1327,7 +1312,6 @@ void ScriptEditorPrivate::referenceSearchChanged(const QString& text)
     m_variableReferenceFilter->setFilterRegularExpression(expression);
     m_functionReferenceFilter->setFilterRegularExpression(expression);
     m_formattingReferenceFilter->setFilterRegularExpression(expression);
-    m_commandReferenceFilter->setFilterRegularExpression(expression);
 }
 
 void ScriptEditorPrivate::referenceItemActivated(const QModelIndex& index)

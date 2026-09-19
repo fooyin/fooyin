@@ -30,7 +30,6 @@ enum class ScriptReferenceKind : uint8_t
     Variable = 0,
     Function,
     Formatting,
-    CommandAlias,
 };
 
 struct ScriptReferenceEntry

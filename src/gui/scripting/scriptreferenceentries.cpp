@@ -80,18 +80,6 @@ Fooyin::ScriptReferenceEntry formattingEntry(const char* name, const char* signa
             .description  = translate(description),
             .cursorOffset = cursorOffset};
 }
-
-Fooyin::ScriptReferenceEntry commandAliasEntry(const Fooyin::ScriptCommandAlias& alias)
-{
-    return {
-        .kind         = Fooyin::ScriptReferenceKind::CommandAlias,
-        .label        = alias.alias.toString(),
-        .insertText   = alias.alias.toString(),
-        .category     = translate(alias.category),
-        .description  = translate(alias.description),
-        .cursorOffset = 0,
-    };
-}
 } // namespace
 
 namespace Fooyin {
@@ -522,27 +510,6 @@ const std::vector<ScriptReferenceEntry>& scriptReferenceEntries()
                       QT_TRANSLATE_NOOP("Fooyin", "Lookup")),
     };
 
-    static const auto CommandEntries = [] {
-        const auto& aliases = ScriptCommandHandler::scriptCommandAliases();
-
-        std::vector<ScriptReferenceEntry> entries;
-        entries.reserve(aliases.size());
-
-        for(const auto& alias : aliases) {
-            entries.emplace_back(commandAliasEntry(alias));
-        }
-
-        return entries;
-    }();
-
-    static const auto AllEntries = [] {
-        std::vector<ScriptReferenceEntry> entries;
-        entries.reserve(Entries.size() + CommandEntries.size());
-        entries.insert(entries.end(), Entries.cbegin(), Entries.cend());
-        entries.insert(entries.end(), CommandEntries.cbegin(), CommandEntries.cend());
-        return entries;
-    }();
-
-    return AllEntries;
+    return Entries;
 }
 } // namespace Fooyin
