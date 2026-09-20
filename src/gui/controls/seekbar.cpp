@@ -294,6 +294,7 @@ void TrackSlider::paintEvent(QPaintEvent* event)
     const QRect handle = style()->subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, this);
 
     QPainter painter{this};
+    painter.setRenderHint(QPainter::Antialiasing, true);
 
     QPen pen{palette().color(QPalette::Highlight), 2};
     pen.setCosmetic(true);
