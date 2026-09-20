@@ -29,6 +29,7 @@
 #include <core/library/musiclibrary.h>
 #include <gui/guiconstants.h>
 #include <gui/widgets/extendabletableview.h>
+#include <utils/fypaths.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
@@ -41,6 +42,8 @@
 #include <QInputDialog>
 #include <QLabel>
 #include <QMenu>
+#include <QMessageBox>
+#include <QToolButton>
 
 using namespace Qt::StringLiterals;
 
@@ -184,6 +187,27 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(LibraryManager* libraryManage
 
     row = 0;
     mainLayout->addWidget(m_libraryView, row++, 0, 1, 2);
+
+    if(Utils::isFlatpak()) {
+        auto* flatpakHelp = new QToolButton(this);
+        flatpakHelp->setText(tr("Flatpak help…"));
+        QObject::connect(flatpakHelp, &QToolButton::clicked, this, [this] {
+            QMessageBox messageBox{
+                QMessageBox::Information, tr("Music Libraries in Flatpak"), {}, QMessageBox::Ok, this};
+            messageBox.setTextFormat(Qt::RichText);
+            messageBox.setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
+            messageBox.setText(
+                tr("<p>The Flatpak already permits access to common music locations. If a music directory is not "
+                   "shown in the directory picker, cannot be read, or becomes unavailable after restarting fooyin, "
+                   "grant access to that directory under <code>Filesystem</code> in Flatseal, or run the following "
+                   "command after replacing the example path:</p>"
+                   "<pre>flatpak override --user --filesystem=&quot;/path/to/music&quot; org.fooyin.fooyin</pre>"
+                   "<p>Restart fooyin after changing its permissions.</p>"));
+            messageBox.exec();
+        });
+        m_libraryView->addCustomTool(flatpakHelp);
+    }
+
     mainLayout->addWidget(fileTypesGroup, row++, 0, 1, 2);
     mainLayout->addWidget(scanningGroup, row, 0);
     mainLayout->addWidget(availabilityGroup, row++, 1);
