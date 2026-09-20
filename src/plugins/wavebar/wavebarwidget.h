@@ -58,6 +58,7 @@ public:
     {
         bool showLabels{false};
         bool showRemainingTime{false};
+        bool showPlayedThreshold{false};
         bool showCursor{true};
         int cursorWidth{3};
         int mode{WaveMode::Default};
@@ -101,6 +102,7 @@ private:
     void openConfigDialog() override;
 
     void rescaleWaveform();
+    void updatePlayedThresholdMarker();
 
     PlayerController* m_playerController;
     SettingsManager* m_settings;

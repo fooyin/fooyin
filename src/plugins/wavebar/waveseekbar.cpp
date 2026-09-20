@@ -127,6 +127,19 @@ void WaveSeekBar::setPosition(uint64_t pos)
     updateRange(oldX, x);
 }
 
+void WaveSeekBar::setPlayedThresholdPosition(std::optional<uint64_t> position)
+{
+    if(position == m_playedThresholdPosition) {
+        return;
+    }
+
+    const auto oldPosition = std::exchange(m_playedThresholdPosition, position);
+    const double oldX      = oldPosition.has_value() ? positionFromValue(static_cast<double>(*oldPosition))
+                                                     : positionFromValue(static_cast<double>(position.value_or(0)));
+    const double newX      = position.has_value() ? positionFromValue(static_cast<double>(*position)) : oldX;
+    updateRange(std::min(oldX, newX) - 1.0, std::max(oldX, newX) + 1.0);
+}
+
 void WaveSeekBar::setShowCursor(bool show)
 {
     if(std::exchange(m_showCursor, show) != show) {
@@ -549,6 +562,19 @@ void WaveSeekBar::drawCachedTransition(QPainter& painter, double positionX)
 
 void WaveSeekBar::drawCursors(QPainter& painter)
 {
+    if(m_playedThresholdPosition.has_value()) {
+        painter.save();
+
+        QPen thresholdPen{m_colours.colour(Colours::Type::PlayedThreshold, palette()), 2.0, Qt::SolidLine, Qt::FlatCap};
+        thresholdPen.setCosmetic(true);
+        painter.setPen(thresholdPen);
+
+        const double posX = positionFromValue(static_cast<double>(*m_playedThresholdPosition));
+        painter.drawLine(QPointF{posX, 0.0}, QPointF{posX, static_cast<double>(height())});
+
+        painter.restore();
+    }
+
     if(m_showCursor && m_playState != Player::PlayState::Stopped) {
         const double posX = positionFromValue(static_cast<double>(m_position));
 

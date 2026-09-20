@@ -46,23 +46,24 @@ using namespace std::chrono_literals;
 using namespace Qt::StringLiterals;
 
 // Settings
-constexpr auto ShowLabelsKey         = u"WaveBar/ShowLabels";
-constexpr auto ShowRemainingTimeKey  = u"WaveBar/ShowRemainingTime";
-constexpr auto LegacyElapsedTotalKey = u"WaveBar/ElapsedTotal";
-constexpr auto ShowCursorKey         = u"WaveBar/ShowCursor";
-constexpr auto CursorWidthKey        = u"WaveBar/CursorWidth";
-constexpr auto ModeKey               = u"WaveBar/Mode";
-constexpr auto DownmixKey            = u"WaveBar/Downmix";
-constexpr auto BarWidthKey           = u"WaveBar/BarWidth";
-constexpr auto BarGapKey             = u"WaveBar/BarGap";
-constexpr auto SupersampleFactorKey  = u"WaveBar/SupersampleFactor";
-constexpr auto PeakDisplayModeKey    = u"WaveBar/PeakDisplayMode";
-constexpr auto NormaliseToPeakKey    = u"WaveBar/NormaliseToPeak";
-constexpr auto DecibelScaleKey       = u"WaveBar/DecibelScale";
-constexpr auto MaxScaleKey           = u"WaveBar/MaxScale";
-constexpr auto CentreGapKey          = u"WaveBar/CentreGap";
-constexpr auto ChannelScaleKey       = u"WaveBar/ChannelScale";
-constexpr auto ColoursKey            = u"WaveBar/Colours";
+constexpr auto ShowLabelsKey          = u"WaveBar/ShowLabels";
+constexpr auto ShowRemainingTimeKey   = u"WaveBar/ShowRemainingTime";
+constexpr auto LegacyElapsedTotalKey  = u"WaveBar/ElapsedTotal";
+constexpr auto ShowPlayedThresholdKey = u"WaveBar/ShowPlayedThreshold";
+constexpr auto ShowCursorKey          = u"WaveBar/ShowCursor";
+constexpr auto CursorWidthKey         = u"WaveBar/CursorWidth";
+constexpr auto ModeKey                = u"WaveBar/Mode";
+constexpr auto DownmixKey             = u"WaveBar/Downmix";
+constexpr auto BarWidthKey            = u"WaveBar/BarWidth";
+constexpr auto BarGapKey              = u"WaveBar/BarGap";
+constexpr auto SupersampleFactorKey   = u"WaveBar/SupersampleFactor";
+constexpr auto PeakDisplayModeKey     = u"WaveBar/PeakDisplayMode";
+constexpr auto NormaliseToPeakKey     = u"WaveBar/NormaliseToPeak";
+constexpr auto DecibelScaleKey        = u"WaveBar/DecibelScale";
+constexpr auto MaxScaleKey            = u"WaveBar/MaxScale";
+constexpr auto CentreGapKey           = u"WaveBar/CentreGap";
+constexpr auto ChannelScaleKey        = u"WaveBar/ChannelScale";
+constexpr auto ColoursKey             = u"WaveBar/Colours";
 
 namespace Fooyin::WaveBar {
 namespace {
@@ -101,7 +102,10 @@ WaveBarWidget::WaveBarWidget(std::shared_ptr<AudioLoader> audioLoader, DbConnect
                      [this]() { m_seekbar->processData({}); });
     QObject::connect(m_builder.get(), &WaveformBuilder::waveformRescaled, m_seekbar, &WaveSeekBar::processData);
 
-    QObject::connect(playerController, &PlayerController::positionChanged, m_seekbar, &WaveSeekBar::setPosition);
+    QObject::connect(playerController, &PlayerController::positionChanged, this, [this](uint64_t position) {
+        m_seekbar->setPosition(position);
+        updatePlayedThresholdMarker();
+    });
     QObject::connect(playerController, &PlayerController::playStateChanged, m_seekbar, &WaveSeekBar::setPlayState);
     QObject::connect(playerController, &PlayerController::currentTrackSeekableChanged, m_seekbar,
                      &WaveSeekBar::setSeekable);
@@ -166,20 +170,21 @@ WaveBarWidget::ConfigData WaveBarWidget::defaultConfig() const
               ->fileValue(m_settings->fileContains(ShowRemainingTimeKey) ? ShowRemainingTimeKey : LegacyElapsedTotalKey,
                           config.showRemainingTime)
               .toBool();
-    config.showCursor        = m_settings->fileValue(ShowCursorKey, config.showCursor).toBool();
-    config.cursorWidth       = m_settings->fileValue(CursorWidthKey, config.cursorWidth).toInt();
-    config.mode              = m_settings->fileValue(ModeKey, config.mode).toInt();
-    config.downmix           = m_settings->fileValue(DownmixKey, config.downmix).toInt();
-    config.barWidth          = m_settings->fileValue(BarWidthKey, config.barWidth).toInt();
-    config.barGap            = m_settings->fileValue(BarGapKey, config.barGap).toInt();
-    config.supersampleFactor = m_settings->fileValue(SupersampleFactorKey, config.supersampleFactor).toInt();
-    config.peakDisplayMode   = m_settings->fileValue(PeakDisplayModeKey, config.peakDisplayMode).toInt();
-    config.normaliseToPeak   = m_settings->fileValue(NormaliseToPeakKey, config.normaliseToPeak).toBool();
-    config.decibelScale      = m_settings->fileValue(DecibelScaleKey, config.decibelScale).toBool();
-    config.maxScale          = m_settings->fileValue(MaxScaleKey, config.maxScale).toDouble();
-    config.centreGap         = m_settings->fileValue(CentreGapKey, config.centreGap).toInt();
-    config.channelScale      = m_settings->fileValue(ChannelScaleKey, config.channelScale).toDouble();
-    config.colourOptions     = m_settings->fileValue(ColoursKey, config.colourOptions);
+    config.showPlayedThreshold = m_settings->fileValue(ShowPlayedThresholdKey, config.showPlayedThreshold).toBool();
+    config.showCursor          = m_settings->fileValue(ShowCursorKey, config.showCursor).toBool();
+    config.cursorWidth         = m_settings->fileValue(CursorWidthKey, config.cursorWidth).toInt();
+    config.mode                = m_settings->fileValue(ModeKey, config.mode).toInt();
+    config.downmix             = m_settings->fileValue(DownmixKey, config.downmix).toInt();
+    config.barWidth            = m_settings->fileValue(BarWidthKey, config.barWidth).toInt();
+    config.barGap              = m_settings->fileValue(BarGapKey, config.barGap).toInt();
+    config.supersampleFactor   = m_settings->fileValue(SupersampleFactorKey, config.supersampleFactor).toInt();
+    config.peakDisplayMode     = m_settings->fileValue(PeakDisplayModeKey, config.peakDisplayMode).toInt();
+    config.normaliseToPeak     = m_settings->fileValue(NormaliseToPeakKey, config.normaliseToPeak).toBool();
+    config.decibelScale        = m_settings->fileValue(DecibelScaleKey, config.decibelScale).toBool();
+    config.maxScale            = m_settings->fileValue(MaxScaleKey, config.maxScale).toDouble();
+    config.centreGap           = m_settings->fileValue(CentreGapKey, config.centreGap).toInt();
+    config.channelScale        = m_settings->fileValue(ChannelScaleKey, config.channelScale).toDouble();
+    config.colourOptions       = m_settings->fileValue(ColoursKey, config.colourOptions);
 
     return config;
 }
@@ -187,22 +192,23 @@ WaveBarWidget::ConfigData WaveBarWidget::defaultConfig() const
 WaveBarWidget::ConfigData WaveBarWidget::factoryConfig() const
 {
     return {
-        .showLabels        = false,
-        .showRemainingTime = false,
-        .showCursor        = true,
-        .cursorWidth       = 3,
-        .mode              = static_cast<int>(Default),
-        .downmix           = 0,
-        .barWidth          = 1,
-        .barGap            = 0,
-        .supersampleFactor = 1,
-        .peakDisplayMode   = static_cast<int>(PeakDisplayMode::Maximum),
-        .normaliseToPeak   = false,
-        .decibelScale      = false,
-        .maxScale          = 1.0,
-        .centreGap         = 0,
-        .channelScale      = 0.9,
-        .colourOptions     = QVariant{},
+        .showLabels          = false,
+        .showRemainingTime   = false,
+        .showPlayedThreshold = false,
+        .showCursor          = true,
+        .cursorWidth         = 3,
+        .mode                = static_cast<int>(Default),
+        .downmix             = 0,
+        .barWidth            = 1,
+        .barGap              = 0,
+        .supersampleFactor   = 1,
+        .peakDisplayMode     = static_cast<int>(PeakDisplayMode::Maximum),
+        .normaliseToPeak     = false,
+        .decibelScale        = false,
+        .maxScale            = 1.0,
+        .centreGap           = 0,
+        .channelScale        = 0.9,
+        .colourOptions       = QVariant{},
     };
 }
 
@@ -257,6 +263,7 @@ void WaveBarWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(ShowLabelsKey, validated.showLabels);
     m_settings->fileSet(ShowRemainingTimeKey, validated.showRemainingTime);
     m_settings->fileRemove(LegacyElapsedTotalKey);
+    m_settings->fileSet(ShowPlayedThresholdKey, validated.showPlayedThreshold);
     m_settings->fileSet(ShowCursorKey, validated.showCursor);
     m_settings->fileSet(CursorWidthKey, validated.cursorWidth);
     m_settings->fileSet(ModeKey, validated.mode);
@@ -278,6 +285,7 @@ void WaveBarWidget::clearSavedDefaults() const
     m_settings->fileRemove(ShowLabelsKey);
     m_settings->fileRemove(ShowRemainingTimeKey);
     m_settings->fileRemove(LegacyElapsedTotalKey);
+    m_settings->fileRemove(ShowPlayedThresholdKey);
     m_settings->fileRemove(ShowCursorKey);
     m_settings->fileRemove(CursorWidthKey);
     m_settings->fileRemove(ModeKey);
@@ -333,6 +341,8 @@ void WaveBarWidget::applyConfig(const ConfigData& config)
     m_seekbar->setMode(static_cast<WaveModes>(m_config.mode));
     m_seekbar->setColours(m_config.colourOptions.isValid() ? m_config.colourOptions.value<Colours>() : Colours{});
 
+    updatePlayedThresholdMarker();
+
     m_builder->setSampleWidth(m_config.barWidth + m_config.barGap);
     m_builder->setDownmix(static_cast<DownmixOption>(m_config.downmix));
     m_builder->setSupersampleFactor(m_config.supersampleFactor);
@@ -355,6 +365,9 @@ WaveBarWidget::ConfigData WaveBarWidget::configFromLayout(const QJsonObject& lay
     if(layout.contains("ShowRemainingTime"_L1) || layout.contains("ElapsedTotal"_L1)) {
         const auto key           = layout.contains("ShowRemainingTime"_L1) ? "ShowRemainingTime"_L1 : "ElapsedTotal"_L1;
         config.showRemainingTime = layout.value(key).toBool();
+    }
+    if(layout.contains("ShowPlayedThreshold"_L1)) {
+        config.showPlayedThreshold = layout.value("ShowPlayedThreshold"_L1).toBool();
     }
     if(layout.contains("ShowCursor"_L1)) {
         config.showCursor = layout.value("ShowCursor"_L1).toBool();
@@ -427,6 +440,7 @@ WaveBarWidget::ConfigData WaveBarWidget::configFromLayout(const QJsonObject& lay
             setColour(u"RmsMinBorderColour"_s, Colours::Type::RmsMinBorder);
             setColour(u"CursorColour"_s, Colours::Type::Cursor);
             setColour(u"SeekingCursorColour"_s, Colours::Type::SeekingCursor);
+            setColour(u"PlayedThresholdColour"_s, Colours::Type::PlayedThreshold);
 
             if(!colours.isEmpty()) {
                 config.colourOptions = QVariant::fromValue(colours);
@@ -442,8 +456,9 @@ WaveBarWidget::ConfigData WaveBarWidget::configFromLayout(const QJsonObject& lay
 
 void WaveBarWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const
 {
-    layout["ShowLabels"_L1]        = config.showLabels;
-    layout["ShowRemainingTime"_L1] = config.showRemainingTime;
+    layout["ShowLabels"_L1]          = config.showLabels;
+    layout["ShowRemainingTime"_L1]   = config.showRemainingTime;
+    layout["ShowPlayedThreshold"_L1] = config.showPlayedThreshold;
     layout.remove("ElapsedTotal"_L1);
     layout["ShowCursor"_L1]        = config.showCursor;
     layout["CursorWidth"_L1]       = config.cursorWidth;
@@ -479,6 +494,7 @@ void WaveBarWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& la
         layout.remove("RmsMinBorderColour"_L1);
         layout.remove("CursorColour"_L1);
         layout.remove("SeekingCursorColour"_L1);
+        layout.remove("PlayedThresholdColour"_L1);
         return;
     }
 
@@ -508,12 +524,34 @@ void WaveBarWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& la
     saveColour(u"RmsMinBorderColour"_s, Colours::Type::RmsMinBorder);
     saveColour(u"CursorColour"_s, Colours::Type::Cursor);
     saveColour(u"SeekingCursorColour"_s, Colours::Type::SeekingCursor);
+    saveColour(u"PlayedThresholdColour"_s, Colours::Type::PlayedThreshold);
 }
 
 void WaveBarWidget::changeTrack(const Track& track, bool update)
 {
     m_seekbar->setPosition(m_playerController->currentPosition());
+    updatePlayedThresholdMarker();
     m_builder->generateAndScale(track, update);
+}
+
+void WaveBarWidget::updatePlayedThresholdMarker()
+{
+    if(!m_config.showPlayedThreshold) {
+        m_seekbar->setPlayedThresholdPosition({});
+        return;
+    }
+
+    const Track track        = m_playerController->currentTrack();
+    const uint64_t threshold = m_playerController->playedThreshold();
+    if(!track.isValid() || threshold == 0 || m_playerController->playedThresholdReached()) {
+        m_seekbar->setPlayedThresholdPosition({});
+        return;
+    }
+
+    const uint64_t listened  = m_playerController->currentTimeListened();
+    const uint64_t remaining = threshold > listened ? threshold - listened : 0;
+    m_seekbar->setPlayedThresholdPosition(
+        std::min(track.duration(), m_playerController->currentPosition() + remaining));
 }
 
 void WaveBarWidget::showEvent(QShowEvent* event)
@@ -569,6 +607,15 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
     QObject::connect(showRemainingTime, &QAction::triggered, this, [this](bool checked) {
         auto config{m_config};
         config.showRemainingTime = checked;
+        applyConfig(config);
+    });
+
+    auto* showPlayedThreshold = new QAction(tr("Show played threshold"), menu);
+    showPlayedThreshold->setCheckable(true);
+    showPlayedThreshold->setChecked(m_config.showPlayedThreshold);
+    QObject::connect(showPlayedThreshold, &QAction::triggered, this, [this](bool checked) {
+        auto config{m_config};
+        config.showPlayedThreshold = checked;
         applyConfig(config);
     });
 
@@ -713,6 +760,7 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(showCursor);
     menu->addAction(showLabels);
     menu->addAction(showRemainingTime);
+    menu->addAction(showPlayedThreshold);
     menu->addAction(normaliseToPeak);
     menu->addAction(decibelScale);
     menu->addSeparator();

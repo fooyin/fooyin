@@ -43,6 +43,7 @@ WaveBarConfigDialog::WaveBarConfigDialog(WaveBarWidget* waveBar, QWidget* parent
     : WidgetConfigDialog{waveBar, tr("WaveBar Settings"), parent}
     , m_showLabels{new QCheckBox(tr("Show labels"), this)}
     , m_showRemainingTime{new QCheckBox(tr("Show remaining time"), this)}
+    , m_showPlayedThreshold{new QCheckBox(tr("Show played threshold"), this)}
     , m_minMax{new QCheckBox(tr("Min/Max"), this)}
     , m_rms{new QCheckBox(tr("RMS"), this)}
     , m_silence{new QCheckBox(tr("Silence"), this)}
@@ -77,6 +78,7 @@ WaveBarConfigDialog::WaveBarConfigDialog(WaveBarWidget* waveBar, QWidget* parent
     , m_rmsMinBorder{new ColourButton(true, this)}
     , m_cursorColour{new ColourButton(true, this)}
     , m_seekingCursorColour{new ColourButton(true, this)}
+    , m_playedThresholdColour{new ColourButton(true, this)}
     , m_cacheSizeLabel{new QLabel(this)}
     , m_numSamples{new QComboBox(this)}
     , m_clearCacheButton{new QPushButton(tr("Clear Cache"), this)}
@@ -121,9 +123,11 @@ WaveBarConfigDialog::WaveBarConfigDialog(WaveBarWidget* waveBar, QWidget* parent
     m_cursorWidth->setRange(1, 20);
     m_cursorWidth->setSuffix(u" px"_s);
 
-    cursorGroupLayout->addWidget(m_showCursor, 0, 0, 1, 2);
-    cursorGroupLayout->addWidget(new QLabel(tr("Cursor width") + u":"_s, this), 1, 0);
-    cursorGroupLayout->addWidget(m_cursorWidth, 1, 1);
+    int row{0};
+    cursorGroupLayout->addWidget(m_showCursor, row++, 0, 1, 2);
+    cursorGroupLayout->addWidget(new QLabel(tr("Cursor width") + u":"_s, this), row, 0);
+    cursorGroupLayout->addWidget(m_cursorWidth, row++, 1);
+    cursorGroupLayout->addWidget(m_showPlayedThreshold, row++, 0, 1, 2);
     cursorGroupLayout->setColumnStretch(2, 1);
 
     auto* amplitudeGroup       = new QGroupBox(tr("Amplitude"), displayPage);
@@ -159,7 +163,7 @@ WaveBarConfigDialog::WaveBarConfigDialog(WaveBarWidget* waveBar, QWidget* parent
     auto* peakDisplayLabel = new QLabel(tr("Peak display") + u":"_s, this);
     peakDisplayLabel->setToolTip(m_peakDisplayMode->toolTip());
 
-    int row{0};
+    row = 0;
     amplitudeGroupLayout->addWidget(new QLabel(tr("Channel scale") + u":"_s, this), row, 0);
     amplitudeGroupLayout->addWidget(m_channelScale, row++, 1);
     amplitudeGroupLayout->addWidget(new QLabel(tr("Max scale") + u":"_s, this), row, 0);
@@ -217,10 +221,12 @@ WaveBarConfigDialog::WaveBarConfigDialog(WaveBarWidget* waveBar, QWidget* parent
     coloursLayout->addWidget(m_rmsMinPlayed, row, 2);
     coloursLayout->addWidget(m_rmsMinBorder, row++, 3);
     coloursLayout->addWidget(new QLabel(tr("Playing"), this), row, 1, Qt::AlignCenter);
-    coloursLayout->addWidget(new QLabel(tr("Seeking"), this), row++, 2, Qt::AlignCenter);
+    coloursLayout->addWidget(new QLabel(tr("Seeking"), this), row, 2, Qt::AlignCenter);
+    coloursLayout->addWidget(new QLabel(tr("Threshold"), this), row++, 3, Qt::AlignCenter);
     coloursLayout->addWidget(new QLabel(tr("Cursor"), this), row, 0);
     coloursLayout->addWidget(m_cursorColour, row, 1);
     coloursLayout->addWidget(m_seekingCursorColour, row, 2);
+    coloursLayout->addWidget(m_playedThresholdColour, row, 3);
     coloursLayout->setColumnStretch(1, 1);
     coloursLayout->setColumnStretch(2, 1);
     coloursLayout->setColumnStretch(3, 1);
@@ -302,11 +308,12 @@ WaveBarWidget::ConfigData WaveBarConfigDialog::config() const
     }
 
     WaveBarWidget::ConfigData config{
-        .showLabels        = m_showLabels->isChecked(),
-        .showRemainingTime = m_showRemainingTime->isChecked(),
-        .showCursor        = m_showCursor->isChecked(),
-        .cursorWidth       = m_cursorWidth->value(),
-        .mode              = static_cast<int>(mode),
+        .showLabels          = m_showLabels->isChecked(),
+        .showRemainingTime   = m_showRemainingTime->isChecked(),
+        .showPlayedThreshold = m_showPlayedThreshold->isChecked(),
+        .showCursor          = m_showCursor->isChecked(),
+        .cursorWidth         = m_cursorWidth->value(),
+        .mode                = static_cast<int>(mode),
         .downmix  = m_downmixStereo->isChecked() ? static_cast<int>(DownmixOption::Stereo)
                                                  : (m_downmixMono->isChecked() ? static_cast<int>(DownmixOption::Mono)
                                                                                : static_cast<int>(DownmixOption::Off)),
@@ -345,6 +352,7 @@ WaveBarWidget::ConfigData WaveBarConfigDialog::config() const
     applyColour(m_rmsMinBorder, Colours::Type::RmsMinBorder);
     applyColour(m_cursorColour, Colours::Type::Cursor);
     applyColour(m_seekingCursorColour, Colours::Type::SeekingCursor);
+    applyColour(m_playedThresholdColour, Colours::Type::PlayedThreshold);
 
     if(!colours.isEmpty()) {
         config.colourOptions = QVariant::fromValue(colours);
@@ -357,6 +365,7 @@ void WaveBarConfigDialog::setConfig(const WaveBarWidget::ConfigData& config)
 {
     m_showLabels->setChecked(config.showLabels);
     m_showRemainingTime->setChecked(config.showRemainingTime);
+    m_showPlayedThreshold->setChecked(config.showPlayedThreshold);
     m_showCursor->setChecked(config.showCursor);
     m_cursorWidth->setValue(config.cursorWidth);
     m_channelScale->setValue(config.channelScale);
@@ -411,20 +420,21 @@ void WaveBarConfigDialog::setConfig(const WaveBarWidget::ConfigData& config)
     loadColour(m_rmsMinBorder, Colours::Type::RmsMinBorder);
     loadColour(m_cursorColour, Colours::Type::Cursor);
     loadColour(m_seekingCursorColour, Colours::Type::SeekingCursor);
+    loadColour(m_playedThresholdColour, Colours::Type::PlayedThreshold);
 }
 
 void WaveBarConfigDialog::mergeExternalConfig(const WaveBarWidget::ConfigData& previous,
                                               const WaveBarWidget::ConfigData& current)
 {
     mergeExternalFields(previous, current, &WaveBarWidget::ConfigData::showLabels,
-                        &WaveBarWidget::ConfigData::showRemainingTime, &WaveBarWidget::ConfigData::showCursor,
-                        &WaveBarWidget::ConfigData::cursorWidth, &WaveBarWidget::ConfigData::mode,
-                        &WaveBarWidget::ConfigData::downmix, &WaveBarWidget::ConfigData::barWidth,
-                        &WaveBarWidget::ConfigData::barGap, &WaveBarWidget::ConfigData::supersampleFactor,
-                        &WaveBarWidget::ConfigData::peakDisplayMode, &WaveBarWidget::ConfigData::normaliseToPeak,
-                        &WaveBarWidget::ConfigData::decibelScale, &WaveBarWidget::ConfigData::maxScale,
-                        &WaveBarWidget::ConfigData::centreGap, &WaveBarWidget::ConfigData::channelScale,
-                        &WaveBarWidget::ConfigData::colourOptions);
+                        &WaveBarWidget::ConfigData::showRemainingTime, &WaveBarWidget::ConfigData::showPlayedThreshold,
+                        &WaveBarWidget::ConfigData::showCursor, &WaveBarWidget::ConfigData::cursorWidth,
+                        &WaveBarWidget::ConfigData::mode, &WaveBarWidget::ConfigData::downmix,
+                        &WaveBarWidget::ConfigData::barWidth, &WaveBarWidget::ConfigData::barGap,
+                        &WaveBarWidget::ConfigData::supersampleFactor, &WaveBarWidget::ConfigData::peakDisplayMode,
+                        &WaveBarWidget::ConfigData::normaliseToPeak, &WaveBarWidget::ConfigData::decibelScale,
+                        &WaveBarWidget::ConfigData::maxScale, &WaveBarWidget::ConfigData::centreGap,
+                        &WaveBarWidget::ConfigData::channelScale, &WaveBarWidget::ConfigData::colourOptions);
 }
 
 void WaveBarConfigDialog::apply()

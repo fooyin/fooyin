@@ -63,6 +63,7 @@ private:
 
     QCheckBox* m_showLabels;
     QCheckBox* m_showRemainingTime;
+    QCheckBox* m_showPlayedThreshold;
     QCheckBox* m_minMax;
     QCheckBox* m_rms;
     QCheckBox* m_silence;
@@ -99,6 +100,7 @@ private:
     ColourButton* m_rmsMinBorder;
     ColourButton* m_cursorColour;
     ColourButton* m_seekingCursorColour;
+    ColourButton* m_playedThresholdColour;
 
     QLabel* m_cacheSizeLabel;
     QComboBox* m_numSamples;

@@ -30,6 +30,8 @@
 #include <QPointer>
 #include <QWidget>
 
+#include <optional>
+
 namespace Fooyin::WaveBar {
 class WaveSeekBar : public QWidget
 {
@@ -43,6 +45,7 @@ public:
     void setPlayState(Player::PlayState state);
     void setSeekable(bool seekable);
     void setPosition(uint64_t pos);
+    void setPlayedThresholdPosition(std::optional<uint64_t> position);
     void setShowCursor(bool show);
     void setCursorWidth(int width);
     void setChannelScale(double scale);
@@ -107,6 +110,7 @@ private:
     WaveformData<float> m_data;
     double m_scale;
     uint64_t m_position;
+    std::optional<uint64_t> m_playedThresholdPosition;
     QPoint m_pressPos;
     QPoint m_seekPos;
     QPointer<ToolTip> m_seekTip;

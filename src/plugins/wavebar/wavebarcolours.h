@@ -50,7 +50,8 @@ struct Colours
         RmsMinPlayed,
         RmsMinBorder,
         Cursor,
-        SeekingCursor
+        SeekingCursor,
+        PlayedThreshold
     };
 
     QMap<Type, QColor> waveColours;
@@ -76,6 +77,8 @@ struct Colours
             case Type::MinPlayed:
             case Type::Cursor:
                 return highlight;
+            case Type::PlayedThreshold:
+                return palette.color(QPalette::Active, QPalette::Text);
             case Type::RmsMaxUnplayed:
             case Type::RmsMinUnplayed:
                 return {65, 65, 65};
