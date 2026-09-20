@@ -23,6 +23,7 @@
 #include "notifysettings.h"
 
 #include <gui/widgets/scriptlineedit.h>
+#include <utils/fypaths.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
@@ -30,6 +31,8 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QMessageBox>
+#include <QPushButton>
 #include <QSpinBox>
 #include <QVBoxLayout>
 
@@ -144,7 +147,23 @@ NotifyPageWidget::NotifyPageWidget(SettingsManager* settings, NotifyPlugin* plug
     layout->addWidget(generalGroup, row++, 0, 1, 2);
     layout->addWidget(fieldsGroup, row++, 0, 1, 2);
     layout->addWidget(controlsGroup, row++, 0, 1, 2);
-    layout->setRowStretch(row, 1);
+    layout->setRowStretch(row++, 1);
+
+    if(Utils::isFlatpak()) {
+        auto* flatpakHelp = new QPushButton(tr("Flatpak help…"), this);
+        QObject::connect(flatpakHelp, &QPushButton::clicked, this, [this] {
+            QMessageBox messageBox{QMessageBox::Information, tr("Notifications in Flatpak"), {}, QMessageBox::Ok, this};
+            messageBox.setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
+            messageBox.setText(
+                tr("<p>The Flatpak notification portal does not support custom timeouts or album art. To use the "
+                   "desktop notification service directly, add <code>org.freedesktop.Notifications</code> to "
+                   "fooyin's Session Bus ‘talk’ permissions in Flatseal, or run:</p>"
+                   "<pre>flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin</pre>"
+                   "<p>Restart fooyin after changing its permissions.</p>"));
+            messageBox.exec();
+        });
+        layout->addWidget(flatpakHelp, row++, 1, 1, 1, Qt::AlignRight);
+    }
 
     QObject::connect(m_enable, &QCheckBox::toggled, this, &NotifyPageWidget::updateWidgetState);
     QObject::connect(m_showAlbumArt, &QCheckBox::toggled, this, &NotifyPageWidget::updateWidgetState);
