@@ -111,15 +111,21 @@ std::optional<RunServiceCommand> resolveRunServiceCommand(const QString& command
     return resolved;
 }
 
-bool launchRunServiceCommand(const RunServiceCommand& command)
+std::expected<void, QString> launchRunServiceCommand(const RunServiceCommand& command)
 {
     if(command.type == RunServiceCommandType::Url) {
-        return QDesktopServices::openUrl(QUrl::fromUserInput(command.target));
+        if(!QDesktopServices::openUrl(QUrl::fromUserInput(command.target))) {
+            return std::unexpected{QStringLiteral("Could not open URL")};
+        }
+        return {};
     }
 
     QProcess process;
     process.setProgram(command.target);
     process.setArguments(command.arguments);
-    return process.startDetached();
+    if(!process.startDetached()) {
+        return std::unexpected{process.errorString()};
+    }
+    return {};
 }
 } // namespace Fooyin::RunServices

@@ -171,8 +171,9 @@ void RunServicesPlugin::runService(const RunService& service, const TrackList& t
             qCWarning(RUN_SERVICES) << "Could not parse service command:" << text;
             continue;
         }
-        if(!launchRunServiceCommand(*command)) {
-            qCWarning(RUN_SERVICES) << "Could not launch service command:" << text;
+        const auto result = launchRunServiceCommand(*command);
+        if(!result) {
+            qCWarning(RUN_SERVICES) << "Could not launch service command:" << text << "Error:" << result.error();
         }
     }
 }

@@ -25,6 +25,7 @@
 
 #include <QStringList>
 
+#include <expected>
 #include <optional>
 
 namespace Fooyin::RunServices {
@@ -46,5 +47,5 @@ struct RunServiceCommand
 QString evaluateRunServiceLabel(const RunService& service, const Track& track);
 QStringList evaluateRunServiceCommands(const RunService& service, const TrackList& tracks);
 std::optional<RunServiceCommand> resolveRunServiceCommand(const QString& command);
-bool launchRunServiceCommand(const RunServiceCommand& command);
+std::expected<void, QString> launchRunServiceCommand(const RunServiceCommand& command);
 } // namespace Fooyin::RunServices
