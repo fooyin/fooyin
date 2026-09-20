@@ -44,6 +44,15 @@ bool isPortable()
     return QFile::exists(QCoreApplication::applicationDirPath() + "/PORTABLE"_L1);
 }
 
+bool isFlatpak()
+{
+#ifdef Q_OS_LINUX
+    return QFileInfo::exists(u"/.flatpak-info"_s);
+#else
+    return false;
+#endif
+}
+
 QString createPath(const QString& path, const QString& appendPath)
 {
     if(!QFileInfo::exists(path)) {

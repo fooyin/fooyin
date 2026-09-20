@@ -26,6 +26,7 @@
 
 #include <QCoreApplication>
 #include <QDir>
+#include <QStandardPaths>
 
 using namespace Qt::StringLiterals;
 
@@ -53,14 +54,31 @@ QStringList pluginPaths()
 
     paths.append(Utils::File::cleanPath(appPath.absolutePath() + u"/"_s + QString::fromLatin1(RELATIVE_PLUGIN_PATH)));
     paths.append(Utils::File::cleanPath(appPath.absolutePath() + u"/plugins"_s));
-    paths.append(userPluginsPath());
+
+    const QString userPath = userPluginsPath();
+    if(!paths.contains(userPath)) {
+        paths.append(userPath);
+    }
 
     return paths;
 }
 
 QString userPluginsPath()
 {
-    return Utils::createPath(QDir::cleanPath(u"%1/.local/lib/fooyin/plugins/"_s.arg(QDir::homePath())));
+#ifdef Q_OS_WIN
+    if(Utils::isPortable()) {
+        const QDir appPath{QCoreApplication::applicationDirPath()};
+        return Utils::createPath(Utils::File::cleanPath(appPath.absolutePath() + u"/plugins"_s));
+    }
+    return Utils::createPath(
+        Utils::File::cleanPath(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)) + u"/plugins"_s);
+#else
+    if(Utils::isFlatpak()) {
+        return Utils::createPath(Utils::File::cleanPath(
+            u"%1/.var/app/org.fooyin.fooyin/.local/lib/fooyin/plugins/"_s.arg(QDir::homePath())));
+    }
+    return Utils::createPath(Utils::File::cleanPath(u"%1/.local/lib/fooyin/plugins/"_s.arg(QDir::homePath())));
+#endif
 }
 
 QString translationsPath()

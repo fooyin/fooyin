@@ -446,6 +446,7 @@ void Application::tracksWereUpdated(const TrackList& tracks) const
 void Application::loadPlugins()
 {
     const QStringList pluginPaths{Core::pluginPaths()};
+    qCInfo(APP) << "Plugin search paths:" << pluginPaths.join("; "_L1);
     m_pluginManager->findPlugins(pluginPaths);
     m_pluginManager->loadPlugins();
 

@@ -25,6 +25,7 @@
 
 namespace Fooyin::Utils {
 FYUTILS_EXPORT bool isPortable();
+FYUTILS_EXPORT bool isFlatpak();
 FYUTILS_EXPORT QString createPath(const QString& path, const QString& appendPath = {});
 FYUTILS_EXPORT QString configPath(const QString& appendPath = {});
 FYUTILS_EXPORT QString statePath(const QString& appendPath = {});
