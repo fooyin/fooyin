@@ -286,8 +286,11 @@ void RunServicesPageWidget::updateCurrentService()
     }
 
     RunService& service = m_services.at(row);
-    service.name = Utils::findUniqueString(m_name->text(), m_services, [](const RunService& rs) { return rs.name; });
-    service.path = m_path->text();
+    service.name
+        = Utils::findUniqueString(m_name->text(), m_services, [serviceId = service.id](const RunService& candidate) {
+              return candidate.id == serviceId ? QString{} : candidate.name;
+          });
+    service.path             = m_path->text();
     service.simultaneousRuns = m_simultaneousRuns->value();
     m_serviceList->item(row)->setText(service.name);
 }
