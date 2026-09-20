@@ -30,26 +30,36 @@ using namespace Qt::StringLiterals;
 namespace Fooyin {
 namespace {
 constexpr std::array RatingScaleTable{
-    RatingScaleDescriptor{.scale             = RatingScale::Automatic,
-                          .label             = QT_TRANSLATE_NOOP("Fooyin", "Automatic detection"),
-                          .availableForRead  = true,
-                          .availableForWrite = false},
-    RatingScaleDescriptor{.scale             = RatingScale::Normalized01,
-                          .label             = "0.0–1.0",
-                          .availableForRead  = true,
-                          .availableForWrite = true},
-    RatingScaleDescriptor{.scale             = RatingScale::OneToFive,
-                          .label             = "1–5",
-                          .availableForRead  = true,
-                          .availableForWrite = true},
-    RatingScaleDescriptor{.scale             = RatingScale::OneToTen,
-                          .label             = "1–10",
-                          .availableForRead  = true,
-                          .availableForWrite = true},
-    RatingScaleDescriptor{.scale             = RatingScale::OneToHundred,
-                          .label             = "1–100",
-                          .availableForRead  = true,
-                          .availableForWrite = true},
+    RatingScaleDescriptor{
+        .scale             = RatingScale::Automatic,
+        .label             = QT_TRANSLATE_NOOP("Fooyin", "Automatic detection"),
+        .availableForRead  = true,
+        .availableForWrite = false,
+    },
+    RatingScaleDescriptor{
+        .scale             = RatingScale::Normalized01,
+        .label             = "0.0–1.0",
+        .availableForRead  = true,
+        .availableForWrite = true,
+    },
+    RatingScaleDescriptor{
+        .scale             = RatingScale::OneToFive,
+        .label             = "1–5",
+        .availableForRead  = true,
+        .availableForWrite = true,
+    },
+    RatingScaleDescriptor{
+        .scale             = RatingScale::OneToTen,
+        .label             = "1–10",
+        .availableForRead  = true,
+        .availableForWrite = true,
+    },
+    RatingScaleDescriptor{
+        .scale             = RatingScale::OneToHundred,
+        .label             = "1–100",
+        .availableForRead  = true,
+        .availableForWrite = true,
+    },
 };
 
 constexpr std::array PopmMappingTable{
@@ -255,7 +265,7 @@ QString formatTextRating(float rating, RatingScale scale)
 
     switch(scale) {
         case RatingScale::OneToFive:
-            return QString::number(std::lround(rating * 5.0F));
+            return QString::number(std::round(rating * 10.0F) / 2.0F);
         case RatingScale::OneToTen:
             return QString::number(std::lround(rating * 10.0F));
         case RatingScale::OneToHundred:

@@ -66,6 +66,9 @@ TEST(RatingTagPolicyTest, FormatsConfiguredTextScales)
 {
     EXPECT_EQ(formatTextRating(0.7F, RatingScale::Normalized01), u"0.7"_s);
     EXPECT_EQ(formatTextRating(0.6F, RatingScale::OneToFive), u"3"_s);
+    EXPECT_EQ(formatTextRating(0.7F, RatingScale::OneToFive), u"3.5"_s);
+    EXPECT_EQ(formatTextRating(0.74F, RatingScale::OneToFive), u"3.5"_s);
+    EXPECT_EQ(formatTextRating(0.76F, RatingScale::OneToFive), u"4"_s);
     EXPECT_EQ(formatTextRating(0.7F, RatingScale::OneToTen), u"7"_s);
     EXPECT_EQ(formatTextRating(0.7F, RatingScale::OneToHundred), u"70"_s);
 }

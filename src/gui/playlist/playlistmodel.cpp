@@ -195,6 +195,24 @@ ScriptFieldValue trackValueForEdit(const QString& writeField, const QVariant& va
     return value.toString();
 }
 
+float normalisedRatingForEdit(const QString& writeField, const QVariant& value)
+{
+    if(value.canConvert<StarRating>()) {
+        return value.value<StarRating>().rating();
+    }
+
+    bool ok{false};
+    const float rating = value.toFloat(&ok);
+    if(!ok) {
+        return -1.0F;
+    }
+
+    const QString normalisedField = normaliseWriteField(writeField);
+    return normalisedField.compare(QLatin1StringView{Constants::MetaData::RatingEditor}, Qt::CaseInsensitive) == 0
+             ? rating
+             : rating / 5.0F;
+}
+
 bool cmpItemsPlaylistItems(PlaylistItem* pItem1, PlaylistItem* pItem2, bool reverse = false)
 {
     const PlaylistItem* item1{pItem1};
@@ -1933,7 +1951,7 @@ PlaylistModel::prepareEditedTrack(const QModelIndex& index, const EditableTrackC
 
     if(context.ratingField) {
         const float currentRating = track.rating();
-        const float nextRating = value.canConvert<StarRating>() ? value.value<StarRating>().rating() : value.toFloat();
+        const float nextRating    = normalisedRatingForEdit(context.writeField, value);
         if(qFuzzyCompare(currentRating + 1.0F, nextRating + 1.0F)) {
             return std::unexpected{BulkEditError::NoChanges};
         }
@@ -2339,8 +2357,14 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
                 HeartValue{track.isLoved(), m_loveHeartSize, m_loveHeartColour, m_unlovedHeartColour});
         }
         if(isRatingWriteField(writeField)) {
-            return QVariant::fromValue(
-                StarRating{track.rating(), 5, m_starRatingSize, m_ratingStarColours, m_unratedStarColour});
+            if(playlistColumn.field == QLatin1StringView{Constants::RatingEditor}) {
+                return QVariant::fromValue(
+                    StarRating{track.rating(), 5, m_starRatingSize, m_ratingStarColours, m_unratedStarColour});
+            }
+            if(writeField.compare(QLatin1StringView{Constants::MetaData::RatingEditor}, Qt::CaseInsensitive) == 0) {
+                return track.rating() > 0 ? QString::number(track.rating()) : QString{};
+            }
+            return track.rating() > 0 ? QString::number(track.rating() * 5.0F) : QString{};
         }
 
         return editStringForTrack(track, writeField);

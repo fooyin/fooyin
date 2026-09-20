@@ -1308,7 +1308,7 @@ TEST_F(TagWriterTest, OggWriteConfiguredRatingScales)
 
     const std::vector<Case> cases{
         {.tag = u"FMPS_RATING"_s, .scale = u"Normalized01"_s, .expectedValue = u"0.7"_s, .expectedRating = 0.7F},
-        {.tag = u"RATING"_s, .scale = u"OneToFive"_s, .expectedValue = u"4"_s, .expectedRating = 0.8F},
+        {.tag = u"RATING"_s, .scale = u"OneToFive"_s, .expectedValue = u"3.5"_s, .expectedRating = 0.7F},
         {.tag = u"RATING"_s, .scale = u"OneToTen"_s, .expectedValue = u"7"_s, .expectedRating = 0.7F},
         {.tag = u"RATING"_s, .scale = u"OneToHundred"_s, .expectedValue = u"70"_s, .expectedRating = 0.7F},
         {.tag = u"MY_RATING"_s, .scale = u"OneToTen"_s, .expectedValue = u"7"_s, .expectedRating = 0.7F},
