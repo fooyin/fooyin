@@ -23,6 +23,7 @@
 #include "runservicesconstants.h"
 
 #include <gui/widgets/scriptlineedit.h>
+#include <utils/fypaths.h>
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -31,6 +32,7 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QListWidget>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QSignalBlocker>
 #include <QSpinBox>
@@ -122,6 +124,25 @@ RunServicesPageWidget::RunServicesPageWidget(SettingsManager* settings)
     buttons->addWidget(m_moveUp);
     buttons->addWidget(m_moveDown);
     buttons->addStretch();
+
+    if(Utils::isFlatpak()) {
+        auto* flatpakHelp = new QPushButton(tr("Flatpak help…"), this);
+        QObject::connect(flatpakHelp, &QPushButton::clicked, this, [this] {
+            QMessageBox messageBox{QMessageBox::Information, tr("Run Services in Flatpak"), {}, QMessageBox::Ok, this};
+            messageBox.setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
+            messageBox.setText(
+                tr("<p>The Flatpak sandbox cannot directly launch applications installed on the host. "
+                   "To allow fooyin to launch host applications, add <code>org.freedesktop.Flatpak</code> to fooyin's "
+                   "Session Bus \"talk\" permissions in Flatseal, or run:</p>"
+                   "<pre>flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin</pre>"
+                   "<p>Then prefix each service command with <code>flatpak-spawn --host</code>. For example:</p>"
+                   "<pre>flatpak-spawn --host spek \\\"%filepath%\\\"</pre>"
+                   "<p>This permission allows fooyin to execute arbitrary commands outside the sandbox. Only enable "
+                   "it if you trust your configured services.</p>"));
+            messageBox.exec();
+        });
+        buttons->addWidget(flatpakHelp);
+    }
 
     auto* propertiesLayout = new QGridLayout(m_properties);
 
