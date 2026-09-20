@@ -169,6 +169,7 @@ constexpr auto QuickSetup                = "View.QuickSetup";
 constexpr auto PlaybackQueue             = "View.PlaybackQueue";
 constexpr auto PlaylistManager           = "View.PlaylistManager";
 constexpr auto ShowNowPlaying            = "View.ShowNowPlaying";
+constexpr auto ToggleMainWindow          = "View.ToggleMainWindow";
 constexpr auto FocusSearchBar            = "View.FocusSearchBar";
 constexpr auto QuickSearch               = "Library.QuickSearch";
 constexpr auto SearchLibrary             = "Library.SearchLibrary";

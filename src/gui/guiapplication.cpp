@@ -1043,6 +1043,11 @@ void GuiApplication::removeExpiredCovers(const TrackList& tracks)
 
 void GuiApplication::registerActions()
 {
+    auto* toggleMainWindow    = new QAction(tr("Show or hide main window"), m_mainWindow.get());
+    auto* toggleMainWindowCmd = m_actionManager->registerAction(toggleMainWindow, Constants::Actions::ToggleMainWindow);
+    toggleMainWindowCmd->setCategories({tr("View")});
+    QObject::connect(toggleMainWindow, &QAction::triggered, m_mainWindow.get(), &MainWindow::toggleVisibility);
+
     const QStringList volumeCategory = {tr("Volume")};
 
     auto* volumeUp = new QAction(tr("Volume up"), m_mainWindow.get());
