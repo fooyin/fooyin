@@ -662,7 +662,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="96"/>
         <source>Track artists not present in album artists</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpret skladby, který není interpretem alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="143"/>
@@ -19230,7 +19230,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="505"/>
         <source>Show played threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit prahovou pozici přehrání</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="517"/>
@@ -22567,7 +22567,7 @@ Supersampling je určen pro pruhy s šířkou 1px a mezerou 0px; jiné hodnoty m
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="46"/>
         <source>Show played threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit prahovou pozici přehrání</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="142"/>
@@ -22677,7 +22677,7 @@ Supersampling je určen pro pruhy s šířkou 1px a mezerou 0px; jiné hodnoty m
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="225"/>
         <source>Threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Prahová pozice</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="234"/>
@@ -22799,7 +22799,7 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="613"/>
         <source>Show played threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit prahovou pozici přehrání</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="622"/>
@@ -23118,7 +23118,7 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/gui/widgets.cpp" line="604"/>
         <source>Confirm before removing playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Před odstraněním seznamu skladeb si vyžádat potvrzení</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="610"/>
@@ -23769,32 +23769,32 @@ Změny se projeví pro nově otevřené streamy.</translation>
         <location filename="../../src/gui/guiapplication.cpp" line="411"/>
         <location filename="../../src/gui/guiapplication.cpp" line="414"/>
         <source>New Layout</source>
-        <translation type="unfinished">Nový vzhled</translation>
+        <translation>Nový vzhled</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="414"/>
         <source>Layout Name</source>
-        <translation type="unfinished">Název vzhledu</translation>
+        <translation>Název vzhledu</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1047"/>
         <source>Show or hide main window</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit nebo skrýt hlavní okno</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1211"/>
         <source>Look up metadata by disc TOC…</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat metadata podle TOC disku…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1212"/>
         <source>Look up metadata using the selected tracks&apos; disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat metadata podle TOC disku vybraných skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1216"/>
         <source>Look up metadata by disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat metadata podle TOC disku</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1556"/>
