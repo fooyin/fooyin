@@ -255,7 +255,9 @@ Id conversionPresetActionId(const QString& presetId)
     return Id{u"Tracks.Convert.Preset.%1"_s.arg(presetId)};
 }
 } // namespace
+} // namespace Fooyin
 
+namespace Fooyin {
 GuiApplication::GuiApplication(Application* core)
     : m_core{prepareCoreForGuiApplication(core)}
     , m_settings{m_core->settingsManager()}
