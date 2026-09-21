@@ -328,7 +328,7 @@
 <context>
     <name>Fooyin::MetadataLookupDialog</name>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="524"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="520"/>
         <source>Found %Ln release(s).</source>
         <translation>
             <numerusform>Found %Ln release.</numerusform>
@@ -336,7 +336,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="911"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="907"/>
         <source>Metadata will be applied to %Ln track(s).</source>
         <translation>
             <numerusform>Metadata will be applied to %Ln track.</numerusform>
@@ -344,7 +344,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="913"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="909"/>
         <source>%Ln track(s) will be updated.</source>
         <translation>
             <numerusform>%Ln track will be updated.</numerusform>
@@ -352,7 +352,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="961"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="957"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
@@ -360,8 +360,8 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="982"/>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="987"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="978"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="983"/>
         <source>%Ln succeeded</source>
         <translation>
             <numerusform>%Ln succeeded</numerusform>
@@ -369,8 +369,8 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="983"/>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="988"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="979"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="984"/>
         <source>%Ln failed</source>
         <translation>
             <numerusform>%Ln failed</numerusform>
@@ -378,7 +378,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="993"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="989"/>
         <source>Metadata was updated in %Ln track(s).</source>
         <translation>
             <numerusform>Metadata was updated in %Ln track.</numerusform>
@@ -406,9 +406,20 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::PlaylistController</name>
+    <message numerus="yes">
+        <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="439"/>
+        <source>Remove %Ln playlist(s)?</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::PlaylistModel</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1599"/>
+        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1617"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln track</numerusform>
