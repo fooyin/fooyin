@@ -295,8 +295,8 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
     scriptLayout->addWidget(new QLabel(tr("Subtitle") + u":"_s, this), row++, 1);
     scriptLayout->addWidget(m_headerTitle, row, 0);
     scriptLayout->addWidget(m_headerSubtitle, row++, 1);
-    scriptLayout->addWidget(new QLabel(tr("Side") + u":"_s, this), row, 0);
-    scriptLayout->addWidget(new QLabel(tr("Info") + u":"_s, this), row++, 1);
+    scriptLayout->addWidget(new QLabel(tr("Right-aligned") + u":"_s, this), row, 0);
+    scriptLayout->addWidget(new QLabel(tr("Details") + u":"_s, this), row++, 1);
     scriptLayout->addWidget(m_headerSideText, row, 0);
     scriptLayout->addWidget(m_headerInfo, row++, 1);
     scriptLayout->setColumnStretch(0, 1);
