@@ -13874,37 +13874,37 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <translation>在所选组中对播放列表进行字母顺序排序</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="458"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="461"/>
         <source>Remove the selected playlists</source>
         <translation>删除选中的播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="461"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="464"/>
         <source>Rename the selected group</source>
         <translation>重命名选中的分组</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="462"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="465"/>
         <source>Remove the selected groups</source>
         <translation>删除选中的分组</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="465"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="468"/>
         <source>Remove the selected playlists and groups</source>
         <translation>删除选中的播放列表和分组</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="477"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="480"/>
         <source>Restore deleted playlist</source>
         <translation>恢复已删除的播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="518"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="521"/>
         <source>Lock playlist</source>
         <translation>锁定播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="457"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="460"/>
         <source>Rename the selected playlist</source>
         <translation>重命名选中的播放列表</translation>
     </message>
@@ -13915,7 +13915,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="235"/>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="347"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="350"/>
         <source>Playlist Organiser</source>
         <translation>播放列表管理器</translation>
     </message>
@@ -23345,37 +23345,37 @@ Changes apply to newly opened streams.</source>
 <context>
     <name>GuiApplication</name>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="441"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="443"/>
         <source>Searching for artwork…</source>
         <translation>正在搜索插图…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="455"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="457"/>
         <source>Artwork search finished</source>
         <translation>插图搜索完成</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="509"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="511"/>
         <source>Failed to open artwork file</source>
         <translation>无法打开插图文件</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="515"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="517"/>
         <source>Artwork file is empty</source>
         <translation>插图作品文件为空</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="916"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="918"/>
         <source>Plugins not found</source>
         <translation>找不到插件</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="917"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="919"/>
         <source>Some plugins are required for full functionality.</source>
         <translation>实现完整功能需要某些插件。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="918"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="920"/>
         <source>Plugin search locations:
 
 </source>
@@ -23384,459 +23384,459 @@ Changes apply to newly opened streams.</source>
 </translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="921"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="923"/>
         <source>Quit</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1052"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1054"/>
         <source>Volume</source>
         <translation>音量</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1054"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1056"/>
         <source>Volume up</source>
         <translation>增大音量</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1061"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1063"/>
         <source>Volume down</source>
         <translation>减少音量</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1068"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1070"/>
         <source>Mute</source>
         <translation>静音</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1078"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1080"/>
         <source>Clear Current Playlist</source>
         <translation>清除当前播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1079"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1081"/>
         <source>Remove all tracks from the current playlist</source>
         <translation>清空当前播放列表所有音轨</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1082"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1109"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1182"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1084"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1111"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1184"/>
         <source>Playlist</source>
         <translation>播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1105"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1107"/>
         <source>Lock playlist</source>
         <translation>锁定播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1107"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1109"/>
         <source>Prevent changes to the contents of the current playlist</source>
         <translation>防止更改当前播放列表的内容</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1110"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1112"/>
         <source>Lock Current Playlist</source>
         <translation>锁定当前播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1131"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1133"/>
         <source>Playback</source>
         <translation>播放</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1131"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1133"/>
         <source>Seek</source>
         <translation>定位</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1133"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1135"/>
         <source>Seek forward (small step)</source>
         <translation>前进（一小步）</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1140"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1142"/>
         <source>Seek forward (large step)</source>
         <translation>前进（一大步）</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1147"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1149"/>
         <source>Seek backward (small step)</source>
         <translation>后退（一小步）</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1155"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1157"/>
         <source>Seek backward (large step)</source>
         <translation>后退（一大步）</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1180"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1182"/>
         <source>Remove Playlist</source>
         <translation>删除播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1183"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1185"/>
         <source>Remove Current Playlist</source>
         <translation>移除当前播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1191"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1193"/>
         <source>Toggle Menubar</source>
         <translation>切换菜单栏</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1049"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1195"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1051"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1197"/>
         <source>View</source>
         <translation>视图</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1202"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1204"/>
         <source>Look up metadata by artist and album…</source>
         <translation>按艺人和专辑查找元数据…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1203"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1205"/>
         <source>Look up metadata using the selected tracks&apos; artist and album</source>
         <translation>使用所选曲目的艺人和专辑信息查找元数据</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1208"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1210"/>
         <source>Look up metadata by artist and album</source>
         <translation>按艺人和专辑查找元数据</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1209"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1217"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1224"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1228"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1297"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1211"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1219"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1226"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1230"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1299"/>
         <source>Tagging</source>
         <translation>标签</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1219"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1221"/>
         <source>Look up metadata by MusicBrainz ID…</source>
         <translation>按 MusicBrainz ID 查找元数据…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1220"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1222"/>
         <source>Look up metadata using a MusicBrainz release identifier</source>
         <translation>使用 MusicBrainz 发行版标识符查询元数据</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1223"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1225"/>
         <source>Look up metadata by MusicBrainz ID</source>
         <translation>根据 MusicBrainz ID 查找元数据</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1256"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1258"/>
         <source>Reading tracks…</source>
         <translation>正在读取音轨…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1256"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1258"/>
         <source>Abort</source>
         <translation>中止</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1284"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1286"/>
         <source>Current file</source>
         <translation>当前文件</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1299"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1301"/>
         <source>Reload tags from files</source>
         <translation>从文件中重新加载标签</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1300"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1302"/>
         <source>Reload tags from modified files</source>
         <translation>从已修改的文件中重新加载标签</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1302"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1304"/>
         <source>Replace tags in selected tracks with tags from the files</source>
         <translation>重新加载所选音轨的标签</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1303"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1305"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
         <translation>重新加载所选音轨中已修改的标签</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1334"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1336"/>
         <source>View full size</source>
         <translation>查看完整尺寸</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1335"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1337"/>
         <source>View the common artwork for the selected tracks at full size</source>
         <translation>以全尺寸查看所选曲目的通用封面图像</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1338"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1340"/>
         <source>Artwork</source>
         <translation>艺术品</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1391"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1393"/>
         <source>Playback Statistics</source>
         <translation>播放统计</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1406"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1408"/>
         <source>Toggle loved</source>
         <translation>切换喜爱</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1406"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1408"/>
         <source>Toggle Loved for selected tracks</source>
         <translation>切换所选曲目的“喜爱”状态</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1408"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1410"/>
         <source>Love</source>
         <translation>喜爱</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1408"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1410"/>
         <source>Love selected tracks</source>
         <translation>喜爱所选曲目</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1410"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1412"/>
         <source>Unlove</source>
         <translation>取消喜爱</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1410"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1412"/>
         <source>Unlove selected tracks</source>
         <translation>取消喜爱所选曲目</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1426"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1428"/>
         <source>Choose destination</source>
         <translation>选择目标</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1452"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1454"/>
         <source>Converter Output</source>
         <translation>转换输出</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1549"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1557"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1551"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1559"/>
         <source>Convert using preset %1</source>
         <translation>使用预设值 %1 进行转换</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1338"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1391"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1556"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1589"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1599"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1608"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1653"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1662"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1340"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1393"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1558"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1591"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1601"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1610"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1655"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1664"/>
         <source>Tracks</source>
         <translation>音轨</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="411"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="414"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="413"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="416"/>
         <source>New Layout</source>
         <translation type="unfinished">新建布局</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="414"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="416"/>
         <source>Layout Name</source>
         <translation type="unfinished">布局名称</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1047"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1049"/>
         <source>Show or hide main window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1211"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1213"/>
         <source>Look up metadata by disc TOC…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1212"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1214"/>
         <source>Look up metadata using the selected tracks&apos; disc TOC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1216"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1218"/>
         <source>Look up metadata by disc TOC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1556"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1589"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1599"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1608"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1619"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1558"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1591"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1601"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1610"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1621"/>
         <source>Convert</source>
         <translation>转换</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1587"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1589"/>
         <source>Converter setup…</source>
         <translation>转换器设置…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1596"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1598"/>
         <source>Using default settings</source>
         <translation>使用默认设置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1600"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1602"/>
         <source>Convert using default settings</source>
         <translation>使用默认设置进行转换</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1605"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1607"/>
         <source>Repeat last conversion</source>
         <translation>重复上次转换</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1636"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1638"/>
         <source>Custom conversion…</source>
         <translation>自定义转换…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1648"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1653"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1662"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1650"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1655"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1664"/>
         <source>Utilities</source>
         <translation>实用工具</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1650"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1652"/>
         <source>Verify integrity</source>
         <translation>验证完整性</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1651"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1653"/>
         <source>Decode the selected tracks and report file or checksum errors</source>
         <translation>解码所选音轨并报告文件或校验和错误</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1658"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1660"/>
         <source>Verify album with AccurateRip</source>
         <translation>使用 AccurateRip 验证专辑</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1659"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1661"/>
         <source>Verify all tracks from one complete lossless CD rip against AccurateRip</source>
         <translation>根据 AccurateRip 验证一张完整无损 CD 抓轨的所有音轨</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1947"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1949"/>
         <source>Reload Required</source>
         <translation>需要重新加载</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1949"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1951"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
         <translation>由于数据库发生了变更，应从磁盘重新加载曲目，以更新其保存的元数据。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1953"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1955"/>
         <source>Reload Now</source>
         <translation>立即重新加载</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1956"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1958"/>
         <source>OK</source>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2101"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2103"/>
         <source>Playback Error</source>
         <translation>播放错误</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2126"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2128"/>
         <source>Continue</source>
         <translation>继续</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2128"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2130"/>
         <source>Stop</source>
         <translation>停止</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2132"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2134"/>
         <source>Always continue playing if a track is unavailable</source>
         <translation>如果有音轨不可用则继续播放下一首</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2154"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2156"/>
         <source>Track Not Found</source>
         <translation>未找到音轨</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2159"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2161"/>
         <source>No Decoder Available</source>
         <translation>解码器不可用</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2239"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2241"/>
         <source>All Supported Media Files (%1)</source>
         <translation>所有支持的媒体文件 (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2240"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2242"/>
         <source>Audio Files (%1)</source>
         <translation>音频文件 (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2251"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2253"/>
         <source>Add Files</source>
         <translation>添加文件</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2265"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2267"/>
         <source>Add Folders</source>
         <translation>添加文件夹</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2277"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2279"/>
         <source>Add Stream URL</source>
         <translation>添加流媒体 URL</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2277"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2279"/>
         <source>Stream URL:</source>
         <translation>流媒体 URL：</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2279"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2281"/>
         <source>&amp;Add</source>
         <translation>添加(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2283"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2285"/>
         <source>Enter a valid http:// or https:// URL.</source>
         <translation>请输入有效的 http:// 或 https:// URL。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2381"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2383"/>
         <source>All Supported Playlists (%1)</source>
         <translation>所有支持的播放列表 (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2391"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2393"/>
         <source>Load Playlist</source>
         <translation>加载播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2428"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2430"/>
         <source>Save Playlist</source>
         <translation>保存播放列表</translation>
     </message>
@@ -24655,7 +24655,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
 <context>
     <name>SearchWidget</name>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2082"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2084"/>
         <source>Quick Search</source>
         <translation>快速搜索</translation>
     </message>
