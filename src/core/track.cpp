@@ -376,6 +376,7 @@ public:
     uint64_t filesize{0};
     int bitrate{0};
     int sampleRate{0};
+    uint64_t sampleFrames{0};
     int channels{2};
     int bitDepth{-1};
     QString codecProfile;
@@ -644,8 +645,9 @@ bool Track::sameDataAs(const Track& other) const
         && sameFlatStringMap(p->extraProps, other.p->extraProps) && p->cuePath == other.p->cuePath
         && p->subsong == other.p->subsong && p->offset == other.p->offset && p->duration == other.p->duration
         && p->filesize == other.p->filesize && p->bitrate == other.p->bitrate && p->sampleRate == other.p->sampleRate
-        && p->channels == other.p->channels && p->bitDepth == other.p->bitDepth
-        && p->codecProfile == other.p->codecProfile && p->tool == other.p->tool && p->tagTypes == other.p->tagTypes
+        && p->sampleFrames == other.p->sampleFrames && p->channels == other.p->channels
+        && p->bitDepth == other.p->bitDepth && p->codecProfile == other.p->codecProfile && p->tool == other.p->tool
+        && p->tagTypes == other.p->tagTypes
         && resolveString(*p, StringPool::Domain::Encoding, p->encoding)
                == resolveString(*other.p, StringPool::Domain::Encoding, other.p->encoding)
         && p->loved == other.p->loved && p->rating == other.p->rating && p->playcount == other.p->playcount
@@ -1504,6 +1506,11 @@ int Track::sampleRate() const
     return p->sampleRate;
 }
 
+uint64_t Track::sampleFrames() const
+{
+    return p->sampleFrames;
+}
+
 int Track::channels() const
 {
     return p->channels;
@@ -2276,6 +2283,11 @@ void Track::setBitrate(int rate)
 void Track::setSampleRate(int rate)
 {
     p->sampleRate = rate;
+}
+
+void Track::setSampleFrames(uint64_t frames)
+{
+    p->sampleFrames = frames;
 }
 
 void Track::setChannels(int channels)

@@ -296,6 +296,8 @@ public:
     [[nodiscard]] uint64_t fileSize() const;
     [[nodiscard]] int bitrate() const;
     [[nodiscard]] int sampleRate() const;
+    //! Number of PCM sample frames per channel, when known exactly.
+    [[nodiscard]] uint64_t sampleFrames() const;
     [[nodiscard]] int channels() const;
     [[nodiscard]] int bitDepth() const;
     [[nodiscard]] QString codec() const;
@@ -416,6 +418,7 @@ public:
     void setFileSize(uint64_t fileSize);
     void setBitrate(int rate);
     void setSampleRate(int rate);
+    void setSampleFrames(uint64_t frames);
     void setChannels(int channels);
     void setBitDepth(int depth);
     void setCodec(const QString& codec);

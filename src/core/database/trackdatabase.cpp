@@ -65,6 +65,7 @@ QString fetchTrackColumns()
                                    "FileSize,"
                                    "BitRate,"
                                    "SampleRate,"
+                                   "SampleFrames,"
                                    "Channels,"
                                    "BitDepth,"
                                    "Codec,"
@@ -118,40 +119,41 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q, const std::shared_ptr<Fooyin
     track.setFileSize(q.value(19).toInt());
     track.setBitrate(q.value(20).toInt());
     track.setSampleRate(q.value(21).toInt());
-    track.setChannels(q.value(22).toInt());
-    track.setBitDepth(q.value(23).toInt());
-    track.setCodec(q.value(24).toString());
-    track.setCodecProfile(q.value(25).toString());
-    track.setTool(q.value(26).toString());
-    track.setTagTypes(q.value(27).toString().split(QLatin1String{Fooyin::Constants::UnitSeparator}));
-    track.setEncoding(q.value(28).toString());
-    track.storeExtraTags(q.value(29).toByteArray());
-    track.storeExtraProperties(q.value(30).toByteArray());
-    track.setModifiedTime(q.value(31).toULongLong());
-    track.setLibraryId(q.value(32).toInt());
-    track.setHash(q.value(33).toString());
+    track.setSampleFrames(q.value(22).toULongLong());
+    track.setChannels(q.value(23).toInt());
+    track.setBitDepth(q.value(24).toInt());
+    track.setCodec(q.value(25).toString());
+    track.setCodecProfile(q.value(26).toString());
+    track.setTool(q.value(27).toString());
+    track.setTagTypes(q.value(28).toString().split(QLatin1String{Fooyin::Constants::UnitSeparator}));
+    track.setEncoding(q.value(29).toString());
+    track.storeExtraTags(q.value(30).toByteArray());
+    track.storeExtraProperties(q.value(31).toByteArray());
+    track.setModifiedTime(q.value(32).toULongLong());
+    track.setLibraryId(q.value(33).toInt());
+    track.setHash(q.value(34).toString());
 
     bool isValid{false};
-    if(const auto rgTrackGain = q.value(34).toFloat(&isValid); isValid) {
+    if(const auto rgTrackGain = q.value(35).toFloat(&isValid); isValid) {
         track.setRGTrackGain(rgTrackGain);
     }
-    if(const auto rgAlbumGain = q.value(35).toFloat(&isValid); isValid) {
+    if(const auto rgAlbumGain = q.value(36).toFloat(&isValid); isValid) {
         track.setRGAlbumGain(rgAlbumGain);
     }
-    if(const auto rgTrackPeak = q.value(36).toFloat(&isValid); isValid) {
+    if(const auto rgTrackPeak = q.value(37).toFloat(&isValid); isValid) {
         track.setRGTrackPeak(rgTrackPeak);
     }
-    if(const auto rgAlbumPeak = q.value(37).toFloat(&isValid); isValid) {
+    if(const auto rgAlbumPeak = q.value(38).toFloat(&isValid); isValid) {
         track.setRGAlbumPeak(rgAlbumPeak);
     }
-    track.setCreatedTime(q.value(38).toULongLong());
+    track.setCreatedTime(q.value(39).toULongLong());
 
-    track.setAddedTime(q.value(39).toULongLong());
-    track.setFirstPlayed(q.value(40).toULongLong());
-    track.setLastPlayed(q.value(41).toULongLong());
-    track.setPlayCount(q.value(42).toInt());
-    track.setRating(q.value(43).toFloat());
-    track.setLoved(q.value(44).toBool());
+    track.setAddedTime(q.value(40).toULongLong());
+    track.setFirstPlayed(q.value(41).toULongLong());
+    track.setLastPlayed(q.value(42).toULongLong());
+    track.setPlayCount(q.value(43).toInt());
+    track.setRating(q.value(44).toFloat());
+    track.setLoved(q.value(45).toBool());
 
     track.setMetadataWasRead(true);
     track.generateHash();
@@ -385,6 +387,7 @@ bool TrackDatabase::updateTrack(const Track& track)
                                      "FileSize = :fileSize,"
                                      "BitRate = :bitRate,"
                                      "SampleRate = :sampleRate,"
+                                     "SampleFrames = :sampleFrames,"
                                      "Channels = :channels,"
                                      "BitDepth = :bitDepth,"
                                      "Codec = :codec,"
@@ -573,6 +576,7 @@ void TrackDatabase::insertViews(const QSqlDatabase& db)
                                      "Tracks.FileSize,"
                                      "Tracks.BitRate,"
                                      "Tracks.SampleRate,"
+                                     "Tracks.SampleFrames,"
                                      "Tracks.Channels,"
                                      "Tracks.BitDepth,"
                                      "Tracks.Codec,"
@@ -645,6 +649,7 @@ bool TrackDatabase::insertTrack(Track& track, bool ignoreDuplicates) const
                                            "FileSize,"
                                            "BitRate,"
                                            "SampleRate,"
+                                           "SampleFrames,"
                                            "Channels,"
                                            "BitDepth,"
                                            "Codec,"
@@ -685,6 +690,7 @@ bool TrackDatabase::insertTrack(Track& track, bool ignoreDuplicates) const
                                            ":fileSize,"
                                            ":bitRate,"
                                            ":sampleRate,"
+                                           ":sampleFrames,"
                                            ":channels,"
                                            ":bitDepth,"
                                            ":codec,"
@@ -726,6 +732,7 @@ bool TrackDatabase::insertTrack(Track& track, bool ignoreDuplicates) const
                                            "FileSize,"
                                            "BitRate,"
                                            "SampleRate,"
+                                           "SampleFrames,"
                                            "Channels,"
                                            "BitDepth,"
                                            "Codec,"
@@ -766,6 +773,7 @@ bool TrackDatabase::insertTrack(Track& track, bool ignoreDuplicates) const
                                            ":fileSize,"
                                            ":bitRate,"
                                            ":sampleRate,"
+                                           ":sampleFrames,"
                                            ":channels,"
                                            ":bitDepth,"
                                            ":codec,"

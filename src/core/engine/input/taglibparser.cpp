@@ -966,9 +966,10 @@ QString codecForFormat(AudioFileFormat format)
     return {};
 }
 
-void readAudioProperties(const TagLib::File& file, Track& track)
+template <typename Type>
+void readAudioProperties(const Type& file, Track& track)
 {
-    if(const TagLib::AudioProperties* props = file.audioProperties()) {
+    if(const auto* props = file.audioProperties()) {
         const uint64_t duration = props->lengthInMilliseconds();
         const int bitrate       = props->bitrate();
         const int sampleRate    = props->sampleRate();
@@ -985,6 +986,14 @@ void readAudioProperties(const TagLib::File& file, Track& track)
         }
         if(channels > 0) {
             track.setChannels(channels);
+        }
+
+        if constexpr(requires { props->sampleFrames(); }) {
+            const uint64_t sampleFrames = props->sampleFrames();
+
+            if(sampleFrames > 0) {
+                track.setSampleFrames(sampleFrames);
+            }
         }
     }
 }
@@ -3189,7 +3198,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
     const auto style       = TagLib::AudioProperties::Average;
     const TagPolicy policy = tagPolicy();
 
-    const auto readProperties = [&track, &policy](const TagLib::File& file) {
+    const auto readProperties = [&track, &policy]<typename Type>(const Type& file) {
         readAudioProperties(file, track);
         readGeneralProperties(file.properties(), track, false, true, policy);
     };

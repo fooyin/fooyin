@@ -416,4 +416,12 @@
             ALTER TABLE PlaybackQueue ADD COLUMN IsCurrent INTEGER NOT NULL DEFAULT 0;
         </sql>
     </revision>
+    <revision version="22">
+        <description>
+            Add sample frame count to tracks.
+        </description>
+        <sql>
+            ALTER TABLE Tracks ADD COLUMN SampleFrames INTEGER DEFAULT 0;
+        </sql>
+    </revision>
 </schema>

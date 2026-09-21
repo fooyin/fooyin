@@ -265,6 +265,9 @@ void InfoPopulatorPrivate::addTrackGeneral(int total, const Track& track)
 
     checkAddEntryNode(u"Duration"_s, InfoPopulator::tr("Duration"), ItemParent::General, track.duration(),
                       InfoItem::Total, InfoItem::FormatUIntFunc{[](uint64_t ms) { return Utils::msToString(ms); }});
+    checkAddEntryNode(u"Samples"_s, InfoPopulator::tr("Samples"), ItemParent::General, track.sampleFrames(),
+                      InfoItem::CompleteTotal,
+                      InfoItem::FormatUIntFunc{[](uint64_t samples) { return QLocale{}.toString(samples); }});
     checkAddEntryNode(u"Channels"_s, InfoPopulator::tr("Channels"), ItemParent::General, track.channels(),
                       InfoItem::Percentage);
     checkAddEntryNode(u"BitDepth"_s, InfoPopulator::tr("Bit Depth"), ItemParent::General, track.bitDepth(),

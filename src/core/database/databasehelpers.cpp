@@ -47,6 +47,7 @@ BindingsMap trackBindings(const Track& track)
             {u":fileSize"_s, static_cast<quint64>(track.fileSize())},
             {u":bitRate"_s, track.bitrate()},
             {u":sampleRate"_s, track.sampleRate()},
+            {u":sampleFrames"_s, static_cast<quint64>(track.sampleFrames())},
             {u":channels"_s, track.channels()},
             {u":bitDepth"_s, track.bitDepth()},
             {u":codec"_s, track.codec()},

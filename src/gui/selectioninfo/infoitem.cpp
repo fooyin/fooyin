@@ -281,37 +281,43 @@ QString InfoItem::name() const
 QVariant InfoItem::value() const
 {
     switch(m_valueType) {
-        case(ValueType::Concat): {
+        case Concat: {
             if(m_value.isEmpty()) {
                 m_value = joinValues(m_values);
             }
             return m_value;
         }
-        case(ValueType::Percentage): {
+        case Percentage: {
             if(m_value.isEmpty()) {
                 m_value = formatPercentage(m_values);
             }
             return m_value;
         }
-        case(ValueType::Average): {
+        case Average: {
             if(m_value.isEmpty() && !m_values.empty()) {
                 m_value = calculateAverage(m_values, m_formatNum, m_isFloat);
             }
             return m_value;
         }
-        case(ValueType::Total): {
+        case Total: {
             if(m_value.isEmpty() && !m_values.empty()) {
                 m_value = calculateTotal(m_values, m_formatNum, m_isFloat);
             }
             return m_value;
         }
-        case(ValueType::Min): {
+        case CompleteTotal: {
+            if(m_value.isEmpty() && !m_values.empty() && std::ranges::none_of(m_values, &QString::isEmpty)) {
+                m_value = calculateTotal(m_values, m_formatNum, m_isFloat);
+            }
+            return m_value;
+        }
+        case Min: {
             if(m_value.isEmpty() && !m_values.empty()) {
                 m_value = calculateMin(m_values, m_formatNum, m_isFloat);
             }
             return m_value;
         }
-        case(ValueType::Max): {
+        case Max: {
             if(m_value.isEmpty() && !m_values.empty()) {
                 m_value = calculateMax(m_values, m_formatNum, m_isFloat);
             }
@@ -328,7 +334,7 @@ void InfoItem::setIsFloat(bool isFloat)
 
 void InfoItem::addTrackValue(const QString& value)
 {
-    if(m_valueType != ValueType::Concat) {
+    if(m_valueType != Concat) {
         m_values.append(value);
         return;
     }

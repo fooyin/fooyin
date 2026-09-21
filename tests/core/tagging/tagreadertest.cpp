@@ -222,6 +222,7 @@ TEST_F(TagReaderTest, AiffRead)
     EXPECT_EQ(track.composer(), u"Fooyin"_s);
     EXPECT_EQ(track.comment(), u"A fooyin test"_s);
     EXPECT_GT(track.duration(), 0);
+    EXPECT_GT(track.sampleFrames(), 0);
 
     const auto testTag = track.extraTag(u"TEST"_s);
     ASSERT_TRUE(!testTag.isEmpty());
@@ -252,6 +253,7 @@ TEST_F(TagReaderTest, FlacRead)
     EXPECT_EQ(track.composer(), u"Fooyin"_s);
     EXPECT_EQ(track.comment(), u"A fooyin test"_s);
     EXPECT_GT(track.duration(), 0);
+    EXPECT_GT(track.sampleFrames(), 0);
 
     const auto testTag = track.extraTag(u"TEST"_s);
     ASSERT_TRUE(!testTag.isEmpty());

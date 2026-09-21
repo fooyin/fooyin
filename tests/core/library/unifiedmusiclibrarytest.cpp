@@ -64,7 +64,7 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr auto CurrentSchemaVersion = 20;
+constexpr auto CurrentSchemaVersion = 22;
 
 namespace {
 QCoreApplication* ensureCoreApplication()
