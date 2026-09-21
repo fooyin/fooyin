@@ -27,10 +27,10 @@
 
 namespace Fooyin::TagEditor {
 namespace {
-bool hasDefaultField(const std::vector<TagEditorField>& fields, const QString& field)
+bool hasEnabledDefaultField(const std::vector<TagEditorField>& fields, const QString& field)
 {
     return std::ranges::any_of(fields, [&field](const TagEditorField& editorField) {
-        return editorField.scriptField.compare(field, Qt::CaseInsensitive) == 0;
+        return editorField.enabled && editorField.scriptField.compare(field, Qt::CaseInsensitive) == 0;
     });
 }
 } // namespace
@@ -77,7 +77,7 @@ void TagEditorPopulator::run(uint64_t requestId, const TrackList& tracks, const 
 
     const auto addCustomTags = [&data, &fields, &multiValueSeparators](const auto& tags, int previousTrackCount) {
         for(const auto& [field, value] : tags) {
-            if(value.isEmpty() || hasDefaultField(fields, field)) {
+            if(value.isEmpty() || hasEnabledDefaultField(fields, field)) {
                 continue;
             }
 
