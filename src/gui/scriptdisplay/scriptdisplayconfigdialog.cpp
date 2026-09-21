@@ -58,6 +58,7 @@ namespace Fooyin {
 ScriptDisplayConfigDialog::ScriptDisplayConfigDialog(ScriptDisplay* widget, QWidget* parent)
     : WidgetConfigDialog<ScriptDisplay, ScriptDisplay::ConfigData>{widget, widget->name(), parent}
     , m_script{new ScriptTextEdit(this)}
+    , m_showStoppedTrack{new QCheckBox(tr("Show current track when playback is stopped"), this)}
     , m_tabs{new QTabWidget(this)}
     , m_formatTab{new QWidget(this)}
     , m_styleTab{new QWidget(this)}
@@ -120,6 +121,7 @@ ScriptDisplayConfigDialog::ScriptDisplayConfigDialog(ScriptDisplay* widget, QWid
     formatLayout->setContentsMargins({});
 
     formatLayout->addWidget(m_script, 1, 0);
+    formatLayout->addWidget(m_showStoppedTrack, 2, 0);
 
     QObject::connect(widget, &ScriptDisplay::configChanged, this, &ScriptDisplayConfigDialog::syncCurrentConfig);
 
@@ -144,12 +146,14 @@ ScriptDisplay::ConfigData ScriptDisplayConfigDialog::config() const
         .horizontalAlignment = m_horizontalAlignment->currentData().toInt(),
         .verticalAlignment   = m_verticalAlignment->currentData().toInt(),
         .showScrollBar       = widget()->currentConfig().showScrollBar,
+        .showStoppedTrack    = m_showStoppedTrack->isChecked(),
     };
 }
 
 void ScriptDisplayConfigDialog::setConfig(const ScriptDisplay::ConfigData& config)
 {
     m_script->setText(config.script);
+    m_showStoppedTrack->setChecked(config.showStoppedTrack);
 
     const QFont defaultFont = config.font.isEmpty() ? widget()->font() : fontFromString(config.font);
     m_font->setChecked(!config.font.isEmpty());
@@ -178,6 +182,7 @@ void ScriptDisplayConfigDialog::mergeExternalConfig(const ScriptDisplay::ConfigD
     mergeExternalFields(previous, current, &ScriptDisplay::ConfigData::script, &ScriptDisplay::ConfigData::font,
                         &ScriptDisplay::ConfigData::bgColour, &ScriptDisplay::ConfigData::fgColour,
                         &ScriptDisplay::ConfigData::linkColour, &ScriptDisplay::ConfigData::horizontalAlignment,
-                        &ScriptDisplay::ConfigData::verticalAlignment, &ScriptDisplay::ConfigData::showScrollBar);
+                        &ScriptDisplay::ConfigData::verticalAlignment, &ScriptDisplay::ConfigData::showScrollBar,
+                        &ScriptDisplay::ConfigData::showStoppedTrack);
 }
 } // namespace Fooyin

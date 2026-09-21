@@ -1678,6 +1678,14 @@ void PlaylistWidget::reloadBackgroundCover(const Track& track)
     }
 
     const int requestId{++m_bgCoverRequestId};
+
+    if(!m_settings->value<PlaylistBackgroundShowStoppedTrack>()
+       && m_playerController->playState() == Player::PlayState::Stopped) {
+        m_bgCoverTrack = {};
+        m_playlistView->setBackgroundPixmap({});
+        return;
+    }
+
     const Track coverTrack = track.isValid() ? track : m_playerController->currentTrack();
     if(!coverTrack.isValid()) {
         m_bgCoverTrack = {};
@@ -1831,6 +1839,8 @@ void PlaylistWidget::setupConnections()
     QObject::connect(m_playlistController, &PlaylistController::currentPlaylistUpdated, this, &PlaylistWidget::resetModelThrottled);
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &PlaylistWidget::reloadBackgroundCover);
     QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this, &PlaylistWidget::reloadBackgroundCover);
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
+                     [this]() { reloadBackgroundCover(); });
 
     QObject::connect(m_columnRegistry, &PlaylistColumnRegistry::itemRemoved, this, &PlaylistWidget::handleColumnRemoved);
     QObject::connect(m_columnRegistry, &PlaylistColumnRegistry::columnChanged, this, &PlaylistWidget::handleColumnChanged);
@@ -1868,6 +1878,7 @@ void PlaylistWidget::setupConnections()
     m_settings->subscribe<PlaylistBackgroundImageMode>(this, &PlaylistWidget::applyBackgroundSettings);
     m_settings->subscribe<PlaylistBackgroundCustomImage>(this, &PlaylistWidget::applyBackgroundSettings);
     m_settings->subscribe<PlaylistBackgroundCoverType>(this, &PlaylistWidget::applyBackgroundSettings);
+    m_settings->subscribe<PlaylistBackgroundShowStoppedTrack>(this, [this]() { reloadBackgroundCover(); });
     m_settings->subscribe<PlaylistBackgroundScaling>(this, &PlaylistWidget::applyBackgroundSettings);
     m_settings->subscribe<PlaylistBackgroundPosition>(this, &PlaylistWidget::applyBackgroundSettings);
     m_settings->subscribe<PlaylistBackgroundMaxSize>(this, &PlaylistWidget::applyBackgroundSettings);

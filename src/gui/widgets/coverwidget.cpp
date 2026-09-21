@@ -56,13 +56,14 @@
 using namespace std::chrono_literals;
 using namespace Qt::StringLiterals;
 
-constexpr auto CoverWidgetCoverTypeKey       = u"ArtworkPanel/CoverType";
-constexpr auto CoverWidgetCoverAlignmentKey  = u"ArtworkPanel/CoverAlignment";
-constexpr auto CoverWidgetKeepAspectRatioKey = u"ArtworkPanel/KeepAspectRatio";
-constexpr auto CoverWidgetFadeEnabledKey     = u"ArtworkPanel/FadeCoverChanges";
-constexpr auto CoverWidgetFadeDurationKey    = u"ArtworkPanel/FadeDurationMs";
-constexpr auto CoverWidgetDoubleClickKey     = u"ArtworkPanel/DoubleClickAction";
-constexpr auto CoverWidgetMiddleClickKey     = u"ArtworkPanel/MiddleClickAction";
+constexpr auto CoverWidgetCoverTypeKey        = u"ArtworkPanel/CoverType";
+constexpr auto CoverWidgetCoverAlignmentKey   = u"ArtworkPanel/CoverAlignment";
+constexpr auto CoverWidgetKeepAspectRatioKey  = u"ArtworkPanel/KeepAspectRatio";
+constexpr auto CoverWidgetShowStoppedTrackKey = u"ArtworkPanel/ShowStoppedTrack";
+constexpr auto CoverWidgetFadeEnabledKey      = u"ArtworkPanel/FadeCoverChanges";
+constexpr auto CoverWidgetFadeDurationKey     = u"ArtworkPanel/FadeDurationMs";
+constexpr auto CoverWidgetDoubleClickKey      = u"ArtworkPanel/DoubleClickAction";
+constexpr auto CoverWidgetMiddleClickKey      = u"ArtworkPanel/MiddleClickAction";
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
 constexpr auto ResizeInterval = 5ms;
@@ -101,6 +102,7 @@ CoverWidget::CoverWidget(ActionManager* actionManager, PlayerController* playerC
 
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &CoverWidget::reloadCover);
     QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this, &CoverWidget::reloadCover);
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &CoverWidget::reloadCover);
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &CoverWidget::checkTrackArtwork);
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistsPopulated, this, &CoverWidget::reloadCover);
     QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this, &CoverWidget::reloadCover);
@@ -138,6 +140,7 @@ CoverWidget::ConfigData CoverWidget::defaultConfig() const
     config.coverAlignment = static_cast<Qt::Alignment>(
         m_settings->fileValue(CoverWidgetCoverAlignmentKey, static_cast<int>(config.coverAlignment)).toInt());
     config.keepAspectRatio   = m_settings->fileValue(CoverWidgetKeepAspectRatioKey, config.keepAspectRatio).toBool();
+    config.showStoppedTrack  = m_settings->fileValue(CoverWidgetShowStoppedTrackKey, config.showStoppedTrack).toBool();
     config.fadeCoverChanges  = m_settings->fileValue(CoverWidgetFadeEnabledKey, config.fadeCoverChanges).toBool();
     config.fadeDurationMs    = m_settings->fileValue(CoverWidgetFadeDurationKey, config.fadeDurationMs).toInt();
     config.doubleClickAction = static_cast<CoverAction>(
@@ -161,6 +164,7 @@ void CoverWidget::applyConfig(const ConfigData& config)
     const bool keepAspectChanged  = m_keepAspectRatio != config.keepAspectRatio;
     const bool alignmentChanged   = m_coverAlignment != config.coverAlignment;
     const bool fadeEnabledChanged = m_fadeCoverChanges != config.fadeCoverChanges;
+    const bool showStoppedChanged = m_config.showStoppedTrack != config.showStoppedTrack;
     const int fadeDurationMs
         = std::clamp(config.fadeDurationMs, PixmapFadeController::MinDurationMs, PixmapFadeController::MaxDurationMs);
 
@@ -168,6 +172,7 @@ void CoverWidget::applyConfig(const ConfigData& config)
         .coverType         = config.coverType,
         .coverAlignment    = config.coverAlignment,
         .keepAspectRatio   = config.keepAspectRatio,
+        .showStoppedTrack  = config.showStoppedTrack,
         .fadeCoverChanges  = config.fadeCoverChanges,
         .fadeDurationMs    = fadeDurationMs,
         .doubleClickAction = config.doubleClickAction,
@@ -188,9 +193,11 @@ void CoverWidget::applyConfig(const ConfigData& config)
         stopCoverFade();
     }
 
-    if(coverTypeChanged) {
+    if(coverTypeChanged || showStoppedChanged) {
         ++m_actionRequestId;
-        m_noCover = m_coverProvider->placeholderCover(m_coverType);
+        if(coverTypeChanged) {
+            m_noCover = m_coverProvider->placeholderCover(m_coverType);
+        }
         reloadCover();
         return;
     }
@@ -210,6 +217,7 @@ void CoverWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(CoverWidgetCoverTypeKey, static_cast<int>(config.coverType));
     m_settings->fileSet(CoverWidgetCoverAlignmentKey, static_cast<int>(config.coverAlignment));
     m_settings->fileSet(CoverWidgetKeepAspectRatioKey, config.keepAspectRatio);
+    m_settings->fileSet(CoverWidgetShowStoppedTrackKey, config.showStoppedTrack);
     m_settings->fileSet(CoverWidgetFadeEnabledKey, config.fadeCoverChanges);
     m_settings->fileSet(
         CoverWidgetFadeDurationKey,
@@ -223,6 +231,7 @@ void CoverWidget::clearSavedDefaults() const
     m_settings->fileRemove(CoverWidgetCoverTypeKey);
     m_settings->fileRemove(CoverWidgetCoverAlignmentKey);
     m_settings->fileRemove(CoverWidgetKeepAspectRatioKey);
+    m_settings->fileRemove(CoverWidgetShowStoppedTrackKey);
     m_settings->fileRemove(CoverWidgetFadeEnabledKey);
     m_settings->fileRemove(CoverWidgetFadeDurationKey);
     m_settings->fileRemove(CoverWidgetDoubleClickKey);
@@ -258,6 +267,10 @@ Track CoverWidget::displayTrack() const
 {
     if(m_displayOption == SelectionDisplay::PreferSelection && m_trackSelection->hasDisplayTracks()) {
         return m_trackSelection->displayTrack();
+    }
+
+    if(!m_config.showStoppedTrack && m_playerController->playState() == Player::PlayState::Stopped) {
+        return {};
     }
 
     if(const Track track = m_playerController->currentTrack(); track.isValid()) {
@@ -382,6 +395,9 @@ CoverWidget::ConfigData CoverWidget::configFromLayout(const QJsonObject& layout)
     if(layout.contains("KeepAspectRatio"_L1)) {
         config.keepAspectRatio = layout.value("KeepAspectRatio"_L1).toBool();
     }
+    if(layout.contains("ShowStoppedTrack"_L1)) {
+        config.showStoppedTrack = layout.value("ShowStoppedTrack"_L1).toBool();
+    }
     if(layout.contains("FadeCoverChanges"_L1)) {
         config.fadeCoverChanges = layout.value("FadeCoverChanges"_L1).toBool();
     }
@@ -406,6 +422,7 @@ void CoverWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layo
     layout["CoverType"_L1]         = static_cast<int>(config.coverType);
     layout["CoverAlignment"_L1]    = static_cast<int>(config.coverAlignment);
     layout["KeepAspectRatio"_L1]   = config.keepAspectRatio;
+    layout["ShowStoppedTrack"_L1]  = config.showStoppedTrack;
     layout["FadeCoverChanges"_L1]  = config.fadeCoverChanges;
     layout["FadeDurationMs"_L1]    = config.fadeDurationMs;
     layout["DoubleClickAction"_L1] = static_cast<int>(config.doubleClickAction);

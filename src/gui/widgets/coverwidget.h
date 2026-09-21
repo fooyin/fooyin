@@ -58,6 +58,7 @@ public:
         Track::Cover coverType{Track::Cover::Front};
         Qt::Alignment coverAlignment{Qt::AlignCenter};
         bool keepAspectRatio{true};
+        bool showStoppedTrack{true};
         bool fadeCoverChanges{false};
         int fadeDurationMs{1000};
         CoverAction doubleClickAction{CoverAction::ViewFullSize};

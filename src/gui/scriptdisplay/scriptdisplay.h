@@ -58,6 +58,7 @@ public:
         int horizontalAlignment{Qt::AlignLeft};
         int verticalAlignment{Qt::AlignVCenter};
         bool showScrollBar{true};
+        bool showStoppedTrack{true};
     };
 
     ScriptDisplay(PlayerController* playerController, PlaylistHandler* playlistHandler,

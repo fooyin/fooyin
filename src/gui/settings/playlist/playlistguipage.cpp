@@ -93,6 +93,7 @@ private:
     QComboBox* m_backgroundImage;
     QLabel* m_backgroundCoverTypeLabel;
     QComboBox* m_backgroundCoverType;
+    QCheckBox* m_backgroundShowStoppedTrack;
     QLabel* m_customImageLabel;
     QLineEdit* m_customImage;
     QComboBox* m_backgroundScaling;
@@ -116,6 +117,7 @@ PlaylistAppearancePageWidget::PlaylistAppearancePageWidget(SettingsManager* sett
     , m_backgroundImage{new QComboBox(this)}
     , m_backgroundCoverTypeLabel{new QLabel(tr("Artwork type") + u":"_s, this)}
     , m_backgroundCoverType{new QComboBox(this)}
+    , m_backgroundShowStoppedTrack{new QCheckBox(tr("Show current track when playback is stopped"), this)}
     , m_customImageLabel{new QLabel(tr("File") + u":"_s, this)}
     , m_customImage{new QLineEdit(this)}
     , m_backgroundScaling{new QComboBox(this)}
@@ -240,7 +242,8 @@ PlaylistAppearancePageWidget::PlaylistAppearancePageWidget(SettingsManager* sett
     backgroundLayout->addWidget(new QLabel(tr("Source") + u":"_s, this), row, 0);
     backgroundLayout->addWidget(m_backgroundImage, row++, 1);
     backgroundLayout->addWidget(m_backgroundCoverTypeLabel, row, 0);
-    backgroundLayout->addWidget(m_backgroundCoverType, row, 1);
+    backgroundLayout->addWidget(m_backgroundCoverType, row++, 1);
+    backgroundLayout->addWidget(m_backgroundShowStoppedTrack, row++, 0, 1, 2);
     backgroundLayout->addWidget(m_customImageLabel, row, 0);
     backgroundLayout->addWidget(m_customImage, row++, 1);
     backgroundLayout->addWidget(Gui::createSectionHeader(tr("Layout"), this), row++, 0, 1, 2);
@@ -281,6 +284,8 @@ void PlaylistAppearancePageWidget::load()
         m_backgroundImage->findData(m_settings->value<Settings::Gui::Internal::PlaylistBackgroundImageMode>()));
     m_backgroundCoverType->setCurrentIndex(
         m_backgroundCoverType->findData(m_settings->value<Settings::Gui::Internal::PlaylistBackgroundCoverType>()));
+    m_backgroundShowStoppedTrack->setChecked(
+        m_settings->value<Settings::Gui::Internal::PlaylistBackgroundShowStoppedTrack>());
     m_customImage->setText(m_settings->value<Settings::Gui::Internal::PlaylistBackgroundCustomImage>());
     m_backgroundScaling->setCurrentIndex(
         m_backgroundScaling->findData(m_settings->value<Settings::Gui::Internal::PlaylistBackgroundScaling>()));
@@ -315,6 +320,8 @@ void PlaylistAppearancePageWidget::apply()
     m_settings->set<Settings::Gui::Internal::PlaylistArtworkCornerRadius>(m_artworkCornerRadius->value());
     m_settings->set<Settings::Gui::Internal::PlaylistBackgroundImageMode>(m_backgroundImage->currentData().toInt());
     m_settings->set<Settings::Gui::Internal::PlaylistBackgroundCoverType>(m_backgroundCoverType->currentData().toInt());
+    m_settings->set<Settings::Gui::Internal::PlaylistBackgroundShowStoppedTrack>(
+        m_backgroundShowStoppedTrack->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistBackgroundCustomImage>(m_customImage->text());
     m_settings->set<Settings::Gui::Internal::PlaylistBackgroundScaling>(m_backgroundScaling->currentData().toInt());
     m_settings->set<Settings::Gui::Internal::PlaylistBackgroundPosition>(m_backgroundPosition->currentData().toInt());
@@ -336,6 +343,7 @@ void PlaylistAppearancePageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::PlaylistArtworkCornerRadius>();
     m_settings->reset<Settings::Gui::Internal::PlaylistBackgroundImageMode>();
     m_settings->reset<Settings::Gui::Internal::PlaylistBackgroundCoverType>();
+    m_settings->reset<Settings::Gui::Internal::PlaylistBackgroundShowStoppedTrack>();
     m_settings->reset<Settings::Gui::Internal::PlaylistBackgroundCustomImage>();
     m_settings->reset<Settings::Gui::Internal::PlaylistBackgroundScaling>();
     m_settings->reset<Settings::Gui::Internal::PlaylistBackgroundPosition>();
@@ -369,6 +377,8 @@ void PlaylistAppearancePageWidget::updateBackgroundControls()
     m_backgroundCoverType->setEnabled(coverImage);
     m_backgroundCoverType->setVisible(coverImage);
     m_backgroundCoverTypeLabel->setVisible(coverImage);
+    m_backgroundShowStoppedTrack->setEnabled(coverImage);
+    m_backgroundShowStoppedTrack->setVisible(coverImage);
     m_customImage->setVisible(customImage);
     m_customImageLabel->setVisible(customImage);
     m_backgroundScaling->setEnabled(hasImage);

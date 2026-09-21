@@ -262,6 +262,7 @@ enum GuiInternalSettings : uint32_t
     StatusMiddleClick                        = 79 | Type::Int,
     ContextMenuQueueViewerDisabledSections   = 80 | Type::StringList,
     ContextMenuQueueViewerLayout             = 81 | Type::StringList,
+    PlaylistBackgroundShowStoppedTrack       = 82 | Type::Bool,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

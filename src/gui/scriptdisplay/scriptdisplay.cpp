@@ -73,6 +73,7 @@ constexpr auto LinkColourKey          = "TextWidget/LinkColour";
 constexpr auto HorizontalAlignmentKey = "TextWidget/HorizontalAlignment";
 constexpr auto VerticalAlignmentKey   = "TextWidget/VerticalAlignment";
 constexpr auto ScrollBarKey           = "TextWidget/Scrollbar";
+constexpr auto ShowStoppedTrackKey    = "TextWidget/ShowStoppedTrack";
 
 Q_LOGGING_CATEGORY(SCRIPT_DISPLAY, "fy.scriptdisplay")
 
@@ -201,6 +202,7 @@ ScriptDisplay::ConfigData ScriptDisplay::defaultConfig() const
     config.horizontalAlignment = m_settings->fileValue(HorizontalAlignmentKey, config.horizontalAlignment).toInt();
     config.verticalAlignment   = m_settings->fileValue(VerticalAlignmentKey, config.verticalAlignment).toInt();
     config.showScrollBar       = m_settings->fileValue(ScrollBarKey, config.showScrollBar).toBool();
+    config.showStoppedTrack    = m_settings->fileValue(ShowStoppedTrackKey, config.showStoppedTrack).toBool();
 
     return config;
 }
@@ -235,6 +237,7 @@ void ScriptDisplay::applyConfig(const ConfigData& config)
     m_config.horizontalAlignment = config.horizontalAlignment;
     m_config.verticalAlignment   = config.verticalAlignment;
     m_config.showScrollBar       = config.showScrollBar;
+    m_config.showStoppedTrack    = config.showStoppedTrack;
 
     applyAppearance();
     updateText();
@@ -252,6 +255,7 @@ void ScriptDisplay::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(HorizontalAlignmentKey, config.horizontalAlignment);
     m_settings->fileSet(VerticalAlignmentKey, config.verticalAlignment);
     m_settings->fileSet(ScrollBarKey, config.showScrollBar);
+    m_settings->fileSet(ShowStoppedTrackKey, config.showStoppedTrack);
 }
 
 void ScriptDisplay::clearSavedDefaults() const
@@ -264,6 +268,7 @@ void ScriptDisplay::clearSavedDefaults() const
     m_settings->fileRemove(HorizontalAlignmentKey);
     m_settings->fileRemove(VerticalAlignmentKey);
     m_settings->fileRemove(ScrollBarKey);
+    m_settings->fileRemove(ShowStoppedTrackKey);
 }
 
 void ScriptDisplay::saveLayoutData(QJsonObject& layout)
@@ -392,6 +397,9 @@ ScriptDisplay::ConfigData ScriptDisplay::configFromLayout(const QJsonObject& lay
     if(layout.contains("ShowScrollbar"_L1)) {
         config.showScrollBar = layout.value("ShowScrollbar"_L1).toBool();
     }
+    if(layout.contains("ShowStoppedTrack"_L1)) {
+        config.showStoppedTrack = layout.value("ShowStoppedTrack"_L1).toBool();
+    }
 
     return config;
 }
@@ -406,6 +414,7 @@ void ScriptDisplay::saveConfigToLayout(const ConfigData& config, QJsonObject& la
     layout["HorizontalAlignment"_L1] = config.horizontalAlignment;
     layout["VerticalAlignment"_L1]   = config.verticalAlignment;
     layout["ShowScrollbar"_L1]       = config.showScrollBar;
+    layout["ShowStoppedTrack"_L1]    = config.showStoppedTrack;
 }
 
 void ScriptDisplay::applyAppearance()
@@ -528,6 +537,10 @@ void ScriptDisplay::updateViewportAlignment()
 
 Track ScriptDisplay::currentTrack() const
 {
+    if(!m_config.showStoppedTrack && m_playerController->playState() == Player::PlayState::Stopped) {
+        return {};
+    }
+
     if(const Track track = m_playerController->currentTrack(); track.isValid()) {
         return track;
     }

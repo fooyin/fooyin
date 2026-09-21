@@ -47,6 +47,7 @@ protected:
 
 private:
     ScriptTextEdit* m_script;
+    QCheckBox* m_showStoppedTrack;
 
     QTabWidget* m_tabs;
     QWidget* m_formatTab;
