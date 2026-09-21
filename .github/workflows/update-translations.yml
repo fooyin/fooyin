@@ -25,6 +25,7 @@ jobs:
           passphrase: ${{ secrets.BOT_GPG_PASSPHRASE }}
           git_user_signingkey: true
           git_commit_gpgsign: true
+          workdir: ${{ github.workspace }}
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
