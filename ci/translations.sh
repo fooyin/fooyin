@@ -1,11 +1,9 @@
 #!/bin/bash -eux
 
-source ci/setup.sh
+dnf install -y \
+    git \
+    gnupg2 \
+    qt6-linguist
 
-$SUDO apt-get update -qq
-$SUDO apt-get install -y \
-    gnupg \
-    qt6-l10n-tools
-
-/usr/lib/qt6/bin/lupdate src -no-obsolete -I include -ts data/translations/fooyin_*.ts
-/usr/lib/qt6/bin/lupdate src -no-obsolete -I include -ts -pluralonly data/translations/fooyin_en_GB.ts
+/usr/bin/lupdate-qt6 src -no-obsolete -I include -ts data/translations/fooyin_*.ts
+/usr/bin/lupdate-qt6 src -no-obsolete -I include -ts -pluralonly data/translations/fooyin_en_GB.ts
