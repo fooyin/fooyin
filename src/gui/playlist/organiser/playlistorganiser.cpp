@@ -266,7 +266,13 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
         sortAndRestoreState(
             [this, indexes]() { m_model->sortGroupPlaylists(indexes, PlaylistOrganiserModel::SortOrder::Ascending); });
     });
-    QObject::connect(m_removePlaylist, &QAction::triggered, this, [this]() { m_model->removeItems(actionIndexes()); });
+    QObject::connect(m_removePlaylist, &QAction::triggered, this, [this]() {
+        const QModelIndexList indexes = actionIndexes();
+        const auto playlistIds        = m_model->playlistIds(indexes);
+        if(m_playlistInteractor->playlistController()->confirmPlaylistRemoval(playlistIds, this)) {
+            m_model->removeItems(indexes);
+        }
+    });
     QObject::connect(m_renamePlaylist, &QAction::triggered, this, [this]() { m_organiserTree->edit(actionIndex()); });
     QObject::connect(m_newPlaylist, &QAction::triggered, this, [this]() { createPlaylist(actionIndex(), false); });
     QObject::connect(m_newAutoPlaylist, &QAction::triggered, this, [this]() { createPlaylist(actionIndex(), true); });

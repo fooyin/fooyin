@@ -97,6 +97,9 @@ public:
     bool movePlaylistItems(const UId& playlistId, const std::vector<int>& indexes, int newIndex) override;
     bool reorderPlaylistItems(const UId& playlistId, const std::vector<int>& order) override;
 
+    bool removePlaylist(const UId& playlistId, QWidget* parent) override;
+    bool confirmPlaylistRemoval(std::span<const UId> playlistIds, QWidget* parent) override;
+
     [[nodiscard]] bool canUndo(const UId& playlistId) const override;
     [[nodiscard]] bool canRedo(const UId& playlistId) const override;
     bool undo(const UId& playlistId) override;

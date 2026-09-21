@@ -466,7 +466,7 @@ void PlaylistManagerWidget::removePlaylist(const Playlist* playlist)
         return;
     }
 
-    m_playlistController->playlistHandler()->removePlaylist(playlist->id());
+    m_playlistController->removePlaylist(playlist->id(), this);
 }
 
 void PlaylistManagerWidget::editCurrentAutoPlaylist()

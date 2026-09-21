@@ -542,7 +542,7 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
             auto* removeAction
                 = new QAction(playlist->isAutoPlaylist() ? tr("Remove autoplaylist") : tr("Remove playlist"), menu);
             QObject::connect(removeAction, &QAction::triggered, this,
-                             [this, id]() { m_playlistHandler->removePlaylist(id); });
+                             [this, id]() { m_playlistController->removePlaylist(id, this); });
 
             menu->addAction(removeAction);
         }
@@ -708,13 +708,13 @@ void PlaylistTabs::setupConnections()
         }
         else if(m_config.closeOnMiddleClick) {
             const auto id = m_tabs->tabBar()->tabData(index).value<UId>();
-            m_playlistHandler->removePlaylist(id);
+            m_playlistController->removePlaylist(id, this);
         }
     });
     QObject::connect(m_tabs, &SingleTabbedWidget::tabCloseRequested, this, [this](const int index) {
         if(index >= 0) {
             const auto id = m_tabs->tabBar()->tabData(index).value<UId>();
-            m_playlistHandler->removePlaylist(id);
+            m_playlistController->removePlaylist(id, this);
         }
     });
     QObject::connect(m_tabs, &SingleTabbedWidget::tabBarDoubleClicked, this, [this](const int index) {

@@ -750,6 +750,38 @@ bool PlaylistOrganiserModel::dropMimeData(const QMimeData* data, Qt::DropAction 
     return itemsDropped(data, row, parent);
 }
 
+std::vector<UId> PlaylistOrganiserModel::playlistIds(const QModelIndexList& indexes) const
+{
+    std::vector<UId> playlistIds;
+    std::stack<QModelIndex> pendingIndexes;
+
+    for(const QModelIndex& index : indexes) {
+        if(index.isValid()) {
+            pendingIndexes.push(index);
+        }
+    }
+
+    while(!pendingIndexes.empty()) {
+        const QModelIndex index = pendingIndexes.top();
+        pendingIndexes.pop();
+
+        const auto* item = itemForIndex(index);
+        if(item->type() == PlaylistOrganiserItem::PlaylistItem) {
+            const UId playlistId = item->playlist()->id();
+            if(std::ranges::find(playlistIds, playlistId) == playlistIds.cend()) {
+                playlistIds.push_back(playlistId);
+            }
+            continue;
+        }
+
+        for(int row{0}; row < rowCount(index); ++row) {
+            pendingIndexes.push(this->index(row, 0, index));
+        }
+    }
+
+    return playlistIds;
+}
+
 void PlaylistOrganiserModel::removeItems(const QModelIndexList& indexes)
 {
     if(indexes.empty()) {

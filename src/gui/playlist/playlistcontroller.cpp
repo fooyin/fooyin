@@ -33,6 +33,10 @@
 #include <gui/trackselectioncontroller.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QCheckBox>
+#include <QMessageBox>
+#include <QPushButton>
+
 #include <algorithm>
 #include <numeric>
 #include <ranges>
@@ -390,6 +394,65 @@ bool PlaylistController::reorderPlaylistItems(const UId& playlistId, const std::
 
     if(playlist == currentPlaylist()) {
         Q_EMIT playlistHistoryChanged();
+    }
+
+    return true;
+}
+
+bool PlaylistController::removePlaylist(const UId& playlistId, QWidget* parent)
+{
+    if(!m_handler->playlistById(playlistId) || !confirmPlaylistRemoval({&playlistId, 1}, parent)) {
+        return false;
+    }
+
+    m_handler->removePlaylist(playlistId);
+    return true;
+}
+
+bool PlaylistController::confirmPlaylistRemoval(std::span<const UId> playlistIds, QWidget* parent)
+{
+    if(!m_settings->value<Settings::Gui::ConfirmPlaylistRemoval>()) {
+        return true;
+    }
+
+    PlaylistList playlists;
+    playlists.reserve(playlistIds.size());
+
+    for(const UId& playlistId : playlistIds) {
+        auto* playlist = m_handler->playlistById(playlistId);
+        if(playlist && std::ranges::find(playlists, playlist) == playlists.cend()) {
+            playlists.push_back(playlist);
+        }
+    }
+
+    if(playlists.empty()) {
+        return true;
+    }
+
+    QMessageBox message{parent};
+    message.setIcon(QMessageBox::Question);
+    message.setWindowTitle(tr("Remove Playlist"));
+    if(playlists.size() == 1) {
+        message.setText(tr("Remove playlist \"%1\"?").arg(playlists.front()->name()));
+    }
+    else {
+        message.setText(tr("Remove %Ln playlist(s)?", nullptr, static_cast<int>(playlists.size())));
+    }
+
+    auto* dontAskAgain = new QCheckBox(tr("Don't ask again"), &message);
+    message.setCheckBox(dontAskAgain);
+
+    auto* removeButton = message.addButton(tr("Remove"), QMessageBox::DestructiveRole);
+    message.addButton(QMessageBox::Cancel);
+    message.setDefaultButton(removeButton);
+    message.exec();
+
+    if(message.clickedButton() != removeButton) {
+        return false;
+    }
+
+    if(dontAskAgain->isChecked()) {
+        m_settings->set<Settings::Gui::ConfirmPlaylistRemoval>(false);
     }
 
     return true;

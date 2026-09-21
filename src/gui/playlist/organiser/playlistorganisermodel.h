@@ -89,6 +89,7 @@ public:
     bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
                       const QModelIndex& parent) override;
 
+    [[nodiscard]] std::vector<UId> playlistIds(const QModelIndexList& indexes) const;
     void removeItems(const QModelIndexList& indexes);
 
 Q_SIGNALS:

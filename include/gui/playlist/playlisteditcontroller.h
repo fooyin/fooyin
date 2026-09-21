@@ -24,13 +24,16 @@
 #include <core/track.h>
 #include <utils/id.h>
 
+#include <span>
 #include <vector>
+
+class QWidget;
 
 namespace Fooyin {
 /*!
- * Edits playlists by ID using the shared undo history.
- * Implementations are accessed on the GUI thread; editing does not change
- * the playlist currently selected in the UI.
+ * Edits playlists by ID.
+ * Implementations are accessed on the GUI thread; content edits use the shared undo history and do not change the
+ * playlist currently selected in the UI.
  */
 class FYGUI_EXPORT PlaylistEditController
 {
@@ -43,6 +46,9 @@ public:
     virtual bool clearPlaylist(const UId& playlistId)                                                   = 0;
     virtual bool movePlaylistItems(const UId& playlistId, const std::vector<int>& indexes, int newBase) = 0;
     virtual bool reorderPlaylistItems(const UId& playlistId, const std::vector<int>& order)             = 0;
+
+    virtual bool removePlaylist(const UId& playlistId, QWidget* parent)                    = 0;
+    virtual bool confirmPlaylistRemoval(std::span<const UId> playlistIds, QWidget* parent) = 0;
 
     [[nodiscard]] virtual bool canUndo(const UId& playlistId) const = 0;
     [[nodiscard]] virtual bool canRedo(const UId& playlistId) const = 0;

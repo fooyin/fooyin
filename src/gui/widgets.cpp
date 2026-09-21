@@ -599,6 +599,13 @@ void Widgets::registerAdvancedSettings()
          .editor      = AdvancedSettingCheckBox{},
          .normalise   = {},
          .validate    = {}});
+    advancedSettingsRegistry->add<Settings::Gui::ConfirmPlaylistRemoval>(
+        {.category    = {tr("Playlist"), tr("General")},
+         .label       = tr("Confirm before removing playlists"),
+         .description = {},
+         .editor      = AdvancedSettingCheckBox{},
+         .normalise   = {},
+         .validate    = {}});
     advancedSettingsRegistry->add<Settings::Core::Internal::VBRUpdateInterval>(
         {.category    = {tr("Playback"), tr("Decoding")},
          .label       = tr("VBR update interval"),

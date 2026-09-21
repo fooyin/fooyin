@@ -1184,7 +1184,7 @@ void GuiApplication::registerActions()
     removeCmd->setDefaultShortcut(QKeySequence{Qt::CTRL | Qt::Key_W});
     QObject::connect(removePlaylist, &QAction::triggered, m_mainWindow.get(), [this]() {
         if(auto* currentPlaylist = m_playlistController->currentPlaylist()) {
-            m_core->playlistHandler()->removePlaylist(currentPlaylist->id());
+            m_playlistController->removePlaylist(currentPlaylist->id(), m_mainWindow.get());
         }
     });
 

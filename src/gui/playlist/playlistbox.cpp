@@ -436,8 +436,9 @@ void PlaylistBox::cancelRenameEditor()
 void PlaylistBox::removeCurrentPlaylist()
 {
     if(auto* playlist = currentPlaylist()) {
+        const UId playlistId = playlist->id();
         closeRenameEditor();
-        m_playlistHandler->removePlaylist(playlist->id());
+        m_playlistController->removePlaylist(playlistId, this);
     }
 }
 

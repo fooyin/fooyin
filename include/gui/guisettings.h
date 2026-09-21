@@ -106,6 +106,7 @@ enum GuiSettings : uint32_t
     PlaylistShowQueueIndexes   = 49 | Type::Bool,
     RatingEditorOnlyOnHover    = 50 | Type::Bool,
     LoveEditorOnlyOnHover      = 51 | Type::Bool,
+    ConfirmPlaylistRemoval     = 52 | Type::Bool,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Settings::Gui

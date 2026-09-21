@@ -149,6 +149,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<PlaylistShowQueueIndexes>(false, u"Playlist/ShowQueueIndexes"_s);
     m_settings->createSetting<RatingEditorOnlyOnHover>(false, u"Playlist/RatingEditorOnlyOnHover"_s);
     m_settings->createSetting<LoveEditorOnlyOnHover>(false, u"Playlist/LoveEditorOnlyOnHover"_s);
+    m_settings->createSetting<ConfirmPlaylistRemoval>(true, u"Playlist/ConfirmRemoval"_s);
 
     m_settings->createSetting<Internal::EditingMenuLevels>(2, u"Interface/EditingMenuLevels"_s);
     m_settings->createSetting<Internal::PlaylistAltColours>(true, u"PlaylistWidget/AlternatingColours"_s);
