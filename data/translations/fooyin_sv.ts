@@ -582,7 +582,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="295"/>
         <source>Returns true when x is greater than y</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar sant när x är större än y</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="330"/>
@@ -1288,7 +1288,7 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="493"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="496"/>
         <source>Conditional</source>
-        <translation>Konditional</translation>
+        <translation>Villkorlighet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="480"/>
@@ -2781,7 +2781,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="117"/>
         <source>Confidence</source>
-        <translation type="unfinished"></translation>
+        <translation>Säkerhet</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="118"/>
@@ -4052,7 +4052,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="100"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">Klickbeteende</translation>
+        <translation>Klickbeteende</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="104"/>
@@ -4062,37 +4062,37 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="105"/>
         <source>View full size</source>
-        <translation type="unfinished">Visa full storlek</translation>
+        <translation>Visa full storlek</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="106"/>
         <source>Next available artwork type</source>
-        <translation type="unfinished"></translation>
+        <translation>Nästa tillgängliga konstverkstyp</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="107"/>
         <source>Show track</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="108"/>
         <source>Open containing folder</source>
-        <translation type="unfinished">Öppna innehållande mapp</translation>
+        <translation>Öppna innehållande mapp</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="109"/>
         <source>Open properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna egenskaper</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="115"/>
         <source>Double-click</source>
-        <translation type="unfinished">Dubbelklick</translation>
+        <translation>Dubbelklick</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="117"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Mellanklick</translation>
+        <translation>Mellanklick</translation>
     </message>
 </context>
 <context>
@@ -4487,7 +4487,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="103"/>
         <source>Expand/collapse or play now</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandera/Kollapsa eller spela nu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="106"/>
@@ -6667,7 +6667,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="189"/>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="193"/>
         <source>Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>Spela nu</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="69"/>
@@ -7948,7 +7948,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="93"/>
         <source>Only show unrated stars on hovered rows</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa bara obetygsatta stjärnor på hovrade rader</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="95"/>
@@ -7983,12 +7983,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="107"/>
         <source>Unrated</source>
-        <translation type="unfinished"></translation>
+        <translation>Obetygsatt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="108"/>
         <source>Heart colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Hjärtfärg</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="109"/>
@@ -8080,7 +8080,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="156"/>
         <source>Editor colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Redigerarfärger</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="167"/>
@@ -9495,7 +9495,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="199"/>
         <source>Expand/collapse or play now</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandera/Kollapsa eller spela nu</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="81"/>
@@ -10012,17 +10012,17 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="140"/>
         <source>Centring</source>
-        <translation type="unfinished"></translation>
+        <translation>Centrering</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="158"/>
         <source>Top and bottom margins apply to lyrics that are not centred at that edge.</source>
-        <translation type="unfinished"></translation>
+        <translation>Topp- och bottenmarginaler appliceras på låttext som inte är centrerad vid den kanten.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="168"/>
         <source>These options apply to synced lyrics and automatically scrolling unsynced lyrics.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dessa alternativ appliceras på synkad låttext och automatiskt skrollande osynkad låttext.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="182"/>
@@ -10064,12 +10064,12 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="56"/>
         <source>Centre first line</source>
-        <translation type="unfinished"></translation>
+        <translation>Centrera första rad</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="57"/>
         <source>Centre last line</source>
-        <translation type="unfinished"></translation>
+        <translation>Centrera sista rad</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="149"/>
@@ -10219,12 +10219,12 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="77"/>
         <source>Ly&amp;rics</source>
-        <translation type="unfinished"></translation>
+        <translation>Lå&amp;ttext</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="78"/>
         <source>Open lyrics in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna låttext i ett separat fönster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="80"/>
@@ -10726,28 +10726,28 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="37"/>
         <source>Metadata Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadataändringar</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="48"/>
         <source>%Ln metadata change(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln metadataändring</numerusform>
+            <numerusform>%Ln metadataändringar</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="49"/>
         <source>%Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln fil</numerusform>
+            <numerusform>%Ln filer</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="50"/>
         <source>%1 across %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 över %2.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="54"/>
@@ -10772,12 +10772,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
         <source>Current value</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuvarande värde</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
         <source>New value</source>
-        <translation type="unfinished"></translation>
+        <translation>Nytt värde</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="137"/>
@@ -10798,7 +10798,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="146"/>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="150"/>
         <source>(empty)</source>
-        <translation type="unfinished">(tom)</translation>
+        <translation>(tomt)</translation>
     </message>
 </context>
 <context>
@@ -10816,7 +10816,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="284"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="295"/>
@@ -10854,12 +10854,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="328"/>
         <source>Lookup by</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök efter</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="334"/>
         <source>Search for a release to see matching results</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök på ett utsläpp för att se matchande resultat</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="347"/>
@@ -10874,7 +10874,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="365"/>
         <source>Original release date</source>
-        <translation>Ursprunligt utsläppsdatum</translation>
+        <translation>Ursprungligt utsläppsdatum</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="366"/>
@@ -10884,7 +10884,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="367"/>
         <source>Label</source>
-        <translation type="unfinished"></translation>
+        <translation>Skivbolag</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="368"/>
@@ -10894,7 +10894,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="369"/>
         <source>Barcode</source>
-        <translation type="unfinished"></translation>
+        <translation>Streckkod</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="370"/>
@@ -10979,12 +10979,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="464"/>
         <source>Write provider IDs</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv leverantörs-ID:n</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="466"/>
         <source>Use original date for Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd ursprungligt datum för datum</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="469"/>
@@ -11028,7 +11028,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="784"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="850"/>
         <source>Changes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändringar…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="493"/>
@@ -11102,7 +11102,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="856"/>
         <source>Changes (%1)…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändringar (%1)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="900"/>
@@ -11842,17 +11842,17 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="286"/>
         <source>Horizontal</source>
-        <translation type="unfinished">Horisontell</translation>
+        <translation>Horisontell</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="287"/>
         <source>Vertical</source>
-        <translation type="unfinished">Vertikal</translation>
+        <translation>Vertikal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="289"/>
         <source>Orientation</source>
-        <translation type="unfinished">Riktning</translation>
+        <translation>Riktning</translation>
     </message>
 </context>
 <context>
@@ -12123,7 +12123,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
         <source>P&amp;ause</source>
-        <translation type="unfinished"></translation>
+        <translation>P&amp;ausa</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
@@ -12198,12 +12198,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="87"/>
         <source>Restart the current track or start playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Starta om det aktuella spåret eller starta uppspelning</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="93"/>
         <source>Pause playback</source>
-        <translation type="unfinished">Pausa uppspelning</translation>
+        <translation>Pausa uppspelning</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="99"/>
@@ -12523,12 +12523,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="263"/>
         <source>General</source>
-        <translation type="unfinished">Generellt</translation>
+        <translation>Generellt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="264"/>
         <source>Playback</source>
-        <translation type="unfinished">Uppspelning</translation>
+        <translation>Uppspelning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="264"/>
@@ -12541,52 +12541,52 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="75"/>
         <source>Playlist-led</source>
-        <translation type="unfinished"></translation>
+        <translation>Spellistsdriven</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="76"/>
         <source>Queue-led</source>
-        <translation type="unfinished"></translation>
+        <translation>Ködriven</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="77"/>
         <source>Start with an empty playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Starta med en tom uppspelningskö</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="78"/>
         <source>Show queue indexes in playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa köindex i spellistor</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="79"/>
         <source>Continue from the playlist after queued tracks finish</source>
-        <translation type="unfinished"></translation>
+        <translation>Fortsätt från spellistan efter köade spår blir klara</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="80"/>
         <source>Stop playback after queued tracks finish</source>
-        <translation type="unfinished"></translation>
+        <translation>Stoppa uppspelning efter köade spår blir klara</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="81"/>
         <source>Scroll the current track to the top</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrolla det aktuella spåret till toppen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="82"/>
         <source>Limit recent track history</source>
-        <translation type="unfinished"></translation>
+        <translation>Begränsa nylig spårhistorik</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="83"/>
         <source>History limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Historikgräns</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="85"/>
         <source>Replace with selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Ersätt med valda spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="86"/>
@@ -12596,7 +12596,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="87"/>
         <source>Replace with all tracks in the current view</source>
-        <translation type="unfinished"></translation>
+        <translation>Ersätt med alla spår i den aktuella vyn</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="88"/>
@@ -12636,12 +12636,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="116"/>
         <source>Start fooyin without restoring the saved queue or current track</source>
-        <translation type="unfinished"></translation>
+        <translation>Starta fooyin utan att återhämta den sparade kön eller aktuella spåret</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="118"/>
         <source>Queue mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Köläge</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="127"/>
@@ -12651,7 +12651,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="129"/>
         <source>After the queue empties, continue after the last queued track in its source playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Efter att kön töms, fortsätt efter det senast köade spåret i dess källspellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="131"/>
@@ -12661,12 +12661,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="133"/>
         <source>Playlist-led options</source>
-        <translation type="unfinished"></translation>
+        <translation>Spellistsdrivna alternativ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="142"/>
         <source>Unlimited</source>
-        <translation type="unfinished">Obegränsat</translation>
+        <translation>Obegränsad</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="144"/>
@@ -12686,17 +12686,17 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="148"/>
         <source>Queue-led options</source>
-        <translation type="unfinished"></translation>
+        <translation>Ködrivna alternativ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="152"/>
         <source>Play now action</source>
-        <translation type="unfinished"></translation>
+        <translation>Spela nu-handling</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="157"/>
         <source>Display and history</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Display och historik</translation>
     </message>
 </context>
 <context>
@@ -12719,12 +12719,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="191"/>
         <source>Show Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa pausa</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="192"/>
         <source>Show Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa spela</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="193"/>
@@ -13594,7 +13594,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="167"/>
         <source>Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>Spela nu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="87"/>
@@ -13751,7 +13751,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="349"/>
         <source>Save the selected playlist to the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara den valda spellistan till den specificerade filen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="357"/>
@@ -14295,7 +14295,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="98"/>
         <source>Save the selected playlist to the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara den valda spellistan till den specificerade filen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="524"/>
@@ -15378,7 +15378,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="116"/>
         <source>&amp;Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>S&amp;pela nu</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="117"/>
@@ -15408,12 +15408,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="302"/>
         <source>Show playing tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa spelande spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="303"/>
         <source>Show upcoming tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa kommande spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="313"/>
@@ -15433,7 +15433,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="441"/>
         <source>Start playback of the selected queue track</source>
-        <translation type="unfinished"></translation>
+        <translation>Starta uppspelning av det valda köspåret</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="445"/>
@@ -15501,7 +15501,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="41"/>
         <source>Upcoming Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommande spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="42"/>
@@ -15579,7 +15579,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="212"/>
         <source>Upcoming Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommande spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="212"/>
@@ -16022,7 +16022,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="55"/>
         <source>Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>Spela nu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="56"/>
@@ -17991,7 +17991,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="301"/>
         <source>Run Services</source>
-        <translation type="unfinished"></translation>
+        <translation>Kör tjänster</translation>
     </message>
 </context>
 <context>
@@ -18029,17 +18029,17 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="115"/>
         <source>Run the service for up to this many selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Kör tjänsten för upp till så här många valda spår</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="116"/>
         <source>Name shown in the Run menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Namn som visas i körmenyn</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="117"/>
         <source>Application and arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Applikationer och argument</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="129"/>
@@ -18054,32 +18054,32 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="134"/>
         <source>Simultaneous runs</source>
-        <translation type="unfinished"></translation>
+        <translation>Samtidiga exekveringar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="143"/>
         <source>Checked services are shown in the Run menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bockade tjänster visas i körmenyn.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="158"/>
         <source>Select application</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj applikation</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="191"/>
         <source>Service %1: Name is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tjänst %1: Namn krävs.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="194"/>
         <source>Service %1: Path is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tjänst %1: Sökväg krävs.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="251"/>
         <source>New service</source>
-        <translation type="unfinished"></translation>
+        <translation>Ny tjänst</translation>
     </message>
 </context>
 <context>
@@ -18087,7 +18087,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="70"/>
         <source>Run</source>
-        <translation type="unfinished"></translation>
+        <translation>Kör</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="92"/>
@@ -18099,14 +18099,14 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="92"/>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="103"/>
         <source>Run Services</source>
-        <translation type="unfinished"></translation>
+        <translation>Kör tjänster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="102"/>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="139"/>
         <source>Run %1</source>
         <extracomment>%1 is the name of a registered run service</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kör %1</translation>
     </message>
 </context>
 <context>
@@ -18158,7 +18158,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="335"/>
         <source>Horizontal</source>
-        <translation>Horisontell</translation>
+        <translation>Horisontellt</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="337"/>
@@ -18179,7 +18179,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="343"/>
         <source>Vertical</source>
-        <translation>Vertikal</translation>
+        <translation>Vertikalt</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="345"/>
@@ -18333,7 +18333,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1064"/>
         <source>Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Redigerare</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1066"/>
@@ -18348,17 +18348,17 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1075"/>
         <source>Word wrap</source>
-        <translation type="unfinished"></translation>
+        <translation>Radbrytning</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1076"/>
         <source>Autocomplete</source>
-        <translation type="unfinished"></translation>
+        <translation>Textförslag</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1077"/>
         <source>Show whitespace</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa blanka tecken</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1078"/>
@@ -18383,7 +18383,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1186"/>
         <source>Conditionals</source>
-        <translation type="unfinished"></translation>
+        <translation>Villkorligheter</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1187"/>
@@ -19489,7 +19489,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="35"/>
         <source>Prevent display from turning off</source>
-        <translation type="unfinished"></translation>
+        <translation>Hindra skärmen från att slockna</translation>
     </message>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="39"/>
@@ -20665,7 +20665,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="90"/>
         <source>Show track</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="91"/>
@@ -20675,7 +20675,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="92"/>
         <source>Open properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna egenskaper</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="98"/>
@@ -21267,12 +21267,12 @@ Detta stödjer inte fullständig skriptning.</translation>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="160"/>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="219"/>
         <source>Unmatched</source>
-        <translation type="unfinished"></translation>
+        <translation>Omatchat</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="181"/>
         <source>This local track is not matched to a retrieved track.</source>
-        <translation type="unfinished"></translation>
+        <translation>Det här lokala spåret är inte matchat med ett hämtad spår.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="184"/>
@@ -21282,7 +21282,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="187"/>
         <source>Automatic match confidence: %1%.</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisk matchningssäkerhet: %1%.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="191"/>
@@ -21312,17 +21312,17 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="223"/>
         <source>%1 / %2</source>
-        <translation>%1 / %2</translation>
+        <translation>%1/%2</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="248"/>
         <source>Current #</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuellt #</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="250"/>
         <source>Title / file</source>
-        <translation>Titel / fil</translation>
+        <translation>Titel/Fil</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="252"/>
@@ -21332,7 +21332,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="254"/>
         <source>Match / Δ</source>
-        <translation type="unfinished"></translation>
+        <translation>Matchning/Δ</translation>
     </message>
 </context>
 <context>
@@ -21606,7 +21606,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="178"/>
         <source>Decoded audio CRC32: %1</source>
-        <translation>Avkodad ljud-CRC32: %1</translation>
+        <translation>Avkodad ljud-CRC-32: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="181"/>
@@ -21700,7 +21700,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="330"/>
         <source>Confidence: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Säkerhet: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="333"/>
@@ -21812,7 +21812,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="458"/>
         <source>Confidence</source>
-        <translation type="unfinished"></translation>
+        <translation>Säkerhet</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="459"/>
@@ -21872,7 +21872,8 @@ Detta stödjer inte fullständig skriptning.</translation>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="591"/>
         <source>Current file:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuell fil:
+%1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="663"/>
@@ -22133,22 +22134,22 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="51"/>
         <source>Top labels</source>
-        <translation type="unfinished">Toppetiketter</translation>
+        <translation>Toppetiketter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="52"/>
         <source>Bottom labels</source>
-        <translation type="unfinished">Bottenetiketter</translation>
+        <translation>Bottenetiketter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="53"/>
         <source>Left labels</source>
-        <translation type="unfinished">Vänsteretiketter</translation>
+        <translation>Vänsteretiketter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="54"/>
         <source>Right labels</source>
-        <translation type="unfinished">Högeretiketter</translation>
+        <translation>Högeretiketter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="64"/>
@@ -22241,7 +22242,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1204"/>
         <source>Labels</source>
-        <translation type="unfinished">Etiketter</translation>
+        <translation>Etiketter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1216"/>
@@ -24097,7 +24098,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="359"/>
         <source>Invalid repeat mode: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ogiltigt upprepningsläge: %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="367"/>
@@ -24112,12 +24113,12 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="380"/>
         <source>Option requires an argument: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternativ kräver ett argument: %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="383"/>
         <source>Unknown option: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Okänt alternativ: %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="386"/>
@@ -24157,7 +24158,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="600"/>
         <source>Expected %1 to close conditional</source>
-        <translation>Förväntade %1 att stänga villkor</translation>
+        <translation>Förväntade %1 att stänga villkorlighet</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="629"/>
@@ -24392,7 +24393,7 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="300"/>
         <source>Run Services</source>
-        <translation type="unfinished"></translation>
+        <translation>Kör tjänster</translation>
     </message>
 </context>
 <context>
@@ -24405,7 +24406,7 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="174"/>
         <source>Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>Spela nu</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="177"/>
@@ -24425,7 +24426,7 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="187"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>Rensa</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="190"/>
@@ -24579,17 +24580,17 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="122"/>
         <source>Google Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Googla artist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="126"/>
         <source>Google Artist + Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Googla artist&#x202f;+&#x202f;titel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="130"/>
         <source>Wikipedia Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Wikipedia artist</translation>
     </message>
 </context>
 <context>
