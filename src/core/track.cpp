@@ -733,6 +733,16 @@ bool Track::isVirtual() const
     return isVirtualPath(p->filepath);
 }
 
+bool Track::isDatabaseOnlyMetadata() const
+{
+    return isRemote() || isVirtual();
+}
+
+bool Track::isMetadataEditable(bool sourceWritable) const
+{
+    return !hasCue() && !isInArchive() && ((isInDatabase() && isDatabaseOnlyMetadata()) || sourceWritable);
+}
+
 QString Track::archivePath() const
 {
     return p->archivePath;

@@ -143,6 +143,10 @@ public:
     [[nodiscard]] bool isRemote() const;
     //! True when the track is backed by a non-file, non-HTTP(S) URI handled by a specialised input backend.
     [[nodiscard]] bool isVirtual() const;
+    //! True when metadata changes can only be persisted in the database.
+    [[nodiscard]] bool isDatabaseOnlyMetadata() const;
+    //! True when metadata can be edited, given whether the backing source supports metadata writes.
+    [[nodiscard]] bool isMetadataEditable(bool sourceWritable) const;
     [[nodiscard]] QString archivePath() const;
     [[nodiscard]] QString pathInArchive() const;
     [[nodiscard]] QString relativeArchivePath() const;

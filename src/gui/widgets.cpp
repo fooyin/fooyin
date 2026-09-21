@@ -837,7 +837,7 @@ void Widgets::registerPropertiesTabs()
     });
     m_gui->propertiesDialog()->addTab(tr("ReplayGain"), [this](const TrackList& tracks) {
         const bool canWrite = std::ranges::all_of(tracks, [this](const Track& track) {
-            return !track.hasCue() && !track.isInArchive() && m_core->audioLoader()->canWriteMetadata(track);
+            return track.isMetadataEditable(m_core->audioLoader()->canWriteMetadata(track));
         });
         return new ReplayGainWidget(m_core->library(), tracks, !canWrite, m_settings, m_window);
     });

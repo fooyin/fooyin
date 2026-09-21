@@ -41,14 +41,10 @@ constexpr auto DontAskAgain = "TagEditor/DontAskAgain";
 
 namespace Fooyin::TagEditor {
 namespace {
-bool isDbOnlyMetadataTrack(const Track& track)
-{
-    return track.isRemote() && track.isInDatabase();
-}
-
 bool allDbOnlyTracks(const TrackList& tracks)
 {
-    return std::ranges::all_of(tracks, isDbOnlyMetadataTrack);
+    return std::ranges::all_of(
+        tracks, [](const Track& track) { return track.isInDatabase() && track.isDatabaseOnlyMetadata(); });
 }
 } // namespace
 
@@ -198,8 +194,7 @@ void TagEditorPanel::updateForTracks(const TrackList& tracks)
 
     const bool hasTracks = !tracks.empty();
     const bool canWrite  = hasTracks && std::ranges::all_of(tracks, [this](const Track& track) {
-                              return !track.hasCue() && !track.isInArchive()
-                                  && (isDbOnlyMetadataTrack(track) || m_audioLoader->canWriteMetadata(track));
+                              return track.isMetadataEditable(m_audioLoader->canWriteMetadata(track));
                            });
     m_applyButton->setEnabled(canWrite);
     m_editor->setReadOnly(!canWrite);

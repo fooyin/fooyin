@@ -103,9 +103,11 @@ TEST(TrackTest, PreservesRatingStarSteps)
 TEST(TrackTest, DerivesPathFieldsForVirtualUrls)
 {
     const QString filepath = u"cdda:///I5l9cCSFccLKFEKS.7wqSZAorPU-"_s;
-    const Track track{filepath, 3};
+    Track track{filepath, 3};
 
     EXPECT_TRUE(track.isVirtual());
+    EXPECT_TRUE(track.isDatabaseOnlyMetadata());
+    EXPECT_FALSE(track.isMetadataEditable(false));
     EXPECT_FALSE(track.isRemote());
     EXPECT_FALSE(track.isInArchive());
     EXPECT_TRUE(track.exists());
@@ -118,6 +120,9 @@ TEST(TrackTest, DerivesPathFieldsForVirtualUrls)
     EXPECT_EQ(u"cdda://I5l9cCSFccLKFEKS.7wqSZAorPU-"_s, track.prettyFilepath());
     EXPECT_EQ(filepath, track.filepath());
     EXPECT_EQ(3, track.subsong());
+
+    track.setId(1);
+    EXPECT_TRUE(track.isMetadataEditable(false));
 }
 
 TEST(TrackTest, RejectsLocalNetworkArchiveAndMalformedPathsAsVirtual)

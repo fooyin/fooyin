@@ -88,11 +88,6 @@ QString commonValue(const TrackList& tracks, const std::function<QString(const T
              : QString{};
 }
 
-bool isDbOnlyMetadataTrack(const Track& track)
-{
-    return track.isRemote() && track.isInDatabase();
-}
-
 bool isIdentifierMode(LookupMode mode)
 {
     return mode == LookupMode::ReleaseId || mode == LookupMode::ReleaseGroupId;
@@ -1056,8 +1051,7 @@ MetadataApplyOptions MetadataLookupDialog::applyOptions() const
 bool MetadataLookupDialog::canWriteAllTracks() const
 {
     return !m_tracks.empty() && std::ranges::all_of(m_tracks, [this](const Track& track) {
-        return !track.hasCue() && !track.isInArchive()
-            && (isDbOnlyMetadataTrack(track) || m_audioLoader->canWriteMetadata(track));
+        return track.isMetadataEditable(m_audioLoader->canWriteMetadata(track));
     });
 }
 } // namespace Fooyin

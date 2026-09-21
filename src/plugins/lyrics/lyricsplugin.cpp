@@ -85,9 +85,9 @@ void LyricsPlugin::initialise(const GuiPluginContext& context)
     });
 
     context.propertiesDialog->addTab(tr("Lyrics"), [this](const TrackList& tracks) {
-        return new LyricsPropertiesTab(tracks.empty() ? Track{} : tracks.front(), m_networkAccess, m_lyricsSaver,
-                                       m_playerController, m_settings,
-                                       [this](const Track& track) { return m_audioLoader->canWriteMetadata(track); });
+        return new LyricsPropertiesTab(
+            tracks.empty() ? Track{} : tracks.front(), m_networkAccess, m_lyricsSaver, m_playerController, m_settings,
+            [this](const Track& track) { return track.isMetadataEditable(m_audioLoader->canWriteMetadata(track)); });
     });
 
     m_widgetProvider->registerWidget(u"Lyrics"_s, createLyricsWidget, tr("Lyrics"));

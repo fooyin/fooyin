@@ -44,11 +44,6 @@ bool shouldContinue(const std::stop_token& stopToken)
     return !stopToken.stop_requested();
 }
 
-bool isDbOnlyMetadataTrack(const Track& track)
-{
-    return track.isRemote();
-}
-
 AudioReader::WriteOptions writeOptionsForStats(Track::Stats stats)
 {
     AudioReader::WriteOptions options{AudioReader::None};
@@ -174,7 +169,7 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int
 
         Track updatedTrack{track};
 
-        if(write && !isDbOnlyMetadataTrack(updatedTrack)) {
+        if(write && !updatedTrack.isDatabaseOnlyMetadata()) {
             if(m_audioLoader->writeTrackMetadata(updatedTrack, options)) {
                 if(options.testFlag(AudioReader::Rating)) {
                     syncRawRatingTag(updatedTrack);
@@ -244,7 +239,7 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, Track::Stat
             updatedTrack.generateHash();
         }
 
-        if(!track.isInArchive() && !isDbOnlyMetadataTrack(updatedTrack) && writeOptions != AudioReader::None) {
+        if(!track.isInArchive() && !updatedTrack.isDatabaseOnlyMetadata() && writeOptions != AudioReader::None) {
             if(m_audioLoader->writeTrackMetadata(updatedTrack, writeOptions)) {
                 const bool rawRatingChanged
                     = writeOptions.testFlag(AudioReader::Rating) && syncRawRatingTag(updatedTrack);

@@ -66,7 +66,7 @@ Id removeActionId(const QuickTag& tag)
 bool canWriteTracks(const TrackList& tracks, const std::shared_ptr<AudioLoader>& audioLoader)
 {
     return !tracks.empty() && std::ranges::all_of(tracks, [&audioLoader](const Track& track) {
-        return !track.hasCue() && !track.isInArchive() && audioLoader->canWriteMetadata(track);
+        return track.isMetadataEditable(audioLoader->canWriteMetadata(track));
     });
 }
 

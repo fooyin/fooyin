@@ -1931,7 +1931,7 @@ bool PlaylistModel::canEditTrack(const Track& track, const EditableTrackContext&
         return false;
     }
 
-    return m_audioLoader->canWriteMetadata(track);
+    return track.isMetadataEditable(m_audioLoader->canWriteMetadata(track));
 }
 
 std::expected<Track, PlaylistModel::BulkEditError>

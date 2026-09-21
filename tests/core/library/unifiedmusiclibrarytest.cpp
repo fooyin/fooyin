@@ -801,6 +801,35 @@ TEST_F(UnifiedMusicLibraryTest, DeferredWritesMergeMetadataAndStatsSnapshots)
     EXPECT_EQ(writes.at(1).second, AudioReader::Rating);
 }
 
+TEST_F(UnifiedMusicLibraryTest, VirtualTrackMetadataIsStoredOnlyInDatabase)
+{
+    Track virtualTrack{u"cdda:///I5l9cCSFccLKFEKS.7wqSZAorPU-"_s, 0};
+    virtualTrack.setTitle(u"Before"_s);
+
+    EXPECT_FALSE(virtualTrack.isMetadataEditable(context().audioLoader->canWriteMetadata(virtualTrack)));
+
+    auto* playlist = context().playlistHandler.createPlaylist(u"Audio CD"_s, {virtualTrack});
+    ASSERT_NE(playlist, nullptr);
+    ASSERT_EQ(playlist->trackCount(), 1);
+
+    virtualTrack = playlist->tracks().front();
+    ASSERT_TRUE(virtualTrack.isInDatabase());
+    ASSERT_TRUE(virtualTrack.isMetadataEditable(context().audioLoader->canWriteMetadata(virtualTrack)));
+
+    virtualTrack.setTitle(u"After"_s);
+    QSignalSpy metadataSpy{&context().library, &MusicLibrary::tracksMetadataChanged};
+    context().library.writeTrackMetadata({virtualTrack});
+    waitForSignal(metadataSpy);
+
+    EXPECT_TRUE(context().readerState->writes().empty());
+
+    QSignalSpy loadedSpy{&context().library, &MusicLibrary::tracksLoaded};
+    context().library.loadAllTracks();
+    waitForSignal(loadedSpy);
+
+    EXPECT_EQ(context().library.trackForId(virtualTrack.id()).title(), u"After"_s);
+}
+
 TEST_F(UnifiedMusicLibraryTest, StalePlaycountUpdatePreservesPendingRating)
 {
     ASSERT_TRUE(context().settings.set<Settings::Core::SaveRatingToMetadata>(true));
