@@ -24384,7 +24384,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="202"/>
         <source>Track menu</source>
-        <translation type="unfinished"></translation>
+        <translation>音轨菜单</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="476"/>
