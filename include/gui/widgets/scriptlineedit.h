@@ -52,11 +52,17 @@ public:
     [[nodiscard]] QString text() const;
     void setText(const QString& text);
 
+    [[nodiscard]] QSize sizeHint() const override;
+    [[nodiscard]] QSize minimumSizeHint() const override;
+
 protected:
+    void changeEvent(QEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
 
 private:
     QAction* m_openEditor;
+    QWidget* m_toolArea;
 };
 
 class FYGUI_EXPORT ScriptComboBox : public QComboBox
