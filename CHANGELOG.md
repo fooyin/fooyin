@@ -32,6 +32,7 @@
 - **Integrations**
   - Add local and MusicBrainz artwork to Discord Rich Presence ([#812](https://github.com/fooyin/fooyin/issues/812))
   - Add optional Last.fm playcount and loved status synchronisation at playback start
+  - Add Flatpak sandbox guidance to Library, Notifications, and Run Services settings
 - **FileOps**
   - Add a "Don't ask again" option to destructive action confirmations
   - Add a shortcut for deleting the currently playing track ([#598](https://github.com/fooyin/fooyin/issues/598))
@@ -57,6 +58,9 @@
   - Improve lyrics search coordination across multiple widgets
   - Add keyboard navigation to search results
   - Keep detached library search results updated when the library changes ([#1613](https://github.com/fooyin/fooyin/issues/1613))
+  - Add optional played-threshold markers to SeekBar and WaveBar
+  - Add a shortcut to toggle the main window ([#337](https://github.com/fooyin/fooyin/issues/337))
+  - Remove the unused Commands tab from Script Editor references
 - **Library & Metadata**
   - Improve track ID lookup performance
   - Update filesystem watchers incrementally ([#1626](https://github.com/fooyin/fooyin/issues/1626))
@@ -104,6 +108,7 @@
   - Refresh the raw rating tag after rating writes ([#1607](https://github.com/fooyin/fooyin/issues/1607))
   - Flush file changes after tag writes ([#1557](https://github.com/fooyin/fooyin/pull/1557))
   - Avoid file rewrites for rating changes in Quick Tagger ([#1551](https://github.com/fooyin/fooyin/issues/1551))
+  - Preserve half-star ratings with the 1-5 write scale ([#1637](https://github.com/fooyin/fooyin/issues/1637))
 - **Interface & Widgets**
   - Clear stale playback indicators after playlist changes in Directory Browser
   - Show playback indicators only in the first Directory Browser column
@@ -127,6 +132,9 @@
   - Fix user folder actions across platforms in Settings
   - Show current playlist information immediately after startup in the Status Widget
   - Fix editing regression in Tag Editor
+- **Playback & System**
+  - Fix user plugin paths on Flatpak and Windows ([#1642](https://github.com/fooyin/fooyin/issues/1642))
+  - Reduce FFmpeg log noise at end of file
 - **Playlists**
   - Fix reordering when temporary playlists are present
   - Normalise native path separators in imported playlists ([#741](https://github.com/fooyin/fooyin/issues/741))
@@ -135,6 +143,7 @@
   - Show status tips in Playlist Tabs context menu
   - Stop generating item moves after the reset threshold is reached
 - **Scripting**
+  - Correct `%uniqueartist%` semantics and add `%trackartist%` as its canonical replacement ([#1640](https://github.com/fooyin/fooyin/issues/1640))
   - Fix premature termination of query operator chains ([#1586](https://github.com/fooyin/fooyin/issues/1586))
   - Preserve literal angle brackets in formatted text ([#1224](https://github.com/fooyin/fooyin/issues/1224))
   - Preserve Script Editor errors across preview refreshes
