@@ -151,7 +151,7 @@ void RadioBrowserPlugin::registerLayouts(LayoutProvider& layoutProvider)
                 "Widgets":[{"RadioGuide":{}},{"ArtworkPanel":{}},{"ScriptDisplay":{"HorizontalAlignment": 4,"Script":"$if(%isstopped%,\n<b>)json"_s;
     const QString playbackStopped = tr("Playback stopped");
     static const QString jsonEnd
-        = uR"json(</b>,\n<sized=1><b>$if2(%station%,$if(%streamtitle%,,%title%))</b></size>\n$crlf()\n$if2(%streamtitle%,[$join( - ,%artist%,%title%)])\n)"}},
+        = uR"json(</b>,\n<sized=1><b>$if2(%station%,$if(%streamtitle%,,%title%))</b></sized>\n$crlf()\n$if2(%streamtitle%,[$join( - ,%artist%,%title%)])\n)"}},
             {"PlayerControls":{"ShowNext":false,"ShowPrevious":false}},{"VolumeControls":{}}]}},
             {"SplitterVertical":{"Locked":[true,false],"State":"AAAA/wAAAAEAAAACAAAAHAAABOIA/////wEAAAACAA==","Widgets":[{"RadioSearch":{}},{"RadioBrowser":{}}]}}]}},{"StatusBar":{}}]}}]})json"_s;
 

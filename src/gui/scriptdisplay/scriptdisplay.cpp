@@ -210,12 +210,12 @@ ScriptDisplay::ConfigData ScriptDisplay::defaultConfig() const
 ScriptDisplay::ConfigData ScriptDisplay::factoryConfig()
 {
     return {
-        .script   = uR"(<sized=3><b>%1</b></size>
+        .script = uR"(<sized=3><b>%1</b></sized>
 $crlf()
 <alpha=190>%2</alpha>)"_s.arg(tr("Script Display"), tr("Right-click to configure this panel.")),
-        .font     = {},
-        .bgColour = {},
-        .fgColour = {},
+        .font   = {},
+        .bgColour            = {},
+        .fgColour            = {},
         .linkColour          = {},
         .horizontalAlignment = Qt::AlignLeft,
         .verticalAlignment   = Qt::AlignVCenter,
