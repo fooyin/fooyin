@@ -62,8 +62,6 @@ public:
         layout->setContentsMargins(0, 0, 0, 0);
         layout->addWidget(m_groupBox);
 
-        auto* groupLayout = new QGridLayout(m_groupBox);
-
         m_overrideHeight->setChecked(rowHeight > 0);
         m_rowHeight->setValue(rowHeight);
         m_rowHeight->setEnabled(m_overrideHeight->isChecked());
@@ -76,15 +74,25 @@ public:
         m_rowHeight->setMinimum(20);
         m_rowHeight->setMaximum(150);
 
+        auto* scriptLayout = new QGridLayout();
+        scriptLayout->setContentsMargins({});
+
         int row{0};
+        scriptLayout->addWidget(new QLabel(tr("Grouping script") + u":"_s, this), row++, 0, 1, 2);
+        scriptLayout->addWidget(m_grouping, row++, 0, 1, 2);
+        scriptLayout->addWidget(leftScript, row, 0);
+        scriptLayout->addWidget(rightScript, row++, 1);
+        scriptLayout->addWidget(m_leftScript, row, 0);
+        scriptLayout->addWidget(m_rightScript, row++, 1);
+        scriptLayout->setColumnStretch(0, 1);
+        scriptLayout->setColumnStretch(1, 1);
+
+        auto* groupLayout = new QGridLayout(m_groupBox);
+
+        row = 0;
         groupLayout->addWidget(m_overrideHeight, row, 0);
         groupLayout->addWidget(m_rowHeight, row++, 1);
-        groupLayout->addWidget(new QLabel(tr("Grouping script") + u":"_s, this), row++, 0, 1, 3);
-        groupLayout->addWidget(m_grouping, row++, 0, 1, 3);
-        groupLayout->addWidget(leftScript, row++, 0, 1, 3);
-        groupLayout->addWidget(m_leftScript, row++, 0, 1, 3);
-        groupLayout->addWidget(rightScript, row++, 0, 1, 3);
-        groupLayout->addWidget(m_rightScript, row++, 0, 1, 3);
+        groupLayout->addLayout(scriptLayout, row++, 0, 1, 3);
 
         groupLayout->setColumnStretch(2, 1);
 
@@ -272,29 +280,37 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
     mainLayout->addWidget(m_presetTabs, 2, 0, 2, 5, Qt::AlignTop);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
-    auto* headerWidget = new QWidget();
-    auto* headerLayout = new QGridLayout(headerWidget);
-
     m_headerRowHeight->setMinimum(50);
     m_headerRowHeight->setMaximum(300);
 
     m_headerGrouping->setPlaceholderText(tr("Leave empty to group by the displayed values"));
 
+    auto* scriptLayout = new QGridLayout();
+    scriptLayout->setContentsMargins({});
+
     int row{0};
+    scriptLayout->addWidget(new QLabel(tr("Grouping script") + u":"_s, this), row++, 0, 1, 2);
+    scriptLayout->addWidget(m_headerGrouping, row++, 0, 1, 2);
+    scriptLayout->addWidget(new QLabel(tr("Title") + u":"_s, this), row, 0);
+    scriptLayout->addWidget(new QLabel(tr("Subtitle") + u":"_s, this), row++, 1);
+    scriptLayout->addWidget(m_headerTitle, row, 0);
+    scriptLayout->addWidget(m_headerSubtitle, row++, 1);
+    scriptLayout->addWidget(new QLabel(tr("Side") + u":"_s, this), row, 0);
+    scriptLayout->addWidget(new QLabel(tr("Info") + u":"_s, this), row++, 1);
+    scriptLayout->addWidget(m_headerSideText, row, 0);
+    scriptLayout->addWidget(m_headerInfo, row++, 1);
+    scriptLayout->setColumnStretch(0, 1);
+    scriptLayout->setColumnStretch(1, 1);
+
+    auto* headerWidget = new QWidget();
+    auto* headerLayout = new QGridLayout(headerWidget);
+
+    row = 0;
     headerLayout->addWidget(m_simpleHeader, row++, 0, 1, 2);
     headerLayout->addWidget(m_showCover, row++, 0, 1, 2);
     headerLayout->addWidget(m_overrideHeaderHeight, row, 0);
     headerLayout->addWidget(m_headerRowHeight, row++, 1);
-    headerLayout->addWidget(new QLabel(tr("Grouping script") + u":"_s, this), row++, 0, 1, 5);
-    headerLayout->addWidget(m_headerGrouping, row++, 0, 1, 5);
-    headerLayout->addWidget(new QLabel(tr("Title") + u":"_s, this), row++, 0, 1, 5);
-    headerLayout->addWidget(m_headerTitle, row++, 0, 1, 5);
-    headerLayout->addWidget(new QLabel(tr("Subtitle") + u":"_s, this), row++, 0, 1, 5);
-    headerLayout->addWidget(m_headerSubtitle, row++, 0, 1, 5);
-    headerLayout->addWidget(new QLabel(tr("Side") + u":"_s, this), row++, 0, 1, 5);
-    headerLayout->addWidget(m_headerSideText, row++, 0, 1, 5);
-    headerLayout->addWidget(new QLabel(tr("Info") + u":"_s, this), row++, 0, 1, 5);
-    headerLayout->addWidget(m_headerInfo, row++, 0, 1, 5);
+    headerLayout->addLayout(scriptLayout, row++, 0, 1, 5);
 
     headerLayout->setColumnStretch(4, 1);
     headerLayout->setRowStretch(headerLayout->rowCount(), 1);
