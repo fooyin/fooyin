@@ -662,7 +662,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="96"/>
         <source>Track artists not present in album artists</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpret skladby, který není interpretem alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="143"/>
@@ -8519,7 +8519,7 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="268"/>
         <source>Samples</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzorky</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="271"/>
@@ -8870,17 +8870,17 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="193"/>
         <source>Flatpak help…</source>
-        <translation type="unfinished"></translation>
+        <translation>Nápověda pro Flatpak…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="196"/>
         <source>Music Libraries in Flatpak</source>
-        <translation type="unfinished"></translation>
+        <translation>Hudební knihovny ve Flatpaku</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="200"/>
         <source>&lt;p&gt;The Flatpak already permits access to common music locations. If a music directory is not shown in the directory picker, cannot be read, or becomes unavailable after restarting fooyin, grant access to that directory under &lt;code&gt;Filesystem&lt;/code&gt; in Flatseal, or run the following command after replacing the example path:&lt;/p&gt;&lt;pre&gt;flatpak override --user --filesystem=&amp;quot;/path/to/music&amp;quot; org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Restart fooyin after changing its permissions.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Flatpak má již povolen přístup do umístění běžně obsahujících hudební soubory. Pokud se nějaká hudební složka neobjevuje v dialogu pro výběr složky, není čitelná, nebo se po restartování fooyinu stane nedostupná, povolte přístup do této složky pomocí nástroje Flatseal v sekci &lt;code&gt;Systém souborů&lt;/code&gt;, nebo spusťte tento příkaz (cestu nahraďte skutečnou cestou k vaší složce):&lt;/p&gt;&lt;pre&gt;flatpak override --user --filesystem=&amp;quot;/cesta/k/hudbě&amp;quot; org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Po změně oprávnění restartujte fooyin.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="277"/>
@@ -11485,17 +11485,17 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="153"/>
         <source>Flatpak help…</source>
-        <translation type="unfinished"></translation>
+        <translation>Nápověda pro Flatpak…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="155"/>
         <source>Notifications in Flatpak</source>
-        <translation type="unfinished"></translation>
+        <translation>Upozornění ve Flatpaku</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="158"/>
         <source>&lt;p&gt;The Flatpak notification portal does not support custom timeouts or album art. To use the desktop notification service directly, add &lt;code&gt;org.freedesktop.Notifications&lt;/code&gt; to fooyin&apos;s Session Bus ‘talk’ permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Restart fooyin after changing its permissions.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Portál upozornění Flatpaku nepodporuje uživatelky definované časové limity ani přebaly alb. Pro přímé využití služby upozornění přidejte v nástroji Flatseal do seznamu oprávnění pro ‘komunikaci’ v sekci Session Bus položku &lt;code&gt;org.freedesktop.Notifications&lt;/code&gt;, nebo spusťte příkaz:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Po změně oprávnění restartujte fooyin.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="207"/>
@@ -13526,31 +13526,31 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="434"/>
         <source>Remove Playlist</source>
-        <translation type="unfinished">Odstranit seznam skladeb</translation>
+        <translation>Odstranit seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="436"/>
         <source>Remove playlist &quot;%1&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit seznam skladeb „%1“?</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="439"/>
         <source>Remove %Ln playlist(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Odstranit %Ln seznam skladeb?</numerusform>
+            <numerusform>Odstranit %Ln seznamy skladeb?</numerusform>
+            <numerusform>Odstranit %Ln seznamů skladeb?</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="442"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished">Příště se neptat</translation>
+        <translation>Příště se neptat</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="445"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit</translation>
     </message>
 </context>
 <context>
@@ -18152,17 +18152,17 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="129"/>
         <source>Flatpak help…</source>
-        <translation type="unfinished"></translation>
+        <translation>Nápověda pro Flatpak…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="131"/>
         <source>Run Services in Flatpak</source>
-        <translation type="unfinished"></translation>
+        <translation>Spouštění služeb ve Flatpaku</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="134"/>
         <source>&lt;p&gt;The Flatpak sandbox cannot directly launch applications installed on the host. To allow fooyin to launch host applications, add &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; to fooyin&apos;s Session Bus &quot;talk&quot; permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Then prefix each service command with &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. For example:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;This permission allows fooyin to execute arbitrary commands outside the sandbox. Only enable it if you trust your configured services.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Sandbox Flatpaku neumožňuje přímé spouštění aplikací nainstalovaných na hostitelském systému. Pro umožnění spouštění aplikací hostitele přidejte v nástroji Flatseal do seznamu oprávnění pro ‘komunikaci’ v sekci Session Bus položku &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt;, nebo spusťte příkaz:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Poté přidejte na začátek každého příkazu pro spuštění služby &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. Například:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;Toto oprávnění umožňuje fooyinu spustit libovolný příkaz mimo sandbox. Povolte tuto volbu pouze pokud zcela důvěřujete vašim službám.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="150"/>
@@ -19230,7 +19230,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="505"/>
         <source>Show played threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit prahovou pozici přehrání</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="517"/>
@@ -22567,7 +22567,7 @@ Supersampling je určen pro pruhy s šířkou 1px a mezerou 0px; jiné hodnoty m
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="46"/>
         <source>Show played threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit prahovou pozici přehrání</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="142"/>
@@ -22677,7 +22677,7 @@ Supersampling je určen pro pruhy s šířkou 1px a mezerou 0px; jiné hodnoty m
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="225"/>
         <source>Threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Prahová pozice</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="234"/>
@@ -22799,7 +22799,7 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="613"/>
         <source>Show played threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit prahovou pozici přehrání</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="622"/>
@@ -23118,7 +23118,7 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/gui/widgets.cpp" line="604"/>
         <source>Confirm before removing playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Před odstraněním seznamu skladeb si vyžádat potvrzení</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="610"/>
@@ -23769,32 +23769,32 @@ Změny se projeví pro nově otevřené streamy.</translation>
         <location filename="../../src/gui/guiapplication.cpp" line="411"/>
         <location filename="../../src/gui/guiapplication.cpp" line="414"/>
         <source>New Layout</source>
-        <translation type="unfinished">Nový vzhled</translation>
+        <translation>Nový vzhled</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="414"/>
         <source>Layout Name</source>
-        <translation type="unfinished">Název vzhledu</translation>
+        <translation>Název vzhledu</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1047"/>
         <source>Show or hide main window</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit nebo skrýt hlavní okno</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1211"/>
         <source>Look up metadata by disc TOC…</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat metadata podle TOC disku…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1212"/>
         <source>Look up metadata using the selected tracks&apos; disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat metadata podle TOC disku vybraných skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1216"/>
         <source>Look up metadata by disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat metadata podle TOC disku</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1556"/>
