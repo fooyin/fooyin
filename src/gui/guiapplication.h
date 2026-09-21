@@ -191,6 +191,7 @@ private:
     void showTrackUnreableMessage(const Track& track) const;
 
     void showMetadataLookupDialog(LookupMode mode);
+    void showMetadataLookupByDiscToc();
     void showMetadataLookupById();
 
     void createNewPlaylist() const;
@@ -265,6 +266,7 @@ private:
     std::vector<ConversionPresetAction> m_conversionPresetActions;
 
     QAction* m_lookupArtistAlbumAction;
+    QAction* m_lookupDiscTocAction;
     QAction* m_lookupIdAction;
     QPointer<MetadataLookupDialog> m_metadataLookupDialog;
 

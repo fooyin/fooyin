@@ -265,8 +265,9 @@ void MetadataLookupDialog::buildUi()
         = new QLineEdit(commonValue(m_tracks, [](const Track& track) { return track.effectiveAlbumArtist(); }), this);
     m_album = new QLineEdit(commonValue(m_tracks, [](const Track& track) { return track.album(); }), this);
 
-    m_discToc
-        = new QLineEdit(commonValue(m_tracks, [](const Track& track) { return track.metaValue(u"DISCTOC"_s); }), this);
+    m_discId
+        = commonValue(m_tracks, [](const Track& track) { return track.extraProperties().value(u"_CDDA_DISC_ID"_s); });
+    m_discToc = new QLineEdit(Track::discTocForTracks(m_tracks), this);
     m_discToc->setPlaceholderText(tr("First track, last track, lead-out sector, then track offsets"));
 
     m_releaseId = new QLineEdit(

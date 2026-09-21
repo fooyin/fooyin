@@ -247,6 +247,7 @@ constexpr auto LoveTracks                = "Tracks.Loved.Love";
 constexpr auto UnloveTracks              = "Tracks.Loved.Unlove";
 constexpr auto ToggleMenubar             = "View.ToggleMenubar";
 constexpr auto LookupMetadata            = "Tracks.LookupMetadata";
+constexpr auto LookupMetadataByDiscToc   = "Tracks.LookupMetadataByDiscToc";
 constexpr auto LookupMetadataById        = "Tracks.LookupMetadataById";
 } // namespace Actions
 

@@ -320,6 +320,7 @@ GuiApplication::GuiApplication(Application* core)
     , m_lastUsedConversionAction{nullptr}
     , m_lastUsedConversionCommand{nullptr}
     , m_lookupArtistAlbumAction{nullptr}
+    , m_lookupDiscTocAction{nullptr}
     , m_lookupIdAction{nullptr}
     , m_coverProvider{m_coverRepository}
     , m_themeUpdatePending{false}
@@ -405,7 +406,7 @@ void GuiApplication::toggleMute() const
     mute();
 }
 
-void Fooyin::GuiApplication::createNewLayout()
+void GuiApplication::createNewLayout()
 {
     const QString defaultName = m_layoutProvider->uniqueLayoutName(tr("New Layout"));
 
@@ -456,7 +457,7 @@ void GuiApplication::searchForArtwork(const TrackList& tracks, Track::Cover type
 
     QObject::connect(
         artworkFinder, &ArtworkFinder::coverLoaded, this,
-        [this, finishSearch, tracks](const QUrl& /*url*/, const Fooyin::ArtworkResult& result) {
+        [this, finishSearch, tracks](const QUrl& /*url*/, const ArtworkResult& result) {
             finishSearch();
 
             const auto saveMethods
@@ -1207,6 +1208,14 @@ void GuiApplication::registerActions()
     artistAlbumCommand->setDescription(tr("Look up metadata by artist and album"));
     artistAlbumCommand->setCategories({tr("Tagging")});
 
+    m_lookupDiscTocAction = new QAction(tr("Look up metadata by disc TOC…"), this);
+    m_lookupDiscTocAction->setStatusTip(tr("Look up metadata using the selected tracks' disc TOC"));
+    QObject::connect(m_lookupDiscTocAction, &QAction::triggered, this, &GuiApplication::showMetadataLookupByDiscToc);
+    Command* discTocCommand
+        = m_actionManager->registerAction(m_lookupDiscTocAction, Constants::Actions::LookupMetadataByDiscToc);
+    discTocCommand->setDescription(tr("Look up metadata by disc TOC"));
+    discTocCommand->setCategories({tr("Tagging")});
+
     m_lookupIdAction = new QAction(tr("Look up metadata by MusicBrainz ID…"), this);
     m_lookupIdAction->setStatusTip(tr("Look up metadata using a MusicBrainz release identifier"));
     QObject::connect(m_lookupIdAction, &QAction::triggered, this, &GuiApplication::showMetadataLookupById);
@@ -1214,21 +1223,26 @@ void GuiApplication::registerActions()
     idCommand->setDescription(tr("Look up metadata by MusicBrainz ID"));
     idCommand->setCategories({tr("Tagging")});
 
-    m_selectionController->registerTrackContextSubmenu(this, TrackContextMenuArea::Track,
-                                                       Fooyin::Constants::Menus::Context::TrackSelection,
-                                                       Fooyin::Constants::Menus::Context::Tagging, tr("Tagging"),
-                                                       Fooyin::Constants::Menus::Context::TrackFinalSeparator);
+    m_selectionController->registerTrackContextSubmenu(
+        this, TrackContextMenuArea::Track, Constants::Menus::Context::TrackSelection,
+        Constants::Menus::Context::Tagging, tr("Tagging"), Constants::Menus::Context::TrackFinalSeparator);
     m_selectionController->registerTrackContextAction(
-        this, TrackContextMenuArea::Track, Fooyin::Constants::Menus::Context::Tagging,
-        Constants::Actions::LookupMetadata, m_lookupArtistAlbumAction->text(),
-        [this](QMenu* menu, const TrackSelection& selection) {
+        this, TrackContextMenuArea::Track, Constants::Menus::Context::Tagging, Constants::Actions::LookupMetadata,
+        m_lookupArtistAlbumAction->text(), [this](QMenu* menu, const TrackSelection& selection) {
             m_lookupArtistAlbumAction->setEnabled(!selection.tracks.empty());
             menu->addAction(m_lookupArtistAlbumAction);
         });
     m_selectionController->registerTrackContextAction(
-        this, TrackContextMenuArea::Track, Fooyin::Constants::Menus::Context::Tagging,
-        Constants::Actions::LookupMetadataById, m_lookupIdAction->text(),
+        this, TrackContextMenuArea::Track, Constants::Menus::Context::Tagging,
+        Constants::Actions::LookupMetadataByDiscToc, m_lookupDiscTocAction->text(),
         [this](QMenu* menu, const TrackSelection& selection) {
+            if(!Track::discTocForTracks(selection.tracks).isEmpty()) {
+                menu->addAction(m_lookupDiscTocAction);
+            }
+        });
+    m_selectionController->registerTrackContextAction(
+        this, TrackContextMenuArea::Track, Constants::Menus::Context::Tagging, Constants::Actions::LookupMetadataById,
+        m_lookupIdAction->text(), [this](QMenu* menu, const TrackSelection& selection) {
             m_lookupIdAction->setEnabled(musicBrainzLookupMode(selection.tracks).has_value());
             menu->addAction(m_lookupIdAction);
         });
@@ -2170,6 +2184,14 @@ void GuiApplication::showMetadataLookupDialog(LookupMode mode)
                                    m_settings, mode, Utils::getMainWindow());
     m_metadataLookupDialog->show();
     m_metadataLookupDialog->raise();
+}
+
+void GuiApplication::showMetadataLookupByDiscToc()
+{
+    const auto* selection = m_selectionController->selectedSelection();
+    if(selection && !Track::discTocForTracks(selection->tracks).isEmpty()) {
+        showMetadataLookupDialog(LookupMode::DiscToc);
+    }
 }
 
 void GuiApplication::showMetadataLookupById()

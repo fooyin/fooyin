@@ -159,7 +159,9 @@ TEST(CddaReaderTest, MapsSubsongsAcrossMixedModePhysicalTracks)
     EXPECT_EQ(u"Audio CD"_s, first.album());
     EXPECT_EQ(u"2"_s, first.trackNumber());
     EXPECT_EQ(u"2"_s, first.trackTotal());
+    EXPECT_EQ(u"1+4+600+150+225+300+450"_s, first.extraProperties().value(u"_CDDA_DISC_TOC"_s));
     EXPECT_EQ(1000, first.duration());
+    EXPECT_EQ(44'100, first.sampleFrames());
 
     Track second{fixture.filepath, 1};
     ASSERT_TRUE(fixture.reader.readTrack(source, second)) << fixture.reader.lastError().toStdString();
@@ -172,8 +174,10 @@ TEST(CddaReaderTest, MapsSubsongsAcrossMixedModePhysicalTracks)
     EXPECT_EQ(1411, second.bitrate());
     EXPECT_EQ(u"CDDA"_s, second.codec());
     EXPECT_EQ(u"Lossless"_s, second.encoding());
+    EXPECT_EQ(88'200, second.sampleFrames());
     const auto properties = second.extraProperties();
     EXPECT_EQ(fixture.discId, properties.value(u"_CDDA_DISC_ID"_s));
+    EXPECT_EQ(first.extraProperties().value(u"_CDDA_DISC_TOC"_s), properties.value(u"_CDDA_DISC_TOC"_s));
     EXPECT_EQ(u"4"_s, properties.value(u"_CDDA_TRACK_NUMBER"_s));
 
     // Reading metadata doesn't takes a drive lease or read audio sectors

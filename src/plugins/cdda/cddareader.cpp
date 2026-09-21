@@ -33,9 +33,10 @@ namespace Fooyin::Cdda {
 namespace {
 
 std::expected<void, QString> populateTrack(Track& track, const CdTocTrack& tocTrack, int trackTotal,
-                                           const QString& discId, const CdText& cdText)
+                                           const QString& discId, const QString& discToc, const CdText& cdText)
 {
-    const auto duration = durationForSectors(static_cast<uint64_t>(tocTrack.endSectorExclusive - tocTrack.firstSector));
+    const auto sectors  = static_cast<uint64_t>(tocTrack.endSectorExclusive - tocTrack.firstSector);
+    const auto duration = durationForSectors(sectors);
     if(!duration) {
         return std::unexpected(duration.error());
     }
@@ -89,12 +90,14 @@ std::expected<void, QString> populateTrack(Track& track, const CdTocTrack& tocTr
 
     track.setDuration(*duration);
     track.setSampleRate(SampleRate);
+    track.setSampleFrames(sectors * 588);
     track.setChannels(Channels);
     track.setBitDepth(BitDepth);
     track.setBitrate(Bitrate);
     track.setCodec(u"CDDA"_s);
     track.setEncoding(u"Lossless"_s);
     track.setExtraProperty(u"_CDDA_DISC_ID"_s, discId);
+    track.setExtraProperty(u"_CDDA_DISC_TOC"_s, discToc);
     track.setExtraProperty(u"_CDDA_TRACK_NUMBER"_s, physicalTrackNumber);
 
     return {};
@@ -113,6 +116,7 @@ std::expected<TrackList, QString> tracksForDisc(const CdToc& toc, const QString&
     }
 
     const std::vector<CdTocTrack> tocTracks = audioTracks(toc);
+    const QString discToc                   = *musicBrainzToc(toc);
 
     TrackList tracks;
     tracks.reserve(tocTracks.size());
@@ -121,7 +125,8 @@ std::expected<TrackList, QString> tracksForDisc(const CdToc& toc, const QString&
     for(int subsong{0}; subsong < trackTotal; ++subsong) {
         Track track{filepath, subsong};
 
-        if(const auto result = populateTrack(track, tocTracks.at(subsong), trackTotal, discId, cdText); !result) {
+        if(const auto result = populateTrack(track, tocTracks.at(subsong), trackTotal, discId, discToc, cdText);
+           !result) {
             return std::unexpected(result.error());
         }
 
@@ -187,6 +192,13 @@ bool CddaReader::init(const AudioSource& source)
     m_cdText      = observation->cdText.value_or(CdText{});
     m_audioTracks = audioTracks(m_toc);
 
+    const auto discToc = musicBrainzToc(m_toc);
+    if(!discToc) {
+        m_error = invalidTocUserMessage();
+        return false;
+    }
+    m_discToc = *discToc;
+
     return !m_audioTracks.empty();
 }
 
@@ -207,7 +219,7 @@ bool CddaReader::readTrack(const AudioSource& source, Track& track)
         return false;
     }
 
-    const auto result = populateTrack(track, m_audioTracks.at(subsong), trackTotal, m_discId, m_cdText);
+    const auto result = populateTrack(track, m_audioTracks.at(subsong), trackTotal, m_discId, m_discToc, m_cdText);
     if(!result) {
         m_error = result.error();
     }
@@ -223,6 +235,7 @@ void CddaReader::clear()
 {
     m_sourcePath.clear();
     m_discId.clear();
+    m_discToc.clear();
     m_error.clear();
     m_toc    = {};
     m_cdText = {};

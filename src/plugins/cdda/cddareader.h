@@ -55,6 +55,7 @@ private:
     std::shared_ptr<CdDriveManager> m_driveManager;
     QString m_sourcePath;
     QString m_discId;
+    QString m_discToc;
     QString m_error;
     CdToc m_toc;
     CdText m_cdText;

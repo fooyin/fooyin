@@ -2435,6 +2435,21 @@ TrackIds Track::trackIdsForTracks(const TrackList& tracks)
     return trackIds;
 }
 
+QString Track::discTocForTracks(const TrackList& tracks)
+{
+    if(tracks.empty() || tracks.size() > 99) {
+        return {};
+    }
+
+    const QString toc = tracks.front().extraProperties().value(u"_CDDA_DISC_TOC"_s);
+    return !toc.isEmpty()
+                && std::ranges::all_of(
+                    tracks,
+                    [&toc](const Track& track) { return track.extraProperties().value(u"_CDDA_DISC_TOC"_s) == toc; })
+             ? toc
+             : QString{};
+}
+
 QStringList Track::supportedMimeTypes()
 {
     static const QStringList supportedTypes

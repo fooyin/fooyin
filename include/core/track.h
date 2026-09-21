@@ -440,6 +440,7 @@ public:
 
     static QString findCommonField(const TrackList& tracks);
     static TrackIds trackIdsForTracks(const TrackList& tracks);
+    static QString discTocForTracks(const TrackList& tracks);
 
     static QStringList supportedMimeTypes();
 
