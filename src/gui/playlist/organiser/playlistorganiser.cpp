@@ -269,8 +269,12 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
     QObject::connect(m_removePlaylist, &QAction::triggered, this, [this]() {
         const QModelIndexList indexes = actionIndexes();
         const auto playlistIds        = m_model->playlistIds(indexes);
+        const auto groupNames         = m_model->groupNames(indexes);
         if(m_playlistInteractor->playlistController()->confirmPlaylistRemoval(playlistIds, this)) {
-            m_model->removeItems(indexes);
+            for(const UId& playlistId : playlistIds) {
+                m_playlistInteractor->handler()->removePlaylist(playlistId);
+            }
+            m_model->removeGroups(groupNames);
         }
     });
     QObject::connect(m_renamePlaylist, &QAction::triggered, this, [this]() { m_organiserTree->edit(actionIndex()); });
@@ -298,13 +302,12 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
     QObject::connect(m_organiserTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      [this]() { selectionChanged(); });
 
-    QObject::connect(
-        m_playlistInteractor->handler(), &PlaylistHandler::playlistAdded, this, [this](Playlist* playlist) {
-            if(!m_creatingPlaylist) {
-                QMetaObject::invokeMethod(
-                    m_model, [this, playlist]() { m_model->playlistAdded(playlist); }, Qt::QueuedConnection);
-            }
-        });
+    QObject::connect(m_playlistInteractor->handler(), &PlaylistHandler::playlistAdded, this,
+                     [this](Playlist* playlist) {
+                         if(!m_creatingPlaylist) {
+                             m_model->playlistAdded(playlist);
+                         }
+                     });
     QObject::connect(m_playlistInteractor->handler(), &PlaylistHandler::playlistRemoved, m_model,
                      &PlaylistOrganiserModel::playlistRemoved);
     QObject::connect(m_playlistInteractor->handler(), &PlaylistHandler::playlistRenamed, m_model,
@@ -530,6 +533,11 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(m_removeCmd->action());
 
     menu->popup(event->globalPos());
+}
+
+void PlaylistOrganiser::openConfigDialog()
+{
+    showConfigDialog(new PlaylistOrganiserConfigDialog(this, this), Qt::NonModal);
 }
 
 QModelIndex PlaylistOrganiser::actionIndex() const
@@ -803,11 +811,6 @@ void PlaylistOrganiser::saveConfigToLayout(const ConfigData& config, QJsonObject
     layout["RightScript"_L1]             = config.rightScript;
     layout["PlayingTextColour"_L1]       = normaliseColour(config.playingTextColour);
     layout["PlayingBackgroundColour"_L1] = normaliseColour(config.playingBackgroundColour);
-}
-
-void PlaylistOrganiser::openConfigDialog()
-{
-    showConfigDialog(new PlaylistOrganiserConfigDialog(this, this), Qt::NonModal);
 }
 } // namespace Fooyin
 
