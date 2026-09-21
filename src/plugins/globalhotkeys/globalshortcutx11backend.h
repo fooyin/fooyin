@@ -28,6 +28,8 @@ class GlobalShortcutX11BackendPrivate;
 
 class GlobalShortcutX11Backend : public GlobalShortcutBackend
 {
+    Q_OBJECT
+
 public:
     explicit GlobalShortcutX11Backend(QObject* parent = nullptr);
     ~GlobalShortcutX11Backend() override;

@@ -29,6 +29,8 @@ namespace Fooyin::GlobalHotkeys {
 class GlobalShortcutWindowsBackend : public GlobalShortcutBackend,
                                      private QAbstractNativeEventFilter
 {
+    Q_OBJECT
+
 public:
     explicit GlobalShortcutWindowsBackend(QObject* parent = nullptr);
     ~GlobalShortcutWindowsBackend() override;

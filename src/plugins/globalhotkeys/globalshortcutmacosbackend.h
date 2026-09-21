@@ -29,6 +29,8 @@
 namespace Fooyin::GlobalHotkeys {
 class GlobalShortcutMacosBackend : public GlobalShortcutBackend
 {
+    Q_OBJECT
+
 public:
     explicit GlobalShortcutMacosBackend(QObject* parent = nullptr);
     ~GlobalShortcutMacosBackend() override;
