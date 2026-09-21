@@ -61,11 +61,16 @@
   - Add optional played-threshold markers to SeekBar and WaveBar
   - Add a shortcut to toggle the main window ([#337](https://github.com/fooyin/fooyin/issues/337))
   - Remove the unused Commands tab from Script Editor references
+  - Add options to hide current track displays when stopped in Artwork, Script Display, and playlist backgrounds
+  - Add a tool button area to script text edits, with a button to open the full Script Editor
+  - Improve the playlist presets settings layout and field names
+  - Improve separation of actions in utility context menu
 - **Library & Metadata**
   - Improve track ID lookup performance
   - Update filesystem watchers incrementally ([#1626](https://github.com/fooyin/fooyin/issues/1626))
   - Recognise additional MP4 codecs supported by TagLib 2.3.2
   - Support per-track metadata and reliable reloads for embedded CUE sheets ([#1549](https://github.com/fooyin/fooyin/issues/1549), [#1567](https://github.com/fooyin/fooyin/issues/1567))
+  - Add sample frame counts to track information
 - **Playlists & Queues**
   - Add custom grouping scripts to playlist presets ([#1566](https://github.com/fooyin/fooyin/issues/1566))
   - Add Save and Save All actions to playlist widget context menus ([#1602](https://github.com/fooyin/fooyin/issues/1602))
@@ -75,6 +80,7 @@
   - Replace the default playlist contents when opening external files by default
   - Add configurable Play now, Queue next, Stop after this, and Add to playlist actions to Queue Viewer ([#343](https://github.com/fooyin/fooyin/issues/343), [#1032](https://github.com/fooyin/fooyin/issues/1032), [#1228](https://github.com/fooyin/fooyin/issues/1228))
   - Scroll Queue Viewer by item instead of by pixel
+  - Show confirmation dialog on playlist removal ([#1301](https://github.com/fooyin/fooyin/issues/1301))
 - **Scripting**
   - Add line comments
   - Add common metadata aliases
@@ -109,6 +115,7 @@
   - Flush file changes after tag writes ([#1557](https://github.com/fooyin/fooyin/pull/1557))
   - Avoid file rewrites for rating changes in Quick Tagger ([#1551](https://github.com/fooyin/fooyin/issues/1551))
   - Preserve half-star ratings with the 1-5 write scale ([#1637](https://github.com/fooyin/fooyin/issues/1637))
+  - Show disabled default Tag Editor fields as extra tags ([#1646](https://github.com/fooyin/fooyin/issues/1646))
 - **Interface & Widgets**
   - Clear stale playback indicators after playlist changes in Directory Browser
   - Show playback indicators only in the first Directory Browser column
@@ -142,6 +149,8 @@
   - Fix refreshing of dynamic values after track changes
   - Show status tips in Playlist Tabs context menu
   - Stop generating item moves after the reset threshold is reached
+  - Keep the Playlist Organiser model unchanged when playlist removal fails
+  - Immediately show replacement playlists in Playlist Organiser after removal
 - **Scripting**
   - Correct `%uniqueartist%` semantics and add `%trackartist%` as its canonical replacement ([#1640](https://github.com/fooyin/fooyin/issues/1640))
   - Fix premature termination of query operator chains ([#1586](https://github.com/fooyin/fooyin/issues/1586))
@@ -167,7 +176,7 @@
 - **Dependencies**
   - Add libcdio and libcdio-paranoia for Audio CD support
   - Remove unused FFmpeg components ([#1582](https://github.com/fooyin/fooyin/pull/1582))
-- **Translations:** Update translations and translation sources ([#1562](https://github.com/fooyin/fooyin/pull/1562), [#1569](https://github.com/fooyin/fooyin/pull/1569), [#1571](https://github.com/fooyin/fooyin/pull/1571), [#1587](https://github.com/fooyin/fooyin/pull/1587), [#1588](https://github.com/fooyin/fooyin/pull/1588), [#1611](https://github.com/fooyin/fooyin/pull/1611), [#1612](https://github.com/fooyin/fooyin/pull/1612), [#1638](https://github.com/fooyin/fooyin/pull/1638), [#1639](https://github.com/fooyin/fooyin/pull/1639))
+- **Translations:** Update translations and translation sources ([#1562](https://github.com/fooyin/fooyin/pull/1562), [#1569](https://github.com/fooyin/fooyin/pull/1569), [#1571](https://github.com/fooyin/fooyin/pull/1571), [#1587](https://github.com/fooyin/fooyin/pull/1587), [#1588](https://github.com/fooyin/fooyin/pull/1588), [#1611](https://github.com/fooyin/fooyin/pull/1611), [#1612](https://github.com/fooyin/fooyin/pull/1612), [#1638](https://github.com/fooyin/fooyin/pull/1638), [#1639](https://github.com/fooyin/fooyin/pull/1639), [#1647](https://github.com/fooyin/fooyin/pull/1647), [#1648](https://github.com/fooyin/fooyin/pull/1648), [#1650](https://github.com/fooyin/fooyin/pull/1650), [#1651](https://github.com/fooyin/fooyin/pull/1651))
 - **Windows:** Enable MP3, Opus, and Vorbis encoders ([#1542](https://github.com/fooyin/fooyin/issues/1542))
 
 ### Dev/API
