@@ -2020,6 +2020,7 @@
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkviewerdialog.cpp" line="238"/>
+        <location filename="../../src/gui/artwork/artworkviewerdialog.cpp" line="238"/>
         <source>Artwork</source>
         <translation>Konstverk</translation>
     </message>
@@ -7326,6 +7327,510 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         <location filename="../../src/gui/widgets/gradienteditor.cpp" line="243"/>
         <source>Reverse</source>
         <translation>Omvänd</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::GuiApplication</name>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="413"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="416"/>
+        <source>New Layout</source>
+        <translation type="unfinished">Ny layout</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="416"/>
+        <source>Layout Name</source>
+        <translation type="unfinished">Layoutnamn</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="443"/>
+        <source>Searching for artwork…</source>
+        <translation type="unfinished">Söker efter konstverk…</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="457"/>
+        <source>Artwork search finished</source>
+        <translation type="unfinished">Konstverkssökning slutförd</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="511"/>
+        <source>Failed to open artwork file</source>
+        <translation type="unfinished">Misslyckades att öppna konstverksfil</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="517"/>
+        <source>Artwork file is empty</source>
+        <translation type="unfinished">Konstverksfil är tom</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="918"/>
+        <source>Plugins not found</source>
+        <translation type="unfinished">Tillägg hittades inte</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="919"/>
+        <source>Some plugins are required for full functionality.</source>
+        <translation type="unfinished">Vissa tillägg behövs för fullständig funktionalitet.</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="920"/>
+        <source>Plugin search locations:
+
+</source>
+        <translation type="unfinished">Sökplatser för tillägg:
+
+</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="923"/>
+        <source>Quit</source>
+        <translation type="unfinished">Avsluta</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1049"/>
+        <source>Show or hide main window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1051"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1197"/>
+        <source>View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1054"/>
+        <source>Volume</source>
+        <translation type="unfinished">Volym</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1056"/>
+        <source>Volume up</source>
+        <translation type="unfinished">Volym upp</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1063"/>
+        <source>Volume down</source>
+        <translation type="unfinished">Volym ner</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1070"/>
+        <source>Mute</source>
+        <translation type="unfinished">Tystna</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1080"/>
+        <source>Clear Current Playlist</source>
+        <translation type="unfinished">Rensa aktuell spellista</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1081"/>
+        <source>Remove all tracks from the current playlist</source>
+        <translation type="unfinished">Ta bort alla spår från den aktuella spellistan</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1084"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1111"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1184"/>
+        <source>Playlist</source>
+        <translation type="unfinished">Spellista</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1107"/>
+        <source>Lock playlist</source>
+        <translation type="unfinished">Lås spellista</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1109"/>
+        <source>Prevent changes to the contents of the current playlist</source>
+        <translation type="unfinished">Förhindra ändringar av den aktuella spellistans innehåll</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1112"/>
+        <source>Lock Current Playlist</source>
+        <translation type="unfinished">Lås aktuell spellista</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1133"/>
+        <source>Playback</source>
+        <translation type="unfinished">Uppspelning</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1133"/>
+        <source>Seek</source>
+        <translation type="unfinished">Leta</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1135"/>
+        <source>Seek forward (small step)</source>
+        <translation type="unfinished">Leta framåt (litet steg)</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1142"/>
+        <source>Seek forward (large step)</source>
+        <translation type="unfinished">Leta framåt (stort steg)</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1149"/>
+        <source>Seek backward (small step)</source>
+        <translation type="unfinished">Leta bakåt (litet steg)</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1157"/>
+        <source>Seek backward (large step)</source>
+        <translation type="unfinished">Leta bakåt (stort steg)</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1182"/>
+        <source>Remove Playlist</source>
+        <translation type="unfinished">Ta bort spellista</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1185"/>
+        <source>Remove Current Playlist</source>
+        <translation type="unfinished">Ta bort aktuell spellista</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1193"/>
+        <source>Toggle Menubar</source>
+        <translation type="unfinished">Växla menyruta</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1204"/>
+        <source>Look up metadata by artist and album…</source>
+        <translation type="unfinished">Sök upp metadata efter artist och album…</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1205"/>
+        <source>Look up metadata using the selected tracks&apos; artist and album</source>
+        <translation type="unfinished">Sök upp metadata med de valda spårens artist och album</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1210"/>
+        <source>Look up metadata by artist and album</source>
+        <translation type="unfinished">Sök upp metadata efter artist och album</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1211"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1219"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1226"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1230"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1299"/>
+        <source>Tagging</source>
+        <translation type="unfinished">Taggning</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1213"/>
+        <source>Look up metadata by disc TOC…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1214"/>
+        <source>Look up metadata using the selected tracks&apos; disc TOC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1218"/>
+        <source>Look up metadata by disc TOC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1221"/>
+        <source>Look up metadata by MusicBrainz ID…</source>
+        <translation type="unfinished">Sök upp metadata efter MusicBrainz-ID…</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1222"/>
+        <source>Look up metadata using a MusicBrainz release identifier</source>
+        <translation type="unfinished">Sök upp metadata med en MusicBrainz-utsläppsidentifierare</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1225"/>
+        <source>Look up metadata by MusicBrainz ID</source>
+        <translation type="unfinished">Sök upp metadata efter MusicBrainz-ID</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1258"/>
+        <source>Reading tracks…</source>
+        <translation type="unfinished">Läser spår…</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1258"/>
+        <source>Abort</source>
+        <translation type="unfinished">Stoppa</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1286"/>
+        <source>Current file</source>
+        <translation type="unfinished">Aktuell fil</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1301"/>
+        <source>Reload tags from files</source>
+        <translation type="unfinished">Ladda om taggar från filer</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1302"/>
+        <source>Reload tags from modified files</source>
+        <translation type="unfinished">Ladda om taggar från modifierade filer</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1304"/>
+        <source>Replace tags in selected tracks with tags from the files</source>
+        <translation type="unfinished">Ersätt taggar i valda spår med taggar från filerna</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1305"/>
+        <source>Replace tags in selected tracks with tags from the files if modified</source>
+        <translation type="unfinished">Ersätt taggar i valda spår med taggar från filerna om modifierade</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1336"/>
+        <source>View full size</source>
+        <translation type="unfinished">Visa full storlek</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1337"/>
+        <source>View the common artwork for the selected tracks at full size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1340"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1393"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1558"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1591"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1601"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1610"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1655"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1664"/>
+        <source>Tracks</source>
+        <translation type="unfinished">Spår</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1340"/>
+        <source>Artwork</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1393"/>
+        <source>Playback Statistics</source>
+        <translation type="unfinished">Uppspelningsstatistik</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1408"/>
+        <source>Toggle loved</source>
+        <translation type="unfinished">Tåggla älskade</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1408"/>
+        <source>Toggle Loved for selected tracks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1410"/>
+        <source>Love</source>
+        <translation type="unfinished">Älska</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1410"/>
+        <source>Love selected tracks</source>
+        <translation type="unfinished">Älska valda spår</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1412"/>
+        <source>Unlove</source>
+        <translation type="unfinished">Oälska</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1412"/>
+        <source>Unlove selected tracks</source>
+        <translation type="unfinished">Oälska valda spår</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1428"/>
+        <source>Choose destination</source>
+        <translation type="unfinished">Välj destination</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1454"/>
+        <source>Converter Output</source>
+        <translation type="unfinished">Konverterarutmatning</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1551"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1559"/>
+        <source>Convert using preset %1</source>
+        <translation type="unfinished">Konvertera med förinställning %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1558"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1591"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1601"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1610"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1621"/>
+        <source>Convert</source>
+        <translation type="unfinished">Konvertera</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1589"/>
+        <source>Converter setup…</source>
+        <translation type="unfinished">Konverterar-setup…</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1598"/>
+        <source>Using default settings</source>
+        <translation type="unfinished">Med default-inställningar</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1602"/>
+        <source>Convert using default settings</source>
+        <translation type="unfinished">Konvertera med default-inställningar</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1607"/>
+        <source>Repeat last conversion</source>
+        <translation type="unfinished">Upprepa senaste konvertering</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1638"/>
+        <source>Custom conversion…</source>
+        <translation type="unfinished">Anpassad konvertering…</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1650"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1655"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1664"/>
+        <source>Utilities</source>
+        <translation type="unfinished">Verktyg</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1652"/>
+        <source>Verify integrity</source>
+        <translation type="unfinished">Verifiera integritet­</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1653"/>
+        <source>Decode the selected tracks and report file or checksum errors</source>
+        <translation type="unfinished">Avkoda de valda spåren och rapportera fil- eller kontrollsummafel</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1660"/>
+        <source>Verify album with AccurateRip</source>
+        <translation type="unfinished">Verifiera album med AccurateRip</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1661"/>
+        <source>Verify all tracks from one complete lossless CD rip against AccurateRip</source>
+        <translation type="unfinished">Verifiera alla spår från en helt förlustfri CD-rippning mot AccurateRip</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1949"/>
+        <source>Reload Required</source>
+        <translation type="unfinished">Omladdning krävs</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1951"/>
+        <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
+        <translation type="unfinished">På grund av en databasändring borde spåren laddas om från disken för att uppdatera dess sparade metadata.</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1955"/>
+        <source>Reload Now</source>
+        <translation type="unfinished">Ladda om nu</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1958"/>
+        <source>OK</source>
+        <translation type="unfinished">Ok</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="2103"/>
+        <source>Playback Error</source>
+        <translation type="unfinished">Uppspelningsfel</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="2128"/>
+        <source>Continue</source>
+        <translation type="unfinished">Fortsätt</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="2130"/>
+        <source>Stop</source>
+        <translation type="unfinished">Stopp</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="2134"/>
+        <source>Always continue playing if a track is unavailable</source>
+        <translation type="unfinished">Fortsätt alltid spela om ett spår är otillgängligt</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="2156"/>
+        <source>Track Not Found</source>
+        <translation type="unfinished">Spår hittades inte</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="2161"/>
+        <source>No Decoder Available</source>
+        <translation type="unfinished">Ingen avkodare tillgänglig</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="2241"/>
+        <source>All Supported Media Files (%1)</source>
+        <translation type="unfinished">Alla stödda mediafiler (%1)</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="2242"/>
+        <source>Audio Files (%1)</source>
+        <translation type="unfinished">Ljudfiler (%1)</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="2253"/>
+        <source>Add Files</source>
+        <translation type="unfinished">Lägg till filer</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="2267"/>
+        <source>Add Folders</source>
+        <translation type="unfinished">Lägg till mappar</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="2279"/>
+        <source>Add Stream URL</source>
+        <translation type="unfinished">Lägg till ström-URL</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="2279"/>
+        <source>Stream URL:</source>
+        <translation type="unfinished">Ström-URL:</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="2281"/>
+        <source>&amp;Add</source>
+        <translation type="unfinished">L&amp;ägg till</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="2285"/>
+        <source>Enter a valid http:// or https:// URL.</source>
+        <translation type="unfinished">Skriv in en giltig http://- eller https://-URL.</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="2383"/>
+        <source>All Supported Playlists (%1)</source>
+        <translation type="unfinished">Alla stödda spellistor (%1)</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="2393"/>
+        <source>Load Playlist</source>
+        <translation type="unfinished">Läs in spellista</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="2430"/>
+        <source>Save Playlist</source>
+        <translation type="unfinished">Spara spellista</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="570"/>
+        <source>Display</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -19152,6 +19657,11 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
         <source>Help</source>
         <translation>Hjälp</translation>
     </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="2084"/>
+        <source>Quick Search</source>
+        <translation type="unfinished">Snabbsök</translation>
+    </message>
 </context>
 <context>
     <name>Fooyin::SeekBar</name>
@@ -23404,510 +23914,6 @@ Changes apply to newly opened streams.</source>
     </message>
 </context>
 <context>
-    <name>GuiApplication</name>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="443"/>
-        <source>Searching for artwork…</source>
-        <translation>Söker efter konstverk…</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="457"/>
-        <source>Artwork search finished</source>
-        <translation>Konstverkssökning slutförd</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="511"/>
-        <source>Failed to open artwork file</source>
-        <translation>Misslyckades att öppna konstverksfil</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="517"/>
-        <source>Artwork file is empty</source>
-        <translation>Konstverksfil är tom</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="918"/>
-        <source>Plugins not found</source>
-        <translation>Tillägg hittades inte</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="919"/>
-        <source>Some plugins are required for full functionality.</source>
-        <translation>Vissa tillägg behövs för fullständig funktionalitet.</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="920"/>
-        <source>Plugin search locations:
-
-</source>
-        <translation>Sökplatser för tillägg:
-
-</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="923"/>
-        <source>Quit</source>
-        <translation>Avsluta</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1054"/>
-        <source>Volume</source>
-        <translation>Volym</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1056"/>
-        <source>Volume up</source>
-        <translation>Volym upp</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1063"/>
-        <source>Volume down</source>
-        <translation>Volym ner</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1070"/>
-        <source>Mute</source>
-        <translation>Tystna</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1080"/>
-        <source>Clear Current Playlist</source>
-        <translation>Rensa aktuell spellista</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1081"/>
-        <source>Remove all tracks from the current playlist</source>
-        <translation>Ta bort alla spår från den aktuella spellistan</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1084"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1111"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1184"/>
-        <source>Playlist</source>
-        <translation>Spellista</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1107"/>
-        <source>Lock playlist</source>
-        <translation>Lås spellista</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1109"/>
-        <source>Prevent changes to the contents of the current playlist</source>
-        <translation>Förhindra ändringar av den aktuella spellistans innehåll</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1112"/>
-        <source>Lock Current Playlist</source>
-        <translation>Lås aktuell spellista</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1133"/>
-        <source>Playback</source>
-        <translation>Uppspelning</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1133"/>
-        <source>Seek</source>
-        <translation>Leta</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1135"/>
-        <source>Seek forward (small step)</source>
-        <translation>Leta framåt (litet steg)</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1142"/>
-        <source>Seek forward (large step)</source>
-        <translation>Leta framåt (stort steg)</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1149"/>
-        <source>Seek backward (small step)</source>
-        <translation>Leta bakåt (litet steg)</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1157"/>
-        <source>Seek backward (large step)</source>
-        <translation>Leta bakåt (stort steg)</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1182"/>
-        <source>Remove Playlist</source>
-        <translation>Ta bort spellista</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1185"/>
-        <source>Remove Current Playlist</source>
-        <translation>Ta bort aktuell spellista</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1193"/>
-        <source>Toggle Menubar</source>
-        <translation>Växla menyruta</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1051"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1197"/>
-        <source>View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1204"/>
-        <source>Look up metadata by artist and album…</source>
-        <translation>Sök upp metadata efter artist och album…</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1205"/>
-        <source>Look up metadata using the selected tracks&apos; artist and album</source>
-        <translation>Sök upp metadata med de valda spårens artist och album</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1210"/>
-        <source>Look up metadata by artist and album</source>
-        <translation>Sök upp metadata efter artist och album</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1211"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1219"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1226"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1230"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1299"/>
-        <source>Tagging</source>
-        <translation>Taggning</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1221"/>
-        <source>Look up metadata by MusicBrainz ID…</source>
-        <translation>Sök upp metadata efter MusicBrainz-ID…</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1222"/>
-        <source>Look up metadata using a MusicBrainz release identifier</source>
-        <translation>Sök upp metadata med en MusicBrainz-utsläppsidentifierare</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1225"/>
-        <source>Look up metadata by MusicBrainz ID</source>
-        <translation>Sök upp metadata efter MusicBrainz-ID</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1258"/>
-        <source>Reading tracks…</source>
-        <translation>Läser spår…</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1258"/>
-        <source>Abort</source>
-        <translation>Stoppa</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1286"/>
-        <source>Current file</source>
-        <translation>Aktuell fil</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1301"/>
-        <source>Reload tags from files</source>
-        <translation>Ladda om taggar från filer</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1302"/>
-        <source>Reload tags from modified files</source>
-        <translation>Ladda om taggar från modifierade filer</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1304"/>
-        <source>Replace tags in selected tracks with tags from the files</source>
-        <translation>Ersätt taggar i valda spår med taggar från filerna</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1305"/>
-        <source>Replace tags in selected tracks with tags from the files if modified</source>
-        <translation>Ersätt taggar i valda spår med taggar från filerna om modifierade</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1336"/>
-        <source>View full size</source>
-        <translation>Visa full storlek</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1337"/>
-        <source>View the common artwork for the selected tracks at full size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1340"/>
-        <source>Artwork</source>
-        <translation>Konstverk</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1393"/>
-        <source>Playback Statistics</source>
-        <translation>Uppspelningsstatistik</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1408"/>
-        <source>Toggle loved</source>
-        <translation>Tåggla älskade</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1408"/>
-        <source>Toggle Loved for selected tracks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1410"/>
-        <source>Love</source>
-        <translation>Älska</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1410"/>
-        <source>Love selected tracks</source>
-        <translation>Älska valda spår</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1412"/>
-        <source>Unlove</source>
-        <translation>Oälska</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1412"/>
-        <source>Unlove selected tracks</source>
-        <translation>Oälska valda spår</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1428"/>
-        <source>Choose destination</source>
-        <translation>Välj destination</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1454"/>
-        <source>Converter Output</source>
-        <translation>Konverterarutmatning</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1551"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1559"/>
-        <source>Convert using preset %1</source>
-        <translation>Konvertera med förinställning %1</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1340"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1393"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1558"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1591"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1601"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1610"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1655"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1664"/>
-        <source>Tracks</source>
-        <translation>Spår</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="413"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="416"/>
-        <source>New Layout</source>
-        <translation type="unfinished">Ny layout</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="416"/>
-        <source>Layout Name</source>
-        <translation type="unfinished">Layoutnamn</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1049"/>
-        <source>Show or hide main window</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1213"/>
-        <source>Look up metadata by disc TOC…</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1214"/>
-        <source>Look up metadata using the selected tracks&apos; disc TOC</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1218"/>
-        <source>Look up metadata by disc TOC</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1558"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1591"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1601"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1610"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1621"/>
-        <source>Convert</source>
-        <translation>Konvertera</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1589"/>
-        <source>Converter setup…</source>
-        <translation>Konverterar-setup…</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1598"/>
-        <source>Using default settings</source>
-        <translation>Med default-inställningar</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1602"/>
-        <source>Convert using default settings</source>
-        <translation>Konvertera med default-inställningar</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1607"/>
-        <source>Repeat last conversion</source>
-        <translation>Upprepa senaste konvertering</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1638"/>
-        <source>Custom conversion…</source>
-        <translation>Anpassad konvertering…</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1650"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1655"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1664"/>
-        <source>Utilities</source>
-        <translation>Verktyg</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1652"/>
-        <source>Verify integrity</source>
-        <translation>Verifiera integritet­</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1653"/>
-        <source>Decode the selected tracks and report file or checksum errors</source>
-        <translation>Avkoda de valda spåren och rapportera fil- eller kontrollsummafel</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1660"/>
-        <source>Verify album with AccurateRip</source>
-        <translation>Verifiera album med AccurateRip</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1661"/>
-        <source>Verify all tracks from one complete lossless CD rip against AccurateRip</source>
-        <translation>Verifiera alla spår från en helt förlustfri CD-rippning mot AccurateRip</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1949"/>
-        <source>Reload Required</source>
-        <translation>Omladdning krävs</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1951"/>
-        <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
-        <translation>På grund av en databasändring borde spåren laddas om från disken för att uppdatera dess sparade metadata.</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1955"/>
-        <source>Reload Now</source>
-        <translation>Ladda om nu</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1958"/>
-        <source>OK</source>
-        <translation>Ok</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2103"/>
-        <source>Playback Error</source>
-        <translation>Uppspelningsfel</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2128"/>
-        <source>Continue</source>
-        <translation>Fortsätt</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2130"/>
-        <source>Stop</source>
-        <translation>Stopp</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2134"/>
-        <source>Always continue playing if a track is unavailable</source>
-        <translation>Fortsätt alltid spela om ett spår är otillgängligt</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2156"/>
-        <source>Track Not Found</source>
-        <translation>Spår hittades inte</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2161"/>
-        <source>No Decoder Available</source>
-        <translation>Ingen avkodare tillgänglig</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2241"/>
-        <source>All Supported Media Files (%1)</source>
-        <translation>Alla stödda mediafiler (%1)</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2242"/>
-        <source>Audio Files (%1)</source>
-        <translation>Ljudfiler (%1)</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2253"/>
-        <source>Add Files</source>
-        <translation>Lägg till filer</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2267"/>
-        <source>Add Folders</source>
-        <translation>Lägg till mappar</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2279"/>
-        <source>Add Stream URL</source>
-        <translation>Lägg till ström-URL</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2279"/>
-        <source>Stream URL:</source>
-        <translation>Ström-URL:</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2281"/>
-        <source>&amp;Add</source>
-        <translation>L&amp;ägg till</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2285"/>
-        <source>Enter a valid http:// or https:// URL.</source>
-        <translation>Skriv in en giltig http://- eller https://-URL.</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2383"/>
-        <source>All Supported Playlists (%1)</source>
-        <translation>Alla stödda spellistor (%1)</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2393"/>
-        <source>Load Playlist</source>
-        <translation>Läs in spellista</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2430"/>
-        <source>Save Playlist</source>
-        <translation>Spara spellista</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/widgets.cpp" line="570"/>
-        <source>Display</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>LibraryTreeWidget</name>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="223"/>
@@ -24713,14 +24719,6 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
         <location filename="../../src/plugins/runservices/runservices.cpp" line="130"/>
         <source>Wikipedia Artist</source>
         <translation>Wikipedia artist</translation>
-    </message>
-</context>
-<context>
-    <name>SearchWidget</name>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2084"/>
-        <source>Quick Search</source>
-        <translation>Snabbsök</translation>
     </message>
 </context>
 <context>
