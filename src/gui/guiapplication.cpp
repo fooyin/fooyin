@@ -1676,6 +1676,9 @@ void GuiApplication::setupUtilitiesMenu()
             verifyAccurateRip->setEnabled(AccurateRip::prepareAlbumTracks(selection.tracks).has_value());
             menu->addAction(verifyAccurateRip);
         });
+    m_selectionController->registerTrackContextSeparator(this, TrackContextMenuArea::Track,
+                                                         Constants::Menus::Context::Utilities,
+                                                         Constants::Menus::Context::UtilitiesVerifySeparator);
 }
 
 void GuiApplication::close()

@@ -102,22 +102,23 @@ constexpr auto SwitchLibrary  = "Fooyin.Menu.Library.Switch";
 constexpr auto Help           = "Fooyin.Menu.Help";
 
 namespace Context {
-constexpr auto Layout                 = "Fooyin.Menu.Layout";
-constexpr auto AddWidget              = "Fooyin.Menu.Widget.Add";
-constexpr auto TrackSelection         = "Fooyin.Menu.Tracks";
-constexpr auto TrackQueue             = "Fooyin.Menu.Queue";
-constexpr auto TracksPlaylist         = "Fooyin.Menu.Tracks.Playlist";
-constexpr auto Playlist               = "Fooyin.Menu.Playlist";
-constexpr auto PlaylistAddTo          = "Fooyin.Menu.Playlist.AddTo";
-constexpr auto ReplayGain             = "Fooyin.Menu.ReplayGain";
-constexpr auto Artwork                = "Fooyin.Menu.Artwork";
-constexpr auto ArtworkAttach          = "Fooyin.Menu.Artwork.Attach";
-constexpr auto Tagging                = "Fooyin.Menu.Tagging";
-constexpr auto TaggingLookupSeparator = "Fooyin.Menu.Tagging.LookupSeparator";
-constexpr auto TaggingReloadSeparator = "Fooyin.Menu.Tagging.ReloadSeparator";
-constexpr auto TrackFinalSeparator    = "Fooyin.Menu.Track.FinalSeparator";
-constexpr auto Utilities              = "Fooyin.Menu.Utilities";
-constexpr auto Convert                = "Fooyin.Menu.Convert";
+constexpr auto Layout                   = "Fooyin.Menu.Layout";
+constexpr auto AddWidget                = "Fooyin.Menu.Widget.Add";
+constexpr auto TrackSelection           = "Fooyin.Menu.Tracks";
+constexpr auto TrackQueue               = "Fooyin.Menu.Queue";
+constexpr auto TracksPlaylist           = "Fooyin.Menu.Tracks.Playlist";
+constexpr auto Playlist                 = "Fooyin.Menu.Playlist";
+constexpr auto PlaylistAddTo            = "Fooyin.Menu.Playlist.AddTo";
+constexpr auto ReplayGain               = "Fooyin.Menu.ReplayGain";
+constexpr auto Artwork                  = "Fooyin.Menu.Artwork";
+constexpr auto ArtworkAttach            = "Fooyin.Menu.Artwork.Attach";
+constexpr auto Tagging                  = "Fooyin.Menu.Tagging";
+constexpr auto TaggingLookupSeparator   = "Fooyin.Menu.Tagging.LookupSeparator";
+constexpr auto TaggingReloadSeparator   = "Fooyin.Menu.Tagging.ReloadSeparator";
+constexpr auto TrackFinalSeparator      = "Fooyin.Menu.Track.FinalSeparator";
+constexpr auto Utilities                = "Fooyin.Menu.Utilities";
+constexpr auto UtilitiesVerifySeparator = "Fooyin.Menu.Utilities.VerifySeparator";
+constexpr auto Convert                  = "Fooyin.Menu.Convert";
 } // namespace Context
 } // namespace Menus
 
