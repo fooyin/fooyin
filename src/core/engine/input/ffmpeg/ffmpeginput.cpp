@@ -1510,9 +1510,9 @@ void FFmpegInputPrivate::readNext()
             return;
         }
         if(readResult == AVERROR_EOF && !m_eof) {
-            qCWarning(FFMPEG) << "FFmpeg input reached EOF:"
-                              << "remote=" << isRemoteStream() << "currentPosMs=" << m_currentPos
-                              << "bufferValid=" << m_buffer.isValid() << "draining=" << m_draining;
+            qCDebug(FFMPEG) << "FFmpeg input reached EOF:"
+                            << "remote=" << isRemoteStream() << "currentPosMs=" << m_currentPos
+                            << "bufferValid=" << m_buffer.isValid() << "draining=" << m_draining;
             m_inputUnavailable = false;
             decodeAudio(packet);
             m_eof = true;
@@ -1765,9 +1765,10 @@ AudioDecoder::ReadResult FFmpegDecoder::readAudio(size_t bytes)
                           << "eof=" << p->m_eof << "inputUnavailable=" << p->m_inputUnavailable;
         return ReadResult::errorResult(p->m_errorMessage);
     }
-    qCWarning(FFMPEG) << "FFmpeg readAudio returning end of stream:"
-                      << "remote=" << p->isRemoteStream() << "currentPosMs=" << p->m_currentPos << "eof=" << p->m_eof
-                      << "inputUnavailable=" << p->m_inputUnavailable << "bufferValid=" << p->m_buffer.isValid();
+
+    qCDebug(FFMPEG) << "FFmpeg readAudio returning end of stream:"
+                    << "remote=" << p->isRemoteStream() << "currentPosMs=" << p->m_currentPos << "eof=" << p->m_eof
+                    << "inputUnavailable=" << p->m_inputUnavailable << "bufferValid=" << p->m_buffer.isValid();
     return ReadResult::endOfStream();
 }
 
