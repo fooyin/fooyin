@@ -13487,9 +13487,9 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="439"/>
         <source>Remove %Ln playlist(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Remove %Ln playlist?</numerusform>
+            <numerusform>Remove %Ln playlists?</numerusform>
         </translation>
     </message>
     <message>
