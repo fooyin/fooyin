@@ -31,6 +31,10 @@
 
 using namespace Qt::StringLiterals;
 
+constexpr quint32 CommandOptionsMagic     = 0x46594f50;
+constexpr quint8 CommandOptionsVersion    = 1;
+constexpr qsizetype MaxCommandOptionsSize = 4UL * 1024 * 1024;
+
 namespace {
 enum CommandOption : uint16_t // NOLINT
 {
@@ -157,7 +161,13 @@ CommandLine::ParseResult CommandLine::parse()
     m_repeatMode   = RepeatMode::Unchanged;
     m_shuffleMode  = ShuffleMode::Unchanged;
 
-    optind = 1;
+    // Reset getopt
+#ifdef Q_OS_BSD4
+    optind   = 1;
+    optreset = 1;
+#else
+    optind = 0;
+#endif
     opterr = 0;
 
     static constexpr option cmdOptions[] = {
@@ -435,7 +445,7 @@ std::optional<uint64_t> CommandLine::parseSeekTime(const QStringView value)
             if(!part || (i > 0 && *part >= 60)) {
                 return {};
             }
-            if(seconds > ((std::numeric_limits<uint64_t>::max)() - *part) / 60) {
+            if(seconds > (std::numeric_limits<uint64_t>::max() - *part) / 60) {
                 return {};
             }
             seconds = (seconds * 60) + *part;
@@ -518,7 +528,8 @@ QByteArray CommandLine::saveOptions() const
     QDataStream stream(&out, QDataStream::WriteOnly);
     stream.setVersion(QDataStream::Qt_6_0);
 
-    stream << m_files;
+    stream << CommandOptionsMagic;
+    stream << CommandOptionsVersion;
     stream << m_skipSingle;
     stream << static_cast<quint8>(m_playerAction);
     stream << static_cast<quint64>(m_seekDelta);
@@ -526,16 +537,27 @@ QByteArray CommandLine::saveOptions() const
     stream << m_volume;
     stream << static_cast<quint8>(m_repeatMode);
     stream << static_cast<quint8>(m_shuffleMode);
+    stream << static_cast<quint32>(m_files.size());
+
+    for(const QUrl& file : m_files) {
+        stream << file.toEncoded(QUrl::FullyEncoded);
+    }
 
     return out;
 }
 
 bool CommandLine::loadOptions(const QByteArray& options)
 {
+    if(options.size() > MaxCommandOptionsSize) {
+        return false;
+    }
+
     QByteArray in{options};
     QDataStream stream(&in, QDataStream::ReadOnly);
     stream.setVersion(QDataStream::Qt_6_0);
 
+    quint32 magic{0};
+    quint8 version{0};
     QList<QUrl> files;
     bool skipSingle{false};
     quint8 playerAction{0};
@@ -544,8 +566,15 @@ bool CommandLine::loadOptions(const QByteArray& options)
     double volume{0.0};
     quint8 repeatMode{0};
     quint8 shuffleMode{0};
+    quint32 fileCount{0};
 
-    stream >> files;
+    stream >> magic;
+    stream >> version;
+
+    if(magic != CommandOptionsMagic || version != CommandOptionsVersion) {
+        return false;
+    }
+
     stream >> skipSingle;
     stream >> playerAction;
     stream >> seekDelta;
@@ -553,8 +582,9 @@ bool CommandLine::loadOptions(const QByteArray& options)
     stream >> volume;
     stream >> repeatMode;
     stream >> shuffleMode;
+    stream >> fileCount;
 
-    if(stream.status() != QDataStream::Ok || !stream.atEnd()) {
+    if(stream.status() != QDataStream::Ok) {
         return false;
     }
 
@@ -568,6 +598,29 @@ bool CommandLine::loadOptions(const QByteArray& options)
     }
 
     if(repeatMode > static_cast<quint8>(RepeatMode::Track) || shuffleMode > static_cast<quint8>(ShuffleMode::Random)) {
+        return false;
+    }
+
+    files.reserve(fileCount);
+    for(quint32 i{0}; i < fileCount; ++i) {
+        quint32 urlSize{0};
+        stream >> urlSize;
+
+        const int encodedSize = static_cast<int>(urlSize);
+        QByteArray encodedUrl(encodedSize, Qt::Uninitialized);
+
+        if(stream.readRawData(encodedUrl.data(), encodedSize) != encodedSize) {
+            return false;
+        }
+
+        QUrl url = QUrl::fromEncoded(encodedUrl, QUrl::StrictMode);
+        if(!url.isValid()) {
+            return false;
+        }
+        files.append(std::move(url));
+    }
+
+    if(!stream.atEnd()) {
         return false;
     }
 
