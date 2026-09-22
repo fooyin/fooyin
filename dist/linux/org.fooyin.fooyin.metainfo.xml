@@ -12,7 +12,7 @@
     </developer>
     <branding>
         <color type="primary" scheme_preference="light">#555b61</color>
-        <color type="primary" scheme_preference="dark">#292d30</color>
+        <color type="primary" scheme_preference="dark">#464c51</color>
     </branding>
     <description>
         <p>
@@ -20,14 +20,15 @@
             canvas, start with a preset layout, and tailor its widgets and shortcuts to suit you.
         </p>
         <p>
-            Browse and filter your library, edit tags and artwork, and organise tracks in playlists
-            or autoplaylists. Enjoy gapless playback of local music, archives, and remote radio, with
-            ReplayGain, audio conversion, fading, and DSP chains for shaping the sound.
+            Browse and filter your library, edit tags and artwork, and organise tracks into playlists
+            or autoplaylists. Play local music, archives, Audio CDs, and internet radio with gapless
+            playback. Shape the sound with ReplayGain, fading, and DSP chains, or convert audio
+            between formats.
         </p>
         <p>
-            Extend the player with plugins for audio formats, widgets, visualisations, lyrics,
-            scrobbling, and other integrations. FooScript provides advanced display formatting,
-            library queries, autoplaylists, and custom widget behaviour.
+            Extend the player with plugins providing additional audio formats, widgets, visualisations,
+            and scrobbling services. FooScript enables advanced display formatting, library
+            queries, autoplaylists, and custom widget behaviour.
         </p>
     </description>
     <provides>
