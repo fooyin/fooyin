@@ -13,9 +13,11 @@
     <clipPath id="c">
         <rect height="39.5" rx="7.5" width="40" x="4" y="4"/>
     </clipPath>
-    <mask id="d" height="40" maskUnits="userSpaceOnUse" width="40" x="4" y="4">
-        <path d="m4 4h40v40h-40z" fill="url(#b)"/>
-    </mask>
+    <defs>
+        <mask id="d" height="40" maskUnits="userSpaceOnUse" width="40" x="4" y="4">
+            <path d="m4 4h40v40h-40z" fill="url(#b)"/>
+        </mask>
+    </defs>
     <linearGradient id="e" gradientUnits="userSpaceOnUse" x1="512" x2="512" y1="73" y2="1450">
         <stop offset="0" stop-color="#fff000"/>
         <stop offset=".38" stop-color="#ffb300"/>
