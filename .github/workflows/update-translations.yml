@@ -7,7 +7,7 @@ jobs:
   update-translations:
     if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && github.event.pull_request.user.login == 'weblate')
     runs-on: ubuntu-latest
-    container: fedora:44
+    container: archlinux:latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
