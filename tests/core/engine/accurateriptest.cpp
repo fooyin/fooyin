@@ -19,8 +19,6 @@
 
 #include <core/engine/verification/accuraterip.h>
 
-#include <QtEndian>
-
 #include <gtest/gtest.h>
 
 #include <cstring>
@@ -41,8 +39,11 @@ AudioBuffer makeBuffer(const std::vector<uint32_t>& samples, const AudioFormat& 
 {
     QByteArray pcm(static_cast<qsizetype>(samples.size() * sizeof(uint32_t)), '\0');
     for(size_t index{0}; index < samples.size(); ++index) {
-        const uint32_t value = qToLittleEndian(samples.at(index));
-        std::memcpy(pcm.data() + static_cast<qsizetype>(index * sizeof(value)), &value, sizeof(value));
+        const auto left   = static_cast<uint16_t>(samples.at(index));
+        const auto right  = static_cast<uint16_t>(samples.at(index) >> 16);
+        const auto offset = index * sizeof(uint32_t);
+        std::memcpy(pcm.data() + offset, &left, sizeof(left));
+        std::memcpy(pcm.data() + offset + sizeof(left), &right, sizeof(right));
     }
     return {reinterpret_cast<const uint8_t*>(pcm.constData()), static_cast<size_t>(pcm.size()), format, 0};
 }

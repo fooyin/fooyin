@@ -140,7 +140,7 @@ TEST(AccurateRipTest, VerifiesOffsetCorrectedSourcePcm)
     AccurateRip::Verifier verifier{*layout, {pressing}, tracks};
 
     QByteArray pcm(FramesPerSector * 4LL, '\0');
-    const uint32_t values[]{qToLittleEndian(1), qToLittleEndian(2), qToLittleEndian(3)};
+    static constexpr uint16_t values[]{1, 0, 2, 0, 3, 0};
     std::memcpy(pcm.data(), values, sizeof(values));
     const AudioFormat format{SampleFormat::S16, 44100, 2};
     const AudioBuffer buffer{reinterpret_cast<const uint8_t*>(pcm.constData()), static_cast<size_t>(pcm.size()), format,
