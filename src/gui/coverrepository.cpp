@@ -684,8 +684,18 @@ CoverRepositoryPrivate::CoverRepositoryPrivate(CoverRepository* self, std::share
     m_settings->subscribe<Settings::Gui::Internal::PixmapCacheSize>(m_self, updateCache);
 
     m_settings->subscribe<Settings::Gui::Internal::TrackCoverPaths>(m_self, [this](const QVariant& var) {
-        m_paths = var.value<CoverPaths>();
-        clearPlaceholderCache();
+        auto paths                    = var.value<CoverPaths>();
+        const bool searchPathsChanged = m_paths.frontCoverPaths != paths.frontCoverPaths
+                                     || m_paths.backCoverPaths != paths.backCoverPaths
+                                     || m_paths.artistPaths != paths.artistPaths;
+
+        m_paths = std::move(paths);
+        if(searchPathsChanged) {
+            m_self->clearCache();
+        }
+        else {
+            clearPlaceholderCache();
+        }
         Q_EMIT m_self->placeholderChanged();
     });
     m_settings->subscribe<Settings::Gui::Internal::TrackCoverSourcePreference>(
