@@ -27,12 +27,12 @@
       "sources": [
         {
           "type": "archive",
-          "url": "https://github.com/libcdio/libcdio/archive/refs/tags/2.4.0.tar.gz",
-          "sha256": "62b940b458241b3b03eee554f07094c89f4afbfdb3180b8bacd336970e145df1",
+          "url": "https://github.com/libcdio/libcdio-C/releases/download/2.4.0/libcdio-2.4.0.tar.gz",
+          "sha256": "bf7cde63762bb12db7755c395c441e49406fde7e1d9f9a9be7e3b940b1f405d7",
           "x-checker-data": {
             "type": "anitya",
             "project-id": 1573,
-            "url-template": "https://github.com/libcdio/libcdio/archive/refs/tags/$version.tar.gz"
+            "url-template": "https://github.com/libcdio/libcdio-C/releases/download/$version/libcdio-$version.tar.gz"
           }
         }
       ]
@@ -42,7 +42,8 @@
       "config-opts": [
         "--disable-cxx",
         "--disable-cpp-progs",
-        "--disable-example-progs"
+        "--disable-example-progs",
+        "--disable-static"
       ],
       "cleanup": [
         "/bin/cd-paranoia"
