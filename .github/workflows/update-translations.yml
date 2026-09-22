@@ -19,7 +19,7 @@ jobs:
           ./ci/translations.sh
 
       - name: Configure git
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        run: git config --system --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Setup gpg
         uses: crazy-max/ghaction-import-gpg@v7.0.0
@@ -28,7 +28,6 @@ jobs:
           passphrase: ${{ secrets.BOT_GPG_PASSPHRASE }}
           git_user_signingkey: true
           git_commit_gpgsign: true
-          workdir: ${{ github.workspace }}
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
