@@ -57,17 +57,24 @@ It's built around extensibility and supports plugins for widgets, decoders, tag 
 - Support for major audio formats and containers, including FLAC, MP3, MP4, Vorbis, Opus, WavPack, WAV, AIFF, MKA, Musepack, and Monkey's Audio
 - Native support for VGM and tracker/module formats through optional plugins
 - Playback of files directly from archives
+- CUE sheet support, including embedded CUE sheets
+- Audio CD playback and ripping (Linux-only)
+- File integrity checks and AccurateRip verification for complete discs
 - Internet radio discovery and remote audio stream playback
 - Gapless and bit-perfect playback
+- Playlist-led and queue-led playback modes
 - Configurable fade and crossfade behaviour for pause, stop, seek, manual track changes, and automatic transitions
-- Waveform seekbar, spectrum, and other visualisations
+- Waveform seekbar, spectrum, spectrogram, oscilloscope, VU and peak meters, and projectM visualisations
 - Audio output and device configuration
+- Command-line playback controls and support for opening files, directories, and remote URLs
 
 ### Audio and metadata tools
 
 - ReplayGain playback support and scanning
-- DSP chains with built-in and plugin-provided DSPs
+- DSP chains with an equaliser, resampling, tempo, pitch, rate, and plugin-provided DSPs
 - Built-in tag editor and metadata management tools
+- Quick Tagger for configurable metadata actions
+- MusicBrainz metadata lookup
 - Artwork embedding, downloading, viewing, exporting, and extracting
 - File renaming, copying, moving, and deletion
 - Audio conversion to WAV, FLAC, ALAC, WavPack, MP3, AAC, Vorbis, and Opus with reusable presets
@@ -75,6 +82,7 @@ It's built around extensibility and supports plugins for widgets, decoders, tag 
 ### Library and playlists
 
 - Advanced filtering and search on library and playlist data
+- Ratings, play counts, and loved status
 - Standard playlists plus autoplaylists
 - Playback queue
 - M3U/M3U8 import and export
@@ -86,12 +94,16 @@ It's built around extensibility and supports plugins for widgets, decoders, tag 
 - Lyrics search, editing, syncing, and display
 - FooScript for advanced formatting, display logic, queries, and autoplaylists
 - Rich text and script formatting support across most widgets and views
+- Configurable application and global keyboard shortcuts
 
-### Integrations
+### Plugins and integrations
 
 - MPRIS support for desktop and media key integration
+- Desktop track notifications with playback controls
+- Sleep and display inhibition during playback
 - Scrobbling support for Last.fm, Libre.fm, ListenBrainz, and custom services
-- Discord Rich Presence
+- Discord Rich Presence with artwork support
+- Run Services for launching external applications
 
 ## Installation
 
