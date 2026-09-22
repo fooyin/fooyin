@@ -445,7 +445,7 @@ std::optional<uint64_t> CommandLine::parseSeekTime(const QStringView value)
             if(!part || (i > 0 && *part >= 60)) {
                 return {};
             }
-            if(seconds > (std::numeric_limits<uint64_t>::max() - *part) / 60) {
+            if(seconds > ((std::numeric_limits<uint64_t>::max)() - *part) / 60) { // NOLINT
                 return {};
             }
             seconds = (seconds * 60) + *part;
