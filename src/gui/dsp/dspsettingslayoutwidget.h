@@ -56,15 +56,21 @@ protected:
 
     void refreshInstances();
     void selectInstance(uint64_t instanceId);
+    void changeEnabledState(bool enabled);
+
     virtual void populateInstanceSelector(const std::vector<DspSettingsController::Target>& targets);
     virtual void updateSelectedInstance(uint64_t instanceId);
     virtual void updateEnabledState(bool enabled);
+
     virtual void saveEditorLayoutData(QJsonObject& layout);
     virtual void loadEditorLayoutData(const QJsonObject& layout);
+
     virtual void addEditorActions(QMenu* menu);
     virtual void connectEditor(const DspSettingsController::Target& target) = 0;
     virtual void disconnectEditor();
+
     [[nodiscard]] virtual QObject* editorObject() const         = 0;
+    [[nodiscard]] virtual QByteArray saveEditorSettings() const = 0;
     virtual void loadEditorSettings(const QByteArray& settings) = 0;
     virtual void setEditorControlsEnabled(bool enabled)         = 0;
 
@@ -94,7 +100,9 @@ protected:
     void updateEnabledState(bool enabled) override;
     void connectEditor(const DspSettingsController::Target& target) override;
     void disconnectEditor() override;
+
     [[nodiscard]] QObject* editorObject() const override;
+    [[nodiscard]] QByteArray saveEditorSettings() const override;
     void loadEditorSettings(const QByteArray& settings) override;
     void setEditorControlsEnabled(bool enabled) override;
 
@@ -103,7 +111,6 @@ private:
     QComboBox* m_instanceSelector;
     QCheckBox* m_enabledToggle;
     QMetaObject::Connection m_previewConnection;
-    QMetaObject::Connection m_enabledConnection;
 };
 
 class DspCompactLayoutWidget final : public DspLayoutWidgetBase
@@ -118,15 +125,17 @@ protected:
     void saveEditorLayoutData(QJsonObject& layout) override;
     void loadEditorLayoutData(const QJsonObject& layout) override;
     void addEditorActions(QMenu* menu) override;
+
     void connectEditor(const DspSettingsController::Target& target) override;
     void disconnectEditor() override;
+
     [[nodiscard]] QObject* editorObject() const override;
+    [[nodiscard]] QByteArray saveEditorSettings() const override;
     void loadEditorSettings(const QByteArray& settings) override;
     void setEditorControlsEnabled(bool enabled) override;
 
 private:
     DspLayoutEditor* m_editor;
     QMetaObject::Connection m_previewConnection;
-    QMetaObject::Connection m_enabledConnection;
 };
 } // namespace Fooyin

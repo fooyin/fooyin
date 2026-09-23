@@ -194,6 +194,31 @@ void DspLayoutWidgetBase::selectInstance(const uint64_t instanceId)
     connectEditor(*target);
 }
 
+void DspLayoutWidgetBase::changeEnabledState(const bool enabled)
+{
+    if(const auto target = m_controller->targetForInstance(m_dspId, m_currentInstanceId)) {
+        m_controller->setDspEnabled(target->scope, target->instanceId, enabled, editorObject());
+        updateEnabledState(enabled);
+        setEditorControlsEnabled(enabled);
+        return;
+    }
+
+    if(!enabled) {
+        return;
+    }
+
+    if(m_controller->hasDsp(m_dspId)) {
+        refreshInstances();
+        return;
+    }
+
+    const uint64_t instanceId = m_controller->addDsp(m_dspId, saveEditorSettings(), Engine::DspChainScope::Master, 0);
+    if(instanceId == 0) {
+        updateEnabledState(false);
+        setEditorControlsEnabled(false);
+    }
+}
+
 void DspLayoutWidgetBase::populateInstanceSelector(const std::vector<DspSettingsController::Target>& /*targets*/) { }
 
 void DspLayoutWidgetBase::updateSelectedInstance(uint64_t /*instanceId*/) { }
@@ -246,16 +271,9 @@ void DspLayoutWidgetBase::addEnabledAction(QMenu* menu)
     auto* enabled = new QAction(tr("Enabled"), menu);
     menu->addAction(enabled);
     enabled->setCheckable(true);
-    enabled->setEnabled(currentTarget.has_value());
     enabled->setChecked(currentTarget ? currentTarget->enabled : false);
 
-    QObject::connect(enabled, &QAction::triggered, this, [this](const bool checked) {
-        if(const auto target = m_controller->targetForInstance(m_dspId, m_currentInstanceId)) {
-            m_controller->setDspEnabled(target->scope, target->instanceId, checked, editorObject());
-            updateEnabledState(checked);
-            setEditorControlsEnabled(checked);
-        }
-    });
+    QObject::connect(enabled, &QAction::triggered, this, &DspLayoutWidgetBase::changeEnabledState);
 }
 
 void DspLayoutWidgetBase::clearInstance()
@@ -286,6 +304,7 @@ DspSettingsDialogLayoutWidget::DspSettingsDialogLayoutWidget(DspSettingsControll
             selectInstance(m_instanceSelector->itemData(index).toULongLong());
         }
     });
+    QObject::connect(m_enabledToggle, &QCheckBox::toggled, this, &DspSettingsDialogLayoutWidget::changeEnabledState);
 
     refreshInstances();
 }
@@ -325,24 +344,21 @@ void DspSettingsDialogLayoutWidget::connectEditor(const DspSettingsController::T
                             instanceId = target.instanceId](const QByteArray& settings) {
                                controller->updateDspSettings(scope, instanceId, settings, true, m_editor);
                            });
-
-    m_enabledConnection = QObject::connect(
-        m_enabledToggle, &QCheckBox::toggled, m_editor,
-        [this, controller = controller(), scope = target.scope, instanceId = target.instanceId](const bool enabled) {
-            controller->setDspEnabled(scope, instanceId, enabled, m_editor);
-            setEditorControlsEnabled(enabled);
-        });
 }
 
 void DspSettingsDialogLayoutWidget::disconnectEditor()
 {
     QObject::disconnect(m_previewConnection);
-    QObject::disconnect(m_enabledConnection);
 }
 
 QObject* DspSettingsDialogLayoutWidget::editorObject() const
 {
     return m_editor;
+}
+
+QByteArray DspSettingsDialogLayoutWidget::saveEditorSettings() const
+{
+    return m_editor->saveSettings();
 }
 
 void DspSettingsDialogLayoutWidget::loadEditorSettings(const QByteArray& settings)
@@ -365,6 +381,9 @@ DspCompactLayoutWidget::DspCompactLayoutWidget(DspSettingsController* controller
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins({});
     layout->addWidget(m_editor);
+
+    QObject::connect(m_editor, &DspLayoutEditor::enabledStateChangeRequested, this,
+                     &DspCompactLayoutWidget::changeEnabledState);
 
     refreshInstances();
 }
@@ -421,24 +440,21 @@ void DspCompactLayoutWidget::connectEditor(const DspSettingsController::Target& 
                             instanceId = target.instanceId](const QByteArray& settings) {
                                controller->updateDspSettings(scope, instanceId, settings, true, m_editor);
                            });
-
-    m_enabledConnection = QObject::connect(
-        m_editor, &DspLayoutEditor::enabledStateChangeRequested, m_editor,
-        [this, controller = controller(), scope = target.scope, instanceId = target.instanceId](bool enabled) {
-            controller->setDspEnabled(scope, instanceId, enabled, m_editor);
-            setEditorControlsEnabled(enabled);
-        });
 }
 
 void DspCompactLayoutWidget::disconnectEditor()
 {
     QObject::disconnect(m_previewConnection);
-    QObject::disconnect(m_enabledConnection);
 }
 
 QObject* DspCompactLayoutWidget::editorObject() const
 {
     return m_editor;
+}
+
+QByteArray DspCompactLayoutWidget::saveEditorSettings() const
+{
+    return m_editor->saveSettings();
 }
 
 void DspCompactLayoutWidget::loadEditorSettings(const QByteArray& settings)

@@ -832,7 +832,6 @@ void Widgets::registerDspWidgets()
             key, [this, dspId]() { return m_dspSettingsController->createLayoutWidget(dspId); },
             settingsProvider->displayName());
         widgetProvider->setSubMenus(key, {tr("DSP")});
-        widgetProvider->setIsVisibleWhen(key, [this, dspId]() { return m_dspSettingsController->hasDsp(dspId); });
     }
 }
 
