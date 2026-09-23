@@ -23,6 +23,7 @@
 
 #include <core/track.h>
 #include <gui/fywidget.h>
+#include <gui/trackdisplay.h>
 #include <utils/database/dbconnectionpool.h>
 
 #include <QVariant>
@@ -47,7 +48,7 @@ class WaveBarWidget : public FyWidget
 public:
     WaveBarWidget(std::shared_ptr<AudioLoader> audioLoader, DbConnectionPoolPtr dbPool,
                   PlayerController* playerController, TrackSelectionController* trackSelection,
-                  SettingsManager* settings, bool playbackStarted, QWidget* parent = nullptr);
+                  SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -62,7 +63,7 @@ public:
         bool showLabels{false};
         bool showRemainingTime{false};
         bool showPlayedThreshold{false};
-        int trackPreference{static_cast<int>(TrackPreference::PlayingTrack)};
+        int trackPreference{static_cast<int>(TrackDisplayPreference::PlayingTrack)};
         bool showCursor{true};
         int cursorWidth{3};
         int mode{Default};
@@ -122,7 +123,6 @@ private:
     std::unique_ptr<WaveformBuilder> m_builder;
     ConfigData m_config;
     Track m_displayedTrack;
-    bool m_playbackStarted;
 };
 } // namespace WaveBar
 } // namespace Fooyin

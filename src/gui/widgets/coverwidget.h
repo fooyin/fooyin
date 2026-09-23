@@ -19,10 +19,9 @@
 
 #pragma once
 
-#include "internalguisettings.h"
-
 #include <core/track.h>
 #include <gui/fywidget.h>
+#include <gui/trackdisplay.h>
 
 #include <QBasicTimer>
 #include <QPixmap>
@@ -58,7 +57,7 @@ public:
         Track::Cover coverType{Track::Cover::Front};
         Qt::Alignment coverAlignment{Qt::AlignCenter};
         bool keepAspectRatio{true};
-        bool showStoppedTrack{true};
+        TrackDisplayPreference trackPreference{TrackDisplayPreference::PlayingTrack};
         bool fadeCoverChanges{false};
         int fadeDurationMs{1000};
         CoverAction doubleClickAction{CoverAction::ViewFullSize};
@@ -134,7 +133,6 @@ private:
     CoverProvider* m_coverProvider;
 
     ConfigData m_config;
-    SelectionDisplay m_displayOption;
     Track::Cover m_coverType;
     Qt::Alignment m_coverAlignment;
     bool m_keepAspectRatio;

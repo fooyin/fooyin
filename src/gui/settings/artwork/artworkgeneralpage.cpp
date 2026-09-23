@@ -58,8 +58,6 @@ private:
     SettingsManager* m_settings;
     CoverRepository* m_coverRepository;
 
-    QRadioButton* m_preferPlaying;
-    QRadioButton* m_preferSelection;
     QRadioButton* m_preferDirectory;
     QRadioButton* m_preferEmbedded;
 
@@ -71,24 +69,12 @@ private:
 ArtworkPageWidget::ArtworkPageWidget(SettingsManager* settings, CoverRepository* coverRepository)
     : m_settings{settings}
     , m_coverRepository{coverRepository}
-    , m_preferPlaying{new QRadioButton(tr("Prefer currently playing track"), this)}
-    , m_preferSelection{new QRadioButton(tr("Prefer current selection"), this)}
     , m_preferDirectory{new QRadioButton(tr("Prefer directory artwork"), this)}
     , m_preferEmbedded{new QRadioButton(tr("Prefer embedded artwork"), this)}
     , m_thumbnailGroupScript{new ScriptLineEdit(this)}
     , m_pixmapCache{new QSpinBox(this)}
     , m_cacheSizeLabel{new QLabel(this)}
 {
-    auto* displayGroupBox = new QGroupBox(tr("Display"), this);
-    auto* displayGroup    = new QButtonGroup(this);
-    auto* displayLayout   = new QVBoxLayout(displayGroupBox);
-
-    displayGroup->addButton(m_preferPlaying);
-    displayGroup->addButton(m_preferSelection);
-
-    displayLayout->addWidget(m_preferPlaying);
-    displayLayout->addWidget(m_preferSelection);
-
     auto* sourceGroupBox = new QGroupBox(tr("Local Source"), this);
     auto* sourceGroup    = new QButtonGroup(this);
     auto* sourceLayout   = new QVBoxLayout(sourceGroupBox);
@@ -134,25 +120,15 @@ ArtworkPageWidget::ArtworkPageWidget(SettingsManager* settings, CoverRepository*
     cacheLayout->setColumnStretch(cacheLayout->columnCount(), 1);
 
     auto* layout = new QGridLayout(this);
-    layout->addWidget(displayGroupBox, 0, 0);
-    layout->addWidget(sourceGroupBox, 1, 0);
-    layout->addWidget(thumbnailsGroupBox, 2, 0);
-    layout->addWidget(cacheGroupBox, 3, 0);
+    row          = 0;
+    layout->addWidget(sourceGroupBox, row++, 0);
+    layout->addWidget(thumbnailsGroupBox, row++, 0);
+    layout->addWidget(cacheGroupBox, row++, 0);
     layout->setRowStretch(layout->rowCount(), 1);
 }
 
 void ArtworkPageWidget::load()
 {
-    const auto option
-        = static_cast<SelectionDisplay>(m_settings->value<Settings::Gui::Internal::TrackCoverDisplayOption>());
-
-    if(option == SelectionDisplay::PreferPlaying) {
-        m_preferPlaying->setChecked(true);
-    }
-    else {
-        m_preferSelection->setChecked(true);
-    }
-
     const auto sourcePref = static_cast<ArtworkSourcePreference>(
         m_settings->value<Settings::Gui::Internal::TrackCoverSourcePreference>());
     if(sourcePref == ArtworkSourcePreference::PreferEmbedded) {
@@ -169,12 +145,9 @@ void ArtworkPageWidget::load()
 
 void ArtworkPageWidget::apply()
 {
-    const SelectionDisplay option
-        = m_preferPlaying->isChecked() ? SelectionDisplay::PreferPlaying : SelectionDisplay::PreferSelection;
     const ArtworkSourcePreference sourcePref = m_preferEmbedded->isChecked() ? ArtworkSourcePreference::PreferEmbedded
                                                                              : ArtworkSourcePreference::PreferDirectory;
 
-    m_settings->set<Settings::Gui::Internal::TrackCoverDisplayOption>(static_cast<int>(option));
     m_settings->set<Settings::Gui::Internal::TrackCoverSourcePreference>(static_cast<int>(sourcePref));
     m_settings->set<Settings::Gui::Internal::TrackCoverThumbnailGroupScript>(m_thumbnailGroupScript->text());
     m_settings->set<Settings::Gui::Internal::PixmapCacheSize>(m_pixmapCache->value());
@@ -182,7 +155,6 @@ void ArtworkPageWidget::apply()
 
 void ArtworkPageWidget::reset()
 {
-    m_settings->reset<Settings::Gui::Internal::TrackCoverDisplayOption>();
     m_settings->reset<Settings::Gui::Internal::TrackCoverSourcePreference>();
     m_settings->reset<Settings::Gui::Internal::TrackCoverThumbnailGroupScript>();
     m_settings->reset<Settings::Gui::Internal::PixmapCacheSize>();

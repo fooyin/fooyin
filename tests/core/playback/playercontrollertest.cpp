@@ -211,18 +211,27 @@ TEST(PlayerControllerTest, PlayAndPauseEmitTransportStateChanges)
     QSignalSpy transportPauseSpy{&controller, &PlayerController::transportPauseRequested};
     QSignalSpy playStateSpy{&controller, &PlayerController::playStateChanged};
 
+    EXPECT_FALSE(controller.playbackStarted());
+
     controller.changeCurrentTrack(makeTrack(u"/tmp/pending.flac"_s, 12, 1500));
     controller.play();
 
     EXPECT_EQ(controller.playState(), Player::PlayState::Playing);
+    EXPECT_TRUE(controller.playbackStarted());
     EXPECT_EQ(transportPlaySpy.count(), 1);
     EXPECT_EQ(playStateSpy.count(), 1);
 
     controller.pause();
 
     EXPECT_EQ(controller.playState(), Player::PlayState::Paused);
+    EXPECT_TRUE(controller.playbackStarted());
     EXPECT_EQ(transportPauseSpy.count(), 1);
     EXPECT_EQ(playStateSpy.count(), 2);
+
+    controller.syncPlayStateFromEngine(Player::PlayState::Stopped);
+
+    EXPECT_EQ(controller.playState(), Player::PlayState::Stopped);
+    EXPECT_TRUE(controller.playbackStarted());
 }
 
 TEST(PlayerControllerTest, StopAfterQueueItemArmsWhenSelectedItemCommits)

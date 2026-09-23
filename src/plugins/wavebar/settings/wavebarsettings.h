@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include <core/player/playerdefs.h>
 #include <utils/settings/settingsentry.h>
 
 namespace Fooyin {
@@ -59,41 +58,6 @@ enum class PeakDisplayMode : uint8_t
     Average,
     SmoothedAverage,
 };
-
-enum class TrackPreference : uint8_t
-{
-    PlayingTrack = 0,
-    SelectedTrack,
-    PlayingTrackSelectedWhenStopped,
-    PlayingTrackBlankAtStartup,
-    PlayingTrackBlankWhenStopped,
-};
-
-enum class PreferredTrackSource : uint8_t
-{
-    Playing = 0,
-    Selected,
-    None,
-};
-
-constexpr PreferredTrackSource preferredTrackSource(TrackPreference preference, Player::PlayState playState,
-                                                    bool playbackStarted)
-{
-    switch(preference) {
-        case TrackPreference::SelectedTrack:
-            return PreferredTrackSource::Selected;
-        case TrackPreference::PlayingTrackSelectedWhenStopped:
-            return playState == Player::PlayState::Stopped ? PreferredTrackSource::Selected
-                                                           : PreferredTrackSource::Playing;
-        case TrackPreference::PlayingTrackBlankAtStartup:
-            return playbackStarted ? PreferredTrackSource::Playing : PreferredTrackSource::None;
-        case TrackPreference::PlayingTrackBlankWhenStopped:
-            return playState == Player::PlayState::Stopped ? PreferredTrackSource::None : PreferredTrackSource::Playing;
-        case TrackPreference::PlayingTrack:
-        default:
-            return PreferredTrackSource::Playing;
-    }
-}
 
 class WaveBarSettings
 {

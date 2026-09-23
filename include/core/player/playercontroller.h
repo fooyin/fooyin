@@ -45,6 +45,8 @@ public:
 
     /** Returns the current state (playing, paused or stopped). */
     [[nodiscard]] Player::PlayState playState() const;
+    /** Returns whether playback has started since the application was launched. */
+    [[nodiscard]] bool playbackStarted() const;
 
     /** Returns the current playlist mode (shuffle and repeat flags). */
     [[nodiscard]] Playlist::PlayModes playMode() const;

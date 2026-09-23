@@ -26,6 +26,7 @@
 #include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QRadioButton>
 #include <QVBoxLayout>
@@ -37,8 +38,8 @@ CoverWidgetConfigDialog::CoverWidgetConfigDialog(CoverWidget* coverWidget, QWidg
     : WidgetConfigDialog{coverWidget, tr("Cover Widget Settings"), parent}
     , m_coverTypeGroup{new QButtonGroup(this)}
     , m_alignmentGroup{new QButtonGroup(this)}
+    , m_trackPreference{new QComboBox(this)}
     , m_keepAspectRatio{new QCheckBox(tr("Keep aspect ratio"), this)}
-    , m_showStoppedTrack{new QCheckBox(tr("Show current track when playback is stopped"), this)}
     , m_fadeEnabled{new QCheckBox(tr("Fade cover changes"), this)}
     , m_fadeDuration{new SliderEditor(tr("Fade length"), this)}
     , m_doubleClick{new QComboBox(this)}
@@ -79,11 +80,25 @@ CoverWidgetConfigDialog::CoverWidgetConfigDialog(CoverWidget* coverWidget, QWidg
     m_alignmentGroup->addButton(leftButton, Qt::AlignLeft);
     m_alignmentGroup->addButton(rightButton, Qt::AlignRight);
 
+    m_trackPreference->addItem(tr("Playing track"), static_cast<int>(TrackDisplayPreference::PlayingTrack));
+    m_trackPreference->addItem(tr("Selected track"), static_cast<int>(TrackDisplayPreference::SelectedTrack));
+    m_trackPreference->addItem(tr("Playing (or selected when stopped)"),
+                               static_cast<int>(TrackDisplayPreference::PlayingTrackSelectedWhenStopped));
+    m_trackPreference->addItem(tr("Playing (blank at startup)"),
+                               static_cast<int>(TrackDisplayPreference::PlayingTrackBlankAtStartup));
+    m_trackPreference->addItem(tr("Playing (blank when stopped)"),
+                               static_cast<int>(TrackDisplayPreference::PlayingTrackBlankWhenStopped));
+
+    auto* trackPreferenceLayout = new QHBoxLayout();
+    trackPreferenceLayout->addWidget(new QLabel(tr("Preferred track") + u":"_s, displayGroup));
+    trackPreferenceLayout->addWidget(m_trackPreference);
+    trackPreferenceLayout->addStretch();
+
     int row{0};
     displayLayout->addWidget(coverTypeBox, row, 0);
     displayLayout->addWidget(alignmentBox, row++, 1);
+    displayLayout->addLayout(trackPreferenceLayout, row++, 0, 1, 2);
     displayLayout->addWidget(m_keepAspectRatio, row++, 0, 1, 2);
-    displayLayout->addWidget(m_showStoppedTrack, row++, 0, 1, 2);
     displayLayout->setColumnStretch(0, 1);
     displayLayout->setColumnStretch(1, 1);
 
@@ -144,7 +159,7 @@ void CoverWidgetConfigDialog::setConfig(const CoverWidget::ConfigData& config)
     }
 
     m_keepAspectRatio->setChecked(config.keepAspectRatio);
-    m_showStoppedTrack->setChecked(config.showStoppedTrack);
+    m_trackPreference->setCurrentIndex(m_trackPreference->findData(static_cast<int>(config.trackPreference)));
     m_fadeEnabled->setChecked(config.fadeCoverChanges);
     m_fadeDuration->setValue(config.fadeDurationMs);
     m_doubleClick->setCurrentIndex(m_doubleClick->findData(static_cast<int>(config.doubleClickAction)));
@@ -157,7 +172,7 @@ CoverWidget::ConfigData CoverWidgetConfigDialog::config() const
         .coverType         = static_cast<Track::Cover>(m_coverTypeGroup->checkedId()),
         .coverAlignment    = static_cast<Qt::Alignment>(m_alignmentGroup->checkedId()),
         .keepAspectRatio   = m_keepAspectRatio->isChecked(),
-        .showStoppedTrack  = m_showStoppedTrack->isChecked(),
+        .trackPreference   = static_cast<TrackDisplayPreference>(m_trackPreference->currentData().toInt()),
         .fadeCoverChanges  = m_fadeEnabled->isChecked(),
         .fadeDurationMs    = m_fadeDuration->value(),
         .doubleClickAction = static_cast<CoverAction>(m_doubleClick->currentData().toInt()),
@@ -170,7 +185,7 @@ void CoverWidgetConfigDialog::mergeExternalConfig(const CoverWidget::ConfigData&
 {
     mergeExternalFields(previous, current, &CoverWidget::ConfigData::coverType,
                         &CoverWidget::ConfigData::coverAlignment, &CoverWidget::ConfigData::keepAspectRatio,
-                        &CoverWidget::ConfigData::showStoppedTrack, &CoverWidget::ConfigData::fadeCoverChanges,
+                        &CoverWidget::ConfigData::trackPreference, &CoverWidget::ConfigData::fadeCoverChanges,
                         &CoverWidget::ConfigData::fadeDurationMs, &CoverWidget::ConfigData::doubleClickAction,
                         &CoverWidget::ConfigData::middleClickAction);
 }

@@ -75,7 +75,6 @@ private:
     SettingsManager* m_settings;
 
     Track m_playingTrack;
-    bool m_playbackStarted;
     DbConnectionPoolPtr m_dbPool;
     std::vector<QPointer<WaveBarWidget>> m_waveBars;
 

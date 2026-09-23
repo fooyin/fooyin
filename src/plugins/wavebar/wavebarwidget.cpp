@@ -77,7 +77,7 @@ int normaliseSupersampleFactor(int factor)
 
 WaveBarWidget::WaveBarWidget(std::shared_ptr<AudioLoader> audioLoader, DbConnectionPoolPtr dbPool,
                              PlayerController* playerController, TrackSelectionController* trackSelection,
-                             SettingsManager* settings, bool playbackStarted, QWidget* parent)
+                             SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_playerController{playerController}
     , m_trackSelection{trackSelection}
@@ -85,7 +85,6 @@ WaveBarWidget::WaveBarWidget(std::shared_ptr<AudioLoader> audioLoader, DbConnect
     , m_container{new SeekContainer(m_playerController, this)}
     , m_seekbar{new WaveSeekBar(this)}
     , m_builder{std::make_unique<WaveformBuilder>(std::move(audioLoader), std::move(dbPool), settings, this)}
-    , m_playbackStarted{playbackStarted}
 {
     setMinimumSize(100, 20);
     resize(100, 100);
@@ -113,10 +112,8 @@ WaveBarWidget::WaveBarWidget(std::shared_ptr<AudioLoader> audioLoader, DbConnect
         }
         updatePlayedThresholdMarker();
     });
-    QObject::connect(playerController, &PlayerController::playStateChanged, this, [this](Player::PlayState state) {
-        m_playbackStarted |= state != Player::PlayState::Stopped;
-        refreshTrack();
-    });
+    QObject::connect(playerController, &PlayerController::playStateChanged, this,
+                     [this](Player::PlayState) { refreshTrack(); });
     QObject::connect(playerController, &PlayerController::currentTrackSeekableChanged, this,
                      &WaveBarWidget::syncPlaybackState);
     QObject::connect(m_seekbar, &WaveSeekBar::sliderMoved, playerController, &PlayerController::seek);
@@ -233,9 +230,10 @@ void WaveBarWidget::saveDefaults(const ConfigData& config) const
 {
     auto validated{config};
 
-    validated.cursorWidth       = std::clamp(validated.cursorWidth, 1, 20);
-    validated.trackPreference   = std::clamp(validated.trackPreference, static_cast<int>(TrackPreference::PlayingTrack),
-                                             static_cast<int>(TrackPreference::PlayingTrackBlankWhenStopped));
+    validated.cursorWidth = std::clamp(validated.cursorWidth, 1, 20);
+    validated.trackPreference
+        = std::clamp(validated.trackPreference, static_cast<int>(TrackDisplayPreference::PlayingTrack),
+                     static_cast<int>(TrackDisplayPreference::PlayingTrackBlankWhenStopped));
     validated.barWidth          = std::clamp(validated.barWidth, 1, 50);
     validated.barGap            = std::clamp(validated.barGap, 0, 50);
     validated.supersampleFactor = normaliseSupersampleFactor(validated.supersampleFactor);
@@ -302,9 +300,10 @@ void WaveBarWidget::applyConfig(const ConfigData& config)
 {
     auto validated{config};
 
-    validated.cursorWidth       = std::clamp(validated.cursorWidth, 1, 20);
-    validated.trackPreference   = std::clamp(validated.trackPreference, static_cast<int>(TrackPreference::PlayingTrack),
-                                             static_cast<int>(TrackPreference::PlayingTrackBlankWhenStopped));
+    validated.cursorWidth = std::clamp(validated.cursorWidth, 1, 20);
+    validated.trackPreference
+        = std::clamp(validated.trackPreference, static_cast<int>(TrackDisplayPreference::PlayingTrack),
+                     static_cast<int>(TrackDisplayPreference::PlayingTrackBlankWhenStopped));
     validated.barWidth          = std::clamp(validated.barWidth, 1, 50);
     validated.barGap            = std::clamp(validated.barGap, 0, 50);
     validated.supersampleFactor = normaliseSupersampleFactor(validated.supersampleFactor);
@@ -795,8 +794,8 @@ Track WaveBarWidget::preferredTrack() const
 {
     const Track playingTrack  = m_playerController->currentTrack();
     const Track selectedTrack = m_trackSelection->displayTrack();
-    const auto preference     = static_cast<TrackPreference>(m_config.trackPreference);
-    switch(preferredTrackSource(preference, m_playerController->playState(), m_playbackStarted)) {
+    const auto preference     = static_cast<TrackDisplayPreference>(m_config.trackPreference);
+    switch(preferredTrackSource(preference, m_playerController->playState(), m_playerController->playbackStarted())) {
         case PreferredTrackSource::Playing:
             return playingTrack.isValid() ? playingTrack : selectedTrack;
         case PreferredTrackSource::Selected:

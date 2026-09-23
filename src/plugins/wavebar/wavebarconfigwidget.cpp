@@ -94,14 +94,14 @@ WaveBarConfigDialog::WaveBarConfigDialog(WaveBarWidget* waveBar, QWidget* parent
     tabs->addTab(coloursPage, tr("Colours"));
     tabs->addTab(globalPage, tr("Global"));
 
-    m_trackPreference->addItem(tr("Playing track"), static_cast<int>(TrackPreference::PlayingTrack));
-    m_trackPreference->addItem(tr("Selected track"), static_cast<int>(TrackPreference::SelectedTrack));
+    m_trackPreference->addItem(tr("Playing track"), static_cast<int>(TrackDisplayPreference::PlayingTrack));
+    m_trackPreference->addItem(tr("Selected track"), static_cast<int>(TrackDisplayPreference::SelectedTrack));
     m_trackPreference->addItem(tr("Playing (or selected when stopped)"),
-                               static_cast<int>(TrackPreference::PlayingTrackSelectedWhenStopped));
+                               static_cast<int>(TrackDisplayPreference::PlayingTrackSelectedWhenStopped));
     m_trackPreference->addItem(tr("Playing (blank at startup)"),
-                               static_cast<int>(TrackPreference::PlayingTrackBlankAtStartup));
+                               static_cast<int>(TrackDisplayPreference::PlayingTrackBlankAtStartup));
     m_trackPreference->addItem(tr("Playing (blank when stopped)"),
-                               static_cast<int>(TrackPreference::PlayingTrackBlankWhenStopped));
+                               static_cast<int>(TrackDisplayPreference::PlayingTrackBlankWhenStopped));
 
     auto* generalGroup       = new QGroupBox(tr("General"), displayPage);
     auto* generalGroupLayout = new QGridLayout(generalGroup);

@@ -71,8 +71,7 @@ void registerLayouts(LayoutProvider& layoutProvider)
 } // namespace
 
 WaveBarPlugin::WaveBarPlugin()
-    : m_playbackStarted{false}
-    , m_dbPool{DbConnectionPool::create(dbConnectionParams(), u"wavebar"_s)}
+    : m_dbPool{DbConnectionPool::create(dbConnectionParams(), u"wavebar"_s)}
 { }
 
 WaveBarPlugin::~WaveBarPlugin() = default;
@@ -83,12 +82,9 @@ void WaveBarPlugin::initialise(const CorePluginContext& context)
     m_engine           = context.engine;
     m_audioLoader      = context.audioLoader;
     m_settings         = context.settingsManager;
-    m_playbackStarted  = m_playerController->playState() != Player::PlayState::Stopped;
 
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
                      [this](const Track& track) { m_playingTrack = track; });
-    QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
-                     [this](Player::PlayState state) { m_playbackStarted |= state != Player::PlayState::Stopped; });
     QObject::connect(m_engine, &EngineController::trackChanged, this, [this](const Track& track) {
         if(m_playingTrack.id() == track.id()) {
             removeTrack(m_playingTrack);
@@ -150,8 +146,7 @@ void WaveBarPlugin::initialise(const GuiPluginContext& context)
 
 FyWidget* WaveBarPlugin::createWavebar()
 {
-    auto* wavebar = new WaveBarWidget(m_audioLoader, m_dbPool, m_playerController, m_trackSelection, m_settings,
-                                      m_playbackStarted);
+    auto* wavebar = new WaveBarWidget(m_audioLoader, m_dbPool, m_playerController, m_trackSelection, m_settings);
 
     registerWaveBar(wavebar);
 

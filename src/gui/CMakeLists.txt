@@ -41,6 +41,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/theme/fythemefile.h
     ${CMAKE_SOURCE_DIR}/include/gui/theme/themeregistry.h
     ${CMAKE_SOURCE_DIR}/include/gui/trackmimedata.h
+    ${CMAKE_SOURCE_DIR}/include/gui/trackdisplay.h
     ${CMAKE_SOURCE_DIR}/include/gui/trackselectioncontroller.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgetcontainer.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgetfilter.h

@@ -45,8 +45,8 @@ protected:
 private:
     QButtonGroup* m_coverTypeGroup;
     QButtonGroup* m_alignmentGroup;
+    QComboBox* m_trackPreference;
     QCheckBox* m_keepAspectRatio;
-    QCheckBox* m_showStoppedTrack;
 
     QCheckBox* m_fadeEnabled;
     SliderEditor* m_fadeDuration;

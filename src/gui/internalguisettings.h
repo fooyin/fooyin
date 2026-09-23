@@ -36,12 +36,6 @@ enum class IconThemeOption : uint8_t
     Dark,
 };
 
-enum class SelectionDisplay : uint8_t
-{
-    PreferPlaying = 0,
-    PreferSelection
-};
-
 struct CoverPaths
 {
     static constexpr qint32 Magic   = -0x434F5650;
@@ -200,7 +194,6 @@ enum GuiInternalSettings : uint32_t
     SystemPalette                            = 12 | Type::Variant,
     WindowTitleTrackScript                   = 13 | Type::String,
     TrackCoverPaths                          = 14 | Type::Variant,
-    TrackCoverDisplayOption                  = 15 | Type::Int,
     PlaylistImagePadding                     = 16 | Type::Int,
     PlaylistImagePaddingTop                  = 17 | Type::Int,
     PixmapCacheSize                          = 18 | Type::Int,
@@ -208,7 +201,6 @@ enum GuiInternalSettings : uint32_t
     ShowTrayIcon                             = 21 | Type::Bool,
     TrayOnClose                              = 22 | Type::Bool,
     PlaylistMiddleClick                      = 27 | Type::Int,
-    InfoDisplayPrefer                        = 28 | Type::Int,
     LibTreeIconSize                          = 29 | Type::Variant,
     ArtworkSaveMethods                       = 30 | Type::Variant,
     ArtworkAutoSearch                        = 31 | Type::Bool,

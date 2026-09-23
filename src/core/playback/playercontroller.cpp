@@ -243,6 +243,7 @@ public:
     PlaylistHandler* m_playlistHandler{nullptr};
 
     Player::PlayState m_playState{Player::PlayState::Stopped};
+    bool m_playbackStarted{false};
     Playlist::PlayModes m_playMode;
 
     PlaybackSession m_session;
@@ -527,6 +528,8 @@ void PlayerControllerPrivate::requestTrackChange(const Player::TrackChangeReques
 
 bool PlayerControllerPrivate::updatePlaystate(Player::PlayState state)
 {
+    m_playbackStarted |= state != Player::PlayState::Stopped;
+
     const auto prevState = std::exchange(m_playState, state);
     if(prevState != state) {
         Q_EMIT m_self->playStateChanged(state, prevState);
@@ -2009,6 +2012,11 @@ void PlayerController::restorePlaybackQueue(PlaybackQueueSnapshot snapshot)
 Player::PlayState PlayerController::playState() const
 {
     return p->m_playState;
+}
+
+bool PlayerController::playbackStarted() const
+{
+    return p->m_playbackStarted;
 }
 
 Playlist::PlayModes PlayerController::playMode() const
