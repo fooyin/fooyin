@@ -71,6 +71,9 @@ public:
                            QObject* source = nullptr);
     bool setDspEnabled(Engine::DspChainScope scope, uint64_t instanceId, bool enabled, QObject* source = nullptr);
 
+    uint64_t addDsp(const QString& dspId, const QByteArray& settings, Engine::DspChainScope scope, size_t index);
+    bool removeDsp(const QString& dspId, uint64_t instanceId);
+
 Q_SIGNALS:
     void dspInstancesChanged();
     void dspSettingsChanged(uint64_t instanceId, const QByteArray& settings, QObject* source);

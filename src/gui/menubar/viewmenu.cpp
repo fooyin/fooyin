@@ -139,11 +139,8 @@ void ViewMenu::registerDspSettingsActions(DspSettingsRegistry* registry, DspSett
         command->setDescription(provider->viewMenuText());
         command->setCategories(viewCategory);
 
-        QObject::connect(action, &QAction::triggered, this, [controller, dspId]() {
-            if(controller->hasDsp(dspId)) {
-                controller->showDialog(dspId, Utils::getMainWindow());
-            }
-        });
+        QObject::connect(action, &QAction::triggered, this,
+                         [controller, dspId]() { controller->showDialog(dspId, Utils::getMainWindow()); });
 
         m_registeredDspActions.insert(dspId);
         m_dspActions.emplace(dspId, command);
@@ -172,12 +169,7 @@ void ViewMenu::refreshDspSettingsActions(DspSettingsController* controller)
             continue;
         }
 
-        if(controller->hasDsp(dspId)) {
-            viewMenu->insertAction(m_dspInsertBefore, action);
-        }
-        else {
-            viewMenu->menu()->removeAction(action);
-        }
+        viewMenu->insertAction(m_dspInsertBefore, action);
     }
 }
 } // namespace Fooyin
