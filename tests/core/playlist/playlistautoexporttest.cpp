@@ -50,12 +50,14 @@ void initDataResources()
 }
 
 namespace Fooyin::Testing {
-void ensureCoreApplication()
+QCoreApplication* ensureCoreApplication()
 {
     initDataResources();
 
     static const QTemporaryDir testRoot{QDir::tempPath() + u"/fooyin-autoexport-test-XXXXXX"_s};
-    ASSERT_TRUE(testRoot.isValid());
+    if(!testRoot.isValid()) {
+        return nullptr;
+    }
 
     qputenv("XDG_CONFIG_HOME", testRoot.filePath(u"config"_s).toUtf8());
     qputenv("XDG_DATA_HOME", testRoot.filePath(u"data"_s).toUtf8());
@@ -67,15 +69,19 @@ void ensureCoreApplication()
     QStandardPaths::setTestModeEnabled(true);
 #endif
 
-    if(QCoreApplication::instance()) {
-        return;
+    if(auto* app = QCoreApplication::instance()) {
+        return app;
     }
 
     static int argc{1};
-    static char appName[] = "fooyin-autoexport-test";
-    static char* argv[]   = {appName, nullptr};
-    static const QCoreApplication app{argc, argv};
-    QCoreApplication::setApplicationName(QString::fromLatin1(appName) + u'-' + QDir{testRoot.path()}.dirName());
+    static char appName[]        = "fooyin-autoexport-test";
+    static char* argv[]          = {appName, nullptr};
+    static QCoreApplication* app = []() {
+        auto* instance = new QCoreApplication(argc, argv);
+        QCoreApplication::setApplicationName(QString::fromLatin1(appName) + u'-' + QDir{testRoot.path()}.dirName());
+        return instance;
+    }();
+    return app;
 }
 
 Track makeTrack(const QString& path, int id)
@@ -91,7 +97,7 @@ class PlaylistAutoExportTest : public ::testing::Test
 protected:
     void SetUp() override
     {
-        ensureCoreApplication();
+        ASSERT_NE(ensureCoreApplication(), nullptr);
 
         QFile::remove(Core::settingsPath());
         QFile::remove(Core::statePath());
@@ -111,7 +117,6 @@ protected:
     void TearDown() override
     {
         QCoreApplication::processEvents();
-        m_application.reset();
     }
 
     SettingsManager* settings() const
