@@ -545,13 +545,9 @@ QSize PlaylistDelegate::sizeHint(const QStyleOptionViewItem& option, const QMode
     const bool usesStyleBaseHeight
         = (type == PlaylistItem::Track && index.data(PlaylistItem::Role::UsesStyleBaseHeight).toBool());
 
-    QSize hintSize{size};
-    if(usesStyleBaseHeight) {
-        hintSize.setHeight(0);
-    }
-
     const int margin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) * 5;
-    const QSize hint = style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, hintSize, widget);
+    const QSize hint = usesStyleBaseHeight ? Gui::itemViewTextSizeHint(opt, {size.width(), opt.fontMetrics.height()})
+                                           : style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, size, widget);
 
     if(size.width() <= 0) {
         size.setWidth(hint.width());

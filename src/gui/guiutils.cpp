@@ -114,6 +114,20 @@ QIcon::Mode itemViewIconMode(const QStyleOptionViewItem& option)
     return QIcon::Normal;
 }
 
+QSize itemViewTextSizeHint(const QStyleOptionViewItem& option, const QSize& textSize)
+{
+    QStyleOptionViewItem textOption{option};
+    textOption.features |= QStyleOptionViewItem::HasDisplay;
+
+    const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
+    QSize size          = style->sizeFromContents(QStyle::CT_ItemViewItem, &textOption, textSize, option.widget);
+
+    const int verticalPadding
+        = std::max(2, style->pixelMetric(QStyle::PM_FocusFrameHMargin, &textOption, option.widget));
+    size.setHeight(std::max(size.height(), textSize.height() + (2 * verticalPadding)));
+    return size;
+}
+
 QRect itemViewTextRect(const QStyleOptionViewItem& option)
 {
     const QStyle* style     = option.widget ? option.widget->style() : QApplication::style();

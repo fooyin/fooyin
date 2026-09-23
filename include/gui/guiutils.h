@@ -66,6 +66,8 @@ FYGUI_EXPORT bool styleUsesNormalItemViewSelectionText(const QString& styleName,
 FYGUI_EXPORT QPalette::ColorRole itemViewSelectionTextRole(const QStyleOptionViewItem& option);
 FYGUI_EXPORT QIcon::Mode itemViewIconMode(const QStyleOptionViewItem& option);
 
+/*! Returns the style-provided size hint for custom-painted item text. */
+FYGUI_EXPORT QSize itemViewTextSizeHint(const QStyleOptionViewItem& option, const QSize& textSize);
 /*! Returns the style-provided item text rectangle with spacing for leading row decorations. */
 FYGUI_EXPORT QRect itemViewTextRect(const QStyleOptionViewItem& option);
 FYGUI_EXPORT int itemViewTextMargin(const QWidget* widget, const QStyleOption* option = nullptr);

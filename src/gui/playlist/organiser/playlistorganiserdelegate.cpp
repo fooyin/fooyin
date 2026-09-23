@@ -242,25 +242,15 @@ QSize PlaylistOrganiserDelegate::sizeHint(const QStyleOptionViewItem& option, co
     opt.text.clear();
 
     const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
-    const int hMargin   = style->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, opt.widget) * 2;
-    const int vMargin   = style->pixelMetric(QStyle::PM_FocusFrameVMargin, nullptr, opt.widget) * 2;
+    const int textGap   = style->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, opt.widget) * 2;
 
     const QSize leftSize = richTextNaturalSize(opt, index.data(PlaylistOrganiserItem::RichText).value<RichText>());
     const QSize rightSize
         = richTextNaturalSize(opt, index.data(PlaylistOrganiserItem::RichRightText).value<RichText>());
-    QSize contentSize{leftSize.width() + rightSize.width()
-                          + (rightSize.width() > 0 ? hMargin + RightContentPadding : 0),
-                      std::max(leftSize.height(), rightSize.height())};
+    const QSize contentSize{leftSize.width() + rightSize.width()
+                                + (rightSize.width() > 0 ? textGap + RightContentPadding : 0),
+                            std::max(leftSize.height(), rightSize.height())};
 
-    if(!opt.icon.isNull()) {
-        contentSize.rwidth() += opt.decorationSize.width() + hMargin;
-        contentSize.rheight() = std::max(contentSize.height(), opt.decorationSize.height());
-    }
-
-    QSize size = style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, contentSize, opt.widget);
-    size.setWidth(std::max(size.width(), contentSize.width() + (2 * hMargin)));
-    size.setHeight(std::max(size.height(), contentSize.height() + (2 * vMargin)));
-
-    return size;
+    return Gui::itemViewTextSizeHint(opt, contentSize);
 }
 } // namespace Fooyin

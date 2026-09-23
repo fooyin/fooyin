@@ -314,12 +314,7 @@ QSize LibraryTreeDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
     const QStyle* style  = opt.widget ? opt.widget->style() : QApplication::style();
     const int textGap    = style->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, opt.widget) * 2;
     const QSize textSize = richTextSize(opt, index, textGap);
-    const QSize baseTextSize{textSize.width(), opt.fontMetrics.height()};
-    const QSize baseSize     = style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, baseTextSize, opt.widget);
-    const int verticalMargin = std::max(0, baseSize.height() - baseTextSize.height());
-
-    QSize size = style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, textSize, opt.widget);
-    size.setHeight(std::max(size.height(), textSize.height() + verticalMargin));
+    QSize size           = Gui::itemViewTextSizeHint(opt, textSize);
 
     const QSize sizeHint = index.data(Qt::SizeHintRole).toSize();
     if(sizeHint.height() > 0) {

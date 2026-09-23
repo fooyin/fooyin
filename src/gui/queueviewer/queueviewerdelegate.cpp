@@ -256,9 +256,7 @@ QSize QueueViewerDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
                              + (rightSize.width() > 0 ? textGap + RightContentPadding + TextElideMargin : 0),
                          std::max(leftSize.height(), rightSize.height())};
 
-    QSize size = style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, textSize, opt.widget);
-
-    return size;
+    return Gui::itemViewTextSizeHint(opt, textSize);
 }
 
 void QueueViewerDelegate::setArtworkCornerRadius(int radius)

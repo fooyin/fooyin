@@ -249,16 +249,9 @@ QSize FilterDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelI
 
     opt.decorationSize = option.decorationSize;
 
-    const QStyle* style  = opt.widget ? opt.widget->style() : QApplication::style();
     const bool iconMode  = view && view->viewMode() == ExpandedTreeView::ViewMode::Icon;
     const QSize textSize = iconMode ? QSize{} : richTextSize(opt, index);
-    QSize size           = iconMode ? iconItemSize(opt, index)
-                                    : style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, textSize, opt.widget);
-
-    if(!iconMode) {
-        const int verticalPadding = std::max(2, style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget));
-        size.setHeight(std::max(size.height(), textSize.height() + (2 * verticalPadding)));
-    }
+    QSize size           = iconMode ? iconItemSize(opt, index) : Gui::itemViewTextSizeHint(opt, textSize);
 
     const QSize sizeHint = index.data(Qt::SizeHintRole).toSize();
     if(sizeHint.height() > 0) {
