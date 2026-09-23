@@ -47,15 +47,16 @@ create_fooyin_plugin_internal(
     SOURCES ${SOURCES}
 )
 
-if(UNIX
-   AND NOT APPLE
-   AND TARGET Qt6::DBus
-)
-    target_compile_definitions(globalhotkeys PRIVATE FOOYIN_HAVE_GLOBAL_SHORTCUT_PORTAL)
+if(UNIX AND NOT APPLE)
+    if(TARGET Qt6::DBus)
+        target_compile_definitions(globalhotkeys PRIVATE FOOYIN_HAVE_GLOBAL_SHORTCUT_PORTAL)
+    endif()
+
+    if(X11_FOUND)
+        target_compile_definitions(globalhotkeys PRIVATE FOOYIN_HAVE_X11_GLOBAL_SHORTCUTS)
+    endif()
 elseif(WIN32)
     target_compile_definitions(globalhotkeys PRIVATE FOOYIN_HAVE_WINDOWS_GLOBAL_SHORTCUTS)
 elseif(APPLE)
     target_compile_definitions(globalhotkeys PRIVATE FOOYIN_HAVE_MACOS_GLOBAL_SHORTCUTS)
-elseif(X11_FOUND)
-    target_compile_definitions(globalhotkeys PRIVATE FOOYIN_HAVE_X11_GLOBAL_SHORTCUTS)
 endif()
