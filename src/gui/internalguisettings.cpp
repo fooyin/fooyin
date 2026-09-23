@@ -102,6 +102,8 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<StartupBehaviour>(3, u"Interface/StartupBehaviour"_s);
     m_settings->createSetting<WaitForTracks>(true, u"Interface/WaitForTracks"_s);
     m_settings->createSetting<IconTheme>(0, u"Theme/IconTheme"_s);
+    m_settings->createSetting<ApplicationIcon>(0, u"Interface/ApplicationIcon"_s);
+    m_settings->createSetting<CustomApplicationIcon>(QString{}, u"Interface/CustomApplicationIcon"_s);
     m_settings->createSetting<CursorFollowsPlayback>(false, u"Playlist/CursorFollowsPlayback"_s);
     m_settings->createSetting<PlaybackFollowsCursor>(false, u"Playlist/PlaybackFollowsCursor"_s);
     m_settings->createSetting<ToolButtonStyle>(static_cast<int>(Stretch), u"Interface/ToolButtonStyle"_s);

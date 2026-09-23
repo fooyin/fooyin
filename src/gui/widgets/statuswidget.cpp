@@ -219,6 +219,13 @@ void StatusWidgetPrivate::setupConnections()
 
     m_settings->subscribe<Settings::Gui::IconTheme>(
         this, [this]() { m_scanCancelButton->setIcon(Gui::iconFromTheme(Constants::Icons::Close)); });
+
+    auto refreshApplicationIcon = [this]() {
+        m_iconLabel->setPixmap(Gui::applicationIcon().pixmap(IconSize, m_iconLabel->devicePixelRatioF()));
+    };
+    m_settings->subscribe<Settings::Gui::ApplicationIcon>(this, refreshApplicationIcon);
+    m_settings->subscribe<Settings::Gui::CustomApplicationIcon>(this, refreshApplicationIcon);
+
     m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this]() {
         updatePlayingText();
         updateSelectionText();

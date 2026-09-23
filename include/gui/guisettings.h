@@ -107,6 +107,8 @@ enum GuiSettings : uint32_t
     RatingEditorOnlyOnHover    = 50 | Type::Bool,
     LoveEditorOnlyOnHover      = 51 | Type::Bool,
     ConfirmPlaylistRemoval     = 52 | Type::Bool,
+    ApplicationIcon            = 53 | Type::Int,
+    CustomApplicationIcon      = 54 | Type::String,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Settings::Gui

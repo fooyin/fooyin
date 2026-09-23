@@ -169,6 +169,7 @@ private:
     void applyTheme();
     void handleSystemThemeChanged();
     bool setIconTheme() const;
+    void updateApplicationIcon();
     void refreshThemeIcons();
     void refreshAutoDetectedIconTheme() const;
     void registerLayouts();

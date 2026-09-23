@@ -226,6 +226,13 @@ void SettingsDialogController::restoreState(const QSettings& settings)
         }
     }
 }
+
+void SettingsDialogController::setWindowIcon(const QIcon& icon)
+{
+    if(p->dialog) {
+        p->dialog->setWindowIcon(icon);
+    }
+}
 } // namespace Fooyin
 
 #include "utils/settings/moc_settingsdialogcontroller.cpp"

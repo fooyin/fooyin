@@ -20,7 +20,6 @@
 #include "aboutdialog.h"
 
 #include <core/constants.h>
-#include <gui/guiconstants.h>
 #include <gui/iconloader.h>
 #include <utils/utils.h>
 
@@ -78,6 +77,7 @@ QString description()
 namespace Fooyin {
 AboutDialog::AboutDialog(QWidget* parent)
     : QDialog{parent}
+    , m_icon{new QLabel(this)}
 {
     setWindowTitle(tr("About fooyin"));
     auto* layout = new QGridLayout(this);
@@ -93,12 +93,16 @@ AboutDialog::AboutDialog(QWidget* parent)
     buttonBox->addButton(closeButton, QDialogButtonBox::AcceptRole);
     QObject::connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
 
-    auto* logo = new QLabel(this);
-    logo->setPixmap(Gui::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize));
+    refreshApplicationIcon();
 
-    layout->addWidget(logo, 0, 0);
+    layout->addWidget(m_icon, 0, 0);
     layout->addWidget(aboutLabel, 0, 1);
     layout->addWidget(buttonBox, 4, 1);
+}
+
+void AboutDialog::refreshApplicationIcon()
+{
+    m_icon->setPixmap(Gui::applicationIcon().pixmap(IconSize));
 }
 } // namespace Fooyin
 
