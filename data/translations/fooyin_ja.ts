@@ -119,12 +119,12 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="83"/>
         <source>Remove</source>
-        <translation>消去</translation>
+        <translation>削除</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="487"/>
         <source>Layout Editing</source>
-        <translation>レイアウトの編集</translation>
+        <translation>レイアウト編集</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="489"/>
@@ -389,7 +389,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="145"/>
         <source>Normalised rating</source>
-        <translation type="unfinished"></translation>
+        <translation>正規化された評価</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="149"/>
@@ -410,12 +410,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="155"/>
         <source>Love flag: 1 when loved, empty otherwise</source>
-        <translation type="unfinished"></translation>
+        <translation>「いいね」 フラグ : 愛されている場合は 1、そうでない場合は空</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Interactive heart editor for the Love flag</source>
-        <translation type="unfinished"></translation>
+        <translation>「いいね」 フラグ用インタラクティブ・ハート・エディタ</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="159"/>
@@ -577,27 +577,27 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="283"/>
         <source>Returns true when x is greater than y</source>
-        <translation type="unfinished"></translation>
+        <translation>x が y より大きい場合に true を返します</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="318"/>
         <source>Finds the first substring position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>最初の部分文字列の位置 (1を基準) を検索</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="321"/>
         <source>Finds the first substring position ignoring case (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>大文字小文字を区別せずに、最初の部分文字列の位置を検索 (1を基準)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="324"/>
         <source>Finds the last substring position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>最後の部分文字列の位置を検索 (1を基準)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="327"/>
         <source>Finds the last substring position ignoring case (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>大文字小文字を区別せずに、最後の部分文字列の位置を検索 (1を基準)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="330"/>
@@ -607,22 +607,22 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="340"/>
         <source>Returns the first shortest string</source>
-        <translation type="unfinished"></translation>
+        <translation>最も短い文字列の最初のものを返す</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="343"/>
         <source>Finds the first character position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>最初の文字の位置を検索 (1を基準)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="346"/>
         <source>Finds the last character position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>最後の文字の位置を検索 (1を基準)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="355"/>
         <source>Returns true when a is longer than b</source>
-        <translation type="unfinished"></translation>
+        <translation>a が b より長い場合に true を返す</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="357"/>
@@ -632,7 +632,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="412"/>
         <source>Builds a clickable link that launches an application</source>
-        <translation type="unfinished"></translation>
+        <translation>アプリケーションを起動するクリック可能なリンクを作成</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="418"/>
@@ -642,7 +642,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="474"/>
         <source>Returns the value at the one-based index</source>
-        <translation type="unfinished"></translation>
+        <translation>1を起点とするインデックス位置の値を返します</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="483"/>
@@ -662,7 +662,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="96"/>
         <source>Track artists not present in album artists</source>
-        <translation type="unfinished"></translation>
+        <translation>アルバムアーティストに含まれていないトラックアーティスト</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="143"/>
@@ -725,7 +725,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="231"/>
         <source>Input decoder backend used for the current playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>現在再生中のトラックに使用されている入力デコーダーのバックエンド</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="233"/>
@@ -1364,12 +1364,12 @@
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="68"/>
         <source>Five star compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>5つ星の互換性</translation>
     </message>
     <message>
         <location filename="../../src/core/engine/input/ratingtagpolicy.cpp" line="70"/>
         <source>Raw 0–255 byte scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Raw 0～255バイトのスケール</translation>
     </message>
 </context>
 <context>
@@ -1385,7 +1385,7 @@
     <message>
         <location filename="../../src/core/engine/verification/accuraterip.cpp" line="496"/>
         <source>The selected tracks do not form a correct gapless CD rip.</source>
-        <translation type="unfinished"></translation>
+        <translation>選択されたトラックは、正しいギャップレスCDリッピングを構成していません。</translation>
     </message>
 </context>
 <context>
@@ -1476,7 +1476,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="68"/>
         <source>Artwork Finder</source>
-        <translation>アートワークファインダ</translation>
+        <translation>アートワークファインダー</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="70"/>
@@ -1713,14 +1713,14 @@
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="345"/>
         <source>Exported artwork to %Ln file(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個のファイルにアートワークをエクスポートしました</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="353"/>
         <source>Exported artwork to %Ln file(s); some exports failed</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個のファイルにアートワークをエクスポートしました(一部失敗)</numerusform>
         </translation>
     </message>
@@ -1783,14 +1783,14 @@
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="197"/>
         <source>Artwork found in %Ln file(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個のファイルにアートワークが見つかりました</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="198"/>
         <source>%Ln file(s) selected</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個のファイルを選択中</numerusform>
         </translation>
     </message>
@@ -1868,7 +1868,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="70"/>
         <source>Search parameters</source>
-        <translation>パラメータ検索</translation>
+        <translation>検索パラメーター</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="76"/>
@@ -1919,7 +1919,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="100"/>
         <source>Use front cover before placeholder</source>
-        <translation type="unfinished"></translation>
+        <translation>プレースホルダーの前に前面カバーを使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="114"/>
@@ -1959,7 +1959,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="134"/>
         <source>Use the track&apos;s front cover when artist artwork is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>アーティストのアートワークが使用できない場合は、トラックの前面カバーを使用する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="138"/>
@@ -2154,7 +2154,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/cdda/accuraterip.cpp" line="53"/>
         <source>AccurateRip verification of mixed-mode discs is not supported</source>
-        <translation type="unfinished"></translation>
+        <translation>混合モードディスクの AccurateRip 検証はサポートされていません</translation>
     </message>
 </context>
 <context>
@@ -2162,30 +2162,30 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="62"/>
         <source>The CD drive is already in use</source>
-        <translation type="unfinished"></translation>
+        <translation>CD ドライブは既に使用されています</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="356"/>
         <source>Audio CD identity is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>オーディオ CD ID が使用できません</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="375"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="587"/>
         <source>The disc in the CD drive has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>CD ドライブのディスクが変更されました</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="467"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="522"/>
         <source>Invalid CD disc identity</source>
-        <translation type="unfinished"></translation>
+        <translation>無効な CD ディスク ID</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="499"/>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="610"/>
         <source>The requested audio CD is not inserted</source>
-        <translation type="unfinished"></translation>
+        <translation>要求されたオーディオ CD が挿入されていません</translation>
     </message>
 </context>
 <context>
@@ -2193,12 +2193,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/cdda/drive/cddrivebackend.cpp" line="41"/>
         <source>Secure CD extraction is unavailable for this drive backend</source>
-        <translation type="unfinished"></translation>
+        <translation>このドライブバックエンドではセキュアな CD 抽出を使用できません</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/cddrivebackend.cpp" line="48"/>
         <source>CD read speed control is unavailable for this drive backend</source>
-        <translation type="unfinished"></translation>
+        <translation>CD 読み取り速度制御は、このドライブバックエンドでは使用できません</translation>
     </message>
 </context>
 <context>
@@ -2206,19 +2206,21 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="49"/>
         <source>Lookup with AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip による検索</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="53"/>
         <source>Drive Settings — %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ドライブ設定 — %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="58"/>
         <source>Compensates for a drive that reads slightly before or after the requested CD position.
 Positive values read later; negative values read earlier.
 Use AccurateRip to look up the correction for this drive model, or enter a known value manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>要求された CD の位置よりわずかに前または後ろを読み取るドライブの誤差を補正します。
+正の値は読み取り位置を遅らせ、負の値は読み取り位置を早めます。
+AccurateRip を使用してこのドライブモデルの補正値を検索するか、既知の値を手動で入力してください。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="62"/>
@@ -2228,12 +2230,12 @@ Use AccurateRip to look up the correction for this drive model, or enter a known
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="63"/>
         <source>Standard</source>
-        <translation type="unfinished"></translation>
+        <translation>標準</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="64"/>
         <source>Paranoid</source>
-        <translation type="unfinished"></translation>
+        <translation>パラノイド</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="66"/>
@@ -2241,7 +2243,10 @@ Use AccurateRip to look up the correction for this drive model, or enter a known
 Disabled: direct reads with no verification (fastest).
 Standard: verifies overlapping reads and retries inconsistencies (slower).
 Paranoid: performs the most thorough available checking and additional retries (slowest).</source>
-        <translation type="unfinished"></translation>
+        <translation>リッピング中のエラー検出と修正を制御します。再生には影響しません。
+無効 : 検証を行わない直接読み取り (最速)。
+標準 : 重複する読み取りを検証し、不整合がある場合は再試行します (やや遅い)。
+徹底 : 利用可能な最も徹底的なチェックと追加の再試行を行います (最も遅い)。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="71"/>
@@ -2251,59 +2256,59 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="77"/>
         <source>Limits the drive&apos;s read speed while ripping; playback is unaffected.</source>
-        <translation type="unfinished"></translation>
+        <translation>リッピング中はドライブの読み取り速度を制限しますが、再生には影響しません。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="78"/>
         <source>This drive doesn&apos;t support read-speed control.</source>
-        <translation type="unfinished"></translation>
+        <translation>このドライブは読み取り速度の制御に対応していません。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="88"/>
         <source>Read offset correction</source>
-        <translation type="unfinished"></translation>
+        <translation>読み取りオフセット補正</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="91"/>
         <source>Ripping security</source>
-        <translation type="unfinished"></translation>
+        <translation>リッピングのセキュリティ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="93"/>
         <source>Drive speed limit</source>
-        <translation type="unfinished"></translation>
+        <translation>ドライブ速度制限</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="119"/>
         <source>Looking up drive…</source>
-        <translation type="unfinished"></translation>
+        <translation>ドライブを検索中…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="129"/>
         <source>Lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>検索に失敗しました : %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="135"/>
         <source>AccurateRip returned an unexpectedly large drive list.</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip が予想以上に多くのドライブ一覧を返しました。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="142"/>
         <source>No unambiguous entry was found for this drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>このドライブについて、明確なエントリは見つかりませんでした。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="147"/>
         <source>This drive was purged because its offset is not consistent.</source>
-        <translation type="unfinished"></translation>
+        <translation>このドライブは、オフセットに一貫性がないため、消去されました。</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="154"/>
         <source>Found correction: %1 (%Ln submission(s), %2% agreement).</source>
         <extracomment>Correction = CD Drive read offset correction</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>修正箇所が見つかりました : %1 (%Ln 件の提出、%2% の一致)。</numerusform>
         </translation>
     </message>
 </context>
@@ -2312,12 +2317,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="43"/>
         <source>CD sector conversion overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>CD セクター変換オーバーフロー</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="89"/>
         <source>The CD has an invalid TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>CD の TOC が無効です</translation>
     </message>
 </context>
 <context>
@@ -2325,33 +2330,33 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="181"/>
         <source>Audio CD decoder is not initialised</source>
-        <translation type="unfinished"></translation>
+        <translation>オーディオ CD デコーダーが初期化されていません</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="188"/>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="322"/>
         <source>Audio CD read was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>オーディオ CD の読み取りがキャンセルされました</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="269"/>
         <source>CD drive returned no audio data</source>
-        <translation type="unfinished"></translation>
+        <translation>CD ドライブからオーディオデータが返されませんでした</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="336"/>
         <source>The disc in the CD drive has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>CD ドライブ内のディスクが変更されました</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="351"/>
         <source>Could not limit CD read speed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>CD の読み取り速度を制限できませんでした : %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="363"/>
         <source>The selected CD drive became unavailable; extraction settings for %1 are being used</source>
-        <translation type="unfinished"></translation>
+        <translation>選択した CD ドライブが使用できなくなりました。 %1 の抽出設定が使用されています</translation>
     </message>
 </context>
 <context>
@@ -2359,12 +2364,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="72"/>
         <source>Open audio &amp;CD…</source>
-        <translation type="unfinished"></translation>
+        <translation>オーディオ CD を開く(&amp;C)…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="73"/>
         <source>Open an audio CD for playback or ripping</source>
-        <translation type="unfinished"></translation>
+        <translation>再生またはリッピングを行うために、オーディオ CD を開く</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="75"/>
@@ -2376,22 +2381,22 @@ Paranoid: performs the most thorough available checking and additional retries (
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="118"/>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="249"/>
         <source>Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>オーディオ CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="199"/>
         <source>This disc is not present in AccurateRip.</source>
-        <translation type="unfinished"></translation>
+        <translation>このディスクは AccurateRip に登録されていません。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="200"/>
         <source>AccurateRip lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip の検索に失敗しました : %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddaplugin.cpp" line="207"/>
         <source>AccurateRip returned an unexpectedly large disc record.</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip が、予想以上に大きなディスクレコードを返しました。</translation>
     </message>
 </context>
 <context>
@@ -2399,17 +2404,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="51"/>
         <source>Track %1</source>
-        <translation type="unfinished"></translation>
+        <translation>トラック %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="55"/>
         <source>Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>オーディオ CD</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddareader.cpp" line="115"/>
         <source>Invalid audio CD identity</source>
-        <translation type="unfinished"></translation>
+        <translation>オーディオ CD の識別情報が無効です</translation>
     </message>
 </context>
 <context>
@@ -2417,21 +2422,21 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="130"/>
         <source>CD read offset correction padded %Ln frame(s) with silence before the readable audio range</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD の読み取りオフセット補正により、読み取り可能なオーディオ範囲の前に、%Ln フレーム分の無音部分を挿入しました</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="170"/>
         <source>CD read offset correction padded %Ln frame(s) with silence after the readable audio range</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD の読み取りオフセット補正により、読み取り可能なオーディオ範囲の後に、%Lnフ レーム分の無音部分を追加しました</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddasectorreader.cpp" line="234"/>
         <source>CD extraction was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>CD の抽出がキャンセルされました</translation>
     </message>
 </context>
 <context>
@@ -2439,12 +2444,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="262"/>
         <source>The selected optical drive is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>選択した光学ドライブは利用できません</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="270"/>
         <source>The selected optical drive is unavailable: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>選択した光学ドライブは利用できません : %1</translation>
     </message>
 </context>
 <context>
@@ -2452,88 +2457,88 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="100"/>
         <source>Details: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>詳細 : %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="105"/>
         <source>Check the disk drive device permissions.</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスクドライブのデバイス権限を確認してください。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="307"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="385"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="524"/>
         <source>Failed to access audio CD drive %1</source>
-        <translation type="unfinished"></translation>
+        <translation>オーディオ CD ドライブ %1 にアクセスできませんでした</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="317"/>
         <source>Failed to read the CD TOC from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 から CD の TOC を読み込めませんでした</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="330"/>
         <source>Failed to read a CD track boundary from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 から CD トラックの境界を読み取れませんでした</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="393"/>
         <source>Failed to read CD audio sectors from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 から CD オーディオセクタを読み取れませんでした</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="422"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="535"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="546"/>
         <source>Failed to initialise secure CD extraction for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 のセキュア CD 抽出の初期化に失敗しました</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="437"/>
         <source>Failed to seek the secure CD reader for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 用のセキュア CD リーダーが見つかりませんでした</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="457"/>
         <source>Failed to read securely from audio CD drive %1</source>
-        <translation type="unfinished"></translation>
+        <translation>オーディオ CD ドライブ %1 から安全に読み込むことができませんでした</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="468"/>
         <source>CD extraction corrected %Ln read inconsistency event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD の抽出により、%Ln の読み取り不整合イベントが修正されました</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="471"/>
         <source>CD extraction encountered %Ln read error event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD の抽出中に、%Ln 件の読み取りエラーが発生しました</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="474"/>
         <source>CD extraction exhausted retries and concealed %Ln unreadable sector event(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>CD の抽出で再試行回数が上限に達し、%Ln の読み取り不能セクタイベントが隠蔽されました</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="485"/>
         <source>The requested CD read-speed limit is invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>指定された CD の読み取り速度制限は無効です</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="492"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="497"/>
         <source>Failed to limit the CD read speed for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 の CD 読み取り速度を制限できませんでした</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="555"/>
         <source>CD operation was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>CD の再生が中止されました</translation>
     </message>
 </context>
 <context>
@@ -2541,12 +2546,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="68"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>更新</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="69"/>
         <source>Drive settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>ドライブの設定…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="70"/>
@@ -2556,22 +2561,22 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="71"/>
         <source>Read CD-Text</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Text の読み込み</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="72"/>
         <source>Auto lookup metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>メタデータの自動検索</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="73"/>
         <source>Lookup metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>メタデータの検索…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="74"/>
         <source>Rip…</source>
-        <translation type="unfinished"></translation>
+        <translation>リップ…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="75"/>
@@ -2586,7 +2591,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="78"/>
         <source>Open Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>オーディオ CD を開く</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="82"/>
@@ -2606,104 +2611,104 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="105"/>
         <source>CD drive</source>
-        <translation type="unfinished"></translation>
+        <translation>CD ドライブ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="143"/>
         <source>Check all</source>
-        <translation type="unfinished"></translation>
+        <translation>すべてチェック</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="144"/>
         <source>Uncheck all</source>
-        <translation type="unfinished"></translation>
+        <translation>すべてチェック解除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="179"/>
         <source>Searching for CD drives…</source>
-        <translation type="unfinished"></translation>
+        <translation>CD ドライブを検索中…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="227"/>
         <source>Reading audio CD…</source>
-        <translation type="unfinished"></translation>
+        <translation>オーディオ CD を読み込み中…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="262"/>
         <source>No CD drives found.</source>
-        <translation type="unfinished"></translation>
+        <translation>CD ドライブが見つかりません。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="287"/>
         <source>No audio CD is available in this drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>このドライブにはオーディオ CD が挿入されていません。</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="305"/>
         <source>Found %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 個のオーディオトラックが見つかりました。</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="337"/>
         <source>Reading CD-Text…</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Text を読み込み中…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="360"/>
         <source>Failed to read CD-Text: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Text の読み取りに失敗しました : %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="374"/>
         <source>No CD-Text found.</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Text が見つかりません。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="384"/>
         <source>CD-Text was read; existing metadata was kept.</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Text が読み込まれ、既存のメタデータは保持されました。</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="392"/>
         <source>Applied CD-Text to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln のオーディオトラックに CD-Text を適用しました。</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="461"/>
         <source>Automatic metadata lookup needs review.</source>
-        <translation type="unfinished"></translation>
+        <translation>メタデータの自動検索について、見直しが必要です。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="471"/>
         <source>Automatic metadata lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>メタデータの自動検索に失敗しました : %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="476"/>
         <source>Looking up audio CD metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>オーディオ CD のメタデータを検索中…</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="500"/>
         <source>Applied automatic metadata to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 個のオーディオトラックにメタデータを自動的に適用しました。</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="504"/>
         <source>No automatic metadata match found.</source>
-        <translation type="unfinished"></translation>
+        <translation>メタデータの自動一致は見つかりませんでした。</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="549"/>
         <source>Applied metadata to %Ln audio track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 個のオーディオトラックにメタデータを適用しました。</numerusform>
         </translation>
     </message>
 </context>
@@ -2712,37 +2717,37 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="76"/>
         <source>Accurately ripped</source>
-        <translation type="unfinished"></translation>
+        <translation>正確にリッピングされました</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="78"/>
         <source>Mismatch</source>
-        <translation type="unfinished"></translation>
+        <translation>不一致</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="80"/>
         <source>Incomplete</source>
-        <translation type="unfinished"></translation>
+        <translation>未完了</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="82"/>
         <source>Unsupported format</source>
-        <translation type="unfinished"></translation>
+        <translation>サポートされていない形式</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="93"/>
         <source>AccurateRip Verification</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip の検証</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="105"/>
         <source>Verified: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>検証済み : %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="106"/>
         <source>Mismatched: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>不一致 : %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="116"/>
@@ -2763,52 +2768,52 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="117"/>
         <source>Confidence</source>
-        <translation type="unfinished"></translation>
+        <translation>信頼</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="118"/>
         <source>AR v1 CRC</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v1 CRC</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="118"/>
         <source>AR v2 CRC</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v2 CRC</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="119"/>
         <source>Database CRCs</source>
-        <translation type="unfinished"></translation>
+        <translation>データベース CRC</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="172"/>
         <source>Verify with AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip で検証</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="174"/>
         <source>Lookup metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>メタデータの検索中…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="175"/>
         <source>Converter Setup…</source>
-        <translation type="unfinished"></translation>
+        <translation>コンバータの設定…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="176"/>
         <source>Rip</source>
-        <translation type="unfinished"></translation>
+        <translation>リップ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="179"/>
         <source>Rip Audio CD</source>
-        <translation type="unfinished"></translation>
+        <translation>オーディオ CD のリッピング</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="183"/>
         <source>Album information</source>
-        <translation type="unfinished"></translation>
+        <translation>アルバム情報</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="199"/>
@@ -2838,12 +2843,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="212"/>
         <source>Track information</source>
-        <translation type="unfinished"></translation>
+        <translation>トラック情報</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="215"/>
         <source>#</source>
-        <translation type="unfinished"></translation>
+        <translation>#</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="215"/>
@@ -2853,27 +2858,27 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="260"/>
         <source>Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセット</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="276"/>
         <source>Check all</source>
-        <translation type="unfinished"></translation>
+        <translation>すべてチェック</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="277"/>
         <source>Uncheck all</source>
-        <translation type="unfinished"></translation>
+        <translation>すべてチェック解除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="305"/>
         <source>Drive offset has not been configured. Check Drive settings before ripping.</source>
-        <translation type="unfinished"></translation>
+        <translation>ドライブのオフセットが設定されていません。リッピングを行う前に、ドライブの設定を確認してください。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="420"/>
         <source>Looking up disc in AccurateRip…</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip でディスクを検索中…</translation>
     </message>
 </context>
 <context>
@@ -2881,7 +2886,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/colourbutton.cpp" line="204"/>
         <source>Select Colour</source>
-        <translation>色を選択</translation>
+        <translation>色の選択</translation>
     </message>
 </context>
 <context>
@@ -2954,7 +2959,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="206"/>
         <source>Custom image — %1</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタムイメージ — %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="214"/>
@@ -2970,27 +2975,27 @@ Paranoid: performs the most thorough available checking and additional retries (
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="45"/>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="51"/>
         <source>Choose…</source>
-        <translation type="unfinished"></translation>
+        <translation>選択…</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="66"/>
         <source>Focused widget</source>
-        <translation type="unfinished"></translation>
+        <translation>フォーカスされたウィジェット</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="67"/>
         <source>Use the command as if invoked from the focused widget</source>
-        <translation type="unfinished"></translation>
+        <translation>フォーカスされているウィジェットから呼び出されたかのように、そのコマンドを実行</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="68"/>
         <source>Now playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>現在再生中のトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="69"/>
         <source>Use the currently playing track for selection-based commands</source>
-        <translation type="unfinished"></translation>
+        <translation>選択ベースのコマンドでは、現在再生中のトラックを使用する</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="70"/>
@@ -3000,32 +3005,32 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="71"/>
         <source>Use all tracks and the command context of the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のプレイリストのすべてのトラックとコマンドコンテキストを使用する</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="72"/>
         <source>Current playlist selection</source>
-        <translation type="unfinished"></translation>
+        <translation>現在選択中のプレイリスト</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="73"/>
         <source>Use the selected tracks and command context of the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のプレイリストで選択されているトラックとコマンドのコンテキストを使用する</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="74"/>
         <source>Active selection</source>
-        <translation type="unfinished"></translation>
+        <translation>アクティブな選択範囲</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="75"/>
         <source>Use the most recently active track selection, even after focus moves elsewhere.</source>
-        <translation type="unfinished"></translation>
+        <translation>フォーカスが他の場所に移動した後でも、最後にアクティブだったトラックの選択を維持します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="86"/>
         <source>Choose an icon</source>
-        <translation type="unfinished"></translation>
+        <translation>アイコンの選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="94"/>
@@ -3050,7 +3055,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="105"/>
         <source>Target</source>
-        <translation type="unfinished"></translation>
+        <translation>ターゲット</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="110"/>
@@ -3075,7 +3080,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="136"/>
         <source>No command selected</source>
-        <translation type="unfinished"></translation>
+        <translation>コマンドが選択されていません</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="137"/>
@@ -3088,17 +3093,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="136"/>
         <source>Choose Command</source>
-        <translation type="unfinished"></translation>
+        <translation>コマンドの選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="139"/>
         <source>Filter commands</source>
-        <translation type="unfinished"></translation>
+        <translation>コマンドのフィルタリング</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="142"/>
         <source>Enter a raw `$cmdlink` id or alias</source>
-        <translation type="unfinished"></translation>
+        <translation>`$cmdlink` の ID またはエイリアスを RAW 形式で入力</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="145"/>
@@ -3113,12 +3118,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="160"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="163"/>
         <source>Command ID or alias</source>
-        <translation type="unfinished"></translation>
+        <translation>コマンド ID またはエイリアス</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/commandpickerdialog.cpp" line="253"/>
@@ -3182,22 +3187,22 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="69"/>
         <source>Converted and verified</source>
-        <translation type="unfinished"></translation>
+        <translation>変換および検証済み</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="70"/>
         <source>Converted</source>
-        <translation type="unfinished"></translation>
+        <translation>変換済み</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="72"/>
         <source>Skipped</source>
-        <translation type="unfinished"></translation>
+        <translation>スキップ</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="74"/>
         <source>Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>失敗</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="76"/>
@@ -3207,7 +3212,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="113"/>
         <source>Audio Conversion Results</source>
-        <translation type="unfinished"></translation>
+        <translation>オーディオ変換の結果</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="121"/>
@@ -3232,7 +3237,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="158"/>
         <source>Converted: %1 | Skipped: %2 | Failed: %3 | Cancelled: %4</source>
-        <translation type="unfinished"></translation>
+        <translation>変換済み : %1 | スキップ : %2 | 失敗 : %3 | キャンセル : %4</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="475"/>
@@ -3283,7 +3288,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="245"/>
         <source>Converting %1 of %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>変換中 %1 / %2 (%3)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="249"/>
@@ -3394,7 +3399,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="118"/>
         <source>Show converted files when finished</source>
-        <translation type="unfinished"></translation>
+        <translation>変換が完了したら、変換されたファイルを表示する</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="120"/>
@@ -3815,7 +3820,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message numerus="yes">
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1230"/>
         <source>%Ln DSP(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個の DSP</numerusform>
         </translation>
     </message>
@@ -3837,7 +3842,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1247"/>
         <source>Show converted files</source>
-        <translation type="unfinished"></translation>
+        <translation>変換されたファイルを表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1250"/>
@@ -3880,7 +3885,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="491"/>
         <source>Front cover</source>
-        <translation>表ジャケット</translation>
+        <translation>表カバー</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="492"/>
@@ -3973,7 +3978,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="41"/>
         <source>Show current track when playback is stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>再生が停止しているときに現在のトラックを表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="42"/>
@@ -4053,12 +4058,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="108"/>
         <source>Next available artwork type</source>
-        <translation type="unfinished"></translation>
+        <translation>次に利用可能なアートワークの種類</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="109"/>
         <source>Show track</source>
-        <translation type="unfinished"></translation>
+        <translation>トラックを表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="110"/>
@@ -4068,7 +4073,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="111"/>
         <source>Open properties</source>
-        <translation type="unfinished"></translation>
+        <translation>プロパティを開く</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="117"/>
@@ -4473,7 +4478,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="103"/>
         <source>Expand/collapse or play now</source>
-        <translation type="unfinished"></translation>
+        <translation>展開 / 折りたたみ、または今すぐ再生</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="106"/>
@@ -4486,7 +4491,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="196"/>
         <source>Columns</source>
-        <translation>カラム</translation>
+        <translation>列</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="207"/>
@@ -4552,7 +4557,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="86"/>
         <source>Show artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークを表示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="87"/>
@@ -4562,7 +4567,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="89"/>
         <source>Retention</source>
-        <translation type="unfinished"></translation>
+        <translation>保持</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="92"/>
@@ -4582,42 +4587,42 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="118"/>
         <source>1 hour</source>
-        <translation type="unfinished"></translation>
+        <translation>1 時間</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="119"/>
         <source>12 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>12 時間</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="120"/>
         <source>24 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>24 時間</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="121"/>
         <source>72 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>72 時間</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="125"/>
         <source>Search for artwork via MusicBrainz ID only</source>
-        <translation type="unfinished"></translation>
+        <translation>MusicBrainz ID のみでアートワークを検索</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="126"/>
         <source>Search via MusicBrainz ID, or upload if not found</source>
-        <translation type="unfinished"></translation>
+        <translation>MusicBrainz IDで検索するか、見つからない場合はアップロードしてください</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="128"/>
         <source>Upload artwork only</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークのみアップロード</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="129"/>
         <source>Upload artwork, or search via MusicBrainz ID if not found</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークをアップロードするか、見つからない場合は MusicBrainz ID で検索してください</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="142"/>
@@ -5469,7 +5474,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="720"/>
         <source>Band:</source>
-        <translation>バンド:</translation>
+        <translation>バンド :</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="721"/>
@@ -5528,21 +5533,21 @@ Effects here process the final combined output.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="987"/>
         <source>The first %Ln non-empty line(s) must contain integer values.</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>最初の %Ln 行(空でない行)には整数値を含める必要があります。</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="998"/>
         <source>The preset file contains %Ln band value(s).</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>プリセットファイルには %Ln 個のバンド値が含まれています。</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="999"/>
         <source>Expected %Ln band value(s).</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個のバンド値が必要です。</numerusform>
         </translation>
     </message>
@@ -5584,7 +5589,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="72"/>
         <source>Leave empty to group by the displayed values</source>
-        <translation type="unfinished"></translation>
+        <translation>表示されている値でグループ分けする場合は、空欄のままにしてください</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="81"/>
@@ -5647,7 +5652,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="163"/>
         <source>Save Layout</source>
-        <translation>レイアウト保存</translation>
+        <translation>レイアウトを保存</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="163"/>
@@ -5826,7 +5831,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="44"/>
         <source>Add &amp;files…</source>
-        <translation>ファイルを追加(&amp;F)...</translation>
+        <translation>ファイルを追加(&amp;F)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="45"/>
@@ -5836,7 +5841,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="51"/>
         <source>Ad&amp;d folders…</source>
-        <translation>フォルダーを追加(&amp;D)...</translation>
+        <translation>フォルダーを追加(&amp;D)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="52"/>
@@ -5861,7 +5866,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="68"/>
         <source>Create a new empty playlist</source>
-        <translation>新たに空のプレイリストを作る</translation>
+        <translation>新たに空のプレイリストを作成</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="75"/>
@@ -5871,7 +5876,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="76"/>
         <source>Create a new autoplaylist</source>
-        <translation>新たに自動プレイリストを作る</translation>
+        <translation>新たに自動プレイリストを作成</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="83"/>
@@ -5939,14 +5944,14 @@ Effects here process the final combined output.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="51"/>
         <source>Are you sure you want to permanently delete %Ln track(s)?</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個のトラックを完全に削除してもよろしいですか?</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="52"/>
         <source>Are you sure you want to delete %Ln track(s)?</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個のトラックを削除してもよろしいですか?</numerusform>
         </translation>
     </message>
@@ -6027,56 +6032,56 @@ Effects here process the final combined output.</source>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="511"/>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="527"/>
         <source>Pending operation(s): %Ln</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>保留中の操作 : %Ln 件</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="544"/>
         <source>Aborted: %Ln operation(s) not run</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>中止 : %Ln 件の操作が実行されませんでした</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="550"/>
         <source>Completed %Ln operation(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 件の操作が完了しました</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="557"/>
         <source>%Ln succeeded</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 件が成功</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="560"/>
         <source>%Ln failed</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 件が失敗</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="563"/>
         <source>%Ln skipped</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 件がスキップ</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="566"/>
         <source>%Ln cancelled</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 件がキャンセル</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="571"/>
         <source>Completed %Ln operation(s): %1</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 件の操作が完了しました : %1</numerusform>
         </translation>
     </message>
@@ -6284,7 +6289,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="108"/>
         <source>Confirm before deleting source archives after extraction</source>
-        <translation type="unfinished"></translation>
+        <translation>解凍後にソースアーカイブを削除する前に確認してください</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="129"/>
@@ -6294,12 +6299,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="142"/>
         <source>Remove empty parent folders</source>
-        <translation type="unfinished"></translation>
+        <translation>空の親フォルダーを削除する</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="143"/>
         <source>Remove empty parent folders after moving or deleting files, stopping at the library root</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルの移動または削除後、ライブラリのルートディレクトリまでを上限として、空になった親フォルダーを削除する</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="161"/>
@@ -6344,7 +6349,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="235"/>
         <source>Delete currently playing file</source>
-        <translation type="unfinished"></translation>
+        <translation>現在再生中のファイルを削除する</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="279"/>
@@ -6354,36 +6359,36 @@ Effects here process the final combined output.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="280"/>
         <source>Deleted %Ln track(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個のトラックを削除しました</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="288"/>
         <source>Could not move &quot;%1&quot; to the trash. Delete it permanently?</source>
-        <translation type="unfinished"></translation>
+        <translation>「%1」をゴミ箱に移動できませんでした。完全に削除しますか？</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="290"/>
         <source>Could not move %Ln file(s) to the trash. Delete them permanently?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 個のファイルをゴミ箱に移動できませんでした。完全に削除しますか？</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="292"/>
         <source>Move to Trash Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>「ごみ箱へ移動」に失敗しました</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="295"/>
         <source>Permanent deletion cannot be undone.</source>
-        <translation type="unfinished"></translation>
+        <translation>完全削除は元に戻すことができません。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="296"/>
         <source>Delete Permanently</source>
-        <translation type="unfinished"></translation>
+        <translation>完全に削除する</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="329"/>
@@ -6610,7 +6615,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="59"/>
         <source>Manage columns…</source>
-        <translation type="unfinished"></translation>
+        <translation>列の管理…</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="106"/>
@@ -6666,7 +6671,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="189"/>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="193"/>
         <source>Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>今すぐ再生</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="69"/>
@@ -6778,7 +6783,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="639"/>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="895"/>
         <source>Columns</source>
-        <translation>カラム</translation>
+        <translation>列</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="706"/>
@@ -6930,12 +6935,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="52"/>
         <source>Every library filter needs a name.</source>
-        <translation type="unfinished"></translation>
+        <translation>すべてのライブラリフィルターには名前が必要です。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="57"/>
         <source>The expression for library filter &quot;%1&quot; is invalid.</source>
-        <translation type="unfinished"></translation>
+        <translation>ライブラリフィルター「%1」の式が無効です。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="89"/>
@@ -6955,12 +6960,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="138"/>
         <source>Enter name</source>
-        <translation type="unfinished"></translation>
+        <translation>名前を入力</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="140"/>
         <source>Enter expression</source>
-        <translation type="unfinished"></translation>
+        <translation>式を入力</translation>
     </message>
 </context>
 <context>
@@ -6990,22 +6995,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="50"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>すべて</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="76"/>
         <source>Saved Filter Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>保存済みフィルター選択ツール</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="165"/>
         <source>Rename &apos;All&apos; filter</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;すべて&apos;フィルターの名前を変更</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="168"/>
         <source>Rename &apos;All&apos; Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;すべて&apos;フィルターの名前を変更</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="168"/>
@@ -7015,7 +7020,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="177"/>
         <source>Manage library filters…</source>
-        <translation type="unfinished"></translation>
+        <translation>ライブラリ フィルターの管理…</translation>
     </message>
 </context>
 <context>
@@ -7023,27 +7028,27 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="52"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>すべて</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="63"/>
         <source>Library filter</source>
-        <translation type="unfinished"></translation>
+        <translation>ライブラリフィルター</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="86"/>
         <source>Saved Filter Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>保存済みフィルタータブ</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="465"/>
         <source>Rename tab</source>
-        <translation type="unfinished"></translation>
+        <translation>タブ名の変更</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="472"/>
         <source>Tabs position</source>
-        <translation type="unfinished"></translation>
+        <translation>タブの位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="484"/>
@@ -7058,7 +7063,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="489"/>
         <source>Manage library filters…</source>
-        <translation type="unfinished"></translation>
+        <translation>ライブラリ フィルターの管理…</translation>
     </message>
 </context>
 <context>
@@ -7121,17 +7126,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="108"/>
         <source>User Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>ユーザーフォルダー</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
         <source>Open Configuration Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>設定フォルダーを開く</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="112"/>
         <source>Open Data Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>データフォルダーを開く</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
@@ -7174,17 +7179,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="279"/>
         <source>macOS global shortcuts must contain one key combination</source>
-        <translation type="unfinished"></translation>
+        <translation>macOS のグローバルショートカットには、1つのキーの組み合わせを含める必要があります</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="287"/>
         <source>The shortcut cannot be represented on macOS</source>
-        <translation type="unfinished"></translation>
+        <translation>このショートカットは macOS では表示できません</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="299"/>
         <source>macOS rejected this shortcut (error %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>macOS はこのショートカットを拒否しました (エラー %1)</translation>
     </message>
 </context>
 <context>
@@ -7192,32 +7197,32 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="120"/>
         <source>The shortcut cannot be represented by the Wayland portal</source>
-        <translation type="unfinished"></translation>
+        <translation>そのショートカットは、Wayland ポータルでは表現できません</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="281"/>
         <source>Global shortcut registration was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>グローバルショートカットの登録がキャンセルされました</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="282"/>
         <source>The Wayland portal rejected the global shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Wayland ポータルがグローバルショートカットを拒否しました</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="290"/>
         <source>The Wayland portal returned an invalid shortcut session</source>
-        <translation type="unfinished"></translation>
+        <translation>Wayland ポータルから無効なショートカットセッションが返されました</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="314"/>
         <source>The Wayland portal did not bind this shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Wayland ポータルは、このショートカットを割り当てていませんでした</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="350"/>
         <source>The Wayland global shortcut session was closed</source>
-        <translation type="unfinished"></translation>
+        <translation>Wayland のグローバルショートカットセッションが閉じられました</translation>
     </message>
 </context>
 <context>
@@ -7225,22 +7230,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="165"/>
         <source>Windows global shortcuts must contain one key combination</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows のグローバルショートカットには、1つのキーの組み合わせを含める必要があります</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="173"/>
         <source>The shortcut cannot be represented on Windows</source>
-        <translation type="unfinished"></translation>
+        <translation>このショートカットは Windows では表示できません</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="179"/>
         <source>Windows cannot register any more global shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows では、これ以上グローバルショートカットを登録できません</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="188"/>
         <source>Windows rejected this shortcut (error %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows はこのショートカットを拒否しました (エラー %1)</translation>
     </message>
 </context>
 <context>
@@ -7248,22 +7253,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutx11backend.cpp" line="227"/>
         <source>X11 global shortcuts must contain one key combination</source>
-        <translation type="unfinished"></translation>
+        <translation>X11 のグローバルショートカットには、1つのキーの組み合わせを含める必要があります</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutx11backend.cpp" line="240"/>
         <source>The shortcut cannot be represented on X11</source>
-        <translation type="unfinished"></translation>
+        <translation>このショートカットは X11 では表現できません</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutx11backend.cpp" line="243"/>
         <source>The shortcut is already registered</source>
-        <translation type="unfinished"></translation>
+        <translation>そのショートカットはすでに登録されています</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutx11backend.cpp" line="247"/>
         <source>Another application has already registered this shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>このショートカットは、すでに別のアプリケーションによって登録されています</translation>
     </message>
 </context>
 <context>
@@ -7343,7 +7348,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="444"/>
         <source>Searching for artwork…</source>
-        <translation>アートワークを検索中...</translation>
+        <translation>アートワークを検索中…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="458"/>
@@ -7387,7 +7392,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1052"/>
         <source>Show or hide main window</source>
-        <translation type="unfinished"></translation>
+        <translation>メインウィンドウを表示/非表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1054"/>
@@ -7495,17 +7500,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1207"/>
         <source>Look up metadata by artist and album…</source>
-        <translation type="unfinished"></translation>
+        <translation>アーティストやアルバム名でメタデータを検索…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1208"/>
         <source>Look up metadata using the selected tracks&apos; artist and album</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したトラックのアーティスト名やアルバム名を使ってメタデータを検索</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1213"/>
         <source>Look up metadata by artist and album</source>
-        <translation type="unfinished"></translation>
+        <translation>アーティスト名やアルバム名でメタデータを検索</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1214"/>
@@ -7519,32 +7524,32 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1216"/>
         <source>Look up metadata by disc TOC…</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスクの TOC からメタデータを検索…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1217"/>
         <source>Look up metadata using the selected tracks&apos; disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したトラックのディスク TOC を使用してメタデータを検索</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1221"/>
         <source>Look up metadata by disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスクの TOC からメタデータを検索</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1224"/>
         <source>Look up metadata by MusicBrainz ID…</source>
-        <translation type="unfinished"></translation>
+        <translation>MusicBrainz ID でメタデータを検索…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1225"/>
         <source>Look up metadata using a MusicBrainz release identifier</source>
-        <translation type="unfinished"></translation>
+        <translation>MusicBrainz のリリース識別子を使用してメタデータを検索</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1228"/>
         <source>Look up metadata by MusicBrainz ID</source>
-        <translation type="unfinished"></translation>
+        <translation>MusicBrainz ID でメタデータを検索</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1261"/>
@@ -7589,7 +7594,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1340"/>
         <source>View the common artwork for the selected tracks at full size</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したトラックの共通アートワークをフルサイズで表示する</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1343"/>
@@ -7616,32 +7621,32 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1411"/>
         <source>Toggle loved</source>
-        <translation type="unfinished"></translation>
+        <translation>「いいね」の切り替え</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1411"/>
         <source>Toggle Loved for selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したトラックの「いいね」設定を切り替え</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1413"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>「いいね」</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1413"/>
         <source>Love selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したトラックを「いいね」</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1415"/>
         <source>Unlove</source>
-        <translation type="unfinished"></translation>
+        <translation>「よくない」</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1415"/>
         <source>Unlove selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したトラックを「よくない」</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1431"/>
@@ -7651,7 +7656,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1457"/>
         <source>Converter Output</source>
-        <translation type="unfinished"></translation>
+        <translation>コンバータの出力</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1554"/>
@@ -7703,22 +7708,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1655"/>
         <source>Verify integrity</source>
-        <translation type="unfinished"></translation>
+        <translation>整合性の確認</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1656"/>
         <source>Decode the selected tracks and report file or checksum errors</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したトラックをデコードし、ファイルエラーやチェックサムエラーを報告する</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1663"/>
         <source>Verify album with AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip を使ってアルバムを確認</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1664"/>
         <source>Verify all tracks from one complete lossless CD rip against AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>完全なロスレス CD リッピングから得られたすべてのトラックを、AccurateRip と照合する</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1970"/>
@@ -8108,7 +8113,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="133"/>
         <source>Browse…</source>
-        <translation type="unfinished">参照…</translation>
+        <translation>参照…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="134"/>
@@ -8173,22 +8178,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="167"/>
         <source>New</source>
-        <translation type="unfinished">新規</translation>
+        <translation>新規</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="168"/>
         <source>Old</source>
-        <translation type="unfinished"></translation>
+        <translation>古い</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="169"/>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタム</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="171"/>
         <source>Application icon</source>
-        <translation type="unfinished"></translation>
+        <translation>アプリのアイコン</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="181"/>
@@ -8213,12 +8218,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="241"/>
         <source>Choose application icon</source>
-        <translation type="unfinished"></translation>
+        <translation>アプリのアイコンを選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="242"/>
         <source>Images (*.png *.jpg *.jpeg *.svg *.ico);;All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>画像 (*.png *.jpg *.jpeg *.svg *.ico);;すべてのファイル (*)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="260"/>
@@ -8310,7 +8315,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="245"/>
         <source>Show in Layout menu</source>
-        <translation type="unfinished"></translation>
+        <translation>「レイアウト」メニューに表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="287"/>
@@ -8472,52 +8477,52 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="93"/>
         <source>Only show unrated stars on hovered rows</source>
-        <translation type="unfinished"></translation>
+        <translation>カーソルを合わせた行には、評価のない星のみを表示する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="95"/>
         <source>Only show unloved hearts on hovered rows</source>
-        <translation type="unfinished"></translation>
+        <translation>カーソルを合わせた行にのみ、「よくない」ハートを表示する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="101"/>
         <source>1 star</source>
-        <translation type="unfinished"></translation>
+        <translation>1 つ星</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="102"/>
         <source>2 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>2 つ星</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="103"/>
         <source>3 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>3 つ星</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="104"/>
         <source>4 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>4 つ星</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="105"/>
         <source>5 stars</source>
-        <translation type="unfinished"></translation>
+        <translation>5 つ星</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="107"/>
         <source>Unrated</source>
-        <translation type="unfinished"></translation>
+        <translation>未評価</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="108"/>
         <source>Heart colour</source>
-        <translation type="unfinished"></translation>
+        <translation>ハートの色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="109"/>
         <source>Unloved heart colour</source>
-        <translation type="unfinished"></translation>
+        <translation>「よくない」ハートの色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="111"/>
@@ -8558,7 +8563,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="135"/>
         <source>Used for the half-step portion of %rating_stars% and %rating_stars_padded%.
 If the default half-star does not render correctly with your system font, choose a different symbol here.</source>
-        <translation>%rating_stars% と %rating_stars_padded%  の半段階部分に使用されます。
+        <translation>%rating_stars% と %rating_stars_padded% の半段階部分に使用されます。
 既定の半星がシステムフォントで正しく表示されない場合は、ここで別の記号を選択してください。</translation>
     </message>
     <message>
@@ -8604,22 +8609,22 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="156"/>
         <source>Editor colours</source>
-        <translation type="unfinished"></translation>
+        <translation>エディタの色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="167"/>
         <source>Controls the heart size used by the love editor widget</source>
-        <translation type="unfinished"></translation>
+        <translation>「いいね」エディタウィジェットで使用されるハートのサイズを制御します</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="169"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>「いいね」</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="174"/>
         <source>Love editor heart size</source>
-        <translation type="unfinished"></translation>
+        <translation>「いいね」エディタのハートサイズ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="182"/>
@@ -8712,12 +8717,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="49"/>
         <source>Choose Icon</source>
-        <translation type="unfinished"></translation>
+        <translation>アイコンの選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="52"/>
         <source>Filter icons</source>
-        <translation type="unfinished"></translation>
+        <translation>フィルター アイコン</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="55"/>
@@ -8727,17 +8732,17 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="59"/>
         <source>Use the icon supplied by the selected command</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したコマンドで指定されたアイコンを使用する</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="85"/>
         <source>Browse custom image…</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタム画像を選択…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="86"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="158"/>
@@ -8758,17 +8763,17 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="198"/>
         <source>Current: Custom image — %1</source>
-        <translation type="unfinished"></translation>
+        <translation>現在 : カスタム画像 — %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="202"/>
         <source>Current: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>現在 : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="206"/>
         <source>Current: Use command icon</source>
-        <translation type="unfinished"></translation>
+        <translation>現在 : コマンドアイコンを使用する</translation>
     </message>
 </context>
 <context>
@@ -8846,7 +8851,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="200"/>
         <source>fooyin Layout (*.fyl)</source>
-        <translation>fooyinレイアウト (*.fyl)</translation>
+        <translation>fooyin レイアウト (*.fyl)</translation>
     </message>
 </context>
 <context>
@@ -9028,7 +9033,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="268"/>
         <source>Samples</source>
-        <translation type="unfinished"></translation>
+        <translation>サンプル</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="271"/>
@@ -9083,12 +9088,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="321"/>
         <source>Loved</source>
-        <translation type="unfinished"></translation>
+        <translation>「いいね」</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="322"/>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>はい</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="322"/>
@@ -9379,17 +9384,17 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="193"/>
         <source>Flatpak help…</source>
-        <translation type="unfinished"></translation>
+        <translation>Flatpak ヘルプ…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="196"/>
         <source>Music Libraries in Flatpak</source>
-        <translation type="unfinished"></translation>
+        <translation>Flatpak の音楽ライブラリ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="200"/>
         <source>&lt;p&gt;The Flatpak already permits access to common music locations. If a music directory is not shown in the directory picker, cannot be read, or becomes unavailable after restarting fooyin, grant access to that directory under &lt;code&gt;Filesystem&lt;/code&gt; in Flatseal, or run the following command after replacing the example path:&lt;/p&gt;&lt;pre&gt;flatpak override --user --filesystem=&amp;quot;/path/to/music&amp;quot; org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Restart fooyin after changing its permissions.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Flatpakでは、一般的な音楽ファイルの保存場所へのアクセスがすでに許可されています。音楽ディレクトリがディレクトリピッカーに表示されない場合、読み取れない場合、または fooyin を再起動した後に利用できなくなった場合は、Flatseal の &lt;code&gt;ファイルシステム&lt;/code&gt; でそのディレクトリへのアクセス権を付与するか、以下のコマンドを実行してください（例示のパスは実際のパスに置き換えてください）：&lt;/p&gt;&lt;pre&gt;flatpak override --user --filesystem=&amp;quot;/path/to/music&amp;quot; org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;権限を変更した後、fooyinを再起動してください。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="277"/>
@@ -9502,7 +9507,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="115"/>
         <source>&amp;Configure</source>
-        <translation>構成(&amp;C)</translation>
+        <translation>設定(&amp;C)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="117"/>
@@ -9533,21 +9538,21 @@ If the default half-star does not render correctly with your system font, choose
     <message numerus="yes">
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="156"/>
         <source>%Ln track(s) added</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個のトラックを追加しました</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="157"/>
         <source>%Ln track(s) updated</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個のトラックを更新しました</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="158"/>
         <source>%Ln track(s) removed</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個のトラックを削除しました</numerusform>
         </translation>
     </message>
@@ -10036,7 +10041,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="199"/>
         <source>Expand/collapse or play now</source>
-        <translation type="unfinished"></translation>
+        <translation>展開 / 折りたたみ、または今すぐ再生</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="81"/>
@@ -10052,7 +10057,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="65"/>
         <source>Manage groupings…</source>
-        <translation type="unfinished"></translation>
+        <translation>グループを管理…</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="82"/>
@@ -10093,7 +10098,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="148"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
-        <translation>ウィジェット内で &lt;b&gt;Ctrl+スクロール&lt;/b&gt; を使用すると、アイコンのサイズを変更できます。</translation>
+        <translation>ウィジェット内で&lt;b&gt;Ctrl+スクロール&lt;/b&gt;を使用すると、アイコンのサイズを変更できます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="152"/>
@@ -10272,7 +10277,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="867"/>
         <source>Manage groupings…</source>
-        <translation type="unfinished"></translation>
+        <translation>グループを管理…</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="911"/>
@@ -10354,7 +10359,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="41"/>
         <source>Release</source>
-        <translation type="unfinished"></translation>
+        <translation>リリース</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="43"/>
@@ -10364,7 +10369,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="45"/>
         <source>Date/Country</source>
-        <translation type="unfinished"></translation>
+        <translation>日付 / 国</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="47"/>
@@ -10374,7 +10379,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="49"/>
         <source>Discs</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスク</translation>
     </message>
 </context>
 <context>
@@ -10382,7 +10387,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/controls/lovecontrol.cpp" line="232"/>
         <source>Love Control</source>
-        <translation type="unfinished"></translation>
+        <translation>「いいね」の管理</translation>
     </message>
 </context>
 <context>
@@ -10553,17 +10558,17 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="140"/>
         <source>Centring</source>
-        <translation type="unfinished"></translation>
+        <translation>中央寄せ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="158"/>
         <source>Top and bottom margins apply to lyrics that are not centred at that edge.</source>
-        <translation type="unfinished"></translation>
+        <translation>上と下の余白は、その端で中央揃えされていない歌詞に適用されます。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="168"/>
         <source>These options apply to synced lyrics and automatically scrolling unsynced lyrics.</source>
-        <translation type="unfinished"></translation>
+        <translation>これらの設定は、同期された歌詞および自動的にスクロールされる非同期の歌詞に適用されます。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="182"/>
@@ -10605,12 +10610,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="56"/>
         <source>Centre first line</source>
-        <translation type="unfinished"></translation>
+        <translation>中央の 1行目</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="57"/>
         <source>Centre last line</source>
-        <translation type="unfinished"></translation>
+        <translation>中央の 1行目</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="149"/>
@@ -10699,12 +10704,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="125"/>
         <source>Rewind line (−100 ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>行を巻き戻す (−100 ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="126"/>
         <source>Forward line (+100 ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>行を進める (+100 ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="127"/>
@@ -10760,12 +10765,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="77"/>
         <source>Ly&amp;rics</source>
-        <translation type="unfinished"></translation>
+        <translation>歌詞(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="78"/>
         <source>Open lyrics in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>歌詞を別のウィンドウで開く</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="80"/>
@@ -10981,7 +10986,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="238"/>
         <source>%Ln result(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 件の結果</numerusform>
         </translation>
     </message>
@@ -11266,26 +11271,26 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="37"/>
         <source>Metadata Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>メタデータの変更</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="48"/>
         <source>%Ln metadata change(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 件のメタデータ変更</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="49"/>
         <source>%Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 個のファイル</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="50"/>
         <source>%1 across %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 全体で %2。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="54"/>
@@ -11295,12 +11300,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="54"/>
         <source>Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>変更</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
         <source>Change</source>
-        <translation type="unfinished"></translation>
+        <translation>変更</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
@@ -11310,12 +11315,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
         <source>Current value</source>
-        <translation type="unfinished"></translation>
+        <translation>現在の値</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
         <source>New value</source>
-        <translation type="unfinished"></translation>
+        <translation>新しい値</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="137"/>
@@ -11325,18 +11330,18 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="138"/>
         <source>Removed</source>
-        <translation type="unfinished"></translation>
+        <translation>削除済み</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="139"/>
         <source>Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>変更済み</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="146"/>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="150"/>
         <source>(empty)</source>
-        <translation type="unfinished"></translation>
+        <translation>(空)</translation>
     </message>
 </context>
 <context>
@@ -11344,12 +11349,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="163"/>
         <source>Metadata Lookup</source>
-        <translation type="unfinished"></translation>
+        <translation>メタデータの検索</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="271"/>
         <source>First track, last track, lead-out sector, then track offsets</source>
-        <translation type="unfinished"></translation>
+        <translation>最初のトラック、最後のトラック、リードアウトセクター、そしてトラックのオフセット</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="280"/>
@@ -11371,7 +11376,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="299"/>
         <source>TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>TOC</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="309"/>
@@ -11392,17 +11397,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="324"/>
         <source>Lookup by</source>
-        <translation type="unfinished"></translation>
+        <translation>検索条件</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="330"/>
         <source>Search for a release to see matching results</source>
-        <translation type="unfinished"></translation>
+        <translation>リリースを検索して、一致する結果を表示する</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="343"/>
         <source>Release information</source>
-        <translation type="unfinished"></translation>
+        <translation>リリース情報</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="360"/>
@@ -11412,7 +11417,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="361"/>
         <source>Original release date</source>
-        <translation type="unfinished"></translation>
+        <translation>オリジナルのリリース日</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="362"/>
@@ -11422,17 +11427,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="363"/>
         <source>Label</source>
-        <translation type="unfinished"></translation>
+        <translation>ラベル</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="364"/>
         <source>Catalogue number</source>
-        <translation type="unfinished"></translation>
+        <translation>カタログ番号</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="365"/>
         <source>Barcode</source>
-        <translation type="unfinished"></translation>
+        <translation>バーコード</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="366"/>
@@ -11452,112 +11457,112 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="374"/>
         <source>Releases</source>
-        <translation type="unfinished"></translation>
+        <translation>リリース</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="384"/>
         <source>Select a release above to load its tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>上のリリースを選択して、そのトラックを読み込んでください</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="395"/>
         <source>No local tracks were selected</source>
-        <translation type="unfinished"></translation>
+        <translation>ローカルトラックは選択されませんでした</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="416"/>
         <source>Retrieved tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>取得したトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="427"/>
         <source>Drag rows to align tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>行をドラッグしてトラックを揃える</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="430"/>
         <source>Local tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>ローカルトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="451"/>
         <source>Fill missing metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>欠落したメタデータを埋める</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="452"/>
         <source>Replace lookup fields</source>
-        <translation type="unfinished"></translation>
+        <translation>ルックアップフィールドの置換</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="453"/>
         <source>Wipe writable tags, then apply</source>
-        <translation type="unfinished"></translation>
+        <translation>書き込み可能なタグのデータを消去してから、貼り付ける</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="454"/>
         <source>Choose how retrieved metadata is combined with the track&apos;s existing tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>取得したメタデータを、トラックの既存のタグとどのように組み合わせるかを選択します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="456"/>
         <source>Allow applying unresolved tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>未解決のトラックの適用を許可する</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="457"/>
         <source>Allow updating unresolved tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>未解決のトラックの更新を許可する</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="459"/>
         <source>Write genres</source>
-        <translation type="unfinished"></translation>
+        <translation>ジャンルの入力</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="460"/>
         <source>Write provider IDs</source>
-        <translation type="unfinished"></translation>
+        <translation>プロバイダー ID の入力</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="462"/>
         <source>Use original date for Date</source>
-        <translation type="unfinished"></translation>
+        <translation>「日付」には元の日付を使用する</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="465"/>
         <source>Allow applying metadata when local tracks are unmatched or have an ambiguous match.</source>
-        <translation type="unfinished"></translation>
+        <translation>ローカルトラックが一致しない場合や、一致が曖昧な場合でも、メタデータの適用を許可する。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="466"/>
         <source>Allow writing when local tracks are unmatched or have an ambiguous match.</source>
-        <translation type="unfinished"></translation>
+        <translation>ローカルトラックが一致しない場合や、曖昧な一致がある場合でも書き込みを許可する。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="467"/>
         <source>Write genres supplied by the selected metadata provider when available.</source>
-        <translation type="unfinished"></translation>
+        <translation>利用可能な場合は、選択したメタデータプロバイダーから提供されたジャンルを記載してください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="468"/>
         <source>Write identifiers supplied by the selected metadata provider.</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したメタデータプロバイダから提供された識別子を書き込みます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="470"/>
         <source>Use the original release date for the Date tag instead of this specific release&apos;s date.</source>
-        <translation type="unfinished"></translation>
+        <translation>「日付」タグには、この特定のリリースの日付ではなく、元のリリース日を使用する。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="476"/>
         <source>Metadata options</source>
-        <translation type="unfinished"></translation>
+        <translation>メタデータのオプション</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="479"/>
         <source>Existing metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>既存のメタデータ</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="486"/>
@@ -11566,13 +11571,13 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="780"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="846"/>
         <source>Changes…</source>
-        <translation type="unfinished"></translation>
+        <translation>変更…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="489"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="570"/>
         <source>Ready.</source>
-        <translation type="unfinished"></translation>
+        <translation>準備完了。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="494"/>
@@ -11582,24 +11587,24 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="494"/>
         <source>Update files</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルの更新</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="519"/>
         <source>No matching releases found.</source>
-        <translation type="unfinished"></translation>
+        <translation>該当するリリースは見つかりませんでした。</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="520"/>
         <source>Found %Ln release(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 件のリリースが見つかりました。</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="541"/>
         <source>Contacting %1…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 に接続中…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1012"/>
@@ -11609,70 +11614,70 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="590"/>
         <source>Artist and album</source>
-        <translation type="unfinished"></translation>
+        <translation>アーティストとアルバム</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="593"/>
         <source>Disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスク TOC</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="596"/>
         <source>Release</source>
-        <translation type="unfinished"></translation>
+        <translation>リリース</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="599"/>
         <source>Release group</source>
-        <translation type="unfinished"></translation>
+        <translation>リリースグループ</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="602"/>
         <source>%1 ID</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="781"/>
         <source>The selected release does not contain the queried disc.</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したリリースには、検索対象のディスクが含まれていません。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="852"/>
         <source>Changes (%1)…</source>
-        <translation type="unfinished"></translation>
+        <translation>変更点 (%1)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="896"/>
         <source>One or more selected tracks cannot be updated.</source>
-        <translation type="unfinished"></translation>
+        <translation>選択した 1つ以上のトラックを更新できません。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="900"/>
         <source>Review unmatched or ambiguous tracks before applying metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>メタデータを適用する前に、一致していない、または曖昧なトラックを確認してください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="901"/>
         <source>Review unmatched or ambiguous tracks before updating files.</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルを更新する前に、一致していない、または曖昧なトラックを確認してください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="904"/>
         <source>The selected release produces no metadata changes.</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したリリースでは、メタデータに変更はありません。</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="907"/>
         <source>Metadata will be applied to %Ln track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>メタデータは %Ln 件のトラックに適用されます。</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="909"/>
         <source>%Ln track(s) will be updated.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 件のトラックが更新されます。</numerusform>
         </translation>
     </message>
     <message>
@@ -11693,7 +11698,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="957"/>
         <source>Writing metadata to %Ln track(s)…</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個のトラックにメタデータを書き込んでいます…</numerusform>
         </translation>
     </message>
@@ -11701,7 +11706,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="978"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="983"/>
         <source>%Ln succeeded</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 件が成功</numerusform>
         </translation>
     </message>
@@ -11709,36 +11714,36 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="979"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="984"/>
         <source>%Ln failed</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 件が失敗</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="980"/>
         <source>Metadata writing was cancelled.</source>
-        <translation type="unfinished"></translation>
+        <translation>メタデータの書き込みがキャンセルされました。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="985"/>
         <source>Metadata writing finished:</source>
-        <translation type="unfinished"></translation>
+        <translation>メタデータの書き込みが完了しました :</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="989"/>
         <source>Metadata was updated in %Ln track(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 件のトラックでメタデータが更新されました。</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1007"/>
         <source>Wipe existing tags?</source>
-        <translation type="unfinished"></translation>
+        <translation>既存のタグを消去しますか?</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1008"/>
         <source>Existing metadata and custom tags will be removed before applying the selected release. Ratings, ReplayGain, technical information, playback statistics, and artwork will be preserved.</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したリリースを適用する前に、既存のメタデータとカスタムタグが削除されます。評価、ReplayGain、技術情報、再生統計、アートワークは保持されます。</translation>
     </message>
 </context>
 <context>
@@ -11746,42 +11751,42 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="234"/>
         <source>MusicBrainz</source>
-        <translation type="unfinished"></translation>
+        <translation>MusicBrainz</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="251"/>
         <source>Enter an artist or album.</source>
-        <translation type="unfinished"></translation>
+        <translation>アーティストまたはアルバムを入力してください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="252"/>
         <source>Enter a disc TOC.</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスク TOC を入力してください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="253"/>
         <source>Enter a MusicBrainz ID.</source>
-        <translation type="unfinished"></translation>
+        <translation>MusicBrainz ID を入力してください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="267"/>
         <source>The selected result has no release identifier.</source>
-        <translation type="unfinished"></translation>
+        <translation>選択した結果にはリリース識別子がありません。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="541"/>
         <source>MusicBrainz request failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>MusicBrainz のリクエストに失敗しました : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="555"/>
         <source>Could not read the MusicBrainz search response: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>MusicBrainz の検索結果を読み込めませんでした : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="566"/>
         <source>Could not read the MusicBrainz release response: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>MusicBrainz のリリース情報を読み込めませんでした : %1</translation>
     </message>
 </context>
 <context>
@@ -11901,7 +11906,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="82"/>
         <source>Notify when repeating a track</source>
-        <translation type="unfinished"></translation>
+        <translation>トラックを繰り返す際に通知する</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="83"/>
@@ -11968,17 +11973,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="153"/>
         <source>Flatpak help…</source>
-        <translation type="unfinished"></translation>
+        <translation>Flatpak ヘルプ…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="155"/>
         <source>Notifications in Flatpak</source>
-        <translation type="unfinished"></translation>
+        <translation>Flatpak での通知</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="158"/>
         <source>&lt;p&gt;The Flatpak notification portal does not support custom timeouts or album art. To use the desktop notification service directly, add &lt;code&gt;org.freedesktop.Notifications&lt;/code&gt; to fooyin&apos;s Session Bus ‘talk’ permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Restart fooyin after changing its permissions.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Flatpak の通知ポータルはカスタムタイムアウトやアルバムアートに対応していません。デスクトップの通知サービスを直接使用するには、Flatseal で fooyin のセッションバスの「talk」権限に &lt;code&gt;org.freedesktop.Notifications&lt;/code&gt; を追加するか、以下を実行してください:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;権限を変更した後、fooyin を再起動してください。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="207"/>
@@ -12583,14 +12588,14 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message numerus="yes">
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="177"/>
         <source>Resume decoding below %Ln ms</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln ms 未満でデコードを再開</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="178"/>
         <source>Pause decoding at %Ln ms</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln ms でデコードを一時停止</numerusform>
         </translation>
     </message>
@@ -12667,7 +12672,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
         <source>P&amp;ause</source>
-        <translation type="unfinished"></translation>
+        <translation>一時停止(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
@@ -12742,7 +12747,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="87"/>
         <source>Restart the current track or start playback</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のトラックを最初から再生するか、再生を開始する</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="93"/>
@@ -13009,7 +13014,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="104"/>
         <source>If the current track has been playing for more than 5 s, restart it instead of moving to the previous track</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のトラックの再生時間が5秒を超えている場合、前のトラックに移動する代わりに現在のトラックを最初から再生する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="107"/>
@@ -13085,127 +13090,127 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="75"/>
         <source>Playlist-led</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリスト主導</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="76"/>
         <source>Queue-led</source>
-        <translation type="unfinished"></translation>
+        <translation>キュー主導</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="77"/>
         <source>Start with an empty playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>空の再生キューで開始する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="78"/>
         <source>Show queue indexes in playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストにキュー番号を表示する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="79"/>
         <source>Continue from the playlist after queued tracks finish</source>
-        <translation type="unfinished"></translation>
+        <translation>キュー内のトラックの再生が終わったらプレイリストの続きを再生する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="80"/>
         <source>Stop playback after queued tracks finish</source>
-        <translation type="unfinished"></translation>
+        <translation>キュー内のトラックの再生が終わったら再生を停止する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="81"/>
         <source>Scroll the current track to the top</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のトラックを一番上までスクロールする</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="82"/>
         <source>Limit recent track history</source>
-        <translation type="unfinished"></translation>
+        <translation>最近再生したトラックの履歴を制限する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="83"/>
         <source>History limit</source>
-        <translation type="unfinished"></translation>
+        <translation>履歴の上限</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="85"/>
         <source>Replace with selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したトラックに置き換える</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="86"/>
         <source>Replace with the containing group</source>
-        <translation type="unfinished"></translation>
+        <translation>含まれるグループに置き換える</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="87"/>
         <source>Replace with all tracks in the current view</source>
-        <translation type="unfinished"></translation>
+        <translation>現在の表示内のすべてのトラックに置き換える</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="88"/>
         <source>Insert selected tracks next and play now</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したトラックを次に挿入してすぐに再生する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="91"/>
         <source>The active playlist drives playback, with queued tracks temporarily taking priority</source>
-        <translation type="unfinished"></translation>
+        <translation>アクティブなプレイリストが再生を制御し、キューに入れたトラックが一時的に優先されます</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="93"/>
         <source>The queue drives playback, containing the played, current, and upcoming tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>キューが再生を制御し、再生済み、現在、今後のトラックを保持します</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="102"/>
         <source>Replace Playing Tracks with the selected tracks and start playback at the first selection</source>
-        <translation type="unfinished"></translation>
+        <translation>「再生中のトラック」を選択したトラックに置き換え、最初に選択したトラックから再生を開始する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="104"/>
         <source>Replace Playing Tracks with the first selected track&apos;s group and start playback at that track</source>
-        <translation type="unfinished"></translation>
+        <translation>「再生中のトラック」を最初に選択したトラックのグループに置き換え、そのトラックから再生を開始する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="106"/>
         <source>Replace Playing Tracks with the current view and start playback at the first selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>「再生中のトラック」を現在の表示に置き換え、最初に選択したトラックから再生を開始する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="108"/>
         <source>Keep Playing Tracks, insert the selected tracks next, and play the first selection immediately</source>
-        <translation type="unfinished"></translation>
+        <translation>「再生中のトラック」を維持したまま選択したトラックを次に挿入し、最初に選択したトラックをすぐに再生する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="116"/>
         <source>Start fooyin without restoring the saved queue or current track</source>
-        <translation type="unfinished"></translation>
+        <translation>保存されたキューや現在のトラックを復元せずに fooyin を起動する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="118"/>
         <source>Queue mode</source>
-        <translation type="unfinished"></translation>
+        <translation>キューモード</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="127"/>
         <source>Show the position of each queued override beside its source track in playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリスト内で、キューに割り込んだ各トラックの位置を元のトラックの横に表示する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="129"/>
         <source>After the queue empties, continue after the last queued track in its source playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>キューが空になった後、最後にキューに入っていたトラックの元のプレイリストの続きを再生する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="131"/>
         <source>Stop when the final queued override finishes instead of returning to playlist playback</source>
-        <translation type="unfinished"></translation>
+        <translation>最後のキュー割り込みトラックの再生が終わったら、プレイリストの再生に戻らずに停止する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="133"/>
         <source>Playlist-led options</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリスト主導のオプション</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="142"/>
@@ -13215,32 +13220,32 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="144"/>
         <source>Keep the current track at the top of the Playing Tracks view</source>
-        <translation type="unfinished"></translation>
+        <translation>「再生中のトラック」ビューの一番上に現在のトラックを保持する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="145"/>
         <source>Automatically remove played tracks beyond the retained history</source>
-        <translation type="unfinished"></translation>
+        <translation>保持する履歴を超えた再生済みトラックを自動的に削除する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="146"/>
         <source>Number of played tracks to retain before the current track</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のトラックの前に保持する再生済みトラックの数</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="148"/>
         <source>Queue-led options</source>
-        <translation type="unfinished"></translation>
+        <translation>キュー主導のオプション</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="152"/>
         <source>Play now action</source>
-        <translation type="unfinished"></translation>
+        <translation>「今すぐ再生」の動作</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="157"/>
         <source>Display and history</source>
-        <translation type="unfinished"></translation>
+        <translation>表示と履歴</translation>
     </message>
 </context>
 <context>
@@ -13263,12 +13268,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="191"/>
         <source>Show Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>「一時停止」を表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="192"/>
         <source>Show Play</source>
-        <translation type="unfinished"></translation>
+        <translation>「再生」を表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="193"/>
@@ -13357,7 +13362,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="120"/>
         <source>Show current track when playback is stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>再生が停止しているときに現在のトラックを表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="121"/>
@@ -13793,7 +13798,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="134"/>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="135"/>
         <source>Columns</source>
-        <translation>カラム</translation>
+        <translation>列</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="135"/>
@@ -13899,7 +13904,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="61"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>「いいね」</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="62"/>
@@ -14015,13 +14020,13 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="436"/>
         <source>Remove playlist &quot;%1&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリスト「%1」を削除しますか?</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="439"/>
         <source>Remove %Ln playlist(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 件のプレイリストを削除しますか?</numerusform>
         </translation>
     </message>
     <message>
@@ -14032,7 +14037,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="445"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>削除</translation>
     </message>
 </context>
 <context>
@@ -14173,7 +14178,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="167"/>
         <source>Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>今すぐ再生</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="87"/>
@@ -14330,7 +14335,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="349"/>
         <source>Save the selected playlist to the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したプレイリストを指定したファイルに保存する</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="357"/>
@@ -14383,7 +14388,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1617"/>
         <source>%Ln track(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個のトラック</numerusform>
         </translation>
     </message>
@@ -14478,7 +14483,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="460"/>
         <source>Rename the selected playlist</source>
-        <translation>選択したプレイリストの名前を変更</translation>
+        <translation>選択したプレイリスト名の変更</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="245"/>
@@ -14517,7 +14522,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="66"/>
         <source>Available variables: &lt;code&gt;%node_name%&lt;/code&gt;, &lt;code&gt;%is_group%&lt;/code&gt;, &lt;code&gt;%count%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;</source>
-        <translation type="unfinished">使用可能な変数: &lt;code&gt;%node_name%&lt;/code&gt;、&lt;code&gt;%is_group%&lt;/code&gt;、&lt;code&gt;%count%&lt;/code&gt;、&lt;code&gt;%playlist_size%&lt;/code&gt;、&lt;code&gt;%playlist_duration%&lt;/code&gt;</translation>
+        <translation>使用可能な変数: &lt;code&gt;%node_name%&lt;/code&gt;、&lt;code&gt;%is_group%&lt;/code&gt;、&lt;code&gt;%count%&lt;/code&gt;、&lt;code&gt;%playlist_size%&lt;/code&gt;、&lt;code&gt;%playlist_duration%&lt;/code&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="73"/>
@@ -14634,7 +14639,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="286"/>
         <source>Leave empty to group by the displayed values</source>
-        <translation type="unfinished"></translation>
+        <translation>表示されている値でグループ分けする場合は、空欄のままにしてください</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="292"/>
@@ -14661,7 +14666,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="299"/>
         <source>Details</source>
-        <translation type="unfinished">詳細</translation>
+        <translation>詳細</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="354"/>
@@ -14869,7 +14874,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="98"/>
         <source>Save the selected playlist to the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したプレイリストを指定したファイルに保存する</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="524"/>
@@ -15009,7 +15014,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1774"/>
         <source>Writing metadata to %Ln track(s)…</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個のトラックにメタデータを書き込んでいます…</numerusform>
         </translation>
     </message>
@@ -15071,7 +15076,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1348"/>
         <source>Columns</source>
-        <translation>カラム</translation>
+        <translation>列</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1336"/>
@@ -15112,7 +15117,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="207"/>
         <source>&amp;Redo</source>
-        <translation>やり直し(&amp;R)</translation>
+        <translation>やり直す(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="210"/>
@@ -15252,7 +15257,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="460"/>
         <source>Remove dead (non-existent) tracks from the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストから無効(存在しない)トラックを削除する</translation>
     </message>
 </context>
 <context>
@@ -15295,7 +15300,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="46"/>
         <source>Licence</source>
-        <translation type="unfinished"></translation>
+        <translation>ライセンス</translation>
     </message>
 </context>
 <context>
@@ -15634,7 +15639,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="279"/>
         <source>%Ln preset(s) found.</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 件のプリセットが見つかりました。</numerusform>
         </translation>
     </message>
@@ -15725,7 +15730,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="618"/>
         <source>Using presets from %Ln folder(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個のフォルダーのプリセットを使用しています</numerusform>
         </translation>
     </message>
@@ -15892,7 +15897,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message numerus="yes">
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="775"/>
         <source>%Ln track(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個のトラック</numerusform>
         </translation>
     </message>
@@ -15917,7 +15922,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="110"/>
         <source>Writing changes…</source>
-        <translation type="unfinished"></translation>
+        <translation>変更を書き込み中…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="110"/>
@@ -15932,8 +15937,8 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message numerus="yes">
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="119"/>
         <source>Writing changes to %Ln track(s)…</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 件のトラックに変更を書き込み中…</numerusform>
         </translation>
     </message>
 </context>
@@ -15947,12 +15952,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="116"/>
         <source>&amp;Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>今すぐ再生(&amp;P)</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="117"/>
         <source>Queue &amp;next</source>
-        <translation type="unfinished"></translation>
+        <translation>次にキューに追加(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="118"/>
@@ -15977,12 +15982,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="302"/>
         <source>Show playing tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>再生中のトラックを表示する</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="303"/>
         <source>Show upcoming tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>今後のトラックを表示する</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="313"/>
@@ -16002,12 +16007,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="441"/>
         <source>Start playback of the selected queue track</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したキュー内のトラックの再生を開始する</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="445"/>
         <source>Move the selected tracks to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したトラックを次に再生するように移動する</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="449"/>
@@ -16060,17 +16065,17 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="39"/>
         <source>Queue view</source>
-        <translation type="unfinished"></translation>
+        <translation>キュー表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="40"/>
         <source>Playing Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>再生中のトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="41"/>
         <source>Upcoming Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>今後のトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="42"/>
@@ -16148,12 +16153,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="212"/>
         <source>Upcoming Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>今後のトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="212"/>
         <source>Playing Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>再生中のトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="215"/>
@@ -16332,7 +16337,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="313"/>
         <source>Set &quot;%1&quot; on %Ln track(s)?</source>
         <extracomment>%1 is the Quick Tagger entry name, for example &quot;Rating&quot;.</extracomment>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個のトラックに「%1」を設定しますか?</numerusform>
         </translation>
     </message>
@@ -16590,7 +16595,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="55"/>
         <source>Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>今すぐ再生</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="56"/>
@@ -17182,7 +17187,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1744"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1790"/>
         <source>Columns</source>
-        <translation>カラム</translation>
+        <translation>列</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1787"/>
@@ -17932,42 +17937,42 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="396"/>
         <source>Countries unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>国の情報を取得できません — 選択して再試行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="397"/>
         <source>Countries unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>国の情報を取得できません : %1 — 選択して再試行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="404"/>
         <source>Languages unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>言語の情報を取得できません — 選択して再試行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="405"/>
         <source>Languages unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>言語の情報を取得できません : %1 — 選択して再試行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="412"/>
         <source>Tags unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>タグの情報を取得できません — 選択して再試行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="413"/>
         <source>Tags unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>タグの情報を取得できません : %1 — 選択して再試行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="420"/>
         <source>Codecs unavailable — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>コーデックの情報を取得できません — 選択して再試行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="421"/>
         <source>Codecs unavailable: %1 — select to retry</source>
-        <translation type="unfinished"></translation>
+        <translation>コーデックの情報を取得できません : %1 — 選択して再試行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="826"/>
@@ -17978,7 +17983,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="827"/>
         <source>%Ln active filter(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 件の有効なフィルター</numerusform>
         </translation>
     </message>
@@ -18177,14 +18182,14 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="150"/>
         <source>Imported %Ln radio station(s), skipped %Ln duplicate(s).</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 件のラジオ局をインポートしました(%Ln 件の重複をスキップ)。</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="154"/>
         <source>Imported %Ln radio station(s).</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 件のラジオ局をインポートしました。</numerusform>
         </translation>
     </message>
@@ -18220,7 +18225,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/ratingcontrol.cpp" line="241"/>
         <source>Rating Control</source>
-        <translation type="unfinished"></translation>
+        <translation>評価の管理</translation>
     </message>
 </context>
 <context>
@@ -18269,7 +18274,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="166"/>
         <source>Configure ReplayGain…</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain の設定…</translation>
     </message>
 </context>
 <context>
@@ -18532,7 +18537,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="109"/>
         <source>#</source>
-        <translation type="unfinished"></translation>
+        <translation>#</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="111"/>
@@ -18555,7 +18560,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="325"/>
         <source>Run Services</source>
-        <translation type="unfinished"></translation>
+        <translation>サービスの実行</translation>
     </message>
 </context>
 <context>
@@ -18568,7 +18573,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="107"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>削除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="108"/>
@@ -18583,7 +18588,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="110"/>
         <source>Service properties</source>
-        <translation type="unfinished"></translation>
+        <translation>サービスのプロパティ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="113"/>
@@ -18593,32 +18598,32 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="117"/>
         <source>Run the service for up to this many selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したトラックがこの件数以下の場合にサービスを実行する</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="118"/>
         <source>Name shown in the Run menu</source>
-        <translation type="unfinished"></translation>
+        <translation>「実行」メニューに表示する名前</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="119"/>
         <source>Application and arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>アプリケーションと引数</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="129"/>
         <source>Flatpak help…</source>
-        <translation type="unfinished"></translation>
+        <translation>Flatpak ヘルプ…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="131"/>
         <source>Run Services in Flatpak</source>
-        <translation type="unfinished"></translation>
+        <translation>Flatpak でのサービスの実行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="134"/>
         <source>&lt;p&gt;The Flatpak sandbox cannot directly launch applications installed on the host. To allow fooyin to launch host applications, add &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; to fooyin&apos;s Session Bus &quot;talk&quot; permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Then prefix each service command with &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. For example:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;This permission allows fooyin to execute arbitrary commands outside the sandbox. Only enable it if you trust your configured services.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Flatpak のサンドボックスは、ホストにインストールされたアプリケーションを直接起動できません。fooyin がホストのアプリケーションを起動できるようにするには、Flatseal で fooyin のセッションバスの &quot;talk&quot; 権限に &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; を追加するか、以下を実行してください:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;その後、各サービスコマンドの先頭に &lt;code&gt;flatpak-spawn --host&lt;/code&gt; を付けてください。例:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;この権限により、fooyin はサンドボックスの外で任意のコマンドを実行できるようになります。設定したサービスを信頼できる場合にのみ有効にしてください。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="150"/>
@@ -18633,32 +18638,32 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="155"/>
         <source>Simultaneous runs</source>
-        <translation type="unfinished"></translation>
+        <translation>同時実行数</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="164"/>
         <source>Checked services are shown in the Run menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>チェックされているサービスは「実行」メニューに表示されます。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="179"/>
         <source>Select application</source>
-        <translation type="unfinished"></translation>
+        <translation>アプリケーションを選択</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="212"/>
         <source>Service %1: Name is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>サービス %1 : 名前は必須です。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="215"/>
         <source>Service %1: Path is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>サービス %1 : パスは必須です。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="272"/>
         <source>New service</source>
-        <translation type="unfinished"></translation>
+        <translation>新しいサービス</translation>
     </message>
 </context>
 <context>
@@ -18666,7 +18671,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="70"/>
         <source>Run</source>
-        <translation type="unfinished"></translation>
+        <translation>実行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="92"/>
@@ -18678,14 +18683,14 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="92"/>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="103"/>
         <source>Run Services</source>
-        <translation type="unfinished"></translation>
+        <translation>サービスの実行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="102"/>
         <location filename="../../src/plugins/runservices/runservicesplugin.cpp" line="139"/>
         <source>Run %1</source>
         <extracomment>%1 is the name of a registered run service</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>実行 %1</translation>
     </message>
 </context>
 <context>
@@ -18776,7 +18781,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="61"/>
         <source>Show current track when playback is stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>再生が停止しているときに現在のトラックを表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="67"/>
@@ -18912,12 +18917,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1049"/>
         <source>Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>エディター</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1051"/>
         <source>Syntax highlighting</source>
-        <translation type="unfinished"></translation>
+        <translation>構文の強調表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1059"/>
@@ -18927,57 +18932,57 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1060"/>
         <source>Word wrap</source>
-        <translation type="unfinished"></translation>
+        <translation>折り返し</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1061"/>
         <source>Autocomplete</source>
-        <translation type="unfinished"></translation>
+        <translation>自動補完</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1062"/>
         <source>Show whitespace</source>
-        <translation type="unfinished"></translation>
+        <translation>空白文字を表示する</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1063"/>
         <source>Highlight matching brackets</source>
-        <translation type="unfinished"></translation>
+        <translation>対応する括弧を強調表示する</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1064"/>
         <source>Highlight current line</source>
-        <translation type="unfinished"></translation>
+        <translation>現在の行を強調表示する</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1065"/>
         <source>Show line numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>行番号を表示する</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1117"/>
         <source>Reset editor settings</source>
-        <translation type="unfinished"></translation>
+        <translation>エディター設定をリセット</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1171"/>
         <source>Conditionals</source>
-        <translation type="unfinished"></translation>
+        <translation>条件式</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1172"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation>演算子</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1173"/>
         <source>Quoted text</source>
-        <translation type="unfinished"></translation>
+        <translation>引用されたテキスト</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1184"/>
         <source>Reset colours</source>
-        <translation type="unfinished"></translation>
+        <translation>色をリセット</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="1208"/>
@@ -18996,7 +19001,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scripting/scriptformatter.cpp" line="236"/>
         <source>[%1] Error in formatting tag &apos;%2&apos;: invalid formatting option.</source>
-        <translation type="unfinished"></translation>
+        <translation>[%1] フォーマットタグ「%2」でエラーが発生しました : 無効なフォーマットオプションです。</translation>
     </message>
 </context>
 <context>
@@ -19017,7 +19022,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/widgets/scriptlineedit.cpp" line="90"/>
         <source>Script Editor</source>
-        <translation type="unfinished">スクリプトエディタ</translation>
+        <translation>スクリプトエディタ</translation>
     </message>
 </context>
 <context>
@@ -19114,7 +19119,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="81"/>
         <source>Synchronise playback statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>再生統計を同期する</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="82"/>
@@ -19129,7 +19134,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="103"/>
         <source>Enter a query — tracks that match the query will NOT be scrobbled</source>
-        <translation type="unfinished"></translation>
+        <translation>クエリを入力してください — クエリに一致するトラックはスクロブルされません</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="79"/>
@@ -19154,12 +19159,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="121"/>
         <source>Synchronisation</source>
-        <translation type="unfinished"></translation>
+        <translation>同期</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="125"/>
         <source>Import play counts and Loved status from enabled services when a track starts playing</source>
-        <translation type="unfinished"></translation>
+        <translation>トラックの再生開始時に、有効なサービスから再生回数と「いいね」の状態をインポートする</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="129"/>
@@ -19317,22 +19322,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="324"/>
         <source>Submit loved changes</source>
-        <translation type="unfinished"></translation>
+        <translation>「いいね」の変更を送信する</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="325"/>
         <source>Submit Love and Unlove changes to this service</source>
-        <translation type="unfinished"></translation>
+        <translation>このサービスに「いいね」と「よくない」の変更を送信する</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="329"/>
         <source>Synchronise playback statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>再生統計を同期する</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="331"/>
         <source>Import play counts and Loved status from this service when a track starts playing</source>
-        <translation type="unfinished"></translation>
+        <translation>トラックの再生開始時に、このサービスから再生回数と「いいね」の状態をインポートする</translation>
     </message>
 </context>
 <context>
@@ -19418,7 +19423,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message numerus="yes">
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="215"/>
         <source>%Ln result(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 件の結果</numerusform>
         </translation>
     </message>
@@ -19699,7 +19704,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="505"/>
         <source>Show played threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>再生閾値を表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="517"/>
@@ -19912,7 +19917,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="86"/>
         <source>When opening one file from the file manager, add all supported files from the same folder and play the opened file</source>
-        <translation>ファイルマネージャーから1つのファイルを開くとき、同じフォルダー内のサポートされているすべてのファイルを追加し、開いたファイルを再生する</translation>
+        <translation>ファイルマネージャーから 1つのファイルを開くとき、同じフォルダー内のサポートされているすべてのファイルを追加し、開いたファイルを再生する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="92"/>
@@ -19942,22 +19947,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="421"/>
         <source>Only one global shortcut can be assigned to an action.</source>
-        <translation type="unfinished"></translation>
+        <translation>1つのアクションに割り当てられるグローバルショートカットは1つのみです。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="431"/>
         <source>%1 is not available as a global action.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 はグローバルアクションとして使用できません。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="434"/>
         <source>Global shortcuts must contain exactly one key combination.</source>
-        <translation type="unfinished"></translation>
+        <translation>グローバルショートカットには、キーの組み合わせを1つだけ含める必要があります。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="441"/>
         <source>Global shortcuts using printable keys must include Ctrl, Alt, or Meta.</source>
-        <translation type="unfinished"></translation>
+        <translation>印字可能なキーを使用するグローバルショートカットには、Ctrl、Alt、Meta のいずれかを含める必要があります。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="458"/>
@@ -20004,7 +20009,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="179"/>
         <source>Configure global shortcuts…</source>
-        <translation type="unfinished"></translation>
+        <translation>グローバルショートカットを設定…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="183"/>
@@ -20035,12 +20040,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="431"/>
         <source>Global shortcuts are not available on this platform</source>
-        <translation type="unfinished"></translation>
+        <translation>このプラットフォームではグローバルショートカットを使用できません</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="434"/>
         <source>This action is only available within an application context</source>
-        <translation type="unfinished"></translation>
+        <translation>このアクションはアプリケーション内でのみ使用できます</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="472"/>
@@ -20082,7 +20087,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="35"/>
         <source>Prevent display from turning off</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスプレイがオフになるのを防止</translation>
     </message>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="39"/>
@@ -21258,7 +21263,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="90"/>
         <source>Show track</source>
-        <translation type="unfinished"></translation>
+        <translation>トラックを表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="91"/>
@@ -21268,7 +21273,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="92"/>
         <source>Open properties</source>
-        <translation type="unfinished"></translation>
+        <translation>プロパティを開く</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="98"/>
@@ -21612,7 +21617,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="58"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>「いいね」</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="59"/>
@@ -21663,7 +21668,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="146"/>
         <source>Tag Editor</source>
-        <translation>タグの編集</translation>
+        <translation>タグ編集</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="146"/>
@@ -21854,43 +21859,43 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="157"/>
         <source>No local track</source>
-        <translation type="unfinished"></translation>
+        <translation>ローカルトラックなし</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="160"/>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="219"/>
         <source>Unmatched</source>
-        <translation type="unfinished"></translation>
+        <translation>未一致</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="181"/>
         <source>This local track is not matched to a retrieved track.</source>
-        <translation type="unfinished"></translation>
+        <translation>このローカルトラックは、取得したトラックと一致していません。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="184"/>
         <source>This match was set manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>この一致は手動で設定されました。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="187"/>
         <source>Automatic match confidence: %1%.</source>
-        <translation type="unfinished"></translation>
+        <translation>自動一致の信頼度 : %1%。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="191"/>
         <source>The local and retrieved durations differ by more than 10 seconds.</source>
-        <translation type="unfinished"></translation>
+        <translation>ローカルと取得した再生時間が10秒以上異なります。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="195"/>
         <source>This automatic match is ambiguous.</source>
-        <translation type="unfinished"></translation>
+        <translation>この自動一致は曖昧です。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="198"/>
         <source>Drag this row to match it with a retrieved track.</source>
-        <translation type="unfinished"></translation>
+        <translation>この行をドラッグして、取得したトラックと一致させてください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="221"/>
@@ -21905,17 +21910,17 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="223"/>
         <source>%1 / %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 / %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="248"/>
         <source>Current #</source>
-        <translation type="unfinished"></translation>
+        <translation>現在の #</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="250"/>
         <source>Title / file</source>
-        <translation type="unfinished"></translation>
+        <translation>タイトル/ファイル</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="252"/>
@@ -21925,7 +21930,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="254"/>
         <source>Match / Δ</source>
-        <translation type="unfinished"></translation>
+        <translation>一致 / Δ</translation>
     </message>
 </context>
 <context>
@@ -22147,7 +22152,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="80"/>
         <source>Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>失敗</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="82"/>
@@ -22157,156 +22162,156 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="91"/>
         <source>Accurately ripped</source>
-        <translation type="unfinished"></translation>
+        <translation>正確にリッピングされました</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="93"/>
         <source>No match</source>
-        <translation type="unfinished"></translation>
+        <translation>一致なし</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="95"/>
         <source>Incomplete</source>
-        <translation type="unfinished"></translation>
+        <translation>未完了</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="97"/>
         <source>Unsupported format</source>
-        <translation type="unfinished"></translation>
+        <translation>サポートされていない形式</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="169"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="292"/>
         <source>Generated: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>生成日時 : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="174"/>
         <source>Item: &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>項目 : 「%1」</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="175"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="325"/>
         <source>Status: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>状態 : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="177"/>
         <source>Decoded audio MD5: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>デコードされたオーディオの MD5 : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="178"/>
         <source>Decoded audio CRC32: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>デコードされたオーディオの CRC32 : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="181"/>
         <source>Warning: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>警告 : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="188"/>
         <source>Error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>エラー : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="195"/>
         <source>All items decoded successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>すべての項目が正常にデコードされました。</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="198"/>
         <source>%1 of %Ln item(s) decoded successfully.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 件中 %1 件の項目が正常にデコードされました。</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="254"/>
         <source>+%Ln sample(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>+%Ln サンプル</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="256"/>
         <source>%Ln sample(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln サンプル</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="267"/>
         <source>%1 (AR v1/v2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (AR v1/v2)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="270"/>
         <source>%1 (AR v1)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (AR v1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="273"/>
         <source>%1 (AR v2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (AR v2)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="281"/>
         <source>Accurately ripped: %1 | No match: %2 | Incomplete: %3 | Unsupported: %4</source>
-        <translation type="unfinished"></translation>
+        <translation>正確にリッピング : %1 | 一致なし : %2 | 未完了 : %3 | 非対応 : %4</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="314"/>
         <source>AccurateRip disc ID: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip ディスク ID : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="315"/>
         <source>Tracks: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>トラック : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="323"/>
         <source>Track %1</source>
-        <translation type="unfinished"></translation>
+        <translation>トラック %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="324"/>
         <source>Filename: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル名 : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="326"/>
         <source>AR v1 CRC: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v1 CRC : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="327"/>
         <source>AR v2 CRC: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>AR v2 CRC : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="330"/>
         <source>Confidence: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>信頼 : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="333"/>
         <source>Pressing offset: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>プレスオフセット : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="335"/>
         <source>Matched database CRC: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>一致したデータベース CRC : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="344"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="474"/>
         <source>Database CRCs: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>データベース CRC : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="350"/>
@@ -22316,48 +22321,48 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="351"/>
         <source>Accurately ripped: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>正確にリッピング : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="352"/>
         <source>No match: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>一致なし : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="353"/>
         <source>Incomplete: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>未完了 : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="354"/>
         <source>Unsupported: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>非対応 : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="361"/>
         <source>Export Results</source>
-        <translation type="unfinished"></translation>
+        <translation>結果をエクスポート</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="370"/>
         <source>The results file could not be written.</source>
-        <translation type="unfinished"></translation>
+        <translation>結果ファイルを書き込めませんでした。</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="378"/>
         <source>File Integrity Verification</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル整合性検証</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="387"/>
         <source>No problems found.</source>
-        <translation type="unfinished"></translation>
+        <translation>問題は見つかりませんでした。</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="388"/>
         <source>Problems found in %Ln item(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 件の項目で問題が見つかりました。</numerusform>
         </translation>
     </message>
     <message>
@@ -22374,24 +22379,24 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="396"/>
         <source>Warnings</source>
-        <translation type="unfinished"></translation>
+        <translation>警告</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="422"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="506"/>
         <source>Export…</source>
-        <translation type="unfinished"></translation>
+        <translation>エクスポート…</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="428"/>
         <source>Text Files (*.txt)</source>
-        <translation type="unfinished"></translation>
+        <translation>テキストファイル (*.txt)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="446"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="750"/>
         <source>AccurateRip Verification</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip の検証</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="457"/>
@@ -22401,37 +22406,37 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="458"/>
         <source>Confidence</source>
-        <translation type="unfinished"></translation>
+        <translation>信頼</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="459"/>
         <source>Pressing offset</source>
-        <translation type="unfinished"></translation>
+        <translation>プレスオフセット</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="460"/>
         <source>CRC v1</source>
-        <translation type="unfinished"></translation>
+        <translation>CRC v1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="460"/>
         <source>CRC v2</source>
-        <translation type="unfinished"></translation>
+        <translation>CRC v2</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="485"/>
         <source>Matches the AccurateRip database (AR v1)</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip データベースと一致 (AR v1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="494"/>
         <source>Matches the AccurateRip database (AR v2)</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip データベースと一致 (AR v2)</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="514"/>
         <source>Log Files (*.log);;Text Files (*.txt)</source>
-        <translation type="unfinished"></translation>
+        <translation>ログファイル (*.log);;テキストファイル (*.txt)</translation>
     </message>
 </context>
 <context>
@@ -22439,7 +22444,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="541"/>
         <source>Preparing verification…</source>
-        <translation type="unfinished"></translation>
+        <translation>検証を準備中…</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="541"/>
@@ -22449,44 +22454,45 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="544"/>
         <source>File Integrity Verification</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル整合性検証</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="545"/>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="604"/>
         <source>AccurateRip Verification</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip の検証</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="591"/>
         <source>Current file:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のファイル :
+%1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="663"/>
         <source>Looking up album in AccurateRip…</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip でアルバムを検索中…</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="677"/>
         <source>This album is not present in AccurateRip.</source>
-        <translation type="unfinished"></translation>
+        <translation>このアルバムは AccurateRip に存在しません。</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="678"/>
         <source>AccurateRip lookup failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip の検索に失敗しました : %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="685"/>
         <source>AccurateRip returned an unexpectedly large disc record.</source>
-        <translation type="unfinished"></translation>
+        <translation>AccurateRip が、予想以上に大きなディスクレコードを返しました。</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="706"/>
         <source>Verifying album at sample offset %1…</source>
-        <translation type="unfinished"></translation>
+        <translation>サンプルオフセット %1 でアルバムを検証中…</translation>
     </message>
 </context>
 <context>
@@ -23027,7 +23033,7 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="46"/>
         <source>Show played threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>再生閾値を表示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="142"/>
@@ -23137,7 +23143,7 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="225"/>
         <source>Threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>閾値</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="234"/>
@@ -23259,7 +23265,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="613"/>
         <source>Show played threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>再生閾値を表示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="622"/>
@@ -23461,12 +23467,12 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="299"/>
         <source>Rating Control</source>
-        <translation type="unfinished"></translation>
+        <translation>評価の管理</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="311"/>
         <source>Love Control</source>
-        <translation type="unfinished"></translation>
+        <translation>「いいね」の管理</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="331"/>
@@ -23520,22 +23526,22 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="416"/>
         <source>Saved Filter Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>保存済みフィルタータブ</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="423"/>
         <source>Saved Filter Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>保存済みフィルター選択ツール</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="550"/>
         <source>Metadata Lookup</source>
-        <translation type="unfinished"></translation>
+        <translation>メタデータの検索</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="551"/>
         <source>Confirm before wiping writable tags</source>
-        <translation type="unfinished"></translation>
+        <translation>書き込み可能なタグを消去する前に確認する</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="570"/>
@@ -23578,7 +23584,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="604"/>
         <source>Confirm before removing playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストを削除する前に確認する</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="610"/>
@@ -24080,12 +24086,12 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="225"/>
         <source>Only one player option can be used at a time.</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイヤーオプションは一度に1つのみ使用できます。</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="234"/>
         <source>Only one volume option can be used at a time.</source>
-        <translation type="unfinished"></translation>
+        <translation>音量オプションは一度に1つのみ使用できます。</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="250"/>
@@ -24155,47 +24161,47 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="254"/>
         <source>Seek forward (e.g. 5000, 10s, or 1:30)</source>
-        <translation type="unfinished"></translation>
+        <translation>早送り (例: 5000、10s、1:30)</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="255"/>
         <source>Seek backward (e.g. 5000, 10s, or 1:30)</source>
-        <translation type="unfinished"></translation>
+        <translation>早戻し (例: 5000、10s、1:30)</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="255"/>
         <source>Volume options</source>
-        <translation type="unfinished"></translation>
+        <translation>音量オプション</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="256"/>
         <source>Set volume from 0 to 100</source>
-        <translation type="unfinished"></translation>
+        <translation>音量を0から100の範囲で設定する</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="256"/>
         <source>Increase volume by the configured step</source>
-        <translation type="unfinished"></translation>
+        <translation>設定した単位で音量を上げる</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="257"/>
         <source>Decrease volume by the configured step</source>
-        <translation type="unfinished"></translation>
+        <translation>設定した単位で音量を下げる</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="257"/>
         <source>Toggle mute</source>
-        <translation type="unfinished"></translation>
+        <translation>ミュートを切り替える</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="258"/>
         <source>Playback mode options</source>
-        <translation type="unfinished"></translation>
+        <translation>再生モードオプション</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="258"/>
         <source>Set repeat: off, playlist, album, or track</source>
-        <translation type="unfinished"></translation>
+        <translation>リピートを設定する: off、playlist、album、track のいずれか</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="259"/>
@@ -24205,69 +24211,69 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="259"/>
         <source>Set shuffle: off, tracks, albums, or random</source>
-        <translation type="unfinished"></translation>
+        <translation>シャッフルを設定する: off、tracks、albums、random のいずれか</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="260"/>
         <source>Files, directories, or HTTP(S) URLs to open</source>
-        <translation type="unfinished"></translation>
+        <translation>開くファイル、ディレクトリ、または HTTP(S) URL</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="305"/>
         <location filename="../../src/app/commandline.cpp" line="321"/>
         <source>Invalid seek time: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>無効なシーク時間 : %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="314"/>
         <location filename="../../src/app/commandline.cpp" line="330"/>
         <source>Missing time for seek option.</source>
-        <translation type="unfinished"></translation>
+        <translation>シークオプションに時間が指定されていません。</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="337"/>
         <source>Volume must be between 0 and 100: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>音量は0から100の間で指定してください : %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="363"/>
         <source>The repeat option can only be specified once.</source>
-        <translation type="unfinished"></translation>
+        <translation>リピートオプションは一度しか指定できません。</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="369"/>
         <source>Invalid repeat mode: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>無効なリピートモード : %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="377"/>
         <source>The shuffle option can only be specified once.</source>
-        <translation type="unfinished"></translation>
+        <translation>シャッフルオプションは一度しか指定できません。</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="383"/>
         <source>Invalid shuffle mode: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>無効なシャッフルモード : %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="390"/>
         <source>Option requires an argument: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>オプションには引数が必要です : %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="393"/>
         <source>Unknown option: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>不明なオプション : %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="396"/>
         <source>Unable to parse command line options.</source>
-        <translation type="unfinished"></translation>
+        <translation>コマンドラインオプションを解析できません。</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="415"/>
         <source>File or URL does not exist or is not supported: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルまたは URL が存在しないか、サポートされていません : %1</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="413"/>
@@ -24405,14 +24411,14 @@ Changes apply to newly opened streams.</source>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="265"/>
         <source>Extracted artwork to %Ln file(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個のファイルにアートワークを抽出しました</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="270"/>
         <source>Extracted artwork to %Ln file(s); some extractions failed</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 個のファイルにアートワークを抽出しました(一部失敗)</numerusform>
         </translation>
     </message>
@@ -24530,7 +24536,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="324"/>
         <source>Run Services</source>
-        <translation type="unfinished"></translation>
+        <translation>サービスの実行</translation>
     </message>
 </context>
 <context>
@@ -24543,12 +24549,12 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="174"/>
         <source>Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>今すぐ再生</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="177"/>
         <source>Queue next</source>
-        <translation type="unfinished"></translation>
+        <translation>次にキューに追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="180"/>
@@ -24558,12 +24564,12 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="184"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>削除</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="187"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>クリア</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="190"/>
@@ -24593,7 +24599,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/gui/widgets.cpp" line="478"/>
         <source>Unchecked items will be hidden from the playback queue context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>チェックを外した項目は、再生キューのコンテキストメニューに表示されなくなります。</translation>
     </message>
 </context>
 <context>
@@ -24712,22 +24718,22 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="118"/>
         <source>Open Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリを開く</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="122"/>
         <source>Google Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>アーティストを Google で検索</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="126"/>
         <source>Google Artist + Title</source>
-        <translation type="unfinished"></translation>
+        <translation>アーティストとタイトルを Google で検索</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="130"/>
         <source>Wikipedia Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>アーティストを Wikipedia で検索</translation>
     </message>
 </context>
 <context>
