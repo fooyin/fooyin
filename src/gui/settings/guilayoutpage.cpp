@@ -876,13 +876,16 @@ void GuiLayoutPageWidget::onDeleteLayout()
 
     if(m_layoutProvider->canResetLayout(name)) {
         const bool wasCurrent = m_layoutProvider->currentLayout().name() == name;
-        if(m_layoutProvider->resetLayout(name)) {
+        m_layoutProvider->resetLayout(name).then(this, [this, name, wasCurrent](bool success) {
+            if(!success) {
+                return;
+            }
             if(wasCurrent) {
                 m_editableLayout->changeLayout(m_layoutProvider->currentLayout());
             }
             m_drafts.erase(name);
             refreshLayouts(name);
-        }
+        });
         return;
     }
 
@@ -894,13 +897,16 @@ void GuiLayoutPageWidget::onDeleteLayout()
     }
 
     const bool wasCurrent = m_layoutProvider->currentLayout().name() == name;
-    if(m_layoutProvider->deleteLayout(name)) {
+    m_layoutProvider->deleteLayout(name).then(this, [this, name, wasCurrent](bool success) {
+        if(!success) {
+            return;
+        }
         if(wasCurrent && m_layoutProvider->currentLayout().isValid()) {
             m_editableLayout->changeLayout(m_layoutProvider->currentLayout());
         }
         m_drafts.erase(name);
         refreshLayouts(m_layoutProvider->currentLayout().name());
-    }
+    });
 }
 
 void GuiLayoutPageWidget::onRenameLayout()
@@ -920,7 +926,15 @@ void GuiLayoutPageWidget::onRenameLayout()
     const std::optional<LayoutDraft> renamedDraft
         = oldDraft == m_drafts.end() ? std::nullopt : std::optional{oldDraft->second};
 
-    if(success && m_layoutProvider->renameLayout(oldName, newName)) {
+    if(!success) {
+        return;
+    }
+
+    m_layoutProvider->renameLayout(oldName, newName).then(this, [this, newName, renamedDraft](bool renamed) {
+        if(!renamed) {
+            return;
+        }
+
         if(renamedDraft) {
             auto state      = *renamedDraft;
             auto json       = state.layout.json();
@@ -929,8 +943,9 @@ void GuiLayoutPageWidget::onRenameLayout()
             state.layout    = FyLayout{newName, json};
             m_drafts.insert_or_assign(newName, std::move(state));
         }
+
         refreshLayouts(newName);
-    }
+    });
 }
 
 void GuiLayoutPageWidget::onDuplicateLayout()

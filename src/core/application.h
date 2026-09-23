@@ -33,6 +33,7 @@
 #include <QObject>
 
 #include <memory>
+#include <set>
 
 namespace Fooyin {
 class AudioLoader;
@@ -104,6 +105,9 @@ private:
     void startSaveTimer();
     void startPlaybackQueueSaveTimer();
     void exportAllPlaylists(bool shutdown);
+    void queuePlaylistTrash(const QString& path);
+    void processPendingPlaylistTrash();
+    void savePendingPlaylistTrash() const;
 
     void loadDatabaseSettings() const;
     void saveDatabaseSettings() const;
@@ -133,5 +137,9 @@ private:
     QBasicTimer m_playlistSaveTimer;
     QBasicTimer m_playbackQueueSaveTimer;
     QBasicTimer m_settingsSaveTimer;
+    std::set<QString> m_pendingPlaylistTrash;
+    std::set<QString> m_playlistTrashInProgress;
+    std::set<QString> m_playlistTrashAttempted;
+    std::set<QString> m_completedPlaylistTrash;
 };
 } // namespace Fooyin

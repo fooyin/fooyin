@@ -121,4 +121,12 @@ target_link_libraries(
            Qt6::Concurrent
 )
 
+if(UNIX AND NOT APPLE)
+    find_package(Qt6 COMPONENTS DBus QUIET)
+    if(TARGET Qt6::DBus)
+        target_link_libraries(fooyin_utils PRIVATE Qt6::DBus)
+        target_compile_definitions(fooyin_utils PRIVATE FOOYIN_UTILS_DBUS)
+    endif()
+endif()
+
 target_include_directories(fooyin_utils PRIVATE ${ICU_INCLUDE_DIRS})
