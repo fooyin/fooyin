@@ -604,7 +604,7 @@ void InfoPanel::contextMenuEvent(QContextMenuEvent* event)
                   action->setCheckable(true);
                   action->setChecked(m_trackPreference == preference);
                   preferenceGroup->addAction(action);
-                  QAction::connect(action, &QAction::triggered, this, [this, preference] {
+                  QObject::connect(action, &QAction::triggered, this, [this, preference] {
                       m_trackPreference = preference;
                       resetModel();
                   });
