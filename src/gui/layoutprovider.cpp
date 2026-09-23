@@ -33,7 +33,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLoggingCategory>
-#include <QPromise>
 #include <QRegularExpression>
 #include <QString>
 
@@ -45,15 +44,6 @@ constexpr auto ActiveLayoutState = "Interface/ActiveLayout"_L1;
 
 namespace Fooyin {
 namespace {
-QFuture<bool> readyResult(bool result)
-{
-    QPromise<bool> promise;
-    promise.start();
-    promise.addResult(result);
-    promise.finish();
-    return promise.future();
-}
-
 QString layoutFilePath(const QString& name)
 {
     QString filename = name.simplified();
@@ -501,104 +491,80 @@ bool LayoutProvider::createLayout(const QString& name, const FyLayout& baseLayou
     return true;
 }
 
-QFuture<bool> LayoutProvider::deleteLayout(QString name)
+bool LayoutProvider::deleteLayout(const QString& name)
 {
-    const auto layout = p->layout(name);
+    auto layout = p->layout(name);
     if(layout == p->m_layouts.end()) {
-        return readyResult(false);
+        return false;
     }
 
     const QString path = p->pathForLayout(*layout);
     if(path.isEmpty()) {
-        return readyResult(false);
+        return false;
     }
 
-    auto trashed = QFile::exists(path) ? Utils::File::moveToTrash(path) : readyResult(true);
-    return trashed.then(this, [this, name](bool moved) {
-        if(!moved) {
-            qCWarning(LAYOUT_PROV) << "Couldn't delete layout file";
-            return false;
+    if(QFile::exists(path) && !Utils::File::moveToTrash(path)) {
+        qCWarning(LAYOUT_PROV) << "Couldn't delete layout file";
+        return false;
+    }
+
+    const bool wasCurrent = p->m_currentLayout.name() == name;
+    p->m_layoutPaths.erase(name);
+    p->m_layouts.erase(layout);
+
+    if(wasCurrent) {
+        if(const auto defaultLayout = p->layout(u"Default"_s); defaultLayout != p->m_layouts.end()) {
+            p->m_currentLayout = *defaultLayout;
         }
-
-        const auto current = p->layout(name);
-        if(current == p->m_layouts.end()) {
-            return false;
+        else if(!p->m_layouts.empty()) {
+            p->m_currentLayout = p->m_layouts.front();
         }
-
-        const bool wasCurrent = p->m_currentLayout.name() == name;
-        p->m_layoutPaths.erase(name);
-        p->m_layouts.erase(current);
-
-        if(wasCurrent) {
-            if(const auto defaultLayout = p->layout(u"Default"_s); defaultLayout != p->m_layouts.end()) {
-                p->m_currentLayout = *defaultLayout;
-            }
-            else if(!p->m_layouts.empty()) {
-                p->m_currentLayout = p->m_layouts.front();
-            }
-            else {
-                p->m_currentLayout = {};
-            }
-            p->saveActiveLayoutName();
-            Q_EMIT currentLayoutChanged(p->m_currentLayout);
+        else {
+            p->m_currentLayout = {};
         }
+        p->saveActiveLayoutName();
+        Q_EMIT currentLayoutChanged(p->m_currentLayout);
+    }
 
-        Q_EMIT layoutRemoved(name);
-        return true;
-    });
+    Q_EMIT layoutRemoved(name);
+    return true;
 }
 
-QFuture<bool> LayoutProvider::renameLayout(QString oldName, QString newName)
+bool LayoutProvider::renameLayout(const QString& oldName, const QString& newName)
 {
     if(oldName.isEmpty() || newName.isEmpty() || oldName == newName || p->layout(newName) != p->m_layouts.end()) {
-        return readyResult(false);
+        return false;
     }
 
     const auto layout = p->layout(oldName);
     if(layout == p->m_layouts.end()) {
-        return readyResult(false);
+        return false;
     }
 
-    const FyLayout renamed    = renamedLayout(*layout, newName);
-    const QString oldPath     = p->pathForLayout(*layout);
-    const QString newPath     = layoutFilePath(newName);
-    const bool newFileExisted = QFile::exists(newPath);
-
+    const FyLayout renamed = renamedLayout(*layout, newName);
+    const QString oldPath  = p->pathForLayout(*layout);
+    const QString newPath  = layoutFilePath(newName);
     if(!writeLayout(renamed, newPath)) {
-        return readyResult(false);
+        return false;
     }
 
-    auto trashed = !oldPath.isEmpty() && oldPath != newPath && QFile::exists(oldPath)
-                     ? Utils::File::moveToTrash(oldPath)
-                     : readyResult(true);
-    return trashed.then(this, [this, oldName, newName, renamed, newPath, newFileExisted, oldPath](bool moved) {
-        if(!moved) {
-            qCWarning(LAYOUT_PROV) << "Couldn't remove old layout file" << oldPath;
-            if(!newFileExisted) {
-                QFile::remove(newPath);
-            }
-            return false;
-        }
+    if(!oldPath.isEmpty() && oldPath != newPath) {
+        Utils::File::moveToTrash(oldPath);
+    }
 
-        const auto current = p->layout(oldName);
-        if(current == p->m_layouts.end()) {
-            return false;
-        }
+    *layout = renamed;
+    p->m_layoutPaths.erase(oldName);
+    p->setLayoutPath(renamed, newPath);
 
-        *current = renamed;
-        p->m_layoutPaths.erase(oldName);
-        p->setLayoutPath(renamed, newPath);
+    if(p->m_currentLayout.name() == oldName) {
+        p->m_currentLayout = renamed;
+        p->saveActiveLayoutName();
+        Q_EMIT currentLayoutChanged(p->m_currentLayout);
+    }
 
-        if(p->m_currentLayout.name() == oldName) {
-            p->m_currentLayout = renamed;
-            p->saveActiveLayoutName();
-            Q_EMIT currentLayoutChanged(p->m_currentLayout);
-        }
-
-        Q_EMIT layoutRemoved(oldName);
-        Q_EMIT layoutAdded(renamed);
-        return true;
-    });
+    Q_EMIT layoutRemoved(oldName);
+    Q_EMIT layoutAdded(renamed);
+    return true;
 }
 
 bool LayoutProvider::duplicateLayout(const QString& sourceName, const QString& newName)
@@ -607,39 +573,34 @@ bool LayoutProvider::duplicateLayout(const QString& sourceName, const QString& n
     return createLayout(newName, source);
 }
 
-QFuture<bool> LayoutProvider::resetLayout(QString name)
+bool LayoutProvider::resetLayout(const QString& name)
 {
     if(!canResetLayout(name)) {
-        return readyResult(false);
+        return false;
     }
 
     const FyLayout current = layoutByName(name);
     const QString path     = p->pathForLayout(current);
+    if(!path.isEmpty()) {
+        Utils::File::moveToTrash(path);
+    }
 
-    auto trashed = !path.isEmpty() && QFile::exists(path) ? Utils::File::moveToTrash(path) : readyResult(true);
-    return trashed.then(this, [this, name, path](bool moved) {
-        if(!moved) {
-            qCWarning(LAYOUT_PROV) << "Couldn't reset layout file" << path;
-            return false;
-        }
+    const auto builtIn = p->m_builtInLayouts.find(name);
+    if(builtIn == p->m_builtInLayouts.end()) {
+        return false;
+    }
 
-        const auto builtIn = p->m_builtInLayouts.find(name);
-        if(builtIn == p->m_builtInLayouts.end()) {
-            return false;
-        }
+    p->updateLayout(builtIn->second);
+    p->m_layoutPaths.erase(name);
 
-        p->updateLayout(builtIn->second);
-        p->m_layoutPaths.erase(name);
+    if(p->m_currentLayout.name() == name) {
+        p->m_currentLayout = builtIn->second;
+        p->saveActiveLayoutName();
+        Q_EMIT currentLayoutChanged(p->m_currentLayout);
+    }
 
-        if(p->m_currentLayout.name() == name) {
-            p->m_currentLayout = builtIn->second;
-            p->saveActiveLayoutName();
-            Q_EMIT currentLayoutChanged(p->m_currentLayout);
-        }
-
-        Q_EMIT layoutChanged(builtIn->second);
-        return true;
-    });
+    Q_EMIT layoutChanged(builtIn->second);
+    return true;
 }
 
 FyLayout LayoutProvider::importLayout(const QString& path)

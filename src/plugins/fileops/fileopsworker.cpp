@@ -33,8 +33,6 @@
 #include <QLoggingCategory>
 #include <QRegularExpression>
 
-#include <QCoro/QCoroFuture>
-
 #include <ranges>
 
 Q_LOGGING_CATEGORY(FILEOPS, "fy.fileops")
@@ -128,16 +126,6 @@ void FileOpsWorker::simulate(const FileOpPreset& preset)
 
 void FileOpsWorker::run()
 {
-    m_operationTask = runAsync();
-}
-
-void FileOpsWorker::deleteFiles(bool forceImmediateDelete)
-{
-    m_operationTask = deleteFilesAsync(forceImmediateDelete);
-}
-
-QCoro::Task<> FileOpsWorker::runAsync()
-{
     setState(Running);
 
     if(m_isMonitoring) {
@@ -194,7 +182,7 @@ QCoro::Task<> FileOpsWorker::runAsync()
                 break;
             }
             case Operation::RemoveArchive: {
-                result = co_await removeArchive(item);
+                result = removeArchive(item);
                 break;
             }
             case Operation::Delete:
@@ -222,7 +210,7 @@ QCoro::Task<> FileOpsWorker::runAsync()
     Q_EMIT finished();
 }
 
-QCoro::Task<> FileOpsWorker::deleteFilesAsync(bool forceImmediateDelete)
+void FileOpsWorker::deleteFiles(bool forceImmediateDelete)
 {
     setState(Running);
 
@@ -232,7 +220,7 @@ QCoro::Task<> FileOpsWorker::deleteFilesAsync(bool forceImmediateDelete)
         setState(Idle);
         Q_EMIT deleteFinished({}, {});
         Q_EMIT finished();
-        co_return;
+        return;
     }
 
     if(m_isMonitoring) {
@@ -259,7 +247,7 @@ QCoro::Task<> FileOpsWorker::deleteFilesAsync(bool forceImmediateDelete)
 
         const bool immediateDelete
             = forceImmediateDelete || m_settings->fileValue(Settings::ImmediateDelete, false).toBool();
-        const bool deleted = immediateDelete ? QFile::remove(filepath) : co_await Utils::File::moveToTrash(filepath);
+        const bool deleted = immediateDelete ? QFile::remove(filepath) : Utils::File::moveToTrash(filepath);
 
         if(!deleted) {
             qCWarning(FILEOPS) << "Failed to delete file" << filepath;
@@ -718,28 +706,26 @@ FileOpResult FileOpsWorker::extractFile(const FileOpsItem& item)
     return {.operation = item, .status = FileOpStatus::Succeeded, .error = {}};
 }
 
-QCoro::Task<FileOpResult> FileOpsWorker::removeArchive(const FileOpsItem& item)
+FileOpResult FileOpsWorker::removeArchive(const FileOpsItem& item)
 {
     if(m_failedArchives.contains(item.archivePath)) {
         qCWarning(FILEOPS) << "Skipping archive deletion after extraction failure:" << item.archivePath;
-        co_return {.operation = item,
-                   .status    = FileOpStatus::Skipped,
-                   .error     = tr("One or more archive entries could not be extracted")};
+        return {.operation = item,
+                .status    = FileOpStatus::Skipped,
+                .error     = tr("One or more archive entries could not be extracted")};
     }
 
     if(!m_successfulArchives.contains(item.archivePath)) {
         qCWarning(FILEOPS) << "Skipping archive deletion without successful extraction:" << item.archivePath;
-        co_return {
-            .operation = item, .status = FileOpStatus::Skipped, .error = tr("No archive entries were extracted")};
+        return {.operation = item, .status = FileOpStatus::Skipped, .error = tr("No archive entries were extracted")};
     }
 
     const bool immediateDelete = m_settings->fileValue(Settings::ImmediateDelete, false).toBool();
-    const bool deleted
-        = immediateDelete ? QFile::remove(item.archivePath) : co_await Utils::File::moveToTrash(item.archivePath);
+    const bool deleted = immediateDelete ? QFile::remove(item.archivePath) : Utils::File::moveToTrash(item.archivePath);
 
     if(!deleted) {
         qCWarning(FILEOPS) << "Failed to delete source archive" << item.archivePath;
-        co_return {.operation = item, .status = FileOpStatus::Failed, .error = tr("Could not delete source archive")};
+        return {.operation = item, .status = FileOpStatus::Failed, .error = tr("Could not delete source archive")};
     }
 
     if(m_settings->fileValue(Settings::RemoveEmptyParentFolders, false).toBool()) {
@@ -747,7 +733,7 @@ QCoro::Task<FileOpResult> FileOpsWorker::removeArchive(const FileOpsItem& item)
     }
 
     updateExtractedArchiveTracks(item.archivePath);
-    co_return {.operation = item, .status = FileOpStatus::Succeeded, .error = {}};
+    return {.operation = item, .status = FileOpStatus::Succeeded, .error = {}};
 }
 
 void FileOpsWorker::createDir(const QDir& dir)

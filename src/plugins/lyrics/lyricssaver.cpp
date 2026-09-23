@@ -236,13 +236,11 @@ bool LyricsSaver::saveLyricsToFile(const Lyrics& lyrics, const Track& track)
 
     const bool changedFile = !lyrics.filepath.isEmpty() && filepath != lyrics.filepath;
 
-    const auto removeFile = [this, &track](const QString& file) {
+    const auto removeFile = [&track](const QString& file) {
         qCInfo(LYRICS) << "Removing file" << file << "for" << track.prettyFilepath();
-        Utils::File::moveToTrash(file).then(this, [file](bool moved) {
-            if(!moved) {
-                qCWarning(LYRICS) << "Failed to move lyrics file to Trash" << file;
-            }
-        });
+        if(!Utils::File::moveToTrash(file)) {
+            qCWarning(LYRICS) << "Failed to move lyrics file to Trash" << file;
+        }
     };
 
     if(lyrics.isEmpty()) {
@@ -419,11 +417,9 @@ bool LyricsSaver::saveToConfiguredMethod(const Lyrics& lyrics, const Track& trac
                     if(QFile::exists(filepath)) {
                         qCInfo(LYRICS) << "Removing original lyrics file" << filepath << "for"
                                        << track.prettyFilepath();
-                        Utils::File::moveToTrash(filepath).then(this, [filepath](bool moved) {
-                            if(!moved) {
-                                qCWarning(LYRICS) << "Failed to move lyrics file to Trash" << filepath;
-                            }
-                        });
+                        if(!Utils::File::moveToTrash(filepath)) {
+                            qCWarning(LYRICS) << "Failed to move lyrics file to Trash" << filepath;
+                        }
                     }
                 }
             }

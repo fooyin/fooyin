@@ -25,17 +25,12 @@
 #include <QDirIterator>
 #include <QFile>
 #include <QLoggingCategory>
-#include <QPromise>
 
 #ifdef FOOYIN_UTILS_DBUS
 #include <QDBusInterface>
-#include <QDBusPendingCallWatcher>
-#include <QDBusPendingReply>
+#include <QDBusReply>
 #include <QDBusUnixFileDescriptor>
-
 #endif
-
-#include <memory>
 
 Q_LOGGING_CATEGORY(FILE_UTILS, "fy.fileutils")
 
@@ -77,54 +72,32 @@ PathParts splitPath(const QString& path)
 } // namespace
 
 namespace Fooyin::Utils::File {
-QFuture<bool> moveToTrash(QString path)
+bool moveToTrash(const QString& path)
 {
-    auto promise = std::make_shared<QPromise<bool>>();
-    promise->start();
-    const QFuture<bool> future = promise->future();
-
 #ifdef FOOYIN_UTILS_DBUS
     if(isFlatpak()) {
-        auto file = std::make_shared<QFile>(path);
-        if(!file->open(QIODevice::ReadWrite | QIODevice::ExistingOnly)) {
-            qCWarning(FILE_UTILS) << "Failed to open file for trash portal" << path << file->errorString();
-            promise->addResult(false);
-            promise->finish();
-            return future;
+        QFile file{path};
+        if(!file.open(QIODevice::ReadWrite | QIODevice::ExistingOnly)) {
+            qCWarning(FILE_UTILS) << "Failed to open file for trash portal" << path << file.errorString();
+            return false;
         }
 
         QDBusInterface portal{u"org.freedesktop.portal.Desktop"_s, u"/org/freedesktop/portal/desktop"_s,
                               u"org.freedesktop.portal.Trash"_s, QDBusConnection::sessionBus()};
-        auto* watcher = new QDBusPendingCallWatcher{
-            portal.asyncCall(u"TrashFile"_s, QVariant::fromValue(QDBusUnixFileDescriptor{file->handle()}))};
-        auto complete = [watcher, promise, file = std::move(file), path = std::move(path)]() {
-            const QDBusPendingReply<uint> reply{*watcher};
-            bool moved = false;
-            if(reply.isError()) {
-                qCWarning(FILE_UTILS) << "Trash portal failed for" << path << reply.error().message();
-            }
-            else if(reply.value() != 1) {
-                qCWarning(FILE_UTILS) << "Trash portal did not move" << path << "(result" << reply.value() << ')';
-            }
-            else {
-                moved = true;
-            }
-            promise->addResult(moved);
-            promise->finish();
-            watcher->deleteLater();
-        };
-        if(watcher->isFinished()) {
-            complete();
+        const QDBusReply<uint> reply
+            = portal.call(u"TrashFile"_s, QVariant::fromValue(QDBusUnixFileDescriptor{file.handle()}));
+        if(!reply.isValid()) {
+            qCWarning(FILE_UTILS) << "Trash portal failed for" << path << reply.error().message();
+            return false;
         }
-        else {
-            QObject::connect(watcher, &QDBusPendingCallWatcher::finished, watcher, std::move(complete));
+        if(reply.value() != 1) {
+            qCWarning(FILE_UTILS) << "Trash portal did not move" << path << "(result" << reply.value() << ')';
+            return false;
         }
-        return future;
+        return true;
     }
 #endif
-    promise->addResult(QFile::moveToTrash(path));
-    promise->finish();
-    return future;
+    return QFile::moveToTrash(path);
 }
 
 QString cleanPath(const QString& path)

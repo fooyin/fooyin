@@ -23,7 +23,6 @@
 
 #include <gui/fylayout.h>
 
-#include <QFuture>
 #include <QJsonObject>
 #include <QString>
 
@@ -55,10 +54,10 @@ public:
     bool saveLayout(const FyLayout& layout);
     void changeLayout(const FyLayout& layout);
     bool createLayout(const QString& name, const FyLayout& baseLayout);
-    QFuture<bool> deleteLayout(QString name);
-    QFuture<bool> renameLayout(QString oldName, QString newName);
+    bool deleteLayout(const QString& name);
+    bool renameLayout(const QString& oldName, const QString& newName);
     bool duplicateLayout(const QString& sourceName, const QString& newName);
-    QFuture<bool> resetLayout(QString name);
+    bool resetLayout(const QString& name);
 
     FyLayout importLayout(const QString& path);
     void importLayout(QWidget* parent);

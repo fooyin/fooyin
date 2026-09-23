@@ -58,10 +58,7 @@
 #include <QCoreApplication>
 #include <QLoggingCategory>
 #include <QProcess>
-#include <QTimer>
 #include <QTimerEvent>
-
-#include <vector>
 
 Q_LOGGING_CATEGORY(APP, "fy.app")
 
@@ -77,7 +74,6 @@ constexpr auto PlaylistSaveInterval      = 30000;
 constexpr auto PlaybackQueueSaveInterval = 1000;
 constexpr auto SettingsSaveInterval      = 300000;
 #endif
-constexpr auto AutoExportPendingTrash = "Playlist/AutoExportPendingTrash"_L1;
 
 namespace {
 void registerTypes()
@@ -122,18 +118,11 @@ Application::Application(QObject* parent)
     , m_corePluginContext{m_engine.get(), m_playerController, m_libraryManager, m_library,         m_playlistHandler,
                           m_settings,     m_audioLoader,      m_playlistLoader, m_sortingRegistry, m_networkManager}
 {
-    const FyStateSettings stateSettings;
-    const QStringList pendingTrash = stateSettings.value(AutoExportPendingTrash).toStringList();
-    m_pendingPlaylistTrash.insert(pendingTrash.cbegin(), pendingTrash.cend());
-
     m_audioLoader->setRemoteSourceProvider(m_remoteIo);
     m_translations.initialiseTranslations(m_settings->value<Settings::Core::Language>());
     loadDatabaseSettings();
 
-    QObject::connect(m_playlistHandler, &PlaylistHandler::playlistAdded, this, [this]() {
-        startSaveTimer();
-        QMetaObject::invokeMethod(this, [this]() { exportAllPlaylists(false); }, Qt::QueuedConnection);
-    });
+    QObject::connect(m_playlistHandler, &PlaylistHandler::playlistAdded, this, &Application::startSaveTimer);
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistRemoved, this, &Application::startSaveTimer);
     QObject::connect(m_playlistHandler, &PlaylistHandler::tracksAdded, this, &Application::startSaveTimer);
     QObject::connect(m_playlistHandler, &PlaylistHandler::tracksChanged, this, &Application::startSaveTimer);
@@ -142,7 +131,6 @@ Application::Application(QObject* parent)
     QObject::connect(
         m_playlistHandler, &PlaylistHandler::playlistsPopulated, this,
         [this]() {
-            exportAllPlaylists(false);
             if(m_settings->value<Settings::Core::ClearPlaybackQueueOnStartup>()) {
                 m_playbackQueueStore.save(PlaybackQueue{});
                 return;
@@ -202,11 +190,12 @@ void Application::startup()
 
 void Application::shutdown()
 {
-    m_playlistSaveTimer.stop();
     m_playbackQueueSaveTimer.stop();
     saveDatabaseSettings();
 
-    exportAllPlaylists(true);
+    if(m_settings->fileValue(Settings::Core::Internal::AutoExportPlaylists).toBool()) {
+        exportAllPlaylists(true);
+    }
 
     m_playbackQueueStore.save(m_playerController->playbackQueue());
 
@@ -334,7 +323,9 @@ void Application::timerEvent(QTimerEvent* event)
 {
     if(event->timerId() == m_playlistSaveTimer.timerId()) {
         m_playlistSaveTimer.stop();
-        exportAllPlaylists(false);
+        if(m_settings->fileValue(Settings::Core::Internal::AutoExportPlaylists).toBool()) {
+            exportAllPlaylists(false);
+        }
         m_playlistHandler->savePlaylists();
     }
     else if(event->timerId() == m_playbackQueueSaveTimer.timerId()) {
@@ -505,16 +496,6 @@ void Application::exportAllPlaylists(bool shutdown)
 {
     using namespace Settings::Core::Internal;
 
-    const bool autoExport = m_settings->fileValue(AutoExportPlaylists).toBool();
-    const bool canDelete  = autoExport && m_settings->fileValue(AutoExportPlaylistsRemove, true).toBool();
-    if(!canDelete && !m_pendingPlaylistTrash.empty()) {
-        m_pendingPlaylistTrash.clear();
-        savePendingPlaylistTrash();
-    }
-    if(!autoExport) {
-        return;
-    }
-
     const auto ext = m_settings->fileValue(AutoExportPlaylistsType).toString();
 
     auto* parser = m_playlistLoader->parserForExtension(ext);
@@ -524,15 +505,29 @@ void Application::exportAllPlaylists(bool shutdown)
 
     const QString path = m_settings->fileValue(AutoExportPlaylistsPath, Core::playlistsPath()).toString();
     const QDir playlistPath{path};
-    const auto pathType = static_cast<PlaylistParser::PathType>(
-        m_settings->fileValue(Settings::Core::Internal::PlaylistSavePathType, 0).toInt());
-    const bool writeMetadata = m_settings->fileValue(Settings::Core::Internal::PlaylistSaveMetadata, false).toBool();
+    const auto pathType = static_cast<PlaylistParser::PathType>(m_settings->fileValue(PlaylistSavePathType, 0).toInt());
+    const bool writeMetadata = m_settings->fileValue(PlaylistSaveMetadata, false).toBool();
 
-    const auto savePlaylist = [&](Playlist* playlist) {
+    enum ExportType : uint8_t
+    {
+        Save,
+        SaveAndDeleteEmpty,
+        ForceDelete
+    };
+
+    auto saveOrDeletePlaylist = [&](Playlist* playlist, ExportType exportType) {
         const QString playlistFilepath = playlistPath.absoluteFilePath(playlist->name() + u'.' + ext);
         playlistPath.mkpath(path);
 
         QFile playlistFile{playlistFilepath};
+        const bool emptyPlaylist = playlist->trackCount() == 0;
+        if(exportType == ForceDelete || (exportType == SaveAndDeleteEmpty && emptyPlaylist)) {
+            if(playlistFile.exists() && !Utils::File::moveToTrash(playlistFilepath)) {
+                qCInfo(APP) << "Could not remove" << (emptyPlaylist ? "empty" : "") << "playlist:" << playlistFilepath;
+            }
+            return;
+        }
+
         if(!playlistFile.open(QIODevice::WriteOnly)) {
             qCWarning(APP) << "Could not open playlist file" << playlistPath
                            << "for writing:" << playlistFile.errorString();
@@ -544,115 +539,21 @@ void Application::exportAllPlaylists(bool shutdown)
         parser->savePlaylist(&playlistFile, ext, playlist->tracks(), playlistDir, pathType, writeMetadata);
     };
 
-    auto playlists = m_playlistHandler->playlists();
-    for(Playlist* playlist : playlists) {
-        const QString playlistFilepath = playlistPath.absoluteFilePath(playlist->name() + u'.' + ext);
-        if(canDelete && playlist->trackCount() == 0) {
-            queuePlaylistTrash(playlistFilepath);
-            continue;
-        }
+    auto playlists       = m_playlistHandler->playlists();
+    const auto canDelete = shutdown && m_settings->fileValue(AutoExportPlaylistsRemove, true).toBool();
 
-        m_completedPlaylistTrash.erase(playlistFilepath);
-        if(m_playlistTrashInProgress.contains(playlistFilepath)) {
-            continue;
-        }
-
-        const bool wasPending = m_pendingPlaylistTrash.erase(playlistFilepath) > 0;
-        if(wasPending) {
-            m_playlistTrashAttempted.erase(playlistFilepath);
-            savePendingPlaylistTrash();
-        }
-
-        if(playlist->tracksModified() || wasPending
-           || (playlist->trackCount() > 0 && !QFile::exists(playlistFilepath))) {
-            savePlaylist(playlist);
+    for(const auto& playlist : playlists) {
+        if(playlist->tracksModified() || (canDelete && playlist->trackCount() == 0)) {
+            saveOrDeletePlaylist(playlist, canDelete ? SaveAndDeleteEmpty : Save);
         }
     }
 
-    const bool saveRemoved = m_settings->fileValue(AutoExportPlaylistsSaveRemoved, false).toBool();
+    const auto saveRemoved = shutdown && m_settings->fileValue(AutoExportPlaylistsSaveRemoved, false).toBool();
     if(canDelete || saveRemoved) {
-        const auto pendingPlaylists = m_playlistHandler->pendingRemovedPlaylists();
-        for(Playlist* playlist : pendingPlaylists) {
-            if(canDelete) {
-                queuePlaylistTrash(playlistPath.absoluteFilePath(playlist->name() + u'.' + ext));
-            }
-            else if(saveRemoved) {
-                savePlaylist(playlist);
-            }
+        for(const auto& playlist : m_playlistHandler->pendingRemovedPlaylists()) {
+            saveOrDeletePlaylist(playlist, canDelete ? ForceDelete : Save);
         }
     }
-
-    if(!shutdown) {
-        processPendingPlaylistTrash();
-    }
-}
-
-void Application::queuePlaylistTrash(const QString& path)
-{
-    // Removed playlists stay in the handler for undo, so a completed path mustn't be queued again
-    if(!path.isEmpty() && !m_completedPlaylistTrash.contains(path) && m_pendingPlaylistTrash.emplace(path).second) {
-        savePendingPlaylistTrash();
-    }
-}
-
-void Application::processPendingPlaylistTrash()
-{
-    using namespace Settings::Core::Internal;
-
-    const QString ext = m_settings->fileValue(AutoExportPlaylistsType).toString();
-    const QDir playlistPath{m_settings->fileValue(AutoExportPlaylistsPath, Core::playlistsPath()).toString()};
-    const QStringList pending{m_pendingPlaylistTrash.cbegin(), m_pendingPlaylistTrash.cend()};
-
-    for(const QString& path : pending) {
-        if(m_playlistTrashInProgress.contains(path) || m_playlistTrashAttempted.contains(path)) {
-            continue;
-        }
-
-        const bool active = std::ranges::any_of(m_playlistHandler->playlists(), [&](const Playlist* playlist) {
-            return playlist->trackCount() > 0 && playlistPath.absoluteFilePath(playlist->name() + u'.' + ext) == path;
-        });
-        if(active || !QFile::exists(path)) {
-            m_pendingPlaylistTrash.erase(path);
-            if(!active) {
-                m_completedPlaylistTrash.emplace(path);
-            }
-            savePendingPlaylistTrash();
-            continue;
-        }
-
-        m_playlistTrashAttempted.emplace(path);
-        m_playlistTrashInProgress.emplace(path);
-
-        Utils::File::moveToTrash(path).then(this, [this, path](bool moved) {
-            m_playlistTrashInProgress.erase(path);
-            if(moved || !QFile::exists(path)) {
-                m_pendingPlaylistTrash.erase(path);
-                m_completedPlaylistTrash.emplace(path);
-                savePendingPlaylistTrash();
-            }
-            else {
-                qCWarning(APP) << "Could not move playlist to Trash:" << path;
-            }
-            QMetaObject::invokeMethod(this, [this]() { exportAllPlaylists(false); });
-        });
-    }
-}
-
-void Application::savePendingPlaylistTrash() const
-{
-    FyStateSettings stateSettings;
-
-    if(m_pendingPlaylistTrash.empty()) {
-        stateSettings.remove(AutoExportPendingTrash);
-    }
-    else {
-        QStringList paths;
-        for(const QString& path : m_pendingPlaylistTrash) {
-            paths.push_back(path);
-        }
-        stateSettings.setValue(AutoExportPendingTrash, paths);
-    }
-    stateSettings.sync();
 }
 
 void Application::loadDatabaseSettings() const

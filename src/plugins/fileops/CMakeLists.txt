@@ -2,7 +2,6 @@ create_fooyin_plugin_internal(
     fileops
     DEPENDS Fooyin::CorePrivate
             Fooyin::Gui
-            QCoro6::Core
     SOURCES fileopsdialog.cpp
             fileopsdialog.h
             fileopsdeletedialog.cpp

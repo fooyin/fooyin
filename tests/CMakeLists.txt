@@ -85,10 +85,6 @@ fooyin_add_test(test_m3uparser core/playlist/m3uparsertest.cpp data/playlists.qr
 fooyin_add_test(test_plsparser core/playlist/plsparsertest.cpp data/playlists.qrc)
 fooyin_add_test(test_playlistchangeset core/playlist/playlistchangesettest.cpp)
 fooyin_add_test(test_playlisthandler core/playlist/playlisthandlertest.cpp)
-fooyin_add_test(
-    test_playlistautoexport core/playlist/playlistautoexporttest.cpp ${CMAKE_SOURCE_DIR}/data/data.qrc
-                             data/playlists.qrc
-)
 fooyin_add_test(test_libraryscanner core/library/libraryscannertest.cpp ${CMAKE_SOURCE_DIR}/data/data.qrc)
 fooyin_add_test(test_musiclibraryfilter core/library/musiclibraryfiltertest.cpp)
 fooyin_add_test(test_unifiedmusiclibrary core/library/unifiedmusiclibrarytest.cpp ${CMAKE_SOURCE_DIR}/data/data.qrc)
@@ -115,7 +111,6 @@ if(TARGET fileops)
     set(FILEOPS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/plugins/fileops)
     fooyin_add_test(test_fileopsworker plugins/fileops/fileopsworkertest.cpp ${FILEOPS_SOURCE_DIR}/fileopsworker.cpp)
     target_include_directories(test_fileopsworker PRIVATE ${FILEOPS_SOURCE_DIR})
-    target_link_libraries(test_fileopsworker PRIVATE QCoro6::Core)
 endif()
 
 if(TARGET tageditor)

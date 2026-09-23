@@ -26,8 +26,6 @@
 
 #include <QDir>
 
-#include <QCoro/QCoroTask>
-
 #include <deque>
 #include <optional>
 #include <set>
@@ -93,9 +91,6 @@ Q_SIGNALS:
     void operationCompleted(const Fooyin::FileOps::FileOpResult& result);
 
 private:
-    QCoro::Task<> runAsync();
-    QCoro::Task<> deleteFilesAsync(bool forceImmediateDelete);
-
     bool prepareOperations(const FileOpPreset& preset, bool emitSimulation);
     bool populateTrackPaths();
 
@@ -109,7 +104,7 @@ private:
     FileOpResult renameFile(const FileOpsItem& item);
     static FileOpResult copyFile(const FileOpsItem& item);
     FileOpResult extractFile(const FileOpsItem& item);
-    QCoro::Task<FileOpResult> removeArchive(const FileOpsItem& item);
+    FileOpResult removeArchive(const FileOpsItem& item);
 
     void createDir(const QDir& dir);
     void removeDir(const QDir& dir);
@@ -144,7 +139,6 @@ private:
     std::unordered_map<QString, QString> m_extractedTrackDestinations;
     TrackList m_tracksToUpdate;
     TrackList m_tracksToDelete;
-    std::optional<QCoro::Task<>> m_operationTask;
 };
 } // namespace FileOps
 } // namespace Fooyin
