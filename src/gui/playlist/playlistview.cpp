@@ -35,14 +35,14 @@
 #include <QPainter>
 #include <QResizeEvent>
 #include <QScrollBar>
-#include <QTimer>
 
 #include <algorithm>
 
 using namespace Qt::StringLiterals;
 
-constexpr auto EditorDelay          = 600;
-constexpr auto MultipleValuesPrefix = "<<multiple values>>"_L1;
+constexpr auto EditorDelay           = 600;
+constexpr auto BackgroundResizeDelay = 100;
+constexpr auto MultipleValuesPrefix  = "<<multiple values>>"_L1;
 
 QT_BEGIN_NAMESPACE
 // Exported by qimageeffects.cpp
@@ -390,7 +390,17 @@ void PlaylistView::mouseReleaseEvent(QMouseEvent* event)
 void PlaylistView::resizeEvent(QResizeEvent* event)
 {
     ExpandedTreeView::resizeEvent(event);
-    invalidateScaledBackground();
+
+    const bool resizeBackground = m_bgOptions.imageMode != PlaylistBgImage::None
+                               && m_bgOptions.scaling != PlaylistBgScaling::OriginalSize && m_bgOptions.opacity > 0
+                               && !m_bgFadeController->pixmap().isNull();
+    if(!resizeBackground) {
+        m_bgResizeTimer.stop();
+    }
+    else {
+        m_bgResizeTimer.start(BackgroundResizeDelay, this);
+    }
+
     updateBulkEditorGeometry();
 }
 
@@ -402,6 +412,12 @@ void PlaylistView::scrollContentsBy(int dx, int dy)
 
 void PlaylistView::timerEvent(QTimerEvent* event)
 {
+    if(event->timerId() == m_bgResizeTimer.timerId()) {
+        m_bgResizeTimer.stop();
+        invalidateScaledBackground();
+        viewport()->update();
+        return;
+    }
     if(event->timerId() == m_editTimer.timerId()) {
         m_editTimer.stop();
 
@@ -1109,7 +1125,9 @@ QPixmap PlaylistView::preparedBackgroundPixmap(const QPixmap& source, Background
         return {};
     }
 
-    if(cache.sourceKey == source.cacheKey() && cache.viewportSize == viewportSize && qFuzzyCompare(cache.dpr, dpr)
+    // Keep using the cache during an interactive resize
+    const bool useCache = m_bgOptions.scaling == PlaylistBgScaling::OriginalSize || cache.viewportSize == viewportSize;
+    if(cache.sourceKey == source.cacheKey() && (useCache || m_bgResizeTimer.isActive()) && qFuzzyCompare(cache.dpr, dpr)
        && !cache.pixmap.isNull()) {
         return cache.pixmap;
     }
@@ -1205,7 +1223,25 @@ QPoint PlaylistView::backgroundPixmapPosition(const QSize& pixmapSize) const
 
 void PlaylistView::drawBackgroundPixmap(QPainter& painter, const QPixmap& pixmap)
 {
-    painter.drawPixmap(backgroundPixmapPosition(pixmap.deviceIndependentSize().toSize()), pixmap);
+    QSize pixmapSize = pixmap.deviceIndependentSize().toSize();
+
+    if(m_bgResizeTimer.isActive() && m_bgOptions.scaling != PlaylistBgScaling::OriginalSize) {
+        const QSize viewportSize = viewport()->size();
+        if(m_bgOptions.scaling == PlaylistBgScaling::Scaled) {
+            pixmapSize = viewportSize;
+        }
+        else {
+            const Qt::AspectRatioMode aspectRatioMode = m_bgOptions.scaling == PlaylistBgScaling::ScaledAndCropped
+                                                          ? Qt::KeepAspectRatioByExpanding
+                                                          : Qt::KeepAspectRatio;
+            pixmapSize.scale(viewportSize, aspectRatioMode);
+        }
+
+        painter.drawPixmap(QRect{backgroundPixmapPosition(pixmapSize), pixmapSize}, pixmap);
+        return;
+    }
+
+    painter.drawPixmap(backgroundPixmapPosition(pixmapSize), pixmap);
 }
 } // namespace Fooyin
 

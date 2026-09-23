@@ -152,6 +152,7 @@ private:
 
     BackgroundOptions m_bgOptions;
     PixmapFadeController* m_bgFadeController;
+    QBasicTimer m_bgResizeTimer;
     mutable BackgroundPixmapCache m_cachedBg;
     mutable BackgroundPixmapCache m_cachedPreviousBg;
 
