@@ -50,15 +50,25 @@ QStringList pluginPaths()
 {
     QStringList paths;
 
+    const auto appendPath = [&paths](const QString& path) {
+        const QString cleanPath = Utils::File::cleanPath(path);
+        if(!cleanPath.isEmpty() && !paths.contains(cleanPath)) {
+            paths.append(cleanPath);
+        }
+    };
+
     const QDir appPath{QCoreApplication::applicationDirPath()};
 
-    paths.append(Utils::File::cleanPath(appPath.absolutePath() + u"/"_s + QString::fromLatin1(RELATIVE_PLUGIN_PATH)));
-    paths.append(Utils::File::cleanPath(appPath.absolutePath() + u"/plugins"_s));
+    appendPath(appPath.absolutePath() + u"/"_s + QString::fromLatin1(RELATIVE_PLUGIN_PATH));
+    appendPath(appPath.absolutePath() + u"/plugins"_s);
 
-    const QString userPath = userPluginsPath();
-    if(!paths.contains(userPath)) {
-        paths.append(userPath);
+    const QStringList environmentPaths
+        = qEnvironmentVariable("FOOYIN_PLUGIN_PATH").split(QDir::listSeparator(), Qt::SkipEmptyParts);
+    for(const QString& path : environmentPaths) {
+        appendPath(path);
     }
+
+    appendPath(userPluginsPath());
 
     return paths;
 }
